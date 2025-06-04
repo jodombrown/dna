@@ -1,9 +1,9 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Users, DollarSign, Calendar, Target } from 'lucide-react';
+import { navigate } from 'react-router-dom';
 
 const ProjectPathways = () => {
   const projects = [
@@ -213,6 +213,7 @@ const ProjectPathways = () => {
                   <Button 
                     className="flex-1 bg-dna-copper hover:bg-dna-gold text-white"
                     size="sm"
+                    onClick={() => navigate(`/innovation/${project.id}`)}
                   >
                     <DollarSign className="w-4 h-4 mr-1" />
                     Contribute
@@ -221,6 +222,7 @@ const ProjectPathways = () => {
                     size="sm" 
                     variant="outline"
                     className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
+                    onClick={() => navigate(`/innovation/${project.id}`)}
                   >
                     Learn More
                   </Button>

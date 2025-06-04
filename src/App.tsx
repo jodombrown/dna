@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +11,12 @@ import Profile from "./pages/Profile";
 import Members from "./pages/Members";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import ProfileConnect from "./pages/ProfileConnect";
+import InnovationPathwayDetail from "./pages/InnovationPathwayDetail";
+import Programs from "./pages/Programs";
+import Events from "./pages/Events";
+import Resources from "./pages/Resources";
+import Services from "./pages/Services";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +43,36 @@ const App = () => (
             <Route path="/profile/:id" element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/connect/:id" element={
+              <ProtectedRoute>
+                <ProfileConnect />
+              </ProtectedRoute>
+            } />
+            <Route path="/innovation/:id" element={
+              <ProtectedRoute>
+                <InnovationPathwayDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="/programs" element={
+              <ProtectedRoute>
+                <Programs />
+              </ProtectedRoute>
+            } />
+            <Route path="/events" element={
+              <ProtectedRoute>
+                <Events />
+              </ProtectedRoute>
+            } />
+            <Route path="/resources" element={
+              <ProtectedRoute>
+                <Resources />
+              </ProtectedRoute>
+            } />
+            <Route path="/services" element={
+              <ProtectedRoute>
+                <Services />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

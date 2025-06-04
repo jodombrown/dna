@@ -20,6 +20,13 @@ interface ProfileCardProps {
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
+  const navigate = useNavigate();
+
+  const handleConnectClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/connect/${profile.id}`);
+  };
+
   return (
     <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={onClick}>
       <CardContent className="p-6">
@@ -61,7 +68,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
             )}
             
             <div className="flex items-center space-x-2 mt-3">
-              <Button size="sm" className="bg-africa-orange hover:bg-africa-sunset">
+              <Button 
+                size="sm" 
+                className="bg-africa-orange hover:bg-africa-sunset"
+                onClick={handleConnectClick}
+              >
                 Connect
               </Button>
               
