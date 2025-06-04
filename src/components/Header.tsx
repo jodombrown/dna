@@ -22,13 +22,19 @@ const Header = () => {
     navigate('/auth');
   };
 
+  const handleProfileClick = () => {
+    if (user) {
+      navigate(`/profile/${user.id}`);
+    }
+  };
+
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
+            <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => navigate('/')}>
               <div className="w-8 h-8 bg-africa-orange rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">D</span>
               </div>
@@ -56,9 +62,14 @@ const Header = () => {
               <>
                 {/* Navigation Icons */}
                 <nav className="hidden md:flex items-center space-x-6">
-                  <Button variant="ghost" size="sm" className="flex flex-col items-center p-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="flex flex-col items-center p-2"
+                    onClick={() => navigate('/members')}
+                  >
                     <Users className="w-5 h-5" />
-                    <span className="text-xs mt-1">Network</span>
+                    <span className="text-xs mt-1">Members</span>
                   </Button>
                   <Button variant="ghost" size="sm" className="flex flex-col items-center p-2">
                     <Briefcase className="w-5 h-5" />
@@ -98,7 +109,9 @@ const Header = () => {
                       </div>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleProfileClick}>
+                      My Profile
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Settings</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut}>
