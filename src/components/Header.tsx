@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Search, Bell, MessageCircle, Users, Briefcase, Calendar, BookOpen, GraduationCap } from 'lucide-react';
@@ -61,6 +60,16 @@ const Header = () => {
           {user && (
             <NavigationMenu className="hidden lg:flex">
               <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <button
+                      onClick={() => navigate('/dashboard')}
+                      className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-dna-mint hover:text-dna-forest focus:bg-dna-mint focus:text-dna-forest focus:outline-none text-dna-forest"
+                    >
+                      Dashboard
+                    </button>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="text-dna-forest hover:bg-dna-mint">Community</NavigationMenuTrigger>
                   <NavigationMenuContent>
