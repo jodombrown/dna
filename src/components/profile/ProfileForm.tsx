@@ -12,8 +12,11 @@ import {
   sanitizeText, 
   isValidLinkedInUrl, 
   validateCharacterLimit, 
-  validateProfessionalField 
-} from '@/utils/validation';
+  validateProfessionalField,
+  validateBioContent,
+  isRateLimited
+} from '@/utils/securityValidation';
+import { getGenericErrorMessage, logSecurityEvent } from '@/utils/errorHandling';
 
 interface ProfileFormProps {
   profile?: any;
@@ -48,14 +51,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    // Required field validation
+    // Required field validation with enhanced security
     if (!formData.full_name.trim()) {
       newErrors.full_name = 'Full name is required';
     } else if (!validateCharacterLimit(formData.full_name, 100)) {
       newErrors.full_name = 'Full name must be less than 100 characters';
+    } else if (!/^[a-zA-Z\s\-'àáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ]+$/.test(formData.full_name)) {
+      newErrors.full_name = 'Full name contains invalid characters';
     }
 
-    // Professional field validation
+    // Enhanced professional field validation
     if (formData.profession && !validateProfessionalField(formData.profession)) {
       newErrors.profession = 'Profession contains invalid characters or is too long (100 chars max)';
     }
@@ -68,12 +73,17 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
       newErrors.location = 'Location must be less than 100 characters';
     }
 
-    // Bio validation
-    if (formData.bio && !validateCharacterLimit(formData.bio, 1000)) {
-      newErrors.bio = 'Bio must be less than 1000 characters';
+    // Enhanced bio validation with security checks
+    if (formData.bio) {
+      if (!validateCharacterLimit(formData.bio, 1000)) {
+        newErrors.bio = 'Bio must be less than 1000 characters';
+      } else if (!validateBioContent(formData.bio)) {
+        newErrors.bio = 'Bio contains content that is not allowed';
+        logSecurityEvent('suspicious_bio_content', user?.id, { bio: formData.bio });
+      }
     }
 
-    // LinkedIn URL validation
+    // Enhanced LinkedIn URL validation
     if (formData.linkedin_url && !isValidLinkedInUrl(formData.linkedin_url)) {
       newErrors.linkedin_url = 'Please enter a valid LinkedIn profile URL (e.g., https://linkedin.com/in/yourprofile)';
     }
@@ -85,14 +95,15 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Rate limiting check (prevent rapid submissions)
+    // Enhanced rate limiting check
     const now = Date.now();
-    if (now - lastSubmit < 2000) {
+    if (isRateLimited(lastSubmit, 2000)) {
       toast({
         title: "Please wait",
         description: "Please wait a moment before submitting again.",
         variant: "destructive",
       });
+      logSecurityEvent('rate_limit_exceeded', user?.id, { action: 'profile_update' });
       return;
     }
 
@@ -102,6 +113,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
         description: "You must be logged in to update your profile.",
         variant: "destructive",
       });
+      logSecurityEvent('unauthorized_profile_update', undefined);
       return;
     }
 
@@ -118,7 +130,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
     setLastSubmit(now);
 
     try {
-      // Sanitize all text inputs
+      // Enhanced sanitization of all text inputs
       const sanitizedData = {
         full_name: sanitizeText(formData.full_name),
         profession: sanitizeText(formData.profession),
@@ -139,7 +151,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
 
       if (error) {
         console.error('Profile update error:', error);
-        throw new Error(error.message || 'Failed to update profile');
+        logSecurityEvent('profile_update_failed', user.id, { error: error.message });
+        throw new Error(getGenericErrorMessage(error));
       }
 
       toast({
@@ -147,12 +160,13 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
         description: "Profile updated successfully!",
       });
 
+      logSecurityEvent('profile_updated_successfully', user.id);
       if (onSave) onSave();
     } catch (error: any) {
       console.error('Profile update error:', error);
       toast({
         title: "Update Failed",
-        description: error.message || "An unexpected error occurred. Please try again.",
+        description: getGenericErrorMessage(error),
         variant: "destructive",
       });
     } finally {
@@ -161,7 +175,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    // Additional input sanitization on change
+    const sanitizedValue = sanitizeText(value);
+    setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
     
     // Clear error when user starts typing
     if (errors[field as keyof FormErrors]) {

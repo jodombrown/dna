@@ -1,15 +1,14 @@
 
-// Enhanced validation utilities with security focus
+// Enhanced security validation utilities
 export const sanitizeText = (text: string): string => {
   if (!text) return '';
   
-  // Remove potential XSS patterns and normalize
+  // Remove potential XSS patterns
   return text
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
     .replace(/javascript:/gi, '')
     .replace(/on\w+\s*=/gi, '')
-    .replace(/[<>]/g, '') // Remove angle brackets
     .trim();
 };
 
@@ -20,11 +19,9 @@ export const validateCharacterLimit = (text: string, limit: number): boolean => 
 export const validateProfessionalField = (text: string): boolean => {
   if (!text) return true;
   
-  // Enhanced pattern to prevent injection attempts
+  // Allow letters, numbers, spaces, common punctuation, and accented characters
   const validPattern = /^[a-zA-Z0-9\s\-&.,()''""àáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ]+$/;
-  const noScriptPattern = !/(?:script|javascript|onload|onerror)/i.test(text);
-  
-  return validPattern.test(text) && noScriptPattern && text.length <= 100;
+  return validPattern.test(text) && text.length <= 100;
 };
 
 export const isValidLinkedInUrl = (url: string): boolean => {
@@ -32,33 +29,32 @@ export const isValidLinkedInUrl = (url: string): boolean => {
   
   try {
     const urlObj = new URL(url);
-    // Strict LinkedIn URL validation
     return (
       (urlObj.hostname === 'linkedin.com' || urlObj.hostname === 'www.linkedin.com') &&
       urlObj.pathname.startsWith('/in/') &&
-      urlObj.pathname.length > 4 &&
-      !urlObj.pathname.includes('..') && // Prevent path traversal
-      !/[<>'"]/test(url) // Prevent XSS in URL
+      urlObj.pathname.length > 4
     );
   } catch {
     return false;
   }
 };
 
-// Additional security validation functions
 export const validateBioContent = (bio: string): boolean => {
   if (!bio) return true;
   
-  // Check for potential security risks
+  // Check for potential security risks in bio content
   const suspiciousPatterns = [
     /(?:https?:\/\/)?(?:bit\.ly|tinyurl|t\.co)/i, // Suspicious short URLs
     /\b(?:admin|administrator|root|sudo)\b/i, // Admin-related terms
     /\$\{.*\}/i, // Template injection patterns
     /__.*__/i, // Potential code injection
-    /<[^>]*>/i, // HTML tags
   ];
   
   return !suspiciousPatterns.some(pattern => pattern.test(bio));
+};
+
+export const rateLimitKey = (userId: string, action: string): string => {
+  return `rate_limit:${userId}:${action}`;
 };
 
 export const isRateLimited = (lastAction: number, minInterval: number = 2000): boolean => {
