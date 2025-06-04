@@ -31,7 +31,13 @@ const TargetMetrics = () => {
                 tick={{ fontSize: 12 }}
                 width={120}
               />
-              <ChartTooltip content={<ChartTooltipContent />} />
+              <ChartTooltip 
+                content={<ChartTooltipContent />}
+                formatter={(value, name) => [
+                  typeof value === 'number' ? value.toLocaleString() : value, 
+                  name
+                ]}
+              />
               <Bar dataKey="current" fill="var(--color-current)" radius={[0, 4, 4, 0]} />
               <Bar dataKey="target" fill="var(--color-target)" radius={[0, 4, 4, 0]} />
             </BarChart>
@@ -43,27 +49,43 @@ const TargetMetrics = () => {
       <div className="space-y-4">
         {platformData.target_metrics.map((metric, index) => {
           const progress = (metric.current / metric.target) * 100;
+          const isPercentageMetric = metric.metric.includes('%');
+          
           return (
             <div key={index} className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="font-medium text-dna-forest">{metric.metric}</span>
                 <span className="text-sm text-gray-600">{metric.timeframe}</span>
               </div>
-              <Progress value={progress} className="h-2" />
+              <Progress value={progress} className="h-3" />
               <div className="flex justify-between text-sm">
-                <span className="text-dna-emerald">
-                  Current: {metric.current.toLocaleString()}
+                <span className="text-dna-emerald font-medium">
+                  Current: {metric.current.toLocaleString()}{isPercentageMetric ? '%' : ''}
                 </span>
-                <span className="text-dna-forest">
-                  Target: {metric.target.toLocaleString()}
+                <span className="text-dna-forest font-medium">
+                  Target: {metric.target.toLocaleString()}{isPercentageMetric ? '%' : ''}
                 </span>
               </div>
-              <div className="text-center text-sm font-medium">
-                {progress.toFixed(1)}% Complete
+              <div className="text-center">
+                <span className={`text-sm font-medium px-2 py-1 rounded ${
+                  progress >= 80 ? 'bg-dna-emerald text-white' :
+                  progress >= 60 ? 'bg-dna-gold text-dna-forest' :
+                  'bg-dna-copper text-white'
+                }`}>
+                  {progress.toFixed(1)}% Complete
+                </span>
               </div>
             </div>
           );
         })}
+      </div>
+
+      {/* Growth Insights */}
+      <div className="mt-6 pt-4 border-t border-gray-200">
+        <div className="text-center p-4 bg-dna-forest/5 rounded-lg">
+          <div className="text-xl font-bold text-dna-forest">12.5%</div>
+          <div className="text-sm text-gray-600">Monthly User Growth Rate</div>
+        </div>
       </div>
     </div>
   );

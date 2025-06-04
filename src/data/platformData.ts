@@ -58,5 +58,12 @@ export const platformData = {
     { metric: "Capital Raised ($M)", target: 25, current: 18.5, timeframe: "Year 1" },
     { metric: "ROI Average (%)", target: 15, current: 12.8, timeframe: "Year 1" },
     { metric: "User Retention (%)", target: 75, current: 68, timeframe: "Monthly" }
-  ]
+  ],
+  // Enhanced data insights
+  platform_insights: {
+    total_monthly_revenue: 71000,
+    user_growth_rate: 12.5,
+    project_success_rate: 85,
+    average_investment: 52000
+  }
 };

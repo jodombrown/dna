@@ -27,7 +27,8 @@ const chartConfig = {
   },
 };
 
-const COLORS = ['#183c2e', '#d88d4e', '#459c71', '#abddd6', '#e6bc2e'];
+// DNA brand colors for better visual consistency
+const DNA_COLORS = ['#183c2e', '#d88d4e', '#459c71', '#abddd6', '#e6bc2e'];
 
 const RevenueStreams = () => {
   const totalRevenue = platformData.revenue_streams.reduce((sum, stream) => sum + stream.monthly_revenue, 0);
@@ -51,10 +52,13 @@ const RevenueStreams = () => {
                 nameKey="stream"
               >
                 {platformData.revenue_streams.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={DNA_COLORS[index % DNA_COLORS.length]} />
                 ))}
               </Pie>
-              <ChartTooltip content={<ChartTooltipContent />} />
+              <ChartTooltip 
+                content={<ChartTooltipContent />}
+                formatter={(value, name) => [`$${Number(value).toLocaleString()}`, name]}
+              />
               <Legend />
             </PieChart>
           </ResponsiveContainer>
@@ -67,24 +71,36 @@ const RevenueStreams = () => {
           <div className="text-2xl font-bold text-dna-forest">
             ${totalRevenue.toLocaleString()}/month
           </div>
-          <div className="text-sm text-gray-600">Total Monthly Revenue</div>
+          <div className="text-sm text-gray-600">Total Monthly Revenue Target</div>
         </div>
         
         {platformData.revenue_streams.map((stream, index) => (
-          <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+          <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
             <div className="flex items-center space-x-3">
               <div 
                 className="w-4 h-4 rounded"
-                style={{ backgroundColor: COLORS[index] }}
+                style={{ backgroundColor: DNA_COLORS[index] }}
               />
               <span className="font-medium">{stream.stream}</span>
             </div>
             <div className="text-right">
-              <div className="font-semibold">${stream.monthly_revenue.toLocaleString()}</div>
+              <div className="font-semibold text-dna-forest">${stream.monthly_revenue.toLocaleString()}</div>
               <div className="text-sm text-gray-600">{stream.percentage}%</div>
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Additional Insights */}
+      <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-gray-200">
+        <div className="text-center p-3 bg-dna-mint/20 rounded-lg">
+          <div className="text-lg font-bold text-dna-forest">85%</div>
+          <div className="text-sm text-gray-600">Project Success Rate</div>
+        </div>
+        <div className="text-center p-3 bg-dna-mint/20 rounded-lg">
+          <div className="text-lg font-bold text-dna-forest">$52K</div>
+          <div className="text-sm text-gray-600">Avg Investment</div>
+        </div>
       </div>
     </div>
   );
