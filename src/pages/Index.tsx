@@ -2,6 +2,7 @@
 import HeroSection from "@/components/HeroSection";
 import FeaturedMembers from "@/components/FeaturedMembers";
 import ProjectPathways from "@/components/ProjectPathways";
+import CommunityConnect from "@/components/CommunityConnect";
 import ImpactShowcase from "@/components/ImpactShowcase";
 import Footer from "@/components/Footer";
 
@@ -11,6 +12,7 @@ const Index = () => {
       <HeroSection />
       <FeaturedMembers />
       <ProjectPathways />
+      <CommunityConnect />
       <ImpactShowcase />
       <Footer />
     </div>

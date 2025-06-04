@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Search, Bell, MessageCircle, Users, Briefcase } from 'lucide-react';
+import { Search, Bell, MessageCircle, Users, Briefcase, Calendar, BookOpen, GraduationCap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -12,6 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu';
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -28,6 +36,13 @@ const Header = () => {
     }
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,6 +56,79 @@ const Header = () => {
               <span className="ml-2 text-xl font-bold text-africa-green">DiasporaLink</span>
             </div>
           </div>
+
+          {/* Navigation Menu */}
+          {user && (
+            <NavigationMenu className="hidden lg:flex">
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Community</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid gap-3 p-6 w-[400px]">
+                      <NavigationMenuLink asChild>
+                        <button
+                          onClick={() => scrollToSection('programs')}
+                          className="flex items-center space-x-3 p-3 rounded-md hover:bg-gray-50 text-left w-full"
+                        >
+                          <GraduationCap className="w-5 h-5 text-africa-orange" />
+                          <div>
+                            <div className="font-medium">Programs</div>
+                            <div className="text-sm text-gray-600">Accelerators and initiatives</div>
+                          </div>
+                        </button>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <button
+                          onClick={() => scrollToSection('events')}
+                          className="flex items-center space-x-3 p-3 rounded-md hover:bg-gray-50 text-left w-full"
+                        >
+                          <Calendar className="w-5 h-5 text-africa-orange" />
+                          <div>
+                            <div className="font-medium">Events</div>
+                            <div className="text-sm text-gray-600">Conferences and meetups</div>
+                          </div>
+                        </button>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <button
+                          onClick={() => scrollToSection('resources')}
+                          className="flex items-center space-x-3 p-3 rounded-md hover:bg-gray-50 text-left w-full"
+                        >
+                          <BookOpen className="w-5 h-5 text-africa-orange" />
+                          <div>
+                            <div className="font-medium">Resources</div>
+                            <div className="text-sm text-gray-600">Guides and toolkits</div>
+                          </div>
+                        </button>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <button
+                          onClick={() => scrollToSection('services')}
+                          className="flex items-center space-x-3 p-3 rounded-md hover:bg-gray-50 text-left w-full"
+                        >
+                          <Briefcase className="w-5 h-5 text-africa-orange" />
+                          <div>
+                            <div className="font-medium">Services</div>
+                            <div className="text-sm text-gray-600">Professional services</div>
+                          </div>
+                        </button>
+                      </NavigationMenuLink>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <button
+                      onClick={() => scrollToSection('pathways')}
+                      className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+                    >
+                      Innovation Pathways
+                    </button>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          )}
 
           {/* Search Bar */}
           {user && (
