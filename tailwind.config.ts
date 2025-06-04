@@ -63,13 +63,15 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// African Diaspora theme colors
-				africa: {
-					orange: '#E97451',
-					gold: '#D4A574',
-					green: '#2D5016',
-					earth: '#8B4513',
-					sunset: '#FF6B35'
+				// DNA Brand Colors
+				dna: {
+					white: '#ffffff',
+					forest: '#183c2e',
+					copper: '#d88d4e',
+					emerald: '#459c71',
+					mint: '#abddd6',
+					crimson: '#cc0000',
+					gold: '#e6bc2e'
 				}
 			},
 			borderRadius: {

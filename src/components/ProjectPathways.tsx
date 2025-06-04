@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -116,7 +117,7 @@ const ProjectPathways = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Innovation <span className="text-africa-orange">Pathways</span>
+            Innovation <span className="text-dna-copper">Pathways</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Discover, connect, and contribute to transformative projects driving African innovation and development
@@ -133,7 +134,7 @@ const ProjectPathways = () => {
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 {project.featured && (
-                  <Badge className="absolute top-3 left-3 bg-africa-orange text-white">
+                  <Badge className="absolute top-3 left-3 bg-dna-copper text-white">
                     Featured
                   </Badge>
                 )}
@@ -147,12 +148,12 @@ const ProjectPathways = () => {
               
               <CardContent className="p-6">
                 <div className="mb-3">
-                  <Badge variant="outline" className="text-xs text-africa-green border-africa-green">
+                  <Badge variant="outline" className="text-xs text-dna-emerald border-dna-emerald">
                     {project.category}
                   </Badge>
                 </div>
                 
-                <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-africa-orange transition-colors">
+                <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-dna-copper transition-colors">
                   {project.title}
                 </h3>
                 <p className="text-gray-600 mb-4 text-sm leading-relaxed">
@@ -162,7 +163,7 @@ const ProjectPathways = () => {
                 <div className="mb-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium text-gray-700">Funding Progress</span>
-                    <span className="text-sm font-bold text-africa-green">
+                    <span className="text-sm font-bold text-dna-emerald">
                       {calculateFundingPercentage(project.currentFunding, project.fundingGoal)}%
                     </span>
                   </div>
@@ -194,7 +195,7 @@ const ProjectPathways = () => {
                   <div>
                     <div className="flex items-center justify-center mb-1">
                       <Target className="h-4 w-4 text-gray-400 mr-1" />
-                      <span className="text-xs font-bold text-africa-green">Impact</span>
+                      <span className="text-xs font-bold text-dna-emerald">Impact</span>
                     </div>
                     <span className="text-xs text-gray-500">{project.impactMetrics}</span>
                   </div>
@@ -210,7 +211,7 @@ const ProjectPathways = () => {
                 
                 <div className="flex gap-2">
                   <Button 
-                    className="flex-1 bg-africa-orange hover:bg-africa-sunset text-white"
+                    className="flex-1 bg-dna-copper hover:bg-dna-gold text-white"
                     size="sm"
                   >
                     <DollarSign className="w-4 h-4 mr-1" />
@@ -219,7 +220,7 @@ const ProjectPathways = () => {
                   <Button 
                     size="sm" 
                     variant="outline"
-                    className="border-africa-green text-africa-green hover:bg-africa-green hover:text-white"
+                    className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
                   >
                     Learn More
                   </Button>
@@ -233,7 +234,7 @@ const ProjectPathways = () => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="border-africa-green text-africa-green hover:bg-africa-green hover:text-white"
+            className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
           >
             Explore All Innovation Pathways
           </Button>

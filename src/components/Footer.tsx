@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div>
               <h3 className="text-2xl font-bold mb-4">
-                Stay Connected with <span className="text-africa-orange">DiasporaLink</span>
+                Stay Connected with <span className="text-dna-copper">DNA</span>
               </h3>
               <p className="text-gray-300">
                 Get weekly updates on opportunities, events, and success stories from our community.
@@ -23,7 +23,7 @@ const Footer = () => {
                 placeholder="Enter your email address"
                 className="bg-gray-800 border-gray-700 text-white flex-1"
               />
-              <Button className="bg-africa-orange hover:bg-africa-sunset text-white px-8">
+              <Button className="bg-dna-copper hover:bg-dna-gold text-white px-8">
                 Subscribe
               </Button>
             </div>
@@ -34,51 +34,51 @@ const Footer = () => {
         <div className="py-12 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-africa-gold">DiasporaLink</h3>
+            <h3 className="text-xl font-bold mb-4 text-dna-gold">DNA</h3>
             <p className="text-gray-300 mb-4">
-              Connecting the African Diaspora to drive progress across the continent through 
+              Diaspora Network of Africa - Connecting the African Diaspora to drive progress across the continent through 
               professional networking and collaborative impact.
             </p>
             <div className="flex space-x-4">
-              <div className="w-8 h-8 bg-africa-orange rounded-full"></div>
-              <div className="w-8 h-8 bg-africa-gold rounded-full"></div>
-              <div className="w-8 h-8 bg-africa-green rounded-full"></div>
+              <div className="w-8 h-8 bg-dna-copper rounded-full"></div>
+              <div className="w-8 h-8 bg-dna-gold rounded-full"></div>
+              <div className="w-8 h-8 bg-dna-emerald rounded-full"></div>
             </div>
           </div>
 
           {/* Platform Links */}
           <div>
-            <h4 className="font-semibold mb-4 text-africa-gold">Platform</h4>
+            <h4 className="font-semibold mb-4 text-dna-gold">Platform</h4>
             <ul className="space-y-2 text-gray-300">
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Find Members</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Join Groups</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Browse Projects</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Event Calendar</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Resource Hub</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Find Members</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Join Groups</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Browse Projects</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Event Calendar</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Resource Hub</a></li>
             </ul>
           </div>
 
           {/* Community */}
           <div>
-            <h4 className="font-semibold mb-4 text-africa-gold">Community</h4>
+            <h4 className="font-semibold mb-4 text-dna-gold">Community</h4>
             <ul className="space-y-2 text-gray-300">
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Success Stories</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Mentorship</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Career Center</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Investment Board</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Africa Connect</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Success Stories</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Mentorship</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Career Center</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Investment Board</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Africa Connect</a></li>
             </ul>
           </div>
 
           {/* Support */}
           <div>
-            <h4 className="font-semibold mb-4 text-africa-gold">Support</h4>
+            <h4 className="font-semibold mb-4 text-dna-gold">Support</h4>
             <ul className="space-y-2 text-gray-300">
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-africa-orange transition-colors">About Us</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Help Center</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">Contact Us</a></li>
+              <li><a href="#" className="hover:text-dna-copper transition-colors">About Us</a></li>
             </ul>
           </div>
         </div>
@@ -86,7 +86,7 @@ const Footer = () => {
         {/* Bottom Footer */}
         <div className="py-6 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 DiasporaLink. Building bridges to Africa's future.
+            © 2024 DNA - Diaspora Network of Africa. Building bridges to Africa's future.
           </p>
           <p className="text-gray-400 text-sm">
             Made with ❤️ for the African Diaspora

@@ -54,11 +54,11 @@ const ImpactShowcase = () => {
   ];
 
   return (
-    <section className="py-16 bg-africa-green text-white">
+    <section className="py-16 bg-dna-emerald text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Our Collective <span className="text-africa-gold">Impact</span>
+            Our Collective <span className="text-dna-gold">Impact</span>
           </h2>
           <p className="text-xl text-gray-100 max-w-3xl mx-auto">
             Together, we're creating measurable change across Africa through innovation, investment, and collaboration
@@ -70,7 +70,7 @@ const ImpactShowcase = () => {
           {stats.map((stat, index) => (
             <div key={index} className="text-center">
               <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-colors">
-                <div className="text-3xl md:text-4xl font-bold text-africa-gold mb-2">
+                <div className="text-3xl md:text-4xl font-bold text-dna-gold mb-2">
                   {stat.number}
                 </div>
                 <div className="text-lg font-semibold mb-1">
@@ -86,7 +86,7 @@ const ImpactShowcase = () => {
 
         {/* Featured Projects */}
         <div className="mb-12">
-          <h3 className="text-2xl font-bold text-center mb-8 text-africa-gold">
+          <h3 className="text-2xl font-bold text-center mb-8 text-dna-gold">
             Featured Impact Projects
           </h3>
           
@@ -95,10 +95,10 @@ const ImpactShowcase = () => {
               <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 transition-colors">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <Badge variant="secondary" className="bg-africa-orange text-white">
+                    <Badge variant="secondary" className="bg-dna-copper text-white">
                       {project.category}
                     </Badge>
-                    <Badge variant="outline" className="border-africa-gold text-africa-gold">
+                    <Badge variant="outline" className="border-dna-gold text-dna-gold">
                       {project.status}
                     </Badge>
                   </div>
@@ -114,11 +114,11 @@ const ImpactShowcase = () => {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-300">Impact:</span>
-                      <span className="text-africa-gold font-medium">{project.impact}</span>
+                      <span className="text-dna-gold font-medium">{project.impact}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-300">Funding:</span>
-                      <span className="text-africa-gold font-medium">{project.funding}</span>
+                      <span className="text-dna-gold font-medium">{project.funding}</span>
                     </div>
                   </div>
                 </CardContent>

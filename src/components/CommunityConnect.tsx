@@ -209,7 +209,7 @@ const CommunityConnect = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Community <span className="text-africa-orange">Connect</span>
+            Community <span className="text-dna-copper">Connect</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Discover programs, events, resources, knowledge, and services that connect our diaspora community
@@ -219,7 +219,7 @@ const CommunityConnect = () => {
         {/* Programs Section */}
         <div id="programs" className="mb-16">
           <div className="flex items-center mb-8">
-            <GraduationCap className="w-6 h-6 text-africa-orange mr-3" />
+            <GraduationCap className="w-6 h-6 text-dna-copper mr-3" />
             <h3 className="text-2xl font-bold text-gray-900">Programs</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -231,7 +231,7 @@ const CommunityConnect = () => {
                       {program.category}
                     </Badge>
                     {program.featured && (
-                      <Badge className="bg-africa-orange text-white">Featured</Badge>
+                      <Badge className="bg-dna-copper text-white">Featured</Badge>
                     )}
                   </div>
                   <CardTitle className="text-lg">{program.title}</CardTitle>
@@ -259,7 +259,7 @@ const CommunityConnect = () => {
                       </Badge>
                     ))}
                   </div>
-                  <Button className="w-full bg-africa-green hover:bg-africa-green/90">
+                  <Button className="w-full bg-dna-emerald hover:bg-dna-emerald/90">
                     Apply Now
                   </Button>
                 </CardContent>
@@ -271,7 +271,7 @@ const CommunityConnect = () => {
         {/* Events Section */}
         <div id="events" className="mb-16">
           <div className="flex items-center mb-8">
-            <Calendar className="w-6 h-6 text-africa-orange mr-3" />
+            <Calendar className="w-6 h-6 text-dna-copper mr-3" />
             <h3 className="text-2xl font-bold text-gray-900">Events</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -281,7 +281,7 @@ const CommunityConnect = () => {
                   <div className="flex justify-between items-start mb-2">
                     <Badge variant="outline">{event.type}</Badge>
                     {event.featured && (
-                      <Badge className="bg-africa-orange text-white">Featured</Badge>
+                      <Badge className="bg-dna-copper text-white">Featured</Badge>
                     )}
                   </div>
                   <CardTitle className="text-lg">{event.title}</CardTitle>
@@ -313,7 +313,7 @@ const CommunityConnect = () => {
                       </Badge>
                     ))}
                   </div>
-                  <Button className="w-full bg-africa-green hover:bg-africa-green/90">
+                  <Button className="w-full bg-dna-emerald hover:bg-dna-emerald/90">
                     Register
                   </Button>
                 </CardContent>
@@ -325,7 +325,7 @@ const CommunityConnect = () => {
         {/* Resources Section */}
         <div id="resources" className="mb-16">
           <div className="flex items-center mb-8">
-            <BookOpen className="w-6 h-6 text-africa-orange mr-3" />
+            <BookOpen className="w-6 h-6 text-dna-copper mr-3" />
             <h3 className="text-2xl font-bold text-gray-900">Resources</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -335,7 +335,7 @@ const CommunityConnect = () => {
                   <div className="flex justify-between items-start mb-2">
                     <Badge variant="outline">{resource.type}</Badge>
                     {resource.featured && (
-                      <Badge className="bg-africa-orange text-white">Featured</Badge>
+                      <Badge className="bg-dna-copper text-white">Featured</Badge>
                     )}
                   </div>
                   <CardTitle className="text-lg">{resource.title}</CardTitle>
@@ -359,7 +359,7 @@ const CommunityConnect = () => {
                       </Badge>
                     ))}
                   </div>
-                  <Button className="w-full bg-africa-green hover:bg-africa-green/90">
+                  <Button className="w-full bg-dna-emerald hover:bg-dna-emerald/90">
                     <Download className="w-4 h-4 mr-2" />
                     Download
                   </Button>
@@ -372,7 +372,7 @@ const CommunityConnect = () => {
         {/* Knowledge Section */}
         <div id="knowledge" className="mb-16">
           <div className="flex items-center mb-8">
-            <Users className="w-6 h-6 text-africa-orange mr-3" />
+            <Users className="w-6 h-6 text-dna-copper mr-3" />
             <h3 className="text-2xl font-bold text-gray-900">Knowledge</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -382,7 +382,7 @@ const CommunityConnect = () => {
                   <div className="flex justify-between items-start mb-2">
                     <Badge variant="outline">{article.type}</Badge>
                     {article.featured && (
-                      <Badge className="bg-africa-orange text-white">Featured</Badge>
+                      <Badge className="bg-dna-copper text-white">Featured</Badge>
                     )}
                   </div>
                   <CardTitle className="text-lg">{article.title}</CardTitle>
@@ -406,7 +406,7 @@ const CommunityConnect = () => {
                       </Badge>
                     ))}
                   </div>
-                  <Button className="w-full bg-africa-green hover:bg-africa-green/90">
+                  <Button className="w-full bg-dna-emerald hover:bg-dna-emerald/90">
                     <Play className="w-4 h-4 mr-2" />
                     Read Article
                   </Button>
@@ -419,7 +419,7 @@ const CommunityConnect = () => {
         {/* Services Section */}
         <div id="services" className="mb-16">
           <div className="flex items-center mb-8">
-            <Briefcase className="w-6 h-6 text-africa-orange mr-3" />
+            <Briefcase className="w-6 h-6 text-dna-copper mr-3" />
             <h3 className="text-2xl font-bold text-gray-900">Services</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -429,7 +429,7 @@ const CommunityConnect = () => {
                   <div className="flex justify-between items-start mb-2">
                     <Badge variant="outline">{service.category}</Badge>
                     {service.featured && (
-                      <Badge className="bg-africa-orange text-white">Featured</Badge>
+                      <Badge className="bg-dna-copper text-white">Featured</Badge>
                     )}
                   </div>
                   <CardTitle className="text-lg">{service.title}</CardTitle>
@@ -454,7 +454,7 @@ const CommunityConnect = () => {
                     ))}
                   </div>
                   <div className="flex gap-2">
-                    <Button className="flex-1 bg-africa-green hover:bg-africa-green/90">
+                    <Button className="flex-1 bg-dna-emerald hover:bg-dna-emerald/90">
                       Get Quote
                     </Button>
                     <Button variant="outline" size="sm">
@@ -471,7 +471,7 @@ const CommunityConnect = () => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="border-africa-green text-africa-green hover:bg-africa-green hover:text-white"
+            className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
           >
             Explore All Community Connections
           </Button>

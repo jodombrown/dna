@@ -43,7 +43,7 @@ const FeaturedMembers = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Meet Our <span className="text-africa-orange">Community Leaders</span>
+            Meet Our <span className="text-dna-copper">Network Leaders</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Discover professionals making extraordinary impact across Africa and the diaspora
@@ -58,19 +58,19 @@ const FeaturedMembers = () => {
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-20 h-20 rounded-full mb-4 object-cover border-4 border-africa-gold"
+                    className="w-20 h-20 rounded-full mb-4 object-cover border-4 border-dna-gold"
                   />
                   <h3 className="font-semibold text-lg mb-1 text-gray-900">{member.name}</h3>
-                  <p className="text-africa-orange font-medium mb-2">{member.title}</p>
+                  <p className="text-dna-copper font-medium mb-2">{member.title}</p>
                   <p className="text-sm text-gray-600 mb-2">{member.company}</p>
                   <p className="text-xs text-gray-500 mb-3">{member.location}</p>
-                  <div className="bg-africa-green/10 rounded-lg p-3 mb-4">
-                    <p className="text-sm text-africa-green font-medium">{member.impact}</p>
+                  <div className="bg-dna-emerald/10 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-dna-emerald font-medium">{member.impact}</p>
                   </div>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="border-africa-orange text-africa-orange hover:bg-africa-orange hover:text-white w-full"
+                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white w-full"
                   >
                     Connect
                   </Button>
@@ -83,7 +83,7 @@ const FeaturedMembers = () => {
         <div className="text-center">
           <Button 
             size="lg" 
-            className="bg-africa-orange hover:bg-africa-sunset text-white"
+            className="bg-dna-copper hover:bg-dna-gold text-white"
           >
             View All Members
           </Button>
