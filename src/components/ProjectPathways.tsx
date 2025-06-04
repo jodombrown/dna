@@ -17,7 +17,7 @@ const ProjectPathways = () => {
       currentFunding: 185000,
       backers: 156,
       daysLeft: 23,
-      stage: "Series A",
+      stage: "Go-to-Market",
       impactMetrics: "50,000 farmers impacted",
       featured: true,
       tags: ["Technology", "Agriculture", "Sustainability"]
@@ -32,7 +32,7 @@ const ProjectPathways = () => {
       currentFunding: 320000,
       backers: 243,
       daysLeft: 45,
-      stage: "Growth",
+      stage: "Scale",
       impactMetrics: "200,000 accounts opened",
       featured: true,
       tags: ["FinTech", "Inclusion", "Mobile"]
@@ -47,7 +47,7 @@ const ProjectPathways = () => {
       currentFunding: 750000,
       backers: 89,
       daysLeft: 67,
-      stage: "Infrastructure",
+      stage: "Grow",
       impactMetrics: "25 communities powered",
       featured: false,
       tags: ["Energy", "Infrastructure", "Environment"]
@@ -62,7 +62,7 @@ const ProjectPathways = () => {
       currentFunding: 95000,
       backers: 178,
       daysLeft: 12,
-      stage: "MVP",
+      stage: "Launch",
       impactMetrics: "5,000 students enrolled",
       featured: false,
       tags: ["Education", "AI", "Technology"]
@@ -77,7 +77,7 @@ const ProjectPathways = () => {
       currentFunding: 165000,
       backers: 134,
       daysLeft: 38,
-      stage: "Pilot",
+      stage: "Prototype",
       impactMetrics: "10,000 consultations completed",
       featured: true,
       tags: ["Healthcare", "Telemedicine", "Access"]
