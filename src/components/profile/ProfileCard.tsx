@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, Building, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ProfileCardProps {
   profile: {

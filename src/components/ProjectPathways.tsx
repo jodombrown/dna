@@ -3,9 +3,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Users, DollarSign, Calendar, Target } from 'lucide-react';
-import { navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ProjectPathways = () => {
+  const navigate = useNavigate();
+
   const projects = [
     {
       id: 1,
