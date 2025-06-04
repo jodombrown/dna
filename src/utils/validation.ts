@@ -38,7 +38,7 @@ export const isValidLinkedInUrl = (url: string): boolean => {
       urlObj.pathname.startsWith('/in/') &&
       urlObj.pathname.length > 4 &&
       !urlObj.pathname.includes('..') && // Prevent path traversal
-      !/[<>'"]/test(url) // Prevent XSS in URL
+      !/[<>'"]/g.test(url) // Prevent XSS in URL - fixed regex syntax
     );
   } catch {
     return false;
