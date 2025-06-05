@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,15 +9,18 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import MyProfile from "./pages/MyProfile";
 import Members from "./pages/Members";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import ProfileConnect from "./pages/ProfileConnect";
 import InnovationPathwayDetail from "./pages/InnovationPathwayDetail";
+import InnovationPathways from "./pages/InnovationPathways";
 import Programs from "./pages/Programs";
 import Events from "./pages/Events";
 import Resources from "./pages/Resources";
 import Services from "./pages/Services";
+import Opportunities from "./pages/Opportunities";
 
 const queryClient = new QueryClient();
 
@@ -35,9 +39,24 @@ const App = () => (
                 <Dashboard />
               </ProtectedRoute>
             } />
+            <Route path="/my-profile" element={
+              <ProtectedRoute>
+                <MyProfile />
+              </ProtectedRoute>
+            } />
             <Route path="/members" element={
               <ProtectedRoute>
                 <Members />
+              </ProtectedRoute>
+            } />
+            <Route path="/opportunities" element={
+              <ProtectedRoute>
+                <Opportunities />
+              </ProtectedRoute>
+            } />
+            <Route path="/innovation-pathways" element={
+              <ProtectedRoute>
+                <InnovationPathways />
               </ProtectedRoute>
             } />
             <Route path="/profile/:id" element={
@@ -75,7 +94,6 @@ const App = () => (
                 <Services />
               </ProtectedRoute>
             } />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

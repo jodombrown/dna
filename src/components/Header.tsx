@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Search, Bell, MessageCircle, Users, Briefcase, Calendar, BookOpen, GraduationCap } from 'lucide-react';
@@ -31,14 +32,26 @@ const Header = () => {
 
   const handleProfileClick = () => {
     if (user) {
-      navigate(`/profile/${user.id}`);
+      navigate('/my-profile');
     }
   };
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    // Check if we're on the home page
+    if (window.location.pathname !== '/') {
+      navigate('/');
+      // Wait for navigation to complete before scrolling
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
@@ -76,7 +89,7 @@ const Header = () => {
                     <div className="grid gap-3 p-6 w-[400px]">
                       <NavigationMenuLink asChild>
                         <button
-                          onClick={() => scrollToSection('programs')}
+                          onClick={() => navigate('/programs')}
                           className="flex items-center space-x-3 p-3 rounded-md hover:bg-dna-mint text-left w-full"
                         >
                           <GraduationCap className="w-5 h-5 text-dna-copper" />
@@ -88,7 +101,7 @@ const Header = () => {
                       </NavigationMenuLink>
                       <NavigationMenuLink asChild>
                         <button
-                          onClick={() => scrollToSection('events')}
+                          onClick={() => navigate('/events')}
                           className="flex items-center space-x-3 p-3 rounded-md hover:bg-dna-mint text-left w-full"
                         >
                           <Calendar className="w-5 h-5 text-dna-copper" />
@@ -100,7 +113,7 @@ const Header = () => {
                       </NavigationMenuLink>
                       <NavigationMenuLink asChild>
                         <button
-                          onClick={() => scrollToSection('resources')}
+                          onClick={() => navigate('/resources')}
                           className="flex items-center space-x-3 p-3 rounded-md hover:bg-dna-mint text-left w-full"
                         >
                           <BookOpen className="w-5 h-5 text-dna-copper" />
@@ -112,7 +125,7 @@ const Header = () => {
                       </NavigationMenuLink>
                       <NavigationMenuLink asChild>
                         <button
-                          onClick={() => scrollToSection('services')}
+                          onClick={() => navigate('/services')}
                           className="flex items-center space-x-3 p-3 rounded-md hover:bg-dna-mint text-left w-full"
                         >
                           <Briefcase className="w-5 h-5 text-dna-copper" />
@@ -128,7 +141,7 @@ const Header = () => {
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
                     <button
-                      onClick={() => scrollToSection('pathways')}
+                      onClick={() => navigate('/innovation-pathways')}
                       className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-dna-mint hover:text-dna-forest focus:bg-dna-mint focus:text-dna-forest focus:outline-none text-dna-forest"
                     >
                       Innovation Pathways
@@ -168,7 +181,12 @@ const Header = () => {
                     <Users className="w-5 h-5" />
                     <span className="text-xs mt-1">Members</span>
                   </Button>
-                  <Button variant="ghost" size="sm" className="flex flex-col items-center p-2 text-dna-forest hover:bg-dna-mint">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="flex flex-col items-center p-2 text-dna-forest hover:bg-dna-mint"
+                    onClick={() => navigate('/opportunities')}
+                  >
                     <Briefcase className="w-5 h-5" />
                     <span className="text-xs mt-1">Opportunities</span>
                   </Button>
