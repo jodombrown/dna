@@ -16,7 +16,7 @@ const Footer = () => {
           {/* Social Media Links */}
           <div className="flex items-center space-x-6">
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/company/diasporanetworkafrica"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-dna-copper transition-colors"
@@ -25,7 +25,7 @@ const Footer = () => {
               <Linkedin className="w-6 h-6" />
             </a>
             <a
-              href="https://reddit.com"
+              href="https://www.reddit.com/r/diasporanetworkafrica/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-dna-copper transition-colors"
@@ -38,7 +38,7 @@ const Footer = () => {
               </div>
             </a>
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/diasporanetwork.africa"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-dna-copper transition-colors"

@@ -11,6 +11,7 @@ const EmailCollectionForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [linkedin, setLinkedin] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -19,7 +20,7 @@ const EmailCollectionForm = () => {
     e.preventDefault();
     
     if (!firstName.trim() || !lastName.trim() || !email.trim()) {
-      setError('Please fill in all fields');
+      setError('Please fill in all required fields');
       return;
     }
 
@@ -32,6 +33,7 @@ const EmailCollectionForm = () => {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
           email: email.trim(),
+          linkedin: linkedin.trim(),
         },
       });
 
@@ -82,7 +84,7 @@ const EmailCollectionForm = () => {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="firstName" className="text-dna-forest">
-                First Name
+                First Name *
               </Label>
               <Input
                 id="firstName"
@@ -96,7 +98,7 @@ const EmailCollectionForm = () => {
             </div>
             <div>
               <Label htmlFor="lastName" className="text-dna-forest">
-                Last Name
+                Last Name *
               </Label>
               <Input
                 id="lastName"
@@ -112,7 +114,7 @@ const EmailCollectionForm = () => {
           
           <div>
             <Label htmlFor="email" className="text-dna-forest">
-              Email Address
+              Email Address *
             </Label>
             <Input
               id="email"
@@ -122,6 +124,20 @@ const EmailCollectionForm = () => {
               placeholder="john@example.com"
               className="border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
               required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="linkedin" className="text-dna-forest">
+              LinkedIn Profile (Optional)
+            </Label>
+            <Input
+              id="linkedin"
+              type="url"
+              value={linkedin}
+              onChange={(e) => setLinkedin(e.target.value)}
+              placeholder="https://linkedin.com/in/yourprofile"
+              className="border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
             />
           </div>
 
@@ -146,7 +162,7 @@ const EmailCollectionForm = () => {
         </form>
 
         <p className="text-xs text-gray-500 text-center mt-4">
-          We respect your privacy and will only send updates about DNA platform development and collaboration opportunities.
+          * Required fields. We respect your privacy and will only send updates about DNA platform development and collaboration opportunities.
         </p>
       </CardContent>
     </Card>

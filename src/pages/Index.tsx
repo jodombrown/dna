@@ -45,7 +45,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 relative bg-gradient-to-br from-gray-50 to-dna-mint/30">
+      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 relative bg-white">
         
         <div className="relative max-w-4xl mx-auto text-center">
           {/* Logo */}
@@ -64,17 +64,42 @@ const Index = () => {
             <span className="text-dna-copper">Diaspora Network of Africa</span>
           </h1>
 
-          {/* Description */}
+          {/* Jaune's Introduction */}
           <div className="max-w-3xl mx-auto mb-12">
-            <p className="text-xl md:text-2xl mb-6 text-dna-forest leading-relaxed">
-              Join us in building the world's most powerful network of African diaspora professionals. 
-              Together, we're creating a platform to connect, collaborate, and contribute to Africa's transformation.
+            <p className="text-lg md:text-xl mb-6 text-dna-forest leading-relaxed">
+              Welcome! I'm{' '}
+              <a 
+                href="https://www.linkedin.com/in/jaunelamarr/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-dna-copper hover:text-dna-gold underline font-semibold"
+              >
+                Jaune Odombrown
+              </a>
+              , and I'm excited to invite you to be part of something extraordinary.
             </p>
             
-            <p className="text-lg text-gray-700 mb-8">
-              We're in the early stages of building something extraordinary. This isn't just about joining a network – 
-              it's about partnering with us to create the infrastructure for diaspora impact. Your expertise, 
-              our shared vision, Africa's future.
+            <p className="text-base md:text-lg mb-6 text-gray-700 leading-relaxed">
+              As a visionary leader and passionate advocate for global innovation and entrepreneurship, 
+              I've dedicated my career to empowering communities and driving impactful change. My journey 
+              has now brought me back to my roots, with a deep commitment to uniting the African Diaspora 
+              to help mobilize Africa's progress. This vision led me to create the Diaspora Network of Africa (DNA).
+            </p>
+
+            <p className="text-base md:text-lg mb-6 text-gray-700 leading-relaxed">
+              We're in the early stages of building a transformative platform designed to elevate the 
+              African Diaspora's role in advancing Africa's development. This isn't just about joining 
+              a network, it's about co-creating, co-investing, and co-executing the infrastructure that 
+              empowers us to connect, collaborate, and contribute meaningful change across Africa and beyond.
+            </p>
+
+            <p className="text-base md:text-lg mb-8 text-gray-700 leading-relaxed">
+              Your expertise matters. Your voice matters. Together, we'll shape a future where the 
+              African Diaspora thrives, and Africa's full potential is realized.
+            </p>
+
+            <p className="text-lg md:text-xl font-semibold text-dna-forest mb-8">
+              Let's build this together.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
@@ -97,7 +122,7 @@ const Index = () => {
       </section>
 
       {/* Impact Stats */}
-      <section className="py-16 bg-dna-mint/20">
+      <section className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-dna-forest mb-4">

@@ -14,6 +14,7 @@ interface EmailSubmissionRequest {
   firstName: string;
   lastName: string;
   email: string;
+  linkedin?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -33,9 +34,9 @@ const handler = async (req: Request): Promise<Response> => {
     const body = await req.json();
     console.log("Raw request body:", body);
     
-    const { firstName, lastName, email }: EmailSubmissionRequest = body;
+    const { firstName, lastName, email, linkedin }: EmailSubmissionRequest = body;
 
-    console.log("Received email submission:", { firstName, lastName, email });
+    console.log("Received email submission:", { firstName, lastName, email, linkedin });
 
     // Validate required fields
     if (!firstName || !lastName || !email) {
@@ -55,6 +56,7 @@ const handler = async (req: Request): Promise<Response> => {
           <strong>Contact Details:</strong><br>
           <strong>Name:</strong> ${firstName} ${lastName}<br>
           <strong>Email:</strong> ${email}<br>
+          ${linkedin ? `<strong>LinkedIn:</strong> <a href="${linkedin}">${linkedin}</a><br>` : ''}
           <strong>Submitted:</strong> ${new Date().toLocaleString()}
         </div>
         
@@ -90,7 +92,7 @@ const handler = async (req: Request): Promise<Response> => {
           
           <p style="margin-top: 30px;">
             <strong>Building together,</strong><br>
-            The DNA Platform Team
+            Jaune and the DNA Platform Team
           </p>
           
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
