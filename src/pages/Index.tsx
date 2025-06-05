@@ -6,6 +6,9 @@ import {
   Lightbulb
 } from 'lucide-react';
 import HeroSection from '@/components/HeroSection';
+import FeaturedMembers from '@/components/FeaturedMembers';
+import ImpactShowcase from '@/components/ImpactShowcase';
+import CommunityGroups from '@/components/CommunityGroups';
 import Footer from '@/components/Footer';
 
 const Index = () => {
@@ -31,6 +34,12 @@ const Index = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Featured Members Section */}
+      <FeaturedMembers />
+
+      {/* Impact Showcase Section */}
+      <ImpactShowcase />
 
       {/* Building Together Section */}
       <section className="py-20 bg-gray-50">
@@ -64,6 +73,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Community Groups Section */}
+      <CommunityGroups />
 
       <Footer />
     </div>

@@ -61,7 +61,7 @@ const CommunityGroups = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Join Professional <span className="text-africa-orange">Communities</span>
+            Join Professional <span className="text-dna-copper">Communities</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Connect with like-minded professionals in specialized groups focused on Africa's development
@@ -78,7 +78,7 @@ const CommunityGroups = () => {
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 {group.trending && (
-                  <Badge className="absolute top-3 left-3 bg-africa-orange text-white">
+                  <Badge className="absolute top-3 left-3 bg-dna-copper text-white">
                     Trending
                   </Badge>
                 )}
@@ -91,7 +91,7 @@ const CommunityGroups = () => {
               </div>
               
               <CardContent className="p-6">
-                <h3 className="font-semibold text-lg mb-2 text-gray-900 group-hover:text-africa-orange transition-colors">
+                <h3 className="font-semibold text-lg mb-2 text-gray-900 group-hover:text-dna-copper transition-colors">
                   {group.name}
                 </h3>
                 <p className="text-gray-600 mb-4 text-sm leading-relaxed">
@@ -106,7 +106,7 @@ const CommunityGroups = () => {
                 </div>
                 
                 <Button 
-                  className="w-full bg-africa-green hover:bg-africa-earth text-white"
+                  className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
                 >
                   Join Group
                 </Button>
@@ -119,7 +119,7 @@ const CommunityGroups = () => {
           <Button 
             size="lg" 
             variant="outline" 
-            className="border-africa-green text-africa-green hover:bg-africa-green hover:text-white"
+            className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
           >
             Explore All Communities
           </Button>
