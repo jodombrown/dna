@@ -6,6 +6,7 @@ import { Search, Filter } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import ProfileCard from './ProfileCard';
 import { useNavigate } from 'react-router-dom';
+import { sanitizeText } from '@/utils/securityValidation';
 
 const MemberDirectory = () => {
   const [profiles, setProfiles] = useState<any[]>([]);
@@ -44,11 +45,14 @@ const MemberDirectory = () => {
       return;
     }
 
+    // Sanitize search term to prevent injection attacks
+    const sanitizedSearchTerm = sanitizeText(searchTerm);
+
     const filtered = profiles.filter(profile => 
-      profile.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      profile.profession?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      profile.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      profile.location?.toLowerCase().includes(searchTerm.toLowerCase())
+      profile.full_name?.toLowerCase().includes(sanitizedSearchTerm.toLowerCase()) ||
+      profile.profession?.toLowerCase().includes(sanitizedSearchTerm.toLowerCase()) ||
+      profile.company?.toLowerCase().includes(sanitizedSearchTerm.toLowerCase()) ||
+      profile.location?.toLowerCase().includes(sanitizedSearchTerm.toLowerCase())
     );
     
     setFilteredProfiles(filtered);
@@ -56,6 +60,14 @@ const MemberDirectory = () => {
 
   const handleProfileClick = (profileId: string) => {
     navigate(`/profile/${profileId}`);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Limit search term length to prevent abuse
+    if (value.length <= 100) {
+      setSearchTerm(value);
+    }
   };
 
   if (loading) {
@@ -74,7 +86,8 @@ const MemberDirectory = () => {
           <Input
             placeholder="Search by name, profession, company, or location..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
+            maxLength={100}
             className="pl-10"
           />
         </div>
