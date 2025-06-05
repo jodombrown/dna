@@ -9,6 +9,38 @@ export const sanitizeText = (input: string): string => {
     .substring(0, 1000); // Limit length to prevent abuse
 };
 
+export const validateCharacterLimit = (text: string, maxLength: number): boolean => {
+  if (!text || typeof text !== 'string') return true;
+  return text.trim().length <= maxLength;
+};
+
+export const validateProfessionalField = (text: string): boolean => {
+  if (!text || typeof text !== 'string') return true;
+  
+  // Check character limit
+  if (!validateCharacterLimit(text, 100)) return false;
+  
+  // Allow alphanumeric, spaces, hyphens, apostrophes, periods, commas, and common accented characters
+  const validPattern = /^[a-zA-Z0-9\s\-'.,àáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ]+$/;
+  return validPattern.test(text.trim());
+};
+
+export const validateBioContent = (bio: string): boolean => {
+  if (!bio || typeof bio !== 'string') return true;
+  
+  // Check for potentially malicious content
+  const suspiciousPatterns = [
+    /<script/i,
+    /javascript:/i,
+    /on\w+\s*=/i,
+    /<iframe/i,
+    /<object/i,
+    /<embed/i
+  ];
+  
+  return !suspiciousPatterns.some(pattern => pattern.test(bio));
+};
+
 export const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email) && email.length <= 254;
