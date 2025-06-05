@@ -2,120 +2,140 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Play, Users, TrendingUp, Network, Target, Briefcase } from 'lucide-react';
+import { Play, Users, TrendingUp, Network, Target, Briefcase, ArrowRight, Globe, Handshake, Heart } from 'lucide-react';
 
 const PlatformFeatureShowcase = () => {
   return (
     <div className="bg-white">
-      {/* Hero Feature Section */}
+      {/* Hero Section - DNA Triangle Framework */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <Badge className="mb-4 bg-dna-copper text-white text-sm px-4 py-2 rounded-full">
-              2025 Platform Release
+              The DNA Framework
             </Badge>
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-              Now you can DNA
+              Connect. Collaborate.
               <br />
-              more than a network
+              <span className="text-dna-copper">Contribute.</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Professional connections were just the start. Introducing DNA Investment Hub 
-              and DNA Impact Tracker in an all-new platform.
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
+              The triangular framework that powers Africa's diaspora network. 
+              Each pillar strengthens the others, creating unstoppable momentum for impact.
             </p>
-          </div>
 
-          <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-8 p-8">
-              <div className="flex flex-col justify-center">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="relative">
-                    <div className="w-16 h-16 bg-gradient-to-br from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center">
-                      <TrendingUp className="w-8 h-8 text-white" />
-                    </div>
-                    <Badge className="absolute -top-2 -right-2 bg-dna-emerald text-white text-xs px-2 py-1">
-                      NEW
-                    </Badge>
-                  </div>
-                  <div className="relative">
-                    <div className="w-16 h-16 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center">
-                      <Target className="w-8 h-8 text-white" />
-                    </div>
-                    <Badge className="absolute -top-2 -right-2 bg-dna-emerald text-white text-xs px-2 py-1">
-                      NEW
-                    </Badge>
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold mb-4">Investment Hub</h3>
-                <p className="text-lg text-gray-600 mb-4 underline">Impact Tracker</p>
+            {/* DNA Triangle Visual */}
+            <div className="relative max-w-md mx-auto mb-12">
+              <div className="relative w-64 h-64 mx-auto">
+                {/* Triangle outline */}
+                <svg className="w-full h-full" viewBox="0 0 200 180">
+                  <path
+                    d="M100 20 L170 150 L30 150 Z"
+                    fill="none"
+                    stroke="#B8860B"
+                    strokeWidth="2"
+                    strokeDasharray="5,5"
+                  />
+                </svg>
                 
-                <Button className="bg-gray-800 hover:bg-gray-900 text-white rounded-full px-8 py-3 w-fit flex items-center gap-2">
-                  <Play className="w-4 h-4" />
-                  Watch the announcement
-                </Button>
-              </div>
-              
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop"
-                  alt="DNA Platform Preview"
-                  className="w-full h-80 object-cover rounded-2xl"
-                />
+                {/* Connect */}
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
+                  <div className="w-16 h-16 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center shadow-lg">
+                    <Users className="w-8 h-8 text-white" />
+                  </div>
+                  <p className="text-sm font-semibold mt-2 text-dna-forest">Connect</p>
+                </div>
+                
+                {/* Collaborate */}
+                <div className="absolute bottom-8 left-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center shadow-lg">
+                    <Handshake className="w-8 h-8 text-white" />
+                  </div>
+                  <p className="text-sm font-semibold mt-2 text-dna-copper">Collaborate</p>
+                </div>
+                
+                {/* Contribute */}
+                <div className="absolute bottom-8 right-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-2xl flex items-center justify-center shadow-lg">
+                    <Heart className="w-8 h-8 text-white" />
+                  </div>
+                  <p className="text-sm font-semibold mt-2 text-dna-emerald">Contribute</p>
+                </div>
               </div>
             </div>
+
+            <Button className="bg-gray-800 hover:bg-gray-900 text-white rounded-full px-8 py-3 flex items-center gap-2 mx-auto">
+              <Play className="w-4 h-4" />
+              See how it works
+            </Button>
           </div>
         </div>
       </section>
 
-      {/* Services Section */}
+      {/* Connect Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Introducing
-                <br />
-                DNA Investment Hub
-              </h2>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+                  Connect
+                </h2>
+              </div>
               <p className="text-xl text-gray-600 mb-8">
-                Connect with vetted investment opportunities across Africa, 
-                from early-stage startups to infrastructure projects.
+                Build meaningful professional relationships across the diaspora. 
+                Discover opportunities, expand your network, and find your tribe.
               </p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
+                  <Globe className="w-5 h-5 text-dna-emerald" />
+                  <span className="font-medium">Global Network Access</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
+                  <Target className="w-5 h-5 text-dna-emerald" />
+                  <span className="font-medium">Smart Opportunity Matching</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
+                  <Network className="w-5 h-5 text-dna-emerald" />
+                  <span className="font-medium">Professional Communities</span>
+                </div>
+              </div>
             </div>
             
             <div className="relative">
-              <div className="bg-gray-100 rounded-3xl p-8 shadow-lg">
-                <div className="bg-white rounded-2xl p-6 mb-4">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-dna-emerald rounded-full"></div>
-                    <div>
-                      <h4 className="font-semibold">AgriTech Expansion</h4>
-                      <p className="text-sm text-gray-600">Series A • $2.5M target</p>
+              <div className="bg-gray-900 rounded-3xl p-6 shadow-2xl">
+                <div className="bg-white rounded-2xl overflow-hidden">
+                  <div className="bg-dna-emerald text-white p-4 text-center">
+                    <h3 className="font-semibold">Your Professional Network</h3>
+                  </div>
+                  
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center gap-3 p-3 border rounded-lg">
+                      <div className="w-12 h-12 bg-dna-copper rounded-full"></div>
+                      <div>
+                        <p className="font-medium">Dr. Amara Okafor</p>
+                        <p className="text-sm text-gray-600">FinTech • Lagos → London</p>
+                      </div>
+                      <Button size="sm" className="ml-auto">Connect</Button>
                     </div>
-                  </div>
-                  <p className="text-sm text-gray-700 mb-3">
-                    Sustainable farming solutions across West Africa. 
-                    ROI projections show 25% annual returns.
-                  </p>
-                  <div className="text-xs text-gray-500">
-                    📍 Lagos, Nigeria • ⭐ Verified opportunity
-                  </div>
-                </div>
-                
-                <div className="bg-white rounded-2xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-dna-copper rounded-full"></div>
-                    <div>
-                      <h4 className="font-semibold">FinTech Infrastructure</h4>
-                      <p className="text-sm text-gray-600">Growth stage • $5M target</p>
+                    
+                    <div className="flex items-center gap-3 p-3 border rounded-lg">
+                      <div className="w-12 h-12 bg-dna-gold rounded-full"></div>
+                      <div>
+                        <p className="font-medium">Prof. Kwame Asante</p>
+                        <p className="text-sm text-gray-600">AgriTech • Accra → Toronto</p>
+                      </div>
+                      <Button size="sm" className="ml-auto">Connect</Button>
                     </div>
-                  </div>
-                  <p className="text-sm text-gray-700 mb-3">
-                    Digital payment platform serving 50M+ users. 
-                    Expanding to 15 new markets in 2025.
-                  </p>
-                  <div className="text-xs text-gray-500">
-                    📍 Nairobi, Kenya • ⭐ High growth potential
+                    
+                    <div className="text-center py-4">
+                      <p className="text-sm text-gray-500">847 professionals in your network</p>
+                      <p className="text-xs text-dna-emerald">+23 new connections this week</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -124,61 +144,75 @@ const PlatformFeatureShowcase = () => {
         </div>
       </section>
 
-      {/* Impact Tracker Section */}
+      {/* Collaborate Section */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Make your impact more measurable
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Track real outcomes from your investments and collaborations 
-              with our comprehensive impact measurement tools.
-            </p>
-          </div>
-
-          <div className="relative max-w-md mx-auto">
-            <div className="bg-gray-900 rounded-[3rem] p-4 shadow-2xl">
-              <div className="bg-white rounded-[2.5rem] overflow-hidden">
-                <div className="bg-gray-50 px-6 py-4 text-center">
-                  <div className="text-xs font-medium text-gray-600">9:41</div>
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="md:order-2">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
+                  <Handshake className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+                  Collaborate
+                </h2>
+              </div>
+              <p className="text-xl text-gray-600 mb-8">
+                Work together on meaningful projects that drive African development. 
+                Pool resources, share knowledge, and amplify collective impact.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-4 bg-dna-copper/10 rounded-lg">
+                  <Briefcase className="w-5 h-5 text-dna-copper" />
+                  <span className="font-medium">Cross-Border Project Teams</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-dna-copper/10 rounded-lg">
+                  <Network className="w-5 h-5 text-dna-copper" />
+                  <span className="font-medium">Knowledge Sharing Platforms</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-dna-copper/10 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-dna-copper" />
+                  <span className="font-medium">Resource Pooling Tools</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="md:order-1">
+              <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+                <div className="bg-dna-copper text-white p-4">
+                  <h3 className="font-semibold">Active Collaborations</h3>
                 </div>
                 
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">Your Impact Dashboard</h3>
+                <div className="p-6 space-y-4">
+                  <div className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-semibold">Solar Education Initiative</h4>
+                      <Badge className="bg-dna-emerald text-white">Active</Badge>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">
+                      12 collaborators • 6 countries • $2.3M pooled
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 bg-dna-emerald rounded-full"></div>
+                      <div className="w-6 h-6 bg-dna-copper rounded-full -ml-2"></div>
+                      <div className="w-6 h-6 bg-dna-gold rounded-full -ml-2"></div>
+                      <span className="text-xs text-gray-500 ml-2">+9 more</span>
+                    </div>
+                  </div>
                   
-                  <div className="space-y-4">
-                    <div className="bg-dna-mint/20 rounded-xl p-4">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-8 h-8 bg-dna-emerald rounded-lg"></div>
-                        <div>
-                          <div className="font-medium text-sm">Jobs Created</div>
-                          <div className="text-lg font-bold text-dna-emerald">2,847</div>
-                        </div>
-                      </div>
-                      <div className="text-xs text-gray-600">+12% this quarter</div>
+                  <div className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-semibold">HealthTech Platform</h4>
+                      <Badge variant="outline" className="border-dna-copper text-dna-copper">Planning</Badge>
                     </div>
-                    
-                    <div className="bg-dna-copper/20 rounded-xl p-4">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-8 h-8 bg-dna-copper rounded-lg"></div>
-                        <div>
-                          <div className="font-medium text-sm">Communities Reached</div>
-                          <div className="text-lg font-bold text-dna-copper">156K</div>
-                        </div>
-                      </div>
-                      <div className="text-xs text-gray-600">Across 23 countries</div>
-                    </div>
-                    
-                    <div className="bg-dna-gold/20 rounded-xl p-4">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-8 h-8 bg-dna-gold rounded-lg"></div>
-                        <div>
-                          <div className="font-medium text-sm">Capital Deployed</div>
-                          <div className="text-lg font-bold text-dna-forest">$12.4M</div>
-                        </div>
-                      </div>
-                      <div className="text-xs text-gray-600">89% to local businesses</div>
+                    <p className="text-sm text-gray-600 mb-3">
+                      8 collaborators • 4 countries • $1.8M committed
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 bg-dna-mint rounded-full"></div>
+                      <div className="w-6 h-6 bg-dna-forest rounded-full -ml-2"></div>
+                      <span className="text-xs text-gray-500 ml-2">+6 more</span>
                     </div>
                   </div>
                 </div>
@@ -188,100 +222,117 @@ const PlatformFeatureShowcase = () => {
         </div>
       </section>
 
-      {/* Feature Grid */}
+      {/* Contribute Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              A platform of opportunities, at your service
-            </h2>
-            <p className="text-xl text-gray-600">
-              Choose from thousands of vetted opportunities across 
-              54 countries—powered by diaspora expertise.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Users className="w-10 h-10 text-white" />
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-xl flex items-center justify-center">
+                  <Heart className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+                  Contribute
+                </h2>
               </div>
-              <h3 className="font-semibold text-gray-900">Professional Network</h3>
+              <p className="text-xl text-gray-600 mb-8">
+                Make your mark on Africa's future. Invest capital, share skills, 
+                or contribute time to projects that create lasting impact.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-dna-emerald" />
+                  <span className="font-medium">Impact Investment Hub</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg">
+                  <Users className="w-5 h-5 text-dna-emerald" />
+                  <span className="font-medium">Skills-Based Volunteering</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg">
+                  <Target className="w-5 h-5 text-dna-emerald" />
+                  <span className="font-medium">Impact Measurement Tools</span>
+                </div>
+              </div>
             </div>
             
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform">
-                <TrendingUp className="w-10 h-10 text-white" />
+            <div className="relative">
+              <div className="bg-white rounded-3xl shadow-2xl p-8">
+                <h3 className="text-xl font-semibold mb-6 text-center">Your Impact Dashboard</h3>
+                
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-dna-emerald mb-2">$127K</div>
+                    <div className="text-sm text-gray-600">Total Contributed</div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-dna-mint/20 rounded-xl p-4 text-center">
+                      <div className="text-lg font-bold text-dna-emerald">847</div>
+                      <div className="text-xs text-gray-600">Lives Impacted</div>
+                    </div>
+                    <div className="bg-dna-copper/20 rounded-xl p-4 text-center">
+                      <div className="text-lg font-bold text-dna-copper">23</div>
+                      <div className="text-xs text-gray-600">Projects Funded</div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-dna-gold/20 rounded-xl p-4">
+                    <h4 className="font-medium text-sm mb-2">Recent Contribution</h4>
+                    <p className="text-xs text-gray-600 mb-2">Solar Education Initiative</p>
+                    <div className="text-sm font-bold text-dna-forest">$15,000 invested</div>
+                    <div className="text-xs text-dna-emerald">+12% projected impact ROI</div>
+                  </div>
+                </div>
               </div>
-              <h3 className="font-semibold text-gray-900">Investment Hub</h3>
-            </div>
-            
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Network className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="font-semibold text-gray-900">Collaboration Tools</h3>
-            </div>
-            
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-dna-forest to-dna-emerald rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Target className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="font-semibold text-gray-900">Impact Tracking</h3>
-            </div>
-            
-            <div className="text-center group">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-dna-gold to-dna-copper rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Briefcase className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="font-semibold text-gray-900">Business Services</h3>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Quality Assurance */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="w-20 h-20 bg-dna-gold rounded-full flex items-center justify-center mx-auto mb-8">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-              <div className="w-6 h-6 bg-dna-gold rounded-full"></div>
-            </div>
-          </div>
-          
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Opportunities on DNA are
-            <br />
-            vetted for quality
+      {/* The DNA Cycle - How It All Works Together */}
+      <section className="py-20 bg-gradient-to-br from-dna-forest to-dna-emerald text-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            The DNA Cycle in Action
           </h2>
-          <p className="text-xl text-gray-600 mb-12">
-            All investments and partnerships are evaluated for 
-            viability, impact potential, and alignment with diaspora values.
+          <p className="text-xl text-gray-100 mb-12 max-w-3xl mx-auto">
+            See how connecting leads to collaboration, which amplifies contribution, 
+            creating a self-reinforcing cycle of impact across Africa.
           </p>
 
-          <div className="bg-white rounded-2xl p-8 shadow-lg max-w-md mx-auto">
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-700">Due diligence completed</span>
-                <div className="w-6 h-6 bg-dna-emerald rounded-full flex items-center justify-center">
-                  <div className="w-3 h-3 bg-white rounded-full"></div>
+          <div className="relative">
+            <div className="flex justify-center items-center gap-8 mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                  <Users className="w-8 h-8 text-white" />
                 </div>
+                <span className="text-lg font-semibold">Connect</span>
               </div>
               
-              <div className="flex items-center justify-between">
-                <span className="text-gray-700">Impact metrics verified</span>
-                <div className="w-6 h-6 bg-dna-emerald rounded-full flex items-center justify-center">
-                  <div className="w-3 h-3 bg-white rounded-full"></div>
+              <ArrowRight className="w-6 h-6 text-dna-gold" />
+              
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                  <Handshake className="w-8 h-8 text-white" />
                 </div>
+                <span className="text-lg font-semibold">Collaborate</span>
               </div>
               
-              <div className="flex items-center justify-between">
-                <span className="text-gray-700">Community-endorsed projects</span>
-                <div className="w-6 h-6 bg-dna-emerald rounded-full flex items-center justify-center">
-                  <div className="w-3 h-3 bg-white rounded-full"></div>
+              <ArrowRight className="w-6 h-6 text-dna-gold" />
+              
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                  <Heart className="w-8 h-8 text-white" />
                 </div>
+                <span className="text-lg font-semibold">Contribute</span>
               </div>
             </div>
+            
+            <p className="text-lg text-gray-200 mb-8">
+              Each successful contribution creates new opportunities to connect, 
+              leading to deeper collaborations and greater impact.
+            </p>
           </div>
         </div>
       </section>
@@ -290,26 +341,31 @@ const PlatformFeatureShowcase = () => {
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            We make it easy to create impact
+            Ready to join the DNA Triangle?
           </h2>
           <p className="text-xl text-gray-600 mb-12">
-            It's simple to discover and join meaningful projects, 
-            whether you're investing, collaborating, or contributing skills.
+            Start with any pillar - connect with professionals, join a collaboration, 
+            or contribute to a project. Your journey begins here.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="grid md:grid-cols-3 gap-4">
             <Button 
               size="lg" 
-              className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 rounded-full text-lg"
+              className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 rounded-full text-lg"
             >
-              Explore DNA Platform
+              Start Connecting
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 rounded-full text-lg"
+              className="bg-dna-copper hover:bg-dna-gold text-white px-8 py-4 rounded-full text-lg"
             >
-              Learn about joining
+              Find Collaborations
+            </Button>
+            <Button 
+              size="lg" 
+              className="bg-dna-mint hover:bg-dna-emerald text-white px-8 py-4 rounded-full text-lg"
+            >
+              Make Contributions
             </Button>
           </div>
         </div>
