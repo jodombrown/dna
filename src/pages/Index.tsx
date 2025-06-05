@@ -67,7 +67,7 @@ const Index = () => {
           {/* Jaune's Introduction */}
           <div className="max-w-3xl mx-auto mb-12">
             <p className="text-lg md:text-xl mb-6 text-dna-forest leading-relaxed">
-              Welcome! I'm{' '}
+              I'm{' '}
               <a 
                 href="https://www.linkedin.com/in/jaunelamarr/" 
                 target="_blank" 
@@ -76,13 +76,14 @@ const Index = () => {
               >
                 Jaune Odombrown
               </a>
-              , and I'm excited to invite you to be part of something extraordinary.
+              ,ecosystem builder, entrepreneur and investor. I'm excited to invite you to be part of something extraordinary.
             </p>
             
             <p className="text-base md:text-lg mb-6 text-gray-700 leading-relaxed">
               As a visionary leader and passionate advocate for global innovation and entrepreneurship, 
-              I've dedicated my career to empowering communities and driving impactful change. My journey 
-              has now brought me back to my roots, with a deep commitment to uniting the African Diaspora 
+              I've dedicated my career to empowering communities and driving impactful change. I've had the pleasure of building frameworks
+              for individuals, organizations and communities through the powerful connectiveness of Capacity Building, Venture Building and 
+              Ecosystem Building. My journey has now brought me back to my roots, with a deep commitment to uniting the African Diaspora 
               to help mobilize Africa's progress. This vision led me to create the Diaspora Network of Africa (DNA).
             </p>
 
