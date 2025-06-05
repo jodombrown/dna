@@ -9,7 +9,7 @@ const Footer = () => {
           {/* Copyright */}
           <div className="mb-4 md:mb-0">
             <p className="text-gray-400 text-sm">
-              © 2024 DNA - Diaspora Network of Africa. All rights reserved.
+              © 2025 DNA - Diaspora Network of Africa. All rights reserved.
             </p>
           </div>
 

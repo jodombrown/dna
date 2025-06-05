@@ -49,15 +49,15 @@ const EmailCollectionForm = () => {
 
   if (isSubmitted) {
     return (
-      <Card className="w-full max-w-md mx-auto bg-white/95 backdrop-blur-sm border-dna-emerald/20">
+      <Card className="w-full max-w-md mx-auto bg-white border-dna-emerald/20 shadow-lg">
         <CardContent className="p-8 text-center">
           <CheckCircle className="w-16 h-16 text-dna-emerald mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-dna-forest mb-2">
-            Thank You!
+            Welcome to the DNA Community!
           </h3>
           <p className="text-gray-600">
-            We've received your information and will keep you updated on our progress. 
-            Get ready to be part of something amazing!
+            Thank you for joining our mission! We've sent a confirmation email with next steps. 
+            Get ready to be part of building something extraordinary together.
           </p>
         </CardContent>
       </Card>
@@ -65,16 +65,16 @@ const EmailCollectionForm = () => {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto bg-white/95 backdrop-blur-sm border-dna-emerald/20">
+    <Card className="w-full max-w-md mx-auto bg-white border-dna-emerald/20 shadow-lg">
       <CardContent className="p-8">
         <div className="text-center mb-6">
           <Mail className="w-12 h-12 text-dna-copper mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-dna-forest mb-2">
-            Stay Informed
+            Join Our Mission
           </h3>
           <p className="text-gray-600 text-sm">
-            Join our community and be the first to know about our progress. 
-            We're launching our prototype in June 2025!
+            Be part of building the future of African diaspora collaboration. 
+            Join our community and help shape our platform from the ground up.
           </p>
         </div>
 
@@ -137,7 +137,7 @@ const EmailCollectionForm = () => {
             {isSubmitting ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Joining...
+                Joining Our Mission...
               </>
             ) : (
               'Join the Movement'
@@ -146,7 +146,7 @@ const EmailCollectionForm = () => {
         </form>
 
         <p className="text-xs text-gray-500 text-center mt-4">
-          We respect your privacy and will only send updates about DNA platform development.
+          We respect your privacy and will only send updates about DNA platform development and collaboration opportunities.
         </p>
       </CardContent>
     </Card>

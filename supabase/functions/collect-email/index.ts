@@ -30,12 +30,20 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { firstName, lastName, email }: EmailSubmissionRequest = await req.json();
+    const body = await req.json();
+    console.log("Raw request body:", body);
+    
+    const { firstName, lastName, email }: EmailSubmissionRequest = body;
 
     console.log("Received email submission:", { firstName, lastName, email });
 
+    // Validate required fields
+    if (!firstName || !lastName || !email) {
+      throw new Error("Missing required fields: firstName, lastName, or email");
+    }
+
     // Send notification email to jaune@roadmap.africa
-    const emailResponse = await resend.emails.send({
+    const notificationResponse = await resend.emails.send({
       from: "DNA Platform <onboarding@resend.dev>",
       to: ["jaune@roadmap.africa"],
       subject: "New DNA Platform Interest - Early Access Request",
@@ -56,11 +64,49 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log("Notification email sent:", notificationResponse);
+
+    // Send confirmation email to the user
+    const confirmationResponse = await resend.emails.send({
+      from: "DNA Platform <onboarding@resend.dev>",
+      to: [email],
+      subject: "Welcome to the DNA Platform Community!",
+      html: `
+        <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+          <h1 style="color: #183c2e; margin-bottom: 20px;">Welcome to the DNA Community, ${firstName}!</h1>
+          
+          <p>Thank you for joining our mission to connect and empower the African diaspora worldwide.</p>
+          
+          <div style="background-color: #abddd6; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #459c71;">
+            <h3 style="color: #183c2e; margin-top: 0;">What happens next?</h3>
+            <ul style="color: #183c2e;">
+              <li>We'll keep you updated on our prototype development (launching June 2025)</li>
+              <li>You'll be among the first to know about collaboration opportunities during our prototyping phase</li>
+              <li>We'll reach out soon with more information about how you can get involved in building this platform together</li>
+            </ul>
+          </div>
+          
+          <p>This is just the beginning of our journey, and we're excited to have you as part of our founding community. Together, we're building the infrastructure for African diaspora impact.</p>
+          
+          <p style="margin-top: 30px;">
+            <strong>Building together,</strong><br>
+            The DNA Platform Team
+          </p>
+          
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+          <p style="color: #666; font-size: 14px;">
+            You're receiving this email because you signed up for early access to the Diaspora Network of Africa platform. 
+            We respect your privacy and will only send updates about our platform development.
+          </p>
+        </div>
+      `,
+    });
+
+    console.log("Confirmation email sent:", confirmationResponse);
 
     return new Response(JSON.stringify({ 
       success: true, 
-      message: "Thank you for your interest! We'll keep you updated." 
+      message: "Thank you for joining our community! Check your email for confirmation." 
     }), {
       status: 200,
       headers: {
