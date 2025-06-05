@@ -73,7 +73,7 @@ const Index = () => {
       rating: 5
     },
     {
-      name: "Michael Adebayo",
+      name: "Jaûne Odombrown",
       title: "Consultant, New York",
       content: "Through DNA's programs, I've been able to mentor over 50 African entrepreneurs and make real impact.",
       avatar: "MA",
