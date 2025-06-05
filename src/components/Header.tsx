@@ -62,10 +62,11 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => navigate('/')}>
-              <div className="w-8 h-8 bg-dna-copper rounded-lg flex items-center justify-center">
-                <span className="text-dna-white font-bold text-lg">D</span>
-              </div>
-              <span className="ml-2 text-xl font-bold text-dna-forest">DNA</span>
+              <img 
+                src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                alt="DNA Platform" 
+                className="h-10 w-auto"
+              />
             </div>
           </div>
 

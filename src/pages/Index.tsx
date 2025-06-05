@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -9,12 +10,13 @@ import {
   TrendingUp, 
   Heart,
   ArrowRight,
-  MapPin,
-  Briefcase,
-  GraduationCap,
-  Target,
-  Star,
-  CheckCircle
+  Mail,
+  Bell,
+  CheckCircle,
+  Sparkles,
+  MessageSquare,
+  Lightbulb,
+  Target
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -22,70 +24,50 @@ import Footer from '@/components/Footer';
 
 const Index = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
-  const impactStats = [
-    { label: "Diaspora Professionals", value: "500K+", icon: <Users className="w-6 h-6" /> },
-    { label: "Active Projects", value: "1,200+", icon: <Target className="w-6 h-6" /> },
-    { label: "African Countries", value: "54", icon: <Globe className="w-6 h-6" /> },
-    { label: "Impact Generated", value: "$2.5B+", icon: <TrendingUp className="w-6 h-6" /> }
+  const handleSubscribe = () => {
+    if (email) {
+      setIsSubscribed(true);
+      // Here you would integrate with your email service
+      console.log('Subscribed:', email);
+    }
+  };
+
+  const impactNumbers = [
+    { value: "500K+", label: "Diaspora Professionals Ready", icon: <Users className="w-6 h-6" /> },
+    { value: "54", label: "African Countries Connected", icon: <Globe className="w-6 h-6" /> },
+    { value: "Q2 2025", label: "Official Launch", icon: <Sparkles className="w-6 h-6" /> },
+    { value: "$2.5B+", label: "Impact Potential", icon: <TrendingUp className="w-6 h-6" /> }
+  ];
+
+  const buildingTogether = [
+    {
+      title: "Community-Driven Development",
+      description: "We're building this platform WITH the African diaspora community, not just FOR them",
+      icon: <Users className="w-8 h-8 text-dna-copper" />
+    },
+    {
+      title: "Continuous Feedback Loop",
+      description: "Your insights shape our features. Every voice matters in creating the future of diaspora connection",
+      icon: <MessageSquare className="w-8 h-8 text-dna-emerald" />
+    },
+    {
+      title: "Innovation Through Collaboration",
+      description: "Together we're creating tools that will transform how the African diaspora connects and contributes",
+      icon: <Lightbulb className="w-8 h-8 text-dna-gold" />
+    }
   ];
 
   const features = [
-    {
-      title: "Professional Network",
-      description: "Connect with 500,000+ African diaspora professionals across the globe",
-      icon: <Users className="w-8 h-8 text-dna-copper" />,
-      action: () => navigate('/members')
-    },
-    {
-      title: "Innovation Pathways",
-      description: "Discover and support groundbreaking projects transforming Africa",
-      icon: <Target className="w-8 h-8 text-dna-emerald" />,
-      action: () => navigate('/#pathways')
-    },
-    {
-      title: "Professional Development",
-      description: "Access world-class programs, events, and resources for growth",
-      icon: <GraduationCap className="w-8 h-8 text-dna-gold" />,
-      action: () => navigate('/programs')
-    },
-    {
-      title: "Expert Services",
-      description: "Get professional guidance from experienced diaspora consultants",
-      icon: <Briefcase className="w-8 h-8 text-dna-mint" />,
-      action: () => navigate('/services')
-    }
+    "Professional networking with verified African diaspora",
+    "Innovation pathway collaboration and funding",
+    "Mentorship and professional development programs",
+    "Real-time project management and impact tracking",
+    "Global events and community building",
+    "Expert services marketplace"
   ];
-
-  const testimonials = [
-    {
-      name: "Dr. Amara Okafor",
-      title: "Tech Entrepreneur, Nigeria",
-      content: "DNA connected me with diaspora investors who understood my vision. We raised $2M for our AgriTech startup.",
-      avatar: "AO",
-      rating: 5
-    },
-    {
-      name: "Sarah Mwangi",
-      title: "Investment Analyst, London",
-      content: "The quality of projects and professionals on DNA is unmatched. It's become my go-to platform for African investments.",
-      avatar: "SM",
-      rating: 5
-    },
-    {
-      name: "Jaûne Odombrown",
-      title: "Consultant, New York",
-      content: "Through DNA's programs, I've been able to mentor over 50 African entrepreneurs and make real impact.",
-      avatar: "MA",
-      rating: 5
-    }
-  ];
-
-  const renderStars = (rating: number) => {
-    return Array.from({ length: rating }, (_, i) => (
-      <Star key={i} className="w-4 h-4 text-dna-gold fill-current" />
-    ));
-  };
 
   return (
     <div className="min-h-screen">
@@ -93,122 +75,142 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-dna-forest via-dna-emerald to-dna-copper text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="animate-fade-in">
-              <Badge className="bg-dna-gold text-dna-forest mb-6 text-sm font-semibold">
-                Welcome to the DNA Platform
-              </Badge>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                Connecting Africa's 
-                <span className="text-dna-gold"> Global Diaspora</span>
-              </h1>
-              <p className="text-xl md:text-2xl mb-8 text-gray-100 leading-relaxed">
-                Join the world's largest network of African diaspora professionals. 
-                Connect, collaborate, and contribute to Africa's transformation.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                <Button 
-                  size="lg" 
-                  className="bg-dna-copper hover:bg-dna-gold text-white text-lg px-8 py-4"
-                  onClick={() => navigate('/auth')}
-                >
-                  Join the Network
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-white text-white hover:bg-white hover:text-dna-forest text-lg px-8 py-4"
-                  onClick={() => navigate('/dashboard')}
-                >
-                  Explore DNA Platform
-                </Button>
-              </div>
-              
-              {/* Quick Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {impactStats.map((stat, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-2xl font-bold text-dna-gold">{stat.value}</div>
-                    <div className="text-sm text-gray-200">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        <div className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
             
-            <div className="hidden lg:block">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-6">
-                  <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                    <CardContent className="p-6">
-                      <Globe className="w-12 h-12 text-dna-gold mb-4" />
-                      <h3 className="font-semibold mb-2 text-white">Global Reach</h3>
-                      <p className="text-sm text-gray-200">Professionals in 100+ countries</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                    <CardContent className="p-6">
-                      <Heart className="w-12 h-12 text-dna-copper mb-4" />
-                      <h3 className="font-semibold mb-2 text-white">Purposeful Impact</h3>
-                      <p className="text-sm text-gray-200">Driving sustainable change</p>
-                    </CardContent>
-                  </Card>
-                </div>
-                <div className="space-y-6 mt-8">
-                  <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                    <CardContent className="p-6">
-                      <TrendingUp className="w-12 h-12 text-dna-emerald mb-4" />
-                      <h3 className="font-semibold mb-2 text-white">Growth Focus</h3>
-                      <p className="text-sm text-gray-200">Accelerating African innovation</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                    <CardContent className="p-6">
-                      <Users className="w-12 h-12 text-dna-mint mb-4" />
-                      <h3 className="font-semibold mb-2 text-white">Community First</h3>
-                      <p className="text-sm text-gray-200">Building lasting connections</p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
+            {/* Header */}
+            <div className="mb-8">
+              <Badge className="bg-dna-gold text-dna-forest mb-6 text-lg font-bold px-6 py-2">
+                Building Together
+              </Badge>
+              
+              <h1 className="text-4xl md:text-7xl font-bold mb-6 leading-tight">
+                The Future of
+                <br />
+                <span className="text-dna-gold">African Diaspora</span>
+                <br />
+                Connection
+              </h1>
+              
+              <p className="text-xl md:text-2xl mb-8 text-gray-100 max-w-3xl mx-auto leading-relaxed">
+                Join us in building the world's most powerful network of African diaspora professionals. 
+                We're not just creating a platform - we're building a movement, together with you.
+              </p>
+            </div>
+
+            {/* Email signup */}
+            <Card className="bg-white/10 backdrop-blur-sm border-white/20 mb-12 max-w-md mx-auto">
+              <CardContent className="p-8">
+                {!isSubscribed ? (
+                  <>
+                    <h3 className="text-xl font-semibold mb-4 text-white">
+                      Join Our Building Community
+                    </h3>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Input
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="bg-white/20 border-white/30 text-white placeholder:text-gray-300"
+                      />
+                      <Button 
+                        onClick={handleSubscribe}
+                        className="bg-dna-copper hover:bg-dna-gold text-white"
+                      >
+                        <Bell className="w-4 h-4 mr-2" />
+                        Join Us
+                      </Button>
+                    </div>
+                    <p className="text-sm text-gray-300 mt-3">
+                      Get early access, share feedback, and help shape the platform
+                    </p>
+                  </>
+                ) : (
+                  <div className="text-center">
+                    <CheckCircle className="w-12 h-12 text-dna-gold mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold mb-2 text-white">
+                      Welcome to the Movement!
+                    </h3>
+                    <p className="text-gray-300">
+                      We'll keep you updated and invite you to help build with us
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Impact stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+              {impactNumbers.map((stat, index) => (
+                <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20">
+                  <CardContent className="p-6 text-center">
+                    <div className="text-dna-gold mb-2">
+                      {stat.icon}
+                    </div>
+                    <div className="text-2xl md:text-3xl font-bold text-white mb-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-gray-200">
+                      {stat.label}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Call to action */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <Button 
+                size="lg" 
+                className="bg-dna-copper hover:bg-dna-gold text-white text-lg px-8 py-4"
+                onClick={() => navigate('/auth')}
+              >
+                <Target className="w-5 h-5 mr-2" />
+                Start Building With Us
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-white text-white hover:bg-white hover:text-dna-forest text-lg px-8 py-4"
+                onClick={() => navigate('/dashboard')}
+              >
+                Explore Our Vision
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Building Together Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Why Choose <span className="text-dna-copper">DNA Platform?</span>
+              Why We're <span className="text-dna-copper">Building Together</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We're more than a network - we're a movement of African diaspora professionals 
-              committed to transforming the continent through collaboration and innovation.
+              The African diaspora has incredible potential. But scattered across the globe, 
+              our collective power remains untapped. We're changing that - with your help.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <Card 
-                key={index} 
-                className="hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                onClick={feature.action}
-              >
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            {buildingTogether.map((item, index) => (
+              <Card key={index} className="hover:shadow-xl transition-all duration-300">
                 <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                    {feature.icon}
+                  <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    {item.icon}
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    {feature.title}
+                    {item.title}
                   </h3>
                   <p className="text-gray-600 leading-relaxed">
-                    {feature.description}
+                    {item.description}
                   </p>
-                  <ArrowRight className="w-5 h-5 text-dna-copper mx-auto mt-4 group-hover:translate-x-1 transition-transform" />
                 </CardContent>
               </Card>
             ))}
@@ -216,86 +218,88 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Success Stories */}
+      {/* What We're Building */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Success <span className="text-dna-emerald">Stories</span>
+              What We're <span className="text-dna-emerald">Building</span>
             </h2>
-            <p className="text-xl text-gray-600">
-              Real impact from real professionals making a difference
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              A comprehensive platform that connects, empowers, and amplifies the African diaspora's impact on the continent
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-8">
-                  <div className="flex items-center mb-4">
-                    {renderStars(testimonial.rating)}
+          <Card className="bg-white/90 backdrop-blur-sm border-gray-200">
+            <CardContent className="p-8">
+              <h3 className="text-2xl font-bold text-dna-forest mb-6 text-center">
+                Platform Features Coming Soon
+              </h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                {features.map((feature, index) => (
+                  <div key={index} className="flex items-center text-left">
+                    <CheckCircle className="w-5 h-5 text-dna-gold mr-3 flex-shrink-0" />
+                    <span className="text-gray-700">{feature}</span>
                   </div>
-                  <p className="text-gray-700 mb-6 italic">
-                    "{testimonial.content}"
-                  </p>
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 bg-dna-copper rounded-full flex items-center justify-center text-white font-semibold mr-4">
-                      {testimonial.avatar}
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                      <div className="text-sm text-gray-600">{testimonial.title}</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
-      {/* Call to Action */}
+      {/* Community Call to Action */}
       <section className="py-20 bg-gradient-to-r from-dna-forest to-dna-emerald text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Make Your Impact?
+            Ready to Build Africa's Future?
           </h2>
           <p className="text-xl mb-8 text-gray-100">
-            Join thousands of African diaspora professionals who are already transforming the continent. 
-            Your expertise, our network, Africa's future.
+            This isn't just about joining a network - it's about creating the infrastructure 
+            for African diaspora impact. Your expertise, our platform, Africa's transformation.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Button 
               size="lg" 
               className="bg-dna-copper hover:bg-dna-gold text-white text-lg px-8 py-4"
               onClick={() => navigate('/auth')}
             >
-              Start Your Journey
-              <ArrowRight className="w-5 h-5 ml-2" />
+              <Heart className="w-5 h-5 mr-2" />
+              Join the Movement
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
               className="border-white text-white hover:bg-white hover:text-dna-forest text-lg px-8 py-4"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => setEmail('')}
             >
-              Explore Platform
+              <Mail className="w-5 h-5 mr-2" />
+              Share Your Ideas
             </Button>
           </div>
           
-          <div className="mt-12 flex items-center justify-center gap-8">
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-8">
             <div className="flex items-center text-gray-200">
               <CheckCircle className="w-5 h-5 mr-2" />
               <span>Free to Join</span>
             </div>
             <div className="flex items-center text-gray-200">
               <CheckCircle className="w-5 h-5 mr-2" />
-              <span>Verified Professionals</span>
+              <span>Community-Driven</span>
             </div>
             <div className="flex items-center text-gray-200">
               <CheckCircle className="w-5 h-5 mr-2" />
-              <span>Global Network</span>
+              <span>Building Together</span>
             </div>
+            <div className="flex items-center text-gray-200">
+              <CheckCircle className="w-5 h-5 mr-2" />
+              <span>Africa-Focused</span>
+            </div>
+          </div>
+
+          <div className="mt-12 text-gray-300 text-sm">
+            <p>Building the future of African diaspora collaboration - one connection at a time</p>
           </div>
         </div>
       </section>
