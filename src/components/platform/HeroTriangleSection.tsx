@@ -2,7 +2,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Play, Users, Handshake, Heart } from 'lucide-react';
+import { Play, Users, Handshake, Heart, ArrowRight } from 'lucide-react';
 
 const HeroTriangleSection = () => {
   const scrollToConnectSection = () => {
@@ -29,81 +29,79 @@ const HeroTriangleSection = () => {
             Each pillar strengthens the others, multiplying your impact across the continent.
           </p>
 
-          {/* Triangle and Labels Section */}
-          <div className="grid lg:grid-cols-3 gap-8 items-center mb-16">
-            {/* Connect - Left */}
-            <div className="text-center lg:text-right space-y-4">
-              <div className="flex justify-center lg:justify-end">
-                <div className="w-20 h-20 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center shadow-lg">
-                  <Users className="w-10 h-10 text-white" />
+          {/* Three Pillars Grid */}
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {/* Connect Pillar */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center">
+                  <Users className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <div>
-                <h3 className="text-2xl font-bold text-dna-forest mb-3">Connect</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Build meaningful professional networks with diaspora professionals worldwide. 
-                  Find mentors, collaborators, and friends who share your vision for Africa's future.
-                </p>
-              </div>
+              <h3 className="text-2xl font-bold text-dna-forest mb-4">Connect</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Build meaningful professional networks with diaspora professionals worldwide. 
+                Find mentors, collaborators, and friends who share your vision for Africa's future.
+              </p>
             </div>
 
-            {/* Triangle - Center */}
-            <div className="flex justify-center">
-              <div className="relative w-48 h-48">
-                <svg className="w-full h-full" viewBox="0 0 200 180">
-                  <defs>
-                    <linearGradient id="triangleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#10B981" stopOpacity="0.1"/>
-                      <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.1"/>
-                      <stop offset="100%" stopColor="#34D399" stopOpacity="0.1"/>
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M100 30 L160 140 L40 140 Z"
-                    fill="url(#triangleGradient)"
-                    stroke="#B8860B"
-                    strokeWidth="3"
-                  />
-                  
-                  {/* Connection lines */}
-                  <line x1="100" y1="30" x2="160" y2="140" stroke="#B8860B" strokeWidth="2" strokeDasharray="5,5" opacity="0.5"/>
-                  <line x1="160" y1="140" x2="40" y2="140" stroke="#B8860B" strokeWidth="2" strokeDasharray="5,5" opacity="0.5"/>
-                  <line x1="40" y1="140" x2="100" y2="30" stroke="#B8860B" strokeWidth="2" strokeDasharray="5,5" opacity="0.5"/>
-                </svg>
-              </div>
-            </div>
-
-            {/* Contribute - Right */}
-            <div className="text-center lg:text-left space-y-4">
-              <div className="flex justify-center lg:justify-start">
-                <div className="w-20 h-20 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-2xl flex items-center justify-center shadow-lg">
-                  <Heart className="w-10 h-10 text-white" />
+            {/* Collaborate Pillar */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
+                  <Handshake className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <div>
-                <h3 className="text-2xl font-bold text-dna-emerald mb-3">Contribute</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Make lasting impact by contributing your skills, capital, or time where it matters most. 
-                  Create measurable change across communities and industries.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Collaborate - Bottom Center */}
-          <div className="max-w-md mx-auto text-center space-y-4 mb-12">
-            <div className="flex justify-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center shadow-lg">
-                <Handshake className="w-10 h-10 text-white" />
-              </div>
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold text-dna-copper mb-3">Collaborate</h3>
+              <h3 className="text-2xl font-bold text-dna-copper mb-4">Collaborate</h3>
               <p className="text-gray-600 leading-relaxed">
                 Work together on meaningful projects that drive real change across Africa. 
                 Join initiatives that match your expertise and passion.
               </p>
             </div>
+
+            {/* Contribute Pillar */}
+            <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-xl flex items-center justify-center">
+                  <Heart className="w-8 h-8 text-white" />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-dna-emerald mb-4">Contribute</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Make lasting impact by contributing your skills, capital, or time where it matters most. 
+                Create measurable change across communities and industries.
+              </p>
+            </div>
+          </div>
+
+          {/* Connection Flow Visualization */}
+          <div className="flex items-center justify-center mb-12 flex-wrap gap-4">
+            <div className="flex items-center gap-2 bg-dna-forest text-white px-4 py-2 rounded-full text-sm font-medium">
+              <Users className="w-4 h-4" />
+              Connect
+            </div>
+            <ArrowRight className="w-5 h-5 text-dna-copper" />
+            <div className="flex items-center gap-2 bg-dna-copper text-white px-4 py-2 rounded-full text-sm font-medium">
+              <Handshake className="w-4 h-4" />
+              Collaborate
+            </div>
+            <ArrowRight className="w-5 h-5 text-dna-emerald" />
+            <div className="flex items-center gap-2 bg-dna-emerald text-white px-4 py-2 rounded-full text-sm font-medium">
+              <Heart className="w-4 h-4" />
+              Contribute
+            </div>
+          </div>
+
+          {/* Impact Statement */}
+          <div className="bg-white rounded-2xl p-8 shadow-lg max-w-4xl mx-auto mb-12">
+            <h4 className="text-2xl font-bold text-gray-900 mb-4">
+              Amplifying Africa's Potential
+            </h4>
+            <p className="text-lg text-gray-600 leading-relaxed">
+              When diaspora professionals connect with purpose, collaborate on meaningful projects, 
+              and contribute their unique skills, we create a multiplying effect that transforms entire communities 
+              and drives sustainable development across the African continent.
+            </p>
           </div>
 
           <Button 
