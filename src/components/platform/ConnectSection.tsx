@@ -1,8 +1,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Users, Globe, Target, Network } from 'lucide-react';
+import { Users, Globe, Target, Network, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ConnectSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section id="connect-section" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,7 +24,7 @@ const ConnectSection = () => {
               Discover opportunities, expand your network, and find your tribe.
             </p>
             
-            <div className="space-y-4">
+            <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
                 <Globe className="w-5 h-5 text-dna-emerald" />
                 <span className="font-medium">Global Network Access</span>
@@ -35,10 +38,21 @@ const ConnectSection = () => {
                 <span className="font-medium">Professional Communities</span>
               </div>
             </div>
+
+            <Button 
+              onClick={() => navigate('/connect-example')}
+              className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-2"
+            >
+              Explore Network
+              <ArrowRight className="w-4 h-4" />
+            </Button>
           </div>
           
           <div className="relative">
-            <div className="bg-gray-900 rounded-3xl p-6 shadow-2xl">
+            <div 
+              className="bg-gray-900 rounded-3xl p-6 shadow-2xl cursor-pointer hover:shadow-3xl transition-shadow"
+              onClick={() => navigate('/connect-example')}
+            >
               <div className="bg-white rounded-2xl overflow-hidden">
                 <div className="bg-dna-emerald text-white p-4 text-center">
                   <h3 className="font-semibold">Your Professional Network</h3>

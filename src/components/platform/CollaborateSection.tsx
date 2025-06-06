@@ -1,9 +1,12 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Handshake, Briefcase, Network, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Handshake, Briefcase, Network, TrendingUp, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const CollaborateSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,7 +25,7 @@ const CollaborateSection = () => {
               Pool resources, share knowledge, and amplify collective impact.
             </p>
             
-            <div className="space-y-4">
+            <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 p-4 bg-dna-copper/10 rounded-lg">
                 <Briefcase className="w-5 h-5 text-dna-copper" />
                 <span className="font-medium">Cross-Border Project Teams</span>
@@ -36,10 +39,21 @@ const CollaborateSection = () => {
                 <span className="font-medium">Resource Pooling Tools</span>
               </div>
             </div>
+
+            <Button 
+              onClick={() => navigate('/collaborations-example')}
+              className="bg-dna-copper hover:bg-dna-gold text-white flex items-center gap-2"
+            >
+              Explore Active Collaborations
+              <ArrowRight className="w-4 h-4" />
+            </Button>
           </div>
           
           <div className="md:order-1">
-            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div 
+              className="bg-white rounded-3xl shadow-2xl overflow-hidden cursor-pointer hover:shadow-3xl transition-shadow"
+              onClick={() => navigate('/collaborations-example')}
+            >
               <div className="bg-dna-copper text-white p-4">
                 <h3 className="font-semibold">Active Collaborations</h3>
               </div>

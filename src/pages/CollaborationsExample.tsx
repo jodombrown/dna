@@ -1,0 +1,207 @@
+
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Users, Calendar, DollarSign, Target, MessageSquare, FileText, Video } from 'lucide-react';
+
+const CollaborationsExample = () => {
+  const navigate = useNavigate();
+
+  const activeProjects = [
+    {
+      id: 1,
+      title: "Solar Education Initiative",
+      description: "Bringing renewable energy education to rural schools across Kenya and Nigeria",
+      collaborators: 12,
+      countries: 6,
+      totalFunding: 2300000,
+      currentFunding: 1850000,
+      progress: 80,
+      stage: "Implementation",
+      nextMeeting: "2024-02-15",
+      recentUpdate: "Solar panels installed in 15 schools this month",
+      tags: ["Education", "Renewable Energy", "Infrastructure"]
+    },
+    {
+      id: 2,
+      title: "HealthTech Platform",
+      description: "Telemedicine platform connecting diaspora doctors with rural patients",
+      collaborators: 8,
+      countries: 4,
+      totalFunding: 1800000,
+      currentFunding: 950000,
+      progress: 53,
+      stage: "Development",
+      nextMeeting: "2024-02-20",
+      recentUpdate: "MVP testing completed with 500+ patient consultations",
+      tags: ["Healthcare", "Technology", "Telemedicine"]
+    },
+    {
+      id: 3,
+      title: "AgriTech Supply Chain",
+      description: "Blockchain-based platform for transparent agricultural supply chain management",
+      collaborators: 15,
+      countries: 8,
+      totalFunding: 3200000,
+      currentFunding: 2100000,
+      progress: 66,
+      stage: "Scaling",
+      nextMeeting: "2024-02-18",
+      recentUpdate: "Onboarded 200+ farmers in Ghana and Nigeria",
+      tags: ["Agriculture", "Blockchain", "Supply Chain"]
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Home
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Active Collaborations</h1>
+                <p className="text-gray-600">Manage your collaborative projects and partnerships</p>
+              </div>
+            </div>
+            <Badge className="bg-dna-copper text-white">
+              {activeProjects.length} Active Projects
+            </Badge>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Quick Stats */}
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardContent className="p-6 text-center">
+              <div className="text-2xl font-bold text-dna-copper mb-2">35</div>
+              <div className="text-sm text-gray-600">Total Collaborators</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6 text-center">
+              <div className="text-2xl font-bold text-dna-emerald mb-2">18</div>
+              <div className="text-sm text-gray-600">Countries Involved</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6 text-center">
+              <div className="text-2xl font-bold text-dna-forest mb-2">$7.3M</div>
+              <div className="text-sm text-gray-600">Total Funding</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6 text-center">
+              <div className="text-2xl font-bold text-dna-gold mb-2">66%</div>
+              <div className="text-sm text-gray-600">Avg Progress</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Active Projects */}
+        <div className="space-y-6">
+          {activeProjects.map((project) => (
+            <Card key={project.id} className="overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-dna-copper/10 to-dna-emerald/10">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-xl mb-2">{project.title}</CardTitle>
+                    <p className="text-gray-600">{project.description}</p>
+                  </div>
+                  <Badge className="bg-dna-emerald text-white">
+                    {project.stage}
+                  </Badge>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {project.tags.map((tag, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </CardHeader>
+              
+              <CardContent className="p-6">
+                <div className="grid md:grid-cols-3 gap-6 mb-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-gray-400" />
+                      <span className="text-sm">{project.collaborators} collaborators • {project.countries} countries</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-gray-400" />
+                      <span className="text-sm">Next meeting: {project.nextMeeting}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Funding Progress</span>
+                      <span className="font-medium">{project.progress}%</span>
+                    </div>
+                    <Progress value={project.progress} className="h-2" />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>${(project.currentFunding / 1000000).toFixed(1)}M raised</span>
+                      <span>${(project.totalFunding / 1000000).toFixed(1)}M goal</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium text-gray-700">Recent Update</div>
+                    <p className="text-sm text-gray-600">{project.recentUpdate}</p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-3">
+                  <Button className="bg-dna-copper hover:bg-dna-gold text-white">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Join Discussion
+                  </Button>
+                  <Button variant="outline">
+                    <FileText className="w-4 h-4 mr-2" />
+                    View Documents
+                  </Button>
+                  <Button variant="outline">
+                    <Video className="w-4 h-4 mr-2" />
+                    Meeting Room
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Call to Action */}
+        <Card className="mt-8 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
+          <CardContent className="p-8 text-center">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              Ready to Start Your Own Collaboration?
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Propose a new project and find collaborators who share your vision for Africa's future.
+            </p>
+            <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
+              Propose New Project
+            </Button>
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  );
+};
+
+export default CollaborationsExample;

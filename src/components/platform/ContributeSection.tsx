@@ -1,8 +1,11 @@
-
 import React from 'react';
-import { Heart, TrendingUp, Users, Target } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Heart, TrendingUp, Users, Target, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ContributeSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,7 +24,7 @@ const ContributeSection = () => {
               or contribute time to projects that create lasting impact.
             </p>
             
-            <div className="space-y-4">
+            <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg">
                 <TrendingUp className="w-5 h-5 text-dna-emerald" />
                 <span className="font-medium">Impact Investment Hub</span>
@@ -35,10 +38,21 @@ const ContributeSection = () => {
                 <span className="font-medium">Impact Measurement Tools</span>
               </div>
             </div>
+
+            <Button 
+              onClick={() => navigate('/contribute-example')}
+              className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-2"
+            >
+              Explore Contributions
+              <ArrowRight className="w-4 h-4" />
+            </Button>
           </div>
           
           <div className="relative">
-            <div className="bg-white rounded-3xl shadow-2xl p-8">
+            <div 
+              className="bg-white rounded-3xl shadow-2xl p-8 cursor-pointer hover:shadow-3xl transition-shadow"
+              onClick={() => navigate('/contribute-example')}
+            >
               <h3 className="text-xl font-semibold mb-6 text-center">Your Impact Dashboard</h3>
               
               <div className="space-y-6">

@@ -25,6 +25,9 @@ import ComingSoon from "./pages/ComingSoon";
 import PrototypePhase from "./pages/PrototypePhase";
 import BuildingPhase from "./pages/BuildingPhase";
 import MvpPhase from "./pages/MvpPhase";
+import CollaborationsExample from "./pages/CollaborationsExample";
+import ConnectExample from "./pages/ConnectExample";
+import ContributeExample from "./pages/ContributeExample";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +45,9 @@ const App = () => (
             <Route path="/prototype-phase" element={<PrototypePhase />} />
             <Route path="/building-phase" element={<BuildingPhase />} />
             <Route path="/mvp-phase" element={<MvpPhase />} />
+            <Route path="/collaborations-example" element={<CollaborationsExample />} />
+            <Route path="/connect-example" element={<ConnectExample />} />
+            <Route path="/contribute-example" element={<ContributeExample />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
