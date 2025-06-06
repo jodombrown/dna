@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,6 +22,9 @@ import Resources from "./pages/Resources";
 import Services from "./pages/Services";
 import Opportunities from "./pages/Opportunities";
 import ComingSoon from "./pages/ComingSoon";
+import PrototypePhase from "./pages/PrototypePhase";
+import BuildingPhase from "./pages/BuildingPhase";
+import MvpPhase from "./pages/MvpPhase";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +39,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/coming-soon" element={<ComingSoon />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/prototype-phase" element={<PrototypePhase />} />
+            <Route path="/building-phase" element={<BuildingPhase />} />
+            <Route path="/mvp-phase" element={<MvpPhase />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
