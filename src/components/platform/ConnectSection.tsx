@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Users, Globe, Target, Network } from 'lucide-react';
 
 const ConnectSection = () => {
   return (
-    <section className="py-20">
+    <section id="connect-section" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <div>
