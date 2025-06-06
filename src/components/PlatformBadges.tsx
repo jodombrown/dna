@@ -1,23 +1,38 @@
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Sparkles, Target, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const PlatformBadges = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
-      <Badge className="bg-dna-copper/10 text-dna-forest border-dna-copper px-4 py-2 text-sm font-semibold hover:bg-dna-copper/20">
+      <Button 
+        onClick={() => navigate('/prototype-phase')}
+        variant="outline"
+        className="bg-dna-copper/10 text-dna-forest border-dna-copper px-4 py-2 text-sm font-semibold hover:bg-dna-copper hover:text-white transition-colors"
+      >
         <Sparkles className="w-4 h-4 mr-2 text-dna-copper" />
         Prototype: June 2025
-      </Badge>
-      <Badge className="bg-dna-emerald/10 text-dna-forest border-dna-emerald px-4 py-2 text-sm font-semibold hover:bg-dna-emerald/20">
+      </Button>
+      <Button 
+        onClick={() => navigate('/building-phase')}
+        variant="outline"
+        className="bg-dna-emerald/10 text-dna-forest border-dna-emerald px-4 py-2 text-sm font-semibold hover:bg-dna-emerald hover:text-white transition-colors"
+      >
         <Target className="w-4 h-4 mr-2 text-dna-emerald" />
         Building Phase: Now
-      </Badge>
-      <Badge className="bg-dna-mint/20 text-dna-forest border-dna-mint px-4 py-2 text-sm font-semibold hover:bg-dna-mint/30">
+      </Button>
+      <Button 
+        onClick={() => navigate('/mvp-phase')}
+        variant="outline"
+        className="bg-dna-mint/20 text-dna-forest border-dna-mint px-4 py-2 text-sm font-semibold hover:bg-dna-mint hover:text-white transition-colors"
+      >
         <Calendar className="w-4 h-4 mr-2 text-dna-forest" />
         MVP Phase Launch: November 2025
-      </Badge>
+      </Button>
     </div>
   );
 };

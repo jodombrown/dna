@@ -4,7 +4,6 @@ import HeroTriangleSection from './platform/HeroTriangleSection';
 import ConnectSection from './platform/ConnectSection';
 import CollaborateSection from './platform/CollaborateSection';
 import ContributeSection from './platform/ContributeSection';
-import DNACycleSection from './platform/DNACycleSection';
 import CTASection from './platform/CTASection';
 
 const PlatformFeatureShowcase = () => {
@@ -14,7 +13,6 @@ const PlatformFeatureShowcase = () => {
       <ConnectSection />
       <CollaborateSection />
       <ContributeSection />
-      <DNACycleSection />
       <CTASection />
     </div>
   );

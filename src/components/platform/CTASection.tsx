@@ -20,7 +20,7 @@ const CTASection = () => {
           Be among the first to experience the platform that's reshaping how Africa's diaspora creates impact together.
         </p>
 
-        <div className="grid sm:grid-cols-3 gap-4 mb-12">
+        <div className="grid sm:grid-cols-3 gap-4">
           <Button 
             size="lg" 
             className="bg-dna-emerald hover:bg-dna-forest text-white px-6 sm:px-8 py-4 rounded-full text-base sm:text-lg"
@@ -39,39 +39,6 @@ const CTASection = () => {
           >
             Make Contributions
           </Button>
-        </div>
-
-        {/* Development Journey Section */}
-        <div className="border-t border-gray-200 pt-12">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
-            Follow Our Development Journey
-          </h3>
-          <p className="text-gray-600 mb-8">
-            Learn about our three-phase approach to building the ultimate diaspora platform
-          </p>
-          <div className="grid sm:grid-cols-3 gap-4">
-            <Button 
-              onClick={() => navigate('/prototype-phase')}
-              variant="outline"
-              className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
-            >
-              Phase 1: Prototype
-            </Button>
-            <Button 
-              onClick={() => navigate('/building-phase')}
-              variant="outline"
-              className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
-            >
-              Phase 2: Building
-            </Button>
-            <Button 
-              onClick={() => navigate('/mvp-phase')}
-              variant="outline"
-              className="border-dna-gold text-dna-gold hover:bg-dna-gold hover:text-white"
-            >
-              Phase 3: MVP
-            </Button>
-          </div>
         </div>
       </div>
     </section>
