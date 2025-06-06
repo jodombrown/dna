@@ -9,6 +9,193 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      communities: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          member_count: number | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          member_count?: number | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          member_count?: number | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      community_memberships: {
+        Row: {
+          community_id: string
+          id: string
+          joined_at: string
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          community_id: string
+          id?: string
+          joined_at?: string
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          community_id?: string
+          id?: string
+          joined_at?: string
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_memberships_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connections: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          recipient_id: string
+          requester_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          recipient_id: string
+          requester_id: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          recipient_id?: string
+          requester_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      event_registrations: {
+        Row: {
+          event_id: string
+          id: string
+          registered_at: string
+          registration_status: string | null
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          registered_at?: string
+          registration_status?: string | null
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          registered_at?: string
+          registration_status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          attendee_count: number | null
+          created_at: string
+          created_by: string | null
+          date_time: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          is_virtual: boolean | null
+          location: string | null
+          max_attendees: number | null
+          registration_url: string | null
+          title: string
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          attendee_count?: number | null
+          created_at?: string
+          created_by?: string | null
+          date_time?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_virtual?: boolean | null
+          location?: string | null
+          max_attendees?: number | null
+          registration_url?: string | null
+          title: string
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attendee_count?: number | null
+          created_at?: string
+          created_by?: string | null
+          date_time?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_virtual?: boolean | null
+          location?: string | null
+          max_attendees?: number | null
+          registration_url?: string | null
+          title?: string
+          type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       form_submissions: {
         Row: {
           created_at: string | null
@@ -30,6 +217,108 @@ export type Database = {
           id?: string
           ip_address?: unknown
           submission_type?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          recipient_id: string
+          sender_id: string
+          subject: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          recipient_id: string
+          sender_id: string
+          subject?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          recipient_id?: string
+          sender_id?: string
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      professionals: {
+        Row: {
+          availability_for: string[] | null
+          avatar_url: string | null
+          bio: string | null
+          company: string | null
+          country_of_origin: string | null
+          created_at: string
+          education: string | null
+          expertise: string[] | null
+          full_name: string
+          id: string
+          is_investor: boolean | null
+          is_mentor: boolean | null
+          languages: string[] | null
+          linkedin_url: string | null
+          location: string | null
+          looking_for_opportunities: boolean | null
+          profession: string | null
+          updated_at: string
+          user_id: string | null
+          website_url: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          availability_for?: string[] | null
+          avatar_url?: string | null
+          bio?: string | null
+          company?: string | null
+          country_of_origin?: string | null
+          created_at?: string
+          education?: string | null
+          expertise?: string[] | null
+          full_name: string
+          id?: string
+          is_investor?: boolean | null
+          is_mentor?: boolean | null
+          languages?: string[] | null
+          linkedin_url?: string | null
+          location?: string | null
+          looking_for_opportunities?: boolean | null
+          profession?: string | null
+          updated_at?: string
+          user_id?: string | null
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          availability_for?: string[] | null
+          avatar_url?: string | null
+          bio?: string | null
+          company?: string | null
+          country_of_origin?: string | null
+          created_at?: string
+          education?: string | null
+          expertise?: string[] | null
+          full_name?: string
+          id?: string
+          is_investor?: boolean | null
+          is_mentor?: boolean | null
+          languages?: string[] | null
+          linkedin_url?: string | null
+          location?: string | null
+          looking_for_opportunities?: boolean | null
+          profession?: string | null
+          updated_at?: string
+          user_id?: string | null
+          website_url?: string | null
+          years_experience?: number | null
         }
         Relationships: []
       }
