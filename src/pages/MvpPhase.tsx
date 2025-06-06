@@ -166,7 +166,7 @@ const MvpPhase = () => {
                     </div>
                     <div>
                       <p className="font-medium">High User Engagement</p>
-                      <p className="text-sm text-gray-600">Daily active users > 40% of monthly actives</p>
+                      <p className="text-sm text-gray-600">Daily active users {'>'}40% of monthly actives</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -175,7 +175,7 @@ const MvpPhase = () => {
                     </div>
                     <div>
                       <p className="font-medium">Strong Retention</p>
-                      <p className="text-sm text-gray-600">6-month retention rate > 70%</p>
+                      <p className="text-sm text-gray-600">6-month retention rate {'>'} 70%</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
