@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +8,10 @@ import { ArrowLeft, Search, MapPin, Briefcase, GraduationCap, MessageSquare, Use
 
 const ConnectExample = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const professionals = [
     {
@@ -91,44 +94,47 @@ const ConnectExample = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 hover:bg-dna-mint"
+                size="sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to Home
+                <span className="hidden sm:inline">Back to Home</span>
+                <span className="sm:hidden">Back</span>
               </Button>
+              <div className="border-l border-gray-300 h-6 hidden sm:block"></div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Professional Network</h1>
-                <p className="text-gray-600">Connect with diaspora professionals worldwide</p>
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900">Professional Network</h1>
+                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Connect with diaspora professionals</p>
               </div>
             </div>
-            <Badge className="bg-dna-emerald text-white">
-              2,847 Active Members
+            <Badge className="bg-dna-emerald text-white text-xs sm:text-sm">
+              2,847 Active
             </Badge>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Search Section */}
-        <Card className="mb-8">
+        <Card className="mb-6 sm:mb-8">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <Search className="w-5 h-5" />
               Find Your Network
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-4 mb-4">
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
               <Input 
-                placeholder="Search by name, expertise, company, or location..." 
+                placeholder="Search by name, expertise, company..." 
                 className="flex-1"
               />
               <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
@@ -146,13 +152,13 @@ const ConnectExample = () => {
         </Card>
 
         {/* Suggestions */}
-        <div className="grid md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 sm:mb-8">
           {suggestions.map((suggestion, index) => (
             <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
               <CardContent className="p-4 text-center">
-                <div className="text-xl font-bold text-dna-copper mb-2">{suggestion.count}</div>
-                <div className="font-medium text-sm mb-1">{suggestion.category}</div>
-                <div className="text-xs text-gray-600">{suggestion.description}</div>
+                <div className="text-lg sm:text-xl font-bold text-dna-copper mb-2">{suggestion.count}</div>
+                <div className="font-medium text-xs sm:text-sm mb-1">{suggestion.category}</div>
+                <div className="text-xs text-gray-600 hidden sm:block">{suggestion.description}</div>
               </CardContent>
             </Card>
           ))}
@@ -164,13 +170,13 @@ const ConnectExample = () => {
             <Card key={professional.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-dna-copper to-dna-emerald rounded-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-white" />
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-dna-copper to-dna-emerald rounded-full flex items-center justify-center">
+                    <User className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-lg mb-1">{professional.name}</CardTitle>
-                    <p className="text-dna-copper font-medium">{professional.title}</p>
-                    <p className="text-gray-600 text-sm">{professional.company}</p>
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-base sm:text-lg mb-1">{professional.name}</CardTitle>
+                    <p className="text-dna-copper font-medium text-sm sm:text-base">{professional.title}</p>
+                    <p className="text-gray-600 text-xs sm:text-sm">{professional.company}</p>
                   </div>
                 </div>
               </CardHeader>
@@ -178,7 +184,7 @@ const ConnectExample = () => {
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <MapPin className="w-4 h-4" />
-                  <span>{professional.location} • Originally from {professional.origin}</span>
+                  <span className="truncate">{professional.location} • Originally from {professional.origin}</span>
                 </div>
                 
                 <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -213,7 +219,7 @@ const ConnectExample = () => {
                   <div className="text-sm">{professional.recentActivity}</div>
                 </div>
                 
-                <div className="flex gap-3 pt-2">
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <Button className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
                     Connect
                   </Button>
@@ -229,14 +235,14 @@ const ConnectExample = () => {
 
         {/* Call to Action */}
         <Card className="mt-8 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
-          <CardContent className="p-8 text-center">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
+          <CardContent className="p-6 sm:p-8 text-center">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
               Expand Your Professional Circle
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm sm:text-base text-gray-600 mb-6">
               Join communities, attend virtual events, and participate in mentorship programs to grow your network.
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
                 Join Communities
               </Button>

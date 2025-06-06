@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +8,10 @@ import { ArrowLeft, Heart, DollarSign, Clock, Users, TrendingUp, Target, PieChar
 
 const ContributeExample = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const contributionOpportunities = [
     {
@@ -69,24 +72,27 @@ const ContributeExample = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 hover:bg-dna-mint"
+                size="sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to Home
+                <span className="hidden sm:inline">Back to Home</span>
+                <span className="sm:hidden">Back</span>
               </Button>
+              <div className="border-l border-gray-300 h-6 hidden sm:block"></div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Contribution Hub</h1>
-                <p className="text-gray-600">Make impact through capital, skills, and time</p>
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900">Contribution Hub</h1>
+                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Make impact through capital, skills, and time</p>
               </div>
             </div>
-            <Badge className="bg-dna-emerald text-white">
+            <Badge className="bg-dna-emerald text-white text-xs sm:text-sm">
               Impact Score: {myContributions.impactScore}
             </Badge>
           </div>
@@ -94,49 +100,49 @@ const ContributeExample = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Your Impact Dashboard */}
-        <Card className="mb-8 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
+        <Card className="mb-6 sm:mb-8 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <Heart className="w-5 h-5 text-dna-emerald" />
               Your Impact Dashboard
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
               <div className="text-center">
-                <div className="text-3xl font-bold text-dna-emerald mb-2">
+                <div className="text-xl sm:text-3xl font-bold text-dna-emerald mb-1 sm:mb-2">
                   ${myContributions.totalContributed.toLocaleString()}
                 </div>
-                <div className="text-sm text-gray-600">Total Contributed</div>
+                <div className="text-xs sm:text-sm text-gray-600">Total Contributed</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-dna-copper mb-2">
+                <div className="text-xl sm:text-3xl font-bold text-dna-copper mb-1 sm:mb-2">
                   {myContributions.livesImpacted}
                 </div>
-                <div className="text-sm text-gray-600">Lives Impacted</div>
+                <div className="text-xs sm:text-sm text-gray-600">Lives Impacted</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-dna-forest mb-2">
+                <div className="text-xl sm:text-3xl font-bold text-dna-forest mb-1 sm:mb-2">
                   {myContributions.projectsFunded}
                 </div>
-                <div className="text-sm text-gray-600">Projects Funded</div>
+                <div className="text-xs sm:text-sm text-gray-600">Projects Funded</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-dna-gold mb-2">
+                <div className="text-xl sm:text-3xl font-bold text-dna-gold mb-1 sm:mb-2">
                   {myContributions.impactScore}%
                 </div>
-                <div className="text-sm text-gray-600">Impact Score</div>
+                <div className="text-xs sm:text-sm text-gray-600">Impact Score</div>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Impact Breakdown */}
-        <Card className="mb-8">
+        <Card className="mb-6 sm:mb-8">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <PieChart className="w-5 h-5" />
               Your Contribution Breakdown
             </CardTitle>
@@ -146,8 +152,8 @@ const ContributeExample = () => {
               {impactCategories.map((category, index) => (
                 <div key={index}>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium">{category.name}</span>
-                    <span className="text-sm text-gray-600">${category.amount.toLocaleString()}</span>
+                    <span className="font-medium text-sm sm:text-base">{category.name}</span>
+                    <span className="text-xs sm:text-sm text-gray-600">${category.amount.toLocaleString()}</span>
                   </div>
                   <Progress value={category.percentage} className="h-2" />
                 </div>
@@ -158,36 +164,36 @@ const ContributeExample = () => {
 
         {/* Contribution Opportunities */}
         <div className="mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-6">Active Contribution Opportunities</h3>
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Active Contribution Opportunities</h3>
           <div className="space-y-6">
             {contributionOpportunities.map((opportunity) => (
               <Card key={opportunity.id} className="overflow-hidden">
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="text-lg mb-2">{opportunity.title}</CardTitle>
-                      <p className="text-gray-600">{opportunity.description}</p>
+                      <CardTitle className="text-base sm:text-lg mb-2">{opportunity.title}</CardTitle>
+                      <p className="text-sm sm:text-base text-gray-600">{opportunity.description}</p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <Badge 
                         className={`${
                           opportunity.urgency === 'High' ? 'bg-red-100 text-red-800' :
                           opportunity.urgency === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-green-100 text-green-800'
-                        }`}
+                        } text-xs`}
                       >
                         {opportunity.urgency} Priority
                       </Badge>
-                      <Badge variant="outline">{opportunity.type}</Badge>
+                      <Badge variant="outline" className="text-xs">{opportunity.type}</Badge>
                     </div>
                   </div>
-                  <Badge className="w-fit bg-dna-emerald/20 text-dna-emerald">
+                  <Badge className="w-fit bg-dna-emerald/20 text-dna-emerald text-xs">
                     {opportunity.category}
                   </Badge>
                 </CardHeader>
                 
                 <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="flex items-center gap-2">
                       <DollarSign className="w-4 h-4 text-gray-400" />
                       <span className="text-sm">
@@ -226,7 +232,7 @@ const ContributeExample = () => {
                     </div>
                   </div>
                   
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
                     <Button className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
                       <DollarSign className="w-4 h-4 mr-2" />
                       Contribute Now
@@ -244,30 +250,30 @@ const ContributeExample = () => {
         {/* Ways to Contribute */}
         <Card className="bg-gradient-to-r from-dna-copper/10 to-dna-emerald/10">
           <CardHeader>
-            <CardTitle>Multiple Ways to Make Impact</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">Multiple Ways to Make Impact</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="w-12 h-12 bg-dna-emerald rounded-xl mx-auto mb-4 flex items-center justify-center">
-                  <DollarSign className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-emerald rounded-xl mx-auto mb-4 flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <h4 className="font-semibold mb-2">Financial Investment</h4>
-                <p className="text-sm text-gray-600">Direct funding for high-impact projects with transparent tracking</p>
+                <h4 className="font-semibold mb-2 text-sm sm:text-base">Financial Investment</h4>
+                <p className="text-xs sm:text-sm text-gray-600">Direct funding for high-impact projects with transparent tracking</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-dna-copper rounded-xl mx-auto mb-4 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-copper rounded-xl mx-auto mb-4 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <h4 className="font-semibold mb-2">Skills & Expertise</h4>
-                <p className="text-sm text-gray-600">Volunteer your professional skills to support project development</p>
+                <h4 className="font-semibold mb-2 text-sm sm:text-base">Skills & Expertise</h4>
+                <p className="text-xs sm:text-sm text-gray-600">Volunteer your professional skills to support project development</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-dna-forest rounded-xl mx-auto mb-4 flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-forest rounded-xl mx-auto mb-4 flex items-center justify-center">
+                  <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <h4 className="font-semibold mb-2">Time & Mentorship</h4>
-                <p className="text-sm text-gray-600">Share knowledge and mentor emerging leaders and entrepreneurs</p>
+                <h4 className="font-semibold mb-2 text-sm sm:text-base">Time & Mentorship</h4>
+                <p className="text-xs sm:text-sm text-gray-600">Share knowledge and mentor emerging leaders and entrepreneurs</p>
               </div>
             </div>
           </CardContent>
