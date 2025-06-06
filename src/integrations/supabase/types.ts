@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      form_submissions: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          ip_address: unknown
+          submission_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          ip_address: unknown
+          submission_type: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          ip_address?: unknown
+          submission_type?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -56,7 +80,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_rate_limit: {
+        Args: {
+          _ip_address: unknown
+          _submission_type: string
+          _max_submissions?: number
+          _time_window_minutes?: number
+        }
+        Returns: boolean
+      }
+      get_current_user_profile: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          is_public: boolean
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
