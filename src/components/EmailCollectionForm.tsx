@@ -18,33 +18,43 @@ const EmailCollectionForm = () => {
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email) && email.length <= 254;
+    return emailRegex.test(email) && 
+           email.length <= 254 && 
+           !email.includes('..') &&
+           !/<script|javascript:|data:/i.test(email);
+  };
+
+  const validateName = (name: string): boolean => {
+    const nameRegex = /^[a-zA-Z\s\-'àáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ]{1,50}$/;
+    return nameRegex.test(name) && 
+           !/<script|javascript:|data:/i.test(name) &&
+           name.trim().length >= 1;
   };
 
   const validateLinkedInUrl = (url: string): boolean => {
-    if (!url) return true; // Optional field
+    if (!url) return true;
     try {
       const urlObj = new URL(url);
-      return urlObj.hostname === 'linkedin.com' || 
-             urlObj.hostname === 'www.linkedin.com' ||
-             /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9-]+\/?$/.test(url);
+      if (urlObj.protocol !== 'https:') return false;
+      const validHosts = ['linkedin.com', 'www.linkedin.com'];
+      if (!validHosts.includes(urlObj.hostname)) return false;
+      const pathPattern = /^\/in\/[a-zA-Z0-9\-]{3,100}\/?$/;
+      return pathPattern.test(urlObj.pathname);
     } catch {
       return false;
     }
   };
 
   const sanitizeInput = (input: string): string => {
-    return input.trim().replace(/[<>\"'&]/g, '');
-  };
-
-  const validateName = (name: string): boolean => {
-    const nameRegex = /^[a-zA-Z\s\-'àáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ]{1,50}$/;
-    return nameRegex.test(name);
+    return input
+      .trim()
+      .replace(/[<>\"'&]/g, '')
+      .replace(/\s+/g, ' ');
   };
 
   const isRateLimited = (): boolean => {
     const now = Date.now();
-    return now - lastSubmissionTime < 3000; // 3 second cooldown
+    return now - lastSubmissionTime < 3000;
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -58,7 +68,8 @@ const EmailCollectionForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Rate limiting check
+    console.log('Form submission started');
+    
     if (isRateLimited()) {
       toast({
         title: "Please wait",
@@ -68,7 +79,6 @@ const EmailCollectionForm = () => {
       return;
     }
 
-    // Enhanced validation
     if (!formData.firstName || !formData.lastName || !formData.email) {
       toast({
         title: "Missing Information",
@@ -118,11 +128,14 @@ const EmailCollectionForm = () => {
     setLastSubmissionTime(Date.now());
 
     try {
-      const response = await fetch('/api/collect-email', {
+      console.log('Sending request to collect-email function');
+      
+      const response = await fetch('https://ybhssuehmfnxrzneobok.supabase.co/functions/v1/collect-email', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliaHNzdWVobWZueHJ6bmVvYm9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTI0NzMsImV4cCI6MjA2NDU4ODQ3M30.Uur_V4TYm4yCYtDQAa4diIpdsKoKb5Bkuo0cWNZAY-Y`
         },
         body: JSON.stringify({
           firstName: formData.firstName.substring(0, 50),
@@ -132,7 +145,9 @@ const EmailCollectionForm = () => {
         }),
       });
 
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (response.ok && data.success) {
         toast({
