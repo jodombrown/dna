@@ -31,7 +31,7 @@ export const useConnections = () => {
         .insert({
           requester_id: user.id,
           recipient_id: recipientId,
-          status: 'pending',
+          status: 'pending' as const,
           message: message || undefined
         })
         .select()
@@ -39,7 +39,7 @@ export const useConnections = () => {
       
       if (error) throw error;
       
-      setConnections(prev => [...prev, data]);
+      setConnections(prev => [...prev, data as Connection]);
       return data;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send connection request');
@@ -70,7 +70,7 @@ export const useConnections = () => {
       if (error) throw error;
       
       setConnections(prev => 
-        prev.map(conn => conn.id === connectionId ? data : conn)
+        prev.map(conn => conn.id === connectionId ? data as Connection : conn)
       );
       
       return data;
@@ -96,7 +96,7 @@ export const useConnections = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      setConnections(data || []);
+      setConnections((data || []) as Connection[]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch connections');
     } finally {

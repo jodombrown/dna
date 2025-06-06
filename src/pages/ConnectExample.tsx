@@ -10,6 +10,7 @@ import { useSearch, Professional, Community, Event } from '@/hooks/useSearch';
 import { useConnections } from '@/hooks/useConnections';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { seedProfessionals, seedCommunities, seedEvents } from '@/utils/seedData';
 

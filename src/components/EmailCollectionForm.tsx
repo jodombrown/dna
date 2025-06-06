@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const EmailCollectionForm = () => {
   const [formData, setFormData] = useState({
@@ -71,56 +71,32 @@ const EmailCollectionForm = () => {
     console.log('Form submission started');
     
     if (isRateLimited()) {
-      toast({
-        title: "Please wait",
-        description: "Please wait a moment before submitting again.",
-        variant: "destructive",
-      });
+      toast.error('Please wait a moment before submitting again.');
       return;
     }
 
     if (!formData.firstName || !formData.lastName || !formData.email) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in your first name, last name, and email.",
-        variant: "destructive",
-      });
+      toast.error('Please fill in your first name, last name, and email.');
       return;
     }
 
     if (!validateName(formData.firstName)) {
-      toast({
-        title: "Invalid First Name",
-        description: "First name must contain only letters, spaces, hyphens, and apostrophes (max 50 characters).",
-        variant: "destructive",
-      });
+      toast.error('First name must contain only letters, spaces, hyphens, and apostrophes (max 50 characters).');
       return;
     }
 
     if (!validateName(formData.lastName)) {
-      toast({
-        title: "Invalid Last Name",
-        description: "Last name must contain only letters, spaces, hyphens, and apostrophes (max 50 characters).",
-        variant: "destructive",
-      });
+      toast.error('Last name must contain only letters, spaces, hyphens, and apostrophes (max 50 characters).');
       return;
     }
 
     if (!validateEmail(formData.email)) {
-      toast({
-        title: "Invalid Email",
-        description: "Please enter a valid email address.",
-        variant: "destructive",
-      });
+      toast.error('Please enter a valid email address.');
       return;
     }
 
     if (formData.linkedin && !validateLinkedInUrl(formData.linkedin)) {
-      toast({
-        title: "Invalid LinkedIn URL",
-        description: "Please enter a valid LinkedIn profile URL (e.g., https://linkedin.com/in/yourprofile).",
-        variant: "destructive",
-      });
+      toast.error('Please enter a valid LinkedIn profile URL (e.g., https://linkedin.com/in/yourprofile).');
       return;
     }
 
@@ -150,10 +126,7 @@ const EmailCollectionForm = () => {
       console.log('Response data:', data);
 
       if (response.ok && data.success) {
-        toast({
-          title: "Welcome to DNA!",
-          description: "You're now part of the movement. Check your email for next steps and updates on our progress.",
-        });
+        toast.success('Welcome to DNA! Check your email for confirmation and next steps.');
         setFormData({
           firstName: '',
           lastName: '',
@@ -165,11 +138,7 @@ const EmailCollectionForm = () => {
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      toast({
-        title: "Something went wrong",
-        description: "Please try again later.",
-        variant: "destructive",
-      });
+      toast.error('Something went wrong. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
