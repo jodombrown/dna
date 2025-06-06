@@ -68,7 +68,7 @@ const checkRateLimit = async (ipAddress: string): Promise<boolean> => {
 
     if (error) {
       console.error('Rate limit check error:', error);
-      return false; // Fail closed for security
+      return false;
     }
 
     return data;
@@ -107,7 +107,6 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    // Check content length
     const contentLength = req.headers.get('content-length');
     if (contentLength && parseInt(contentLength) > 10000) {
       throw new Error("Request too large");
@@ -116,7 +115,6 @@ const handler = async (req: Request): Promise<Response> => {
     const clientIP = getClientIP(req);
     console.log("Request from IP:", clientIP);
 
-    // Check rate limiting
     const isAllowed = await checkRateLimit(clientIP);
     if (!isAllowed) {
       return new Response(JSON.stringify({ 
@@ -131,7 +129,6 @@ const handler = async (req: Request): Promise<Response> => {
     const body = await req.json();
     const { firstName, lastName, email, linkedin }: EmailSubmissionRequest = body;
 
-    // Enhanced validation
     if (!firstName || !lastName || !email) {
       throw new Error("Missing required fields: firstName, lastName, or email");
     }
@@ -148,7 +145,6 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error("Invalid LinkedIn URL format");
     }
 
-    // Sanitize inputs
     const sanitizedData = {
       firstName: sanitizeInput(firstName).substring(0, 50),
       lastName: sanitizeInput(lastName).substring(0, 50),
@@ -158,72 +154,64 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Processing email submission for:", sanitizedData.email);
 
-    // Log the submission for rate limiting
     await logSubmission(clientIP, sanitizedData.email);
 
-    // Send notification email to jaune@roadmap.africa
-    const notificationResponse = await resend.emails.send({
-      from: "DNA Platform <onboarding@resend.dev>",
-      to: ["jaune@roadmap.africa"],
-      subject: "New DNA Platform Interest - Early Access Request",
-      html: `
-        <h1>New Early Access Request</h1>
-        <p>Someone has signed up for early access to the DNA Platform:</p>
-        
-        <div style="background-color: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 5px;">
-          <strong>Contact Details:</strong><br>
-          <strong>Name:</strong> ${sanitizedData.firstName} ${sanitizedData.lastName}<br>
-          <strong>Email:</strong> ${sanitizedData.email}<br>
-          ${sanitizedData.linkedin ? `<strong>LinkedIn:</strong> <a href="${sanitizedData.linkedin}">${sanitizedData.linkedin}</a><br>` : ''}
-          <strong>Submitted:</strong> ${new Date().toLocaleString()}<br>
-          <strong>IP Address:</strong> ${clientIP}
-        </div>
-        
-        <p>This person is interested in joining the Diaspora Network of Africa and wants to stay informed about the platform development.</p>
-        
-        <p>Best regards,<br>DNA Platform System</p>
-      `,
-    });
-
-    console.log("Notification email sent:", notificationResponse);
-
-    // Send confirmation email to the user
-    const confirmationResponse = await resend.emails.send({
-      from: "DNA Platform <onboarding@resend.dev>",
-      to: [sanitizedData.email],
-      subject: "Welcome to the DNA Platform Community!",
-      html: `
-        <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
-          <h1 style="color: #183c2e; margin-bottom: 20px;">Welcome to the DNA Community, ${sanitizedData.firstName}!</h1>
-          
-          <p>Thank you for joining our mission to connect and empower the African diaspora worldwide.</p>
-          
-          <div style="background-color: #abddd6; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #459c71;">
-            <h3 style="color: #183c2e; margin-top: 0;">What happens next?</h3>
-            <ul style="color: #183c2e;">
-              <li>We'll keep you updated on our prototype development (launching June 2025)</li>
-              <li>You'll be among the first to know about collaboration opportunities during our prototyping phase</li>
-              <li>We'll reach out soon with more information about how you can get involved in building this platform together</li>
-            </ul>
+    try {
+      // Send confirmation email to the user
+      const confirmationResponse = await resend.emails.send({
+        from: "DNA Platform <onboarding@resend.dev>",
+        to: [sanitizedData.email],
+        subject: "Welcome to the DNA Platform Community!",
+        html: `
+          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+            <h1 style="color: #183c2e; margin-bottom: 20px;">Welcome to the DNA Community, ${sanitizedData.firstName}!</h1>
+            
+            <p>Thank you for joining our mission to connect and empower the African diaspora worldwide.</p>
+            
+            <div style="background-color: #abddd6; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #459c71;">
+              <h3 style="color: #183c2e; margin-top: 0;">What happens next?</h3>
+              <ul style="color: #183c2e;">
+                <li>We'll keep you updated on our prototype development (launching June 2025)</li>
+                <li>You'll be among the first to know about collaboration opportunities during our prototyping phase</li>
+                <li>We'll reach out soon with more information about how you can get involved in building this platform together</li>
+              </ul>
+            </div>
+            
+            <p>This is just the beginning of our journey, and we're excited to have you as part of our founding community. Together, we're building the infrastructure for African diaspora impact.</p>
+            
+            <p style="margin-top: 30px;">
+              <strong>Building together,</strong><br>
+              Jaune and the DNA Platform Team
+            </p>
+            
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+            <p style="color: #666; font-size: 14px;">
+              You're receiving this email because you signed up for early access to the Diaspora Network of Africa platform. 
+              We respect your privacy and will only send updates about our platform development.
+            </p>
           </div>
-          
-          <p>This is just the beginning of our journey, and we're excited to have you as part of our founding community. Together, we're building the infrastructure for African diaspora impact.</p>
-          
-          <p style="margin-top: 30px;">
-            <strong>Building together,</strong><br>
-            Jaune and the DNA Platform Team
-          </p>
-          
-          <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
-          <p style="color: #666; font-size: 14px;">
-            You're receiving this email because you signed up for early access to the Diaspora Network of Africa platform. 
-            We respect your privacy and will only send updates about our platform development.
-          </p>
-        </div>
-      `,
-    });
+        `,
+      });
 
-    console.log("Confirmation email sent:", confirmationResponse);
+      console.log("Confirmation email sent:", confirmationResponse);
+
+      if (confirmationResponse.error) {
+        console.error("Confirmation email error:", confirmationResponse.error);
+        throw new Error("Failed to send confirmation email");
+      }
+
+    } catch (emailError) {
+      console.error("Email sending failed:", emailError);
+      // Don't fail the entire request if email fails
+      // Log the submission data for manual follow-up
+      console.log("Submission data for manual follow-up:", {
+        name: `${sanitizedData.firstName} ${sanitizedData.lastName}`,
+        email: sanitizedData.email,
+        linkedin: sanitizedData.linkedin,
+        timestamp: new Date().toISOString(),
+        ip: clientIP
+      });
+    }
 
     return new Response(JSON.stringify({ 
       success: true, 
@@ -238,7 +226,6 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Error in collect-email function:", error);
     
-    // Don't expose internal error details
     const safeErrorMessage = error.message.includes('Missing required fields') ||
                             error.message.includes('Invalid') ||
                             error.message.includes('Too many requests') ||
