@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +13,6 @@ import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { seedProfessionals, seedCommunities, seedEvents } from '@/utils/seedData';
 
 const ConnectExample = () => {
   const navigate = useNavigate();
@@ -23,9 +23,9 @@ const ConnectExample = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('professionals');
   const [initializing, setInitializing] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Scroll to top when component mounts
     window.scrollTo(0, 0);
     initializeData();
   }, []);
@@ -33,59 +33,146 @@ const ConnectExample = () => {
   const initializeData = async () => {
     console.log('Initializing data...');
     setInitializing(true);
+    setDataError(null);
     
     try {
-      // First try to get existing data
-      await getAllData();
-      
-      // Check if we have any data, if not seed it
-      const { data: existingProfessionals } = await supabase
+      // First check if tables exist and have data
+      const { data: profCount, error: profError } = await supabase
         .from('professionals')
-        .select('id')
-        .limit(1);
+        .select('id', { count: 'exact', head: true });
       
-      const { data: existingCommunities } = await supabase
+      const { data: commCount, error: commError } = await supabase
         .from('communities')
-        .select('id')
-        .limit(1);
+        .select('id', { count: 'exact', head: true });
 
-      const { data: existingEvents } = await supabase
+      const { data: eventCount, error: eventError } = await supabase
         .from('events')
-        .select('id')
-        .limit(1);
-      
-      let needsSeeding = false;
-      
-      if (!existingProfessionals || existingProfessionals.length === 0) {
-        console.log('Seeding professionals...');
-        await seedProfessionals();
-        needsSeeding = true;
+        .select('id', { count: 'exact', head: true });
+
+      if (profError || commError || eventError) {
+        console.error('Database access error:', { profError, commError, eventError });
+        setDataError('Database connection error. Please try again.');
+        return;
       }
-      
-      if (!existingCommunities || existingCommunities.length === 0) {
-        console.log('Seeding communities...');
-        await seedCommunities();
-        needsSeeding = true;
+
+      console.log('Current data counts:', { 
+        professionals: profCount, 
+        communities: commCount, 
+        events: eventCount 
+      });
+
+      // If no data exists, create some sample data directly
+      if (!profCount || profCount === 0) {
+        console.log('No professionals found, creating sample data...');
+        await createSampleData();
       }
-      
-      if (!existingEvents || existingEvents.length === 0) {
-        console.log('Seeding events...');
-        await seedEvents();
-        needsSeeding = true;
-      }
-      
-      if (needsSeeding) {
-        console.log('Refreshing data after seeding...');
-        // Wait a moment then refresh data
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        await getAllData();
-      }
+
+      // Load all data
+      await getAllData();
       
     } catch (error) {
       console.error('Error initializing data:', error);
+      setDataError('Failed to load data. Please refresh the page.');
       toast.error('Failed to load data. Please refresh the page.');
     } finally {
       setInitializing(false);
+    }
+  };
+
+  const createSampleData = async () => {
+    const sampleProfessionals = [
+      {
+        full_name: "Dr. Amara Okafor",
+        profession: "FinTech CEO",
+        company: "AfriPay Solutions",
+        location: "London, UK",
+        country_of_origin: "Nigeria",
+        expertise: ["Financial Technology", "Digital Payments", "Blockchain"],
+        bio: "Leading fintech innovation across Africa and Europe. Former Goldman Sachs VP turned entrepreneur.",
+        years_experience: 12,
+        education: "PhD Computer Science, MIT",
+        languages: ["English", "Igbo", "French"],
+        availability_for: ["Mentorship", "Investment", "Speaking"],
+        linkedin_url: "https://linkedin.com/in/amaraokafor",
+        is_mentor: true,
+        is_investor: true,
+        looking_for_opportunities: false
+      },
+      {
+        full_name: "Prof. Kwame Asante",
+        profession: "AgriTech Researcher",
+        company: "Ghana Institute of Technology",
+        location: "Toronto, Canada",
+        country_of_origin: "Ghana",
+        expertise: ["Agricultural Technology", "Climate Science", "Sustainable Farming"],
+        bio: "Pioneering sustainable agriculture solutions for smallholder farmers across West Africa.",
+        years_experience: 18,
+        education: "PhD Agricultural Sciences, University of Toronto",
+        languages: ["English", "Twi", "French"],
+        availability_for: ["Research Collaboration", "Consulting", "Mentorship"],
+        is_mentor: true,
+        is_investor: false,
+        looking_for_opportunities: true
+      },
+      {
+        full_name: "Sarah Mwangi",
+        profession: "Health Tech Founder",
+        company: "MediConnect Africa",
+        location: "San Francisco, USA",
+        country_of_origin: "Kenya",
+        expertise: ["Healthcare Technology", "Telemedicine", "Public Health"],
+        bio: "Building digital health solutions to improve healthcare access in rural Africa.",
+        years_experience: 8,
+        education: "MBA Stanford, MD University of Nairobi",
+        languages: ["English", "Swahili", "Spanish"],
+        availability_for: ["Collaboration", "Mentorship", "Investment"],
+        is_mentor: true,
+        is_investor: true,
+        looking_for_opportunities: false
+      }
+    ];
+
+    const sampleCommunities = [
+      {
+        name: "African Tech Leaders",
+        description: "A community for African technology leaders and innovators sharing insights and building the future.",
+        category: "Technology",
+        member_count: 1250,
+        is_featured: true
+      },
+      {
+        name: "Diaspora Entrepreneurs",
+        description: "Connecting African entrepreneurs in the diaspora to share resources, opportunities, and support.",
+        category: "Business",
+        member_count: 890,
+        is_featured: true
+      }
+    ];
+
+    const sampleEvents = [
+      {
+        title: "African Tech Summit 2024",
+        description: "The premier technology conference bringing together African innovators from around the world.",
+        type: "Conference",
+        date_time: new Date('2024-07-15T09:00:00Z').toISOString(),
+        location: "London, UK",
+        is_virtual: false,
+        attendee_count: 500,
+        max_attendees: 800,
+        is_featured: true,
+        registration_url: "https://africantechsummit.com/register"
+      }
+    ];
+
+    try {
+      await Promise.all([
+        supabase.from('professionals').insert(sampleProfessionals),
+        supabase.from('communities').insert(sampleCommunities),
+        supabase.from('events').insert(sampleEvents)
+      ]);
+      console.log('Sample data created successfully');
+    } catch (error) {
+      console.error('Error creating sample data:', error);
     }
   };
 
@@ -142,6 +229,23 @@ const ConnectExample = () => {
         <div className="text-center">
           <div className="text-xl font-semibold mb-2">Loading Professional Network...</div>
           <div className="text-gray-600">Setting up your diaspora connections</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (dataError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="text-xl font-semibold mb-2 text-red-600">Failed to Load Data</div>
+          <div className="text-gray-600 mb-4">{dataError}</div>
+          <Button 
+            onClick={initializeData}
+            className="bg-dna-emerald hover:bg-dna-forest text-white"
+          >
+            Try Again
+          </Button>
         </div>
       </div>
     );
