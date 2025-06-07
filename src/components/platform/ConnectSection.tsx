@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Users, Globe, Target, Network, ArrowRight } from 'lucide-react';
@@ -78,8 +79,8 @@ const ConnectSection = () => {
                   </div>
                   
                   <div className="text-center py-4">
-                    <p className="text-sm text-gray-500">847 professionals in your network</p>
-                    <p className="text-xs text-dna-emerald">+23 new connections this week</p>
+                    <p className="text-sm text-gray-500">50+ professionals in your network</p>
+                    <p className="text-xs text-dna-emerald">New connections available</p>
                   </div>
                 </div>
               </div>

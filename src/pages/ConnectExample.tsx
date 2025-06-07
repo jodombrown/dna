@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, MapPin, Briefcase, GraduationCap, MessageSquare, User, Globe, Calendar, Users as UsersIcon } from 'lucide-react';
+import { ArrowLeft, Search, MapPin, Briefcase, GraduationCap, MessageSquare, User, Globe, Calendar, Users as UsersIcon, Home } from 'lucide-react';
 import { useSearch, Professional, Community, Event } from '@/hooks/useSearch';
 import { useConnections } from '@/hooks/useConnections';
 import { useMessages } from '@/hooks/useMessages';
@@ -22,15 +22,20 @@ const ConnectExample = () => {
   const { sendMessage } = useMessages();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('professionals');
-  const [hasSeeded, setHasSeeded] = useState(false);
+  const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
+    // Scroll to top when component mounts
     window.scrollTo(0, 0);
     initializeData();
   }, []);
 
   const initializeData = async () => {
+    console.log('Initializing data...');
+    setInitializing(true);
+    
     try {
+      // First try to get existing data
       await getAllData();
       
       // Check if we have any data, if not seed it
@@ -39,18 +44,48 @@ const ConnectExample = () => {
         .select('id')
         .limit(1);
       
+      const { data: existingCommunities } = await supabase
+        .from('communities')
+        .select('id')
+        .limit(1);
+
+      const { data: existingEvents } = await supabase
+        .from('events')
+        .select('id')
+        .limit(1);
+      
+      let needsSeeding = false;
+      
       if (!existingProfessionals || existingProfessionals.length === 0) {
-        console.log('Seeding database with sample data...');
-        await Promise.all([
-          seedProfessionals(),
-          seedCommunities(),
-          seedEvents()
-        ]);
-        setHasSeeded(true);
+        console.log('Seeding professionals...');
+        await seedProfessionals();
+        needsSeeding = true;
+      }
+      
+      if (!existingCommunities || existingCommunities.length === 0) {
+        console.log('Seeding communities...');
+        await seedCommunities();
+        needsSeeding = true;
+      }
+      
+      if (!existingEvents || existingEvents.length === 0) {
+        console.log('Seeding events...');
+        await seedEvents();
+        needsSeeding = true;
+      }
+      
+      if (needsSeeding) {
+        console.log('Refreshing data after seeding...');
+        // Wait a moment then refresh data
+        await new Promise(resolve => setTimeout(resolve, 1000));
         await getAllData();
       }
+      
     } catch (error) {
       console.error('Error initializing data:', error);
+      toast.error('Failed to load data. Please refresh the page.');
+    } finally {
+      setInitializing(false);
     }
   };
 
@@ -75,6 +110,7 @@ const ConnectExample = () => {
       await sendConnectionRequest(professionalId, 'I would like to connect with you!');
       toast.success('Connection request sent successfully!');
     } catch (error) {
+      console.error('Connection error:', error);
       toast.error('Failed to send connection request');
     }
   };
@@ -90,6 +126,7 @@ const ConnectExample = () => {
       await sendMessage(recipientId, `Hi ${recipientName}, I'd like to connect and learn more about your work!`);
       toast.success('Message sent successfully!');
     } catch (error) {
+      console.error('Message error:', error);
       toast.error('Failed to send message');
     }
   };
@@ -98,6 +135,17 @@ const ConnectExample = () => {
     if (!user) return null;
     return checkConnectionStatus(professionalId);
   };
+
+  if (initializing) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-xl font-semibold mb-2">Loading Professional Network...</div>
+          <div className="text-gray-600">Setting up your diaspora connections</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -112,9 +160,9 @@ const ConnectExample = () => {
                 className="flex items-center gap-2 hover:bg-dna-mint"
                 size="sm"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <Home className="w-4 h-4" />
                 <span className="hidden sm:inline">Back to Home</span>
-                <span className="sm:hidden">Back</span>
+                <span className="sm:hidden">Home</span>
               </Button>
               <div className="border-l border-gray-300 h-6 hidden sm:block"></div>
               <div>
@@ -123,7 +171,7 @@ const ConnectExample = () => {
               </div>
             </div>
             <Badge className="bg-dna-emerald text-white text-xs sm:text-sm">
-              {professionals.length} Active
+              {professionals.length + communities.length + events.length} Active
             </Badge>
           </div>
         </div>
@@ -168,34 +216,70 @@ const ConnectExample = () => {
           </TabsList>
 
           <TabsContent value="professionals">
-            <div className="grid md:grid-cols-2 gap-6">
-              {professionals.map((professional) => (
-                <ProfessionalCard
-                  key={professional.id}
-                  professional={professional}
-                  onConnect={() => handleConnect(professional.id)}
-                  onMessage={() => handleMessage(professional.id, professional.full_name)}
-                  connectionStatus={getConnectionStatus(professional.id)}
-                  isLoggedIn={!!user}
-                />
-              ))}
-            </div>
+            {professionals.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No professionals found.</p>
+                <Button 
+                  onClick={initializeData}
+                  className="mt-4 bg-dna-emerald hover:bg-dna-forest text-white"
+                >
+                  Refresh Data
+                </Button>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-6">
+                {professionals.map((professional) => (
+                  <ProfessionalCard
+                    key={professional.id}
+                    professional={professional}
+                    onConnect={() => handleConnect(professional.id)}
+                    onMessage={() => handleMessage(professional.id, professional.full_name)}
+                    connectionStatus={getConnectionStatus(professional.id)}
+                    isLoggedIn={!!user}
+                  />
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="communities">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {communities.map((community) => (
-                <CommunityCard key={community.id} community={community} />
-              ))}
-            </div>
+            {communities.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No communities found.</p>
+                <Button 
+                  onClick={initializeData}
+                  className="mt-4 bg-dna-emerald hover:bg-dna-forest text-white"
+                >
+                  Refresh Data
+                </Button>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {communities.map((community) => (
+                  <CommunityCard key={community.id} community={community} />
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="events">
-            <div className="grid md:grid-cols-2 gap-6">
-              {events.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
+            {events.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No events found.</p>
+                <Button 
+                  onClick={initializeData}
+                  className="mt-4 bg-dna-emerald hover:bg-dna-forest text-white"
+                >
+                  Refresh Data
+                </Button>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-6">
+                {events.map((event) => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
 
