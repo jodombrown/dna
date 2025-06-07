@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,17 +36,17 @@ const ConnectExample = () => {
     
     try {
       // First check if tables exist and have data
-      const { data: profCount, error: profError } = await supabase
+      const { count: profCount, error: profError } = await supabase
         .from('professionals')
-        .select('id', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true });
       
-      const { data: commCount, error: commError } = await supabase
+      const { count: commCount, error: commError } = await supabase
         .from('communities')
-        .select('id', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true });
 
-      const { data: eventCount, error: eventError } = await supabase
+      const { count: eventCount, error: eventError } = await supabase
         .from('events')
-        .select('id', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true });
 
       if (profError || commError || eventError) {
         console.error('Database access error:', { profError, commError, eventError });
