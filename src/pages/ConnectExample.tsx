@@ -8,7 +8,7 @@ import { useConnections } from '@/hooks/useConnections';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { Info, Users } from 'lucide-react';
+import { Info, Users, Calendar, UserPlus } from 'lucide-react';
 import ConnectHeader from '@/components/connect/ConnectHeader';
 import SearchSection from '@/components/connect/SearchSection';
 import ProfessionalCard from '@/components/connect/ProfessionalCard';
@@ -31,7 +31,8 @@ const ConnectExample = () => {
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
   const [isConnectDialogOpen, setIsConnectDialogOpen] = useState(false);
   const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
-  const [isRegisterDialogOpen, setIsRegisterDialogOpen] = useState(false);
+  const [isJoinCommunityDialogOpen, setIsJoinCommunityDialogOpen] = useState(false);
+  const [isRegisterEventDialogOpen, setIsRegisterEventDialogOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -103,8 +104,20 @@ const ConnectExample = () => {
     }
   };
 
-  const handleRegister = () => {
-    setIsRegisterDialogOpen(true);
+  const handleJoinCommunity = () => {
+    if (!user) {
+      setIsJoinCommunityDialogOpen(true);
+      return;
+    }
+    toast.success('Community join request sent!');
+  };
+
+  const handleRegisterEvent = () => {
+    if (!user) {
+      setIsRegisterEventDialogOpen(true);
+      return;
+    }
+    toast.success('Event registration successful!');
   };
 
   const getConnectionStatus = (professionalId: string) => {
@@ -207,7 +220,12 @@ const ConnectExample = () => {
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {communities.map((community) => (
-                  <CommunityCard key={community.id} community={community} />
+                  <CommunityCard 
+                    key={community.id} 
+                    community={community} 
+                    onJoin={handleJoinCommunity}
+                    isLoggedIn={!!user}
+                  />
                 ))}
               </div>
             )}
@@ -219,7 +237,12 @@ const ConnectExample = () => {
             ) : (
               <div className="grid md:grid-cols-2 gap-6">
                 {events.map((event) => (
-                  <EventCard key={event.id} event={event} />
+                  <EventCard 
+                    key={event.id} 
+                    event={event} 
+                    onRegister={handleRegisterEvent}
+                    isLoggedIn={!!user}
+                  />
                 ))}
               </div>
             )}
@@ -324,36 +347,72 @@ const ConnectExample = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Register Dialog */}
-      <Dialog open={isRegisterDialogOpen} onOpenChange={setIsRegisterDialogOpen}>
+      {/* Join Community Dialog */}
+      <Dialog open={isJoinCommunityDialogOpen} onOpenChange={setIsJoinCommunityDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-dna-forest" />
-              Join the DNA Community
+              <UserPlus className="w-5 h-5 text-dna-emerald" />
+              How Community Joining Works
             </DialogTitle>
             <DialogDescription className="text-left space-y-4 pt-4">
               <p>
-                Registering for events and communities will give you access to:
+                Our community platform will offer rich, engaging experiences:
               </p>
               <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li>Exclusive diaspora networking events and webinars</li>
-                <li>Industry-specific community groups and discussions</li>
-                <li>Early access to collaboration opportunities</li>
-                <li>Mentorship programs connecting seniors with emerging professionals</li>
-                <li>Resource libraries and professional development tools</li>
-                <li>Regional meetups and cultural celebrations</li>
+                <li>Join interest-based and professional communities</li>
+                <li>Participate in community discussions and forums</li>
+                <li>Access exclusive community resources and tools</li>
+                <li>Connect with like-minded diaspora members</li>
+                <li>Organize and attend community events</li>
+                <li>Share knowledge and collaborate on projects</li>
               </ul>
-              <p className="text-sm text-gray-600 bg-dna-forest/10 p-3 rounded">
-                Create your profile to start connecting with thousands of diaspora professionals and access our growing network of communities and events.
+              <p className="text-sm text-gray-600 bg-dna-emerald/10 p-3 rounded">
+                Community membership requires platform registration to ensure quality interactions and member safety.
               </p>
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3">
-            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-forest hover:bg-dna-emerald text-white">
-              Create Profile
+            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
+              Join Platform
             </Button>
-            <Button variant="outline" onClick={() => setIsRegisterDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setIsJoinCommunityDialogOpen(false)}>
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Register Event Dialog */}
+      <Dialog open={isRegisterEventDialogOpen} onOpenChange={setIsRegisterEventDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-dna-copper" />
+              How Event Registration Works
+            </DialogTitle>
+            <DialogDescription className="text-left space-y-4 pt-4">
+              <p>
+                Our event system will provide comprehensive networking opportunities:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>Register for professional development workshops</li>
+                <li>Attend virtual and in-person networking events</li>
+                <li>Participate in cultural celebrations and meetups</li>
+                <li>Access industry-specific conferences and panels</li>
+                <li>Connect with event attendees before and after</li>
+                <li>Receive event recordings and follow-up resources</li>
+              </ul>
+              <p className="text-sm text-gray-600 bg-dna-copper/10 p-3 rounded">
+                Event registration requires an account to manage your attendance and provide personalized recommendations.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3">
+            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-copper hover:bg-dna-gold text-white">
+              Create Account
+            </Button>
+            <Button variant="outline" onClick={() => setIsRegisterEventDialogOpen(false)}>
               Got it
             </Button>
           </div>

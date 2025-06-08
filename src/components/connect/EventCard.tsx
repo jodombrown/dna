@@ -8,9 +8,11 @@ import { Event } from '@/types/search';
 
 interface EventCardProps {
   event: Event;
+  onRegister: () => void;
+  isLoggedIn: boolean;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event }) => (
+const EventCard: React.FC<EventCardProps> = ({ event, onRegister, isLoggedIn }) => (
   <Card className="hover:shadow-lg transition-shadow">
     <CardHeader>
       <CardTitle className="text-lg">{event.title}</CardTitle>
@@ -39,7 +41,12 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => (
       
       <Button 
         className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
-        onClick={() => event.registration_url && window.open(event.registration_url, '_blank')}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onRegister();
+        }}
+        disabled={!isLoggedIn}
       >
         Register
       </Button>

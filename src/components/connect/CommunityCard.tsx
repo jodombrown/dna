@@ -8,9 +8,11 @@ import { Community } from '@/types/search';
 
 interface CommunityCardProps {
   community: Community;
+  onJoin: () => void;
+  isLoggedIn: boolean;
 }
 
-const CommunityCard: React.FC<CommunityCardProps> = ({ community }) => (
+const CommunityCard: React.FC<CommunityCardProps> = ({ community, onJoin, isLoggedIn }) => (
   <Card className="hover:shadow-lg transition-shadow">
     <CardHeader>
       <CardTitle className="text-lg">{community.name}</CardTitle>
@@ -23,7 +25,16 @@ const CommunityCard: React.FC<CommunityCardProps> = ({ community }) => (
           <UsersIcon className="w-4 h-4" />
           {community.member_count} members
         </div>
-        <Button size="sm" className="bg-dna-emerald hover:bg-dna-forest text-white">
+        <Button 
+          size="sm" 
+          className="bg-dna-emerald hover:bg-dna-forest text-white"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onJoin();
+          }}
+          disabled={!isLoggedIn}
+        >
           Join
         </Button>
       </div>
