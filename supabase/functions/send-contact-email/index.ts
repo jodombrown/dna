@@ -13,6 +13,7 @@ const corsHeaders = {
 interface ContactEmailRequest {
   name: string;
   email: string;
+  linkedin_url?: string;
   message?: string;
 }
 
@@ -23,13 +24,13 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, message }: ContactEmailRequest = await req.json();
+    const { name, email, linkedin_url, message }: ContactEmailRequest = await req.json();
 
     console.log("Sending email to:", email, "from:", name);
 
     // Send confirmation email to the user
     const userEmailResponse = await resend.emails.send({
-      from: "DNA Platform <noreply@resend.dev>",
+      from: "DNA Platform <jaune@roadmap.africa>",
       to: [email],
       subject: "Welcome to the DNA Platform - We received your interest!",
       html: `
@@ -63,14 +64,15 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send notification email to admin
     const adminEmailResponse = await resend.emails.send({
-      from: "DNA Platform <noreply@resend.dev>",
-      to: ["admin@dnaplatform.com"], // Replace with your admin email
+      from: "DNA Platform <jaune@roadmap.africa>",
+      to: ["jaune@roadmap.africa"],
       subject: `New Interest from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #065f46;">New Platform Interest</h1>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
+          ${linkedin_url ? `<p><strong>LinkedIn:</strong> <a href="${linkedin_url}">${linkedin_url}</a></p>` : ''}
           ${message ? `<p><strong>Message:</strong> ${message}</p>` : ''}
           <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
         </div>
