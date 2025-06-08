@@ -1,10 +1,11 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, DollarSign, Users, TrendingUp, Calendar, MapPin, CheckCircle, Info } from 'lucide-react';
+import { ArrowLeft, Heart, DollarSign, Users, TrendingUp, Calendar, MapPin, CheckCircle, Info, PieChart, Clock, Target } from 'lucide-react';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
 
