@@ -168,20 +168,40 @@ export const useSearch = () => {
     setError(null);
     
     try {
+      console.log('Loading all data from database...');
+      
       const [professionalsRes, communitiesRes, eventsRes] = await Promise.all([
         supabase.from('professionals').select('*').order('created_at', { ascending: false }),
         supabase.from('communities').select('*').order('member_count', { ascending: false }),
-        supabase.from('events').select('*').gte('date_time', new Date().toISOString()).order('date_time', { ascending: true })
+        // Remove the date filter - show all events
+        supabase.from('events').select('*').order('date_time', { ascending: true })
       ]);
       
-      if (professionalsRes.error) throw professionalsRes.error;
-      if (communitiesRes.error) throw communitiesRes.error;
-      if (eventsRes.error) throw eventsRes.error;
+      if (professionalsRes.error) {
+        console.error('Professionals error:', professionalsRes.error);
+        throw professionalsRes.error;
+      }
+      if (communitiesRes.error) {
+        console.error('Communities error:', communitiesRes.error);
+        throw communitiesRes.error;
+      }
+      if (eventsRes.error) {
+        console.error('Events error:', eventsRes.error);
+        throw eventsRes.error;
+      }
+      
+      console.log('Raw data from database:', {
+        professionals: professionalsRes.data?.length || 0,
+        communities: communitiesRes.data?.length || 0,
+        events: eventsRes.data?.length || 0,
+        eventsList: eventsRes.data
+      });
       
       setProfessionals(professionalsRes.data || []);
       setCommunities(communitiesRes.data || []);
       setEvents(eventsRes.data || []);
     } catch (err) {
+      console.error('Error in getAllData:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
