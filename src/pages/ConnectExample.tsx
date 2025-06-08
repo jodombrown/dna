@@ -70,7 +70,9 @@ const ConnectExample = () => {
   };
 
   const handleConnect = async (professionalId: string) => {
+    console.log('Connect button clicked for professional:', professionalId);
     if (!user) {
+      console.log('User not logged in, showing connect dialog');
       setIsConnectDialogOpen(true);
       return;
     }
@@ -85,7 +87,9 @@ const ConnectExample = () => {
   };
 
   const handleMessage = async (recipientId: string, recipientName: string) => {
+    console.log('Message button clicked for professional:', recipientId, recipientName);
     if (!user) {
+      console.log('User not logged in, showing message dialog');
       setIsMessageDialogOpen(true);
       return;
     }
@@ -181,8 +185,14 @@ const ConnectExample = () => {
                   <ProfessionalCard
                     key={professional.id}
                     professional={professional}
-                    onConnect={() => handleConnect(professional.id)}
-                    onMessage={() => handleMessage(professional.id, professional.full_name)}
+                    onConnect={() => {
+                      console.log('Calling handleConnect for:', professional.id);
+                      handleConnect(professional.id);
+                    }}
+                    onMessage={() => {
+                      console.log('Calling handleMessage for:', professional.id, professional.full_name);
+                      handleMessage(professional.id, professional.full_name);
+                    }}
                     connectionStatus={getConnectionStatus(professional.id)}
                     isLoggedIn={!!user}
                   />

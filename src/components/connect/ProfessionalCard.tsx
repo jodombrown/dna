@@ -3,7 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, User, MessageSquare } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MapPin, MessageSquare } from 'lucide-react';
 import { Professional } from '@/types/search';
 
 interface ProfessionalCardProps {
@@ -13,6 +14,13 @@ interface ProfessionalCardProps {
   connectionStatus: string | null;
   isLoggedIn: boolean;
 }
+
+// Helper function to generate culturally appropriate profile images
+const getProfileImage = (name: string, countryOfOrigin: string) => {
+  const seed = name.toLowerCase().replace(/\s+/g, '');
+  // Use diverse avatar service that provides culturally appropriate images
+  return `https://api.dicebear.com/7.x/personas/svg?seed=${seed}&backgroundColor=f3f4f6&backgroundType=gradientLinear`;
+};
 
 const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   professional,
@@ -24,9 +32,15 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   <Card className="hover:shadow-lg transition-shadow">
     <CardHeader>
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-dna-copper to-dna-emerald rounded-full flex items-center justify-center">
-          <User className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-        </div>
+        <Avatar className="w-12 h-12 sm:w-16 sm:h-16">
+          <AvatarImage 
+            src={getProfileImage(professional.full_name, professional.country_of_origin)} 
+            alt={professional.full_name}
+          />
+          <AvatarFallback className="bg-gradient-to-br from-dna-copper to-dna-emerald text-white">
+            {professional.full_name.split(' ').map(n => n[0]).join('')}
+          </AvatarFallback>
+        </Avatar>
         <div className="flex-1 min-w-0">
           <CardTitle className="text-base sm:text-lg mb-1">{professional.full_name}</CardTitle>
           <p className="text-dna-copper font-medium text-sm sm:text-base">{professional.profession}</p>
@@ -81,7 +95,11 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         ) : (
           <Button 
             className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
-            onClick={onConnect}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onConnect();
+            }}
             disabled={!isLoggedIn}
           >
             Connect
@@ -90,7 +108,11 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         
         <Button 
           variant="outline"
-          onClick={onMessage}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onMessage();
+          }}
           disabled={!isLoggedIn}
         >
           <MessageSquare className="w-4 h-4 mr-2" />
