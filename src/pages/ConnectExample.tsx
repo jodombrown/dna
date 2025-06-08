@@ -19,6 +19,8 @@ const ConnectExample = () => {
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState<'professionals' | 'communities' | 'events'>('professionals');
 
   // Mock data with updated profile images
   const mockProfessionals: Professional[] = [
@@ -32,8 +34,13 @@ const ConnectExample = () => {
       expertise: ['Blockchain', 'Financial Inclusion', 'Digital Payments'],
       availability_for: ['Mentorship', 'Investment', 'Advisory'],
       bio: 'Leading financial inclusion through blockchain technology across West Africa. Former Goldman Sachs VP.',
-      profile_image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
-      linkedin_url: 'https://linkedin.com/in/amaraokafor'
+      avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/amaraokafor',
+      is_mentor: true,
+      is_investor: true,
+      looking_for_opportunities: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '2',
@@ -45,8 +52,13 @@ const ConnectExample = () => {
       expertise: ['Sustainable Agriculture', 'Climate Tech', 'Food Security'],
       availability_for: ['Collaboration', 'Research Partnerships'],
       bio: 'Pioneer in climate-smart agriculture solutions. Published researcher with 50+ papers on sustainable farming.',
-      profile_image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      linkedin_url: 'https://linkedin.com/in/kwameasante'
+      avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/kwameasante',
+      is_mentor: true,
+      is_investor: false,
+      looking_for_opportunities: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '3',
@@ -58,8 +70,13 @@ const ConnectExample = () => {
       expertise: ['Impact Investing', 'ESG', 'Private Equity'],
       availability_for: ['Investment', 'Board Positions', 'Strategic Advisory'],
       bio: 'Managing $500M+ in African impact investments. Former McKinsey partner specializing in emerging markets.',
-      profile_image: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=150&h=150&fit=crop&crop=face',
-      linkedin_url: 'https://linkedin.com/in/zarambeki'
+      avatar_url: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/zarambeki',
+      is_mentor: false,
+      is_investor: true,
+      looking_for_opportunities: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '4',
@@ -71,8 +88,13 @@ const ConnectExample = () => {
       expertise: ['Educational Technology', 'AI in Education', 'Digital Literacy'],
       availability_for: ['Partnerships', 'Scaling Support', 'Mentorship'],
       bio: 'Building AI-powered education platforms serving 2M+ students across MENA and Sub-Saharan Africa.',
-      profile_image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-      linkedin_url: 'https://linkedin.com/in/ibrahimhassan'
+      avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/ibrahimhassan',
+      is_mentor: true,
+      is_investor: false,
+      looking_for_opportunities: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '5',
@@ -84,8 +106,13 @@ const ConnectExample = () => {
       expertise: ['Digital Health', 'Telemedicine', 'Health Systems'],
       availability_for: ['Collaboration', 'Technical Expertise', 'Funding'],
       bio: 'Developing telemedicine solutions for rural Africa. Former WHO consultant on digital health initiatives.',
-      profile_image: 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=150&h=150&fit=crop&crop=face',
-      linkedin_url: 'https://linkedin.com/in/fatimakone'
+      avatar_url: 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/fatimakone',
+      is_mentor: true,
+      is_investor: false,
+      looking_for_opportunities: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '6',
@@ -97,8 +124,13 @@ const ConnectExample = () => {
       expertise: ['Solar Energy', 'Grid Infrastructure', 'Energy Storage'],
       availability_for: ['Technical Consulting', 'Project Development'],
       bio: 'Leading solar energy projects across West Africa. MIT graduate with 15+ years in renewable energy.',
-      profile_image: 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
-      linkedin_url: 'https://linkedin.com/in/kofimensah'
+      avatar_url: 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/kofimensah',
+      is_mentor: false,
+      is_investor: false,
+      looking_for_opportunities: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     }
   ];
 
@@ -109,8 +141,9 @@ const ConnectExample = () => {
       description: 'A global network of African tech founders and entrepreneurs building the next generation of African startups.',
       member_count: 1250,
       category: 'Technology',
-      location: 'Global',
-      is_verified: true
+      is_featured: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '2',
@@ -118,8 +151,9 @@ const ConnectExample = () => {
       description: 'Empowering African women in business through mentorship, networking, and collaborative opportunities.',
       member_count: 890,
       category: 'Business',
-      location: 'Global',
-      is_verified: true
+      is_featured: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '3',
@@ -127,8 +161,9 @@ const ConnectExample = () => {
       description: 'Connecting healthcare professionals working on innovative solutions for African health challenges.',
       member_count: 567,
       category: 'Healthcare',
-      location: 'Global',
-      is_verified: true
+      is_featured: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '4',
@@ -136,8 +171,9 @@ const ConnectExample = () => {
       description: 'Agricultural experts and innovators working on sustainable farming solutions for Africa.',
       member_count: 734,
       category: 'Agriculture',
-      location: 'Global',
-      is_verified: true
+      is_featured: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     }
   ];
 
@@ -150,7 +186,10 @@ const ConnectExample = () => {
       location: 'Lagos, Nigeria',
       attendee_count: 450,
       type: 'Conference',
-      is_virtual: false
+      is_virtual: false,
+      is_featured: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '2',
@@ -160,7 +199,10 @@ const ConnectExample = () => {
       location: 'Virtual',
       attendee_count: 120,
       type: 'Workshop',
-      is_virtual: true
+      is_virtual: true,
+      is_featured: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '3',
@@ -170,7 +212,10 @@ const ConnectExample = () => {
       location: 'Nairobi, Kenya',
       attendee_count: 320,
       type: 'Networking',
-      is_virtual: false
+      is_virtual: false,
+      is_featured: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '4',
@@ -180,7 +225,10 @@ const ConnectExample = () => {
       location: 'Virtual',
       attendee_count: 200,
       type: 'Workshop',
-      is_virtual: true
+      is_virtual: true,
+      is_featured: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '5',
@@ -190,7 +238,10 @@ const ConnectExample = () => {
       location: 'Cairo, Egypt',
       attendee_count: 280,
       type: 'Cultural',
-      is_virtual: false
+      is_virtual: false,
+      is_featured: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     },
     {
       id: '6',
@@ -200,29 +251,19 @@ const ConnectExample = () => {
       location: 'Kigali, Rwanda',
       attendee_count: 380,
       type: 'Conference',
-      is_virtual: false
+      is_virtual: false,
+      is_featured: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     }
   ];
 
-  const {
-    searchQuery,
-    selectedFilters,
-    activeTab,
-    setSearchQuery,
-    setSelectedFilters,
-    setActiveTab,
-    filteredResults
-  } = useSearch({
-    professionals: mockProfessionals,
-    communities: mockCommunities,
-    events: mockEvents
-  });
-
-  const { connectionStatus, sendConnectionRequest } = useConnections();
+  const { professionals, communities, events, loading, error } = useSearch();
+  const { connections } = useConnections();
   const { sendMessage } = useMessages();
 
   const handleConnect = (professional: Professional) => {
-    sendConnectionRequest(professional.id);
+    console.log('Connecting to:', professional.full_name);
   };
 
   const handleMessage = (professional: Professional) => {
@@ -239,14 +280,58 @@ const ConnectExample = () => {
     setShowRegisterDialog(true);
   };
 
+  const handleRefresh = () => {
+    console.log('Refreshing data...');
+  };
+
   const isLoggedIn = false; // Mock logged out state for demo
+
+  const getFilteredData = () => {
+    const searchLower = searchTerm.toLowerCase();
+    
+    if (activeTab === 'professionals') {
+      return {
+        professionals: mockProfessionals.filter(p => 
+          p.full_name.toLowerCase().includes(searchLower) ||
+          p.profession?.toLowerCase().includes(searchLower) ||
+          p.company?.toLowerCase().includes(searchLower)
+        ),
+        communities: [],
+        events: []
+      };
+    }
+    
+    if (activeTab === 'communities') {
+      return {
+        professionals: [],
+        communities: mockCommunities.filter(c =>
+          c.name.toLowerCase().includes(searchLower) ||
+          c.description?.toLowerCase().includes(searchLower)
+        ),
+        events: []
+      };
+    }
+    
+    if (activeTab === 'events') {
+      return {
+        professionals: [],
+        communities: [],
+        events: mockEvents.filter(e =>
+          e.title.toLowerCase().includes(searchLower) ||
+          e.description?.toLowerCase().includes(searchLower)
+        )
+      };
+    }
+    
+    return { professionals: [], communities: [], events: [] };
+  };
 
   const renderContent = () => {
     if (!isLoggedIn) {
-      return <EmptyState />;
+      return <EmptyState type={activeTab} onRefresh={handleRefresh} />;
     }
 
-    const results = filteredResults();
+    const results = getFilteredData();
 
     if (activeTab === 'professionals') {
       return (
@@ -257,7 +342,7 @@ const ConnectExample = () => {
               professional={professional}
               onConnect={() => handleConnect(professional)}
               onMessage={() => handleMessage(professional)}
-              connectionStatus={connectionStatus[professional.id] || null}
+              connectionStatus={null}
               isLoggedIn={isLoggedIn}
             />
           ))}
@@ -298,9 +383,13 @@ const ConnectExample = () => {
     return null;
   };
 
+  const totalCount = activeTab === 'professionals' ? mockProfessionals.length : 
+                   activeTab === 'communities' ? mockCommunities.length : 
+                   mockEvents.length;
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <ConnectHeader />
+      <ConnectHeader totalCount={totalCount} />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
@@ -319,13 +408,35 @@ const ConnectExample = () => {
         </div>
 
         <SearchSection
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          selectedFilters={selectedFilters}
-          setSelectedFilters={setSelectedFilters}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          onSearch={() => console.log('Searching...')}
+          loading={loading}
         />
+
+        <div className="flex gap-4 mb-6">
+          <Button
+            variant={activeTab === 'professionals' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('professionals')}
+            className={activeTab === 'professionals' ? 'bg-dna-emerald hover:bg-dna-forest text-white' : ''}
+          >
+            Professionals
+          </Button>
+          <Button
+            variant={activeTab === 'communities' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('communities')}
+            className={activeTab === 'communities' ? 'bg-dna-emerald hover:bg-dna-forest text-white' : ''}
+          >
+            Communities
+          </Button>
+          <Button
+            variant={activeTab === 'events' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('events')}
+            className={activeTab === 'events' ? 'bg-dna-emerald hover:bg-dna-forest text-white' : ''}
+          >
+            Events
+          </Button>
+        </div>
 
         <div className="mt-8">
           {renderContent()}
