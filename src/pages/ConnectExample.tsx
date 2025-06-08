@@ -7,6 +7,7 @@ import { useConnections } from '@/hooks/useConnections';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { Info } from 'lucide-react';
 import ConnectHeader from '@/components/connect/ConnectHeader';
 import SearchSection from '@/components/connect/SearchSection';
 import ProfessionalCard from '@/components/connect/ProfessionalCard';
@@ -131,6 +132,21 @@ const ConnectExample = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <ConnectHeader totalCount={totalCount} />
+
+      {/* Prototype Stage Notice */}
+      <div className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-dna-emerald mt-0.5 flex-shrink-0" />
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-1">Platform Preview - Prototype Stage</h3>
+              <p className="text-sm text-gray-700">
+                Welcome to a preview of our Connect experience! What you see below represents our vision for how diaspora professionals will discover and network with each other once the DNA platform is fully built. This prototype demonstrates the seamless connection capabilities we're developing to unite the African diaspora globally.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <SearchSection
