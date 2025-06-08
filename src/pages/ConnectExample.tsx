@@ -1,7 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { useSearch } from '@/hooks/useSearch';
 import { useConnections } from '@/hooks/useConnections';
@@ -29,6 +29,9 @@ const ConnectExample = () => {
   const [initializing, setInitializing] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
+  const [isConnectDialogOpen, setIsConnectDialogOpen] = useState(false);
+  const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
+  const [isRegisterDialogOpen, setIsRegisterDialogOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -68,8 +71,7 @@ const ConnectExample = () => {
 
   const handleConnect = async (professionalId: string) => {
     if (!user) {
-      toast.error('Please log in to connect with professionals');
-      navigate('/auth');
+      setIsConnectDialogOpen(true);
       return;
     }
 
@@ -84,8 +86,7 @@ const ConnectExample = () => {
 
   const handleMessage = async (recipientId: string, recipientName: string) => {
     if (!user) {
-      toast.error('Please log in to send messages');
-      navigate('/auth');
+      setIsMessageDialogOpen(true);
       return;
     }
 
@@ -96,6 +97,10 @@ const ConnectExample = () => {
       console.error('Message error:', error);
       toast.error('Failed to send message');
     }
+  };
+
+  const handleRegister = () => {
+    setIsRegisterDialogOpen(true);
   };
 
   const getConnectionStatus = (professionalId: string) => {
@@ -236,6 +241,114 @@ const ConnectExample = () => {
       </main>
 
       <Footer />
+      
+      {/* Connect Dialog */}
+      <Dialog open={isConnectDialogOpen} onOpenChange={setIsConnectDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-dna-emerald" />
+              How Professional Connections Work
+            </DialogTitle>
+            <DialogDescription className="text-left space-y-4 pt-4">
+              <p>
+                In our fully built platform, the Connect feature will enable you to:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>Send personalized connection requests with custom messages</li>
+                <li>Build your professional network across the African diaspora</li>
+                <li>Access detailed professional profiles and expertise areas</li>
+                <li>Receive intelligent matching suggestions based on your interests</li>
+                <li>Join professional groups and industry-specific communities</li>
+                <li>Participate in networking events and virtual meetups</li>
+              </ul>
+              <p className="text-sm text-gray-600 bg-dna-emerald/10 p-3 rounded">
+                Right now, you would need to create an account to access these networking features. We're building this to be the premier professional network for the African diaspora.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3">
+            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
+              Create Account
+            </Button>
+            <Button variant="outline" onClick={() => setIsConnectDialogOpen(false)}>
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Message Dialog */}
+      <Dialog open={isMessageDialogOpen} onOpenChange={setIsMessageDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-dna-copper" />
+              How Messaging Works
+            </DialogTitle>
+            <DialogDescription className="text-left space-y-4 pt-4">
+              <p>
+                Our messaging system will provide secure, professional communication:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>Direct messaging with diaspora professionals worldwide</li>
+                <li>Group messaging for project collaborations</li>
+                <li>File sharing and document collaboration tools</li>
+                <li>Video call integration for face-to-face conversations</li>
+                <li>Translation services for cross-language communication</li>
+                <li>Professional networking etiquette guidelines</li>
+              </ul>
+              <p className="text-sm text-gray-600 bg-dna-copper/10 p-3 rounded">
+                To use messaging features, you'll need to be a registered member of our platform.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3">
+            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-copper hover:bg-dna-gold text-white">
+              Join Platform
+            </Button>
+            <Button variant="outline" onClick={() => setIsMessageDialogOpen(false)}>
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Register Dialog */}
+      <Dialog open={isRegisterDialogOpen} onOpenChange={setIsRegisterDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-dna-forest" />
+              Join the DNA Community
+            </DialogTitle>
+            <DialogDescription className="text-left space-y-4 pt-4">
+              <p>
+                Registering for events and communities will give you access to:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>Exclusive diaspora networking events and webinars</li>
+                <li>Industry-specific community groups and discussions</li>
+                <li>Early access to collaboration opportunities</li>
+                <li>Mentorship programs connecting seniors with emerging professionals</li>
+                <li>Resource libraries and professional development tools</li>
+                <li>Regional meetups and cultural celebrations</li>
+              </ul>
+              <p className="text-sm text-gray-600 bg-dna-forest/10 p-3 rounded">
+                Create your profile to start connecting with thousands of diaspora professionals and access our growing network of communities and events.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3">
+            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-forest hover:bg-dna-emerald text-white">
+              Create Profile
+            </Button>
+            <Button variant="outline" onClick={() => setIsRegisterDialogOpen(false)}>
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}

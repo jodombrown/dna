@@ -1,23 +1,27 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, DollarSign, Users, TrendingUp, Calendar, MapPin, CheckCircle, Info, PieChart, Clock, Target } from 'lucide-react';
+import { ArrowLeft, Heart, DollarSign, Users, TrendingUp, Calendar, MapPin, CheckCircle, Info, PieChart, Clock, Target, X } from 'lucide-react';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
 
 const ContributeExample = () => {
   const navigate = useNavigate();
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
+  const [isContributeDialogOpen, setIsContributeDialogOpen] = useState(false);
+  const [isLearnMoreOpen, setIsLearnMoreOpen] = useState(false);
+  const [selectedPathway, setSelectedPathway] = useState<any>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const contributionOpportunities = [
+  const contributionPathways = [
     {
       id: 1,
       title: "Solar Education Initiative",
@@ -29,7 +33,16 @@ const ContributeExample = () => {
       timeLeft: "23 days",
       impactMetric: "15,000 students reached",
       category: "Education & Energy",
-      urgency: "High"
+      urgency: "High",
+      detailedDescription: "This initiative focuses on establishing solar energy education programs in rural schools across Kenya and Nigeria. We partner with local educators to develop curriculum and install demonstration solar panels that serve both as learning tools and practical energy sources for the schools.",
+      goals: [
+        "Install solar education labs in 50 rural schools",
+        "Train 200 teachers in renewable energy curriculum",
+        "Provide hands-on learning for 15,000 students",
+        "Create sustainable energy sources for school operations"
+      ],
+      timeline: "12-month implementation with quarterly milestones",
+      partnership: "Working with local education ministries and renewable energy companies"
     },
     {
       id: 2,
@@ -42,7 +55,16 @@ const ContributeExample = () => {
       timeLeft: "45 days",
       impactMetric: "50,000 patients served",
       category: "Healthcare Technology",
-      urgency: "Medium"
+      urgency: "Medium",
+      detailedDescription: "A comprehensive telemedicine platform connecting diaspora healthcare professionals with patients in remote African communities. The platform includes video consultations, digital health records, and mobile health units for areas with limited internet connectivity.",
+      goals: [
+        "Connect 500+ diaspora doctors with remote communities",
+        "Serve 50,000 patients in first year",
+        "Establish 20 mobile health unit partnerships",
+        "Create multilingual health education resources"
+      ],
+      timeline: "18-month development and deployment phase",
+      partnership: "Collaborating with African Medical Association and local health ministries"
     },
     {
       id: 3,
@@ -55,7 +77,16 @@ const ContributeExample = () => {
       timeLeft: "67 days",
       impactMetric: "5,000 farmers supported",
       category: "Agriculture & Tech",
-      urgency: "Low"
+      urgency: "Low",
+      detailedDescription: "A blockchain-powered platform that creates transparency in agricultural supply chains, ensuring farmers receive fair prices while providing consumers with traceability of their food sources. This system reduces middleman exploitation and increases farmer income.",
+      goals: [
+        "Onboard 5,000 farmers across 5 countries",
+        "Establish direct market connections",
+        "Implement blockchain tracking for crop-to-consumer journey",
+        "Increase farmer income by average 40%"
+      ],
+      timeline: "24-month rollout with pilot programs in Ghana and Nigeria",
+      partnership: "Working with agricultural cooperatives and fintech companies"
     }
   ];
 
@@ -72,6 +103,11 @@ const ContributeExample = () => {
     { name: "Agriculture", percentage: 22, amount: 27940 },
     { name: "Technology", percentage: 15, amount: 19050 }
   ];
+
+  const handleLearnMore = (pathway: any) => {
+    setSelectedPathway(pathway);
+    setIsLearnMoreOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -209,33 +245,33 @@ const ContributeExample = () => {
           </CardContent>
         </Card>
 
-        {/* Contribution Opportunities */}
+        {/* Active Contribution Pathways */}
         <div className="mb-8">
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Active Contribution Opportunities</h3>
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Active Contribution Pathways</h3>
           <div className="space-y-6">
-            {contributionOpportunities.map((opportunity) => (
-              <Card key={opportunity.id} className="overflow-hidden">
+            {contributionPathways.map((pathway) => (
+              <Card key={pathway.id} className="overflow-hidden">
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="text-base sm:text-lg mb-2">{opportunity.title}</CardTitle>
-                      <p className="text-sm sm:text-base text-gray-600">{opportunity.description}</p>
+                      <CardTitle className="text-base sm:text-lg mb-2">{pathway.title}</CardTitle>
+                      <p className="text-sm sm:text-base text-gray-600">{pathway.description}</p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-2">
                       <Badge 
                         className={`${
-                          opportunity.urgency === 'High' ? 'bg-red-100 text-red-800' :
-                          opportunity.urgency === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                          pathway.urgency === 'High' ? 'bg-red-100 text-red-800' :
+                          pathway.urgency === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-green-100 text-green-800'
                         } text-xs`}
                       >
-                        {opportunity.urgency} Priority
+                        {pathway.urgency} Priority
                       </Badge>
-                      <Badge variant="outline" className="text-xs">{opportunity.type}</Badge>
+                      <Badge variant="outline" className="text-xs">{pathway.type}</Badge>
                     </div>
                   </div>
                   <Badge className="w-fit bg-dna-emerald/20 text-dna-emerald text-xs">
-                    {opportunity.category}
+                    {pathway.category}
                   </Badge>
                 </CardHeader>
                 
@@ -244,16 +280,16 @@ const ContributeExample = () => {
                     <div className="flex items-center gap-2">
                       <DollarSign className="w-4 h-4 text-gray-400" />
                       <span className="text-sm">
-                        ${opportunity.currentAmount.toLocaleString()} / ${opportunity.targetAmount.toLocaleString()}
+                        ${pathway.currentAmount.toLocaleString()} / ${pathway.targetAmount.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm">{opportunity.contributors} contributors</span>
+                      <span className="text-sm">{pathway.contributors} contributors</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm">{opportunity.timeLeft} remaining</span>
+                      <span className="text-sm">{pathway.timeLeft} remaining</span>
                     </div>
                   </div>
                   
@@ -261,11 +297,11 @@ const ContributeExample = () => {
                     <div className="flex justify-between text-sm mb-2">
                       <span>Funding Progress</span>
                       <span className="font-medium">
-                        {Math.round((opportunity.currentAmount / opportunity.targetAmount) * 100)}%
+                        {Math.round((pathway.currentAmount / pathway.targetAmount) * 100)}%
                       </span>
                     </div>
                     <Progress 
-                      value={(opportunity.currentAmount / opportunity.targetAmount) * 100} 
+                      value={(pathway.currentAmount / pathway.targetAmount) * 100} 
                       className="h-2"
                     />
                   </div>
@@ -274,17 +310,23 @@ const ContributeExample = () => {
                     <div className="flex items-center gap-2">
                       <Target className="w-4 h-4 text-dna-emerald" />
                       <span className="text-sm font-medium text-dna-emerald">
-                        Projected Impact: {opportunity.impactMetric}
+                        Projected Impact: {pathway.impactMetric}
                       </span>
                     </div>
                   </div>
                   
                   <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                    <Button className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
+                    <Button 
+                      onClick={() => setIsContributeDialogOpen(true)}
+                      className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
+                    >
                       <DollarSign className="w-4 h-4 mr-2" />
                       Contribute Now
                     </Button>
-                    <Button variant="outline">
+                    <Button 
+                      onClick={() => handleLearnMore(pathway)}
+                      variant="outline"
+                    >
                       Learn More
                     </Button>
                   </div>
@@ -347,6 +389,107 @@ const ContributeExample = () => {
       </main>
 
       <Footer />
+      
+      {/* Contribute Now Dialog */}
+      <Dialog open={isContributeDialogOpen} onOpenChange={setIsContributeDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-dna-emerald" />
+              How We Envision Contributing
+            </DialogTitle>
+            <DialogDescription className="text-left space-y-4 pt-4">
+              <p>
+                In our fully built platform, clicking "Contribute Now" will take you through a seamless process where you can:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>Choose your contribution type (financial, skills, or time)</li>
+                <li>Set up secure payment processing for financial contributions</li>
+                <li>Connect with project coordinators for skills-based volunteering</li>
+                <li>Schedule time commitments that fit your availability</li>
+                <li>Track your impact in real-time through detailed analytics</li>
+                <li>Join project-specific communication channels</li>
+              </ul>
+              <p className="text-sm text-gray-600 bg-dna-emerald/10 p-3 rounded">
+                This is our vision for how contribution will work. We're building this experience to be as seamless and impactful as possible.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end">
+            <Button onClick={() => setIsContributeDialogOpen(false)}>
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Learn More Sheet */}
+      <Sheet open={isLearnMoreOpen} onOpenChange={setIsLearnMoreOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+          {selectedPathway && (
+            <>
+              <SheetHeader className="mb-6">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-dna-emerald/10 rounded-lg">
+                    <Target className="w-6 h-6 text-dna-emerald" />
+                  </div>
+                  <Badge className="bg-dna-emerald text-white">
+                    {selectedPathway.category}
+                  </Badge>
+                </div>
+                <SheetTitle className="text-2xl text-gray-900">{selectedPathway.title}</SheetTitle>
+                <SheetDescription className="text-base text-gray-600">
+                  {selectedPathway.detailedDescription}
+                </SheetDescription>
+              </SheetHeader>
+
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Project Goals</h3>
+                  <ul className="space-y-2">
+                    {selectedPathway.goals.map((goal: string, index: number) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-dna-emerald mt-0.5 flex-shrink-0" />
+                        <span className="text-gray-700">{goal}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Timeline</h3>
+                  <p className="text-gray-700">{selectedPathway.timeline}</p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Partnership Approach</h3>
+                  <p className="text-gray-700">{selectedPathway.partnership}</p>
+                </div>
+
+                <div className="bg-gradient-to-r from-dna-emerald/5 to-dna-copper/5 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-2">Current Progress</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Funding Progress</span>
+                      <span className="font-medium">
+                        {Math.round((selectedPathway.currentAmount / selectedPathway.targetAmount) * 100)}%
+                      </span>
+                    </div>
+                    <Progress 
+                      value={(selectedPathway.currentAmount / selectedPathway.targetAmount) * 100} 
+                      className="h-2"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>${selectedPathway.currentAmount.toLocaleString()} raised</span>
+                      <span>{selectedPathway.contributors} contributors</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
       
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
