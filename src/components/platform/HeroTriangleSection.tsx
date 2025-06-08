@@ -92,18 +92,6 @@ const HeroTriangleSection = () => {
             </div>
           </div>
 
-          {/* Impact Statement */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg max-w-4xl mx-auto mb-12">
-            <h4 className="text-2xl font-bold text-gray-900 mb-4">
-              Amplifying Africa's Potential
-            </h4>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              When diaspora professionals connect with purpose, collaborate on meaningful projects, 
-              and contribute their unique skills, we create a multiplying effect that transforms entire communities 
-              and drives sustainable development across the African continent.
-            </p>
-          </div>
-
           <Button 
             onClick={scrollToConnectSection}
             className="bg-gray-800 hover:bg-gray-900 text-white rounded-full px-8 py-3 flex items-center gap-2 mx-auto"

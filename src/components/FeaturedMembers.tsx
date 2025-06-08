@@ -9,7 +9,7 @@ const FeaturedMembers = () => {
       title: "Tech Executive & Innovation Strategist",
       location: "Lagos, Nigeria → San Francisco, USA",
       company: "FinTech Africa",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face",
+      image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face",
       impact: "Launched 5 startups connecting African markets globally"
     },
     {

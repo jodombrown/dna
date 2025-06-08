@@ -17,9 +17,44 @@ interface ProfessionalCardProps {
 
 // Helper function to generate culturally appropriate profile images
 const getProfileImage = (name: string, countryOfOrigin: string) => {
-  const seed = name.toLowerCase().replace(/\s+/g, '');
-  // Use diverse avatar service that provides culturally appropriate images
-  return `https://api.dicebear.com/7.x/personas/svg?seed=${seed}&backgroundColor=f3f4f6&backgroundType=gradientLinear`;
+  // Map of real Unsplash photos of African professionals
+  const imageMap: { [key: string]: string } = {
+    // African Women
+    'Amara Okafor': 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face',
+    'Zara Mbeki': 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+    'Fatima Hassan': 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=150&h=150&fit=crop&crop=face',
+    'Aisha Kone': 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=150&h=150&fit=crop&crop=face',
+    'Ngozi Adebayo': 'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=150&h=150&fit=crop&crop=face',
+    
+    // African Men
+    'Kwame Asante': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    'Ibrahim Hassan': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+    'Kofi Mensah': 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
+    'Sekou Traore': 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face',
+    'Emeka Okonkwo': 'https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=150&h=150&fit=crop&crop=face',
+    'Thierry Mukendi': 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face',
+    'Ahmed El-Rashid': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+    'Moses Kiprotich': 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&h=150&fit=crop&crop=face',
+    
+    // Mixed Heritage/Light-skinned Africans
+    'Yasmin El-Sayed': 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=150&h=150&fit=crop&crop=face',
+    'Omar Benali': 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face'
+  };
+
+  // Return specific image for known names, or fallback to a default based on gender hints
+  if (imageMap[name]) {
+    return imageMap[name];
+  }
+
+  // Fallback based on name patterns
+  const femaleNames = ['Amara', 'Zara', 'Fatima', 'Aisha', 'Ngozi', 'Yasmin', 'Kemi', 'Adaora', 'Safiya'];
+  const isLikelyFemale = femaleNames.some(fname => name.includes(fname));
+  
+  if (isLikelyFemale) {
+    return 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face';
+  } else {
+    return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face';
+  }
 };
 
 const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
