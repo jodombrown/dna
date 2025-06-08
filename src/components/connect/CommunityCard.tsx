@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Users as UsersIcon } from 'lucide-react';
-import { Community } from '@/hooks/useSearch';
+import { Community } from '@/types/search';
 
 interface CommunityCardProps {
   community: Community;

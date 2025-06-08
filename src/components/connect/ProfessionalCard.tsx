@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, User, MessageSquare } from 'lucide-react';
-import { Professional } from '@/hooks/useSearch';
+import { Professional } from '@/types/search';
 
 interface ProfessionalCardProps {
   professional: Professional;

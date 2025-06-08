@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users as UsersIcon } from 'lucide-react';
-import { Event } from '@/hooks/useSearch';
+import { Event } from '@/types/search';
 
 interface EventCardProps {
   event: Event;

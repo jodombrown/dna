@@ -1,58 +1,10 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Professional, Community, Event } from '@/types/search';
+import { searchProfessionals } from '@/services/professionalsService';
+import { searchCommunities } from '@/services/communitiesService';
+import { searchEvents } from '@/services/eventsService';
 import { supabase } from '@/integrations/supabase/client';
-
-export interface Professional {
-  id: string;
-  full_name: string;
-  profession?: string;
-  company?: string;
-  location?: string;
-  country_of_origin?: string;
-  expertise?: string[];
-  bio?: string;
-  years_experience?: number;
-  education?: string;
-  languages?: string[];
-  availability_for?: string[];
-  linkedin_url?: string;
-  website_url?: string;
-  avatar_url?: string;
-  is_mentor: boolean;
-  is_investor: boolean;
-  looking_for_opportunities: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Community {
-  id: string;
-  name: string;
-  description?: string;
-  category?: string;
-  member_count: number;
-  is_featured: boolean;
-  image_url?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Event {
-  id: string;
-  title: string;
-  description?: string;
-  type?: string;
-  date_time?: string;
-  location?: string;
-  is_virtual: boolean;
-  attendee_count: number;
-  max_attendees?: number;
-  is_featured: boolean;
-  image_url?: string;
-  registration_url?: string;
-  created_at: string;
-  updated_at: string;
-}
 
 export const useSearch = () => {
   const [professionals, setProfessionals] = useState<Professional[]>([]);
@@ -61,41 +13,13 @@ export const useSearch = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const searchProfessionals = async (searchTerm: string = '', filters: any = {}) => {
+  const handleSearchProfessionals = async (searchTerm: string = '', filters: any = {}) => {
     setLoading(true);
     setError(null);
     
     try {
-      let query = supabase.from('professionals').select('*');
-      
-      if (searchTerm) {
-        query = query.or(`full_name.ilike.%${searchTerm}%,profession.ilike.%${searchTerm}%,company.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%`);
-      }
-      
-      if (filters.expertise && filters.expertise.length > 0) {
-        query = query.overlaps('expertise', filters.expertise);
-      }
-      
-      if (filters.location) {
-        query = query.ilike('location', `%${filters.location}%`);
-      }
-      
-      if (filters.is_mentor !== undefined) {
-        query = query.eq('is_mentor', filters.is_mentor);
-      }
-      
-      if (filters.is_investor !== undefined) {
-        query = query.eq('is_investor', filters.is_investor);
-      }
-      
-      if (filters.looking_for_opportunities !== undefined) {
-        query = query.eq('looking_for_opportunities', filters.looking_for_opportunities);
-      }
-      
-      const { data, error } = await query.order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      setProfessionals(data || []);
+      const data = await searchProfessionals(searchTerm, filters);
+      setProfessionals(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -103,25 +27,13 @@ export const useSearch = () => {
     }
   };
 
-  const searchCommunities = async (searchTerm: string = '', category?: string) => {
+  const handleSearchCommunities = async (searchTerm: string = '', category?: string) => {
     setLoading(true);
     setError(null);
     
     try {
-      let query = supabase.from('communities').select('*');
-      
-      if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
-      }
-      
-      if (category) {
-        query = query.eq('category', category);
-      }
-      
-      const { data, error } = await query.order('member_count', { ascending: false });
-      
-      if (error) throw error;
-      setCommunities(data || []);
+      const data = await searchCommunities(searchTerm, category);
+      setCommunities(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -129,33 +41,13 @@ export const useSearch = () => {
     }
   };
 
-  const searchEvents = async (searchTerm: string = '', filters: any = {}) => {
+  const handleSearchEvents = async (searchTerm: string = '', filters: any = {}) => {
     setLoading(true);
     setError(null);
     
     try {
-      let query = supabase.from('events').select('*');
-      
-      if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
-      }
-      
-      if (filters.type) {
-        query = query.eq('type', filters.type);
-      }
-      
-      if (filters.is_virtual !== undefined) {
-        query = query.eq('is_virtual', filters.is_virtual);
-      }
-      
-      if (filters.upcoming_only) {
-        query = query.gte('date_time', new Date().toISOString());
-      }
-      
-      const { data, error } = await query.order('date_time', { ascending: true });
-      
-      if (error) throw error;
-      setEvents(data || []);
+      const data = await searchEvents(searchTerm, filters);
+      setEvents(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -173,7 +65,6 @@ export const useSearch = () => {
       const [professionalsRes, communitiesRes, eventsRes] = await Promise.all([
         supabase.from('professionals').select('*').order('created_at', { ascending: false }),
         supabase.from('communities').select('*').order('member_count', { ascending: false }),
-        // Remove the date filter - show all events
         supabase.from('events').select('*').order('date_time', { ascending: true })
       ]);
       
@@ -214,9 +105,12 @@ export const useSearch = () => {
     events,
     loading,
     error,
-    searchProfessionals,
-    searchCommunities,
-    searchEvents,
+    searchProfessionals: handleSearchProfessionals,
+    searchCommunities: handleSearchCommunities,
+    searchEvents: handleSearchEvents,
     getAllData
   };
 };
+
+// Re-export types for backward compatibility
+export type { Professional, Community, Event };
