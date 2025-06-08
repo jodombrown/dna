@@ -13,7 +13,7 @@ const corsHeaders = {
 interface ContactEmailRequest {
   name: string;
   email: string;
-  linkedin?: string;
+  message?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -23,13 +23,13 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, linkedin }: ContactEmailRequest = await req.json();
+    const { name, email, message }: ContactEmailRequest = await req.json();
 
     console.log("Sending email to:", email, "from:", name);
 
     // Send confirmation email to the user
     const userEmailResponse = await resend.emails.send({
-      from: "DNA Platform <jaune@roadmap.africa>",
+      from: "DNA Platform <noreply@resend.dev>",
       to: [email],
       subject: "Welcome to the DNA Platform - We received your interest!",
       html: `
@@ -55,8 +55,7 @@ const handler = async (req: Request): Promise<Response> => {
           </p>
           <p style="color: #374151; font-size: 16px; line-height: 1.6;">
             Best regards,<br>
-            <strong>The DNA Platform Team</strong><br>
-            <em>Roadmap.Africa</em>
+            <strong>The DNA Platform Team</strong>
           </p>
         </div>
       `,
@@ -64,15 +63,15 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send notification email to admin
     const adminEmailResponse = await resend.emails.send({
-      from: "DNA Platform <jaune@roadmap.africa>",
-      to: ["jaune@roadmap.africa"],
+      from: "DNA Platform <noreply@resend.dev>",
+      to: ["admin@dnaplatform.com"], // Replace with your admin email
       subject: `New Interest from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h1 style="color: #065f46;">New Platform Interest</h1>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
-          ${linkedin ? `<p><strong>LinkedIn:</strong> ${linkedin}</p>` : ''}
+          ${message ? `<p><strong>Message:</strong> ${message}</p>` : ''}
           <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
         </div>
       `,
