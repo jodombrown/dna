@@ -31,6 +31,7 @@ const SimpleEmailForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validation
     if (!formData.firstName || !formData.lastName || !formData.email) {
       toast({
         title: "Missing Information",
@@ -52,21 +53,37 @@ const SimpleEmailForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Since this is a prototype, we'll simulate the email submission
+      // In a real implementation, this would send to a backend service
+      console.log('Form submission:', formData);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Store in localStorage as a fallback for demo purposes
+      const submissions = JSON.parse(localStorage.getItem('dna-submissions') || '[]');
+      submissions.push({
+        ...formData,
+        timestamp: new Date().toISOString(),
+        id: Date.now()
+      });
+      localStorage.setItem('dna-submissions', JSON.stringify(submissions));
       
       toast({
         title: "Thank you!",
         description: "You've been added to our early access list. We'll be in touch soon!",
       });
       
+      // Clear form
       setFormData({
         firstName: '',
         lastName: '',
         email: '',
         linkedin: ''
       });
+      
     } catch (error) {
+      console.error('Form submission error:', error);
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
@@ -109,6 +126,7 @@ const SimpleEmailForm = () => {
               required
               maxLength={50}
               className="w-full"
+              disabled={isSubmitting}
             />
           </div>
           <div>
@@ -124,6 +142,7 @@ const SimpleEmailForm = () => {
               required
               maxLength={50}
               className="w-full"
+              disabled={isSubmitting}
             />
           </div>
         </div>
@@ -141,6 +160,7 @@ const SimpleEmailForm = () => {
             required
             maxLength={254}
             className="w-full"
+            disabled={isSubmitting}
           />
         </div>
         
@@ -156,13 +176,14 @@ const SimpleEmailForm = () => {
             onChange={(e) => handleInputChange('linkedin', e.target.value)}
             maxLength={200}
             className="w-full"
+            disabled={isSubmitting}
           />
         </div>
         
         <Button 
           type="submit" 
           disabled={isSubmitting || !isFormValid}
-          className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
+          className="w-full bg-dna-emerald hover:bg-dna-forest text-white disabled:opacity-50"
         >
           {isSubmitting ? 'Joining...' : 'Join DNA'}
         </Button>

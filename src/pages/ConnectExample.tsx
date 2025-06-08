@@ -29,6 +29,8 @@ const ConnectExample = () => {
   const [initializing, setInitializing] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
+  
+  // Dialog states
   const [isConnectDialogOpen, setIsConnectDialogOpen] = useState(false);
   const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
   const [isJoinCommunityDialogOpen, setIsJoinCommunityDialogOpen] = useState(false);
@@ -70,7 +72,7 @@ const ConnectExample = () => {
     }
   };
 
-  const handleConnect = async (professionalId: string) => {
+  const handleConnect = (professionalId: string) => {
     console.log('Connect button clicked for professional:', professionalId);
     if (!user) {
       console.log('User not logged in, showing connect dialog');
@@ -79,7 +81,7 @@ const ConnectExample = () => {
     }
 
     try {
-      await sendConnectionRequest(professionalId, 'I would like to connect with you!');
+      sendConnectionRequest(professionalId, 'I would like to connect with you!');
       toast.success('Connection request sent successfully!');
     } catch (error) {
       console.error('Connection error:', error);
@@ -87,7 +89,7 @@ const ConnectExample = () => {
     }
   };
 
-  const handleMessage = async (recipientId: string, recipientName: string) => {
+  const handleMessage = (recipientId: string, recipientName: string) => {
     console.log('Message button clicked for professional:', recipientId, recipientName);
     if (!user) {
       console.log('User not logged in, showing message dialog');
@@ -96,7 +98,7 @@ const ConnectExample = () => {
     }
 
     try {
-      await sendMessage(recipientId, `Hi ${recipientName}, I'd like to connect and learn more about your work!`);
+      sendMessage(recipientId, `Hi ${recipientName}, I'd like to connect and learn more about your work!`);
       toast.success('Message sent successfully!');
     } catch (error) {
       console.error('Message error:', error);
@@ -105,6 +107,7 @@ const ConnectExample = () => {
   };
 
   const handleJoinCommunity = () => {
+    console.log('Join community button clicked');
     if (!user) {
       setIsJoinCommunityDialogOpen(true);
       return;
@@ -113,6 +116,7 @@ const ConnectExample = () => {
   };
 
   const handleRegisterEvent = () => {
+    console.log('Register event button clicked');
     if (!user) {
       setIsRegisterEventDialogOpen(true);
       return;
@@ -198,14 +202,8 @@ const ConnectExample = () => {
                   <ProfessionalCard
                     key={professional.id}
                     professional={professional}
-                    onConnect={() => {
-                      console.log('Calling handleConnect for:', professional.id);
-                      handleConnect(professional.id);
-                    }}
-                    onMessage={() => {
-                      console.log('Calling handleMessage for:', professional.id, professional.full_name);
-                      handleMessage(professional.id, professional.full_name);
-                    }}
+                    onConnect={() => handleConnect(professional.id)}
+                    onMessage={() => handleMessage(professional.id, professional.full_name)}
                     connectionStatus={getConnectionStatus(professional.id)}
                     isLoggedIn={!!user}
                   />
