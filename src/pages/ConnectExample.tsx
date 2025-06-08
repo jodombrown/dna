@@ -1,19 +1,22 @@
 
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useSearch } from '@/hooks/useSearch';
 import { useConnections } from '@/hooks/useConnections';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { Info } from 'lucide-react';
+import { Info, Users } from 'lucide-react';
 import ConnectHeader from '@/components/connect/ConnectHeader';
 import SearchSection from '@/components/connect/SearchSection';
 import ProfessionalCard from '@/components/connect/ProfessionalCard';
 import CommunityCard from '@/components/connect/CommunityCard';
 import EventCard from '@/components/connect/EventCard';
 import EmptyState from '@/components/connect/EmptyState';
+import FeedbackPanel from '@/components/FeedbackPanel';
+import Footer from '@/components/Footer';
 
 const ConnectExample = () => {
   const navigate = useNavigate();
@@ -25,6 +28,7 @@ const ConnectExample = () => {
   const [activeTab, setActiveTab] = useState('professionals');
   const [initializing, setInitializing] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
+  const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -212,7 +216,32 @@ const ConnectExample = () => {
             <div className="text-lg">Loading...</div>
           </div>
         )}
+
+        {/* Call to Action */}
+        <div className="mt-8 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 rounded-2xl p-6 sm:p-8 text-center">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
+            Have an Idea for Better Connections?
+          </h3>
+          <p className="text-sm sm:text-base text-gray-600 mb-6">
+            Help us build the ultimate networking experience for the African diaspora.
+          </p>
+          <Button 
+            onClick={() => setIsFeedbackPanelOpen(true)}
+            className="bg-dna-emerald hover:bg-dna-forest text-white"
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Share Your Connection Ideas
+          </Button>
+        </div>
       </main>
+
+      <Footer />
+      
+      <FeedbackPanel 
+        isOpen={isFeedbackPanelOpen}
+        onClose={() => setIsFeedbackPanelOpen(false)}
+        pageType="connect"
+      />
     </div>
   );
 };

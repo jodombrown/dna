@@ -1,0 +1,270 @@
+
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import { X, CheckCircle, Users, Target, MessageSquare } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+
+interface FeedbackPanelProps {
+  isOpen: boolean;
+  onClose: () => void;
+  pageType: 'connect' | 'collaborate' | 'contribute';
+}
+
+const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    linkedin: '',
+    recommendations: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const pageContent = {
+    connect: {
+      title: 'Propose a New Connection Initiative',
+      description: 'Help us build the ultimate networking experience for the African diaspora',
+      guide: [
+        'Identify gaps in our current networking features',
+        'Suggest new ways for professionals to discover each other',
+        'Propose community-building activities or events',
+        'Share ideas for better matching algorithms',
+        'Recommend integration with existing professional platforms'
+      ],
+      icon: Users
+    },
+    collaborate: {
+      title: 'Propose a New Collaboration Project',
+      description: 'Share your vision for impactful projects that unite the diaspora',
+      guide: [
+        'Define the problem your project would solve',
+        'Identify potential collaborators and their expertise',
+        'Outline the expected impact across African communities',
+        'Suggest funding strategies and resource requirements',
+        'Propose timeline and key milestones for implementation'
+      ],
+      icon: Target
+    },
+    contribute: {
+      title: 'Propose a New Contribution Method',
+      description: 'Help us create more ways for people to give back to Africa',
+      guide: [
+        'Identify new forms of contribution beyond financial',
+        'Suggest skill-sharing or mentorship programs',
+        'Propose educational or capacity-building initiatives',
+        'Recommend partnerships with African organizations',
+        'Share ideas for measuring and showcasing impact'
+      ],
+      icon: CheckCircle
+    }
+  };
+
+  const content = pageContent[pageType];
+  const IconComponent = content.icon;
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value.trim()
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.firstName || !formData.lastName || !formData.email) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in your first name, last name, and email.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Thank you for your feedback!",
+        description: "We've received your suggestions and will be in touch soon.",
+      });
+      
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        linkedin: '',
+        recommendations: ''
+      });
+      
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+        <SheetHeader className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-dna-emerald/10 rounded-lg">
+              <IconComponent className="w-6 h-6 text-dna-emerald" />
+            </div>
+            <Badge className="bg-dna-copper text-white">
+              Platform Preview
+            </Badge>
+          </div>
+          <SheetTitle className="text-2xl text-gray-900">{content.title}</SheetTitle>
+          <SheetDescription className="text-base text-gray-600">
+            {content.description}
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="space-y-8">
+          {/* Guide Section */}
+          <div className="bg-gradient-to-r from-dna-emerald/5 to-dna-copper/5 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-dna-emerald" />
+              How We Envision This Working
+            </h3>
+            <div className="space-y-3">
+              {content.guide.map((item, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-dna-emerald text-white rounded-full flex items-center justify-center text-sm font-medium mt-0.5">
+                    {index + 1}
+                  </div>
+                  <p className="text-gray-700">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Feedback Section */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Help Us Build Better
+            </h3>
+            <p className="text-gray-600 mb-6">
+              We're always looking for suggestions and ideas on how to improve. Share your thoughts with us as we build this platform together.
+            </p>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                    First Name *
+                  </Label>
+                  <Input
+                    id="firstName"
+                    type="text"
+                    placeholder="First name"
+                    value={formData.firstName}
+                    onChange={(e) => handleInputChange('firstName', e.target.value)}
+                    required
+                    maxLength={50}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                    Last Name *
+                  </Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    placeholder="Last name"
+                    value={formData.lastName}
+                    onChange={(e) => handleInputChange('lastName', e.target.value)}
+                    required
+                    maxLength={50}
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  Email *
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  required
+                  maxLength={254}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="linkedin" className="text-sm font-medium text-gray-700">
+                  LinkedIn Profile (Optional)
+                </Label>
+                <Input
+                  id="linkedin"
+                  type="url"
+                  placeholder="https://linkedin.com/in/yourprofile"
+                  value={formData.linkedin}
+                  onChange={(e) => handleInputChange('linkedin', e.target.value)}
+                  maxLength={200}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="recommendations" className="text-sm font-medium text-gray-700">
+                  Your Recommendations & Suggestions
+                </Label>
+                <Textarea
+                  id="recommendations"
+                  placeholder="Share your ideas, suggestions, or recommendations for how we can improve this feature or the platform overall..."
+                  value={formData.recommendations}
+                  onChange={(e) => handleInputChange('recommendations', e.target.value)}
+                  rows={4}
+                  maxLength={1000}
+                  className="resize-none"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.recommendations.length}/1000 characters
+                </p>
+              </div>
+              
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
+                >
+                  {isSubmitting ? 'Sending...' : 'Share Your Ideas'}
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={onClose}
+                  className="px-6"
+                >
+                  Close
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+};
+
+export default FeedbackPanel;

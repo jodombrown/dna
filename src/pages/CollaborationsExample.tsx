@@ -1,14 +1,17 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, Calendar, DollarSign, Target, MessageSquare, FileText, Video, Info } from 'lucide-react';
+import FeedbackPanel from '@/components/FeedbackPanel';
+import Footer from '@/components/Footer';
 
 const CollaborationsExample = () => {
   const navigate = useNavigate();
+  const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -216,12 +219,24 @@ const CollaborationsExample = () => {
             <p className="text-sm sm:text-base text-gray-600 mb-6">
               Propose a new project and find collaborators who share your vision for Africa's future.
             </p>
-            <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
+            <Button 
+              onClick={() => setIsFeedbackPanelOpen(true)}
+              className="bg-dna-emerald hover:bg-dna-forest text-white"
+            >
+              <Target className="w-4 h-4 mr-2" />
               Propose New Project
             </Button>
           </CardContent>
         </Card>
       </main>
+
+      <Footer />
+      
+      <FeedbackPanel 
+        isOpen={isFeedbackPanelOpen}
+        onClose={() => setIsFeedbackPanelOpen(false)}
+        pageType="collaborate"
+      />
     </div>
   );
 };

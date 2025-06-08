@@ -1,14 +1,16 @@
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, DollarSign, Clock, Users, TrendingUp, Target, PieChart, Info } from 'lucide-react';
+import { ArrowLeft, Heart, DollarSign, Users, TrendingUp, Calendar, MapPin, CheckCircle, Info } from 'lucide-react';
+import FeedbackPanel from '@/components/FeedbackPanel';
+import Footer from '@/components/Footer';
 
 const ContributeExample = () => {
   const navigate = useNavigate();
+  const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -89,26 +91,26 @@ const ContributeExample = () => {
               </Button>
               <div className="border-l border-gray-300 h-6 hidden sm:block"></div>
               <div>
-                <h1 className="text-lg sm:text-xl font-bold text-gray-900">Contribution Hub</h1>
-                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Make impact through capital, skills, and time</p>
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900">Contribute to Africa</h1>
+                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Make a lasting impact</p>
               </div>
             </div>
-            <Badge className="bg-dna-emerald text-white text-xs sm:text-sm">
-              Impact Score: {myContributions.impactScore}
+            <Badge className="bg-dna-gold text-white text-xs sm:text-sm">
+              $2.1M+ Raised
             </Badge>
           </div>
         </div>
       </header>
 
       {/* Prototype Stage Notice */}
-      <div className="bg-gradient-to-r from-dna-emerald/10 to-dna-gold/10 border-b">
+      <div className="bg-gradient-to-r from-dna-gold/10 to-dna-emerald/10 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-dna-emerald mt-0.5 flex-shrink-0" />
+            <Info className="w-5 h-5 text-dna-gold mt-0.5 flex-shrink-0" />
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">Platform Preview - Prototype Stage</h3>
               <p className="text-sm text-gray-700">
-                Experience a preview of our Contribute platform! The investment opportunities, impact tracking, and contribution methods shown below represent our vision for how diaspora members will support African development projects. This prototype demonstrates the transparent and impactful contribution system we're building to channel resources effectively across the continent.
+                This is a preview of our Contribute experience! The impact initiatives and contribution methods shown below represent our vision for how diaspora members will give back to Africa and track their impact. This prototype showcases the giving platform we're building to facilitate meaningful contributions to African development.
               </p>
             </div>
           </div>
@@ -117,6 +119,34 @@ const ContributeExample = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Impact Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <Card>
+            <CardContent className="p-4 sm:p-6 text-center">
+              <div className="text-xl sm:text-2xl font-bold text-dna-gold mb-1 sm:mb-2">$2.1M</div>
+              <div className="text-xs sm:text-sm text-gray-600">Total Contributions</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 sm:p-6 text-center">
+              <div className="text-xl sm:text-2xl font-bold text-dna-emerald mb-1 sm:mb-2">1,250</div>
+              <div className="text-xs sm:text-sm text-gray-600">Active Contributors</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 sm:p-6 text-center">
+              <div className="text-xl sm:text-2xl font-bold text-dna-copper mb-1 sm:mb-2">45</div>
+              <div className="text-xs sm:text-sm text-gray-600">Countries Reached</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 sm:p-6 text-center">
+              <div className="text-xl sm:text-2xl font-bold text-dna-forest mb-1 sm:mb-2">89K</div>
+              <div className="text-xs sm:text-sm text-gray-600">Lives Impacted</div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Your Impact Dashboard */}
         <Card className="mb-6 sm:mb-8 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
           <CardHeader>
@@ -294,7 +324,34 @@ const ContributeExample = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Call to Action */}
+        <Card className="mt-8 bg-gradient-to-r from-dna-gold/10 to-dna-emerald/10">
+          <CardContent className="p-6 sm:p-8 text-center">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
+              Have Ideas for New Ways to Contribute?
+            </h3>
+            <p className="text-sm sm:text-base text-gray-600 mb-6">
+              Help us create more meaningful ways for the diaspora to give back to Africa.
+            </p>
+            <Button 
+              onClick={() => setIsFeedbackPanelOpen(true)}
+              className="bg-dna-gold hover:bg-dna-copper text-white"
+            >
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Share Your Contribution Ideas
+            </Button>
+          </CardContent>
+        </Card>
       </main>
+
+      <Footer />
+      
+      <FeedbackPanel 
+        isOpen={isFeedbackPanelOpen}
+        onClose={() => setIsFeedbackPanelOpen(false)}
+        pageType="contribute"
+      />
     </div>
   );
 };
