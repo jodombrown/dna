@@ -4,19 +4,22 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Calendar, Clock, MapPin, Users, Video, Globe } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Events = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [isRegisterDialogOpen, setIsRegisterDialogOpen] = useState(false);
 
   const events = [
     {
       id: 1,
-      title: "African Tech Summit 2024",
+      title: "African Tech Summit 2025",
       description: "The premier technology conference connecting African innovators with global opportunities",
       type: "conference",
       format: "hybrid",
-      date: "March 15-17, 2024",
+      date: "September 15-17, 2025",
       time: "9:00 AM - 6:00 PM WAT",
       location: "Lagos, Nigeria + Virtual",
       attendees: "2,500+",
@@ -31,7 +34,7 @@ const Events = () => {
       description: "Exclusive roundtable discussion on African investment opportunities",
       type: "roundtable",
       format: "in-person",
-      date: "March 28, 2024",
+      date: "October 12, 2025",
       time: "2:00 PM - 5:00 PM EST",
       location: "New York, NY",
       attendees: "50",
@@ -46,7 +49,7 @@ const Events = () => {
       description: "Empowering women entrepreneurs across the African continent",
       type: "webinar",
       format: "virtual",
-      date: "April 5, 2024",
+      date: "November 8, 2025",
       time: "7:00 PM - 8:30 PM GMT",
       location: "Virtual",
       attendees: "1,000+",
@@ -61,7 +64,7 @@ const Events = () => {
       description: "Showcase your startup to a panel of diaspora investors and mentors",
       type: "pitch",
       format: "hybrid",
-      date: "April 12, 2024",
+      date: "December 5, 2025",
       time: "6:00 PM - 9:00 PM GMT",
       location: "London, UK + Virtual",
       attendees: "200",
@@ -69,6 +72,36 @@ const Events = () => {
       speakers: ["Panel of Investors"],
       topics: ["Startup Pitches", "Funding", "Mentorship"],
       image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=250&fit=crop"
+    },
+    {
+      id: 5,
+      title: "African Diaspora Cultural Festival",
+      description: "Celebrating African heritage and culture across the diaspora",
+      type: "cultural",
+      format: "in-person",
+      date: "August 20, 2025",
+      time: "10:00 AM - 8:00 PM EST",
+      location: "Washington, DC",
+      attendees: "5,000+",
+      price: "$25",
+      speakers: ["Cultural Leaders", "Artists", "Musicians"],
+      topics: ["Heritage", "Arts", "Music", "Food"],
+      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=250&fit=crop"
+    },
+    {
+      id: 6,
+      title: "AgriTech Innovation Summit",
+      description: "Revolutionizing African agriculture through technology and innovation",
+      type: "conference",
+      format: "virtual",
+      date: "July 18, 2025",
+      time: "1:00 PM - 6:00 PM EAT",
+      location: "Virtual",
+      attendees: "1,500+",
+      price: "Free",
+      speakers: ["Dr. Kwame Nkrumah", "Grace Mutua", "Ibrahim Sankoh"],
+      topics: ["Smart Farming", "Climate Tech", "Food Security"],
+      image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&h=250&fit=crop"
     }
   ];
 
@@ -77,7 +110,8 @@ const Events = () => {
     { id: 'conference', label: 'Conferences' },
     { id: 'webinar', label: 'Webinars' },
     { id: 'roundtable', label: 'Roundtables' },
-    { id: 'pitch', label: 'Pitch Events' }
+    { id: 'pitch', label: 'Pitch Events' },
+    { id: 'cultural', label: 'Cultural' }
   ];
 
   const filteredEvents = selectedFilter === 'all' 
@@ -86,7 +120,12 @@ const Events = () => {
 
   const handleRegister = (eventId: number) => {
     console.log('Registering for event:', eventId);
-    // Here you would implement the registration logic
+    setIsRegisterDialogOpen(true);
+  };
+
+  const confirmRegistration = () => {
+    toast.success('Event registration request sent! You will receive a confirmation email once registration opens.');
+    setIsRegisterDialogOpen(false);
   };
 
   const getFormatIcon = (format: string) => {
@@ -97,6 +136,17 @@ const Events = () => {
         return <MapPin className="w-4 h-4" />;
       default:
         return <Globe className="w-4 h-4" />;
+    }
+  };
+
+  const getFormatBadge = (format: string) => {
+    switch (format) {
+      case 'virtual':
+        return <Badge className="bg-dna-emerald text-white">Virtual</Badge>;
+      case 'in-person':
+        return <Badge className="bg-dna-copper text-white">In-Person</Badge>;
+      default:
+        return <Badge className="bg-dna-gold text-white">Hybrid</Badge>;
     }
   };
 
@@ -168,6 +218,7 @@ const Events = () => {
                   <div className="flex items-center text-gray-600">
                     {getFormatIcon(event.format)}
                     <span className="ml-2">{event.location}</span>
+                    <span className="ml-2">{getFormatBadge(event.format)}</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <Users className="w-4 h-4 mr-2" />
@@ -224,6 +275,42 @@ const Events = () => {
           </Card>
         </div>
       </div>
+
+      {/* Register Event Dialog */}
+      <Dialog open={isRegisterDialogOpen} onOpenChange={setIsRegisterDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-dna-copper" />
+              Event Registration Preview
+            </DialogTitle>
+            <DialogDescription className="text-left space-y-4 pt-4">
+              <p>
+                Thank you for your interest in our events! Our event registration system will offer:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-sm">
+                <li>Seamless registration for diaspora events worldwide</li>
+                <li>Personalized event recommendations based on your interests</li>
+                <li>Networking opportunities with attendees before and after events</li>
+                <li>Access to exclusive member-only sessions and workshops</li>
+                <li>Integration with your professional profile and connections</li>
+                <li>Event recordings and follow-up resources for registered attendees</li>
+              </ul>
+              <p className="text-sm text-gray-600 bg-dna-copper/10 p-3 rounded">
+                Since we're still building the platform, we'll add you to our early access list and notify you when registration opens for this event.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3">
+            <Button onClick={confirmRegistration} className="flex-1 bg-dna-copper hover:bg-dna-gold text-white">
+              Add Me to Early Access
+            </Button>
+            <Button variant="outline" onClick={() => setIsRegisterDialogOpen(false)}>
+              Maybe Later
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

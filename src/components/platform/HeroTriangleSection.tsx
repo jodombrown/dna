@@ -2,7 +2,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Play, Users, Handshake, Heart, ArrowRight } from 'lucide-react';
+import { Play, Users, Handshake, Heart } from 'lucide-react';
 
 const HeroTriangleSection = () => {
   const scrollToConnectSection = () => {
@@ -71,24 +71,6 @@ const HeroTriangleSection = () => {
                 Make lasting impact by contributing your skills, capital, or time where it matters most. 
                 Create measurable change across communities and industries.
               </p>
-            </div>
-          </div>
-
-          {/* Connection Flow Visualization */}
-          <div className="flex items-center justify-center mb-12 flex-wrap gap-4">
-            <div className="flex items-center gap-2 bg-dna-forest text-white px-4 py-2 rounded-full text-sm font-medium">
-              <Users className="w-4 h-4" />
-              Connect
-            </div>
-            <ArrowRight className="w-5 h-5 text-dna-copper" />
-            <div className="flex items-center gap-2 bg-dna-copper text-white px-4 py-2 rounded-full text-sm font-medium">
-              <Handshake className="w-4 h-4" />
-              Collaborate
-            </div>
-            <ArrowRight className="w-5 h-5 text-dna-emerald" />
-            <div className="flex items-center gap-2 bg-dna-emerald text-white px-4 py-2 rounded-full text-sm font-medium">
-              <Heart className="w-4 h-4" />
-              Contribute
             </div>
           </div>
 

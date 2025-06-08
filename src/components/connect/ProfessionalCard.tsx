@@ -17,16 +17,18 @@ interface ProfessionalCardProps {
 
 // Helper function to generate culturally appropriate profile images
 const getProfileImage = (name: string, countryOfOrigin: string) => {
-  // Map of real Unsplash photos of African professionals
+  // Map of real Unsplash photos of African professionals - each name gets a unique image
   const imageMap: { [key: string]: string } = {
-    // African Women
+    // African Women - Different images for each
     'Amara Okafor': 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face',
     'Zara Mbeki': 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
     'Fatima Hassan': 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=150&h=150&fit=crop&crop=face',
     'Aisha Kone': 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=150&h=150&fit=crop&crop=face',
     'Ngozi Adebayo': 'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=150&h=150&fit=crop&crop=face',
+    'Kemi Adebisi': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face',
+    'Adaora Okafor': 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face',
     
-    // African Men
+    // African Men - Different images for each
     'Kwame Asante': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
     'Ibrahim Hassan': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
     'Kofi Mensah': 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
@@ -35,10 +37,12 @@ const getProfileImage = (name: string, countryOfOrigin: string) => {
     'Thierry Mukendi': 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face',
     'Ahmed El-Rashid': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
     'Moses Kiprotich': 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&h=150&fit=crop&crop=face',
+    'Omar Benali': 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face',
+    'Chidi Okwu': 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
     
     // Mixed Heritage/Light-skinned Africans
     'Yasmin El-Sayed': 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=150&h=150&fit=crop&crop=face',
-    'Omar Benali': 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face'
+    'Tariq Osman': 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=150&h=150&fit=crop&crop=face'
   };
 
   // Return specific image for known names, or fallback to a default based on gender hints
