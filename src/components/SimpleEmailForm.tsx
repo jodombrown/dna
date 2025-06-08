@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -10,7 +9,7 @@ const SimpleEmailForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    message: ''
+    linkedin: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -34,7 +33,7 @@ const SimpleEmailForm = () => {
         body: {
           name: formData.name,
           email: formData.email,
-          message: formData.message
+          linkedin: formData.linkedin
         }
       });
 
@@ -42,7 +41,7 @@ const SimpleEmailForm = () => {
 
       if (data?.success) {
         toast.success('Thank you! We\'ve sent you a confirmation email.');
-        setFormData({ name: '', email: '', message: '' });
+        setFormData({ name: '', email: '', linkedin: '' });
       } else {
         throw new Error(data?.error || 'Failed to send email');
       }
@@ -55,7 +54,7 @@ const SimpleEmailForm = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-dna-emerald to-dna-forest">
+    <section className="py-20 bg-gradient-to-br from-dna-emerald to-dna-forest" data-email-form>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
           <div className="text-center mb-8">
@@ -101,15 +100,15 @@ const SimpleEmailForm = () => {
             </div>
 
             <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                Message (Optional)
+              <label htmlFor="linkedin" className="block text-sm font-medium text-gray-700 mb-2">
+                LinkedIn Profile (Optional)
               </label>
-              <Textarea
-                id="message"
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                placeholder="Tell us about your background and how you'd like to contribute..."
-                rows={4}
+              <Input
+                id="linkedin"
+                type="url"
+                value={formData.linkedin}
+                onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
+                placeholder="https://linkedin.com/in/yourprofile"
                 disabled={isSubmitting}
               />
             </div>
@@ -125,7 +124,8 @@ const SimpleEmailForm = () => {
           </form>
 
           <p className="text-center text-sm text-gray-500 mt-6">
-            We respect your privacy. Your information will only be used to notify you about our platform launch.
+            We respect your privacy. Your information will only be used to notify you about our platform launch. 
+            The email you receive during our Prototype Phase is from our mother company Roadmap.Africa.
           </p>
         </div>
       </div>

@@ -1,427 +1,419 @@
-import React, { useEffect, useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+import React, { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { useNavigate } from 'react-router-dom';
-import { useSearch } from '@/hooks/useSearch';
-import { useConnections } from '@/hooks/useConnections';
-import { useMessages } from '@/hooks/useMessages';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
-import { Info, Users, Calendar, UserPlus } from 'lucide-react';
 import ConnectHeader from '@/components/connect/ConnectHeader';
 import SearchSection from '@/components/connect/SearchSection';
 import ProfessionalCard from '@/components/connect/ProfessionalCard';
 import CommunityCard from '@/components/connect/CommunityCard';
 import EventCard from '@/components/connect/EventCard';
 import EmptyState from '@/components/connect/EmptyState';
-import FeedbackPanel from '@/components/FeedbackPanel';
-import Footer from '@/components/Footer';
+import { useSearch } from '@/hooks/useSearch';
+import { useConnections } from '@/hooks/useConnections';
+import { useMessages } from '@/hooks/useMessages';
+import { Professional, Community, Event } from '@/types/search';
 
 const ConnectExample = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const { professionals, communities, events, loading, searchProfessionals, searchCommunities, searchEvents, getAllData } = useSearch();
-  const { sendConnectionRequest, checkConnectionStatus } = useConnections();
+  const [showJoinDialog, setShowJoinDialog] = useState(false);
+  const [showRegisterDialog, setShowRegisterDialog] = useState(false);
+  const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+  // Mock data with updated profile images
+  const mockProfessionals: Professional[] = [
+    {
+      id: '1',
+      full_name: 'Dr. Amara Okafor',
+      profession: 'FinTech CEO & Blockchain Expert',
+      company: 'AfricaPay Solutions',
+      location: 'London, UK',
+      country_of_origin: 'Nigeria',
+      expertise: ['Blockchain', 'Financial Inclusion', 'Digital Payments'],
+      availability_for: ['Mentorship', 'Investment', 'Advisory'],
+      bio: 'Leading financial inclusion through blockchain technology across West Africa. Former Goldman Sachs VP.',
+      profile_image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/amaraokafor'
+    },
+    {
+      id: '2',
+      full_name: 'Prof. Kwame Asante',
+      profession: 'AgriTech Innovator & Researcher',
+      company: 'GreenGrow Technologies',
+      location: 'Toronto, Canada',
+      country_of_origin: 'Ghana',
+      expertise: ['Sustainable Agriculture', 'Climate Tech', 'Food Security'],
+      availability_for: ['Collaboration', 'Research Partnerships'],
+      bio: 'Pioneer in climate-smart agriculture solutions. Published researcher with 50+ papers on sustainable farming.',
+      profile_image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/kwameasante'
+    },
+    {
+      id: '3',
+      full_name: 'Zara Mbeki',
+      profession: 'Impact Investment Director',
+      company: 'Africa Growth Fund',
+      location: 'New York, USA',
+      country_of_origin: 'South Africa',
+      expertise: ['Impact Investing', 'ESG', 'Private Equity'],
+      availability_for: ['Investment', 'Board Positions', 'Strategic Advisory'],
+      bio: 'Managing $500M+ in African impact investments. Former McKinsey partner specializing in emerging markets.',
+      profile_image: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/zarambeki'
+    },
+    {
+      id: '4',
+      full_name: 'Ibrahim Hassan',
+      profession: 'EdTech Entrepreneur',
+      company: 'LearnAfrica',
+      location: 'Berlin, Germany',
+      country_of_origin: 'Egypt',
+      expertise: ['Educational Technology', 'AI in Education', 'Digital Literacy'],
+      availability_for: ['Partnerships', 'Scaling Support', 'Mentorship'],
+      bio: 'Building AI-powered education platforms serving 2M+ students across MENA and Sub-Saharan Africa.',
+      profile_image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/ibrahimhassan'
+    },
+    {
+      id: '5',
+      full_name: 'Fatima Kone',
+      profession: 'Healthcare Innovation Lead',
+      company: 'MedTech Solutions',
+      location: 'Paris, France',
+      country_of_origin: 'Côte d\'Ivoire',
+      expertise: ['Digital Health', 'Telemedicine', 'Health Systems'],
+      availability_for: ['Collaboration', 'Technical Expertise', 'Funding'],
+      bio: 'Developing telemedicine solutions for rural Africa. Former WHO consultant on digital health initiatives.',
+      profile_image: 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/fatimakone'
+    },
+    {
+      id: '6',
+      full_name: 'Kofi Mensah',
+      profession: 'Renewable Energy Engineer',
+      company: 'SolarTech Africa',
+      location: 'Amsterdam, Netherlands',
+      country_of_origin: 'Ghana',
+      expertise: ['Solar Energy', 'Grid Infrastructure', 'Energy Storage'],
+      availability_for: ['Technical Consulting', 'Project Development'],
+      bio: 'Leading solar energy projects across West Africa. MIT graduate with 15+ years in renewable energy.',
+      profile_image: 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
+      linkedin_url: 'https://linkedin.com/in/kofimensah'
+    }
+  ];
+
+  const mockCommunities: Community[] = [
+    {
+      id: '1',
+      name: 'African Tech Entrepreneurs',
+      description: 'A global network of African tech founders and entrepreneurs building the next generation of African startups.',
+      member_count: 1250,
+      category: 'Technology',
+      location: 'Global',
+      is_verified: true
+    },
+    {
+      id: '2',
+      name: 'Women in African Business',
+      description: 'Empowering African women in business through mentorship, networking, and collaborative opportunities.',
+      member_count: 890,
+      category: 'Business',
+      location: 'Global',
+      is_verified: true
+    },
+    {
+      id: '3',
+      name: 'Healthcare Innovators Network',
+      description: 'Connecting healthcare professionals working on innovative solutions for African health challenges.',
+      member_count: 567,
+      category: 'Healthcare',
+      location: 'Global',
+      is_verified: true
+    },
+    {
+      id: '4',
+      name: 'Sustainable Agriculture Alliance',
+      description: 'Agricultural experts and innovators working on sustainable farming solutions for Africa.',
+      member_count: 734,
+      category: 'Agriculture',
+      location: 'Global',
+      is_verified: true
+    }
+  ];
+
+  const mockEvents: Event[] = [
+    {
+      id: '1',
+      title: 'African FinTech Summit 2025',
+      description: 'Join leading FinTech innovators and investors for discussions on the future of African financial services.',
+      date_time: '2025-09-15T09:00:00Z',
+      location: 'Lagos, Nigeria',
+      attendee_count: 450,
+      type: 'Conference',
+      is_virtual: false
+    },
+    {
+      id: '2',
+      title: 'Diaspora Investment Roundtable',
+      description: 'Virtual roundtable connecting diaspora investors with high-impact African startups and projects.',
+      date_time: '2025-08-20T14:00:00Z',
+      location: 'Virtual',
+      attendee_count: 120,
+      type: 'Workshop',
+      is_virtual: true
+    },
+    {
+      id: '3',
+      title: 'Women in Tech Africa',
+      description: 'Celebrating and supporting women leaders in African technology and innovation.',
+      date_time: '2025-10-08T10:00:00Z',
+      location: 'Nairobi, Kenya',
+      attendee_count: 320,
+      type: 'Networking',
+      is_virtual: false
+    },
+    {
+      id: '4',
+      title: 'Sustainable Development Goals Workshop',
+      description: 'Workshop on leveraging diaspora expertise to accelerate SDG progress across Africa.',
+      date_time: '2025-07-25T13:00:00Z',
+      location: 'Virtual',
+      attendee_count: 200,
+      type: 'Workshop',
+      is_virtual: true
+    },
+    {
+      id: '5',
+      title: 'African Cultural Heritage Symposium',
+      description: 'Exploring the preservation and promotion of African cultural heritage through diaspora networks.',
+      date_time: '2025-11-12T11:00:00Z',
+      location: 'Cairo, Egypt',
+      attendee_count: 280,
+      type: 'Cultural',
+      is_virtual: false
+    },
+    {
+      id: '6',
+      title: 'AgriTech Innovation Summit',
+      description: 'Showcasing cutting-edge agricultural technologies and sustainable farming innovations for Africa.',
+      date_time: '2025-09-30T09:30:00Z',
+      location: 'Kigali, Rwanda',
+      attendee_count: 380,
+      type: 'Conference',
+      is_virtual: false
+    }
+  ];
+
+  const {
+    searchQuery,
+    selectedFilters,
+    activeTab,
+    setSearchQuery,
+    setSelectedFilters,
+    setActiveTab,
+    filteredResults
+  } = useSearch({
+    professionals: mockProfessionals,
+    communities: mockCommunities,
+    events: mockEvents
+  });
+
+  const { connectionStatus, sendConnectionRequest } = useConnections();
   const { sendMessage } = useMessages();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('professionals');
-  const [initializing, setInitializing] = useState(true);
-  const [dataError, setDataError] = useState<string | null>(null);
-  const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
-  
-  // Dialog states
-  const [isConnectDialogOpen, setIsConnectDialogOpen] = useState(false);
-  const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
-  const [isJoinCommunityDialogOpen, setIsJoinCommunityDialogOpen] = useState(false);
-  const [isRegisterEventDialogOpen, setIsRegisterEventDialogOpen] = useState(false);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    initializeData();
-  }, []);
-
-  const initializeData = async () => {
-    console.log('Loading network data...');
-    setInitializing(true);
-    setDataError(null);
-    
-    try {
-      await getAllData();
-      console.log('Data loaded successfully:', { 
-        professionals: professionals.length, 
-        communities: communities.length, 
-        events: events.length 
-      });
-    } catch (error) {
-      console.error('Error loading data:', error);
-      setDataError('Failed to load network data. Please refresh the page.');
-      toast.error('Failed to load network data. Please refresh the page.');
-    } finally {
-      setInitializing(false);
-    }
+  const handleConnect = (professional: Professional) => {
+    sendConnectionRequest(professional.id);
   };
 
-  const handleSearch = async () => {
+  const handleMessage = (professional: Professional) => {
+    sendMessage(professional.id, `Hi ${professional.full_name.split(' ')[0]}, I'd love to connect and learn more about your work!`);
+  };
+
+  const handleJoinCommunity = (community: Community) => {
+    setSelectedCommunity(community);
+    setShowJoinDialog(true);
+  };
+
+  const handleRegisterEvent = (event: Event) => {
+    setSelectedEvent(event);
+    setShowRegisterDialog(true);
+  };
+
+  const isLoggedIn = false; // Mock logged out state for demo
+
+  const renderContent = () => {
+    if (!isLoggedIn) {
+      return <EmptyState />;
+    }
+
+    const results = filteredResults();
+
     if (activeTab === 'professionals') {
-      await searchProfessionals(searchTerm);
-    } else if (activeTab === 'communities') {
-      await searchCommunities(searchTerm);
-    } else if (activeTab === 'events') {
-      await searchEvents(searchTerm);
-    }
-  };
-
-  const handleConnect = (professionalId: string) => {
-    console.log('Connect button clicked for professional:', professionalId);
-    if (!user) {
-      console.log('User not logged in, showing connect dialog');
-      setIsConnectDialogOpen(true);
-      return;
-    }
-
-    try {
-      sendConnectionRequest(professionalId, 'I would like to connect with you!');
-      toast.success('Connection request sent successfully!');
-    } catch (error) {
-      console.error('Connection error:', error);
-      toast.error('Failed to send connection request');
-    }
-  };
-
-  const handleMessage = (recipientId: string, recipientName: string) => {
-    console.log('Message button clicked for professional:', recipientId, recipientName);
-    if (!user) {
-      console.log('User not logged in, showing message dialog');
-      setIsMessageDialogOpen(true);
-      return;
-    }
-
-    try {
-      sendMessage(recipientId, `Hi ${recipientName}, I'd like to connect and learn more about your work!`);
-      toast.success('Message sent successfully!');
-    } catch (error) {
-      console.error('Message error:', error);
-      toast.error('Failed to send message');
-    }
-  };
-
-  const handleJoinCommunity = () => {
-    console.log('Join community button clicked');
-    if (!user) {
-      setIsJoinCommunityDialogOpen(true);
-      return;
-    }
-    toast.success('Community join request sent!');
-  };
-
-  const handleRegisterEvent = () => {
-    console.log('Register event button clicked');
-    if (!user) {
-      setIsRegisterEventDialogOpen(true);
-      return;
-    }
-    toast.success('Event registration successful!');
-  };
-
-  const getConnectionStatus = (professionalId: string) => {
-    if (!user) return null;
-    return checkConnectionStatus(professionalId);
-  };
-
-  if (initializing) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-xl font-semibold mb-2">Loading Professional Network...</div>
-          <div className="text-gray-600">Connecting you with the diaspora community</div>
+      return (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {results.professionals.map((professional) => (
+            <ProfessionalCard
+              key={professional.id}
+              professional={professional}
+              onConnect={() => handleConnect(professional)}
+              onMessage={() => handleMessage(professional)}
+              connectionStatus={connectionStatus[professional.id] || null}
+              isLoggedIn={isLoggedIn}
+            />
+          ))}
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  if (dataError) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <div className="text-xl font-semibold mb-2 text-red-600">Failed to Load Network</div>
-          <div className="text-gray-600 mb-4">{dataError}</div>
-          <button 
-            onClick={initializeData}
-            className="bg-dna-emerald hover:bg-dna-forest text-white px-4 py-2 rounded"
-          >
-            Try Again
-          </button>
+    if (activeTab === 'communities') {
+      return (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {results.communities.map((community) => (
+            <CommunityCard
+              key={community.id}
+              community={community}
+              onJoin={() => handleJoinCommunity(community)}
+              isLoggedIn={isLoggedIn}
+            />
+          ))}
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  const totalCount = professionals.length + communities.length + events.length;
+    if (activeTab === 'events') {
+      return (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {results.events.map((event) => (
+            <EventCard
+              key={event.id}
+              event={event}
+              onRegister={() => handleRegisterEvent(event)}
+              isLoggedIn={isLoggedIn}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ConnectHeader totalCount={totalCount} />
-
-      {/* Prototype Stage Notice */}
-      <div className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-dna-emerald mt-0.5 flex-shrink-0" />
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-1">Platform Preview - Prototype Stage</h3>
-              <p className="text-sm text-gray-700">
-                Welcome to a preview of our Connect experience! What you see below represents our vision for how diaspora professionals will discover and network with each other once the DNA platform is fully built. This prototype demonstrates the seamless connection capabilities we're developing to unite the African diaspora globally.
-              </p>
-            </div>
+      <ConnectHeader />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <Badge className="bg-dna-copper text-white text-sm px-3 py-1">
+              Platform Preview
+            </Badge>
           </div>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+            Connect with Africa's Global Network
+          </h1>
+          <p className="text-lg text-gray-600 max-w-3xl">
+            Discover and connect with verified African diaspora professionals, join thriving communities, 
+            and participate in events that drive meaningful change across the continent.
+          </p>
         </div>
-      </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <SearchSection
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          onSearch={handleSearch}
-          loading={loading}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedFilters={selectedFilters}
+          setSelectedFilters={setSelectedFilters}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="professionals">Professionals ({professionals.length})</TabsTrigger>
-            <TabsTrigger value="communities">Communities ({communities.length})</TabsTrigger>
-            <TabsTrigger value="events">Events ({events.length})</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="professionals">
-            {professionals.length === 0 ? (
-              <EmptyState type="professionals" onRefresh={initializeData} />
-            ) : (
-              <div className="grid md:grid-cols-2 gap-6">
-                {professionals.map((professional) => (
-                  <ProfessionalCard
-                    key={professional.id}
-                    professional={professional}
-                    onConnect={() => handleConnect(professional.id)}
-                    onMessage={() => handleMessage(professional.id, professional.full_name)}
-                    connectionStatus={getConnectionStatus(professional.id)}
-                    isLoggedIn={!!user}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="communities">
-            {communities.length === 0 ? (
-              <EmptyState type="communities" onRefresh={initializeData} />
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {communities.map((community) => (
-                  <CommunityCard 
-                    key={community.id} 
-                    community={community} 
-                    onJoin={handleJoinCommunity}
-                    isLoggedIn={!!user}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="events">
-            {events.length === 0 ? (
-              <EmptyState type="events" onRefresh={initializeData} />
-            ) : (
-              <div className="grid md:grid-cols-2 gap-6">
-                {events.map((event) => (
-                  <EventCard 
-                    key={event.id} 
-                    event={event} 
-                    onRegister={handleRegisterEvent}
-                    isLoggedIn={!!user}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-
-        {loading && (
-          <div className="text-center py-12">
-            <div className="text-lg">Loading...</div>
-          </div>
-        )}
-
-        {/* Call to Action */}
-        <div className="mt-8 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 rounded-2xl p-6 sm:p-8 text-center">
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
-            Have an Idea for Better Connections?
-          </h3>
-          <p className="text-sm sm:text-base text-gray-600 mb-6">
-            Help us build the ultimate networking experience for the African diaspora.
-          </p>
-          <Button 
-            onClick={() => setIsFeedbackPanelOpen(true)}
-            className="bg-dna-emerald hover:bg-dna-forest text-white"
-          >
-            <Users className="w-4 h-4 mr-2" />
-            Share Your Connection Ideas
-          </Button>
+        <div className="mt-8">
+          {renderContent()}
         </div>
       </main>
 
-      <Footer />
-      
-      {/* Connect Dialog */}
-      <Dialog open={isConnectDialogOpen} onOpenChange={setIsConnectDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-dna-emerald" />
-              How Professional Connections Work
-            </DialogTitle>
-            <DialogDescription className="text-left space-y-4 pt-4">
-              <p>
-                In our fully built platform, the Connect feature will enable you to:
-              </p>
-              <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li>Send personalized connection requests with custom messages</li>
-                <li>Build your professional network across the African diaspora</li>
-                <li>Access detailed professional profiles and expertise areas</li>
-                <li>Receive intelligent matching suggestions based on your interests</li>
-                <li>Join professional groups and industry-specific communities</li>
-                <li>Participate in networking events and virtual meetups</li>
-              </ul>
-              <p className="text-sm text-gray-600 bg-dna-emerald/10 p-3 rounded">
-                Right now, you would need to create an account to access these networking features. We're building this to be the premier professional network for the African diaspora.
-              </p>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex gap-3">
-            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
-              Create Account
-            </Button>
-            <Button variant="outline" onClick={() => setIsConnectDialogOpen(false)}>
-              Got it
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Message Dialog */}
-      <Dialog open={isMessageDialogOpen} onOpenChange={setIsMessageDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-dna-copper" />
-              How Messaging Works
-            </DialogTitle>
-            <DialogDescription className="text-left space-y-4 pt-4">
-              <p>
-                Our messaging system will provide secure, professional communication:
-              </p>
-              <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li>Direct messaging with diaspora professionals worldwide</li>
-                <li>Group messaging for project collaborations</li>
-                <li>File sharing and document collaboration tools</li>
-                <li>Video call integration for face-to-face conversations</li>
-                <li>Translation services for cross-language communication</li>
-                <li>Professional networking etiquette guidelines</li>
-              </ul>
-              <p className="text-sm text-gray-600 bg-dna-copper/10 p-3 rounded">
-                To use messaging features, you'll need to be a registered member of our platform.
-              </p>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex gap-3">
-            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-copper hover:bg-dna-gold text-white">
-              Join Platform
-            </Button>
-            <Button variant="outline" onClick={() => setIsMessageDialogOpen(false)}>
-              Got it
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       {/* Join Community Dialog */}
-      <Dialog open={isJoinCommunityDialogOpen} onOpenChange={setIsJoinCommunityDialogOpen}>
-        <DialogContent className="max-w-md">
+      <Dialog open={showJoinDialog} onOpenChange={setShowJoinDialog}>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-dna-emerald" />
-              How Community Joining Works
-            </DialogTitle>
-            <DialogDescription className="text-left space-y-4 pt-4">
-              <p>
-                Our community platform will offer rich, engaging experiences:
-              </p>
-              <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li>Join interest-based and professional communities</li>
-                <li>Participate in community discussions and forums</li>
-                <li>Access exclusive community resources and tools</li>
-                <li>Connect with like-minded diaspora members</li>
-                <li>Organize and attend community events</li>
-                <li>Share knowledge and collaborate on projects</li>
-              </ul>
-              <p className="text-sm text-gray-600 bg-dna-emerald/10 p-3 rounded">
-                Community membership requires platform registration to ensure quality interactions and member safety.
-              </p>
+            <DialogTitle className="text-dna-forest">Join Community - Coming Soon!</DialogTitle>
+            <DialogDescription className="text-gray-600">
+              We're building an amazing community experience for you.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex gap-3">
-            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
-              Join Platform
-            </Button>
-            <Button variant="outline" onClick={() => setIsJoinCommunityDialogOpen(false)}>
-              Got it
+          <div className="space-y-4">
+            <div className="bg-dna-emerald/5 rounded-lg p-4">
+              <h4 className="font-medium text-dna-forest mb-2">
+                {selectedCommunity?.name}
+              </h4>
+              <p className="text-sm text-gray-600 mb-3">
+                {selectedCommunity?.description}
+              </p>
+              <div className="text-sm text-dna-emerald font-medium">
+                {selectedCommunity?.member_count} members • {selectedCommunity?.category}
+              </div>
+            </div>
+            <div className="text-sm text-gray-600">
+              <p className="font-medium mb-2">When this feature launches, you'll be able to:</p>
+              <ul className="space-y-1 text-sm ml-4">
+                <li>• Join verified professional communities</li>
+                <li>• Participate in member-only discussions</li>
+                <li>• Access exclusive events and resources</li>
+                <li>• Connect with like-minded professionals</li>
+              </ul>
+            </div>
+            <Button 
+              onClick={() => setShowJoinDialog(false)}
+              className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
+            >
+              Stay Notified About Launch
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* Register Event Dialog */}
-      <Dialog open={isRegisterEventDialogOpen} onOpenChange={setIsRegisterEventDialogOpen}>
-        <DialogContent className="max-w-md">
+      <Dialog open={showRegisterDialog} onOpenChange={setShowRegisterDialog}>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-dna-copper" />
-              How Event Registration Works
-            </DialogTitle>
-            <DialogDescription className="text-left space-y-4 pt-4">
-              <p>
-                Our event system will provide comprehensive networking opportunities:
-              </p>
-              <ul className="list-disc pl-5 space-y-2 text-sm">
-                <li>Register for professional development workshops</li>
-                <li>Attend virtual and in-person networking events</li>
-                <li>Participate in cultural celebrations and meetups</li>
-                <li>Access industry-specific conferences and panels</li>
-                <li>Connect with event attendees before and after</li>
-                <li>Receive event recordings and follow-up resources</li>
-              </ul>
-              <p className="text-sm text-gray-600 bg-dna-copper/10 p-3 rounded">
-                Event registration requires an account to manage your attendance and provide personalized recommendations.
-              </p>
+            <DialogTitle className="text-dna-forest">Event Registration - Coming Soon!</DialogTitle>
+            <DialogDescription className="text-gray-600">
+              We're preparing an exceptional event experience for the diaspora community.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex gap-3">
-            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-copper hover:bg-dna-gold text-white">
-              Create Account
-            </Button>
-            <Button variant="outline" onClick={() => setIsRegisterEventDialogOpen(false)}>
-              Got it
+          <div className="space-y-4">
+            <div className="bg-dna-emerald/5 rounded-lg p-4">
+              <h4 className="font-medium text-dna-forest mb-2">
+                {selectedEvent?.title}
+              </h4>
+              <p className="text-sm text-gray-600 mb-3">
+                {selectedEvent?.description}
+              </p>
+              <div className="text-sm text-dna-emerald font-medium">
+                {selectedEvent?.attendee_count} registered • {selectedEvent?.type}
+                {selectedEvent?.is_virtual && (
+                  <Badge className="ml-2 bg-dna-emerald text-white text-xs">Virtual</Badge>
+                )}
+              </div>
+            </div>
+            <div className="text-sm text-gray-600">
+              <p className="font-medium mb-2">When event registration launches, you'll enjoy:</p>
+              <ul className="space-y-1 text-sm ml-4">
+                <li>• Seamless event registration and calendar integration</li>
+                <li>• Pre-event networking with other attendees</li>
+                <li>• Access to event materials and recordings</li>
+                <li>• Follow-up collaboration opportunities</li>
+              </ul>
+            </div>
+            <Button 
+              onClick={() => setShowRegisterDialog(false)}
+              className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
+            >
+              Stay Notified About Launch
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-      
-      <FeedbackPanel 
-        isOpen={isFeedbackPanelOpen}
-        onClose={() => setIsFeedbackPanelOpen(false)}
-        pageType="connect"
-      />
     </div>
   );
 };
