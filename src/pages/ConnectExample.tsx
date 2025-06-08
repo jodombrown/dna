@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,6 @@ import { useSearch, Professional, Community, Event } from '@/hooks/useSearch';
 import { useConnections } from '@/hooks/useConnections';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const ConnectExample = () => {
@@ -30,148 +30,23 @@ const ConnectExample = () => {
   }, []);
 
   const initializeData = async () => {
-    console.log('Initializing data...');
+    console.log('Loading network data...');
     setInitializing(true);
     setDataError(null);
     
     try {
-      // First check if tables exist and have data
-      const { count: profCount, error: profError } = await supabase
-        .from('professionals')
-        .select('*', { count: 'exact', head: true });
-      
-      const { count: commCount, error: commError } = await supabase
-        .from('communities')
-        .select('*', { count: 'exact', head: true });
-
-      const { count: eventCount, error: eventError } = await supabase
-        .from('events')
-        .select('*', { count: 'exact', head: true });
-
-      if (profError || commError || eventError) {
-        console.error('Database access error:', { profError, commError, eventError });
-        setDataError('Database connection error. Please try again.');
-        return;
-      }
-
-      console.log('Current data counts:', { 
-        professionals: profCount, 
-        communities: commCount, 
-        events: eventCount 
-      });
-
-      // If no data exists, create some sample data directly
-      if (!profCount || profCount === 0) {
-        console.log('No professionals found, creating sample data...');
-        await createSampleData();
-      }
-
-      // Load all data
       await getAllData();
-      
+      console.log('Data loaded successfully:', { 
+        professionals: professionals.length, 
+        communities: communities.length, 
+        events: events.length 
+      });
     } catch (error) {
-      console.error('Error initializing data:', error);
-      setDataError('Failed to load data. Please refresh the page.');
-      toast.error('Failed to load data. Please refresh the page.');
+      console.error('Error loading data:', error);
+      setDataError('Failed to load network data. Please refresh the page.');
+      toast.error('Failed to load network data. Please refresh the page.');
     } finally {
       setInitializing(false);
-    }
-  };
-
-  const createSampleData = async () => {
-    const sampleProfessionals = [
-      {
-        full_name: "Dr. Amara Okafor",
-        profession: "FinTech CEO",
-        company: "AfriPay Solutions",
-        location: "London, UK",
-        country_of_origin: "Nigeria",
-        expertise: ["Financial Technology", "Digital Payments", "Blockchain"],
-        bio: "Leading fintech innovation across Africa and Europe. Former Goldman Sachs VP turned entrepreneur.",
-        years_experience: 12,
-        education: "PhD Computer Science, MIT",
-        languages: ["English", "Igbo", "French"],
-        availability_for: ["Mentorship", "Investment", "Speaking"],
-        linkedin_url: "https://linkedin.com/in/amaraokafor",
-        is_mentor: true,
-        is_investor: true,
-        looking_for_opportunities: false
-      },
-      {
-        full_name: "Prof. Kwame Asante",
-        profession: "AgriTech Researcher",
-        company: "Ghana Institute of Technology",
-        location: "Toronto, Canada",
-        country_of_origin: "Ghana",
-        expertise: ["Agricultural Technology", "Climate Science", "Sustainable Farming"],
-        bio: "Pioneering sustainable agriculture solutions for smallholder farmers across West Africa.",
-        years_experience: 18,
-        education: "PhD Agricultural Sciences, University of Toronto",
-        languages: ["English", "Twi", "French"],
-        availability_for: ["Research Collaboration", "Consulting", "Mentorship"],
-        is_mentor: true,
-        is_investor: false,
-        looking_for_opportunities: true
-      },
-      {
-        full_name: "Sarah Mwangi",
-        profession: "Health Tech Founder",
-        company: "MediConnect Africa",
-        location: "San Francisco, USA",
-        country_of_origin: "Kenya",
-        expertise: ["Healthcare Technology", "Telemedicine", "Public Health"],
-        bio: "Building digital health solutions to improve healthcare access in rural Africa.",
-        years_experience: 8,
-        education: "MBA Stanford, MD University of Nairobi",
-        languages: ["English", "Swahili", "Spanish"],
-        availability_for: ["Collaboration", "Mentorship", "Investment"],
-        is_mentor: true,
-        is_investor: true,
-        looking_for_opportunities: false
-      }
-    ];
-
-    const sampleCommunities = [
-      {
-        name: "African Tech Leaders",
-        description: "A community for African technology leaders and innovators sharing insights and building the future.",
-        category: "Technology",
-        member_count: 1250,
-        is_featured: true
-      },
-      {
-        name: "Diaspora Entrepreneurs",
-        description: "Connecting African entrepreneurs in the diaspora to share resources, opportunities, and support.",
-        category: "Business",
-        member_count: 890,
-        is_featured: true
-      }
-    ];
-
-    const sampleEvents = [
-      {
-        title: "African Tech Summit 2024",
-        description: "The premier technology conference bringing together African innovators from around the world.",
-        type: "Conference",
-        date_time: new Date('2024-07-15T09:00:00Z').toISOString(),
-        location: "London, UK",
-        is_virtual: false,
-        attendee_count: 500,
-        max_attendees: 800,
-        is_featured: true,
-        registration_url: "https://africantechsummit.com/register"
-      }
-    ];
-
-    try {
-      await Promise.all([
-        supabase.from('professionals').insert(sampleProfessionals),
-        supabase.from('communities').insert(sampleCommunities),
-        supabase.from('events').insert(sampleEvents)
-      ]);
-      console.log('Sample data created successfully');
-    } catch (error) {
-      console.error('Error creating sample data:', error);
     }
   };
 
@@ -227,7 +102,7 @@ const ConnectExample = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-xl font-semibold mb-2">Loading Professional Network...</div>
-          <div className="text-gray-600">Setting up your diaspora connections</div>
+          <div className="text-gray-600">Connecting you with the diaspora community</div>
         </div>
       </div>
     );
@@ -237,7 +112,7 @@ const ConnectExample = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center max-w-md">
-          <div className="text-xl font-semibold mb-2 text-red-600">Failed to Load Data</div>
+          <div className="text-xl font-semibold mb-2 text-red-600">Failed to Load Network</div>
           <div className="text-gray-600 mb-4">{dataError}</div>
           <Button 
             onClick={initializeData}
@@ -452,7 +327,7 @@ const ProfessionalCard: React.FC<{
       
       {professional.bio && (
         <div className="bg-gray-50 rounded-lg p-3">
-          <div className="text-sm">{professional.bio.substring(0, 100)}...</div>
+          <div className="text-sm">{professional.bio.length > 100 ? `${professional.bio.substring(0, 100)}...` : professional.bio}</div>
         </div>
       )}
       
