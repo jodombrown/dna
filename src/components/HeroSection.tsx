@@ -1,6 +1,6 @@
 
 import React from 'react';
-import EmailCollectionForm from '@/components/EmailCollectionForm';
+import SimpleEmailForm from '@/components/SimpleEmailForm';
 import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
@@ -36,7 +36,7 @@ const HeroSection = () => {
 
         {/* Email Collection Form */}
         <div className="mb-16">
-          <EmailCollectionForm />
+          <SimpleEmailForm />
         </div>
       </div>
     </section>
