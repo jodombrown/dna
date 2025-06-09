@@ -28,7 +28,7 @@ import MvpPhase from "./pages/MvpPhase";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ConnectExample from "./pages/ConnectExample";
 import ContributeExample from "./pages/ContributeExample";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 const queryClient = new QueryClient();
@@ -36,21 +36,24 @@ const queryClient = new QueryClient();
 // Component to handle scroll restoration
 const ScrollToTop = () => {
   const { pathname } = useLocation();
+  const isFirstLoad = useRef(true);
 
   useLayoutEffect(() => {
-    // Only scroll to top for major page changes, not sub-pages
-    const shouldScrollToTop = !pathname.includes('#') && 
-      !sessionStorage.getItem(`scroll-${pathname}`);
-    
-    if (shouldScrollToTop) {
+    // On page refresh or first load, always scroll to top
+    if (isFirstLoad.current || performance.navigation.type === 1) {
       window.scrollTo(0, 0);
+      isFirstLoad.current = false;
+      return;
+    }
+
+    // For normal navigation, restore scroll position if it exists
+    const savedPosition = sessionStorage.getItem(`scroll-${pathname}`);
+    if (savedPosition) {
+      const position = parseInt(savedPosition, 10);
+      window.scrollTo(0, position);
     } else {
-      // Restore scroll position if it exists
-      const savedPosition = sessionStorage.getItem(`scroll-${pathname}`);
-      if (savedPosition) {
-        const position = parseInt(savedPosition, 10);
-        window.scrollTo(0, position);
-      }
+      // If no saved position, scroll to top
+      window.scrollTo(0, 0);
     }
 
     // Save scroll position when leaving the page
