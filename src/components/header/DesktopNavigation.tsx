@@ -2,6 +2,14 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu';
 
 const DesktopNavigation = () => {
   const navigate = useNavigate();
@@ -12,6 +20,14 @@ const DesktopNavigation = () => {
     { name: 'Collaborate', path: '/collaborations-example' },
     { name: 'Contribute', path: '/contribute-example' },
     { name: 'Contact', path: '/contact' },
+  ];
+
+  const phases = [
+    { name: 'Prototyping Phase', path: '/prototyping-phase', phase: 1 },
+    { name: 'Build Phase', path: '/build-phase', phase: 2 },
+    { name: 'MVP Phase', path: '/mvp-phase', phase: 3 },
+    { name: 'Customer Discovery Phase', path: '/customer-discovery-phase', phase: 4 },
+    { name: 'Go-to-Market Phase', path: '/go-to-market-phase', phase: 5 },
   ];
 
   return (
@@ -26,6 +42,36 @@ const DesktopNavigation = () => {
           {item.name}
         </Button>
       ))}
+      
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger className="text-dna-forest hover:bg-dna-mint">
+              Phases
+            </NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <div className="grid gap-3 p-6 w-[400px]">
+                {phases.map((phase) => (
+                  <NavigationMenuLink key={phase.path} asChild>
+                    <button
+                      onClick={() => navigate(phase.path)}
+                      className="flex items-center space-x-3 p-3 rounded-md hover:bg-dna-mint text-left w-full"
+                    >
+                      <div className="w-8 h-8 bg-dna-copper text-white rounded-full flex items-center justify-center text-sm font-bold">
+                        {phase.phase}
+                      </div>
+                      <div>
+                        <div className="font-medium text-dna-forest">{phase.name}</div>
+                        <div className="text-sm text-gray-600">Phase {phase.phase} of our development journey</div>
+                      </div>
+                    </button>
+                  </NavigationMenuLink>
+                ))}
+              </div>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
     </nav>
   );
 };

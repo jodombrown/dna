@@ -19,6 +19,14 @@ const MobileNavigation = () => {
     { name: 'Contact', path: '/contact' },
   ];
 
+  const phases = [
+    { name: 'Prototyping Phase', path: '/prototyping-phase', phase: 1 },
+    { name: 'Build Phase', path: '/build-phase', phase: 2 },
+    { name: 'MVP Phase', path: '/mvp-phase', phase: 3 },
+    { name: 'Customer Discovery Phase', path: '/customer-discovery-phase', phase: 4 },
+    { name: 'Go-to-Market Phase', path: '/go-to-market-phase', phase: 5 },
+  ];
+
   const handleNavClick = (path: string) => {
     navigate(path);
     setIsMobileMenuOpen(false);
@@ -64,6 +72,25 @@ const MobileNavigation = () => {
               {item.name}
             </Button>
           ))}
+          
+          <div className="border-t pt-4 mt-4">
+            <p className="text-sm text-gray-600 mb-4">Development Phases</p>
+            <div className="space-y-2">
+              {phases.map((phase) => (
+                <Button
+                  key={phase.path}
+                  variant="ghost"
+                  className="justify-start text-left w-full"
+                  onClick={() => handleNavClick(phase.path)}
+                >
+                  <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">
+                    {phase.phase}
+                  </div>
+                  {phase.name}
+                </Button>
+              ))}
+            </div>
+          </div>
           
           {user ? (
             <>

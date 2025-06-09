@@ -1,13 +1,14 @@
+
 import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, ArrowLeft, Home, Users, Code, Target, CheckCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Home, Hammer, Database, Users, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
-const PrototypePhase = () => {
+const BuildPhase = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,102 +21,74 @@ const PrototypePhase = () => {
       
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="py-16 bg-gradient-to-br from-dna-mint to-dna-emerald">
+        <section className="py-16 bg-gradient-to-br from-dna-copper to-dna-gold">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Badge className="mb-4 bg-white text-dna-emerald">
-              Phase 1 of 3
+            <Badge className="mb-4 bg-white text-dna-copper">
+              Phase 2 of 5
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Prototype Phase
+              Build Phase
             </h1>
             <p className="text-xl text-white/90 max-w-3xl mx-auto mb-8">
-              The foundation stage where we validate our DNA framework concept, 
-              gather early community feedback, and establish core functionalities.
+              Scaling our validated concept into a robust platform with enhanced features, 
+              user onboarding systems, and community engagement tools.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button 
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/prototyping-phase')}
                 variant="outline"
-                className="bg-white text-dna-emerald border-white hover:bg-gray-50"
+                className="bg-white text-dna-copper border-white hover:bg-gray-50"
               >
-                <Home className="w-4 h-4 mr-2" />
-                Back to Home
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Previous: Prototyping Phase
               </Button>
               <Button 
-                onClick={() => navigate('/building-phase')}
-                className="bg-dna-copper hover:bg-dna-gold text-white"
+                onClick={() => navigate('/mvp-phase')}
+                className="bg-dna-emerald hover:bg-dna-mint text-white"
               >
-                Next: Building Phase
+                Next: MVP Phase
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </div>
         </section>
 
-        {/* Timeline */}
+        {/* Build Focus Areas */}
         <section className="py-16">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                What We're Building Now
+                Current Build Focus
               </h2>
               <p className="text-lg text-gray-600">
-                Current focus areas and deliverables in the Prototype Phase
+                Expanding platform capabilities and user experience
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-              <Card className="border-dna-mint">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-dna-mint rounded-xl flex items-center justify-center mb-4">
-                    <Users className="w-6 h-6 text-dna-forest" />
-                  </div>
-                  <CardTitle className="text-dna-forest">Community Validation</CardTitle>
-                  <CardDescription>
-                    Testing our DNA framework with early adopters
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Email collection & feedback
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Core concept validation
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Early community building
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
               <Card className="border-dna-copper">
                 <CardHeader>
                   <div className="w-12 h-12 bg-dna-copper rounded-xl flex items-center justify-center mb-4">
-                    <Code className="w-6 h-6 text-white" />
+                    <Hammer className="w-6 h-6 text-white" />
                   </div>
-                  <CardTitle className="text-dna-forest">Technical Foundation</CardTitle>
+                  <CardTitle className="text-dna-forest">Platform Development</CardTitle>
                   <CardDescription>
-                    Building core platform infrastructure
+                    Advanced features and user experience
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Authentication system
+                      Advanced matching algorithms
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      User profiles & matching
+                      Real-time messaging system
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Basic networking features
+                      Opportunity marketplace
                     </li>
                   </ul>
                 </CardContent>
@@ -124,26 +97,54 @@ const PrototypePhase = () => {
               <Card className="border-dna-gold">
                 <CardHeader>
                   <div className="w-12 h-12 bg-dna-gold rounded-xl flex items-center justify-center mb-4">
-                    <Target className="w-6 h-6 text-white" />
+                    <Database className="w-6 h-6 text-white" />
                   </div>
-                  <CardTitle className="text-dna-forest">Market Research</CardTitle>
+                  <CardTitle className="text-dna-forest">Data & Analytics</CardTitle>
                   <CardDescription>
-                    Understanding our audience and competition
+                    Insights and performance tracking
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Diaspora needs analysis
+                      User behavior analytics
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Competitive landscape
+                      Connection success metrics
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Partnership opportunities
+                      Platform optimization
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="border-dna-emerald">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-dna-emerald rounded-xl flex items-center justify-center mb-4">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <CardTitle className="text-dna-forest">Community Growth</CardTitle>
+                  <CardDescription>
+                    Expanding our user base and engagement
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm text-gray-600">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
+                      Regional chapter launches
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
+                      Ambassador program
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
+                      Partnership development
                     </li>
                   </ul>
                 </CardContent>
@@ -156,24 +157,24 @@ const PrototypePhase = () => {
         <section className="py-16 bg-gray-50">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Prototype Phase Goals
+              Build Phase Targets
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-emerald mb-2">1,000</div>
-                <div className="text-gray-600">Early Subscribers</div>
+                <div className="text-4xl font-bold text-dna-copper mb-2">5,000</div>
+                <div className="text-gray-600">Active Users</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-copper mb-2">50</div>
-                <div className="text-gray-600">Beta Testers</div>
+                <div className="text-4xl font-bold text-dna-gold mb-2">500</div>
+                <div className="text-gray-600">Daily Connections</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-gold mb-2">3</div>
-                <div className="text-gray-600">Core Features</div>
+                <div className="text-4xl font-bold text-dna-emerald mb-2">15</div>
+                <div className="text-gray-600">Platform Features</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-mint mb-2">85%</div>
-                <div className="text-gray-600">User Satisfaction</div>
+                <div className="text-4xl font-bold text-dna-mint mb-2">90%</div>
+                <div className="text-gray-600">User Retention</div>
               </div>
             </div>
           </div>
@@ -184,20 +185,20 @@ const PrototypePhase = () => {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <Button 
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/prototyping-phase')}
                 variant="outline"
                 className="border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
+                Previous: Prototyping Phase
               </Button>
               <div className="text-center">
                 <p className="text-sm text-gray-500 mb-2">Next Phase</p>
                 <Button 
-                  onClick={() => navigate('/building-phase')}
-                  className="bg-dna-copper hover:bg-dna-gold text-white"
+                  onClick={() => navigate('/mvp-phase')}
+                  className="bg-dna-emerald hover:bg-dna-mint text-white"
                 >
-                  Building Phase
+                  MVP Phase
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -211,4 +212,4 @@ const PrototypePhase = () => {
   );
 };
 
-export default PrototypePhase;
+export default BuildPhase;

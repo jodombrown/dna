@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,9 +22,11 @@ import Resources from "./pages/Resources";
 import Services from "./pages/Services";
 import Opportunities from "./pages/Opportunities";
 import ComingSoon from "./pages/ComingSoon";
-import PrototypePhase from "./pages/PrototypePhase";
-import BuildingPhase from "./pages/BuildingPhase";
+import PrototypingPhase from "./pages/PrototypingPhase";
+import BuildPhase from "./pages/BuildPhase";
 import MvpPhase from "./pages/MvpPhase";
+import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
+import GoToMarketPhase from "./pages/GoToMarketPhase";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ConnectExample from "./pages/ConnectExample";
 import ContributeExample from "./pages/ContributeExample";
@@ -88,9 +91,11 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/coming-soon" element={<ComingSoon />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/prototype-phase" element={<PrototypePhase />} />
-            <Route path="/building-phase" element={<BuildingPhase />} />
+            <Route path="/prototyping-phase" element={<PrototypingPhase />} />
+            <Route path="/build-phase" element={<BuildPhase />} />
             <Route path="/mvp-phase" element={<MvpPhase />} />
+            <Route path="/customer-discovery-phase" element={<CustomerDiscoveryPhase />} />
+            <Route path="/go-to-market-phase" element={<GoToMarketPhase />} />
             <Route path="/collaborations-example" element={<CollaborationsExample />} />
             <Route path="/connect-example" element={<ConnectExample />} />
             <Route path="/contribute-example" element={<ContributeExample />} />
