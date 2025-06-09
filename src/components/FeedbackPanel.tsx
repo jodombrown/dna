@@ -242,7 +242,6 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
                   onChange={(e) => handleInputChange('recommendations', e.target.value)}
                   rows={4}
                   maxLength={1000}
-                  className="resize-none"
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   {formData.recommendations.length}/1000 characters
