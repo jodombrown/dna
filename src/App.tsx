@@ -28,8 +28,47 @@ import MvpPhase from "./pages/MvpPhase";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ConnectExample from "./pages/ConnectExample";
 import ContributeExample from "./pages/ContributeExample";
+import { useLayoutEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const queryClient = new QueryClient();
+
+// Component to handle scroll restoration
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useLayoutEffect(() => {
+    // Only scroll to top for major page changes, not sub-pages
+    const shouldScrollToTop = !pathname.includes('#') && 
+      !sessionStorage.getItem(`scroll-${pathname}`);
+    
+    if (shouldScrollToTop) {
+      window.scrollTo(0, 0);
+    } else {
+      // Restore scroll position if it exists
+      const savedPosition = sessionStorage.getItem(`scroll-${pathname}`);
+      if (savedPosition) {
+        const position = parseInt(savedPosition, 10);
+        window.scrollTo(0, position);
+      }
+    }
+
+    // Save scroll position when leaving the page
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem(`scroll-${pathname}`, window.scrollY.toString());
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Also save on route changes
+    return () => {
+      sessionStorage.setItem(`scroll-${pathname}`, window.scrollY.toString());
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [pathname]);
+
+  return null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -37,6 +76,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
