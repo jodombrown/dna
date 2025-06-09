@@ -1,5 +1,26 @@
 
 import React from 'react';
+import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
+
+const AnimatedStat = ({ value, suffix, label, description, bgGradient }: {
+  value: number;
+  suffix: string;
+  label: string;
+  description: string;
+  bgGradient: string;
+}) => {
+  const { count, countRef } = useAnimatedCounter({ end: value, duration: 2500 });
+
+  return (
+    <div className={`${bgGradient} rounded-xl p-6 text-center`}>
+      <div ref={countRef} className="text-3xl font-bold text-dna-forest mb-2">
+        {count}{suffix}
+      </div>
+      <div className="text-sm font-medium text-gray-700 mb-1">{label}</div>
+      <div className="text-xs text-gray-600">{description}</div>
+    </div>
+  );
+};
 
 const DiasporaStats = () => {
   return (
@@ -10,23 +31,29 @@ const DiasporaStats = () => {
 
       {/* Statistics Grid */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-gradient-to-br from-dna-emerald/10 to-dna-forest/10 rounded-xl p-6 text-center">
-          <div className="text-3xl font-bold text-dna-forest mb-2">200M+</div>
-          <div className="text-sm font-medium text-gray-700 mb-1">People of African Descent</div>
-          <div className="text-xs text-gray-600">Living outside Africa, projected to comprise 25% of global population</div>
-        </div>
+        <AnimatedStat
+          value={200}
+          suffix="M+"
+          label="People of African Descent"
+          description="Living outside Africa, projected to comprise 25% of global population"
+          bgGradient="bg-gradient-to-br from-dna-emerald/10 to-dna-forest/10"
+        />
         
-        <div className="bg-gradient-to-br from-dna-copper/10 to-dna-gold/10 rounded-xl p-6 text-center">
-          <div className="text-3xl font-bold text-dna-copper mb-2">$100B+</div>
-          <div className="text-sm font-medium text-gray-700 mb-1">Annual Remittances (2024)</div>
-          <div className="text-xs text-gray-600">Fueling economic growth across African nations</div>
-        </div>
+        <AnimatedStat
+          value={100}
+          suffix="B+"
+          label="Annual Remittances (2024)"
+          description="Fueling economic growth across African nations"
+          bgGradient="bg-gradient-to-br from-dna-copper/10 to-dna-gold/10"
+        />
         
-        <div className="bg-gradient-to-br from-dna-mint/10 to-dna-emerald/10 rounded-xl p-6 text-center">
-          <div className="text-3xl font-bold text-dna-emerald mb-2">60%</div>
-          <div className="text-sm font-medium text-gray-700 mb-1">Highly Educated</div>
-          <div className="text-xs text-gray-600">Advanced degrees and specialized skills driving innovation</div>
-        </div>
+        <AnimatedStat
+          value={60}
+          suffix="%"
+          label="Highly Educated"
+          description="Advanced degrees and specialized skills driving innovation"
+          bgGradient="bg-gradient-to-br from-dna-mint/10 to-dna-emerald/10"
+        />
       </div>
 
       {/* Historical Context */}

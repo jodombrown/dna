@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { X, CheckCircle, Users, Target, MessageSquare } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface FeedbackPanelProps {
   isOpen: boolean;
@@ -24,7 +25,6 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
     recommendations: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
 
   const pageContent = {
     connect: {
@@ -79,39 +79,46 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
     e.preventDefault();
     
     if (!formData.firstName || !formData.lastName || !formData.email) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in your first name, last name, and email.",
-        variant: "destructive"
-      });
+      toast.error('Please fill in your first name, last name, and email.');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Thank you for your feedback!",
-        description: "We've received your suggestions and will be in touch soon.",
+      const fullName = `${formData.firstName} ${formData.lastName}`;
+      const message = `Feedback for ${pageType} page:\n\n${formData.recommendations || 'No specific recommendations provided.'}`;
+
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: {
+          name: fullName,
+          email: formData.email,
+          linkedin_url: formData.linkedin,
+          message: message
+        }
       });
-      
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        linkedin: '',
-        recommendations: ''
-      });
-      
-      onClose();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive"
-      });
+
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
+
+      if (data?.success) {
+        toast.success('Thank you for your feedback! We\'ve received your suggestions and will be in touch soon.');
+        setFormData({
+          firstName: '',
+          lastName: '',
+          email: '',
+          linkedin: '',
+          recommendations: ''
+        });
+        onClose();
+      } else {
+        throw new Error(data?.error || 'Failed to send feedback');
+      }
+    } catch (error: any) {
+      console.error('Feedback submission error:', error);
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

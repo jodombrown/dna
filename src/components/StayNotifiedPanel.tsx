@@ -43,11 +43,14 @@ const StayNotifiedPanel: React.FC<StayNotifiedPanelProps> = ({ isOpen, onClose }
           name: formData.name,
           email: formData.email,
           linkedin_url: formData.linkedin_url,
-          message: formData.message
+          message: formData.message || 'I would like to stay notified about the DNA platform launch.'
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
+      }
 
       if (data?.success) {
         toast.success('Thank you! We\'ve sent you a confirmation email.');
