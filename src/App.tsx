@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,6 +27,8 @@ import MvpPhase from "./pages/MvpPhase";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ConnectExample from "./pages/ConnectExample";
 import ContributeExample from "./pages/ContributeExample";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import { useLayoutEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -83,6 +84,8 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/coming-soon" element={<ComingSoon />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/prototype-phase" element={<PrototypePhase />} />
