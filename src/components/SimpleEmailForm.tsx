@@ -1,122 +1,161 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { CheckCircle, Loader2, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const SimpleEmailForm = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    linkedin_url: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!name || !email || !message) {
-      setStatus('error');
-      setErrorMessage('Please fill in all fields.');
+    
+    if (!formData.name.trim() || !formData.email.trim()) {
+      toast.error('Please fill in your name and email');
       return;
     }
 
-    setStatus('loading');
-    setErrorMessage(null);
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
-        .from('contact_messages')
-        .insert({
-          name,
-          email,
-          message,
-        });
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          linkedin_url: formData.linkedin_url,
+          message: formData.message
+        }
+      });
 
-      if (error) {
-        throw new Error(error.message);
+      if (error) throw error;
+
+      if (data?.success) {
+        toast.success('Thank you! We\'ve sent you a confirmation email.');
+        setFormData({ name: '', email: '', linkedin_url: '', message: '' });
+      } else {
+        throw new Error(data?.error || 'Failed to send email');
       }
-
-      setStatus('success');
-      setName('');
-      setEmail('');
-      setMessage('');
     } catch (error: any) {
-      setStatus('error');
-      setErrorMessage(error.message || 'An unexpected error occurred.');
+      console.error('Email submission error:', error);
+      toast.error('Failed to send email. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div data-email-form className="bg-white rounded-2xl p-8 shadow-lg max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        Let's Build Together
-      </h2>
-      {status === 'success' ? (
-        <div className="text-green-600 flex items-center gap-2">
-          <CheckCircle className="w-5 h-5" />
-          Message sent successfully!
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
-            </Label>
-            <Input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-dna-emerald focus:ring-dna-emerald"
-            />
+    <section className="py-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Ready to Join the Movement?
+            </h2>
+            <p className="text-lg text-gray-600">
+              Be the first to connect with Africa's diaspora professionals when we launch
+            </p>
           </div>
-          <div>
-            <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </Label>
-            <Input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-dna-emerald focus:ring-dna-emerald"
-            />
-          </div>
-          <div>
-            <Label htmlFor="message" className="block text-sm font-medium text-gray-700">
-              Message
-            </Label>
-            <Textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={4}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-dna-emerald focus:ring-dna-emerald"
-            />
-          </div>
-          <div>
-            <Button type="submit" className="bg-dna-emerald hover:bg-dna-forest text-white">
-              {status === 'loading' ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                'Send Message'
-              )}
-            </Button>
-          </div>
-          {status === 'error' && (
-            <div className="text-red-600 flex items-center gap-2">
-              <AlertCircle className="w-5 h-5" />
-              {errorMessage}
+
+          <form onSubmit={handleSubmit} className="space-y-6" data-email-form>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name *
+                </label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Enter your full name"
+                  required
+                  disabled={isSubmitting}
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address *
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="Enter your email address"
+                  required
+                  disabled={isSubmitting}
+                />
+              </div>
             </div>
-          )}
-        </form>
-      )}
-    </div>
+
+            <div>
+              <label htmlFor="linkedin_url" className="block text-sm font-medium text-gray-700 mb-2">
+                LinkedIn URL (Optional)
+              </label>
+              <Input
+                id="linkedin_url"
+                type="url"
+                value={formData.linkedin_url}
+                onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
+                placeholder="https://linkedin.com/in/yourprofile"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                Message (Optional)
+              </label>
+              <Textarea
+                id="message"
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                placeholder="Tell us about your background and how you'd like to contribute..."
+                rows={4}
+                disabled={isSubmitting}
+                className="resize-none"
+              />
+            </div>
+
+            <Button 
+              type="submit" 
+              size="lg" 
+              className="w-full bg-dna-emerald hover:bg-dna-forest text-white py-4 text-lg font-semibold"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Sending...' : 'Join the DNA Platform'}
+            </Button>
+          </form>
+
+          <p className="text-center text-sm text-gray-500 mt-6">
+            We respect your privacy. Your information will only be used to notify you about our platform launch. 
+            During the Prototyping and Building Phase, emails will come from our mother company{' '}
+            <a 
+              href="https://www.Roadmap.Africa" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-dna-emerald hover:text-dna-forest underline"
+            >
+              Roadmap.Africa
+            </a>.
+          </p>
+        </div>
+      </div>
+    </section>
   );
 };
 
