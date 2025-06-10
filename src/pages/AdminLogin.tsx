@@ -10,7 +10,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Shield, Eye, EyeOff } from 'lucide-react';
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState('jaunelamarr@gmail.com'); // Pre-filled with your existing email
+  const [email, setEmail] = useState('jaunelamarro@icloud.com'); // Updated to the correct admin email
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
