@@ -1,42 +1,43 @@
 
-// Enhanced security validation utilities
+export const sanitizeText = (text: string): string => {
+  if (!text) return '';
+  
+  // Remove potential script tags and other dangerous content
+  return text
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .trim();
+};
 
 export const validateCharacterLimit = (text: string, maxLength: number): boolean => {
   return text.length <= maxLength;
 };
 
 export const validateProfessionalField = (text: string): boolean => {
-  if (!text) return true; // Optional field
+  if (!text) return true; // Optional fields
   
-  // Allow letters, numbers, spaces, common punctuation, but block potential XSS
-  const safePattern = /^[a-zA-Z0-9\s\.\,\-\&\(\)\/\+àáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ]{1,100}$/;
-  return safePattern.test(text) && !/<script|javascript:|data:|vbscript:/i.test(text);
+  // Allow letters, numbers, spaces, common punctuation
+  const validPattern = /^[a-zA-Z0-9\s\-'.,()&]+$/;
+  return validPattern.test(text) && validateCharacterLimit(text, 100);
 };
 
 export const validateBioContent = (bio: string): boolean => {
   if (!bio) return true; // Optional field
   
-  // Check length
-  if (bio.length > 1000) return false;
-  
-  // Block potential XSS and injection attempts
-  const dangerousPatterns = [
+  // Check for suspicious patterns
+  const suspiciousPatterns = [
     /<script/i,
     /javascript:/i,
-    /data:/i,
-    /vbscript:/i,
-    /onload=/i,
-    /onerror=/i,
-    /onclick=/i,
-    /onmouseover=/i,
+    /onclick/i,
+    /onerror/i,
+    /onload/i,
     /<iframe/i,
-    /<object/i,
-    /<embed/i,
-    /eval\s*\(/i,
-    /expression\s*\(/i
+    /data:text\/html/i
   ];
   
-  return !dangerousPatterns.some(pattern => pattern.test(bio));
+  return !suspiciousPatterns.some(pattern => pattern.test(bio));
 };
 
 export const isValidLinkedInUrl = (url: string): boolean => {
@@ -44,44 +45,15 @@ export const isValidLinkedInUrl = (url: string): boolean => {
   
   try {
     const urlObj = new URL(url);
-    
-    // Must be HTTPS for security
-    if (urlObj.protocol !== 'https:') return false;
-    
-    // Must be LinkedIn domain
-    const validHosts = ['linkedin.com', 'www.linkedin.com'];
-    if (!validHosts.includes(urlObj.hostname)) return false;
-    
-    // Must follow LinkedIn profile URL pattern
-    const pathPattern = /^\/in\/[a-zA-Z0-9\-]{3,100}\/?$/;
-    return pathPattern.test(urlObj.pathname);
+    return urlObj.hostname === 'linkedin.com' || 
+           urlObj.hostname === 'www.linkedin.com' ||
+           urlObj.pathname.startsWith('/in/');
   } catch {
     return false;
   }
 };
 
-export const sanitizeText = (text: string): string => {
-  return text
-    .trim()
-    .replace(/[<>\"'&]/g, '') // Remove potentially dangerous characters
-    .replace(/\s+/g, ' '); // Normalize whitespace
-};
-
-export const isRateLimited = (lastAction: number, cooldownMs: number = 3000): boolean => {
-  return Date.now() - lastAction < cooldownMs;
-};
-
-export const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email) && 
-         email.length <= 254 && 
-         !email.includes('..') && // Prevent consecutive dots
-         !/<script|javascript:|data:/i.test(email); // Basic XSS protection
-};
-
-export const validateName = (name: string): boolean => {
-  const nameRegex = /^[a-zA-Z\s\-'àáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ]{1,50}$/;
-  return nameRegex.test(name) && 
-         !/<script|javascript:|data:/i.test(name) && // XSS protection
-         name.trim().length >= 1; // Must have actual content
+export const isRateLimited = (lastSubmit: number, cooldownMs: number = 1000): boolean => {
+  const now = Date.now();
+  return (now - lastSubmit) < cooldownMs;
 };

@@ -28,56 +28,53 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({
   onFieldChange,
 }) => {
   return (
-    <>
-      <div className="space-y-2">
-        <Label htmlFor="full_name" className="text-dna-forest">
-          Full Name <span className="text-dna-crimson">*</span>
-        </Label>
+    <div className="space-y-4">
+      <div>
+        <Label htmlFor="full_name" className="text-dna-forest">Full Name *</Label>
         <Input
           id="full_name"
           value={formData.full_name}
           onChange={(e) => onFieldChange('full_name', e.target.value)}
-          placeholder="Your full name"
+          placeholder="Enter your full name"
           className={errors.full_name ? 'border-dna-crimson' : ''}
-          maxLength={100}
           required
         />
         {errors.full_name && (
-          <p className="text-sm text-dna-crimson">{errors.full_name}</p>
+          <p className="text-sm text-dna-crimson mt-1">{errors.full_name}</p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="profession" className="text-dna-forest">Profession</Label>
-        <Input
-          id="profession"
-          value={formData.profession}
-          onChange={(e) => onFieldChange('profession', e.target.value)}
-          placeholder="e.g. Software Engineer, Doctor, Entrepreneur"
-          className={errors.profession ? 'border-dna-crimson' : ''}
-          maxLength={100}
-        />
-        {errors.profession && (
-          <p className="text-sm text-dna-crimson">{errors.profession}</p>
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="profession" className="text-dna-forest">Profession</Label>
+          <Input
+            id="profession"
+            value={formData.profession}
+            onChange={(e) => onFieldChange('profession', e.target.value)}
+            placeholder="Software Engineer, Doctor, etc."
+            className={errors.profession ? 'border-dna-crimson' : ''}
+          />
+          {errors.profession && (
+            <p className="text-sm text-dna-crimson mt-1">{errors.profession}</p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="company" className="text-dna-forest">Company/Organization</Label>
+          <Input
+            id="company"
+            value={formData.company}
+            onChange={(e) => onFieldChange('company', e.target.value)}
+            placeholder="Your company or organization"
+            className={errors.company ? 'border-dna-crimson' : ''}
+          />
+          {errors.company && (
+            <p className="text-sm text-dna-crimson mt-1">{errors.company}</p>
+          )}
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="company" className="text-dna-forest">Company/Organization</Label>
-        <Input
-          id="company"
-          value={formData.company}
-          onChange={(e) => onFieldChange('company', e.target.value)}
-          placeholder="Current company or organization"
-          className={errors.company ? 'border-dna-crimson' : ''}
-          maxLength={100}
-        />
-        {errors.company && (
-          <p className="text-sm text-dna-crimson">{errors.company}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
+      <div>
         <Label htmlFor="location" className="text-dna-forest">Location</Label>
         <Input
           id="location"
@@ -85,34 +82,27 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({
           onChange={(e) => onFieldChange('location', e.target.value)}
           placeholder="City, Country"
           className={errors.location ? 'border-dna-crimson' : ''}
-          maxLength={100}
         />
         {errors.location && (
-          <p className="text-sm text-dna-crimson">{errors.location}</p>
+          <p className="text-sm text-dna-crimson mt-1">{errors.location}</p>
         )}
       </div>
 
-      <div className="space-y-2">
+      <div>
         <Label htmlFor="bio" className="text-dna-forest">Bio</Label>
         <Textarea
           id="bio"
           value={formData.bio}
           onChange={(e) => onFieldChange('bio', e.target.value)}
-          placeholder="Tell us about yourself, your background, and your connection to Africa..."
-          className={errors.bio ? 'border-dna-crimson' : ''}
+          placeholder="Tell us about yourself..."
           rows={4}
-          maxLength={1000}
+          className={errors.bio ? 'border-dna-crimson' : ''}
         />
-        <div className="flex justify-between items-center">
-          {errors.bio && (
-            <p className="text-sm text-dna-crimson">{errors.bio}</p>
-          )}
-          <p className="text-sm text-gray-500 ml-auto">
-            {formData.bio.length}/1000 characters
-          </p>
-        </div>
+        {errors.bio && (
+          <p className="text-sm text-dna-crimson mt-1">{errors.bio}</p>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
