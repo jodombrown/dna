@@ -1,13 +1,11 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, Users, Briefcase } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 const MobileNavigation = () => {
-  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -30,17 +28,6 @@ const MobileNavigation = () => {
   const handleNavClick = (path: string) => {
     navigate(path);
     setIsMobileMenuOpen(false);
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/auth');
-  };
-
-  const handleProfileClick = () => {
-    if (user) {
-      navigate('/my-profile');
-    }
   };
 
   return (
@@ -91,78 +78,6 @@ const MobileNavigation = () => {
               ))}
             </div>
           </div>
-          
-          {user ? (
-            <>
-              <div className="border-t pt-4 mt-4">
-                <p className="text-sm text-gray-600 mb-4">Dashboard</p>
-                <div className="space-y-2">
-                  <Button
-                    variant="ghost"
-                    className="justify-start text-left w-full"
-                    onClick={() => handleNavClick('/dashboard')}
-                  >
-                    Dashboard
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="justify-start text-left w-full"
-                    onClick={() => handleNavClick('/members')}
-                  >
-                    <Users className="w-4 h-4 mr-2" />
-                    Members
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="justify-start text-left w-full"
-                    onClick={() => handleNavClick('/opportunities')}
-                  >
-                    <Briefcase className="w-4 h-4 mr-2" />
-                    Opportunities
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="justify-start text-left w-full"
-                    onClick={() => handleNavClick('/innovation-pathways')}
-                  >
-                    Innovation Pathways
-                  </Button>
-                </div>
-              </div>
-              <div className="border-t pt-4 mt-4">
-                <Button
-                  variant="ghost"
-                  className="justify-start text-left w-full"
-                  onClick={handleProfileClick}
-                >
-                  My Profile
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="justify-start text-left w-full"
-                  onClick={handleSignOut}
-                >
-                  Sign Out
-                </Button>
-              </div>
-            </>
-          ) : (
-            <div className="border-t pt-4 mt-4 space-y-2">
-              <Button 
-                variant="outline" 
-                onClick={() => handleNavClick('/auth')}
-                className="w-full border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-dna-white"
-              >
-                Sign In
-              </Button>
-              <Button 
-                className="w-full bg-dna-copper hover:bg-dna-gold text-dna-white"
-                onClick={() => handleNavClick('/auth')}
-              >
-                Join Now
-              </Button>
-            </div>
-          )}
         </nav>
       </SheetContent>
     </Sheet>

@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
+import AdminLogin from "./pages/AdminLogin";
 import Profile from "./pages/Profile";
 import MyProfile from "./pages/MyProfile";
 import Members from "./pages/Members";
@@ -90,7 +90,7 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/coming-soon" element={<ComingSoon />} />
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/prototyping-phase" element={<PrototypingPhase />} />
             <Route path="/build-phase" element={<BuildPhase />} />
             <Route path="/mvp-phase" element={<MvpPhase />} />
