@@ -3,8 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import EnhancedProfileForm from '@/components/profile/EnhancedProfileForm';
 import EnhancedProfileDisplay from '@/components/profile/EnhancedProfileDisplay';
+import ProfileOverview from '@/components/profile/ProfileOverview';
+import MentorshipPreferences from '@/components/profile/MentorshipPreferences';
+import CulturalImpactSection from '@/components/profile/CulturalImpactSection';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 
 const MyProfile = () => {
@@ -97,11 +101,38 @@ const MyProfile = () => {
                 </Button>
               </div>
             ) : (
-              <EnhancedProfileDisplay 
-                profile={profile} 
-                isOwnProfile={true}
-                onEdit={handleEdit}
-              />
+              <div className="space-y-6">
+                {/* Enhanced Profile Display */}
+                <EnhancedProfileDisplay 
+                  profile={profile} 
+                  isOwnProfile={true}
+                  onEdit={handleEdit}
+                />
+
+                {/* Tabbed Enhanced Sections */}
+                <Tabs defaultValue="overview" className="mt-8">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="overview">Profile Overview</TabsTrigger>
+                    <TabsTrigger value="mentorship">Mentorship & Network</TabsTrigger>
+                    <TabsTrigger value="impact">Cultural Impact</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="overview" className="mt-6">
+                    <ProfileOverview profile={profile} />
+                  </TabsContent>
+                  
+                  <TabsContent value="mentorship" className="mt-6">
+                    <MentorshipPreferences 
+                      profile={profile} 
+                      isOwnProfile={true}
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="impact" className="mt-6">
+                    <CulturalImpactSection profile={profile} />
+                  </TabsContent>
+                </Tabs>
+              </div>
             )}
           </div>
         )}

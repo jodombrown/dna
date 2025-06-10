@@ -5,8 +5,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import EnhancedProfileForm from '@/components/profile/EnhancedProfileForm';
 import EnhancedProfileDisplay from '@/components/profile/EnhancedProfileDisplay';
+import ProfileOverview from '@/components/profile/ProfileOverview';
+import MentorshipPreferences from '@/components/profile/MentorshipPreferences';
+import CulturalImpactSection from '@/components/profile/CulturalImpactSection';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Profile = () => {
   const { id } = useParams();
@@ -51,7 +55,13 @@ const Profile = () => {
   };
 
   const handleConnect = () => {
+    // Navigate to connect functionality
     navigate(`/connect/${id}`);
+  };
+
+  const handleMessage = () => {
+    // Navigate to messages with this user
+    navigate(`/messages?user=${id}`);
   };
 
   if (loading) {
@@ -109,12 +119,41 @@ const Profile = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <EnhancedProfileDisplay 
-          profile={profile} 
-          isOwnProfile={isOwnProfile}
-          onEdit={handleEdit}
-          onConnect={handleConnect}
-        />
+        <div className="space-y-6">
+          {/* Enhanced Profile Display */}
+          <EnhancedProfileDisplay 
+            profile={profile} 
+            isOwnProfile={isOwnProfile}
+            onEdit={handleEdit}
+            onConnect={handleConnect}
+          />
+
+          {/* Tabbed Enhanced Sections */}
+          <Tabs defaultValue="overview" className="mt-8">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="overview">Profile Overview</TabsTrigger>
+              <TabsTrigger value="mentorship">Mentorship & Network</TabsTrigger>
+              <TabsTrigger value="impact">Cultural Impact</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="overview" className="mt-6">
+              <ProfileOverview profile={profile} />
+            </TabsContent>
+            
+            <TabsContent value="mentorship" className="mt-6">
+              <MentorshipPreferences 
+                profile={profile} 
+                isOwnProfile={isOwnProfile}
+                onConnect={handleConnect}
+                onMessage={handleMessage}
+              />
+            </TabsContent>
+            
+            <TabsContent value="impact" className="mt-6">
+              <CulturalImpactSection profile={profile} />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
