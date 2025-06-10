@@ -326,53 +326,77 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          community_involvement: string | null
           company: string | null
           created_at: string
+          diaspora_networks: string[] | null
           email: string | null
           full_name: string | null
+          giving_back_initiatives: string | null
+          home_country_projects: string | null
           id: string
           interests: string[] | null
           is_public: boolean | null
           linkedin_url: string | null
           location: string | null
+          mentorship_areas: string[] | null
           profession: string | null
+          professional_sectors: string[] | null
           profile_picture_url: string | null
           skills: string[] | null
           updated_at: string
+          volunteer_experience: string | null
+          years_in_diaspora: number | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          community_involvement?: string | null
           company?: string | null
           created_at?: string
+          diaspora_networks?: string[] | null
           email?: string | null
           full_name?: string | null
+          giving_back_initiatives?: string | null
+          home_country_projects?: string | null
           id: string
           interests?: string[] | null
           is_public?: boolean | null
           linkedin_url?: string | null
           location?: string | null
+          mentorship_areas?: string[] | null
           profession?: string | null
+          professional_sectors?: string[] | null
           profile_picture_url?: string | null
           skills?: string[] | null
           updated_at?: string
+          volunteer_experience?: string | null
+          years_in_diaspora?: number | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          community_involvement?: string | null
           company?: string | null
           created_at?: string
+          diaspora_networks?: string[] | null
           email?: string | null
           full_name?: string | null
+          giving_back_initiatives?: string | null
+          home_country_projects?: string | null
           id?: string
           interests?: string[] | null
           is_public?: boolean | null
           linkedin_url?: string | null
           location?: string | null
+          mentorship_areas?: string[] | null
           profession?: string | null
+          professional_sectors?: string[] | null
           profile_picture_url?: string | null
           skills?: string[] | null
           updated_at?: string
+          volunteer_experience?: string | null
+          years_in_diaspora?: number | null
         }
         Relationships: []
       }

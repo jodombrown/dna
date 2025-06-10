@@ -11,6 +11,9 @@ interface BasicInfoFieldsProps {
     company: string;
     location: string;
     bio: string;
+    country_of_origin?: string;
+    current_country?: string;
+    years_in_diaspora?: string;
   };
   errors: {
     full_name?: string;
@@ -18,6 +21,8 @@ interface BasicInfoFieldsProps {
     company?: string;
     location?: string;
     bio?: string;
+    country_of_origin?: string;
+    current_country?: string;
   };
   onFieldChange: (field: string, value: string) => void;
 }
@@ -74,18 +79,61 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({
         </div>
       </div>
 
-      <div>
-        <Label htmlFor="location" className="text-dna-forest">Location</Label>
-        <Input
-          id="location"
-          value={formData.location}
-          onChange={(e) => onFieldChange('location', e.target.value)}
-          placeholder="City, Country"
-          className={errors.location ? 'border-dna-crimson' : ''}
-        />
-        {errors.location && (
-          <p className="text-sm text-dna-crimson mt-1">{errors.location}</p>
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="country_of_origin" className="text-dna-forest">Country of Origin</Label>
+          <Input
+            id="country_of_origin"
+            value={formData.country_of_origin || ''}
+            onChange={(e) => onFieldChange('country_of_origin', e.target.value)}
+            placeholder="Nigeria, Ghana, Kenya, etc."
+            className={errors.country_of_origin ? 'border-dna-crimson' : ''}
+          />
+          {errors.country_of_origin && (
+            <p className="text-sm text-dna-crimson mt-1">{errors.country_of_origin}</p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="current_country" className="text-dna-forest">Current Country</Label>
+          <Input
+            id="current_country"
+            value={formData.current_country || ''}
+            onChange={(e) => onFieldChange('current_country', e.target.value)}
+            placeholder="United States, Canada, UK, etc."
+            className={errors.current_country ? 'border-dna-crimson' : ''}
+          />
+          {errors.current_country && (
+            <p className="text-sm text-dna-crimson mt-1">{errors.current_country}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="location" className="text-dna-forest">Current Location</Label>
+          <Input
+            id="location"
+            value={formData.location}
+            onChange={(e) => onFieldChange('location', e.target.value)}
+            placeholder="City, State/Province"
+            className={errors.location ? 'border-dna-crimson' : ''}
+          />
+          {errors.location && (
+            <p className="text-sm text-dna-crimson mt-1">{errors.location}</p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="years_in_diaspora" className="text-dna-forest">Years in Diaspora</Label>
+          <Input
+            id="years_in_diaspora"
+            type="number"
+            value={formData.years_in_diaspora || ''}
+            onChange={(e) => onFieldChange('years_in_diaspora', e.target.value)}
+            placeholder="5"
+          />
+        </div>
       </div>
 
       <div>
@@ -94,7 +142,7 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({
           id="bio"
           value={formData.bio}
           onChange={(e) => onFieldChange('bio', e.target.value)}
-          placeholder="Tell us about yourself..."
+          placeholder="Tell us about yourself and your diaspora journey..."
           rows={4}
           className={errors.bio ? 'border-dna-crimson' : ''}
         />

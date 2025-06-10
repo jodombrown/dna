@@ -23,6 +23,8 @@ interface FormErrors {
   location?: string;
   bio?: string;
   linkedin_url?: string;
+  country_of_origin?: string;
+  current_country?: string;
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
@@ -39,6 +41,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
     location: profile?.location || '',
     bio: profile?.bio || '',
     linkedin_url: profile?.linkedin_url || '',
+    country_of_origin: profile?.country_of_origin || '',
+    current_country: profile?.current_country || '',
+    years_in_diaspora: profile?.years_in_diaspora || '',
   });
 
   const handleFieldChange = (field: string, value: string) => {
@@ -100,6 +105,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
         location: sanitizeText(formData.location),
         bio: sanitizeText(formData.bio),
         linkedin_url: formData.linkedin_url.trim(),
+        country_of_origin: sanitizeText(formData.country_of_origin),
+        current_country: sanitizeText(formData.current_country),
+        years_in_diaspora: formData.years_in_diaspora ? parseInt(formData.years_in_diaspora) : null,
       };
 
       const { error } = await supabase
@@ -139,9 +147,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-dna-forest">Professional Profile</CardTitle>
+        <CardTitle className="text-dna-forest">Diaspora Professional Profile</CardTitle>
         <CardDescription>
-          Share your professional background with the DNA community
+          Connect with diaspora professionals who share your heritage and professional goals
         </CardDescription>
       </CardHeader>
       <CardContent>

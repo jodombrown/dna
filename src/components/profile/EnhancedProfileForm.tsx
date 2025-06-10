@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,6 +45,11 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
     is_public: profile?.is_public !== false,
     availability_for_mentoring: profile?.availability_for_mentoring || false,
     looking_for_opportunities: profile?.looking_for_opportunities || false,
+    years_in_diaspora: profile?.years_in_diaspora || '',
+    community_involvement: profile?.community_involvement || '',
+    giving_back_initiatives: profile?.giving_back_initiatives || '',
+    home_country_projects: profile?.home_country_projects || '',
+    volunteer_experience: profile?.volunteer_experience || '',
   });
 
   const [skills, setSkills] = useState<string[]>(
@@ -54,8 +58,21 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
   const [interests, setInterests] = useState<string[]>(
     profile?.interests ? (Array.isArray(profile.interests) ? profile.interests : profile.interests.split(',').map((s: string) => s.trim())) : []
   );
+  const [professionalSectors, setProfessionalSectors] = useState<string[]>(
+    profile?.professional_sectors ? (Array.isArray(profile.professional_sectors) ? profile.professional_sectors : []) : []
+  );
+  const [diasporaNetworks, setDiasporaNetworks] = useState<string[]>(
+    profile?.diaspora_networks ? (Array.isArray(profile.diaspora_networks) ? profile.diaspora_networks : []) : []
+  );
+  const [mentorshipAreas, setMentorshipAreas] = useState<string[]>(
+    profile?.mentorship_areas ? (Array.isArray(profile.mentorship_areas) ? profile.mentorship_areas : []) : []
+  );
+
   const [newSkill, setNewSkill] = useState('');
   const [newInterest, setNewInterest] = useState('');
+  const [newSector, setNewSector] = useState('');
+  const [newNetwork, setNewNetwork] = useState('');
+  const [newMentorshipArea, setNewMentorshipArea] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '');
 
   const handleInputChange = (field: string, value: string | boolean | number) => {
@@ -82,6 +99,39 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
 
   const removeInterest = (interestToRemove: string) => {
     setInterests(interests.filter(interest => interest !== interestToRemove));
+  };
+
+  const addSector = () => {
+    if (newSector.trim() && !professionalSectors.includes(newSector.trim())) {
+      setProfessionalSectors([...professionalSectors, newSector.trim()]);
+      setNewSector('');
+    }
+  };
+
+  const removeSector = (sectorToRemove: string) => {
+    setProfessionalSectors(professionalSectors.filter(sector => sector !== sectorToRemove));
+  };
+
+  const addNetwork = () => {
+    if (newNetwork.trim() && !diasporaNetworks.includes(newNetwork.trim())) {
+      setDiasporaNetworks([...diasporaNetworks, newNetwork.trim()]);
+      setNewNetwork('');
+    }
+  };
+
+  const removeNetwork = (networkToRemove: string) => {
+    setDiasporaNetworks(diasporaNetworks.filter(network => network !== networkToRemove));
+  };
+
+  const addMentorshipArea = () => {
+    if (newMentorshipArea.trim() && !mentorshipAreas.includes(newMentorshipArea.trim())) {
+      setMentorshipAreas([...mentorshipAreas, newMentorshipArea.trim()]);
+      setNewMentorshipArea('');
+    }
+  };
+
+  const removeMentorshipArea = (areaToRemove: string) => {
+    setMentorshipAreas(mentorshipAreas.filter(area => area !== areaToRemove));
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,6 +184,9 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
           avatar_url: avatarUrl,
           skills: skills,
           interests: interests,
+          professional_sectors: professionalSectors,
+          diaspora_networks: diasporaNetworks,
+          mentorship_areas: mentorshipAreas,
           updated_at: new Date().toISOString(),
         });
 
@@ -306,6 +359,41 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
         </CardContent>
       </Card>
 
+      {/* Diaspora-Specific Professional Sectors */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-dna-forest">Professional Sectors</CardTitle>
+          <CardDescription>Industries and sectors important to the diaspora community</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>Professional Sectors</Label>
+            <div className="flex gap-2 mb-2">
+              <Input
+                value={newSector}
+                onChange={(e) => setNewSector(e.target.value)}
+                placeholder="Healthcare, Technology, Finance, Education..."
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSector())}
+              />
+              <Button type="button" onClick={addSector} size="sm">
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {professionalSectors.map((sector, index) => (
+                <Badge key={index} variant="outline" className="text-dna-emerald border-dna-emerald">
+                  {sector}
+                  <X
+                    className="w-3 h-3 ml-1 cursor-pointer"
+                    onClick={() => removeSector(sector)}
+                  />
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Skills & Interests */}
       <Card>
         <CardHeader>
@@ -366,6 +454,137 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
         </CardContent>
       </Card>
 
+      {/* Cultural Background & Diaspora Identity */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-dna-forest">Cultural Background & Diaspora Identity</CardTitle>
+          <CardDescription>Your cultural heritage and diaspora journey</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="country_of_origin">Country of Origin</Label>
+              <Input
+                id="country_of_origin"
+                value={formData.country_of_origin}
+                onChange={(e) => handleInputChange('country_of_origin', e.target.value)}
+                placeholder="Nigeria, Ghana, Kenya, etc."
+              />
+            </div>
+            <div>
+              <Label htmlFor="current_country">Current Country</Label>
+              <Input
+                id="current_country"
+                value={formData.current_country}
+                onChange={(e) => handleInputChange('current_country', e.target.value)}
+                placeholder="United States, Canada, UK, etc."
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="years_in_diaspora">Years in Diaspora</Label>
+              <Input
+                id="years_in_diaspora"
+                type="number"
+                value={formData.years_in_diaspora}
+                onChange={(e) => handleInputChange('years_in_diaspora', e.target.value)}
+                placeholder="5"
+              />
+            </div>
+            <div>
+              <Label htmlFor="languages">Languages</Label>
+              <Input
+                id="languages"
+                value={formData.languages}
+                onChange={(e) => handleInputChange('languages', e.target.value)}
+                placeholder="English, French, Yoruba, Swahili, etc."
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label>Diaspora Networks & Organizations</Label>
+            <div className="flex gap-2 mb-2">
+              <Input
+                value={newNetwork}
+                onChange={(e) => setNewNetwork(e.target.value)}
+                placeholder="African diaspora organizations you're part of..."
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addNetwork())}
+              />
+              <Button type="button" onClick={addNetwork} size="sm">
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {diasporaNetworks.map((network, index) => (
+                <Badge key={index} variant="outline" className="text-dna-gold border-dna-gold">
+                  {network}
+                  <X
+                    className="w-3 h-3 ml-1 cursor-pointer"
+                    onClick={() => removeNetwork(network)}
+                  />
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Community Impact & Giving Back */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-dna-forest">Community Impact & Giving Back</CardTitle>
+          <CardDescription>Your contributions to diaspora and home country communities</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="community_involvement">Community Involvement</Label>
+            <Textarea
+              id="community_involvement"
+              value={formData.community_involvement}
+              onChange={(e) => handleInputChange('community_involvement', e.target.value)}
+              placeholder="Describe your involvement in diaspora or local communities..."
+              rows={3}
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="giving_back_initiatives">Giving Back Initiatives</Label>
+            <Textarea
+              id="giving_back_initiatives"
+              value={formData.giving_back_initiatives}
+              onChange={(e) => handleInputChange('giving_back_initiatives', e.target.value)}
+              placeholder="Projects or initiatives focused on giving back to your home country or diaspora community..."
+              rows={3}
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="home_country_projects">Home Country Projects</Label>
+            <Textarea
+              id="home_country_projects"
+              value={formData.home_country_projects}
+              onChange={(e) => handleInputChange('home_country_projects', e.target.value)}
+              placeholder="Specific projects or contributions to home country development..."
+              rows={3}
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="volunteer_experience">Volunteer Experience</Label>
+            <Textarea
+              id="volunteer_experience"
+              value={formData.volunteer_experience}
+              onChange={(e) => handleInputChange('volunteer_experience', e.target.value)}
+              placeholder="Volunteer work within diaspora or home country communities..."
+              rows={3}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Contact Information */}
       <Card>
         <CardHeader>
@@ -393,54 +612,42 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
         </CardContent>
       </Card>
 
-      {/* Cultural Background */}
+      {/* Mentorship & Opportunities */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-dna-forest">Cultural Background</CardTitle>
+          <CardTitle className="text-dna-forest">Mentorship & Opportunities</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="country_of_origin">Country of Origin</Label>
-              <Input
-                id="country_of_origin"
-                value={formData.country_of_origin}
-                onChange={(e) => handleInputChange('country_of_origin', e.target.value)}
-                placeholder="Nigeria, Ghana, etc."
-              />
-            </div>
-            <div>
-              <Label htmlFor="current_country">Current Country</Label>
-              <Input
-                id="current_country"
-                value={formData.current_country}
-                onChange={(e) => handleInputChange('current_country', e.target.value)}
-                placeholder="United States, Canada, etc."
-              />
-            </div>
-          </div>
           <div>
-            <Label htmlFor="languages">Languages</Label>
-            <Input
-              id="languages"
-              value={formData.languages}
-              onChange={(e) => handleInputChange('languages', e.target.value)}
-              placeholder="English, French, Yoruba, etc."
-            />
+            <Label>Mentorship Areas</Label>
+            <div className="flex gap-2 mb-2">
+              <Input
+                value={newMentorshipArea}
+                onChange={(e) => setNewMentorshipArea(e.target.value)}
+                placeholder="Career development, entrepreneurship, cultural adaptation..."
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addMentorshipArea())}
+              />
+              <Button type="button" onClick={addMentorshipArea} size="sm">
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {mentorshipAreas.map((area, index) => (
+                <Badge key={index} variant="outline" className="text-dna-crimson border-dna-crimson">
+                  {area}
+                  <X
+                    className="w-3 h-3 ml-1 cursor-pointer"
+                    onClick={() => removeMentorshipArea(area)}
+                  />
+                </Badge>
+              ))}
+            </div>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Availability & Preferences */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-dna-forest">Availability & Preferences</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label>Available for Mentoring</Label>
-              <p className="text-sm text-gray-600">Let others know you're available to mentor</p>
+              <p className="text-sm text-gray-600">Let other diaspora members know you're available to mentor</p>
             </div>
             <Switch
               checked={formData.availability_for_mentoring}
@@ -462,7 +669,7 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label>Public Profile</Label>
-              <p className="text-sm text-gray-600">Make your profile visible to other members</p>
+              <p className="text-sm text-gray-600">Make your profile visible to other diaspora members</p>
             </div>
             <Switch
               checked={formData.is_public}
@@ -528,3 +735,5 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
 };
 
 export default EnhancedProfileForm;
+
+</initial_code>
