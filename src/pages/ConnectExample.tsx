@@ -89,7 +89,7 @@ const ConnectExample = () => {
     }
   };
 
-  const handleMessage = (recipientId: string, recipientName: string) => {
+  const handleMessage = async (recipientId: string, recipientName: string) => {
     console.log('Message button clicked for professional:', recipientId, recipientName);
     if (!user) {
       console.log('User not logged in, showing message dialog');
@@ -98,8 +98,10 @@ const ConnectExample = () => {
     }
 
     try {
-      sendMessage(recipientId, `Hi ${recipientName}, I'd like to connect and learn more about your work!`);
+      await sendMessage(recipientId, `Hi ${recipientName}, I'd like to connect and learn more about your work!`);
       toast.success('Message sent successfully!');
+      // Navigate to messages page to see the conversation
+      navigate('/messages');
     } catch (error) {
       console.error('Message error:', error);
       toast.error('Failed to send message');

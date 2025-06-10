@@ -39,7 +39,6 @@ export const useMessages = () => {
       
       if (error) throw error;
       
-      setMessages(prev => [data, ...prev]);
       return data;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send message');
@@ -110,6 +109,52 @@ export const useMessages = () => {
       return [];
     }
   };
+
+  // Real-time subscription for new messages
+  useEffect(() => {
+    if (!user) return;
+
+    console.log('Setting up real-time message subscription for user:', user.id);
+
+    const channel = supabase
+      .channel('messages-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `recipient_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('New message received:', payload);
+          const newMessage = payload.new as Message;
+          setMessages(prev => [newMessage, ...prev]);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `recipient_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Message updated:', payload);
+          const updatedMessage = payload.new as Message;
+          setMessages(prev =>
+            prev.map(msg => msg.id === updatedMessage.id ? updatedMessage : msg)
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      console.log('Cleaning up message subscription');
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
 
   useEffect(() => {
     if (user) {
