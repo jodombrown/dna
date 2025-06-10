@@ -1,23 +1,49 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import AuthForm from '@/components/auth/AuthForm';
+import PasswordResetForm from '@/components/auth/PasswordResetForm';
+import UpdatePasswordForm from '@/components/auth/UpdatePasswordForm';
 import { useAuth } from '@/contexts/AuthContext';
 
 const Auth = () => {
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get('mode') || 'signin';
+  const [authMode, setAuthMode] = useState<'signin' | 'signup' | 'reset' | 'update'>(
+    mode as 'signin' | 'signup' | 'reset' | 'update'
+  );
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirect authenticated users to home page
-    if (user && !loading) {
+    // Update auth mode when URL changes
+    const urlMode = searchParams.get('mode');
+    if (urlMode && ['signin', 'signup', 'reset', 'update'].includes(urlMode)) {
+      setAuthMode(urlMode as 'signin' | 'signup' | 'reset' | 'update');
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    // Redirect authenticated users to home page (except for password update)
+    if (user && !loading && authMode !== 'update') {
       navigate('/');
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, authMode]);
 
   const toggleMode = () => {
-    setMode(mode === 'signin' ? 'signup' : 'signin');
+    const newMode = authMode === 'signin' ? 'signup' : 'signin';
+    setAuthMode(newMode);
+    navigate(`/auth?mode=${newMode}`);
+  };
+
+  const showPasswordReset = () => {
+    setAuthMode('reset');
+    navigate('/auth?mode=reset');
+  };
+
+  const backToAuth = () => {
+    setAuthMode('signin');
+    navigate('/auth?mode=signin');
   };
 
   if (loading) {
@@ -28,10 +54,27 @@ const Auth = () => {
     );
   }
 
+  const renderForm = () => {
+    switch (authMode) {
+      case 'reset':
+        return <PasswordResetForm onBackToAuth={backToAuth} />;
+      case 'update':
+        return <UpdatePasswordForm />;
+      default:
+        return (
+          <AuthForm 
+            mode={authMode as 'signin' | 'signup'} 
+            onToggleMode={toggleMode}
+            onPasswordReset={showPasswordReset}
+          />
+        );
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-africa-green to-africa-earth flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <AuthForm mode={mode} onToggleMode={toggleMode} />
+        {renderForm()}
       </div>
     </div>
   );

@@ -331,9 +331,13 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          interests: string[] | null
+          is_public: boolean | null
           linkedin_url: string | null
           location: string | null
           profession: string | null
+          profile_picture_url: string | null
+          skills: string[] | null
           updated_at: string
         }
         Insert: {
@@ -344,9 +348,13 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          interests?: string[] | null
+          is_public?: boolean | null
           linkedin_url?: string | null
           location?: string | null
           profession?: string | null
+          profile_picture_url?: string | null
+          skills?: string[] | null
           updated_at?: string
         }
         Update: {
@@ -357,9 +365,13 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          interests?: string[] | null
+          is_public?: boolean | null
           linkedin_url?: string | null
           location?: string | null
           profession?: string | null
+          profile_picture_url?: string | null
+          skills?: string[] | null
           updated_at?: string
         }
         Relationships: []

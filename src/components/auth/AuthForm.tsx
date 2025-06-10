@@ -11,6 +11,7 @@ import { sanitizeText, validateCharacterLimit } from '@/utils/validation';
 interface AuthFormProps {
   mode: 'signin' | 'signup';
   onToggleMode: () => void;
+  onPasswordReset?: () => void;
 }
 
 interface FormErrors {
@@ -19,7 +20,7 @@ interface FormErrors {
   fullName?: string;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -247,18 +248,33 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode }) => {
           </Button>
         </form>
         
-        <div className="mt-4 text-center">
-          <button
-            type="button"
-            onClick={onToggleMode}
-            className="text-dna-emerald hover:text-dna-forest hover:underline"
-            disabled={loading}
-          >
-            {mode === 'signin' 
-              ? "Don't have an account? Sign up" 
-              : "Already have an account? Sign in"
-            }
-          </button>
+        <div className="mt-4 space-y-2">
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={onToggleMode}
+              className="text-dna-emerald hover:text-dna-forest hover:underline"
+              disabled={loading}
+            >
+              {mode === 'signin' 
+                ? "Don't have an account? Sign up" 
+                : "Already have an account? Sign in"
+              }
+            </button>
+          </div>
+          
+          {mode === 'signin' && onPasswordReset && (
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={onPasswordReset}
+                className="text-sm text-dna-emerald hover:text-dna-forest hover:underline"
+                disabled={loading}
+              >
+                Forgot your password?
+              </button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
