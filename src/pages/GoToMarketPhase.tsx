@@ -160,19 +160,19 @@ const GoToMarketPhase = () => {
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-gold mb-2">100K</div>
+                <div className="text-4xl font-bold text-dna-gold mb-2">50,000</div>
                 <div className="text-gray-600">Global Users</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-copper mb-2">50</div>
+                <div className="text-4xl font-bold text-dna-copper mb-2">$1.5M</div>
+                <div className="text-gray-600">Monthly Revenue</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-dna-emerald mb-2">25</div>
                 <div className="text-gray-600">Countries</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-emerald mb-2">$1M</div>
-                <div className="text-gray-600">Annual Revenue</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-forest mb-2">500</div>
+                <div className="text-4xl font-bold text-dna-forest mb-2">200</div>
                 <div className="text-gray-600">Corporate Partners</div>
               </div>
             </div>

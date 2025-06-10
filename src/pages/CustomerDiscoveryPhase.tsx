@@ -161,16 +161,16 @@ const CustomerDiscoveryPhase = () => {
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-forest mb-2">1,000</div>
+                <div className="text-4xl font-bold text-dna-forest mb-2">15,000</div>
+                <div className="text-gray-600">Platform Users</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-dna-emerald mb-2">$450K</div>
+                <div className="text-gray-600">Monthly Revenue</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-dna-copper mb-2">500</div>
                 <div className="text-gray-600">User Interviews</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-emerald mb-2">50</div>
-                <div className="text-gray-600">Feature Tests</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-copper mb-2">25</div>
-                <div className="text-gray-600">Market Segments</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-dna-gold mb-2">80%</div>

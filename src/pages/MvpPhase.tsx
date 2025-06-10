@@ -108,7 +108,7 @@ const MvpPhase = () => {
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Premium memberships
+                      Premium memberships ($29.99/month)
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-dna-emerald" />
@@ -161,11 +161,11 @@ const MvpPhase = () => {
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-emerald mb-2">10,000</div>
+                <div className="text-4xl font-bold text-dna-emerald mb-2">2,500</div>
                 <div className="text-gray-600">Platform Users</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-copper mb-2">$50K</div>
+                <div className="text-4xl font-bold text-dna-copper mb-2">$75K</div>
                 <div className="text-gray-600">Monthly Revenue</div>
               </div>
               <div className="text-center">
