@@ -78,15 +78,15 @@ const SimpleEmailForm = () => {
   };
 
   return (
-    <section className="py-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+    <section className="py-16">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl border border-dna-mint/20 p-8 md:p-12">
           <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-dna-forest mb-4">
               Ready to Join the Movement?
             </h2>
-            <p className="text-lg text-gray-600">
-              Be the first to connect with Africa's diaspora professionals when we launch
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Be the first to connect with Africa's diaspora professionals when we launch our revolutionary platform
             </p>
           </div>
 
@@ -105,6 +105,7 @@ const SimpleEmailForm = () => {
                   placeholder="Enter your full name"
                   required
                   disabled={isSubmitting}
+                  className="border-dna-mint/30 focus:border-dna-emerald focus:ring-dna-emerald"
                 />
               </div>
               
@@ -121,6 +122,7 @@ const SimpleEmailForm = () => {
                   placeholder="Enter your email address"
                   required
                   disabled={isSubmitting}
+                  className="border-dna-mint/30 focus:border-dna-emerald focus:ring-dna-emerald"
                 />
               </div>
             </div>
@@ -137,6 +139,7 @@ const SimpleEmailForm = () => {
                 onChange={handleInputChange}
                 placeholder="https://linkedin.com/in/yourprofile"
                 disabled={isSubmitting}
+                className="border-dna-mint/30 focus:border-dna-emerald focus:ring-dna-emerald"
               />
             </div>
 
@@ -152,14 +155,14 @@ const SimpleEmailForm = () => {
                 placeholder="Tell us about your background and how you'd like to contribute..."
                 rows={4}
                 disabled={isSubmitting}
-                className="resize-none"
+                className="resize-none border-dna-mint/30 focus:border-dna-emerald focus:ring-dna-emerald"
               />
             </div>
 
             <Button 
               type="submit" 
               size="lg" 
-              className="w-full bg-dna-emerald hover:bg-dna-forest text-white py-4 text-lg font-semibold"
+              className="w-full bg-gradient-to-r from-dna-emerald to-dna-forest hover:from-dna-forest hover:to-dna-emerald text-white py-4 text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Sending...' : 'Join DNA'}

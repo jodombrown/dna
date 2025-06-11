@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import Logo from './header/Logo';
@@ -12,10 +12,12 @@ import MessageNotifications from './messaging/MessageNotifications';
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
+  const isHomePage = location.pathname === '/';
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className={`bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50 ${isHomePage ? 'border-b border-dna-mint/20' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -24,8 +26,8 @@ const Header = () => {
           {/* Desktop Navigation */}
           <DesktopNavigation />
 
-          {/* Search Bar */}
-          <SearchBar />
+          {/* Search Bar - only show on non-home pages or when user is logged in */}
+          {(!isHomePage || user) && <SearchBar />}
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
@@ -40,6 +42,7 @@ const Header = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => navigate('/auth')}
+                  className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
                 >
                   Sign In
                 </Button>
