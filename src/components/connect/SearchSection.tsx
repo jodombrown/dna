@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface SearchSectionProps {
   searchTerm: string;
@@ -18,6 +19,8 @@ const SearchSection: React.FC<SearchSectionProps> = ({
   onSearch,
   loading
 }) => {
+  const navigate = useNavigate();
+
   return (
     <Card className="mb-6 sm:mb-8">
       <CardHeader>
@@ -35,14 +38,27 @@ const SearchSection: React.FC<SearchSectionProps> = ({
             onChange={(e) => onSearchChange(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && onSearch()}
           />
-          <Button 
-            className="bg-dna-emerald hover:bg-dna-forest text-white"
-            onClick={onSearch}
-            disabled={loading}
-          >
-            {loading ? 'Searching...' : 'Search'}
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              className="bg-dna-emerald hover:bg-dna-forest text-white"
+              onClick={onSearch}
+              disabled={loading}
+            >
+              {loading ? 'Searching...' : 'Search'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/search')}
+              className="flex items-center gap-2"
+            >
+              <Filter className="w-4 h-4" />
+              Advanced
+            </Button>
+          </div>
         </div>
+        <p className="text-sm text-gray-600">
+          Use the Advanced Search for more detailed filtering options
+        </p>
       </CardContent>
     </Card>
   );

@@ -28,6 +28,7 @@ const MemberDirectory = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
+        .eq('is_public', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -52,7 +53,11 @@ const MemberDirectory = () => {
       profile.full_name?.toLowerCase().includes(sanitizedSearchTerm.toLowerCase()) ||
       profile.profession?.toLowerCase().includes(sanitizedSearchTerm.toLowerCase()) ||
       profile.company?.toLowerCase().includes(sanitizedSearchTerm.toLowerCase()) ||
-      profile.location?.toLowerCase().includes(sanitizedSearchTerm.toLowerCase())
+      profile.location?.toLowerCase().includes(sanitizedSearchTerm.toLowerCase()) ||
+      profile.bio?.toLowerCase().includes(sanitizedSearchTerm.toLowerCase()) ||
+      (profile.skills && profile.skills.some((skill: string) => 
+        skill.toLowerCase().includes(sanitizedSearchTerm.toLowerCase())
+      ))
     );
     
     setFilteredProfiles(filtered);
@@ -84,16 +89,20 @@ const MemberDirectory = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <Input
-            placeholder="Search by name, profession, company, or location..."
+            placeholder="Search by name, profession, company, location, or skills..."
             value={searchTerm}
             onChange={handleSearchChange}
             maxLength={100}
             className="pl-10"
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button 
+          variant="outline" 
+          className="flex items-center gap-2"
+          onClick={() => navigate('/search')}
+        >
           <Filter className="w-4 h-4" />
-          Filters
+          Advanced Search
         </Button>
       </div>
 
@@ -114,7 +123,13 @@ const MemberDirectory = () => {
       {filteredProfiles.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">No members found matching your search.</p>
-          <p className="text-gray-400 mt-2">Try adjusting your search terms.</p>
+          <p className="text-gray-400 mt-2">Try adjusting your search terms or use our advanced search.</p>
+          <Button 
+            className="mt-4 bg-dna-emerald hover:bg-dna-forest text-white"
+            onClick={() => navigate('/search')}
+          >
+            Try Advanced Search
+          </Button>
         </div>
       )}
     </div>
