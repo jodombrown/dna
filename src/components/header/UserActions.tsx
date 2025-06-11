@@ -38,7 +38,7 @@ const UserActions = () => {
           className="border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white"
         >
           <Shield className="w-4 h-4 mr-2" />
-          Admin Access
+          Authorize
         </Button>
       </div>
     );
