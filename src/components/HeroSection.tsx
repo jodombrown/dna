@@ -6,6 +6,13 @@ import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
 
 const HeroSection = () => {
+  const scrollToDNAFramework = () => {
+    const frameworkSection = document.getElementById('dna-framework');
+    if (frameworkSection) {
+      frameworkSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <>
       {/* Main Hero Section */}
@@ -15,15 +22,6 @@ const HeroSection = () => {
             
             {/* Left Column - Main Content */}
             <div className="space-y-8">
-              {/* Logo */}
-              <div className="flex justify-center lg:justify-start">
-                <img 
-                  src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
-                  alt="DNA" 
-                  className="h-16 w-auto"
-                />
-              </div>
-
               {/* Main Headline */}
               <div className="text-center lg:text-left">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-dna-forest mb-6">
@@ -44,6 +42,7 @@ const HeroSection = () => {
                   <Button 
                     size="lg" 
                     className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full"
+                    onClick={scrollToDNAFramework}
                   >
                     Explore Our Platform
                   </Button>
@@ -51,6 +50,7 @@ const HeroSection = () => {
                     variant="outline" 
                     size="lg"
                     className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full"
+                    onClick={() => window.open('https://www.linkedin.com/company/diasporanetworkafrica/', '_blank')}
                   >
                     Learn More
                   </Button>
@@ -82,10 +82,10 @@ const HeroSection = () => {
       </section>
 
       {/* Platform Development Section */}
-      <section className="py-16 bg-gray-50">
+      <section id="dna-framework" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-dna-forest mb-8">
-            Platform Development Journey
+            The DNA Framework
           </h2>
           <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
             Follow our transparent development process as we build the future of diaspora engagement

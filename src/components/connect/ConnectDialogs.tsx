@@ -57,7 +57,7 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
           </DialogHeader>
           <div className="flex gap-3">
             <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
-              Create Account
+              Join Beta Program
             </Button>
             <Button variant="outline" onClick={() => setIsConnectDialogOpen(false)}>
               Got it
@@ -93,7 +93,7 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
           </DialogHeader>
           <div className="flex gap-3">
             <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-copper hover:bg-dna-gold text-white">
-              Join Platform
+              Join Beta Program
             </Button>
             <Button variant="outline" onClick={() => setIsMessageDialogOpen(false)}>
               Got it
@@ -129,7 +129,7 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
           </DialogHeader>
           <div className="flex gap-3">
             <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
-              Join Platform
+              Join Beta Program
             </Button>
             <Button variant="outline" onClick={() => setIsJoinCommunityDialogOpen(false)}>
               Got it
@@ -165,7 +165,7 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
           </DialogHeader>
           <div className="flex gap-3">
             <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-copper hover:bg-dna-gold text-white">
-              Create Account
+              Join Beta Program
             </Button>
             <Button variant="outline" onClick={() => setIsRegisterEventDialogOpen(false)}>
               Got it

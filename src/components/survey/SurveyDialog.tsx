@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -35,6 +35,8 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
     motivation: '',
     concerns: '',
     follow_up: false,
+    first_name: '',
+    last_name: '',
     email: '',
     additional_comments: ''
   });
@@ -80,6 +82,8 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
         motivation: '',
         concerns: '',
         follow_up: false,
+        first_name: '',
+        last_name: '',
         email: '',
         additional_comments: ''
       });
@@ -114,20 +118,20 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-dna-forest">
-            DNA Platform Market Validation Survey
-          </DialogTitle>
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle className="text-2xl font-bold text-dna-forest">
+            DNA Market Validation Survey
+          </SheetTitle>
           <p className="text-gray-600">
             Thank you for participating in this survey. Your feedback will help shape a new digital platform 
             designed to connect, empower, and mobilize the African diaspora for Africa's progress. 
             All responses are confidential.
           </p>
-        </DialogHeader>
+        </SheetHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 mt-6">
           {/* Section 1: About You */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-dna-copper">Section 1: About You</h3>
@@ -215,7 +219,7 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
             
             <div>
               <Label>How do you currently connect with other Africans or diaspora members? (Select all that apply)</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+              <div className="grid grid-cols-1 gap-2 mt-2">
                 {[
                   'Social media (Facebook, WhatsApp, etc.)',
                   'Professional networks (LinkedIn)',
@@ -302,7 +306,7 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
 
             <div>
               <Label>What features would you find most valuable in such a platform? (Select up to 3)</Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+              <div className="grid grid-cols-1 gap-2 mt-2">
                 {[
                   'Professional networking',
                   'Project collaboration tools',
@@ -361,15 +365,37 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
             </div>
 
             {formData.follow_up && (
-              <div>
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  placeholder="your.email@example.com"
-                />
+              <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="first_name">First Name</Label>
+                    <Input
+                      id="first_name"
+                      value={formData.first_name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
+                      placeholder="Your first name"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="last_name">Last Name</Label>
+                    <Input
+                      id="last_name"
+                      value={formData.last_name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
+                      placeholder="Your last name"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="your.email@example.com"
+                  />
+                </div>
               </div>
             )}
 
@@ -398,8 +424,8 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };
 

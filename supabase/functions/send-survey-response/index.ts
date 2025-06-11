@@ -29,13 +29,15 @@ serve(async (req) => {
       motivation,
       concerns,
       follow_up,
+      first_name,
+      last_name,
       email,
       additional_comments,
       recipient_email 
     } = await req.json()
 
     const htmlContent = `
-      <h2>DNA Platform Market Validation Survey Response</h2>
+      <h2>DNA Market Validation Survey Response</h2>
       
       <h3>Section 1: About You</h3>
       <p><strong>Age Group:</strong> ${age_group}</p>
@@ -63,7 +65,11 @@ serve(async (req) => {
       
       <h3>Section 4: Final Thoughts</h3>
       <p><strong>Follow-up Interest:</strong> ${follow_up ? 'Yes' : 'No'}</p>
-      ${follow_up ? `<p><strong>Email:</strong> ${email}</p>` : ''}
+      ${follow_up ? `
+        <p><strong>First Name:</strong> ${first_name}</p>
+        <p><strong>Last Name:</strong> ${last_name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+      ` : ''}
       <p><strong>Additional Comments:</strong> ${additional_comments}</p>
       
       <hr>
@@ -79,7 +85,7 @@ serve(async (req) => {
       body: JSON.stringify({
         from: 'DNA Platform <noreply@roadmap.africa>',
         to: [recipient_email],
-        subject: 'New DNA Platform Market Validation Survey Response',
+        subject: 'New DNA Market Validation Survey Response',
         html: htmlContent,
       }),
     })

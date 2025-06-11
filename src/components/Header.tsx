@@ -2,7 +2,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
 import Logo from './header/Logo';
 import SearchBar from './header/SearchBar';
 import DesktopNavigation from './header/DesktopNavigation';
@@ -35,25 +34,7 @@ const Header = () => {
               <MessageNotifications className="cursor-pointer" />
             )}
             
-            {user ? (
-              <UserActions />
-            ) : (
-              <div className="hidden md:flex items-center space-x-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => navigate('/auth')}
-                  className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
-                >
-                  Sign In
-                </Button>
-                <Button 
-                  onClick={() => navigate('/auth')}
-                  className="bg-dna-emerald hover:bg-dna-forest text-white"
-                >
-                  Join DNA
-                </Button>
-              </div>
-            )}
+            <UserActions />
 
             {/* Mobile menu */}
             <MobileNavigation />

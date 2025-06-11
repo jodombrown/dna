@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -11,14 +11,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import JoinDNADialog from '@/components/auth/JoinDNADialog';
+import SurveyDialog from '@/components/survey/SurveyDialog';
 
 const UserActions = () => {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
+  const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const handleJoinDNA = () => {
+    setIsJoinDialogOpen(true);
+  };
+
+  const handleTakeSurvey = () => {
+    setIsSurveyOpen(true);
   };
 
   if (loading) {
@@ -31,16 +43,28 @@ const UserActions = () => {
 
   if (!user) {
     return (
-      <div className="flex items-center space-x-2">
-        <Button
-          variant="outline"
-          onClick={() => navigate('/admin-login')}
-          className="border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white"
-        >
-          <Shield className="w-4 h-4 mr-2" />
-          Authorize
-        </Button>
-      </div>
+      <>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            onClick={() => navigate('/admin-login')}
+            className="border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white"
+          >
+            <Shield className="w-4 h-4 mr-2" />
+            Authorize
+          </Button>
+        </div>
+
+        <JoinDNADialog 
+          isOpen={isJoinDialogOpen} 
+          onClose={() => setIsJoinDialogOpen(false)}
+          onTakeSurvey={handleTakeSurvey}
+        />
+        <SurveyDialog 
+          isOpen={isSurveyOpen} 
+          onClose={() => setIsSurveyOpen(false)} 
+        />
+      </>
     );
   }
 
