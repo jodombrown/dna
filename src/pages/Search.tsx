@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import AdvancedSearch, { SearchFilters } from '@/components/search/AdvancedSearch';
 import SearchResults from '@/components/search/SearchResults';
@@ -13,11 +13,31 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Search = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const { results, loading, searchProfiles, searchProfessionals, clearResults } = useAdvancedSearch();
+  const { results, loading, error, searchProfiles, searchProfessionals, clearResults } = useAdvancedSearch();
   const { sendConnectionRequest } = useConnections();
   const { sendMessage } = useMessages();
   const [activeTab, setActiveTab] = useState('profiles');
+
+  // Initialize search from URL parameters
+  useEffect(() => {
+    const queryParam = searchParams.get('q');
+    if (queryParam) {
+      const initialFilters: SearchFilters = {
+        searchTerm: queryParam,
+        location: '',
+        profession: '',
+        skills: [],
+        experience: '',
+        isMentor: false,
+        isInvestor: false,
+        lookingForOpportunities: false,
+        countryOfOrigin: ''
+      };
+      handleSearch(initialFilters);
+    }
+  }, [searchParams]);
 
   const handleSearch = async (filters: SearchFilters) => {
     if (activeTab === 'profiles') {
@@ -93,6 +113,12 @@ const Search = () => {
 
           {/* Search Results */}
           <div className="lg:col-span-2">
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <p className="text-red-600">Error: {error}</p>
+              </div>
+            )}
+            
             <SearchResults
               results={results}
               loading={loading}

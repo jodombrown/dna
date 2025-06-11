@@ -1,39 +1,59 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
 import Logo from './header/Logo';
+import SearchBar from './header/SearchBar';
 import DesktopNavigation from './header/DesktopNavigation';
 import MobileNavigation from './header/MobileNavigation';
-import SearchBar from './header/SearchBar';
 import UserActions from './header/UserActions';
+import MessageNotifications from './messaging/MessageNotifications';
 
 const Header = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
-  const isMobile = useIsMobile();
 
   return (
-    <header className="bg-dna-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center">
-            <Logo />
-          </div>
+          <Logo />
 
           {/* Desktop Navigation */}
           <DesktopNavigation />
 
-          {/* Search Bar (for logged in users on desktop) */}
-          {user && !isMobile && <SearchBar />}
+          {/* Search Bar */}
+          <SearchBar />
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
-            {/* Mobile Navigation */}
-            <MobileNavigation />
+            {user && (
+              <MessageNotifications className="cursor-pointer" />
+            )}
+            
+            {user ? (
+              <UserActions />
+            ) : (
+              <div className="hidden md:flex items-center space-x-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/auth')}
+                >
+                  Sign In
+                </Button>
+                <Button 
+                  onClick={() => navigate('/auth')}
+                  className="bg-dna-emerald hover:bg-dna-forest text-white"
+                >
+                  Join DNA
+                </Button>
+              </div>
+            )}
 
-            {/* User Actions */}
-            <UserActions />
+            {/* Mobile menu */}
+            <MobileNavigation />
           </div>
         </div>
       </div>

@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MessageSquare } from 'lucide-react';
-import MessageCenter from '@/components/messaging/MessageCenter';
+import EnhancedMessageCenter from '@/components/messaging/EnhancedMessageCenter';
 
 const Messages: React.FC = () => {
   const { user } = useAuth();
@@ -42,7 +42,7 @@ const Messages: React.FC = () => {
           </p>
         </div>
         
-        <MessageCenter />
+        <EnhancedMessageCenter />
       </div>
     </div>
   );
