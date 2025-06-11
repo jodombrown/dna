@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
-import AdvancedSearch, { SearchFilters } from '@/components/search/AdvancedSearch';
+import AdvancedSearch from '@/components/search/AdvancedSearch';
 import SearchResults from '@/components/search/SearchResults';
 import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
 import { useConnections } from '@/hooks/useConnections';
@@ -10,6 +9,7 @@ import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SearchFilters } from '@/types/searchTypes';
 
 const Search = () => {
   const navigate = useNavigate();

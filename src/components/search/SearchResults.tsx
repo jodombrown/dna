@@ -1,25 +1,10 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, Briefcase, MessageSquare, UserPlus, Star } from 'lucide-react';
-
-interface SearchResult {
-  id: string;
-  full_name: string;
-  profession?: string;
-  company?: string;
-  location?: string;
-  bio?: string;
-  avatar_url?: string;
-  skills?: string[];
-  is_mentor?: boolean;
-  is_investor?: boolean;
-  looking_for_opportunities?: boolean;
-  years_experience?: number;
-}
+import { SearchResult } from '@/types/searchTypes';
 
 interface SearchResultsProps {
   results: SearchResult[];
