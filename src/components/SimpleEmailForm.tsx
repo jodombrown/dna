@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
 const SimpleEmailForm = () => {
   const [formData, setFormData] = useState({
@@ -14,17 +14,26 @@ const SimpleEmailForm = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name.trim() || !formData.email.trim()) {
-      toast.error('Please fill in your name and email');
+      toast({
+        title: "Validation Error",
+        description: "Please fill in your name and email",
+        variant: "destructive",
+      });
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      toast.error('Please enter a valid email address');
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -43,17 +52,29 @@ const SimpleEmailForm = () => {
       if (error) throw error;
 
       if (data?.success) {
-        toast.success('Thank you! We\'ve sent you a confirmation email.');
+        toast({
+          title: "Success!",
+          description: "Thank you! We've sent you a confirmation email.",
+        });
         setFormData({ name: '', email: '', linkedin_url: '', message: '' });
       } else {
         throw new Error(data?.error || 'Failed to send email');
       }
     } catch (error: any) {
       console.error('Email submission error:', error);
-      toast.error('Failed to send email. Please try again.');
+      toast({
+        title: "Error",
+        description: "Failed to send email. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -77,9 +98,10 @@ const SimpleEmailForm = () => {
                 </label>
                 <Input
                   id="name"
+                  name="name"
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleInputChange}
                   placeholder="Enter your full name"
                   required
                   disabled={isSubmitting}
@@ -92,9 +114,10 @@ const SimpleEmailForm = () => {
                 </label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={handleInputChange}
                   placeholder="Enter your email address"
                   required
                   disabled={isSubmitting}
@@ -108,9 +131,10 @@ const SimpleEmailForm = () => {
               </label>
               <Input
                 id="linkedin_url"
+                name="linkedin_url"
                 type="url"
                 value={formData.linkedin_url}
-                onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
+                onChange={handleInputChange}
                 placeholder="https://linkedin.com/in/yourprofile"
                 disabled={isSubmitting}
               />
@@ -122,8 +146,9 @@ const SimpleEmailForm = () => {
               </label>
               <Textarea
                 id="message"
+                name="message"
                 value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                onChange={handleInputChange}
                 placeholder="Tell us about your background and how you'd like to contribute..."
                 rows={4}
                 disabled={isSubmitting}

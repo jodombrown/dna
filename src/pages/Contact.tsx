@@ -5,7 +5,9 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, MapPin, MessageCircle, Send, Clock, Globe } from 'lucide-react';
 
 const Contact = () => {
@@ -15,11 +17,59 @@ const Contact = () => {
     subject: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
+    
+    // Validate required fields
+    if (!formData.name.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate email format
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Simulate form submission - replace with actual implementation
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Message Sent",
+        description: "Thank you for your message. We'll get back to you within 24 hours.",
+      });
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -107,30 +157,30 @@ const Contact = () => {
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                       Full Name *
                     </label>
-                    <input
+                    <Input
                       type="text"
                       id="name"
                       name="name"
                       required
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dna-copper focus:border-transparent"
                       placeholder="Your full name"
+                      disabled={isSubmitting}
                     />
                   </div>
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                       Email Address *
                     </label>
-                    <input
+                    <Input
                       type="email"
                       id="email"
                       name="email"
                       required
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dna-copper focus:border-transparent"
                       placeholder="your.email@example.com"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -139,15 +189,15 @@ const Contact = () => {
                   <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
                     Subject *
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="subject"
                     name="subject"
                     required
                     value={formData.subject}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-dna-copper focus:border-transparent"
                     placeholder="What is this regarding?"
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -164,6 +214,7 @@ const Contact = () => {
                     rows={6}
                     className="resize-none"
                     placeholder="Tell us more about your inquiry, partnership opportunity, or how we can help..."
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -171,9 +222,10 @@ const Contact = () => {
                   <Button 
                     type="submit"
                     className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-3"
+                    disabled={isSubmitting}
                   >
                     <Send className="w-4 h-4 mr-2" />
-                    Send Message
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
                   </Button>
                 </div>
               </form>
