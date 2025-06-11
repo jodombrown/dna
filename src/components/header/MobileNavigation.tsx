@@ -11,9 +11,9 @@ const MobileNavigation = () => {
 
   const publicNavItems = [
     { name: 'About Us', path: '/about' },
-    { name: 'Connect', path: '/connect-example' },
-    { name: 'Collaborate', path: '/collaborations-example' },
-    { name: 'Contribute', path: '/contribute-example' },
+    { name: 'Connect', path: '/connect' },
+    { name: 'Collaborate', path: '/collaborate' },
+    { name: 'Contribute', path: '/contribute' },
     { name: 'Contact', path: '/contact' },
   ];
 

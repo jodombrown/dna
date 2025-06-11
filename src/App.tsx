@@ -54,8 +54,11 @@ function App() {
               <Route path="/search" element={<Search />} />
               <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
               <Route path="/connect" element={<ConnectExample />} />
-              <Route path="/collaborations" element={<CollaborationsExample />} />
+              <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
+              <Route path="/connect-example" element={<ConnectExample />} />
+              <Route path="/collaborations-example" element={<CollaborationsExample />} />
+              <Route path="/contribute-example" element={<ContributeExample />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/services" element={<Services />} />
