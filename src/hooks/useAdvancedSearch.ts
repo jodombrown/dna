@@ -51,11 +51,6 @@ export const useAdvancedSearch = () => {
         query = query.eq('profession', filters.profession);
       }
 
-      // Apply country of origin filter
-      if (filters.countryOfOrigin) {
-        query = query.eq('country_of_origin', filters.countryOfOrigin);
-      }
-
       // Apply skills filter
       if (filters.skills.length > 0) {
         query = query.overlaps('skills', filters.skills);
@@ -101,10 +96,10 @@ export const useAdvancedSearch = () => {
         avatar_url: profile.avatar_url,
         skills: profile.skills,
         is_mentor: profile.mentorship_areas && profile.mentorship_areas.length > 0,
-        is_investor: false, // Not in profiles table
-        looking_for_opportunities: false, // Not in profiles table
+        is_investor: false, // Not available in profiles table
+        looking_for_opportunities: false, // Not available in profiles table
         years_experience: profile.years_in_diaspora,
-        country_of_origin: profile.country_of_origin
+        country_of_origin: undefined // Not available in profiles table
       }));
 
       setResults(searchResults);
