@@ -5,7 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Search, Filter } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import ProfileCard from './ProfileCard';
+import RecommendationsSection from './RecommendationsSection';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useConnections } from '@/hooks/useConnections';
+import { useMessages } from '@/hooks/useMessages';
+import { toast } from 'sonner';
 import { sanitizeText } from '@/utils/securityValidation';
 
 const MemberDirectory = () => {
@@ -14,6 +19,9 @@ const MemberDirectory = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { sendConnectionRequest } = useConnections();
+  const { sendMessage } = useMessages();
 
   useEffect(() => {
     fetchProfiles();
@@ -46,7 +54,6 @@ const MemberDirectory = () => {
       return;
     }
 
-    // Sanitize search term to prevent injection attacks
     const sanitizedSearchTerm = sanitizeText(searchTerm);
 
     const filtered = profiles.filter(profile => 
@@ -67,9 +74,41 @@ const MemberDirectory = () => {
     navigate(`/profile/${profileId}`);
   };
 
+  const handleConnect = async (userId: string) => {
+    if (!user) {
+      toast.error('Please sign in to connect with professionals');
+      navigate('/auth');
+      return;
+    }
+
+    try {
+      await sendConnectionRequest(userId, 'I would like to connect with you!');
+      toast.success('Connection request sent successfully!');
+    } catch (error) {
+      console.error('Connection error:', error);
+      toast.error('Failed to send connection request');
+    }
+  };
+
+  const handleMessage = async (recipientId: string, recipientName: string) => {
+    if (!user) {
+      toast.error('Please sign in to message professionals');
+      navigate('/auth');
+      return;
+    }
+
+    try {
+      await sendMessage(recipientId, `Hi ${recipientName}, I'd like to connect and learn more about your work!`);
+      toast.success('Message sent successfully!');
+      navigate('/messages');
+    } catch (error) {
+      console.error('Message error:', error);
+      toast.error('Failed to send message');
+    }
+  };
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Limit search term length to prevent abuse
     if (value.length <= 100) {
       setSearchTerm(value);
     }
@@ -85,6 +124,14 @@ const MemberDirectory = () => {
 
   return (
     <div className="space-y-6">
+      {/* Recommendations Section - only show for authenticated users */}
+      {user && (
+        <RecommendationsSection
+          onConnect={handleConnect}
+          onMessage={handleMessage}
+        />
+      )}
+
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />

@@ -324,78 +324,114 @@ export type Database = {
       }
       profiles: {
         Row: {
+          achievements: string | null
+          availability_for_mentoring: boolean | null
           avatar_url: string | null
           bio: string | null
+          certifications: string | null
           community_involvement: string | null
           company: string | null
+          country_of_origin: string | null
           created_at: string
+          current_country: string | null
           diaspora_networks: string[] | null
+          education: string | null
           email: string | null
           full_name: string | null
           giving_back_initiatives: string | null
           home_country_projects: string | null
           id: string
+          innovation_pathways: string | null
           interests: string[] | null
           is_public: boolean | null
+          languages: string | null
           linkedin_url: string | null
           location: string | null
+          looking_for_opportunities: boolean | null
           mentorship_areas: string[] | null
+          phone: string | null
           profession: string | null
           professional_sectors: string[] | null
           profile_picture_url: string | null
           skills: string[] | null
           updated_at: string
           volunteer_experience: string | null
+          website_url: string | null
+          years_experience: number | null
           years_in_diaspora: number | null
         }
         Insert: {
+          achievements?: string | null
+          availability_for_mentoring?: boolean | null
           avatar_url?: string | null
           bio?: string | null
+          certifications?: string | null
           community_involvement?: string | null
           company?: string | null
+          country_of_origin?: string | null
           created_at?: string
+          current_country?: string | null
           diaspora_networks?: string[] | null
+          education?: string | null
           email?: string | null
           full_name?: string | null
           giving_back_initiatives?: string | null
           home_country_projects?: string | null
           id: string
+          innovation_pathways?: string | null
           interests?: string[] | null
           is_public?: boolean | null
+          languages?: string | null
           linkedin_url?: string | null
           location?: string | null
+          looking_for_opportunities?: boolean | null
           mentorship_areas?: string[] | null
+          phone?: string | null
           profession?: string | null
           professional_sectors?: string[] | null
           profile_picture_url?: string | null
           skills?: string[] | null
           updated_at?: string
           volunteer_experience?: string | null
+          website_url?: string | null
+          years_experience?: number | null
           years_in_diaspora?: number | null
         }
         Update: {
+          achievements?: string | null
+          availability_for_mentoring?: boolean | null
           avatar_url?: string | null
           bio?: string | null
+          certifications?: string | null
           community_involvement?: string | null
           company?: string | null
+          country_of_origin?: string | null
           created_at?: string
+          current_country?: string | null
           diaspora_networks?: string[] | null
+          education?: string | null
           email?: string | null
           full_name?: string | null
           giving_back_initiatives?: string | null
           home_country_projects?: string | null
           id?: string
+          innovation_pathways?: string | null
           interests?: string[] | null
           is_public?: boolean | null
+          languages?: string | null
           linkedin_url?: string | null
           location?: string | null
+          looking_for_opportunities?: boolean | null
           mentorship_areas?: string[] | null
+          phone?: string | null
           profession?: string | null
           professional_sectors?: string[] | null
           profile_picture_url?: string | null
           skills?: string[] | null
           updated_at?: string
           volunteer_experience?: string | null
+          website_url?: string | null
+          years_experience?: number | null
           years_in_diaspora?: number | null
         }
         Relationships: []

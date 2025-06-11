@@ -1,24 +1,31 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import AdvancedSearch from '@/components/search/AdvancedSearch';
 import SearchResults from '@/components/search/SearchResults';
 import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
+import { useRecommendations } from '@/hooks/useRecommendations';
 import { useConnections } from '@/hooks/useConnections';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SearchFilters } from '@/types/searchTypes';
+import RecommendationCard from '@/components/connect/RecommendationCard';
+import { Lightbulb } from 'lucide-react';
 
 const Search = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { results, loading, error, searchProfiles, searchProfessionals, clearResults } = useAdvancedSearch();
+  const { recommendations, searchWithRelevance, searchResults } = useRecommendations();
   const { sendConnectionRequest } = useConnections();
   const { sendMessage } = useMessages();
   const [activeTab, setActiveTab] = useState('profiles');
+  const [showRecommendations, setShowRecommendations] = useState(true);
 
   // Initialize search from URL parameters
   useEffect(() => {
@@ -36,12 +43,20 @@ const Search = () => {
         countryOfOrigin: ''
       };
       handleSearch(initialFilters);
+      setShowRecommendations(false);
     }
   }, [searchParams]);
 
   const handleSearch = async (filters: SearchFilters) => {
+    setShowRecommendations(false);
+    
     if (activeTab === 'profiles') {
-      await searchProfiles(filters);
+      // Use enhanced search with relevance
+      if (filters.searchTerm) {
+        await searchWithRelevance(filters.searchTerm, filters);
+      } else {
+        await searchProfiles(filters);
+      }
     } else {
       await searchProfessionals(filters);
     }
@@ -80,6 +95,9 @@ const Search = () => {
     }
   };
 
+  // Determine which results to show
+  const displayResults = showRecommendations ? [] : (searchResults.length > 0 ? searchResults : results);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -106,7 +124,10 @@ const Search = () => {
             
             <AdvancedSearch
               onSearch={handleSearch}
-              onClear={clearResults}
+              onClear={() => {
+                clearResults();
+                setShowRecommendations(true);
+              }}
               loading={loading}
             />
           </div>
@@ -118,13 +139,53 @@ const Search = () => {
                 <p className="text-red-600">Error: {error}</p>
               </div>
             )}
-            
-            <SearchResults
-              results={results}
-              loading={loading}
-              onConnect={handleConnect}
-              onMessage={handleMessage}
-            />
+
+            {/* Show recommendations when no search is active */}
+            {showRecommendations && user && recommendations.length > 0 && (
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5 text-dna-emerald" />
+                    Recommended for You
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4">
+                    {recommendations.slice(0, 6).map((profile) => (
+                      <RecommendationCard
+                        key={profile.id}
+                        profile={profile}
+                        onConnect={handleConnect}
+                        onMessage={handleMessage}
+                        isLoggedIn={!!user}
+                      />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Regular search results */}
+            {!showRecommendations && (
+              <SearchResults
+                results={displayResults}
+                loading={loading}
+                onConnect={handleConnect}
+                onMessage={handleMessage}
+              />
+            )}
+
+            {/* Initial state for non-authenticated users */}
+            {showRecommendations && !user && (
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <div className="text-gray-500">
+                    <p className="text-lg font-medium mb-2">Welcome to DiasporaLink Search</p>
+                    <p>Sign in to get personalized recommendations and connect with professionals</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </main>
