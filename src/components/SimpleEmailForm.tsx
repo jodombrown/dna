@@ -162,7 +162,7 @@ const SimpleEmailForm = () => {
               className="w-full bg-dna-emerald hover:bg-dna-forest text-white py-4 text-lg font-semibold"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Sending...' : 'Join the DNA Platform'}
+              {isSubmitting ? 'Sending...' : 'Join DNA'}
             </Button>
           </form>
 
