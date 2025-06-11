@@ -2,7 +2,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, UserPlus } from 'lucide-react';
+import { Users, Calendar, UserPlus, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface ConnectDialogsProps {
@@ -71,7 +71,7 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-dna-copper" />
+              <MessageCircle className="w-5 h-5 text-dna-copper" />
               How Messaging Works
             </DialogTitle>
             <DialogDescription className="text-left space-y-4 pt-4">

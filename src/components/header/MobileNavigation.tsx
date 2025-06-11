@@ -42,10 +42,10 @@ const MobileNavigation = () => {
           <SheetTitle className="flex items-center gap-2">
             <img 
               src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
-              alt="DNA Platform" 
+              alt="DNA" 
               className="h-8 w-auto"
             />
-            DNA Platform
+            DNA
           </SheetTitle>
         </SheetHeader>
         <nav className="flex flex-col space-y-4 mt-8">

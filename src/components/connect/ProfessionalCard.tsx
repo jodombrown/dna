@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, MessageSquare } from 'lucide-react';
 import { Professional } from '@/types/search';
+import ConnectDialogs from './ConnectDialogs';
 
 interface ProfessionalCardProps {
   professional: Professional;
@@ -67,99 +68,129 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   onMessage,
   connectionStatus,
   isLoggedIn
-}) => (
-  <Card className="hover:shadow-lg transition-shadow">
-    <CardHeader>
-      <div className="flex items-start gap-4">
-        <Avatar className="w-12 h-12 sm:w-16 sm:h-16">
-          <AvatarImage 
-            src={getProfileImage(professional.full_name, professional.country_of_origin)} 
-            alt={professional.full_name}
-          />
-          <AvatarFallback className="bg-gradient-to-br from-dna-copper to-dna-emerald text-white">
-            {professional.full_name.split(' ').map(n => n[0]).join('')}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <CardTitle className="text-base sm:text-lg mb-1">{professional.full_name}</CardTitle>
-          <p className="text-dna-copper font-medium text-sm sm:text-base">{professional.profession}</p>
-          <p className="text-gray-600 text-xs sm:text-sm">{professional.company}</p>
-        </div>
-      </div>
-    </CardHeader>
-    
-    <CardContent className="space-y-4">
-      <div className="flex items-center gap-2 text-sm text-gray-600">
-        <MapPin className="w-4 h-4" />
-        <span className="truncate">{professional.location} • Originally from {professional.country_of_origin}</span>
-      </div>
-      
-      {professional.expertise && (
-        <div>
-          <div className="text-sm font-medium text-gray-700 mb-2">Expertise</div>
-          <div className="flex flex-wrap gap-1">
-            {professional.expertise.slice(0, 3).map((skill, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
-                {skill}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      )}
+}) => {
+  const [isConnectDialogOpen, setIsConnectDialogOpen] = useState(false);
+  const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
+  const [isJoinCommunityDialogOpen, setIsJoinCommunityDialogOpen] = useState(false);
+  const [isRegisterEventDialogOpen, setIsRegisterEventDialogOpen] = useState(false);
 
-      {professional.availability_for && (
-        <div>
-          <div className="text-sm font-medium text-gray-700 mb-2">Available For</div>
-          <div className="flex flex-wrap gap-1">
-            {professional.availability_for.map((service, index) => (
-              <Badge key={index} className="text-xs bg-dna-emerald/20 text-dna-emerald">
-                {service}
-              </Badge>
-            ))}
+  const handleConnectClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isLoggedIn) {
+      onConnect();
+    } else {
+      setIsConnectDialogOpen(true);
+    }
+  };
+
+  const handleMessageClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isLoggedIn) {
+      onMessage();
+    } else {
+      setIsMessageDialogOpen(true);
+    }
+  };
+
+  return (
+    <>
+      <Card className="hover:shadow-lg transition-shadow">
+        <CardHeader>
+          <div className="flex items-start gap-4">
+            <Avatar className="w-12 h-12 sm:w-16 sm:h-16">
+              <AvatarImage 
+                src={getProfileImage(professional.full_name, professional.country_of_origin)} 
+                alt={professional.full_name}
+              />
+              <AvatarFallback className="bg-gradient-to-br from-dna-copper to-dna-emerald text-white">
+                {professional.full_name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-base sm:text-lg mb-1">{professional.full_name}</CardTitle>
+              <p className="text-dna-copper font-medium text-sm sm:text-base">{professional.profession}</p>
+              <p className="text-gray-600 text-xs sm:text-sm">{professional.company}</p>
+            </div>
           </div>
-        </div>
-      )}
-      
-      {professional.bio && (
-        <div className="bg-gray-50 rounded-lg p-3">
-          <div className="text-sm">{professional.bio.length > 100 ? `${professional.bio.substring(0, 100)}...` : professional.bio}</div>
-        </div>
-      )}
-      
-      <div className="flex flex-col sm:flex-row gap-3 pt-2">
-        {connectionStatus === 'accepted' ? (
-          <Badge className="bg-green-100 text-green-800">Connected</Badge>
-        ) : connectionStatus === 'pending' ? (
-          <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
-        ) : (
-          <Button 
-            className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onConnect();
-            }}
-            disabled={!isLoggedIn}
-          >
-            Connect
-          </Button>
-        )}
+        </CardHeader>
         
-        <Button 
-          variant="outline"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onMessage();
-          }}
-          disabled={!isLoggedIn}
-        >
-          <MessageSquare className="w-4 h-4 mr-2" />
-          Message
-        </Button>
-      </div>
-    </CardContent>
-  </Card>
-);
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <MapPin className="w-4 h-4" />
+            <span className="truncate">{professional.location} • Originally from {professional.country_of_origin}</span>
+          </div>
+          
+          {professional.expertise && (
+            <div>
+              <div className="text-sm font-medium text-gray-700 mb-2">Expertise</div>
+              <div className="flex flex-wrap gap-1">
+                {professional.expertise.slice(0, 3).map((skill, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {skill}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {professional.availability_for && (
+            <div>
+              <div className="text-sm font-medium text-gray-700 mb-2">Available For</div>
+              <div className="flex flex-wrap gap-1">
+                {professional.availability_for.map((service, index) => (
+                  <Badge key={index} className="text-xs bg-dna-emerald/20 text-dna-emerald">
+                    {service}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {professional.bio && (
+            <div className="bg-gray-50 rounded-lg p-3">
+              <div className="text-sm">{professional.bio.length > 100 ? `${professional.bio.substring(0, 100)}...` : professional.bio}</div>
+            </div>
+          )}
+          
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            {connectionStatus === 'accepted' ? (
+              <Badge className="bg-green-100 text-green-800">Connected</Badge>
+            ) : connectionStatus === 'pending' ? (
+              <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
+            ) : (
+              <Button 
+                className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
+                onClick={handleConnectClick}
+              >
+                Connect
+              </Button>
+            )}
+            
+            <Button 
+              variant="outline"
+              onClick={handleMessageClick}
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Message
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <ConnectDialogs
+        isConnectDialogOpen={isConnectDialogOpen}
+        setIsConnectDialogOpen={setIsConnectDialogOpen}
+        isMessageDialogOpen={isMessageDialogOpen}
+        setIsMessageDialogOpen={setIsMessageDialogOpen}
+        isJoinCommunityDialogOpen={isJoinCommunityDialogOpen}
+        setIsJoinCommunityDialogOpen={setIsJoinCommunityDialogOpen}
+        isRegisterEventDialogOpen={isRegisterEventDialogOpen}
+        setIsRegisterEventDialogOpen={setIsRegisterEventDialogOpen}
+      />
+    </>
+  );
+};
 
 export default ProfessionalCard;

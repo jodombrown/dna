@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Phone, MapPin, MessageCircle, Send, Clock, Globe } from 'lucide-react';
+import { Mail, MessageCircle, MapPin, Send, Clock, Globe } from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -108,8 +108,8 @@ const Contact = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Email Us</h3>
                 <p className="text-gray-600 mb-2">Send us a message anytime</p>
-                <a href="mailto:info@dnaplatform.org" className="text-dna-emerald hover:underline">
-                  info@dnaplatform.org
+                <a href="mailto:jaune@roadmap.africa" className="text-dna-emerald hover:underline">
+                  jaune@roadmap.africa
                 </a>
               </CardContent>
             </Card>
@@ -119,9 +119,16 @@ const Contact = () => {
                 <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <MessageCircle className="w-8 h-8 text-dna-copper" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Live Chat</h3>
-                <p className="text-gray-600 mb-2">Chat with our team</p>
-                <span className="text-dna-copper">Available Mon-Fri, 9AM-6PM GMT</span>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Contact us on WhatsApp</h3>
+                <p className="text-gray-600 mb-2">Chat with our team on WhatsApp</p>
+                <a 
+                  href="https://chat.whatsapp.com/GXZrIElj1gY2UZYVm6J8zh" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-dna-copper hover:underline"
+                >
+                  Available Mon-Fri, 9AM-6PM GMT
+                </a>
               </CardContent>
             </Card>
 
@@ -245,7 +252,7 @@ const Contact = () => {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">How can I join the DNA Platform?</CardTitle>
+                <CardTitle className="text-lg">How can I join DNA?</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700">
