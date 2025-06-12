@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Home } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const HomeDropdownMenu = () => {
@@ -15,6 +15,11 @@ const HomeDropdownMenu = () => {
     { name: 'Collaborate', path: '/collaborate' },
     { name: 'Contribute', path: '/contribute' },
     { name: 'Contact', path: '/contact' },
+    { name: 'Prototyping Phase', path: '/prototyping-phase' },
+    { name: 'Build Phase', path: '/build-phase' },
+    { name: 'MVP Phase', path: '/mvp-phase' },
+    { name: 'Customer Discovery Phase', path: '/customer-discovery-phase' },
+    { name: 'Go-to-Market Phase', path: '/go-to-market-phase' },
   ];
 
   const handleItemClick = (path: string) => {
@@ -29,6 +34,7 @@ const HomeDropdownMenu = () => {
         onMouseLeave={() => setIsOpen(false)}
         className="flex items-center space-x-1 text-dna-forest hover:text-dna-copper transition-colors duration-200"
       >
+        <Home className="w-4 h-4" />
         <span>Back to Home</span>
         <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -37,9 +43,9 @@ const HomeDropdownMenu = () => {
         <div
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
-          className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 animate-slide-in-right"
+          className="absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 animate-slide-in-right"
         >
-          <ScrollArea className="max-h-64">
+          <ScrollArea className="max-h-80">
             <div className="py-2">
               {menuItems.map((item) => (
                 <button

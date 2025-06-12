@@ -7,6 +7,9 @@ const Logo = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  
+  // Show dropdown menu only on connect, collaborate, and contribute pages
+  const showDropdownMenu = ['/connect', '/collaborate', '/contribute'].includes(location.pathname);
 
   return (
     <div className="flex items-center space-x-4">
@@ -22,7 +25,7 @@ const Logo = () => {
         <span className="text-xl font-bold text-dna-forest">DNA</span>
       </button>
       
-      {!isHomePage && (
+      {showDropdownMenu && (
         <div className="hidden md:block">
           <HomeDropdownMenu />
         </div>
