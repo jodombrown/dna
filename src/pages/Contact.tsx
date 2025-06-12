@@ -333,14 +333,19 @@ const Contact = () => {
           <div className="text-center space-y-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <img 
-                src="/lovable-uploads/1ab84097-3d54-44d9-a2ae-4d2059fce6a9.png" 
+                src="/lovable-uploads/dea2fe8e-c718-403d-b6be-24cd5152c4a4.png" 
                 alt="WhatsApp QR Code" 
                 className="w-48 h-48 mx-auto"
               />
             </div>
-            <p className="text-sm text-gray-600">
-              Scan the QR code above or click the button below to join our WhatsApp group
-            </p>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600 font-medium">
+                📱 <strong>On Mobile:</strong> Click the button below to join directly
+              </p>
+              <p className="text-sm text-gray-600 font-medium">
+                💻 <strong>On Desktop:</strong> Scan the QR code above with your phone's camera or WhatsApp app
+              </p>
+            </div>
             <Button 
               asChild
               className="bg-dna-copper hover:bg-dna-gold text-white w-full"
@@ -350,7 +355,7 @@ const Contact = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
               >
-                Join WhatsApp Group
+                Click Here to Join WhatsApp Group
               </a>
             </Button>
           </div>
