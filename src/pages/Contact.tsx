@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -125,22 +124,21 @@ const Contact = () => {
               </CardContent>
             </Card>
 
-            <Card className="text-center cursor-pointer animate-bounce hover:animate-none transition-all duration-300 hover:shadow-lg hover:scale-105 transform">
+            <Card className="text-center cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 transform">
               <CardContent 
                 className="pt-6"
                 onClick={() => setShowWhatsAppModal(true)}
               >
-                <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+                <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <MessageCircle className="w-8 h-8 text-dna-copper" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Join us on WhatsApp</h3>
-                <p className="text-gray-600 mb-2">Chat with our team on WhatsApp</p>
+                <p className="text-gray-600 mb-4">Chat with our team on WhatsApp</p>
                 <Button 
-                  variant="ghost"
                   onClick={() => setShowWhatsAppModal(true)}
-                  className="text-dna-copper hover:underline p-0 h-auto"
+                  className="bg-dna-copper hover:bg-dna-gold text-white"
                 >
-                  Available Mon-Fri, 9AM-6PM GMT
+                  Join Our Community
                 </Button>
               </CardContent>
             </Card>

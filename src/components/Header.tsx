@@ -3,7 +3,6 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Logo from './header/Logo';
-import SearchBar from './header/SearchBar';
 import DesktopNavigation from './header/DesktopNavigation';
 import MobileNavigation from './header/MobileNavigation';
 import UserActions from './header/UserActions';
@@ -26,9 +25,6 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <DesktopNavigation />
-
-          {/* Search Bar - only show on non-home pages or when user is logged in */}
-          {(!isHomePage || user) && <SearchBar />}
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
