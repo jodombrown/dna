@@ -38,12 +38,6 @@ const MobileNavigation = () => {
   ];
 
   const handleNavClick = (item: { name: string; path: string }) => {
-    if (item.name === 'Connect') {
-      setIsMobileMenuOpen(false);
-      setIsBetaSignupOpen(true);
-      return;
-    }
-    
     navigate(item.path);
     setIsMobileMenuOpen(false);
   };

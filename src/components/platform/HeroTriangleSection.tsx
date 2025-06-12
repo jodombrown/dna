@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Play, Users, Handshake, Heart } from 'lucide-react';
 
@@ -13,22 +12,19 @@ const HeroTriangleSection = () => {
   };
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <Badge className="mb-4 bg-dna-copper text-white text-sm px-4 py-2 rounded-full">
-            The DNA Framework
-          </Badge>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+        <div className="text-center mb-20">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
             The DNA Framework
           </h1>
-          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-16">
+          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-20">
             Our framework transforms how Africa's diaspora creates change. 
             Each pillar strengthens the others, multiplying your impact across the continent.
           </p>
 
           {/* Three Pillars Grid */}
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
             {/* Connect Pillar */}
             <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="flex justify-center mb-6">
@@ -38,8 +34,7 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-forest mb-4">Connect</h3>
               <p className="text-gray-600 leading-relaxed">
-                Build meaningful professional networks with diaspora professionals worldwide. 
-                Find mentors, collaborators, and friends who share your vision for Africa's future.
+                Build powerful relationships across the global African Diaspora. Engage with leaders, innovators, and change agents working to unlock Africa's full potential. This is where shared heritage meets collective ambition.
               </p>
             </div>
 
@@ -52,8 +47,7 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-copper mb-4">Collaborate</h3>
               <p className="text-gray-600 leading-relaxed">
-                Work together on meaningful projects that drive real change across Africa. 
-                Join initiatives that match your expertise and passion.
+                Be part of bold initiatives driving Africa's transformation. From breakthrough technologies to grassroots solutions, amplify your impact by working side by side with mission-aligned peers.
               </p>
             </div>
 
@@ -66,8 +60,7 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-emerald mb-4">Contribute</h3>
               <p className="text-gray-600 leading-relaxed">
-                Make lasting impact by contributing your skills, capital, or time where it matters most. 
-                Create measurable change across communities and industries.
+                Turn insight into action and purpose into progress. Offer your expertise, invest in ideas that matter, and help shape a legacy that spans borders and generations.
               </p>
             </div>
           </div>

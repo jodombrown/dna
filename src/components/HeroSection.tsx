@@ -1,11 +1,14 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   const scrollToDNAFramework = () => {
     const frameworkSection = document.getElementById('dna-framework');
     if (frameworkSection) {
@@ -15,10 +18,10 @@ const HeroSection = () => {
 
   return (
     <>
-      {/* Main Hero Section */}
-      <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-20">
+      {/* Main Hero Section with adjusted spacing */}
+      <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh] py-12">
+          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh] py-16">
             
             {/* Left Column - Main Content */}
             <div className="space-y-8">
@@ -42,15 +45,15 @@ const HeroSection = () => {
                   <Button 
                     size="lg" 
                     className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full"
-                    onClick={scrollToDNAFramework}
+                    onClick={() => navigate('/connect')}
                   >
-                    Explore Our Platform
+                    Connect Now
                   </Button>
                   <Button 
                     variant="outline" 
                     size="lg"
                     className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full"
-                    onClick={() => window.open('https://www.linkedin.com/company/diasporanetworkafrica/', '_blank')}
+                    onClick={scrollToDNAFramework}
                   >
                     Learn More
                   </Button>
@@ -74,20 +77,20 @@ const HeroSection = () => {
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
+      {/* Statistics Section with increased spacing */}
+      <section className="py-20 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <DiasporaStats />
         </div>
       </section>
 
-      {/* Platform Development Section */}
-      <section id="dna-framework" className="py-16 bg-gray-50">
+      {/* Platform Development Section with increased spacing */}
+      <section id="dna-framework" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-dna-forest mb-8">
+          <h2 className="text-4xl md:text-5xl font-bold text-dna-forest mb-12">
             From Idea to Implementation
           </h2>
-          <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">
             Follow our transparent development process as we build the future of diaspora engagement
           </p>
           <PlatformBadges />

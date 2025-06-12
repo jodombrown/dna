@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Globe, Lightbulb, Heart, Target, Zap } from 'lucide-react';
+import { Users, Globe, Lightbulb, Heart, Target, Zap, Quote } from 'lucide-react';
 import JoinDNADialog from '@/components/auth/JoinDNADialog';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 
@@ -26,14 +26,14 @@ const About = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <Badge className="bg-dna-copper text-white mb-4">Our Story</Badge>
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+            <Badge className="bg-dna-copper text-white mb-6 text-sm px-6 py-2">Our Story</Badge>
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8">
               About <span className="text-dna-copper">DNA</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
               Empowering the African diaspora to create meaningful connections, drive innovation, 
               and contribute to Africa's sustainable development through technology and collaboration.
             </p>
@@ -42,18 +42,18 @@ const About = () => {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card className="border-l-4 border-l-dna-emerald">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Target className="w-6 h-6 text-dna-emerald" />
+      <section className="py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12">
+            <Card className="border-l-4 border-l-dna-emerald shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader className="pb-6">
+                <CardTitle className="flex items-center gap-3 text-3xl">
+                  <Target className="w-8 h-8 text-dna-emerald" />
                   Our Mission
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-700 text-lg leading-relaxed">
                   To create a unified platform that connects African diaspora professionals, 
                   entrepreneurs, and innovators worldwide, enabling them to collaborate on 
                   impactful projects that drive sustainable development across Africa.
@@ -61,15 +61,15 @@ const About = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-l-4 border-l-dna-copper">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Lightbulb className="w-6 h-6 text-dna-copper" />
+            <Card className="border-l-4 border-l-dna-copper shadow-lg hover:shadow-xl transition-shadow">
+              <CardHeader className="pb-6">
+                <CardTitle className="flex items-center gap-3 text-3xl">
+                  <Lightbulb className="w-8 h-8 text-dna-copper" />
                   Our Vision
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-gray-700 text-lg leading-relaxed">
                   A thriving ecosystem where the African diaspora's collective knowledge, 
                   resources, and passion transform into tangible solutions that address 
                   Africa's most pressing challenges and unlock its vast potential.
@@ -81,49 +81,49 @@ const About = () => {
       </section>
 
       {/* Core Values */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Core Values</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Core Values</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               These principles guide everything we do and shape our platform's culture
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-dna-emerald" />
+          <div className="grid md:grid-cols-3 gap-10">
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+              <CardContent className="pt-8 pb-8">
+                <div className="w-20 h-20 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Users className="w-10 h-10 text-dna-emerald" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Unity</h3>
-                <p className="text-gray-600">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">Unity</h3>
+                <p className="text-gray-600 text-lg leading-relaxed">
                   Bringing together diverse voices and perspectives to create stronger, 
                   more innovative solutions for Africa's future.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Zap className="w-8 h-8 text-dna-copper" />
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+              <CardContent className="pt-8 pb-8">
+                <div className="w-20 h-20 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Zap className="w-10 h-10 text-dna-copper" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Innovation</h3>
-                <p className="text-gray-600">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">Innovation</h3>
+                <p className="text-gray-600 text-lg leading-relaxed">
                   Fostering creativity and technological advancement to solve complex 
                   challenges with cutting-edge solutions.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-dna-forest/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-dna-forest" />
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+              <CardContent className="pt-8 pb-8">
+                <div className="w-20 h-20 bg-dna-forest/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Heart className="w-10 h-10 text-dna-forest" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Impact</h3>
-                <p className="text-gray-600">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">Impact</h3>
+                <p className="text-gray-600 text-lg leading-relaxed">
                   Measuring success by the positive change we create in communities 
                   across Africa and the diaspora.
                 </p>
@@ -133,70 +133,165 @@ const About = () => {
         </div>
       </section>
 
+      {/* Meet the Founder Section */}
+      <section className="py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Meet the Founder</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              The visionary behind the Diaspora Network of Africa
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Photo Placeholder */}
+            <div className="text-center lg:text-left">
+              <div className="w-80 h-80 bg-gradient-to-br from-dna-copper/20 to-dna-emerald/20 rounded-2xl mx-auto lg:mx-0 flex items-center justify-center shadow-2xl">
+                <div className="text-center">
+                  <div className="w-24 h-24 bg-dna-copper rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl font-bold text-white">JO</span>
+                  </div>
+                  <p className="text-gray-600 text-sm">Photo Coming Soon</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bio Content */}
+            <div className="space-y-8">
+              <div>
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">Jaûne L. Odombrown</h3>
+                <p className="text-xl text-dna-copper font-semibold mb-6">Founder & Chief Executive Officer</p>
+                
+                <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
+                  <p>
+                    [Placeholder bio content] Jaûne is a visionary leader passionate about connecting 
+                    Africa's diaspora to drive meaningful change across the continent. With extensive 
+                    experience in technology, entrepreneurship, and community building...
+                  </p>
+                  
+                  <p>
+                    [Additional bio content will be added here, highlighting education, professional 
+                    background, achievements, and vision for DNA platform...]
+                  </p>
+                </div>
+              </div>
+
+              {/* Quote Section */}
+              <Card className="bg-gradient-to-r from-dna-emerald/5 to-dna-copper/5 border-l-4 border-l-dna-copper">
+                <CardContent className="pt-6">
+                  <Quote className="w-8 h-8 text-dna-copper mb-4" />
+                  <blockquote className="text-xl italic text-gray-700 mb-4 leading-relaxed">
+                    "[Placeholder inspirational quote about the vision for DNA platform and 
+                    connecting the African diaspora for positive change...]"
+                  </blockquote>
+                  <cite className="text-dna-copper font-semibold">— Jaûne L. Odombrown</cite>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Platform Overview */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">How DNA Works</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">How DNA Works</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Our three-pillar approach creates a comprehensive ecosystem for diaspora engagement
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-dna-emerald to-dna-copper"></div>
-              <CardHeader>
-                <CardTitle className="text-xl text-dna-emerald">Connect</CardTitle>
+          <div className="grid md:grid-cols-3 gap-10">
+            <Card className="relative overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+              <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-dna-emerald to-dna-copper"></div>
+              <CardHeader className="pb-6">
+                <CardTitle className="text-2xl text-dna-emerald">Connect</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 mb-4">
+                <p className="text-gray-700 text-lg mb-6 leading-relaxed">
                   Build meaningful relationships with fellow diaspora professionals, 
                   entrepreneurs, and thought leaders across industries.
                 </p>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li>• Professional networking</li>
-                  <li>• Mentorship opportunities</li>
-                  <li>• Community events</li>
-                  <li>• Knowledge sharing</li>
+                <ul className="text-gray-600 space-y-3">
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-emerald rounded-full mr-3"></span>
+                    Professional networking
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-emerald rounded-full mr-3"></span>
+                    Mentorship opportunities
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-emerald rounded-full mr-3"></span>
+                    Community events
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-emerald rounded-full mr-3"></span>
+                    Knowledge sharing
+                  </li>
                 </ul>
               </CardContent>
             </Card>
 
-            <Card className="relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-dna-copper to-dna-gold"></div>
-              <CardHeader>
-                <CardTitle className="text-xl text-dna-copper">Collaborate</CardTitle>
+            <Card className="relative overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+              <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-dna-copper to-dna-gold"></div>
+              <CardHeader className="pb-6">
+                <CardTitle className="text-2xl text-dna-copper">Collaborate</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 mb-4">
+                <p className="text-gray-700 text-lg mb-6 leading-relaxed">
                   Work together on innovative projects that address real challenges 
                   across Africa with collective expertise and resources.
                 </p>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li>• Project partnerships</li>
-                  <li>• Resource pooling</li>
-                  <li>• Cross-border initiatives</li>
-                  <li>• Innovation labs</li>
+                <ul className="text-gray-600 space-y-3">
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-copper rounded-full mr-3"></span>
+                    Project partnerships
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-copper rounded-full mr-3"></span>
+                    Resource pooling
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-copper rounded-full mr-3"></span>
+                    Cross-border initiatives
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-copper rounded-full mr-3"></span>
+                    Innovation labs
+                  </li>
                 </ul>
               </CardContent>
             </Card>
 
-            <Card className="relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-dna-gold to-dna-forest"></div>
-              <CardHeader>
-                <CardTitle className="text-xl text-dna-forest">Contribute</CardTitle>
+            <Card className="relative overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+              <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-dna-gold to-dna-forest"></div>
+              <CardHeader className="pb-6">
+                <CardTitle className="text-2xl text-dna-forest">Contribute</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 mb-4">
+                <p className="text-gray-700 text-lg mb-6 leading-relaxed">
                   Make tangible contributions to Africa's development through 
                   skills, knowledge, funding, and strategic partnerships.
                 </p>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li>• Skills volunteering</li>
-                  <li>• Investment opportunities</li>
-                  <li>• Knowledge transfer</li>
-                  <li>• Social impact projects</li>
+                <ul className="text-gray-600 space-y-3">
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-forest rounded-full mr-3"></span>
+                    Skills volunteering
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-forest rounded-full mr-3"></span>
+                    Investment opportunities
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-forest rounded-full mr-3"></span>
+                    Knowledge transfer
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-2 h-2 bg-dna-forest rounded-full mr-3"></span>
+                    Social impact projects
+                  </li>
                 </ul>
               </CardContent>
             </Card>
@@ -205,26 +300,26 @@ const About = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+      <section className="py-20 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold text-gray-900 mb-8">
             Ready to Be Part of the Movement?
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
             Join thousands of diaspora professionals who are already making a difference. 
             Together, we can unlock Africa's potential and create lasting change.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Button 
               onClick={handleJoinPlatform}
-              className="bg-dna-copper hover:bg-dna-gold text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+              className="bg-dna-copper hover:bg-dna-gold text-white px-10 py-4 text-lg rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
             >
               Join the Platform
             </Button>
             <Button 
               onClick={() => window.location.href = '/contact'}
               variant="outline"
-              className="border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+              className="border-2 border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white px-10 py-4 text-lg rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
             >
               Get in Touch
             </Button>

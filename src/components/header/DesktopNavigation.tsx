@@ -42,10 +42,6 @@ const DesktopNavigation = () => {
   ];
 
   const handleNavClick = (item: { name: string; path: string }) => {
-    if (item.name === 'Connect') {
-      setIsBetaSignupOpen(true);
-      return;
-    }
     navigate(item.path);
   };
 
