@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, DollarSign, Clock, Users, TrendingUp, Info, Heart, Target, Lightbulb } from 'lucide-react';
+import { ArrowLeft, DollarSign, Clock, Users, TrendingUp, Info, Heart, Target, Lightbulb, PieChart, CheckCircle } from 'lucide-react';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
 import BackButtonDropdown from '@/components/header/BackButtonDropdown';
@@ -16,6 +17,8 @@ const ContributeExample = () => {
   const [isInvestDialogOpen, setIsInvestDialogOpen] = useState(false);
   const [isVolunteerDialogOpen, setIsVolunteerDialogOpen] = useState(false);
   const [isMentorDialogOpen, setIsMentorDialogOpen] = useState(false);
+  const [isLearnMoreOpen, setIsLearnMoreOpen] = useState(false);
+  const [selectedPathway, setSelectedPathway] = useState<any>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
