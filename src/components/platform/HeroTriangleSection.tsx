@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Play, Users, Handshake, Heart } from 'lucide-react';
 
@@ -16,9 +15,6 @@ const HeroTriangleSection = () => {
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <Badge className="mb-4 bg-dna-copper text-white text-sm px-4 py-2 rounded-full">
-            The DNA Framework
-          </Badge>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
             The DNA Framework
           </h1>
@@ -38,8 +34,9 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-forest mb-4">Connect</h3>
               <p className="text-gray-600 leading-relaxed">
-                Build meaningful professional networks with diaspora professionals worldwide. 
-                Find mentors, collaborators, and friends who share your vision for Africa's future.
+                Transform your career and amplify your voice by joining Africa's most influential diaspora network. 
+                Connect with visionary leaders, innovative entrepreneurs, and passionate changemakers who share 
+                your commitment to Africa's renaissance and global impact.
               </p>
             </div>
 
@@ -52,8 +49,9 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-copper mb-4">Collaborate</h3>
               <p className="text-gray-600 leading-relaxed">
-                Work together on meaningful projects that drive real change across Africa. 
-                Join initiatives that match your expertise and passion.
+                Join forces on game-changing initiatives that reshape Africa's future. From fintech innovations 
+                to sustainable agriculture, healthcare breakthroughs to educational transformation—collaborate 
+                on projects that leverage your unique skills while creating lasting continental impact.
               </p>
             </div>
 
@@ -66,8 +64,9 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-emerald mb-4">Contribute</h3>
               <p className="text-gray-600 leading-relaxed">
-                Make lasting impact by contributing your skills, capital, or time where it matters most. 
-                Create measurable change across communities and industries.
+                Make your mark on Africa's transformation story. Whether through strategic investments, 
+                professional mentorship, or sharing your expertise, create measurable impact that resonates 
+                across communities, industries, and generations while building a legacy of positive change.
               </p>
             </div>
           </div>
