@@ -11,13 +11,11 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import SurveyDialog from '@/components/survey/SurveyDialog';
-import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 
 const DesktopNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
-  const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   // Get current page to hide active nav item
   const currentPath = location.pathname;
@@ -42,10 +40,6 @@ const DesktopNavigation = () => {
   ];
 
   const handleNavClick = (item: { name: string; path: string }) => {
-    if (item.name === 'Connect') {
-      setIsBetaSignupOpen(true);
-      return;
-    }
     navigate(item.path);
   };
 
@@ -104,11 +98,6 @@ const DesktopNavigation = () => {
       <SurveyDialog 
         isOpen={isSurveyOpen} 
         onClose={() => setIsSurveyOpen(false)} 
-      />
-
-      <BetaSignupDialog 
-        isOpen={isBetaSignupOpen} 
-        onClose={() => setIsBetaSignupOpen(false)} 
       />
     </>
   );

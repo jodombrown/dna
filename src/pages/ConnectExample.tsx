@@ -6,6 +6,7 @@ import { useConnections } from '@/hooks/useConnections';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 import ConnectHeader from '@/components/connect/ConnectHeader';
 import SearchSection from '@/components/connect/SearchSection';
 import PrototypeNotice from '@/components/connect/PrototypeNotice';
@@ -14,6 +15,7 @@ import CallToActionSection from '@/components/connect/CallToActionSection';
 import ConnectDialogs from '@/components/connect/ConnectDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
+import BackButtonDropdown from '@/components/header/BackButtonDropdown';
 
 const ConnectExample = () => {
   const navigate = useNavigate();
@@ -159,7 +161,25 @@ const ConnectExample = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ConnectHeader totalCount={totalCount} />
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <BackButtonDropdown currentPage="Connect" />
+              <div className="border-l border-gray-300 h-6 hidden sm:block"></div>
+              <div>
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900">Professional Network</h1>
+                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Connect with diaspora professionals</p>
+              </div>
+            </div>
+            <Badge className="bg-dna-emerald text-white text-xs sm:text-sm">
+              {totalCount} Members
+            </Badge>
+          </div>
+        </div>
+      </header>
+
       <PrototypeNotice />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
