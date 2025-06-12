@@ -8,7 +8,7 @@ const Logo = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   
-  // Show dropdown menu only on connect, collaborate, and contribute pages
+  // Show dropdown menu on connect, collaborate, and contribute pages
   const showDropdownMenu = ['/connect', '/collaborate', '/contribute'].includes(location.pathname);
 
   return (
