@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,7 +14,11 @@ import SurveyDialog from '@/components/survey/SurveyDialog';
 
 const DesktopNavigation = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
+
+  // Get current page to hide active nav item
+  const currentPath = location.pathname;
 
   const publicNavItems = [
     { name: 'About Us', path: '/about' },
@@ -23,6 +27,9 @@ const DesktopNavigation = () => {
     { name: 'Contribute', path: '/contribute' },
     { name: 'Contact', path: '/contact' },
   ];
+
+  // Filter out current page from nav items
+  const filteredNavItems = publicNavItems.filter(item => item.path !== currentPath);
 
   const phases = [
     { name: 'Prototyping Phase', path: '/prototyping-phase', phase: 1 },
@@ -35,7 +42,7 @@ const DesktopNavigation = () => {
   return (
     <>
       <nav className="hidden md:flex items-center space-x-8">
-        {publicNavItems.map((item) => (
+        {filteredNavItems.map((item) => (
           <Button
             key={item.name}
             variant="ghost"

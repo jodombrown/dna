@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -7,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, MessageCircle, MapPin, Send, Clock, Globe } from 'lucide-react';
+import { Mail, MessageCircle, MapPin, Send, Clock, Globe, QrCode } from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +18,8 @@ const Contact = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,10 +51,7 @@ const Contact = () => {
       // Simulate form submission - replace with actual implementation
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      toast({
-        title: "Message Sent",
-        description: "Thank you for your message. We'll get back to you within 24 hours.",
-      });
+      setShowSuccessModal(true);
       
       // Reset form
       setFormData({
@@ -75,6 +74,17 @@ const Contact = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleGetInTouch = () => {
+    const subject = encodeURIComponent("Inquiry from DNA Platform");
+    const body = encodeURIComponent("Hello,\n\nI would like to get in touch regarding the DNA Platform.\n\nBest regards");
+    window.location.href = `mailto:aweh@diasporanetwork.africa?subject=${subject}&body=${body}`;
+    
+    // Show success modal after a brief delay
+    setTimeout(() => {
+      setShowSuccessModal(true);
+    }, 500);
   };
 
   return (
@@ -108,8 +118,8 @@ const Contact = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Email Us</h3>
                 <p className="text-gray-600 mb-2">Send us a message anytime</p>
-                <a href="mailto:jaune@roadmap.africa" className="text-dna-emerald hover:underline">
-                  jaune@roadmap.africa
+                <a href="mailto:aweh@diasporanetwork.africa" className="text-dna-emerald hover:underline">
+                  aweh@diasporanetwork.africa
                 </a>
               </CardContent>
             </Card>
@@ -119,16 +129,15 @@ const Contact = () => {
                 <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <MessageCircle className="w-8 h-8 text-dna-copper" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Contact us on WhatsApp</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Join us on WhatsApp</h3>
                 <p className="text-gray-600 mb-2">Chat with our team on WhatsApp</p>
-                <a 
-                  href="https://chat.whatsapp.com/GXZrIElj1gY2UZYVm6J8zh" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-dna-copper hover:underline"
+                <Button 
+                  variant="ghost"
+                  onClick={() => setShowWhatsAppModal(true)}
+                  className="text-dna-copper hover:underline p-0 h-auto"
                 >
                   Available Mon-Fri, 9AM-6PM GMT
-                </a>
+                </Button>
               </CardContent>
             </Card>
 
@@ -142,6 +151,17 @@ const Contact = () => {
                 <span className="text-dna-forest">50+ Countries Connected</span>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Get in Touch Button */}
+          <div className="text-center mb-12">
+            <Button 
+              onClick={handleGetInTouch}
+              className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-3 text-lg"
+            >
+              <Mail className="w-5 h-5 mr-2" />
+              Get in Touch
+            </Button>
           </div>
         </div>
       </section>
@@ -300,6 +320,68 @@ const Contact = () => {
           </div>
         </div>
       </section>
+
+      {/* WhatsApp Modal */}
+      <Dialog open={showWhatsAppModal} onOpenChange={setShowWhatsAppModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 justify-center">
+              <MessageCircle className="w-5 h-5 text-dna-copper" />
+              Join Our WhatsApp Group
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-center space-y-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <img 
+                src="/lovable-uploads/1ab84097-3d54-44d9-a2ae-4d2059fce6a9.png" 
+                alt="WhatsApp QR Code" 
+                className="w-48 h-48 mx-auto"
+              />
+            </div>
+            <p className="text-sm text-gray-600">
+              Scan the QR code above or click the button below to join our WhatsApp group
+            </p>
+            <Button 
+              asChild
+              className="bg-dna-copper hover:bg-dna-gold text-white w-full"
+            >
+              <a 
+                href="https://chat.whatsapp.com/GXZrIElj1gY2UZYVm6J8zh" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                Join WhatsApp Group
+              </a>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Modal */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 justify-center text-dna-emerald">
+              <Mail className="w-5 h-5" />
+              Message Sent Successfully!
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-center space-y-4">
+            <p className="text-gray-700">
+              Thank you for reaching out! We've received your message and will get back to you within 24 hours.
+            </p>
+            <p className="text-sm text-gray-600">
+              You should also receive a confirmation email at your provided email address.
+            </p>
+            <Button 
+              onClick={() => setShowSuccessModal(false)}
+              className="bg-dna-emerald hover:bg-dna-forest text-white"
+            >
+              Got it!
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

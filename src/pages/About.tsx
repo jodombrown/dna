@@ -1,12 +1,26 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Users, Globe, Lightbulb, Heart, Target, Zap } from 'lucide-react';
+import JoinDNADialog from '@/components/auth/JoinDNADialog';
+import SurveyDialog from '@/components/survey/SurveyDialog';
 
 const About = () => {
+  const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
+
+  const handleJoinPlatform = () => {
+    setIsJoinDialogOpen(true);
+  };
+
+  const handleTakeSurvey = () => {
+    setIsSurveyOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -201,21 +215,35 @@ const About = () => {
             Together, we can unlock Africa's potential and create lasting change.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={() => window.location.href = '/auth'}
+            <Button 
+              onClick={handleJoinPlatform}
               className="bg-dna-copper hover:bg-dna-gold text-white px-8 py-3 rounded-lg font-semibold transition-colors"
             >
               Join the Platform
-            </button>
-            <button 
+            </Button>
+            <Button 
               onClick={() => window.location.href = '/contact'}
-              className="border border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+              variant="outline"
+              className="border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white px-8 py-3 rounded-lg font-semibold transition-colors"
             >
               Get in Touch
-            </button>
+            </Button>
           </div>
         </div>
       </section>
+
+      {/* Join DNA Dialog */}
+      <JoinDNADialog 
+        isOpen={isJoinDialogOpen} 
+        onClose={() => setIsJoinDialogOpen(false)}
+        onTakeSurvey={handleTakeSurvey}
+      />
+
+      {/* Survey Dialog */}
+      <SurveyDialog 
+        isOpen={isSurveyOpen} 
+        onClose={() => setIsSurveyOpen(false)} 
+      />
 
       <Footer />
     </div>

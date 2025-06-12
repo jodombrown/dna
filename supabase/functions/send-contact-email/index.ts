@@ -13,8 +13,8 @@ const corsHeaders = {
 interface ContactEmailRequest {
   name: string;
   email: string;
-  linkedin_url?: string;
-  message?: string;
+  subject: string;
+  message: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,68 +24,44 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, linkedin_url, message }: ContactEmailRequest = await req.json();
-
-    console.log("Sending email to:", email, "from:", name);
-
-    // Send confirmation email to the user
-    const userEmailResponse = await resend.emails.send({
-      from: "DNA Platform <jaune@roadmap.africa>",
-      to: [email],
-      subject: "Welcome to the DNA Platform - We received your interest!",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h1 style="color: #065f46; margin-bottom: 20px;">Thank you for your interest, ${name}!</h1>
-          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            We're excited that you want to be part of the DNA (Diaspora Network Africa) platform!
-          </p>
-          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            Our mission is to connect, collaborate, and contribute to Africa's development through the power of our global diaspora network.
-          </p>
-          <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="color: #065f46; margin-bottom: 10px;">What's Next?</h3>
-            <ul style="color: #374151; padding-left: 20px;">
-              <li>We'll keep you updated on our platform development progress</li>
-              <li>You'll be among the first to know when we launch</li>
-              <li>Get early access to connect with diaspora professionals worldwide</li>
-              <li>Join exclusive events and collaboration opportunities</li>
-            </ul>
-          </div>
-          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            Together, we're building bridges between the African diaspora and the continent to create lasting impact.
-          </p>
-          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
-            Best regards,<br>
-            <strong>The DNA Platform Team</strong>
-          </p>
-        </div>
-      `,
-    });
+    const { name, email, subject, message }: ContactEmailRequest = await req.json();
 
     // Send notification email to admin
-    const adminEmailResponse = await resend.emails.send({
-      from: "DNA Platform <jaune@roadmap.africa>",
-      to: ["jaune@roadmap.africa"],
-      subject: `New Interest from ${name}`,
+    await resend.emails.send({
+      from: "DNA Platform <noreply@diasporanetwork.africa>",
+      to: ["aweh@diasporanetwork.africa"],
+      subject: `New Contact Form Submission: ${subject}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h1 style="color: #065f46;">New Platform Interest</h1>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          ${linkedin_url ? `<p><strong>LinkedIn:</strong> <a href="${linkedin_url}">${linkedin_url}</a></p>` : ''}
-          ${message ? `<p><strong>Message:</strong> ${message}</p>` : ''}
-          <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
-        </div>
+        <h2>New Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Subject:</strong> ${subject}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message.replace(/\n/g, '<br>')}</p>
       `,
     });
 
-    console.log("User email sent successfully:", userEmailResponse);
-    console.log("Admin email sent successfully:", adminEmailResponse);
+    // Send confirmation email to user
+    const confirmationResponse = await resend.emails.send({
+      from: "DNA Platform <noreply@diasporanetwork.africa>",
+      to: [email],
+      subject: "Thank you for contacting DNA Platform",
+      html: `
+        <h1>Thank you for contacting us, ${name}!</h1>
+        <p>We have received your message and will get back to you within 24 hours.</p>
+        <p><strong>Your message:</strong></p>
+        <p><em>"${message}"</em></p>
+        <p>Best regards,<br>The DNA Platform Team</p>
+        <hr>
+        <p style="font-size: 12px; color: #666;">
+          This is an automated confirmation email. Please do not reply to this email.
+        </p>
+      `,
+    });
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      message: "Email sent successfully" 
-    }), {
+    console.log("Contact emails sent successfully:", confirmationResponse);
+
+    return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -95,10 +71,7 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Error in send-contact-email function:", error);
     return new Response(
-      JSON.stringify({ 
-        success: false, 
-        error: error.message || "Failed to send email" 
-      }),
+      JSON.stringify({ error: error.message }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },

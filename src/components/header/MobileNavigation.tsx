@@ -2,14 +2,18 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 
 const MobileNavigation = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
+
+  // Get current page to hide active nav item
+  const currentPath = location.pathname;
 
   const publicNavItems = [
     { name: 'About Us', path: '/about' },
@@ -18,6 +22,9 @@ const MobileNavigation = () => {
     { name: 'Contribute', path: '/contribute' },
     { name: 'Contact', path: '/contact' },
   ];
+
+  // Filter out current page from nav items
+  const filteredNavItems = publicNavItems.filter(item => item.path !== currentPath);
 
   const phases = [
     { name: 'Prototyping Phase', path: '/prototyping-phase', phase: 1 },
@@ -57,7 +64,7 @@ const MobileNavigation = () => {
             </SheetTitle>
           </SheetHeader>
           <nav className="flex flex-col space-y-4 mt-8">
-            {publicNavItems.map((item) => (
+            {filteredNavItems.map((item) => (
               <Button
                 key={item.name}
                 variant="ghost"
