@@ -95,6 +95,7 @@ const AdminLogin = () => {
                 required
                 disabled={loading}
                 className="mt-1"
+                autoComplete="off"
               />
             </div>
 
@@ -109,6 +110,7 @@ const AdminLogin = () => {
                 required
                 disabled={loading}
                 className="mt-1"
+                autoComplete="off"
               />
             </div>
 

@@ -37,14 +37,14 @@ const MobileNavigation = () => {
     { name: 'Go-to-Market Phase', path: '/go-to-market-phase', phase: 5 },
   ];
 
-  const handleNavClick = (path: string) => {
-    if (path === '/connect') {
+  const handleNavClick = (item: { name: string; path: string }) => {
+    if (item.name === 'Connect') {
       setIsMobileMenuOpen(false);
       setIsBetaSignupOpen(true);
       return;
     }
     
-    navigate(path);
+    navigate(item.path);
     setIsMobileMenuOpen(false);
   };
 
@@ -86,7 +86,7 @@ const MobileNavigation = () => {
                     key={item.name}
                     variant="ghost"
                     className="justify-start text-left"
-                    onClick={() => handleNavClick(item.path)}
+                    onClick={() => handleNavClick(item)}
                   >
                     {item.name}
                   </Button>
@@ -116,7 +116,10 @@ const MobileNavigation = () => {
                         key={phase.path}
                         variant="ghost"
                         className="justify-start text-left w-full"
-                        onClick={() => handleNavClick(phase.path)}
+                        onClick={() => {
+                          navigate(phase.path);
+                          setIsMobileMenuOpen(false);
+                        }}
                       >
                         <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">
                           {phase.phase}

@@ -19,10 +19,8 @@ const HeroTriangleSection = () => {
           <Badge className="mb-4 bg-dna-copper text-white text-sm px-4 py-2 rounded-full">
             The DNA Framework
           </Badge>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Transform Impact Through
-            <br />
-            <span className="text-dna-copper">Three Core Pillars</span>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+            The DNA Framework
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-16">
             Our framework transforms how Africa's diaspora creates change. 
