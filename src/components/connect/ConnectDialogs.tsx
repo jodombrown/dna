@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Users, Calendar, UserPlus, MessageCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 
 interface ConnectDialogsProps {
   isConnectDialogOpen: boolean;
@@ -26,7 +26,12 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
   isRegisterEventDialogOpen,
   setIsRegisterEventDialogOpen
 }) => {
-  const navigate = useNavigate();
+  const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
+
+  const handleJoinBeta = (dialogSetter: (open: boolean) => void) => {
+    dialogSetter(false);
+    setIsBetaSignupOpen(true);
+  };
 
   return (
     <>
@@ -56,7 +61,10 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3">
-            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
+            <Button 
+              onClick={() => handleJoinBeta(setIsConnectDialogOpen)} 
+              className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
+            >
               Join Beta Program
             </Button>
             <Button variant="outline" onClick={() => setIsConnectDialogOpen(false)}>
@@ -92,7 +100,10 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3">
-            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-copper hover:bg-dna-gold text-white">
+            <Button 
+              onClick={() => handleJoinBeta(setIsMessageDialogOpen)} 
+              className="flex-1 bg-dna-copper hover:bg-dna-gold text-white"
+            >
               Join Beta Program
             </Button>
             <Button variant="outline" onClick={() => setIsMessageDialogOpen(false)}>
@@ -128,7 +139,10 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3">
-            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white">
+            <Button 
+              onClick={() => handleJoinBeta(setIsJoinCommunityDialogOpen)} 
+              className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
+            >
               Join Beta Program
             </Button>
             <Button variant="outline" onClick={() => setIsJoinCommunityDialogOpen(false)}>
@@ -164,7 +178,10 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3">
-            <Button onClick={() => navigate('/auth')} className="flex-1 bg-dna-copper hover:bg-dna-gold text-white">
+            <Button 
+              onClick={() => handleJoinBeta(setIsRegisterEventDialogOpen)} 
+              className="flex-1 bg-dna-copper hover:bg-dna-gold text-white"
+            >
               Join Beta Program
             </Button>
             <Button variant="outline" onClick={() => setIsRegisterEventDialogOpen(false)}>
@@ -173,6 +190,11 @@ const ConnectDialogs: React.FC<ConnectDialogsProps> = ({
           </div>
         </DialogContent>
       </Dialog>
+
+      <BetaSignupDialog 
+        isOpen={isBetaSignupOpen} 
+        onClose={() => setIsBetaSignupOpen(false)} 
+      />
     </>
   );
 };
