@@ -6,17 +6,14 @@ import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, DollarSign, Clock, Users, TrendingUp, Info, Heart, Target, Lightbulb, PieChart, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Heart, DollarSign, Users, TrendingUp, Calendar, MapPin, CheckCircle, Info, PieChart, Clock, Target, X } from 'lucide-react';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
-import BackButtonDropdown from '@/components/header/BackButtonDropdown';
 
 const ContributeExample = () => {
   const navigate = useNavigate();
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
-  const [isInvestDialogOpen, setIsInvestDialogOpen] = useState(false);
-  const [isVolunteerDialogOpen, setIsVolunteerDialogOpen] = useState(false);
-  const [isMentorDialogOpen, setIsMentorDialogOpen] = useState(false);
+  const [isContributeDialogOpen, setIsContributeDialogOpen] = useState(false);
   const [isLearnMoreOpen, setIsLearnMoreOpen] = useState(false);
   const [selectedPathway, setSelectedPathway] = useState<any>(null);
 
@@ -119,15 +116,24 @@ const ContributeExample = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <BackButtonDropdown currentPage="Contribute" />
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 hover:bg-dna-mint"
+                size="sm"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Back to Home</span>
+                <span className="sm:hidden">Back</span>
+              </Button>
               <div className="border-l border-gray-300 h-6 hidden sm:block"></div>
               <div>
-                <h1 className="text-lg sm:text-xl font-bold text-gray-900">Contribution Hub</h1>
-                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Make your impact across Africa</p>
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900">Contribute to Africa</h1>
+                <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Make a lasting impact</p>
               </div>
             </div>
-            <Badge className="bg-dna-emerald text-white text-xs sm:text-sm">
-              Active
+            <Badge className="bg-dna-gold text-white text-xs sm:text-sm">
+              $2.1M+ Raised
             </Badge>
           </div>
         </div>
@@ -311,7 +317,7 @@ const ContributeExample = () => {
                   
                   <div className="flex flex-col sm:flex-row gap-3 pt-2">
                     <Button 
-                      onClick={() => setIsInvestDialogOpen(true)}
+                      onClick={() => setIsContributeDialogOpen(true)}
                       className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
                     >
                       <DollarSign className="w-4 h-4 mr-2" />
@@ -385,7 +391,7 @@ const ContributeExample = () => {
       <Footer />
       
       {/* Contribute Now Dialog */}
-      <Dialog open={isInvestDialogOpen} onOpenChange={setIsInvestDialogOpen}>
+      <Dialog open={isContributeDialogOpen} onOpenChange={setIsContributeDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -410,7 +416,7 @@ const ContributeExample = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end">
-            <Button onClick={() => setIsInvestDialogOpen(false)}>
+            <Button onClick={() => setIsContributeDialogOpen(false)}>
               Got it
             </Button>
           </div>

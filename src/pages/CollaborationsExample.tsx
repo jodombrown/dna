@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, Calendar, DollarSign, Target, MessageSquare, FileText, Video, Info } from 'lucide-react';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
-import BackButtonDropdown from '@/components/header/BackButtonDropdown';
 
 const CollaborationsExample = () => {
   const navigate = useNavigate();
@@ -35,8 +34,7 @@ const CollaborationsExample = () => {
       stage: "Implementation",
       nextMeeting: "2024-02-15",
       recentUpdate: "Solar panels installed in 15 schools this month",
-      tags: ["Education", "Renewable Energy", "Infrastructure"],
-      backgroundImage: "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1200&q=80"
+      tags: ["Education", "Renewable Energy", "Infrastructure"]
     },
     {
       id: 2,
@@ -50,8 +48,7 @@ const CollaborationsExample = () => {
       stage: "Development",
       nextMeeting: "2024-02-20",
       recentUpdate: "MVP testing completed with 500+ patient consultations",
-      tags: ["Healthcare", "Technology", "Telemedicine"],
-      backgroundImage: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1200&q=80"
+      tags: ["Healthcare", "Technology", "Telemedicine"]
     },
     {
       id: 3,
@@ -65,8 +62,7 @@ const CollaborationsExample = () => {
       stage: "Scaling",
       nextMeeting: "2024-02-18",
       recentUpdate: "Onboarded 200+ farmers in Ghana and Nigeria",
-      tags: ["Agriculture", "Blockchain", "Supply Chain"],
-      backgroundImage: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80"
+      tags: ["Agriculture", "Blockchain", "Supply Chain"]
     }
   ];
 
@@ -77,7 +73,16 @@ const CollaborationsExample = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <BackButtonDropdown currentPage="Collaborate" />
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2 hover:bg-dna-mint"
+                size="sm"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Back to Home</span>
+                <span className="sm:hidden">Back</span>
+              </Button>
               <div className="border-l border-gray-300 h-6 hidden sm:block"></div>
               <div>
                 <h1 className="text-lg sm:text-xl font-bold text-gray-900">Active Collaborations</h1>
@@ -140,30 +145,22 @@ const CollaborationsExample = () => {
         <div className="space-y-6">
           {activeProjects.map((project) => (
             <Card key={project.id} className="overflow-hidden">
-              <CardHeader 
-                className="relative bg-cover bg-center bg-no-repeat text-white"
-                style={{ 
-                  backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${project.backgroundImage})`,
-                  minHeight: '200px'
-                }}
-              >
-                <div className="relative z-10">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg sm:text-xl mb-2 text-white">{project.title}</CardTitle>
-                      <p className="text-sm sm:text-base text-gray-100">{project.description}</p>
-                    </div>
-                    <Badge className="bg-dna-emerald text-white">
-                      {project.stage}
+              <CardHeader className="bg-gradient-to-r from-dna-copper/10 to-dna-emerald/10">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-lg sm:text-xl mb-2">{project.title}</CardTitle>
+                    <p className="text-sm sm:text-base text-gray-600">{project.description}</p>
+                  </div>
+                  <Badge className="bg-dna-emerald text-white">
+                    {project.stage}
+                  </Badge>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {project.tags.map((tag, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {tag}
                     </Badge>
-                  </div>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {project.tags.map((tag, index) => (
-                      <Badge key={index} variant="outline" className="text-xs bg-white/20 border-white/30 text-white">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
+                  ))}
                 </div>
               </CardHeader>
               

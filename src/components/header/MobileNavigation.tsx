@@ -1,25 +1,21 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Menu } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import SurveyDialog from '@/components/survey/SurveyDialog';
+import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 
 const MobileNavigation = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
+  const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
+  // Get current page to hide active nav item
   const currentPath = location.pathname;
 
   const publicNavItems = [
@@ -30,6 +26,9 @@ const MobileNavigation = () => {
     { name: 'Contact', path: '/contact' },
   ];
 
+  // Filter out current page from nav items
+  const filteredNavItems = publicNavItems.filter(item => item.path !== currentPath);
+
   const phases = [
     { name: 'Prototyping Phase', path: '/prototyping-phase', phase: 1 },
     { name: 'Build Phase', path: '/build-phase', phase: 2 },
@@ -38,92 +37,112 @@ const MobileNavigation = () => {
     { name: 'Go-to-Market Phase', path: '/go-to-market-phase', phase: 5 },
   ];
 
-  const filteredNavItems = publicNavItems.filter(item => item.path !== currentPath);
-
-  const handleNavClick = (path: string) => {
-    navigate(path);
-    setIsOpen(false);
+  const handleNavClick = (item: { name: string; path: string }) => {
+    if (item.name === 'Connect') {
+      setIsMobileMenuOpen(false);
+      setIsBetaSignupOpen(true);
+      return;
+    }
+    
+    navigate(item.path);
+    setIsMobileMenuOpen(false);
   };
 
-  const handleTakeSurvey = () => {
-    setIsOpen(false);
+  const handleSurveyClick = () => {
+    setIsMobileMenuOpen(false);
     setIsSurveyOpen(true);
+  };
+
+  const handleBetaSignup = () => {
+    setIsMobileMenuOpen(false);
+    setIsBetaSignupOpen(true);
   };
 
   return (
     <>
-      <div className="md:hidden">
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="sm" className="text-dna-forest">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-            <SheetHeader>
-              <SheetTitle>Menu</SheetTitle>
-              <SheetDescription>
-                Navigate through DiasporaLink
-              </SheetDescription>
+      <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="sm" className="md:hidden">
+            <Menu className="w-5 h-5" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-80 p-0">
+          <div className="flex flex-col h-full">
+            <SheetHeader className="p-6 border-b">
+              <SheetTitle className="flex items-center gap-2">
+                <img 
+                  src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                  alt="DNA" 
+                  className="h-8 w-auto"
+                />
+                DNA
+              </SheetTitle>
             </SheetHeader>
             
-            <ScrollArea className="h-[calc(100vh-120px)] mt-6">
-              <div className="flex flex-col space-y-4">
-                {/* Main Navigation */}
-                <div className="space-y-3">
-                  {filteredNavItems.map((item) => (
-                    <Button
-                      key={item.name}
-                      variant="ghost"
-                      className="w-full justify-start text-dna-forest hover:bg-dna-mint"
-                      onClick={() => handleNavClick(item.path)}
-                    >
-                      {item.name}
-                    </Button>
-                  ))}
-                </div>
-
-                {/* Phases Section */}
+            <ScrollArea className="flex-1 px-6">
+              <nav className="flex flex-col space-y-4 py-6">
+                {filteredNavItems.map((item) => (
+                  <Button
+                    key={item.name}
+                    variant="ghost"
+                    className="justify-start text-left"
+                    onClick={() => handleNavClick(item)}
+                  >
+                    {item.name}
+                  </Button>
+                ))}
+                
+                <Button
+                  variant="ghost"
+                  className="justify-start text-left bg-dna-copper/10 text-dna-copper"
+                  onClick={handleSurveyClick}
+                >
+                  Take Survey
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  className="justify-start text-left bg-dna-emerald/10 text-dna-emerald"
+                  onClick={handleBetaSignup}
+                >
+                  Join Beta Program
+                </Button>
+                
                 <div className="border-t pt-4 mt-4">
-                  <h3 className="font-semibold text-dna-forest mb-3">Development Phases</h3>
+                  <p className="text-sm text-gray-600 mb-4">Development Phases</p>
                   <div className="space-y-2">
                     {phases.map((phase) => (
                       <Button
                         key={phase.path}
                         variant="ghost"
-                        className="w-full justify-start text-left hover:bg-dna-mint"
-                        onClick={() => handleNavClick(phase.path)}
+                        className="justify-start text-left w-full"
+                        onClick={() => {
+                          navigate(phase.path);
+                          setIsMobileMenuOpen(false);
+                        }}
                       >
-                        <div className="flex items-center space-x-3">
-                          <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-xs font-bold">
-                            {phase.phase}
-                          </div>
-                          <span className="text-sm">{phase.name}</span>
+                        <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">
+                          {phase.phase}
                         </div>
+                        {phase.name}
                       </Button>
                     ))}
                   </div>
                 </div>
-
-                {/* Survey Button */}
-                <div className="border-t pt-4 mt-4">
-                  <Button
-                    onClick={handleTakeSurvey}
-                    className="w-full bg-dna-copper hover:bg-dna-gold text-white"
-                  >
-                    Take Survey
-                  </Button>
-                </div>
-              </div>
+              </nav>
             </ScrollArea>
-          </SheetContent>
-        </Sheet>
-      </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <SurveyDialog 
         isOpen={isSurveyOpen} 
         onClose={() => setIsSurveyOpen(false)} 
+      />
+
+      <BetaSignupDialog 
+        isOpen={isBetaSignupOpen} 
+        onClose={() => setIsBetaSignupOpen(false)} 
       />
     </>
   );
