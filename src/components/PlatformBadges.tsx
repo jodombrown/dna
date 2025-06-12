@@ -15,8 +15,7 @@ const PlatformBadges = () => {
         className="bg-dna-mint/20 text-dna-forest border-dna-mint px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out 
-                   hover:bg-dna-mint hover:text-white hover:scale-105
-                   animate-pulse"
+                   hover:bg-dna-mint hover:text-white hover:scale-105"
       >
         <Sparkles className="w-4 h-4 mr-2 text-dna-mint" />
         Phase 1: Prototyping

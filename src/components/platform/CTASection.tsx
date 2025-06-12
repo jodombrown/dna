@@ -11,11 +11,11 @@ const CTASection = () => {
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Ready to Shape Africa's Future?
+            Let's Shape Africa's Future, Together!
           </h2>
           <p className="text-lg sm:text-xl text-gray-600 mb-8">
             Join thousands of diaspora professionals who are already connecting, 
-            collaborating, and contributing to Africa's transformation.
+            collaborating, and contributing to Africa's progress.
           </p>
           
           <Button 

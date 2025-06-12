@@ -4,8 +4,11 @@ import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
 import Footer from '@/components/Footer';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const Index = () => {
+  useScrollToTop();
+
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation Header */}

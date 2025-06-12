@@ -60,7 +60,7 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-emerald mb-4">Contribute</h3>
               <p className="text-gray-600 leading-relaxed">
-                Turn insight into action and purpose into progress. Offer your expertise, invest in ideas that matter, and help shape a legacy that spans borders and generations.
+                Turn insight into action and purpose into progress. Offer your expertise, invest in ideas that matter, and help shape a legacy that spans borders and generations. Your unique skills and resources become catalysts for sustainable development.
               </p>
             </div>
           </div>

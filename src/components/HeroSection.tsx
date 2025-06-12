@@ -53,7 +53,7 @@ const HeroSection = () => {
                     variant="outline" 
                     size="lg"
                     className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full"
-                    onClick={scrollToDNAFramework}
+                    onClick={() => navigate('/about')}
                   >
                     Learn More
                   </Button>
@@ -77,9 +77,14 @@ const HeroSection = () => {
         </div>
       </section>
 
-      {/* Statistics Section with increased spacing */}
+      {/* Statistics Section with centered bold text */}
       <section className="py-20 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-12 leading-tight">
+              The African Diaspora represents one of the most powerful untapped resources for global development:
+            </h2>
+          </div>
           <DiasporaStats />
         </div>
       </section>
