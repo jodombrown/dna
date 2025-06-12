@@ -1,15 +1,15 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronDown, Home } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const HomeDropdownMenu = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
-  const menuItems = [
-    { name: 'Home', path: '/' },
+  const allMenuItems = [
     { name: 'About Us', path: '/about' },
     { name: 'Connect', path: '/connect' },
     { name: 'Collaborate', path: '/collaborate' },
@@ -21,6 +21,11 @@ const HomeDropdownMenu = () => {
     { name: 'Customer Discovery Phase', path: '/customer-discovery-phase' },
     { name: 'Go-to-Market Phase', path: '/go-to-market-phase' },
   ];
+
+  // Filter out current page and home page
+  const menuItems = allMenuItems.filter(item => 
+    item.path !== location.pathname && item.path !== '/'
+  );
 
   const handleItemClick = (path: string) => {
     navigate(path);
