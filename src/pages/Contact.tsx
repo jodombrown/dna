@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -124,9 +125,12 @@ const Contact = () => {
               </CardContent>
             </Card>
 
-            <Card className="text-center">
-              <CardContent className="pt-6">
-                <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Card className="text-center cursor-pointer animate-bounce hover:animate-none transition-all duration-300 hover:shadow-lg hover:scale-105 transform">
+              <CardContent 
+                className="pt-6"
+                onClick={() => setShowWhatsAppModal(true)}
+              >
+                <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
                   <MessageCircle className="w-8 h-8 text-dna-copper" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">Join us on WhatsApp</h3>
