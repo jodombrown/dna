@@ -19,7 +19,7 @@ const HeroSection = () => {
   return (
     <>
       {/* Main Hero Section with adjusted spacing */}
-      <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-12">
+      <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh] py-16">
             
@@ -45,9 +45,9 @@ const HeroSection = () => {
                   <Button 
                     size="lg" 
                     className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full"
-                    onClick={() => navigate('/connect')}
+                    onClick={scrollToDNAFramework}
                   >
-                    Connect Now
+                    Get Started
                   </Button>
                   <Button 
                     variant="outline" 
