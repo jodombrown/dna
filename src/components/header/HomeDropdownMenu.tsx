@@ -32,12 +32,18 @@ const HomeDropdownMenu = () => {
     setIsOpen(false);
   };
 
+  const handleHomeClick = () => {
+    navigate('/');
+    setIsOpen(false);
+  };
+
   return (
     <div className="relative">
       <button
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
-        className="flex items-center space-x-1 text-dna-forest hover:text-dna-copper transition-colors duration-200"
+        onClick={handleHomeClick}
+        className="flex items-center space-x-2 text-dna-forest hover:text-dna-copper transition-colors duration-200 px-3 py-2 rounded-md hover:bg-dna-mint/20"
       >
         <Home className="w-4 h-4" />
         <span>Back to Home</span>
@@ -48,15 +54,21 @@ const HomeDropdownMenu = () => {
         <div
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
-          className="absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 animate-slide-in-right"
+          className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50 animate-slide-in-right"
         >
           <ScrollArea className="max-h-80">
             <div className="py-2">
+              <button
+                onClick={handleHomeClick}
+                className="w-full text-left px-4 py-2 text-gray-700 hover:bg-dna-mint/20 hover:text-dna-forest transition-colors duration-150 font-medium border-b border-gray-100"
+              >
+                🏠 Home
+              </button>
               {menuItems.map((item) => (
                 <button
                   key={item.path}
                   onClick={() => handleItemClick(item.path)}
-                  className="w-full text-left px-4 py-2 text-gray-700 hover:bg-dna-mint/10 hover:text-dna-forest transition-colors duration-150"
+                  className="w-full text-left px-4 py-2 text-gray-700 hover:bg-dna-mint/20 hover:text-dna-forest transition-colors duration-150"
                 >
                   {item.name}
                 </button>

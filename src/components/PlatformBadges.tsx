@@ -15,9 +15,9 @@ const PlatformBadges = () => {
         className="bg-dna-mint/20 text-dna-forest border-dna-mint px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out 
-                   hover:bg-dna-mint hover:text-white hover:scale-105"
+                   hover:bg-dna-mint hover:text-white hover:scale-105 hover:border-dna-mint"
       >
-        <Sparkles className="w-4 h-4 mr-2 text-dna-mint" />
+        <Sparkles className="w-4 h-4 mr-2" />
         Phase 1: Prototyping
       </Button>
       <Button 
@@ -26,10 +26,10 @@ const PlatformBadges = () => {
         className="bg-dna-copper/10 text-dna-forest border-dna-copper px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out delay-75
-                   hover:bg-dna-copper hover:text-white hover:scale-105
+                   hover:bg-dna-copper hover:text-white hover:scale-105 hover:border-dna-copper
                    hover:rotate-1"
       >
-        <Target className="w-4 h-4 mr-2 text-dna-copper" />
+        <Target className="w-4 h-4 mr-2" />
         Phase 2: Build (Current)
       </Button>
       <Button 
@@ -38,10 +38,10 @@ const PlatformBadges = () => {
         className="bg-dna-emerald/10 text-dna-forest border-dna-emerald px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out delay-150
-                   hover:bg-dna-emerald hover:text-white hover:scale-105
+                   hover:bg-dna-emerald hover:text-white hover:scale-105 hover:border-dna-emerald
                    hover:-rotate-1"
       >
-        <Calendar className="w-4 h-4 mr-2 text-dna-emerald" />
+        <Calendar className="w-4 h-4 mr-2" />
         Phase 3: MVP Launch
       </Button>
       <Button 
@@ -50,10 +50,10 @@ const PlatformBadges = () => {
         className="bg-dna-forest/10 text-dna-forest border-dna-forest px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out delay-225
-                   hover:bg-dna-forest hover:text-white hover:scale-105
+                   hover:bg-dna-forest hover:text-white hover:scale-105 hover:border-dna-forest
                    hover:rotate-2"
       >
-        <Search className="w-4 h-4 mr-2 text-dna-forest" />
+        <Search className="w-4 h-4 mr-2" />
         Phase 4: Customer Discovery
       </Button>
       <Button 
@@ -62,10 +62,10 @@ const PlatformBadges = () => {
         className="bg-dna-gold/10 text-dna-forest border-dna-gold px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out delay-300
-                   hover:bg-dna-gold hover:text-white hover:scale-105
+                   hover:bg-dna-gold hover:text-white hover:scale-105 hover:border-dna-gold
                    hover:-rotate-2"
       >
-        <TrendingUp className="w-4 h-4 mr-2 text-dna-gold" />
+        <TrendingUp className="w-4 h-4 mr-2" />
         Phase 5: Go-to-Market
       </Button>
     </div>
