@@ -1,12 +1,9 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Plus, X } from 'lucide-react';
+import ArrayFieldManager from './ArrayFieldManager';
 
 interface MentorshipSectionProps {
   formData: {
@@ -37,31 +34,16 @@ const MentorshipSection: React.FC<MentorshipSectionProps> = ({
         <CardTitle className="text-dna-forest">Mentorship & Opportunities</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <Label>Mentorship Areas</Label>
-          <div className="flex gap-2 mb-2">
-            <Input
-              value={newMentorshipArea}
-              onChange={(e) => onMentorshipAreaChange(e.target.value)}
-              placeholder="Career development, entrepreneurship, cultural adaptation..."
-              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), onAddMentorshipArea())}
-            />
-            <Button type="button" onClick={onAddMentorshipArea} size="sm">
-              <Plus className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {mentorshipAreas.map((area, index) => (
-              <Badge key={index} variant="outline" className="text-dna-crimson border-dna-crimson">
-                {area}
-                <X
-                  className="w-3 h-3 ml-1 cursor-pointer"
-                  onClick={() => onRemoveMentorshipArea(area)}
-                />
-              </Badge>
-            ))}
-          </div>
-        </div>
+        <ArrayFieldManager
+          label="Mentorship Areas"
+          items={mentorshipAreas}
+          newItem={newMentorshipArea}
+          placeholder="Career development, entrepreneurship, cultural adaptation..."
+          badgeColor="text-dna-crimson border-dna-crimson"
+          onNewItemChange={onMentorshipAreaChange}
+          onAddItem={onAddMentorshipArea}
+          onRemoveItem={onRemoveMentorshipArea}
+        />
 
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">

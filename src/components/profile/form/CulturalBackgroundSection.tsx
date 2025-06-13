@@ -3,9 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Plus, X } from 'lucide-react';
+import ArrayFieldManager from './ArrayFieldManager';
 
 interface CulturalBackgroundSectionProps {
   formData: {
@@ -81,31 +79,16 @@ const CulturalBackgroundSection: React.FC<CulturalBackgroundSectionProps> = ({
           </div>
         </div>
 
-        <div>
-          <Label>Diaspora Networks & Organizations</Label>
-          <div className="flex gap-2 mb-2">
-            <Input
-              value={newNetwork}
-              onChange={(e) => onNetworkChange(e.target.value)}
-              placeholder="African diaspora organizations you're part of..."
-              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), onAddNetwork())}
-            />
-            <Button type="button" onClick={onAddNetwork} size="sm">
-              <Plus className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {diasporaNetworks.map((network, index) => (
-              <Badge key={index} variant="outline" className="text-dna-gold border-dna-gold">
-                {network}
-                <X
-                  className="w-3 h-3 ml-1 cursor-pointer"
-                  onClick={() => onRemoveNetwork(network)}
-                />
-              </Badge>
-            ))}
-          </div>
-        </div>
+        <ArrayFieldManager
+          label="Diaspora Networks & Organizations"
+          items={diasporaNetworks}
+          newItem={newNetwork}
+          placeholder="African diaspora organizations you're part of..."
+          badgeColor="text-dna-gold border-dna-gold"
+          onNewItemChange={onNetworkChange}
+          onAddItem={onAddNetwork}
+          onRemoveItem={onRemoveNetwork}
+        />
       </CardContent>
     </Card>
   );
