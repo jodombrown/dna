@@ -15,7 +15,7 @@ const PlatformBadges = () => {
         className="bg-dna-mint/20 text-dna-forest border-dna-mint px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out 
-                   hover:bg-dna-mint hover:text-white hover:scale-105 hover:border-dna-mint"
+                   hover:bg-dna-mint hover:text-dna-forest hover:scale-105 hover:border-dna-mint"
       >
         <Sparkles className="w-4 h-4 mr-2" />
         Phase 1: Prototyping
@@ -26,7 +26,7 @@ const PlatformBadges = () => {
         className="bg-dna-copper/10 text-dna-forest border-dna-copper px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out delay-75
-                   hover:bg-dna-copper hover:text-white hover:scale-105 hover:border-dna-copper
+                   hover:bg-dna-copper hover:text-dna-forest hover:scale-105 hover:border-dna-copper
                    hover:rotate-1"
       >
         <Target className="w-4 h-4 mr-2" />
@@ -38,7 +38,7 @@ const PlatformBadges = () => {
         className="bg-dna-emerald/10 text-dna-forest border-dna-emerald px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out delay-150
-                   hover:bg-dna-emerald hover:text-white hover:scale-105 hover:border-dna-emerald
+                   hover:bg-dna-emerald hover:text-dna-forest hover:scale-105 hover:border-dna-emerald
                    hover:-rotate-1"
       >
         <Calendar className="w-4 h-4 mr-2" />
@@ -62,7 +62,7 @@ const PlatformBadges = () => {
         className="bg-dna-gold/10 text-dna-forest border-dna-gold px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out delay-300
-                   hover:bg-dna-gold hover:text-white hover:scale-105 hover:border-dna-gold
+                   hover:bg-dna-gold hover:text-dna-forest hover:scale-105 hover:border-dna-gold
                    hover:-rotate-2"
       >
         <TrendingUp className="w-4 h-4 mr-2" />

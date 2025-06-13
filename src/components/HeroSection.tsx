@@ -77,14 +77,9 @@ const HeroSection = () => {
         </div>
       </section>
 
-      {/* Statistics Section with centered bold text */}
+      {/* Statistics Section */}
       <section className="py-20 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-12 leading-tight">
-              The African Diaspora represents one of the most powerful untapped resources for global development
-            </h2>
-          </div>
           <DiasporaStats />
         </div>
       </section>
