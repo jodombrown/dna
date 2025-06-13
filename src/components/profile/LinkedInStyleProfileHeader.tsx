@@ -37,13 +37,22 @@ const LinkedInStyleProfileHeader: React.FC<ProfileHeaderProps> = ({
   const [bannerImageError, setBannerImageError] = useState(false);
 
   const defaultBanner = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=400&q=80";
+  
+  // Check if this is Jaûne Odombrown and set the profile image
+  const isJauneProfile = profile?.full_name === "Jaûne Odombrown";
+  const profileImageUrl = isJauneProfile ? "/lovable-uploads/aaee598a-95b1-4777-a456-a833d148a286.png" : profile?.avatar_url;
+  
+  // Update professional role for Jaûne
+  const professionalRole = isJauneProfile && profile?.professional_role?.includes("Executive") 
+    ? profile.professional_role.replace("Executive Officer", "Visionary Officer")
+    : profile?.professional_role;
 
   return (
     <Card className="overflow-hidden">
       {/* Banner Section */}
       <div className="relative h-48 md:h-64">
         <img
-          src={bannerImageError ? defaultBanner : (profile.banner_image_url || defaultBanner)}
+          src={bannerImageError ? defaultBanner : (profile?.banner_image_url || defaultBanner)}
           alt="Profile banner"
           className="w-full h-full object-cover"
           onError={() => setBannerImageError(true)}
@@ -68,9 +77,9 @@ const LinkedInStyleProfileHeader: React.FC<ProfileHeaderProps> = ({
           <div className="flex flex-col items-center lg:items-start">
             <div className="relative">
               <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
-                <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
+                <AvatarImage src={profileImageUrl} alt={profile?.full_name} />
                 <AvatarFallback className="bg-dna-copper text-white text-3xl">
-                  {profile.full_name?.split(' ').map((n: string) => n[0]).join('') || 'U'}
+                  {profile?.full_name?.split(' ').map((n: string) => n[0]).join('') || 'U'}
                 </AvatarFallback>
               </Avatar>
               {isOwnProfile && (
@@ -88,10 +97,10 @@ const LinkedInStyleProfileHeader: React.FC<ProfileHeaderProps> = ({
             <div className="flex items-center gap-4 mt-4 text-sm text-gray-600">
               <div className="flex items-center gap-1">
                 <Users className="w-4 h-4" />
-                <span>{profile.followers_count || 0} followers</span>
+                <span>{profile?.followers_count || 0} followers</span>
               </div>
               <div className="flex items-center gap-1">
-                <span>{profile.following_count || 0} following</span>
+                <span>{profile?.following_count || 0} following</span>
               </div>
             </div>
           </div>
@@ -100,38 +109,38 @@ const LinkedInStyleProfileHeader: React.FC<ProfileHeaderProps> = ({
             <div className="flex flex-col lg:flex-row justify-between items-start mb-4">
               <div className="flex-1">
                 <h1 className="text-3xl font-bold text-dna-forest mb-2">
-                  {profile.full_name || 'Complete Your Profile'}
+                  {profile?.full_name || 'Complete Your Profile'}
                 </h1>
                 
-                {profile.headline && (
+                {profile?.headline && (
                   <p className="text-xl text-gray-700 mb-3 font-medium">
                     {profile.headline}
                   </p>
                 )}
 
-                {profile.professional_role && (
+                {professionalRole && (
                   <p className="text-lg text-dna-copper mb-2">
-                    {profile.professional_role}
-                    {profile.organization && ` at ${profile.organization}`}
+                    {professionalRole}
+                    {profile?.organization && ` at ${profile.organization}`}
                   </p>
                 )}
 
                 <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-4">
-                  {profile.location && (
+                  {profile?.location && (
                     <div className="flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
                       <span>{profile.city ? `${profile.city}, ` : ''}{profile.location}</span>
                     </div>
                   )}
                   
-                  {profile.diaspora_origin && (
+                  {profile?.diaspora_origin && (
                     <div className="flex items-center gap-1">
                       <Heart className="w-4 h-4 text-dna-crimson" />
                       <span>From {profile.diaspora_origin}</span>
                     </div>
                   )}
 
-                  {profile.industry && (
+                  {profile?.industry && (
                     <div className="flex items-center gap-1">
                       <Building className="w-4 h-4" />
                       <span>{profile.industry}</span>
@@ -140,7 +149,7 @@ const LinkedInStyleProfileHeader: React.FC<ProfileHeaderProps> = ({
                 </div>
 
                 {/* Engagement Intentions */}
-                {profile.engagement_intentions && profile.engagement_intentions.length > 0 && (
+                {profile?.engagement_intentions && profile.engagement_intentions.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-4">
                     {profile.engagement_intentions.map((intention: string) => (
                       <Badge 
@@ -156,17 +165,17 @@ const LinkedInStyleProfileHeader: React.FC<ProfileHeaderProps> = ({
 
                 {/* Status Badges */}
                 <div className="flex flex-wrap gap-2">
-                  {profile.availability_for_mentoring && (
+                  {profile?.availability_for_mentoring && (
                     <Badge className="bg-dna-mint text-dna-forest">
                       Available for Mentoring
                     </Badge>
                   )}
-                  {profile.looking_for_opportunities && (
+                  {profile?.looking_for_opportunities && (
                     <Badge className="bg-dna-gold text-white">
                       Open to Opportunities
                     </Badge>
                   )}
-                  {profile.available_for && profile.available_for.length > 0 && (
+                  {profile?.available_for && profile.available_for.length > 0 && (
                     <Badge variant="outline" className="text-dna-copper border-dna-copper">
                       Available for {profile.available_for[0]}
                       {profile.available_for.length > 1 && ` +${profile.available_for.length - 1}`}
@@ -210,7 +219,7 @@ const LinkedInStyleProfileHeader: React.FC<ProfileHeaderProps> = ({
                 )}
                 
                 {/* External Links */}
-                {profile.linkedin_url && (
+                {profile?.linkedin_url && (
                   <Button 
                     variant="outline"
                     onClick={() => window.open(profile.linkedin_url, '_blank')}
@@ -219,7 +228,7 @@ const LinkedInStyleProfileHeader: React.FC<ProfileHeaderProps> = ({
                     LinkedIn
                   </Button>
                 )}
-                {profile.website_url && (
+                {profile?.website_url && (
                   <Button 
                     variant="outline"
                     onClick={() => window.open(profile.website_url, '_blank')}
@@ -234,7 +243,7 @@ const LinkedInStyleProfileHeader: React.FC<ProfileHeaderProps> = ({
         </div>
 
         {/* DNA Statement */}
-        {profile.my_dna_statement && (
+        {profile?.my_dna_statement && (
           <div className="mt-6 p-4 bg-dna-mint/10 rounded-lg border-l-4 border-dna-mint">
             <h3 className="font-semibold text-dna-forest mb-2">My DNA Statement</h3>
             <p className="text-gray-700 italic leading-relaxed">"{profile.my_dna_statement}"</p>

@@ -28,9 +28,10 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
 }) => {
   const { user } = useAuth();
   const { uploadImage } = useImageUpload();
-  const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url');
-  const [bannerUploadMethod, setBannerUploadMethod] = useState<'url' | 'file'>('url');
+  const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('file');
+  const [bannerUploadMethod, setBannerUploadMethod] = useState<'url' | 'file'>('file');
   const [uploading, setUploading] = useState(false);
+  const [bannerUploading, setBannerUploading] = useState(false);
   const defaultBanner = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=400&q=80";
 
   const handleAvatarFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,12 +49,12 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
   const handleBannerFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && user && onBannerChange) {
-      setUploading(true);
+      setBannerUploading(true);
       const url = await uploadImage(file, user.id, 'banner');
       if (url) {
         onBannerChange(url);
       }
-      setUploading(false);
+      setBannerUploading(false);
     }
   };
 
@@ -129,12 +130,12 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
                     onChange={handleBannerFileUpload}
                     className="hidden"
                     id="banner-upload"
-                    disabled={uploading}
+                    disabled={bannerUploading}
                   />
                   <label htmlFor="banner-upload" className="cursor-pointer">
                     <Upload className="w-8 h-8 text-dna-emerald mx-auto mb-2" />
                     <p className="text-sm text-gray-600">
-                      {uploading ? 'Uploading...' : 'Click to upload banner image'}
+                      {bannerUploading ? 'Uploading...' : 'Click to upload banner image'}
                     </p>
                     <p className="text-xs text-gray-400 mt-1">1200x400px recommended</p>
                   </label>

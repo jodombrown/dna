@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -17,7 +16,9 @@ import GoToMarketPhase from './pages/GoToMarketPhase';
 import ConnectExample from './pages/ConnectExample';
 import CollaborationsExample from './pages/CollaborationsExample';
 import ContributeExample from './pages/ContributeExample';
-import Contribute from "@/pages/Contribute";
+import Contribute from "./pages/Contribute";
+import Connect from "./pages/Connect";
+import Collaborate from "./pages/Collaborate";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,8 @@ function App() {
               <Route path="/collaborations-example" element={<CollaborationsExample />} />
               <Route path="/contribute-example" element={<ContributeExample />} />
               <Route path="/contribute" element={<Contribute />} />
+              <Route path="/connect" element={<Connect />} />
+              <Route path="/collaborate" element={<Collaborate />} />
             </Routes>
             <Toaster />
           </div>

@@ -1,12 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 
 interface BasicInfoSectionProps {
   formData: any;
@@ -19,10 +19,15 @@ interface BasicInfoSectionProps {
 
 const IMPACT_AREA_OPTIONS = [
   'Education', 'Health', 'Agriculture', 'Technology', 'Finance', 
-  'Culture', 'Environment', 'Social Justice', 'Economic Development', 'Other'
+  'Culture', 'Environment', 'Social Justice', 'Economic Development'
 ];
 
 const ENGAGEMENT_OPTIONS = ['Connect', 'Collaborate', 'Contribute'];
+
+const AVAILABLE_FOR_OPTIONS = [
+  'Mentoring', 'Consulting', 'Speaking', 'Partnerships', 
+  'Investment Opportunities', 'Board Positions', 'Volunteering'
+];
 
 const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
   formData,
@@ -32,11 +37,22 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
   onImpactAreasChange,
   onEngagementIntentionsChange
 }) => {
+  const [customImpactArea, setCustomImpactArea] = useState('');
+  const [customAvailableFor, setCustomAvailableFor] = useState('');
+  const [availableFor, setAvailableFor] = useState<string[]>(formData.available_for || []);
+
   const toggleImpactArea = (area: string) => {
     if (impactAreas.includes(area)) {
       onImpactAreasChange(impactAreas.filter(a => a !== area));
     } else {
       onImpactAreasChange([...impactAreas, area]);
+    }
+  };
+
+  const addCustomImpactArea = () => {
+    if (customImpactArea.trim() && !impactAreas.includes(customImpactArea.trim())) {
+      onImpactAreasChange([...impactAreas, customImpactArea.trim()]);
+      setCustomImpactArea('');
     }
   };
 
@@ -46,6 +62,33 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
     } else {
       onEngagementIntentionsChange([...engagementIntentions, intention]);
     }
+  };
+
+  const toggleAvailableFor = (option: string) => {
+    const updated = availableFor.includes(option)
+      ? availableFor.filter(a => a !== option)
+      : [...availableFor, option];
+    setAvailableFor(updated);
+    onInputChange('available_for', updated);
+  };
+
+  const addCustomAvailableFor = () => {
+    if (customAvailableFor.trim() && !availableFor.includes(customAvailableFor.trim())) {
+      const updated = [...availableFor, customAvailableFor.trim()];
+      setAvailableFor(updated);
+      onInputChange('available_for', updated);
+      setCustomAvailableFor('');
+    }
+  };
+
+  const removeImpactArea = (area: string) => {
+    onImpactAreasChange(impactAreas.filter(a => a !== area));
+  };
+
+  const removeAvailableFor = (option: string) => {
+    const updated = availableFor.filter(a => a !== option);
+    setAvailableFor(updated);
+    onInputChange('available_for', updated);
   };
 
   return (
@@ -153,7 +196,7 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
           <Label className="text-sm font-medium text-gray-700 mb-3 block">
             Impact Areas I Care About
           </Label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 mb-3">
             {IMPACT_AREA_OPTIONS.map((area) => (
               <Badge
                 key={area}
@@ -169,8 +212,50 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
               </Badge>
             ))}
           </div>
+          
+          {/* Custom Impact Areas */}
+          {impactAreas.filter(area => !IMPACT_AREA_OPTIONS.includes(area)).length > 0 && (
+            <div className="mb-3">
+              <p className="text-xs text-gray-500 mb-2">Custom Impact Areas:</p>
+              <div className="flex flex-wrap gap-2">
+                {impactAreas
+                  .filter(area => !IMPACT_AREA_OPTIONS.includes(area))
+                  .map((area) => (
+                    <Badge
+                      key={area}
+                      className="bg-dna-crimson text-white flex items-center gap-1"
+                    >
+                      {area}
+                      <X 
+                        className="w-3 h-3 cursor-pointer hover:bg-white/20 rounded-full" 
+                        onClick={() => removeImpactArea(area)}
+                      />
+                    </Badge>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* Add Custom Impact Area */}
+          <div className="flex gap-2">
+            <Input
+              placeholder="Add custom impact area..."
+              value={customImpactArea}
+              onChange={(e) => setCustomImpactArea(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && addCustomImpactArea()}
+              className="flex-1"
+            />
+            <Button 
+              type="button"
+              onClick={addCustomImpactArea}
+              size="sm"
+              className="bg-dna-crimson hover:bg-dna-crimson/80"
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+          </div>
           <p className="text-xs text-gray-500 mt-2">
-            Select the areas where you want to make an impact
+            Select existing areas or add your own custom impact areas
           </p>
         </div>
 
@@ -196,6 +281,73 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
           </div>
           <p className="text-xs text-gray-500 mt-2">
             Choose how you want to engage with the diaspora community
+          </p>
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium text-gray-700 mb-3 block">
+            What I'm Available For
+          </Label>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {AVAILABLE_FOR_OPTIONS.map((option) => (
+              <Badge
+                key={option}
+                variant={availableFor.includes(option) ? "default" : "outline"}
+                className={`cursor-pointer transition-colors ${
+                  availableFor.includes(option)
+                    ? 'bg-dna-emerald text-white'
+                    : 'hover:bg-dna-emerald/10 hover:text-dna-emerald'
+                }`}
+                onClick={() => toggleAvailableFor(option)}
+              >
+                {option}
+              </Badge>
+            ))}
+          </div>
+
+          {/* Custom Available For */}
+          {availableFor.filter(option => !AVAILABLE_FOR_OPTIONS.includes(option)).length > 0 && (
+            <div className="mb-3">
+              <p className="text-xs text-gray-500 mb-2">Custom Availability:</p>
+              <div className="flex flex-wrap gap-2">
+                {availableFor
+                  .filter(option => !AVAILABLE_FOR_OPTIONS.includes(option))
+                  .map((option) => (
+                    <Badge
+                      key={option}
+                      className="bg-dna-emerald text-white flex items-center gap-1"
+                    >
+                      {option}
+                      <X 
+                        className="w-3 h-3 cursor-pointer hover:bg-white/20 rounded-full" 
+                        onClick={() => removeAvailableFor(option)}
+                      />
+                    </Badge>
+                  ))}
+              </div>
+            </div>
+          )}
+
+          {/* Add Custom Available For */}
+          <div className="flex gap-2">
+            <Input
+              placeholder="Add what you're available for..."
+              value={customAvailableFor}
+              onChange={(e) => setCustomAvailableFor(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && addCustomAvailableFor()}
+              className="flex-1"
+            />
+            <Button 
+              type="button"
+              onClick={addCustomAvailableFor}
+              size="sm"
+              className="bg-dna-emerald hover:bg-dna-emerald/80"
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            Select from common options or add your own availability
           </p>
         </div>
       </CardContent>
