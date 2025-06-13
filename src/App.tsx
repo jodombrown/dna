@@ -12,6 +12,8 @@ import MyProfile from "./pages/MyProfile";
 import Members from "./pages/Members";
 import Search from "./pages/Search";
 import Messages from "./pages/Messages";
+import Connect from "./pages/Connect";
+import Collaborate from "./pages/Collaborate";
 import ConnectExample from "./pages/ConnectExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
@@ -53,8 +55,8 @@ function App() {
               <Route path="/members" element={<Members />} />
               <Route path="/search" element={<Search />} />
               <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-              <Route path="/connect" element={<ConnectExample />} />
-              <Route path="/collaborate" element={<CollaborationsExample />} />
+              <Route path="/connect" element={<Connect />} />
+              <Route path="/collaborate" element={<Collaborate />} />
               <Route path="/contribute" element={<ContributeExample />} />
               <Route path="/connect-example" element={<ConnectExample />} />
               <Route path="/collaborations-example" element={<CollaborationsExample />} />

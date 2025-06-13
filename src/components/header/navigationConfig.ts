@@ -14,3 +14,10 @@ export const phases = [
   { name: 'Customer Discovery Phase', path: '/customer-discovery-phase', phase: 4 },
   { name: 'Go-to-Market Phase', path: '/go-to-market-phase', phase: 5 },
 ];
+
+// Example pages for landing page showcase
+export const examplePages = [
+  { name: 'Connect Example', path: '/connect-example' },
+  { name: 'Collaborate Example', path: '/collaborations-example' },
+  { name: 'Contribute Example', path: '/contribute-example' },
+];
