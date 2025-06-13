@@ -220,6 +220,44 @@ export type Database = {
         }
         Relationships: []
       }
+      initiatives: {
+        Row: {
+          created_at: string | null
+          creator_id: string | null
+          description: string | null
+          id: string
+          impact_area: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          creator_id?: string | null
+          description?: string | null
+          id?: string
+          impact_area?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          creator_id?: string | null
+          description?: string | null
+          id?: string
+          impact_area?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "initiatives_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -324,23 +362,34 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_visibility: string | null
           achievements: string | null
           availability_for_mentoring: boolean | null
+          available_for: string[] | null
           avatar_url: string | null
+          banner_image_url: string | null
           bio: string | null
           certifications: string | null
+          city: string | null
           community_involvement: string | null
           company: string | null
           country_of_origin: string | null
           created_at: string
           current_country: string | null
           diaspora_networks: string[] | null
+          diaspora_origin: string | null
           education: string | null
           email: string | null
+          engagement_intentions: string[] | null
+          followers_count: number | null
+          following_count: number | null
           full_name: string | null
           giving_back_initiatives: string | null
+          headline: string | null
           home_country_projects: string | null
           id: string
+          impact_areas: string[] | null
+          industry: string | null
           innovation_pathways: string | null
           interests: string[] | null
           is_public: boolean | null
@@ -349,11 +398,18 @@ export type Database = {
           location: string | null
           looking_for_opportunities: boolean | null
           mentorship_areas: string[] | null
+          my_dna_statement: string | null
+          notifications_enabled: boolean | null
+          organization: string | null
+          past_contributions: string | null
           phone: string | null
           profession: string | null
+          professional_role: string | null
           professional_sectors: string[] | null
           profile_picture_url: string | null
           skills: string[] | null
+          skills_needed: string[] | null
+          skills_offered: string[] | null
           updated_at: string
           volunteer_experience: string | null
           website_url: string | null
@@ -361,23 +417,34 @@ export type Database = {
           years_in_diaspora: number | null
         }
         Insert: {
+          account_visibility?: string | null
           achievements?: string | null
           availability_for_mentoring?: boolean | null
+          available_for?: string[] | null
           avatar_url?: string | null
+          banner_image_url?: string | null
           bio?: string | null
           certifications?: string | null
+          city?: string | null
           community_involvement?: string | null
           company?: string | null
           country_of_origin?: string | null
           created_at?: string
           current_country?: string | null
           diaspora_networks?: string[] | null
+          diaspora_origin?: string | null
           education?: string | null
           email?: string | null
+          engagement_intentions?: string[] | null
+          followers_count?: number | null
+          following_count?: number | null
           full_name?: string | null
           giving_back_initiatives?: string | null
+          headline?: string | null
           home_country_projects?: string | null
           id: string
+          impact_areas?: string[] | null
+          industry?: string | null
           innovation_pathways?: string | null
           interests?: string[] | null
           is_public?: boolean | null
@@ -386,11 +453,18 @@ export type Database = {
           location?: string | null
           looking_for_opportunities?: boolean | null
           mentorship_areas?: string[] | null
+          my_dna_statement?: string | null
+          notifications_enabled?: boolean | null
+          organization?: string | null
+          past_contributions?: string | null
           phone?: string | null
           profession?: string | null
+          professional_role?: string | null
           professional_sectors?: string[] | null
           profile_picture_url?: string | null
           skills?: string[] | null
+          skills_needed?: string[] | null
+          skills_offered?: string[] | null
           updated_at?: string
           volunteer_experience?: string | null
           website_url?: string | null
@@ -398,23 +472,34 @@ export type Database = {
           years_in_diaspora?: number | null
         }
         Update: {
+          account_visibility?: string | null
           achievements?: string | null
           availability_for_mentoring?: boolean | null
+          available_for?: string[] | null
           avatar_url?: string | null
+          banner_image_url?: string | null
           bio?: string | null
           certifications?: string | null
+          city?: string | null
           community_involvement?: string | null
           company?: string | null
           country_of_origin?: string | null
           created_at?: string
           current_country?: string | null
           diaspora_networks?: string[] | null
+          diaspora_origin?: string | null
           education?: string | null
           email?: string | null
+          engagement_intentions?: string[] | null
+          followers_count?: number | null
+          following_count?: number | null
           full_name?: string | null
           giving_back_initiatives?: string | null
+          headline?: string | null
           home_country_projects?: string | null
           id?: string
+          impact_areas?: string[] | null
+          industry?: string | null
           innovation_pathways?: string | null
           interests?: string[] | null
           is_public?: boolean | null
@@ -423,11 +508,18 @@ export type Database = {
           location?: string | null
           looking_for_opportunities?: boolean | null
           mentorship_areas?: string[] | null
+          my_dna_statement?: string | null
+          notifications_enabled?: boolean | null
+          organization?: string | null
+          past_contributions?: string | null
           phone?: string | null
           profession?: string | null
+          professional_role?: string | null
           professional_sectors?: string[] | null
           profile_picture_url?: string | null
           skills?: string[] | null
+          skills_needed?: string[] | null
+          skills_offered?: string[] | null
           updated_at?: string
           volunteer_experience?: string | null
           website_url?: string | null
@@ -435,6 +527,122 @@ export type Database = {
           years_in_diaspora?: number | null
         }
         Relationships: []
+      }
+      project_participants: {
+        Row: {
+          id: string
+          joined_at: string | null
+          participant_role: string | null
+          project_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          joined_at?: string | null
+          participant_role?: string | null
+          project_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          joined_at?: string | null
+          participant_role?: string | null
+          project_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_participants_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string | null
+          creator_id: string | null
+          description: string | null
+          id: string
+          impact_area: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          creator_id?: string | null
+          description?: string | null
+          id?: string
+          impact_area?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          creator_id?: string | null
+          description?: string | null
+          id?: string
+          impact_area?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_connections: {
+        Row: {
+          created_at: string | null
+          follower_id: string | null
+          following_id: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          follower_id?: string | null
+          following_id?: string | null
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          follower_id?: string | null
+          following_id?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_connections_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_connections_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

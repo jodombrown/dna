@@ -1,23 +1,13 @@
 
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  MapPin, 
-  Building, 
-  ExternalLink, 
-  Edit, 
-  Phone, 
-  Globe, 
-  GraduationCap,
-  Award,
-  Users,
-  Heart,
-  Briefcase,
-  Calendar
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import LinkedInStyleProfileHeader from './LinkedInStyleProfileHeader';
+import LinkedInAboutSection from './LinkedInAboutSection';
+import LinkedInExperienceSection from './LinkedInExperienceSection';
+import LinkedInProjectsSection from './LinkedInProjectsSection';
+import CulturalImpactSection from './CulturalImpactSection';
+import MentorshipPreferences from './MentorshipPreferences';
+import { useToast } from '@/hooks/use-toast';
 
 interface EnhancedProfileDisplayProps {
   profile: any;
@@ -32,250 +22,178 @@ const EnhancedProfileDisplay: React.FC<EnhancedProfileDisplayProps> = ({
   onEdit, 
   onConnect 
 }) => {
-  const skillsList = profile.skills ? profile.skills.split(',').map((s: string) => s.trim()) : [];
-  const interestsList = profile.interests ? profile.interests.split(',').map((s: string) => s.trim()) : [];
+  const [projects, setProjects] = useState([]);
+  const [initiatives, setInitiatives] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (profile?.id) {
+      fetchProjectsAndInitiatives();
+      if (!isOwnProfile) {
+        checkFollowingStatus();
+      }
+    }
+  }, [profile?.id, isOwnProfile]);
+
+  const fetchProjectsAndInitiatives = async () => {
+    try {
+      // Fetch projects
+      const { data: projectsData } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('creator_id', profile.id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      // Fetch initiatives
+      const { data: initiativesData } = await supabase
+        .from('initiatives')
+        .select('*')
+        .eq('creator_id', profile.id)
+        .order('created_at', { ascending: false });
+
+      setProjects(projectsData || []);
+      setInitiatives(initiativesData || []);
+    } catch (error) {
+      console.error('Error fetching projects and initiatives:', error);
+    }
+  };
+
+  const checkFollowingStatus = async () => {
+    try {
+      const { data: currentUser } = await supabase.auth.getUser();
+      if (!currentUser.user) return;
+
+      const { data } = await supabase
+        .from('user_connections')
+        .select('id')
+        .eq('follower_id', currentUser.user.id)
+        .eq('following_id', profile.id)
+        .single();
+
+      setIsFollowing(!!data);
+    } catch (error) {
+      // Not following or error
+      setIsFollowing(false);
+    }
+  };
+
+  const handleFollow = async () => {
+    if (loading) return;
+    
+    setLoading(true);
+    try {
+      const { data: currentUser } = await supabase.auth.getUser();
+      if (!currentUser.user) {
+        toast({
+          title: "Authentication required",
+          description: "Please log in to follow users",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (isFollowing) {
+        // Unfollow
+        await supabase
+          .from('user_connections')
+          .delete()
+          .eq('follower_id', currentUser.user.id)
+          .eq('following_id', profile.id);
+
+        setIsFollowing(false);
+        toast({
+          title: "Unfollowed",
+          description: `You're no longer following ${profile.full_name}`,
+        });
+      } else {
+        // Follow
+        await supabase
+          .from('user_connections')
+          .insert({
+            follower_id: currentUser.user.id,
+            following_id: profile.id
+          });
+
+        setIsFollowing(true);
+        toast({
+          title: "Following",
+          description: `You're now following ${profile.full_name}`,
+        });
+      }
+    } catch (error: any) {
+      console.error('Error toggling follow:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update follow status",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMessage = () => {
+    // Navigate to messages - this would be handled by parent component
+    if (onConnect) {
+      onConnect();
+    }
+  };
 
   return (
     <div className="space-y-6">
-      {/* Header Card */}
-      <Card>
-        <CardContent className="p-8">
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="flex flex-col items-center lg:items-start">
-              <Avatar className="w-40 h-40 mb-6">
-                <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
-                <AvatarFallback className="bg-dna-copper text-white text-3xl">
-                  {profile.full_name?.split(' ').map((n: string) => n[0]).join('') || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              
-              <div className="flex gap-3 mb-4">
-                {isOwnProfile ? (
-                  <Button 
-                    onClick={onEdit}
-                    className="bg-dna-copper hover:bg-dna-gold text-white"
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Profile
-                  </Button>
-                ) : (
-                  <Button 
-                    onClick={onConnect}
-                    className="bg-dna-emerald hover:bg-dna-forest text-white"
-                  >
-                    <Users className="w-4 h-4 mr-2" />
-                    Connect
-                  </Button>
-                )}
-              </div>
-
-              {/* Status Badges */}
-              <div className="flex flex-col gap-2">
-                {profile.availability_for_mentoring && (
-                  <Badge className="bg-dna-mint text-dna-forest">
-                    Available for Mentoring
-                  </Badge>
-                )}
-                {profile.looking_for_opportunities && (
-                  <Badge className="bg-dna-gold text-white">
-                    Looking for Opportunities
-                  </Badge>
-                )}
-              </div>
-            </div>
-            
-            <div className="flex-1">
-              <h1 className="text-4xl font-bold text-dna-forest mb-2">
-                {profile.full_name || 'Complete Your Profile'}
-              </h1>
-              
-              {profile.profession && (
-                <p className="text-2xl text-dna-copper font-medium mb-4">
-                  {profile.profession}
-                </p>
-              )}
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-                {profile.company && (
-                  <div className="flex items-center text-gray-600">
-                    <Building className="w-5 h-5 mr-2" />
-                    <span>{profile.company}</span>
-                  </div>
-                )}
-                
-                {profile.location && (
-                  <div className="flex items-center text-gray-600">
-                    <MapPin className="w-5 h-5 mr-2" />
-                    <span>{profile.location}</span>
-                  </div>
-                )}
-
-                {profile.years_experience && (
-                  <div className="flex items-center text-gray-600">
-                    <Calendar className="w-5 h-5 mr-2" />
-                    <span>{profile.years_experience} experience</span>
-                  </div>
-                )}
-
-                {profile.phone && (
-                  <div className="flex items-center text-gray-600">
-                    <Phone className="w-5 h-5 mr-2" />
-                    <span>{profile.phone}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Cultural Background */}
-              {(profile.country_of_origin || profile.current_country) && (
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-dna-forest mb-3">Cultural Background</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {profile.country_of_origin && (
-                      <div className="flex items-center text-gray-600">
-                        <Heart className="w-5 h-5 mr-2 text-dna-crimson" />
-                        <span>From {profile.country_of_origin}</span>
-                      </div>
-                    )}
-                    {profile.current_country && (
-                      <div className="flex items-center text-gray-600">
-                        <Globe className="w-5 h-5 mr-2" />
-                        <span>Based in {profile.current_country}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Quick Links */}
-              <div className="flex gap-3">
-                {profile.linkedin_url && (
-                  <Button 
-                    variant="outline"
-                    onClick={() => window.open(profile.linkedin_url, '_blank')}
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    LinkedIn
-                  </Button>
-                )}
-                {profile.website_url && (
-                  <Button 
-                    variant="outline"
-                    onClick={() => window.open(profile.website_url, '_blank')}
-                  >
-                    <Globe className="w-4 h-4 mr-2" />
-                    Website
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* LinkedIn-style Profile Header */}
+      <LinkedInStyleProfileHeader 
+        profile={profile}
+        isOwnProfile={isOwnProfile}
+        onEdit={onEdit}
+        onFollow={handleFollow}
+        onMessage={handleMessage}
+        isFollowing={isFollowing}
+      />
 
       {/* About Section */}
-      {profile.bio && (
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-dna-forest mb-4">About</h3>
-            <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
-          </CardContent>
-        </Card>
-      )}
+      <LinkedInAboutSection 
+        profile={profile}
+        isOwnProfile={isOwnProfile}
+        onEdit={onEdit}
+      />
 
-      {/* Skills & Expertise */}
-      {skillsList.length > 0 && (
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-dna-forest mb-4">Skills & Expertise</h3>
-            <div className="flex flex-wrap gap-2">
-              {skillsList.map((skill) => (
-                <Badge key={skill} variant="outline" className="text-dna-forest border-dna-forest">
-                  {skill}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Experience Section */}
+      <LinkedInExperienceSection 
+        profile={profile}
+        isOwnProfile={isOwnProfile}
+        onEdit={onEdit}
+      />
 
-      {/* Interests */}
-      {interestsList.length > 0 && (
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-dna-forest mb-4">Interests & Passion Areas</h3>
-            <div className="flex flex-wrap gap-2">
-              {interestsList.map((interest) => (
-                <Badge key={interest} variant="outline" className="text-dna-copper border-dna-copper">
-                  {interest}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Projects & Initiatives Section */}
+      <LinkedInProjectsSection 
+        profile={profile}
+        projects={projects}
+        initiatives={initiatives}
+        isOwnProfile={isOwnProfile}
+        onEdit={onEdit}
+        onAddProject={() => {
+          // This would open a project creation modal
+          toast({
+            title: "Feature Coming Soon",
+            description: "Project creation will be available soon!",
+          });
+        }}
+      />
 
-      {/* Professional Background */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {profile.education && (
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-xl font-semibold text-dna-forest mb-4 flex items-center">
-                <GraduationCap className="w-5 h-5 mr-2" />
-                Education
-              </h3>
-              <p className="text-gray-700 whitespace-pre-line">{profile.education}</p>
-            </CardContent>
-          </Card>
-        )}
+      {/* Cultural Impact Section */}
+      <CulturalImpactSection profile={profile} />
 
-        {profile.certifications && (
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-xl font-semibold text-dna-forest mb-4 flex items-center">
-                <Award className="w-5 h-5 mr-2" />
-                Certifications
-              </h3>
-              <p className="text-gray-700 whitespace-pre-line">{profile.certifications}</p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-
-      {/* Innovation & Impact */}
-      {profile.innovation_pathways && (
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-dna-forest mb-4 flex items-center">
-              <Briefcase className="w-5 h-5 mr-2" />
-              Innovation Pathways & Impact
-            </h3>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">{profile.innovation_pathways}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Achievements */}
-      {profile.achievements && (
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-dna-forest mb-4 flex items-center">
-              <Award className="w-5 h-5 mr-2" />
-              Key Achievements
-            </h3>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">{profile.achievements}</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Languages */}
-      {profile.languages && (
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-xl font-semibold text-dna-forest mb-4">Languages</h3>
-            <p className="text-gray-700">{profile.languages}</p>
-          </CardContent>
-        </Card>
-      )}
+      {/* Mentorship Section */}
+      <MentorshipPreferences 
+        profile={profile} 
+        isOwnProfile={isOwnProfile}
+        onConnect={onConnect}
+        onMessage={handleMessage}
+      />
     </div>
   );
 };
