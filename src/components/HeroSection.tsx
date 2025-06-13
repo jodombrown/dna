@@ -34,7 +34,6 @@ const HeroSection = () => {
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed">
-                  The African Diaspora represents one of the most powerful untapped resources for global development. 
                   Connecting Africa's diaspora professionals for meaningful global impact through 
                   <span className="font-semibold text-dna-emerald"> capacity building</span>, 
                   <span className="font-semibold text-dna-copper"> venture development</span>, and 
