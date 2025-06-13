@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronDown, Home } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { publicNavItems, phases } from './navigationConfig';
 
 const HomeDropdownMenu = () => {
   const navigate = useNavigate();
@@ -12,26 +13,8 @@ const HomeDropdownMenu = () => {
   // Get current page to hide active nav item
   const currentPath = location.pathname;
 
-  // Main navigation items (excluding home)
-  const mainNavItems = [
-    { name: 'About Us', path: '/about' },
-    { name: 'Connect', path: '/connect' },
-    { name: 'Collaborate', path: '/collaborate' },
-    { name: 'Contribute', path: '/contribute' },
-    { name: 'Contact', path: '/contact' },
-  ];
-
-  // Development phase items
-  const phaseItems = [
-    { name: 'Prototyping Phase', path: '/prototyping-phase' },
-    { name: 'Build Phase', path: '/build-phase' },
-    { name: 'MVP Phase', path: '/mvp-phase' },
-    { name: 'Customer Discovery Phase', path: '/customer-discovery-phase' },
-    { name: 'Go-to-Market Phase', path: '/go-to-market-phase' },
-  ];
-
   // Filter out current page from main nav items
-  const filteredMainNavItems = mainNavItems.filter(item => item.path !== currentPath);
+  const filteredMainNavItems = publicNavItems.filter(item => item.path !== currentPath);
 
   const handleItemClick = (path: string) => {
     navigate(path);
@@ -89,13 +72,13 @@ const HomeDropdownMenu = () => {
               <div className="px-4 py-2 text-xs text-gray-500 uppercase tracking-wide font-medium">
                 Development Phases
               </div>
-              {phaseItems.map((item) => (
+              {phases.map((phase) => (
                 <button
-                  key={item.path}
-                  onClick={() => handleItemClick(item.path)}
+                  key={phase.path}
+                  onClick={() => handleItemClick(phase.path)}
                   className="w-full text-left px-4 py-2 text-gray-700 hover:bg-dna-mint/20 hover:text-dna-forest transition-colors duration-150 text-sm"
                 >
-                  {item.name}
+                  {phase.name}
                 </button>
               ))}
             </div>
