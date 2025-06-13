@@ -368,6 +368,7 @@ export type Database = {
           available_for: string[] | null
           avatar_url: string | null
           banner_image_url: string | null
+          banner_url: string | null
           bio: string | null
           certifications: string | null
           city: string | null
@@ -423,6 +424,7 @@ export type Database = {
           available_for?: string[] | null
           avatar_url?: string | null
           banner_image_url?: string | null
+          banner_url?: string | null
           bio?: string | null
           certifications?: string | null
           city?: string | null
@@ -478,6 +480,7 @@ export type Database = {
           available_for?: string[] | null
           avatar_url?: string | null
           banner_image_url?: string | null
+          banner_url?: string | null
           bio?: string | null
           certifications?: string | null
           city?: string | null

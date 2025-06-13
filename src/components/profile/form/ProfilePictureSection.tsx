@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Camera, Upload, Image, Info, Link } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/contexts/AuthContext';
+import { useImageUpload } from './ImageUploadHandler';
 
 interface ProfilePictureSectionProps {
   avatarUrl: string;
@@ -24,31 +26,34 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
   onAvatarChange,
   onBannerChange
 }) => {
+  const { user } = useAuth();
+  const { uploadImage } = useImageUpload();
   const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url');
   const [bannerUploadMethod, setBannerUploadMethod] = useState<'url' | 'file'>('url');
+  const [uploading, setUploading] = useState(false);
   const defaultBanner = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=400&q=80";
 
-  const handleAvatarFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      // TODO: Implement actual file upload to storage
-      console.log('Avatar file selected:', file);
-      // For now, create a local URL preview
-      const url = URL.createObjectURL(file);
-      onAvatarChange(url);
+    if (file && user) {
+      setUploading(true);
+      const url = await uploadImage(file, user.id, 'avatar');
+      if (url) {
+        onAvatarChange(url);
+      }
+      setUploading(false);
     }
   };
 
-  const handleBannerFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBannerFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      // TODO: Implement actual file upload to storage
-      console.log('Banner file selected:', file);
-      if (onBannerChange) {
-        // For now, create a local URL preview
-        const url = URL.createObjectURL(file);
+    if (file && user && onBannerChange) {
+      setUploading(true);
+      const url = await uploadImage(file, user.id, 'banner');
+      if (url) {
         onBannerChange(url);
       }
+      setUploading(false);
     }
   };
 
@@ -124,10 +129,13 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
                     onChange={handleBannerFileUpload}
                     className="hidden"
                     id="banner-upload"
+                    disabled={uploading}
                   />
                   <label htmlFor="banner-upload" className="cursor-pointer">
                     <Upload className="w-8 h-8 text-dna-emerald mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">Click to upload banner image</p>
+                    <p className="text-sm text-gray-600">
+                      {uploading ? 'Uploading...' : 'Click to upload banner image'}
+                    </p>
                     <p className="text-xs text-gray-400 mt-1">1200x400px recommended</p>
                   </label>
                 </div>
@@ -195,10 +203,13 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
                       onChange={handleAvatarFileUpload}
                       className="hidden"
                       id="avatar-upload"
+                      disabled={uploading}
                     />
                     <label htmlFor="avatar-upload" className="cursor-pointer">
                       <Upload className="w-6 h-6 text-dna-copper mx-auto mb-1" />
-                      <p className="text-sm text-gray-600">Click to upload</p>
+                      <p className="text-sm text-gray-600">
+                        {uploading ? 'Uploading...' : 'Click to upload'}
+                      </p>
                       <p className="text-xs text-gray-400">400x400px recommended</p>
                     </label>
                   </div>
