@@ -9,11 +9,18 @@ export const handleProfileSubmission = async (
   avatarUrl: string,
   bannerUrl: string
 ) => {
+  // Convert string numbers to actual numbers for database compatibility
+  const processedData = {
+    ...formData,
+    years_experience: formData.years_experience ? parseInt(formData.years_experience) : null,
+    years_in_diaspora: formData.years_in_diaspora ? parseInt(formData.years_in_diaspora) : null,
+  };
+
   const { error } = await supabase
     .from('profiles')
     .upsert({
       id: userId,
-      ...formData,
+      ...processedData,
       avatar_url: avatarUrl,
       banner_image_url: bannerUrl,
       skills: arrayStates.skills,
