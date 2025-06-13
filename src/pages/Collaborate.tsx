@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -180,7 +179,7 @@ const Collaborate = () => {
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
         onClose={() => setIsFeedbackPanelOpen(false)}
-        type="collaborate"
+        pageType="collaborate"
       />
 
       <Footer />

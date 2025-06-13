@@ -74,7 +74,7 @@ const Connect = () => {
 
         <SearchSection 
           searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
+          onSearchChange={setSearchTerm}
           onSearch={handleSearch}
           loading={loading}
         />
@@ -111,7 +111,7 @@ const Connect = () => {
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
         onClose={() => setIsFeedbackPanelOpen(false)}
-        type="connect"
+        pageType="connect"
       />
 
       <Footer />
