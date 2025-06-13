@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, DollarSign, Users, TrendingUp, Calendar, MapPin, CheckCircle, Info, PieChart, Clock, Target, X } from 'lucide-react';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
+import MobileNavigation from '@/components/header/MobileNavigation';
 
 const ContributeExample = () => {
   const navigate = useNavigate();
@@ -119,13 +121,13 @@ const ContributeExample = () => {
               <Button 
                 variant="ghost" 
                 onClick={() => navigate('/')}
-                className="flex items-center gap-2 hover:bg-dna-mint"
+                className="flex items-center gap-2 hover:bg-dna-mint hidden md:flex"
                 size="sm"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Back to Home</span>
-                <span className="sm:hidden">Back</span>
+                <span>Back to Home</span>
               </Button>
+              <MobileNavigation />
               <div className="border-l border-gray-300 h-6 hidden sm:block"></div>
               <div>
                 <h1 className="text-lg sm:text-xl font-bold text-gray-900">Contribute to Africa</h1>
