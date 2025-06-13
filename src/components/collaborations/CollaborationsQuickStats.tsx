@@ -10,10 +10,17 @@ interface StatsData {
 }
 
 interface CollaborationsQuickStatsProps {
-  stats: StatsData;
+  stats?: StatsData;
 }
 
-const CollaborationsQuickStats: React.FC<CollaborationsQuickStatsProps> = ({ stats }) => {
+const CollaborationsQuickStats: React.FC<CollaborationsQuickStatsProps> = ({ 
+  stats = {
+    totalCollaborators: 156,
+    countriesInvolved: 12,
+    totalFunding: '$2.4M',
+    avgProgress: 68
+  }
+}) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
       <Card>

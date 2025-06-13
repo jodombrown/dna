@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,7 +11,7 @@ interface BasicInfoSectionProps {
   formData: any;
   impactAreas: string[];
   engagementIntentions: string[];
-  onInputChange: (field: string, value: string | boolean) => void;
+  onInputChange: (field: string, value: string | boolean | string[]) => void;
   onImpactAreasChange: (areas: string[]) => void;
   onEngagementIntentionsChange: (intentions: string[]) => void;
 }

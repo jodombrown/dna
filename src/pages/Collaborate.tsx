@@ -43,7 +43,15 @@ const Collaborate = () => {
       creator: {
         name: 'Amara Okafor',
         avatar: '/lovable-uploads/aaee598a-95b1-4777-a456-a833d148a286.png'
-      }
+      },
+      collaborators: 8,
+      countries: 3,
+      totalFunding: '$50K',
+      currentFunding: '$25K',
+      progress: 65,
+      tags: ['Technology', 'Education'],
+      timeline: '6 months',
+      status: 'active'
     },
     {
       id: '2',
@@ -56,7 +64,15 @@ const Collaborate = () => {
       creator: {
         name: 'Kwame Asante',
         avatar: null
-      }
+      },
+      collaborators: 12,
+      countries: 5,
+      totalFunding: '$100K',
+      currentFunding: '$75K',
+      progress: 80,
+      tags: ['Finance', 'Investment'],
+      timeline: '12 months',
+      status: 'active'
     }
   ];
 
@@ -83,7 +99,7 @@ const Collaborate = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <CollaborationsPageHeader />
+      <CollaborationsPageHeader activeProjectsCount={projects.length} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <CollaborationsPrototypeNotice />

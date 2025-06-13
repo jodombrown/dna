@@ -4,10 +4,12 @@ import { Badge } from '@/components/ui/badge';
 import MobileNavigation from '@/components/header/MobileNavigation';
 
 interface CollaborationsPageHeaderProps {
-  activeProjectsCount: number;
+  activeProjectsCount?: number;
 }
 
-const CollaborationsPageHeader: React.FC<CollaborationsPageHeaderProps> = ({ activeProjectsCount }) => {
+const CollaborationsPageHeader: React.FC<CollaborationsPageHeaderProps> = ({ 
+  activeProjectsCount = 0 
+}) => {
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
