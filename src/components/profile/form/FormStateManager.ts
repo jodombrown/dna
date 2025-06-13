@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { FormData, ArrayStates, HelperStates } from './FormDataTypes';
 
@@ -77,7 +76,7 @@ export const useFormState = (profile: any, user: any) => {
     bannerUrl: profile?.banner_image_url || '',
   });
 
-  const handleInputChange = (field: string, value: string | boolean | number) => {
+  const handleInputChange = (field: string, value: string | boolean | string[] | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

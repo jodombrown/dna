@@ -7,29 +7,42 @@ import { Progress } from '@/components/ui/progress';
 import { Users, Calendar, MessageSquare, FileText, Video } from 'lucide-react';
 
 interface Project {
-  id: number;
+  id: string;
   title: string;
   description: string;
+  phase: string;
+  impact_area: string;
+  team_size: number;
+  skills_needed: string[];
+  creator: {
+    name: string;
+    avatar: string | null;
+  };
   collaborators: number;
   countries: number;
-  totalFunding: number;
-  currentFunding: number;
+  totalFunding: string;
+  currentFunding: string;
   progress: number;
-  stage: string;
-  nextMeeting: string;
-  recentUpdate: string;
   tags: string[];
+  timeline: string;
+  status: string;
+  // Optional properties for compatibility
+  stage?: string;
+  nextMeeting?: string;
+  recentUpdate?: string;
 }
 
 interface ProjectCardProps {
   project: Project;
-  onDiscussionClick: () => void;
-  onDocumentsClick: () => void;
-  onMeetingClick: () => void;
+  onJoin?: () => void;
+  onDiscussionClick?: () => void;
+  onDocumentsClick?: () => void;
+  onMeetingClick?: () => void;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ 
   project, 
+  onJoin,
   onDiscussionClick, 
   onDocumentsClick, 
   onMeetingClick 
@@ -43,7 +56,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             <p className="text-sm sm:text-base text-gray-600">{project.description}</p>
           </div>
           <Badge className="bg-dna-emerald text-white">
-            {project.stage}
+            {project.phase || project.stage}
           </Badge>
         </div>
         <div className="flex flex-wrap gap-2 mt-4">
@@ -62,52 +75,75 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               <Users className="w-4 h-4 text-gray-400" />
               <span className="text-sm">{project.collaborators} collaborators • {project.countries} countries</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-gray-400" />
-              <span className="text-sm">Next meeting: {project.nextMeeting}</span>
-            </div>
+            {project.nextMeeting && (
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-400" />
+                <span className="text-sm">Next meeting: {project.nextMeeting}</span>
+              </div>
+            )}
           </div>
           
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Funding Progress</span>
+              <span>Progress</span>
               <span className="font-medium">{project.progress}%</span>
             </div>
             <Progress value={project.progress} className="h-2" />
             <div className="flex justify-between text-xs text-gray-500">
-              <span>${(project.currentFunding / 1000000).toFixed(1)}M raised</span>
-              <span>${(project.totalFunding / 1000000).toFixed(1)}M goal</span>
+              <span>{project.currentFunding} raised</span>
+              <span>{project.totalFunding} goal</span>
             </div>
           </div>
           
           <div className="space-y-2">
-            <div className="text-sm font-medium text-gray-700">Recent Update</div>
-            <p className="text-sm text-gray-600">{project.recentUpdate}</p>
+            <div className="text-sm font-medium text-gray-700">Team Size</div>
+            <p className="text-sm text-gray-600">{project.team_size} members</p>
+            {project.recentUpdate && (
+              <>
+                <div className="text-sm font-medium text-gray-700">Recent Update</div>
+                <p className="text-sm text-gray-600">{project.recentUpdate}</p>
+              </>
+            )}
           </div>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-3">
-          <Button 
-            onClick={onDiscussionClick}
-            className="bg-dna-copper hover:bg-dna-gold text-white"
-          >
-            <MessageSquare className="w-4 h-4 mr-2" />
-            Join Discussion
-          </Button>
-          <Button 
-            onClick={onDocumentsClick}
-            variant="outline"
-          >
-            <FileText className="w-4 h-4 mr-2" />
-            View Documents
-          </Button>
-          <Button 
-            onClick={onMeetingClick}
-            variant="outline"
-          >
-            <Video className="w-4 h-4 mr-2" />
-            Meeting Room
-          </Button>
+          {onJoin && (
+            <Button 
+              onClick={onJoin}
+              className="bg-dna-copper hover:bg-dna-gold text-white"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Join Project
+            </Button>
+          )}
+          {onDiscussionClick && (
+            <Button 
+              onClick={onDiscussionClick}
+              className="bg-dna-copper hover:bg-dna-gold text-white"
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Join Discussion
+            </Button>
+          )}
+          {onDocumentsClick && (
+            <Button 
+              onClick={onDocumentsClick}
+              variant="outline"
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              View Documents
+            </Button>
+          )}
+          {onMeetingClick && (
+            <Button 
+              onClick={onMeetingClick}
+              variant="outline"
+            >
+              <Video className="w-4 h-4 mr-2" />
+              Meeting Room
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

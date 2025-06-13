@@ -24,6 +24,9 @@ const CollaborationsExample = () => {
     setIsMeetingDialogOpen
   } = useCollaborationsLogic();
 
+  const [isStartProjectDialogOpen, setIsStartProjectDialogOpen] = React.useState(false);
+  const [isJoinProjectDialogOpen, setIsJoinProjectDialogOpen] = React.useState(false);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <CollaborationsPageHeader activeProjectsCount={activeProjects.length} />
@@ -50,12 +53,10 @@ const CollaborationsExample = () => {
       <Footer />
 
       <CollaborationsDialogs
-        isDiscussionDialogOpen={isDiscussionDialogOpen}
-        setIsDiscussionDialogOpen={setIsDiscussionDialogOpen}
-        isDocumentsDialogOpen={isDocumentsDialogOpen}
-        setIsDocumentsDialogOpen={setIsDocumentsDialogOpen}
-        isMeetingDialogOpen={isMeetingDialogOpen}
-        setIsMeetingDialogOpen={setIsMeetingDialogOpen}
+        isStartProjectDialogOpen={isStartProjectDialogOpen}
+        setIsStartProjectDialogOpen={setIsStartProjectDialogOpen}
+        isJoinProjectDialogOpen={isJoinProjectDialogOpen}
+        setIsJoinProjectDialogOpen={setIsJoinProjectDialogOpen}
       />
       
       <FeedbackPanel 
