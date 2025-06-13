@@ -1,15 +1,16 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Home } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import MobileNavigation from '@/components/header/MobileNavigation';
 
-interface ConnectHeaderProps {
+interface ConnectPageHeaderProps {
   totalCount: number;
 }
 
-const ConnectHeader: React.FC<ConnectHeaderProps> = ({ totalCount }) => {
+const ConnectPageHeader: React.FC<ConnectPageHeaderProps> = ({ totalCount }) => {
   const navigate = useNavigate();
 
   return (
@@ -20,13 +21,13 @@ const ConnectHeader: React.FC<ConnectHeaderProps> = ({ totalCount }) => {
             <Button 
               variant="ghost" 
               onClick={() => navigate('/')}
-              className="flex items-center gap-2 hover:bg-dna-mint"
+              className="flex items-center gap-2 hover:bg-dna-mint hidden md:flex"
               size="sm"
             >
-              <Home className="w-4 h-4" />
-              <span className="hidden sm:inline">Back to Home</span>
-              <span className="sm:hidden">Home</span>
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Home</span>
             </Button>
+            <MobileNavigation />
             <div className="border-l border-gray-300 h-6 hidden sm:block"></div>
             <div>
               <h1 className="text-lg sm:text-xl font-bold text-gray-900">Professional Network</h1>
@@ -34,7 +35,7 @@ const ConnectHeader: React.FC<ConnectHeaderProps> = ({ totalCount }) => {
             </div>
           </div>
           <Badge className="bg-dna-emerald text-white text-xs sm:text-sm">
-            {totalCount} Active
+            {totalCount}+ Members
           </Badge>
         </div>
       </div>
@@ -42,4 +43,4 @@ const ConnectHeader: React.FC<ConnectHeaderProps> = ({ totalCount }) => {
   );
 };
 
-export default ConnectHeader;
+export default ConnectPageHeader;
