@@ -12,12 +12,17 @@ const HomeDropdownMenu = () => {
   // Get current page to hide active nav item
   const currentPath = location.pathname;
 
-  const allMenuItems = [
+  // Main navigation items (excluding home)
+  const mainNavItems = [
     { name: 'About Us', path: '/about' },
     { name: 'Connect', path: '/connect' },
     { name: 'Collaborate', path: '/collaborate' },
     { name: 'Contribute', path: '/contribute' },
     { name: 'Contact', path: '/contact' },
+  ];
+
+  // Development phase items
+  const phaseItems = [
     { name: 'Prototyping Phase', path: '/prototyping-phase' },
     { name: 'Build Phase', path: '/build-phase' },
     { name: 'MVP Phase', path: '/mvp-phase' },
@@ -25,10 +30,8 @@ const HomeDropdownMenu = () => {
     { name: 'Go-to-Market Phase', path: '/go-to-market-phase' },
   ];
 
-  // Filter out current page and home page
-  const menuItems = allMenuItems.filter(item => 
-    item.path !== currentPath && item.path !== '/'
-  );
+  // Filter out current page from main nav items
+  const filteredMainNavItems = mainNavItems.filter(item => item.path !== currentPath);
 
   const handleItemClick = (path: string) => {
     navigate(path);
@@ -67,11 +70,30 @@ const HomeDropdownMenu = () => {
               >
                 🏠 Home
               </button>
-              {menuItems.map((item) => (
+              
+              {/* Main Navigation Items */}
+              {filteredMainNavItems.map((item) => (
                 <button
                   key={item.path}
                   onClick={() => handleItemClick(item.path)}
                   className="w-full text-left px-4 py-2 text-gray-700 hover:bg-dna-mint/20 hover:text-dna-forest transition-colors duration-150"
+                >
+                  {item.name}
+                </button>
+              ))}
+              
+              {/* Separator */}
+              <div className="border-t border-gray-100 my-2"></div>
+              
+              {/* Development Phase Items */}
+              <div className="px-4 py-2 text-xs text-gray-500 uppercase tracking-wide font-medium">
+                Development Phases
+              </div>
+              {phaseItems.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => handleItemClick(item.path)}
+                  className="w-full text-left px-4 py-2 text-gray-700 hover:bg-dna-mint/20 hover:text-dna-forest transition-colors duration-150 text-sm"
                 >
                   {item.name}
                 </button>
