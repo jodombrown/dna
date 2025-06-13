@@ -61,15 +61,17 @@ const MobileNavigation = () => {
     setIsHomeDropdownOpen(false);
   };
 
+  const toggleHomeDropdown = () => {
+    setIsHomeDropdownOpen(!isHomeDropdownOpen);
+  };
+
   return (
     <>
       {/* Home Dropdown for non-home pages */}
       {!isHomePage && (
         <div className="relative md:hidden">
           <button
-            onMouseEnter={() => setIsHomeDropdownOpen(true)}
-            onMouseLeave={() => setIsHomeDropdownOpen(false)}
-            onClick={handleHomeClick}
+            onClick={toggleHomeDropdown}
             className="flex items-center space-x-2 text-dna-forest hover:text-dna-copper transition-colors duration-200 px-3 py-2 rounded-md hover:bg-dna-mint/20"
           >
             <Home className="w-4 h-4" />
@@ -78,11 +80,7 @@ const MobileNavigation = () => {
           </button>
 
           {isHomeDropdownOpen && (
-            <div
-              onMouseEnter={() => setIsHomeDropdownOpen(true)}
-              onMouseLeave={() => setIsHomeDropdownOpen(false)}
-              className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
-            >
+            <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
               <ScrollArea className="max-h-80">
                 <div className="py-2">
                   <button
