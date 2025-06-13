@@ -69,7 +69,6 @@ const MobileNavigation = () => {
                   alt="DNA" 
                   className="h-8 w-auto"
                 />
-                DNA
               </SheetTitle>
             </SheetHeader>
             

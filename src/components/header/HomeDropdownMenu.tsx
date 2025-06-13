@@ -9,6 +9,9 @@ const HomeDropdownMenu = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
+  // Get current page to hide active nav item
+  const currentPath = location.pathname;
+
   const allMenuItems = [
     { name: 'About Us', path: '/about' },
     { name: 'Connect', path: '/connect' },
@@ -24,7 +27,7 @@ const HomeDropdownMenu = () => {
 
   // Filter out current page and home page
   const menuItems = allMenuItems.filter(item => 
-    item.path !== location.pathname && item.path !== '/'
+    item.path !== currentPath && item.path !== '/'
   );
 
   const handleItemClick = (path: string) => {
