@@ -1,212 +1,104 @@
 
-import React, { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Megaphone, Globe, TrendingUp, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import PhaseHero from '@/components/phases/PhaseHero';
+import PhaseObjectives from '@/components/phases/PhaseObjectives';
+import PhaseTimeline from '@/components/phases/PhaseTimeline';
+import PhaseMetrics from '@/components/phases/PhaseMetrics';
+import { Megaphone, Globe, TrendingUp, BarChart3, CheckCircle, Lightbulb } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
-const GoToMarketPhase = () => {
-  const navigate = useNavigate();
+const objectives = [
+  {
+    icon: <Megaphone className="w-5 h-5" />,
+    title: "Global Launch",
+    description: "Bring DNA platform to target diaspora communities across regions.",
+    status: "Not Started",
+    completion: 0
+  },
+  {
+    icon: <Globe className="w-5 h-5" />,
+    title: "International Expansion",
+    description: "Establish a network of local chapters in major diaspora regions.",
+    status: "Preparation",
+    completion: 15
+  },
+  {
+    icon: <TrendingUp className="w-5 h-5" />,
+    title: "Growth Optimization",
+    description: "Optimize marketing, onboarding, and partnerships to grow user base.",
+    status: "Planning",
+    completion: 10
+  },
+];
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+const timeline = [
+  {
+    quarter: "Q3 2025",
+    title: "Market Readiness",
+    items: [
+      "Finalize regional launch plan",
+      "Internationalize platform features",
+      "Recruit and train local ambassadors"
+    ],
+    status: "active"
+  },
+  {
+    quarter: "Q4 2025",
+    title: "Soft Launch",
+    items: [
+      "Roll out in select regions",
+      "Early media & PR campaigns",
+      "Monitor & optimize user onboarding"
+    ],
+    status: "upcoming"
+  },
+  {
+    quarter: "Q1 2026",
+    title: "Full Launch",
+    items: [
+      "Go global across key markets",
+      "Scale infrastructure for high demand",
+      "Solidify new partnerships"
+    ],
+    status: "upcoming"
+  }
+];
 
-  return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      
-      <main className="pt-20">
-        {/* Hero Section */}
-        <section className="py-16 bg-gradient-to-br from-dna-gold via-dna-copper to-dna-emerald">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Badge className="mb-4 bg-white text-dna-gold">
-              Phase 5 of 5
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Go-to-Market Phase
-            </h1>
-            <p className="text-xl text-white/90 max-w-3xl mx-auto mb-8">
-              Full market launch with comprehensive marketing campaigns, 
-              strategic partnerships, and global expansion to reach diaspora communities worldwide.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button 
-                onClick={() => navigate('/customer-discovery-phase')}
-                variant="outline"
-                className="bg-white text-dna-gold border-white hover:bg-gray-50"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Previous: Customer Discovery Phase
-              </Button>
-              <Button 
-                onClick={() => navigate('/')}
-                className="bg-dna-forest hover:bg-dna-emerald text-white"
-              >
-                Back to Home
-              </Button>
-            </div>
-          </div>
-        </section>
+const metrics = [
+  { label: "Global Users", value: "0", target: "50,000", color: "bg-dna-gold" },
+  { label: "Monthly Revenue", value: "0", target: "1.5M", color: "bg-dna-copper" },
+  { label: "Countries", value: "0", target: "25", color: "bg-dna-emerald" },
+  { label: "Corporate Partners", value: "0", target: "200", color: "bg-dna-forest" }
+];
 
-        {/* Launch Strategy */}
-        <section className="py-16">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Market Launch Strategy
-              </h2>
-              <p className="text-lg text-gray-600">
-                Comprehensive approach to global market penetration
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <Card className="border-dna-gold">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-dna-gold rounded-xl flex items-center justify-center mb-4">
-                    <Megaphone className="w-6 h-6 text-white" />
-                  </div>
-                  <CardTitle className="text-dna-forest">Marketing Campaign</CardTitle>
-                  <CardDescription>
-                    Multi-channel marketing and brand awareness
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Digital marketing campaigns
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Influencer partnerships
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      PR & media outreach
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="border-dna-copper">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-dna-copper rounded-xl flex items-center justify-center mb-4">
-                    <Globe className="w-6 h-6 text-white" />
-                  </div>
-                  <CardTitle className="text-dna-forest">Global Expansion</CardTitle>
-                  <CardDescription>
-                    Worldwide reach to diaspora communities
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Regional market entry
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Local partnership network
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Cultural adaptation strategy
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="border-dna-emerald">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-dna-emerald rounded-xl flex items-center justify-center mb-4">
-                    <TrendingUp className="w-6 h-6 text-white" />
-                  </div>
-                  <CardTitle className="text-dna-forest">Growth Optimization</CardTitle>
-                  <CardDescription>
-                    Scaling and performance optimization
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Conversion optimization
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Customer acquisition cost
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Lifetime value maximization
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* Success Metrics */}
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Go-to-Market Targets
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-gold mb-2">50,000</div>
-                <div className="text-gray-600">Global Users</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-copper mb-2">$1.5M</div>
-                <div className="text-gray-600">Monthly Revenue</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-emerald mb-2">25</div>
-                <div className="text-gray-600">Countries</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-forest mb-2">200</div>
-                <div className="text-gray-600">Corporate Partners</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Navigation */}
-        <section className="py-16">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <Button 
-                onClick={() => navigate('/customer-discovery-phase')}
-                variant="outline"
-                className="border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Previous: Customer Discovery Phase
-              </Button>
-              <div className="text-center">
-                <Button 
-                  onClick={() => navigate('/')}
-                  className="bg-dna-forest hover:bg-dna-emerald text-white"
-                >
-                  Back to Home
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
-  );
-};
+const GoToMarketPhase = () => (
+  <div className="min-h-screen bg-gray-50 flex flex-col">
+    <Header />
+    <PhaseHero
+      badge="Phase 5"
+      title="Go-to-Market Phase"
+      description="A global launch and marketing push to bring the DNA platform to diaspora communities worldwide and drive sustainable user growth."
+      prevPhase={{ label: "Previous: Customer Discovery Phase", url: "/customer-discovery-phase" }}
+      nextPhase={undefined}
+      gradient="bg-gradient-to-br from-dna-gold via-dna-copper to-dna-emerald"
+    />
+    <PhaseObjectives objectives={objectives} color="dna-gold" />
+    <PhaseTimeline milestones={timeline} color="dna-gold" />
+    <PhaseMetrics metrics={metrics} />
+    <section className="py-16 bg-gradient-to-r from-dna-gold/10 to-dna-emerald/10">
+      <div className="max-w-4xl mx-auto text-center px-4">
+        <Lightbulb className="w-16 h-16 text-dna-gold mx-auto mb-5" />
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          Let's Make DNA a Global Movement
+        </h2>
+        <p className="text-xl text-gray-600 mb-8">
+          Partner with us, spread the word, and help us empower the African diaspora on a global scale!
+        </p>
+      </div>
+    </section>
+    <Footer />
+  </div>
+);
 
 export default GoToMarketPhase;

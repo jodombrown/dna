@@ -1,214 +1,96 @@
-import React, { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ArrowRight, ArrowLeft, Home, Users, Code, Target, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+
+import React from 'react';
+import PhaseHero from '@/components/phases/PhaseHero';
+import PhaseObjectives from '@/components/phases/PhaseObjectives';
+import PhaseTimeline from '@/components/phases/PhaseTimeline';
+import PhaseMetrics from '@/components/phases/PhaseMetrics';
+import { Users, Code, Target, CheckCircle, BarChart3, Lightbulb } from "lucide-react";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
-const PrototypingPhase = () => {
-  const navigate = useNavigate();
+const objectives = [
+  {
+    icon: <Users className="w-5 h-5" />,
+    title: "Community Validation",
+    description: "Work directly with early adopters and DNA community members to validate our framework and gather actionable feedback.",
+    status: "Ongoing",
+    completion: 70
+  },
+  {
+    icon: <Code className="w-5 h-5" />,
+    title: "Core Infrastructure",
+    description: "Develop and test the technical foundations needed to build and scale the DNA platform.",
+    status: "In Progress",
+    completion: 65
+  },
+  {
+    icon: <Target className="w-5 h-5" />,
+    title: "Product-Market Fit",
+    description: "Refine the value proposition and key features to ensure our solution meets real-world diaspora needs.",
+    status: "Active",
+    completion: 50
+  },
+];
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+const timeline = [
+  {
+    quarter: "Q3 2025",
+    title: "Community & Prototype Launch",
+    items: [
+      "Early adopter feedback gathering",
+      "Core concept prototyping and validation",
+      "Initial outreach to diaspora groups",
+      "First version of matching algorithm",
+    ],
+    status: "active"
+  },
+  {
+    quarter: "Q4 2025",
+    title: "Refinement & Early Growth",
+    items: [
+      "Prototype iterations and bug fixing",
+      "Beta user expansion",
+      "Feature refinement based on feedback",
+      "Growth of core community"
+    ],
+    status: "upcoming"
+  }
+];
 
-  return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      
-      <main className="pt-20">
-        {/* Hero Section */}
-        <section className="py-16 bg-gradient-to-br from-dna-mint to-dna-emerald">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Badge className="mb-4 bg-dna-emerald text-white text-base px-6 py-2 rounded-full shadow">
-              Prototyping Phase
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Prototyping Phase
-            </h1>
-            <p className="text-xl text-white/90 max-w-3xl mx-auto mb-8">
-              The foundation stage where we validate our DNA framework concept, 
-              gather early community feedback, and establish core functionalities.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 mt-6">
-              <Button 
-                onClick={() => navigate('/')}
-                variant="outline"
-                className="bg-white text-dna-emerald border-white hover:bg-gray-50"
-              >
-                <Home className="w-4 h-4 mr-2" />
-                Back to Home
-              </Button>
-              <Button 
-                onClick={() => navigate('/build-phase')}
-                className="bg-dna-copper hover:bg-dna-gold text-white"
-              >
-                Next: Build Phase
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          </div>
-        </section>
+const metrics = [
+  { label: "Feedback Submissions", value: "200", target: "1000", color: "bg-dna-emerald" },
+  { label: "Active Testers", value: "35", target: "100", color: "bg-dna-copper" },
+  { label: "Early Community Members", value: "75", target: "500", color: "bg-dna-gold" },
+  { label: "Prototype Features", value: "3", target: "5", color: "bg-dna-forest" }
+];
 
-        {/* Timeline */}
-        <section className="py-16">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                What We're Building Now
-              </h2>
-              <p className="text-lg text-gray-600">
-                Current focus areas and deliverables in the Prototyping Phase
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <Card className="border-dna-mint">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-dna-mint rounded-xl flex items-center justify-center mb-4">
-                    <Users className="w-6 h-6 text-dna-forest" />
-                  </div>
-                  <CardTitle className="text-dna-forest">Community Validation</CardTitle>
-                  <CardDescription>
-                    Testing our DNA framework with early adopters
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Email collection & feedback
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Core concept validation
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Early community building
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="border-dna-copper">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-dna-copper rounded-xl flex items-center justify-center mb-4">
-                    <Code className="w-6 h-6 text-white" />
-                  </div>
-                  <CardTitle className="text-dna-forest">Technical Foundation</CardTitle>
-                  <CardDescription>
-                    Building core platform infrastructure
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Authentication system
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      User profiles & matching
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Basic networking features
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-
-              <Card className="border-dna-gold">
-                <CardHeader>
-                  <div className="w-12 h-12 bg-dna-gold rounded-xl flex items-center justify-center mb-4">
-                    <Target className="w-6 h-6 text-white" />
-                  </div>
-                  <CardTitle className="text-dna-forest">Market Research</CardTitle>
-                  <CardDescription>
-                    Understanding our audience and competition
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Diaspora needs analysis
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Competitive landscape
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Partnership opportunities
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* Key Metrics */}
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Prototyping Phase Goals
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-emerald mb-2">1,000</div>
-                <div className="text-gray-600">Early Subscribers</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-copper mb-2">50</div>
-                <div className="text-gray-600">Beta Testers</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-gold mb-2">3</div>
-                <div className="text-gray-600">Core Features</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-mint mb-2">85%</div>
-                <div className="text-gray-600">User Satisfaction</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Navigation */}
-        <section className="py-16">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <Button 
-                onClick={() => navigate('/')}
-                variant="outline"
-                className="border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
-              </Button>
-              <div className="text-center">
-                <p className="text-sm text-gray-500 mb-2">Next Phase</p>
-                <Button 
-                  onClick={() => navigate('/build-phase')}
-                  className="bg-dna-copper hover:bg-dna-gold text-white"
-                >
-                  Build Phase
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-    </div>
-  );
-};
+const PrototypingPhase = () => (
+  <div className="min-h-screen bg-gray-50 flex flex-col">
+    <Header />
+    <PhaseHero
+      badge="Phase 1"
+      title="Prototyping Phase"
+      description="The foundation stage where we validate our DNA framework concept, gather early community feedback, and establish core functionalities for the journey ahead."
+      prevPhase={undefined}
+      nextPhase={{ label: "Next: Build Phase", url: "/build-phase" }}
+      gradient="bg-gradient-to-br from-dna-mint to-dna-emerald"
+    />
+    <PhaseObjectives objectives={objectives} color="dna-emerald" />
+    <PhaseTimeline milestones={timeline} color="dna-copper" />
+    <PhaseMetrics metrics={metrics} />
+    <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
+      <div className="max-w-4xl mx-auto text-center px-4">
+        <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          Join Us at the Start of the DNA Journey
+        </h2>
+        <p className="text-xl text-gray-600 mb-8">
+          Be part of our prototyping community and make your voice heard.
+        </p>
+      </div>
+    </section>
+    <Footer />
+  </div>
+);
 
 export default PrototypingPhase;
