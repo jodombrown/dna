@@ -1,15 +1,9 @@
 
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import HomeDropdownMenu from './HomeDropdownMenu';
+import { useNavigate } from 'react-router-dom';
 
 const Logo = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
-  
-  // Show dropdown menu on connect, collaborate, and contribute pages
-  const showDropdownMenu = ['/connect', '/collaborate', '/contribute'].includes(location.pathname);
 
   return (
     <div className="flex items-center space-x-4">
@@ -23,12 +17,6 @@ const Logo = () => {
           className="h-8 w-auto"
         />
       </button>
-      
-      {showDropdownMenu && (
-        <div className="hidden md:block">
-          <HomeDropdownMenu />
-        </div>
-      )}
     </div>
   );
 };
