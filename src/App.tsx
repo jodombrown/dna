@@ -19,7 +19,6 @@ import ContributeExample from './pages/ContributeExample';
 import Contribute from "./pages/Contribute";
 import Connect from "./pages/Connect";
 import Collaborate from "./pages/Collaborate";
-import SierraLeonePage from "./pages/west-africa/SierraLeone";
 
 const queryClient = new QueryClient();
 
@@ -46,7 +45,6 @@ function App() {
               <Route path="/contribute" element={<Contribute />} />
               <Route path="/connect" element={<Connect />} />
               <Route path="/collaborate" element={<Collaborate />} />
-              <Route path="/west-africa/sierra-leone" element={<SierraLeonePage />} />
             </Routes>
             <Toaster />
           </div>
