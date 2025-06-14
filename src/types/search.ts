@@ -1,4 +1,3 @@
-
 export interface Professional {
   id: string;
   full_name: string;
@@ -46,6 +45,7 @@ export interface Event {
   max_attendees?: number;
   is_featured: boolean;
   image_url?: string;
+  banner_url?: string; // Added this line for the banner image
   registration_url?: string;
   created_at: string;
   updated_at: string;
