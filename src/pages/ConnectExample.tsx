@@ -11,10 +11,12 @@ import CallToActionSection from '@/components/connect/CallToActionSection';
 import ConnectDialogs from '@/components/connect/ConnectDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ConnectExample = () => {
   const {
-    // Data
     professionals,
     communities,
     events,
@@ -22,14 +24,10 @@ const ConnectExample = () => {
     initializing,
     dataError,
     user,
-    
-    // Search state
     searchTerm,
     setSearchTerm,
     activeTab,
     setActiveTab,
-    
-    // Dialog states
     isConnectDialogOpen,
     setIsConnectDialogOpen,
     isMessageDialogOpen,
@@ -40,8 +38,6 @@ const ConnectExample = () => {
     setIsRegisterEventDialogOpen,
     isFeedbackPanelOpen,
     setIsFeedbackPanelOpen,
-    
-    // Handlers
     handleSearch,
     handleConnect,
     handleMessage,
@@ -50,6 +46,8 @@ const ConnectExample = () => {
     getConnectionStatus,
     initializeData
   } = useConnectPageLogic();
+
+  const navigate = useNavigate();
 
   if (initializing) {
     return <ConnectLoadingState />;
@@ -63,6 +61,24 @@ const ConnectExample = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Pillar Navigation */}
+      <div className="flex items-center justify-between px-4 py-3 bg-white shadow-sm">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 text-dna-forest font-semibold"
+        >
+          <ArrowLeft className="w-5 h-5" /> Home
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/contribute-example')}
+          className="flex items-center gap-2 text-dna-copper font-semibold"
+        >
+          Contribute <ArrowRight className="w-5 h-5" />
+        </Button>
+      </div>
+
       <ConnectPageHeader totalCount={totalCount} />
       <PrototypeNotice />
 
@@ -121,3 +137,4 @@ const ConnectExample = () => {
 };
 
 export default ConnectExample;
+

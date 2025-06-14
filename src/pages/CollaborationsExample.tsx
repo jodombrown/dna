@@ -9,6 +9,9 @@ import CollaborationsCallToAction from '@/components/collaborations/Collaboratio
 import CollaborationsDialogs from '@/components/collaborations/CollaborationsDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const CollaborationsExample = () => {
   const {
@@ -27,8 +30,28 @@ const CollaborationsExample = () => {
   const [isStartProjectDialogOpen, setIsStartProjectDialogOpen] = React.useState(false);
   const [isJoinProjectDialogOpen, setIsJoinProjectDialogOpen] = React.useState(false);
 
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Pillar Navigation */}
+      <div className="flex items-center justify-between px-4 py-3 bg-white shadow-sm">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/contribute-example')}
+          className="flex items-center gap-2 text-dna-emerald font-semibold"
+        >
+          <ArrowLeft className="w-5 h-5" /> Contribute Example
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 text-dna-copper font-semibold"
+        >
+          Home <ArrowRight className="w-5 h-5" />
+        </Button>
+      </div>
+
       <CollaborationsPageHeader activeProjectsCount={activeProjects.length} />
       <CollaborationsPrototypeNotice />
 
@@ -75,3 +98,4 @@ const CollaborationsExample = () => {
 };
 
 export default CollaborationsExample;
+
