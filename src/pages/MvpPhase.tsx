@@ -66,13 +66,6 @@ const timeline = [
   }
 ];
 
-const metrics = [
-  { label: "Platform Users", value: "2,500", target: "10,000", color: "bg-dna-emerald" },
-  { label: "Revenue", value: "75K", target: "150K", color: "bg-dna-copper" },
-  { label: "Partner Orgs", value: "25", target: "50", color: "bg-dna-gold" },
-  { label: "Platform Uptime", value: "95", target: "100", color: "bg-dna-mint" }
-];
-
 const MvpPhase = () => {
   useScrollToTop();
   return (
@@ -88,7 +81,7 @@ const MvpPhase = () => {
       />
       <PhaseObjectives objectives={objectives} color="dna-emerald" />
       <PhaseTimeline milestones={timeline} color="dna-emerald" />
-      <PhaseMetrics metrics={metrics} />
+      <PhaseMetrics phaseSlug="mvp" />
       <section className="py-16 bg-gradient-to-r from-dna-mint/10 to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />

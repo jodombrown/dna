@@ -57,13 +57,6 @@ const timeline = [
   }
 ];
 
-const metrics = [
-  { label: "Feedback Submissions", value: "200", target: "1000", color: "bg-dna-emerald" },
-  { label: "Active Testers", value: "35", target: "100", color: "bg-dna-copper" },
-  { label: "Early Community Members", value: "75", target: "500", color: "bg-dna-gold" },
-  { label: "Prototype Features", value: "3", target: "5", color: "bg-dna-forest" }
-];
-
 const PrototypingPhase = () => {
   useScrollToTop();
   return (
@@ -79,7 +72,7 @@ const PrototypingPhase = () => {
       />
       <PhaseObjectives objectives={objectives} color="dna-emerald" />
       <PhaseTimeline milestones={timeline} color="dna-copper" />
-      <PhaseMetrics metrics={metrics} />
+      <PhaseMetrics phaseSlug="prototyping" />
       <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />

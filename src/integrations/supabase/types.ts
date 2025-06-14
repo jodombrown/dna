@@ -288,6 +288,39 @@ export type Database = {
         }
         Relationships: []
       }
+      phase_metrics: {
+        Row: {
+          color: string | null
+          icon: string | null
+          id: string
+          label: string
+          phase_slug: string
+          target: string | null
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          color?: string | null
+          icon?: string | null
+          id?: string
+          label: string
+          phase_slug: string
+          target?: string | null
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          color?: string | null
+          icon?: string | null
+          id?: string
+          label?: string
+          phase_slug?: string
+          target?: string | null
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       professionals: {
         Row: {
           availability_for: string[] | null

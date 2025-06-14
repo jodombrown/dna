@@ -87,7 +87,7 @@ const GoToMarketPhase = () => {
       />
       <PhaseObjectives objectives={objectives} color="dna-gold" />
       <PhaseTimeline milestones={timeline} color="dna-gold" />
-      <PhaseMetrics metrics={metrics} />
+      <PhaseMetrics phaseSlug="go-to-market" />
       <section className="py-16 bg-gradient-to-r from-dna-gold/10 to-dna-emerald/10">
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-gold mx-auto mb-5" />

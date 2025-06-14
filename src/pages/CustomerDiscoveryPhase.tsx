@@ -94,7 +94,7 @@ const CustomerDiscoveryPhase = () => {
       />
       <PhaseObjectives objectives={objectives} color="dna-emerald" />
       <PhaseTimeline milestones={timeline} color="dna-copper" />
-      <PhaseMetrics metrics={metrics} />
+      <PhaseMetrics phaseSlug="customer-discovery" />
       <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />

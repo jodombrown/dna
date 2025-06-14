@@ -96,7 +96,7 @@ const BuildPhase = () => {
       />
       <PhaseObjectives objectives={objectives} color="dna-copper" />
       <PhaseTimeline milestones={timeline} color="dna-copper" />
-      <PhaseMetrics metrics={metrics} />
+      <PhaseMetrics phaseSlug="build" />
       <section className="py-16 bg-gradient-to-r from-dna-copper/10 to-dna-mint/10">
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-5" />
