@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -103,11 +102,11 @@ const CustomerDiscoveryPhase = () => {
               Understanding Our Community
             </h1>
             <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="flex items-center gap-2 text-dna-copper">
+              <div className="flex items-center gap-2 text-dna-copper hover:text-dna-gold transition-colors">
                 <Calendar className="w-5 h-5" />
-                <span className="font-medium">4 months • Q1-Q2 2025</span>
+                <span className="font-medium">Remove • Q1-Q2 2025</span>
               </div>
-              <div className="flex items-center gap-2 text-dna-emerald">
+              <div className="flex items-center gap-2 text-dna-emerald hover:text-dna-forest transition-colors">
                 <UserCheck className="w-5 h-5" />
                 <span className="font-medium">Research & Validation Phase</span>
               </div>
@@ -288,7 +287,7 @@ const CustomerDiscoveryPhase = () => {
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
         onClose={() => setIsFeedbackPanelOpen(false)}
-        pageType="customer-discovery"
+        pageType="contribute"
       />
 
       <Footer />
