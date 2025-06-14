@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AdminPhaseAddMetricForm from "@/components/admin/AdminPhaseAddMetricForm";
+import AdminPhaseMetricsList from "@/components/admin/AdminPhaseMetricsList";
 
 interface Metric {
   id: string;
@@ -187,136 +189,27 @@ const AdminPhaseDashboard: React.FC = () => {
               + Add Metric
             </Button>
           </div>
-          {adding && addForm && (
-            <Card className="mb-8 p-6 bg-dna-emerald/10">
-              <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Phase</label>
-                  <Input
-                    name="phase_slug"
-                    value={addForm.phase_slug || ""}
-                    onChange={handleAddChange}
-                    placeholder="Phase slug"
-                    list="phases"
-                  />
-                  <datalist id="phases">
-                    {PHASES.map(p => (
-                      <option key={p} value={p} />
-                    ))}
-                  </datalist>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Label</label>
-                  <Input name="label" value={addForm.label || ""} onChange={handleAddChange} placeholder="Label" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Value</label>
-                  <Input name="value" value={addForm.value || ""} onChange={handleAddChange} placeholder="Value" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Target</label>
-                  <Input name="target" value={addForm.target || ""} onChange={handleAddChange} placeholder="Target" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Icon</label>
-                  <Input name="icon" value={addForm.icon || ""} onChange={handleAddChange} placeholder="(e.g. activity, check, rocket)" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Color</label>
-                  <Input name="color" value={addForm.color || ""} onChange={handleAddChange} placeholder="e.g. bg-dna-emerald" />
-                </div>
-                <div className="col-span-full flex gap-3 mt-3">
-                  <Button onClick={saveAdd} className="bg-dna-emerald text-white">Save</Button>
-                  <Button onClick={() => { setAdding(false); setAddForm(null); }} variant="outline" className="border-gray-300">Cancel</Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          <AdminPhaseAddMetricForm
+            phases={PHASES}
+            addForm={addForm}
+            onChange={handleAddChange}
+            onSave={saveAdd}
+            onCancel={() => { setAdding(false); setAddForm(null); }}
+          />
           <div className="space-y-8">
             {PHASES.map(phase => (
-              <div key={phase}>
-                <h3 className="font-bold text-2xl mb-2 capitalize">{phase.replace(/-/g, " ")} Metrics</h3>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {metrics.filter(m => m.phase_slug === phase).map(metric =>
-                    editingId === metric.id && editForm ? (
-                      <Card key={metric.id} className="border border-dna-emerald bg-white">
-                        <CardContent className="space-y-3 p-4">
-                          <Input
-                            className="mb-1"
-                            name="label"
-                            value={editForm.label || ""}
-                            onChange={handleEditChange}
-                            placeholder="Label"
-                          />
-                          <Input
-                            className="mb-1"
-                            name="value"
-                            value={editForm.value || ""}
-                            onChange={handleEditChange}
-                            placeholder="Value"
-                          />
-                          <Input
-                            className="mb-1"
-                            name="target"
-                            value={editForm.target || ""}
-                            onChange={handleEditChange}
-                            placeholder="Target"
-                          />
-                          <Input
-                            className="mb-1"
-                            name="icon"
-                            value={editForm.icon || ""}
-                            onChange={handleEditChange}
-                            placeholder="Icon"
-                          />
-                          <Input
-                            className="mb-1"
-                            name="color"
-                            value={editForm.color || ""}
-                            onChange={handleEditChange}
-                            placeholder="Color"
-                          />
-                          <div className="flex gap-2 mt-2">
-                            <Button onClick={saveEdit} className="bg-dna-emerald text-white">Save</Button>
-                            <Button onClick={() => { setEditingId(null); setEditForm(null); }} variant="outline">Cancel</Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ) : (
-                      <Card key={metric.id} className="border border-gray-200 bg-white hover:shadow transition-all">
-                        <CardContent className="p-4">
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <div className="text-lg font-bold">{metric.label}</div>
-                              <div className="text-sm text-gray-400 mb-2">{metric.phase_slug}</div>
-                              <div className="font-mono text-2xl text-dna-emerald">{metric.value}</div>
-                              <div className="text-xs text-gray-500">
-                                {metric.target ? `of ${metric.target}` : ""}
-                              </div>
-                              {metric.target && !isNaN(parseFloat(metric.value)) && !isNaN(parseFloat(metric.target)) && (
-                                <Progress
-                                  value={(parseFloat(metric.value) / parseFloat(metric.target)) * 100}
-                                  className="h-2 mt-3"
-                                />
-                              )}
-                              <div className="text-xs mt-2 font-mono text-gray-400">Icon: {metric.icon || "none"}</div>
-                              <div className="text-xs text-gray-400">Color: {metric.color || "none"}</div>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                              <Button size="sm" onClick={() => handleEdit(metric)}>Edit</Button>
-                              <Button size="sm" variant="destructive" onClick={() => handleDelete(metric.id)}>
-                                Delete
-                              </Button>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                </div>
-                {metrics.filter(m => m.phase_slug === phase).length === 0 && (
-                  <div className="p-4 text-sm text-gray-400 italic">No metrics defined for this phase.</div>
-                )}
-              </div>
+              <AdminPhaseMetricsList
+                key={phase}
+                phase={phase}
+                metrics={metrics}
+                editingId={editingId}
+                editForm={editForm}
+                onEditStart={handleEdit}
+                onEditChange={handleEditChange}
+                onEditSave={saveEdit}
+                onEditCancel={() => { setEditingId(null); setEditForm(null); }}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         </div>
