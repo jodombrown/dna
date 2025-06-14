@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -13,16 +14,19 @@ import {
   Calendar,
   CheckCircle,
   ArrowRight,
+  ArrowLeft,
   Lightbulb,
   Search,
   UserCheck
 } from 'lucide-react';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 import FeedbackPanel from '@/components/FeedbackPanel';
+import { useNavigate } from 'react-router-dom';
 
 const CustomerDiscoveryPhase = () => {
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
+  const navigate = useNavigate();
 
   const objectives = [
     {
@@ -57,7 +61,7 @@ const CustomerDiscoveryPhase = () => {
 
   const milestones = [
     {
-      quarter: "Q1 2025",
+      quarter: "Q3 2025",
       title: "Research Foundation",
       items: [
         "Complete 500+ user surveys",
@@ -68,7 +72,7 @@ const CustomerDiscoveryPhase = () => {
       status: "active"
     },
     {
-      quarter: "Q2 2025", 
+      quarter: "Q4 2025", 
       title: "Validation & Refinement",
       items: [
         "Validate problem-solution fit",
@@ -88,38 +92,39 @@ const CustomerDiscoveryPhase = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
-      
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-dna-emerald/10 to-dna-copper/10 py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <Badge className="bg-dna-emerald text-white mb-4 px-4 py-2">
-              Phase 1: Customer Discovery
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Understanding Our Community
-            </h1>
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="flex items-center gap-2 text-dna-copper hover:text-dna-gold transition-colors">
-                <Calendar className="w-5 h-5" />
-                <span className="font-medium">Remove • Q1-Q2 2025</span>
-              </div>
-              <div className="flex items-center gap-2 text-dna-emerald hover:text-dna-forest transition-colors">
-                <UserCheck className="w-5 h-5" />
-                <span className="font-medium">Research & Validation Phase</span>
-              </div>
-            </div>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Deep-diving into the African diaspora ecosystem to understand needs, validate our approach, 
-              and build the foundation for a platform that truly serves our community.
-            </p>
+      {/* HERO */}
+      <section className="py-16 bg-gradient-to-br from-dna-emerald to-dna-forest text-white text-center flex flex-col justify-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <span className="inline-block mb-6">
+            <span className="bg-white/90 text-dna-emerald font-semibold px-6 py-2 rounded-full shadow text-base">Phase 1 of 5</span>
+          </span>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white">Customer Discovery Phase</h1>
+          <p className="text-xl max-w-3xl mx-auto text-white/90 mb-10">
+            Deep-diving into the African diaspora ecosystem to understand needs, validate our approach, and build the foundation for a platform that truly serves our community.
+          </p>
+          {/* Nav Buttons */}
+          <div className="flex justify-center gap-4 mt-6 flex-wrap">
+            <Button 
+              onClick={() => navigate('/mvp-phase')}
+              variant="outline"
+              className="bg-white text-dna-emerald border-white hover:bg-gray-50 font-medium px-6 py-3 text-lg"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Previous: MVP Phase
+            </Button>
+            <Button 
+              onClick={() => navigate('/go-to-market-phase')}
+              className="bg-dna-copper hover:bg-dna-gold text-white font-medium px-6 py-3 text-lg"
+            >
+              Next: Go-to-Market Phase
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
           </div>
         </div>
       </section>
-
-      {/* Objectives Section */}
+      {/* OBJECTIVES */}
       <section className="py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -128,7 +133,6 @@ const CustomerDiscoveryPhase = () => {
               Our focused approach to understanding and validating the diaspora community's needs
             </p>
           </div>
-
           <div className="grid md:grid-cols-2 gap-8">
             {objectives.map((objective, index) => (
               <Card key={index} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-l-4 border-l-dna-emerald">
@@ -155,8 +159,7 @@ const CustomerDiscoveryPhase = () => {
           </div>
         </div>
       </section>
-
-      {/* Timeline Section */}
+      {/* TIMELINE */}
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -165,7 +168,6 @@ const CustomerDiscoveryPhase = () => {
               Key milestones and deliverables across our customer discovery journey
             </p>
           </div>
-
           <div className="space-y-8">
             {milestones.map((milestone, index) => (
               <Card 
@@ -198,7 +200,6 @@ const CustomerDiscoveryPhase = () => {
                       </span>
                     </div>
                   </div>
-                  
                   <div className="grid md:grid-cols-2 gap-4">
                     {milestone.items.map((item, itemIndex) => (
                       <div key={itemIndex} className="flex items-center gap-3 p-3 bg-white rounded-lg border hover:shadow-md transition-shadow">
@@ -213,8 +214,7 @@ const CustomerDiscoveryPhase = () => {
           </div>
         </div>
       </section>
-
-      {/* Metrics Dashboard */}
+      {/* METRICS */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -223,7 +223,6 @@ const CustomerDiscoveryPhase = () => {
               Real-time tracking of our customer discovery efforts
             </p>
           </div>
-
           <div className="grid md:grid-cols-4 gap-6">
             {metrics.map((metric, index) => (
               <Card key={index} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -244,8 +243,7 @@ const CustomerDiscoveryPhase = () => {
           </div>
         </div>
       </section>
-
-      {/* Call to Action */}
+      {/* CTA */}
       <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="mb-8">
@@ -258,7 +256,6 @@ const CustomerDiscoveryPhase = () => {
               Join our research efforts and be part of the solution.
             </p>
           </div>
-          
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               onClick={() => setIsSurveyOpen(true)}
@@ -278,18 +275,15 @@ const CustomerDiscoveryPhase = () => {
           </div>
         </div>
       </section>
-
       <SurveyDialog 
         isOpen={isSurveyOpen} 
         onClose={() => setIsSurveyOpen(false)} 
       />
-
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
         onClose={() => setIsFeedbackPanelOpen(false)}
         pageType="contribute"
       />
-
       <Footer />
     </div>
   );
