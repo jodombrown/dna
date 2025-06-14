@@ -3,10 +3,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { Event } from '@/types/search';
 
 export const searchEvents = async (searchTerm: string = '', filters: any = {}): Promise<Event[]> => {
+  console.log('Searching events with term:', searchTerm, 'and filters:', filters);
+  
   let query = supabase.from('events').select('*');
   
-  if (searchTerm) {
-    query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
+  if (searchTerm && searchTerm.trim()) {
+    const term = searchTerm.trim();
+    query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,type.ilike.%${term}%,location.ilike.%${term}%`);
   }
   
   if (filters.type) {
@@ -23,6 +26,11 @@ export const searchEvents = async (searchTerm: string = '', filters: any = {}): 
   
   const { data, error } = await query.order('date_time', { ascending: true });
   
-  if (error) throw error;
+  if (error) {
+    console.error('Events search error:', error);
+    throw error;
+  }
+  
+  console.log('Events search results:', data?.length || 0, 'events found');
   return data || [];
 };

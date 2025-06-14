@@ -46,9 +46,42 @@ export const useSearch = () => {
     setError(null);
     
     try {
+      console.log('Searching events with term:', searchTerm);
       const data = await searchEvents(searchTerm, filters);
+      console.log('Events search completed, found:', data.length, 'events');
       setEvents(data);
     } catch (err) {
+      console.error('Events search error:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const searchAll = async (searchTerm: string = '') => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      console.log('Searching all data with term:', searchTerm);
+      
+      const [professionalsRes, communitiesRes, eventsRes] = await Promise.all([
+        searchProfessionals(searchTerm),
+        searchCommunities(searchTerm),
+        searchEvents(searchTerm)
+      ]);
+      
+      console.log('Search results:', {
+        professionals: professionalsRes.length,
+        communities: communitiesRes.length,
+        events: eventsRes.length
+      });
+      
+      setProfessionals(professionalsRes);
+      setCommunities(communitiesRes);
+      setEvents(eventsRes);
+    } catch (err) {
+      console.error('Search all error:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
@@ -108,6 +141,7 @@ export const useSearch = () => {
     searchProfessionals: handleSearchProfessionals,
     searchCommunities: handleSearchCommunities,
     searchEvents: handleSearchEvents,
+    searchAll,
     getAllData
   };
 };

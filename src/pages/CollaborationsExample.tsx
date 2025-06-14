@@ -57,6 +57,12 @@ const CollaborationsExample = () => {
         setIsStartProjectDialogOpen={setIsStartProjectDialogOpen}
         isJoinProjectDialogOpen={isJoinProjectDialogOpen}
         setIsJoinProjectDialogOpen={setIsJoinProjectDialogOpen}
+        isDiscussionDialogOpen={isDiscussionDialogOpen}
+        setIsDiscussionDialogOpen={setIsDiscussionDialogOpen}
+        isDocumentsDialogOpen={isDocumentsDialogOpen}
+        setIsDocumentsDialogOpen={setIsDocumentsDialogOpen}
+        isMeetingDialogOpen={isMeetingDialogOpen}
+        setIsMeetingDialogOpen={setIsMeetingDialogOpen}
       />
       
       <FeedbackPanel 

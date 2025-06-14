@@ -21,6 +21,12 @@ const SearchSection: React.FC<SearchSectionProps> = ({
 }) => {
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      onSearch();
+    }
+  };
+
   return (
     <>
       <Card className="mb-6 sm:mb-8">
@@ -33,11 +39,11 @@ const SearchSection: React.FC<SearchSectionProps> = ({
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 mb-4">
             <Input 
-              placeholder="Search by name, expertise, company..." 
+              placeholder="Search by name, expertise, company, events..." 
               className="flex-1"
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && onSearch()}
+              onKeyPress={handleKeyPress}
             />
             <div className="flex gap-2">
               <Button 
@@ -58,7 +64,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
             </div>
           </div>
           <p className="text-sm text-gray-600">
-            Use the Advanced Search for more detailed filtering options
+            Search across professionals, communities, and events with keywords like "events", "networking", or specific skills
           </p>
         </CardContent>
       </Card>
