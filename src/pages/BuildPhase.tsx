@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,28 +22,27 @@ const BuildPhase = () => {
         {/* Hero Section */}
         <section className="py-16 bg-gradient-to-br from-dna-copper to-dna-gold">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Badge className="mb-4 bg-white text-dna-copper">
-              Phase 2 of 5 • 6 months • Q2-Q3 2024
+            <Badge className="mb-4 bg-dna-copper text-white text-base px-6 py-2 rounded-full shadow">
+              Build Phase
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
               Build Phase
             </h1>
             <p className="text-xl text-white/90 max-w-3xl mx-auto mb-8">
-              Scaling our validated concept into a robust, production-ready platform with enhanced features, 
-              comprehensive user systems, and sophisticated community engagement tools that can support thousands of users.
+              This stage focuses on transforming our validated ideas into a real, scalable platform with robust architecture.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button 
+            <div className="flex flex-wrap justify-center gap-4 mt-6">
+              <Button
                 onClick={() => navigate('/prototyping-phase')}
                 variant="outline"
                 className="bg-white text-dna-copper border-white hover:bg-gray-50"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Previous: Prototyping Phase
+                Previous: Prototyping
               </Button>
-              <Button 
+              <Button
                 onClick={() => navigate('/mvp-phase')}
-                className="bg-dna-emerald hover:bg-dna-mint text-white"
+                className="bg-dna-gold hover:bg-dna-copper text-white"
               >
                 Next: MVP Phase
                 <ArrowRight className="w-4 h-4 ml-2" />
