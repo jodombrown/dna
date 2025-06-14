@@ -144,15 +144,14 @@ const About = () => {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Photo Placeholder */}
+            {/* Founder Photo */}
             <div className="text-center lg:text-left">
-              <div className="w-80 h-80 bg-gradient-to-br from-dna-copper/20 to-dna-emerald/20 rounded-2xl mx-auto lg:mx-0 flex items-center justify-center shadow-2xl">
-                <div className="text-center">
-                  <div className="w-24 h-24 bg-dna-copper rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-3xl font-bold text-white">JO</span>
-                  </div>
-                  <p className="text-gray-600 text-sm">Photo Coming Soon</p>
-                </div>
+              <div className="w-80 h-80 mx-auto lg:mx-0 rounded-2xl shadow-2xl overflow-hidden">
+                <img 
+                  src="/lovable-uploads/02154efb-0abe-4ed4-b41f-265e4a856e8d.png"
+                  alt="Jaûne L. Odombrown - Founder & CEO"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
@@ -164,14 +163,18 @@ const About = () => {
                 
                 <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
                   <p>
-                    [Placeholder bio content] Jaûne is a visionary leader passionate about connecting 
-                    Africa's diaspora to drive meaningful change across the continent. With extensive 
-                    experience in technology, entrepreneurship, and community building...
+                    Jaûne is a visionary leader passionate about connecting Africa's diaspora to drive 
+                    meaningful change across the continent. With extensive experience in technology, 
+                    entrepreneurship, and community building, he recognized the untapped potential 
+                    of uniting diaspora professionals for collective impact.
                   </p>
                   
                   <p>
-                    [Additional bio content will be added here, highlighting education, professional 
-                    background, achievements, and vision for DNA platform...]
+                    His journey began with witnessing firsthand the challenges faced by both diaspora 
+                    communities seeking meaningful ways to contribute to Africa's development and 
+                    African communities needing access to global expertise and resources. This inspired 
+                    the creation of DNA - a platform designed to bridge these gaps and unlock the 
+                    transformative power of diaspora collaboration.
                   </p>
                 </div>
               </div>
@@ -181,8 +184,9 @@ const About = () => {
                 <CardContent className="pt-6">
                   <Quote className="w-8 h-8 text-dna-copper mb-4" />
                   <blockquote className="text-xl italic text-gray-700 mb-4 leading-relaxed">
-                    "[Placeholder inspirational quote about the vision for DNA platform and 
-                    connecting the African diaspora for positive change...]"
+                    "The African diaspora represents one of the world's most powerful yet underutilized 
+                    resources for positive change. By connecting our collective knowledge, passion, and 
+                    resources, we can transform challenges into opportunities and unlock Africa's limitless potential."
                   </blockquote>
                   <cite className="text-dna-copper font-semibold">— Jaûne L. Odombrown</cite>
                 </CardContent>

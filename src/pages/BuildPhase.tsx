@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, ArrowLeft, Home, Hammer, Database, Users, CheckCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Hammer, Database, Users, CheckCircle, Code, Zap, Globe, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -24,14 +24,14 @@ const BuildPhase = () => {
         <section className="py-16 bg-gradient-to-br from-dna-copper to-dna-gold">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Badge className="mb-4 bg-white text-dna-copper">
-              Phase 2 of 5
+              Phase 2 of 5 • 6 months • Q2-Q3 2024
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
               Build Phase
             </h1>
             <p className="text-xl text-white/90 max-w-3xl mx-auto mb-8">
-              Scaling our validated concept into a robust platform with enhanced features, 
-              user onboarding systems, and community engagement tools.
+              Scaling our validated concept into a robust, production-ready platform with enhanced features, 
+              comprehensive user systems, and sophisticated community engagement tools that can support thousands of users.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button 
@@ -53,15 +53,64 @@ const BuildPhase = () => {
           </div>
         </section>
 
+        {/* Phase Overview */}
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                What We're Building
+              </h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Taking our successful prototype and transforming it into a scalable, secure, and feature-rich platform 
+                that can handle significant user growth while maintaining excellent performance and user experience.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="text-center border-dna-copper">
+                <CardContent className="pt-6">
+                  <Code className="w-12 h-12 text-dna-copper mx-auto mb-4" />
+                  <h3 className="font-semibold text-gray-900 mb-2">Full-Stack Development</h3>
+                  <p className="text-sm text-gray-600">Complete platform architecture with scalable backend</p>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center border-dna-gold">
+                <CardContent className="pt-6">
+                  <Users className="w-12 h-12 text-dna-gold mx-auto mb-4" />
+                  <h3 className="font-semibold text-gray-900 mb-2">User Management</h3>
+                  <p className="text-sm text-gray-600">Advanced profiles, authentication & authorization</p>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center border-dna-emerald">
+                <CardContent className="pt-6">
+                  <Zap className="w-12 h-12 text-dna-emerald mx-auto mb-4" />
+                  <h3 className="font-semibold text-gray-900 mb-2">Real-time Features</h3>
+                  <p className="text-sm text-gray-600">Live messaging, notifications & collaboration tools</p>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center border-dna-forest">
+                <CardContent className="pt-6">
+                  <Settings className="w-12 h-12 text-dna-forest mx-auto mb-4" />
+                  <h3 className="font-semibold text-gray-900 mb-2">Admin Systems</h3>
+                  <p className="text-sm text-gray-600">Content management, moderation & analytics</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
         {/* Build Focus Areas */}
         <section className="py-16">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Current Build Focus
+                Core Development Areas
               </h2>
               <p className="text-lg text-gray-600">
-                Expanding platform capabilities and user experience
+                Key technical and product development focus areas for this phase
               </p>
             </div>
 
@@ -71,24 +120,32 @@ const BuildPhase = () => {
                   <div className="w-12 h-12 bg-dna-copper rounded-xl flex items-center justify-center mb-4">
                     <Hammer className="w-6 h-6 text-white" />
                   </div>
-                  <CardTitle className="text-dna-forest">Platform Development</CardTitle>
+                  <CardTitle className="text-dna-forest">Platform Architecture</CardTitle>
                   <CardDescription>
-                    Advanced features and user experience
+                    Scalable infrastructure and advanced features
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Advanced matching algorithms
+                  <ul className="space-y-3 text-sm text-gray-600">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Microservices architecture with Docker containers</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Real-time messaging system
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Advanced matching algorithms using AI/ML</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Opportunity marketplace
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Real-time messaging with WebSocket technology</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Video conferencing integration</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Mobile-responsive progressive web app</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -99,24 +156,32 @@ const BuildPhase = () => {
                   <div className="w-12 h-12 bg-dna-gold rounded-xl flex items-center justify-center mb-4">
                     <Database className="w-6 h-6 text-white" />
                   </div>
-                  <CardTitle className="text-dna-forest">Data & Analytics</CardTitle>
+                  <CardTitle className="text-dna-forest">Data & Security</CardTitle>
                   <CardDescription>
-                    Insights and performance tracking
+                    Robust data management and security systems
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      User behavior analytics
+                  <ul className="space-y-3 text-sm text-gray-600">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Advanced analytics and reporting dashboard</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Connection success metrics
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>GDPR-compliant data protection</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Platform optimization
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Multi-factor authentication system</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Automated backup and disaster recovery</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Performance monitoring and optimization</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -127,24 +192,32 @@ const BuildPhase = () => {
                   <div className="w-12 h-12 bg-dna-emerald rounded-xl flex items-center justify-center mb-4">
                     <Users className="w-6 h-6 text-white" />
                   </div>
-                  <CardTitle className="text-dna-forest">Community Growth</CardTitle>
+                  <CardTitle className="text-dna-forest">Community Features</CardTitle>
                   <CardDescription>
-                    Expanding our user base and engagement
+                    Enhanced engagement and collaboration tools
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Regional chapter launches
+                  <ul className="space-y-3 text-sm text-gray-600">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Project collaboration workspaces</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Ambassador program
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Event management and virtual meetups</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      Partnership development
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Mentorship matching and tracking</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Regional chapter management system</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-4 h-4 text-dna-emerald mt-0.5" />
+                      <span>Ambassador and leadership programs</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -153,28 +226,108 @@ const BuildPhase = () => {
           </div>
         </section>
 
-        {/* Key Metrics */}
+        {/* Technical Milestones */}
         <section className="py-16 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Development Milestones
+              </h2>
+              <p className="text-lg text-gray-600">
+                Key deliverables and timeline for the Build Phase
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-dna-copper">Month 1-2: Foundation</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>• Complete backend API development</li>
+                    <li>• Implement user authentication & authorization</li>
+                    <li>• Set up production infrastructure on AWS/Azure</li>
+                    <li>• Develop advanced search and filtering</li>
+                    <li>• Launch alpha testing with 100 users</li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-dna-gold">Month 3-4: Core Features</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>• Build messaging and notification systems</li>
+                    <li>• Implement project collaboration tools</li>
+                    <li>• Develop event management features</li>
+                    <li>• Create admin dashboard and moderation tools</li>
+                    <li>• Launch beta testing with 500 users</li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-dna-emerald">Month 5: Enhancement</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>• Integrate AI-powered matching algorithms</li>
+                    <li>• Add video conferencing capabilities</li>
+                    <li>• Implement analytics and reporting</li>
+                    <li>• Optimize for mobile devices</li>
+                    <li>• Conduct comprehensive security audits</li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-dna-forest">Month 6: Preparation</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>• Final testing and bug fixes</li>
+                    <li>• Performance optimization and scaling</li>
+                    <li>• Complete documentation and training</li>
+                    <li>• Prepare for MVP launch marketing</li>
+                    <li>• Build customer support systems</li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Success Metrics */}
+        <section className="py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Build Phase Targets
+              Build Phase Success Metrics
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
                 <div className="text-4xl font-bold text-dna-copper mb-2">5,000</div>
-                <div className="text-gray-600">Active Users</div>
+                <div className="text-gray-600 font-medium">Beta Users</div>
+                <div className="text-sm text-gray-500 mt-1">Registered & Active</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-gold mb-2">500</div>
-                <div className="text-gray-600">Daily Connections</div>
+                <div className="text-4xl font-bold text-dna-gold mb-2">15+</div>
+                <div className="text-gray-600 font-medium">Core Features</div>
+                <div className="text-sm text-gray-500 mt-1">Fully Functional</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-emerald mb-2">15</div>
-                <div className="text-gray-600">Platform Features</div>
+                <div className="text-4xl font-bold text-dna-emerald mb-2">95%</div>
+                <div className="text-gray-600 font-medium">Uptime</div>
+                <div className="text-sm text-gray-500 mt-1">Platform Reliability</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-dna-mint mb-2">90%</div>
-                <div className="text-gray-600">User Retention</div>
+                <div className="text-4xl font-bold text-dna-mint mb-2">85%</div>
+                <div className="text-gray-600 font-medium">User Satisfaction</div>
+                <div className="text-sm text-gray-500 mt-1">Beta Feedback Score</div>
               </div>
             </div>
           </div>

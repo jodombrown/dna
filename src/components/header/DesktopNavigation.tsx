@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
+import { publicNavItems, phases } from './navigationConfig';
 
 const DesktopNavigation = () => {
   const navigate = useNavigate();
@@ -22,24 +23,8 @@ const DesktopNavigation = () => {
   // Get current page to hide active nav item
   const currentPath = location.pathname;
 
-  const publicNavItems = [
-    { name: 'About Us', path: '/about' },
-    { name: 'Connect', path: '/connect' },
-    { name: 'Collaborate', path: '/collaborate' },
-    { name: 'Contribute', path: '/contribute' },
-    { name: 'Contact', path: '/contact' },
-  ];
-
   // Filter out current page from nav items
   const filteredNavItems = publicNavItems.filter(item => item.path !== currentPath);
-
-  const phases = [
-    { name: 'Prototyping Phase', path: '/prototyping-phase', phase: 1 },
-    { name: 'Build Phase', path: '/build-phase', phase: 2 },
-    { name: 'MVP Phase', path: '/mvp-phase', phase: 3 },
-    { name: 'Customer Discovery Phase', path: '/customer-discovery-phase', phase: 4 },
-    { name: 'Go-to-Market Phase', path: '/go-to-market-phase', phase: 5 },
-  ];
 
   const handleNavClick = (item: { name: string; path: string }) => {
     navigate(item.path);
