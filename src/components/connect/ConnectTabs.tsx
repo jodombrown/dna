@@ -6,6 +6,7 @@ import EventCard from './EventCard';
 import EmptyState from './EmptyState';
 import EventDetailDialog from "./EventDetailDialog";
 import { Professional, Community, Event } from '@/types/search';
+import { useNavigate } from "react-router-dom";
 
 interface ConnectTabsProps {
   activeTab: string;
@@ -39,15 +40,51 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
   // New state for selected event dialog
   const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = React.useState(false);
+  const navigate = useNavigate();
+
+  // Mock 5 creator profiles -- these would come from backend in real app
+  const sampleCreators = [
+    {
+      id: "u1",
+      full_name: "Dr. Amara Okafor",
+      avatar_url: "https://randomuser.me/api/portraits/women/44.jpg"
+    },
+    {
+      id: "u2",
+      full_name: "Kwame Asante",
+      avatar_url: "https://randomuser.me/api/portraits/men/32.jpg"
+    },
+    {
+      id: "u3",
+      full_name: "Sarah Mwangi",
+      avatar_url: "https://randomuser.me/api/portraits/women/68.jpg"
+    },
+    {
+      id: "u4",
+      full_name: "Ibrahim Diallo",
+      avatar_url: "https://randomuser.me/api/portraits/men/90.jpg"
+    },
+    {
+      id: "u5",
+      full_name: "Fatima Al-Rashid",
+      avatar_url: "https://randomuser.me/api/portraits/women/81.jpg"
+    }
+  ];
+
+  // Assign creators to first 5 events for demo
+  const eventsWithCreators = events.map((event, idx) => {
+    if (idx < 5 && !event.creator_profile) {
+      return {
+        ...event,
+        creator_profile: sampleCreators[idx % sampleCreators.length]
+      };
+    }
+    return event;
+  });
 
   const openEventDialog = (event: Event) => {
     setSelectedEvent(event);
     setDetailDialogOpen(true);
-  };
-
-  const closeEventDialog = () => {
-    setDetailDialogOpen(false);
-    setTimeout(() => setSelectedEvent(null), 250); // allow dialog animation
   };
 
   return (
@@ -96,11 +133,11 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
         </TabsContent>
 
         <TabsContent value="events">
-          {events.length === 0 ? (
+          {eventsWithCreators.length === 0 ? (
             <EmptyState type="events" onRefresh={onRefresh} />
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
-              {events.map((event) => (
+              {eventsWithCreators.map((event) => (
                 <EventCard
                   key={event.id}
                   event={event}

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Users as UsersIcon, Image as ImageIcon } from "lucide-react";
 import { Event } from "@/types/search";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   open: boolean;
@@ -27,6 +27,7 @@ export default function EventDetailDialog({
   onRegister,
   isLoggedIn
 }: Props) {
+  const navigate = useNavigate();
   if (!event) return null;
 
   return (
@@ -40,6 +41,25 @@ export default function EventDetailDialog({
             className="h-full w-full object-cover object-center"
             loading="lazy"
           />
+          {/* Creator on banner - bottom right */}
+          {event.creator_profile && (
+            <button
+              className="absolute bottom-4 right-4 rounded-full shadow border-2 border-white bg-white/80 hover:bg-dna-emerald/80 flex items-center gap-2 px-3 py-1 z-20"
+              onClick={() => navigate(`/profile/${event.creator_profile.id}`)}
+              title={`View profile: ${event.creator_profile.full_name}`}
+              aria-label="View event creator profile"
+              tabIndex={0}
+              type="button"
+            >
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={event.creator_profile.avatar_url || PLACEHOLDER_PROFILE} alt={event.creator_profile.full_name} />
+                <AvatarFallback className="bg-dna-copper text-white">
+                  <ImageIcon className="w-4 h-4" />
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium text-dna-forest opacity-90 max-w-[8em] truncate">{event.creator_profile.full_name}</span>
+            </button>
+          )}
           {/* Profile image avatar - absolute, overlap banner bottom left */}
           <div className="absolute left-5 -bottom-10 z-10">
             <Avatar className="w-20 h-20 ring-4 ring-white shadow-xl bg-white">
@@ -62,7 +82,7 @@ export default function EventDetailDialog({
               <div className="flex gap-2 flex-wrap mb-2">
                 <Badge variant="outline">{event.type}</Badge>
                 {event.is_virtual && (
-                  <Badge className="bg-blue-100 text-blue-800">Virtual</Badge>
+                  <Badge variant="virtual" className="cursor-default">Virtual</Badge>
                 )}
               </div>
             </div>

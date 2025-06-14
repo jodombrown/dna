@@ -45,8 +45,14 @@ export interface Event {
   max_attendees?: number;
   is_featured: boolean;
   image_url?: string;
-  banner_url?: string; // Added this line for the banner image
+  banner_url?: string; // banner image!
   registration_url?: string;
   created_at: string;
   updated_at: string;
+  created_by?: string; // Add creator id reference for linking to profile
+  creator_profile?: {
+    id: string;
+    full_name: string;
+    avatar_url?: string;
+  }
 }

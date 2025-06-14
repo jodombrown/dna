@@ -13,7 +13,6 @@ import { useConnectPageLogic } from '@/hooks/useConnectPageLogic';
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
-import PrototypeBanner from '@/components/PrototypeBanner';
 import CreateEventDialog from "@/components/connect/CreateEventDialog";
 import CreateCommunityDialog from "@/components/connect/CreateCommunityDialog";
 
@@ -84,23 +83,13 @@ const Connect = () => {
       </div>
       <Header />
 
-      {/* Prototype Banner */}
-      <PrototypeBanner />
+      {/* Prototype Banner Removed */}
+
+      {/* Admin Access Notice Removed */}
       
       <ConnectPageHeader totalCount={totalCount} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Admin Notice */}
-        <div className="mb-6 p-4 bg-dna-emerald/10 border border-dna-emerald/20 rounded-lg">
-          <h2 className="text-lg font-semibold text-dna-forest mb-2">
-            🔧 Admin Access - Main Connect Platform
-          </h2>
-          <p className="text-sm text-gray-700">
-            This is the main Connect page with full professional networking functionality. 
-            Admin features are enabled for testing and development.
-          </p>
-        </div>
-
         {/* Creation buttons for logged-in users */}
         {!!user && (
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
