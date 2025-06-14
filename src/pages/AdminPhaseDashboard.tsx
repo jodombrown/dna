@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -44,9 +43,9 @@ const AdminPhaseDashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<Partial<Metric>>({});
+  const [editForm, setEditForm] = useState<Omit<Metric, "id" | "updated_at"> | null>(null);
   const [adding, setAdding] = useState<boolean>(false);
-  const [addForm, setAddForm] = useState<Partial<Metric>>({});
+  const [addForm, setAddForm] = useState<Omit<Metric, "id" | "updated_at"> | null>(null);
   const [fetching, setFetching] = useState<boolean>(true);
 
   useEffect(() => {
@@ -73,29 +72,31 @@ const AdminPhaseDashboard: React.FC = () => {
   }, [isAdmin]);
 
   function handleEdit(metric: Metric) {
+    const { id, updated_at, ...rest } = metric;
     setEditingId(metric.id);
-    setEditForm(metric);
+    setEditForm(rest);
   }
 
   function handleEditChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!editForm) return;
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
   }
 
   async function saveEdit() {
-    if (!editingId) return;
+    if (!editingId || !editForm) return;
     const { error } = await supabase
       .from("phase_metrics")
       .update(editForm)
       .eq("id", editingId);
     if (!error) {
-      // Refresh metrics after saving
       const { data: updated } = await supabase
         .from("phase_metrics")
         .select("*")
         .order("phase_slug", { ascending: true })
         .order("label", { ascending: true });
-      setMetrics(updated || []);
+      setMetrics((updated ?? []) as Metric[]);
       setEditingId(null);
+      setEditForm(null);
     } else {
       alert("Error saving changes");
     }
@@ -109,25 +110,37 @@ const AdminPhaseDashboard: React.FC = () => {
 
   function handleAddStart() {
     setAdding(true);
-    setAddForm({ phase_slug: PHASES[0], label: "", value: "", target: "" });
+    setAddForm({
+      phase_slug: PHASES[0],
+      label: "",
+      value: "",
+      target: "",
+      icon: "",
+      color: ""
+    });
   }
 
   function handleAddChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!addForm) return; // Defensive
     setAddForm({ ...addForm, [e.target.name]: e.target.value });
   }
 
   async function saveAdd() {
+    if (!addForm) return;
+    if (!addForm.phase_slug || !addForm.label || !addForm.value) {
+      alert("Phase, label, and value are required.");
+      return;
+    }
     const { error } = await supabase.from("phase_metrics").insert([addForm]);
     if (!error) {
-      // Refresh list
       const { data } = await supabase
         .from("phase_metrics")
         .select("*")
         .order("phase_slug", { ascending: true })
         .order("label", { ascending: true });
-      setMetrics(data || []);
+      setMetrics((data ?? []) as Metric[]);
       setAdding(false);
-      setAddForm({});
+      setAddForm(null);
     } else {
       alert("Error adding metric");
     }
@@ -174,7 +187,7 @@ const AdminPhaseDashboard: React.FC = () => {
               + Add Metric
             </Button>
           </div>
-          {adding && (
+          {adding && addForm && (
             <Card className="mb-8 p-6 bg-dna-emerald/10">
               <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
                 <div>
@@ -214,7 +227,7 @@ const AdminPhaseDashboard: React.FC = () => {
                 </div>
                 <div className="col-span-full flex gap-3 mt-3">
                   <Button onClick={saveAdd} className="bg-dna-emerald text-white">Save</Button>
-                  <Button onClick={() => setAdding(false)} variant="outline" className="border-gray-300">Cancel</Button>
+                  <Button onClick={() => { setAdding(false); setAddForm(null); }} variant="outline" className="border-gray-300">Cancel</Button>
                 </div>
               </CardContent>
             </Card>
@@ -225,7 +238,7 @@ const AdminPhaseDashboard: React.FC = () => {
                 <h3 className="font-bold text-2xl mb-2 capitalize">{phase.replace(/-/g, " ")} Metrics</h3>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {metrics.filter(m => m.phase_slug === phase).map(metric =>
-                    editingId === metric.id ? (
+                    editingId === metric.id && editForm ? (
                       <Card key={metric.id} className="border border-dna-emerald bg-white">
                         <CardContent className="space-y-3 p-4">
                           <Input
@@ -265,7 +278,7 @@ const AdminPhaseDashboard: React.FC = () => {
                           />
                           <div className="flex gap-2 mt-2">
                             <Button onClick={saveEdit} className="bg-dna-emerald text-white">Save</Button>
-                            <Button onClick={() => setEditingId(null)} variant="outline">Cancel</Button>
+                            <Button onClick={() => { setEditingId(null); setEditForm(null); }} variant="outline">Cancel</Button>
                           </div>
                         </CardContent>
                       </Card>
