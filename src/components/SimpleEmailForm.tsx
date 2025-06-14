@@ -1,10 +1,47 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+
+// Add this hook for working with reCAPTCHA v2/v3
+function useRecaptcha() {
+  const execute = async (): Promise<string | null> => {
+    // @ts-ignore
+    if (!window.grecaptcha) {
+      await new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
+        script.onload = resolve;
+        document.body.appendChild(script);
+      });
+    }
+    // @ts-ignore
+    return new Promise((resolve) => {
+      // v2 invisible demo, assumes a <div id="recaptcha"></div> exists
+      // For production, best to use v3 ("grecaptcha.execute") and your site key
+      // Here we'll use v2 for demo: 
+      // @ts-ignore
+      window.grecaptcha.ready(() => {
+        // Place your Site Key here for v3 or
+        // render a widget for v2/invisible
+        // This demo expects you use invisible v2 and have your site key available
+        // For _production_ switch to v3!
+        window.grecaptcha.render('recaptcha', {
+          sitekey: '6LeyHWErAAAAALC88CkKx_VadAXbKZKemQeQBpDL', // PUBLIC SITE KEY!
+          badge: 'inline',
+          size: 'invisible',
+          callback: resolve,
+        });
+        // Execute after rendering
+        window.grecaptcha.execute();
+      });
+    });
+  };
+
+  return { execute };
+}
 
 const SimpleEmailForm = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +52,7 @@ const SimpleEmailForm = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { execute } = useRecaptcha();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,12 +78,25 @@ const SimpleEmailForm = () => {
     setIsSubmitting(true);
 
     try {
+      // Get reCAPTCHA token
+      const recaptchaToken = await execute();
+      if (!recaptchaToken) {
+        toast({
+          title: "reCAPTCHA failed",
+          description: "Unable to verify, please try again.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('send-contact-email', {
         body: {
           name: formData.name,
           email: formData.email,
           linkedin_url: formData.linkedin_url,
-          message: formData.message
+          message: formData.message,
+          recaptchaToken // pass to backend
         }
       });
 
@@ -89,8 +140,9 @@ const SimpleEmailForm = () => {
               Be the first to connect with Africa's diaspora professionals when we launch our revolutionary platform
             </p>
           </div>
-
           <form onSubmit={handleSubmit} className="space-y-6" data-email-form>
+            {/* Demo: reCAPTCHA placeholder required for v2 */}
+            <div id="recaptcha" style={{display: 'none'}}></div>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
