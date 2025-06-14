@@ -6,6 +6,7 @@ import PhaseMetrics from '@/components/phases/PhaseMetrics';
 import { Search, Users, MessageSquare, Target, CheckCircle, BarChart3, Lightbulb } from "lucide-react";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const objectives = [
   {
@@ -78,33 +79,36 @@ const metrics = [
   { label: "Countries Researched", value: "17", target: "25", color: "bg-dna-forest" }
 ];
 
-const CustomerDiscoveryPhase = () => (
-  <div className="min-h-screen bg-gray-50 flex flex-col">
-    <Header />
-    <PhaseHero
-      badge="Phase 4"
-      title="Customer Discovery Phase"
-      description="Deep-diving into the African diaspora ecosystem to understand needs, validate our approach, and lay the groundwork for a platform that truly serves our community."
-      prevPhase={{ label: "Previous: MVP Phase", url: "/mvp-phase" }}
-      nextPhase={{ label: "Next: Go-to-Market Phase", url: "/go-to-market-phase" }}
-      gradient="bg-gradient-to-br from-dna-emerald to-dna-forest"
-    />
-    <PhaseObjectives objectives={objectives} color="dna-emerald" />
-    <PhaseTimeline milestones={timeline} color="dna-copper" />
-    <PhaseMetrics metrics={metrics} />
-    <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
-      <div className="max-w-4xl mx-auto text-center px-4">
-        <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          Help Shape the Future of Diaspora Connection
-        </h2>
-        <p className="text-xl text-gray-600 mb-8">
-          Your insights are crucial—join our research cohort and help us build a better DNA platform.
-        </p>
-      </div>
-    </section>
-    <Footer />
-  </div>
-);
+const CustomerDiscoveryPhase = () => {
+  useScrollToTop();
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header />
+      <PhaseHero
+        badge="Phase 4"
+        title="Customer Discovery Phase"
+        description="Deep-diving into the African diaspora ecosystem to understand needs, validate our approach, and lay the groundwork for a platform that truly serves our community."
+        prevPhase={{ label: "Previous: MVP Phase", url: "/mvp-phase" }}
+        nextPhase={{ label: "Next: Go-to-Market Phase", url: "/go-to-market-phase" }}
+        gradient="bg-gradient-to-br from-dna-emerald to-dna-forest"
+      />
+      <PhaseObjectives objectives={objectives} color="dna-emerald" />
+      <PhaseTimeline milestones={timeline} color="dna-copper" />
+      <PhaseMetrics metrics={metrics} />
+      <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
+        <div className="max-w-4xl mx-auto text-center px-4">
+          <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Help Shape the Future of Diaspora Connection
+          </h2>
+          <p className="text-xl text-gray-600 mb-8">
+            Your insights are crucial—join our research cohort and help us build a better DNA platform.
+          </p>
+        </div>
+      </section>
+      <Footer />
+    </div>
+  );
+};
 
 export default CustomerDiscoveryPhase;

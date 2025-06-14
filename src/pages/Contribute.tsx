@@ -19,8 +19,10 @@ import {
   CheckCircle
 } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const Contribute = () => {
+  useScrollToTop();
   const navigate = useNavigate();
   const contributionMethods = [
     {

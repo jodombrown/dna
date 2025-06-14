@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PhaseHero from '@/components/phases/PhaseHero';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
@@ -7,6 +6,7 @@ import PhaseMetrics from '@/components/phases/PhaseMetrics';
 import { Users, Code, Target, CheckCircle, BarChart3, Lightbulb } from "lucide-react";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const objectives = [
   {
@@ -64,33 +64,36 @@ const metrics = [
   { label: "Prototype Features", value: "3", target: "5", color: "bg-dna-forest" }
 ];
 
-const PrototypingPhase = () => (
-  <div className="min-h-screen bg-gray-50 flex flex-col">
-    <Header />
-    <PhaseHero
-      badge="Phase 1"
-      title="Prototyping Phase"
-      description="The foundation stage where we validate our DNA framework concept, gather early community feedback, and establish core functionalities for the journey ahead."
-      prevPhase={undefined}
-      nextPhase={{ label: "Next: Build Phase", url: "/build-phase" }}
-      gradient="bg-gradient-to-br from-dna-mint to-dna-emerald"
-    />
-    <PhaseObjectives objectives={objectives} color="dna-emerald" />
-    <PhaseTimeline milestones={timeline} color="dna-copper" />
-    <PhaseMetrics metrics={metrics} />
-    <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
-      <div className="max-w-4xl mx-auto text-center px-4">
-        <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          Join Us at the Start of the DNA Journey
-        </h2>
-        <p className="text-xl text-gray-600 mb-8">
-          Be part of our prototyping community and make your voice heard.
-        </p>
-      </div>
-    </section>
-    <Footer />
-  </div>
-);
+const PrototypingPhase = () => {
+  useScrollToTop();
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header />
+      <PhaseHero
+        badge="Phase 1"
+        title="Prototyping Phase"
+        description="The foundation stage where we validate our DNA framework concept, gather early community feedback, and establish core functionalities for the journey ahead."
+        prevPhase={undefined}
+        nextPhase={{ label: "Next: Build Phase", url: "/build-phase" }}
+        gradient="bg-gradient-to-br from-dna-mint to-dna-emerald"
+      />
+      <PhaseObjectives objectives={objectives} color="dna-emerald" />
+      <PhaseTimeline milestones={timeline} color="dna-copper" />
+      <PhaseMetrics metrics={metrics} />
+      <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
+        <div className="max-w-4xl mx-auto text-center px-4">
+          <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Join Us at the Start of the DNA Journey
+          </h2>
+          <p className="text-xl text-gray-600 mb-8">
+            Be part of our prototyping community and make your voice heard.
+          </p>
+        </div>
+      </section>
+      <Footer />
+    </div>
+  );
+};
 
 export default PrototypingPhase;

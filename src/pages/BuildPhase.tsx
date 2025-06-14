@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PhaseHero from '@/components/phases/PhaseHero';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
@@ -7,6 +6,7 @@ import PhaseMetrics from '@/components/phases/PhaseMetrics';
 import { Code, Users, Zap, Settings, Hammer, Database, CheckCircle, BarChart3, Lightbulb } from "lucide-react";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const objectives = [
   {
@@ -81,33 +81,36 @@ const metrics = [
   { label: "Stable Deployments", value: "5", target: "20", color: "bg-dna-forest" }
 ];
 
-const BuildPhase = () => (
-  <div className="min-h-screen bg-gray-50 flex flex-col">
-    <Header />
-    <PhaseHero
-      badge="Phase 2"
-      title="Build Phase"
-      description="Transforming validated concepts into a scalable, production-ready DNA platform with cutting-edge technology and features."
-      prevPhase={{ label: "Previous: Prototyping", url: "/prototyping-phase" }}
-      nextPhase={{ label: "Next: MVP Phase", url: "/mvp-phase" }}
-      gradient="bg-gradient-to-br from-dna-copper to-dna-gold"
-    />
-    <PhaseObjectives objectives={objectives} color="dna-copper" />
-    <PhaseTimeline milestones={timeline} color="dna-copper" />
-    <PhaseMetrics metrics={metrics} />
-    <section className="py-16 bg-gradient-to-r from-dna-copper/10 to-dna-mint/10">
-      <div className="max-w-4xl mx-auto text-center px-4">
-        <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-5" />
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          Ready to See DNA Go Live?
-        </h2>
-        <p className="text-xl text-gray-600 mb-8">
-          Help us build and test new features—join our beta community!
-        </p>
-      </div>
-    </section>
-    <Footer />
-  </div>
-);
+const BuildPhase = () => {
+  useScrollToTop();
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header />
+      <PhaseHero
+        badge="Phase 2"
+        title="Build Phase"
+        description="Transforming validated concepts into a scalable, production-ready DNA platform with cutting-edge technology and features."
+        prevPhase={{ label: "Previous: Prototyping", url: "/prototyping-phase" }}
+        nextPhase={{ label: "Next: MVP Phase", url: "/mvp-phase" }}
+        gradient="bg-gradient-to-br from-dna-copper to-dna-gold"
+      />
+      <PhaseObjectives objectives={objectives} color="dna-copper" />
+      <PhaseTimeline milestones={timeline} color="dna-copper" />
+      <PhaseMetrics metrics={metrics} />
+      <section className="py-16 bg-gradient-to-r from-dna-copper/10 to-dna-mint/10">
+        <div className="max-w-4xl mx-auto text-center px-4">
+          <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-5" />
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Ready to See DNA Go Live?
+          </h2>
+          <p className="text-xl text-gray-600 mb-8">
+            Help us build and test new features—join our beta community!
+          </p>
+        </div>
+      </section>
+      <Footer />
+    </div>
+  );
+};
 
 export default BuildPhase;

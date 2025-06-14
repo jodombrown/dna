@@ -24,8 +24,10 @@ import {
 } from 'lucide-react';
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const Collaborate = () => {
+  useScrollToTop();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = React.useState('projects');
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = React.useState(false);

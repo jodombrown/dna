@@ -12,8 +12,10 @@ import FeedbackPanel from '@/components/FeedbackPanel';
 import { useConnectPageLogic } from '@/hooks/useConnectPageLogic';
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const Connect = () => {
+  useScrollToTop();
   const navigate = useNavigate();
   const {
     professionals,
