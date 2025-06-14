@@ -13,6 +13,7 @@ import { useConnectPageLogic } from '@/hooks/useConnectPageLogic';
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import PrototypeBanner from '@/components/PrototypeBanner';
 
 const Connect = () => {
   useScrollToTop();
@@ -76,6 +77,9 @@ const Connect = () => {
         </button>
       </div>
       <Header />
+
+      {/* Prototype Banner */}
+      <PrototypeBanner />
       
       <ConnectPageHeader totalCount={totalCount} />
       
