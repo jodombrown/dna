@@ -20,6 +20,7 @@ import Contribute from "./pages/Contribute";
 import Connect from "./pages/Connect";
 import Collaborate from "./pages/Collaborate";
 import AdminPhaseDashboard from './pages/AdminPhaseDashboard';
+import Auth from './pages/Auth';
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ function App() {
               <Route path="/connect" element={<Connect />} />
               <Route path="/collaborate" element={<Collaborate />} />
               <Route path="/admin-phase-dashboard" element={<AdminPhaseDashboard />} />
+              <Route path="/auth" element={<Auth />} />
             </Routes>
             <Toaster />
           </div>
