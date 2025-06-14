@@ -18,7 +18,7 @@ const AdminLogin = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate('/admin-phase-dashboard');
     }
   }, [user, navigate]);
 
@@ -30,30 +30,22 @@ const AdminLogin = () => {
       const { error } = await signIn(email, password);
       
       if (error) {
-        if (error.message === 'Invalid login credentials') {
-          toast({
-            title: "Access Denied",
-            description: "Admin authorization is currently restricted. Only authorized administrators can access the platform during development phase.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Authentication Error",
-            description: error.message,
-            variant: "destructive",
-          });
-        }
+        toast({
+          title: "Access Denied",
+          description: "Incorrect email or password, or you are not authorized as an admin.",
+          variant: "destructive",
+        });
       } else {
         toast({
           title: "Welcome Administrator",
-          description: "You have been successfully authenticated.",
+          description: "You are now logged in.",
         });
-        navigate('/dashboard');
+        navigate('/admin-phase-dashboard');
       }
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        description: "An error occurred.",
         variant: "destructive",
       });
     } finally {
@@ -73,16 +65,9 @@ const AdminLogin = () => {
             </div>
             <h1 className="text-2xl font-bold text-dna-forest mb-2">Admin Authorization</h1>
             <p className="text-gray-600">
-              Restricted access for authorized administrators only
+              Restricted access for authorized administrators only.
             </p>
-            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-              <p className="text-sm text-amber-800">
-                <strong>Note:</strong> Public sign-in will be available in Phase 2. 
-                Currently, only pre-authorized administrators can access the platform.
-              </p>
-            </div>
           </div>
-
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <Label htmlFor="email">Email Address</Label>
@@ -95,10 +80,8 @@ const AdminLogin = () => {
                 required
                 disabled={loading}
                 className="mt-1"
-                autoComplete="off"
               />
             </div>
-
             <div>
               <Label htmlFor="password">Password</Label>
               <Input
@@ -110,10 +93,8 @@ const AdminLogin = () => {
                 required
                 disabled={loading}
                 className="mt-1"
-                autoComplete="off"
               />
             </div>
-
             <Button 
               type="submit" 
               className="w-full bg-dna-emerald hover:bg-dna-forest text-white py-3"
@@ -122,7 +103,6 @@ const AdminLogin = () => {
               {loading ? 'Authorizing...' : 'Authorize Access'}
             </Button>
           </form>
-
           <div className="mt-6 text-center">
             <Button 
               variant="ghost" 
