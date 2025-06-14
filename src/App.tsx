@@ -19,6 +19,9 @@ import ContributeExample from './pages/ContributeExample';
 import Contribute from "./pages/Contribute";
 import Connect from "./pages/Connect";
 import Collaborate from "./pages/Collaborate";
+import SierraLeone from "./pages/west-africa/SierraLeone";
+import WestAfricaIndex from "./pages/west-africa/Index";
+import CmsSwotEditor from "./pages/dashboard/CmsSwotEditor";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +48,9 @@ function App() {
               <Route path="/contribute" element={<Contribute />} />
               <Route path="/connect" element={<Connect />} />
               <Route path="/collaborate" element={<Collaborate />} />
+              <Route path="/west-africa" element={<WestAfricaIndex />} />
+              <Route path="/west-africa/sierra-leone" element={<SierraLeone />} />
+              <Route path="/dashboard/editor" element={<CmsSwotEditor />} />
             </Routes>
             <Toaster />
           </div>
