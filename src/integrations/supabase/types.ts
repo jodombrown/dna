@@ -145,6 +145,7 @@ export type Database = {
       events: {
         Row: {
           attendee_count: number | null
+          banner_url: string | null
           created_at: string
           created_by: string | null
           date_time: string | null
@@ -162,6 +163,7 @@ export type Database = {
         }
         Insert: {
           attendee_count?: number | null
+          banner_url?: string | null
           created_at?: string
           created_by?: string | null
           date_time?: string | null
@@ -179,6 +181,7 @@ export type Database = {
         }
         Update: {
           attendee_count?: number | null
+          banner_url?: string | null
           created_at?: string
           created_by?: string | null
           date_time?: string | null
