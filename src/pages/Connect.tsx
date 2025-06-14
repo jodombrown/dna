@@ -14,6 +14,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import PrototypeBanner from '@/components/PrototypeBanner';
+import CreateEventDialog from "@/components/connect/CreateEventDialog";
+import CreateCommunityDialog from "@/components/connect/CreateCommunityDialog";
 
 const Connect = () => {
   useScrollToTop();
@@ -48,6 +50,10 @@ const Connect = () => {
     getConnectionStatus,
     initializeData
   } = useConnectPageLogic();
+
+  // State for dialogs
+  const [isCreateEventOpen, setIsCreateEventOpen] = React.useState(false);
+  const [isCreateCommunityOpen, setIsCreateCommunityOpen] = React.useState(false);
 
   if (initializing) {
     return <ConnectLoadingState message="Loading Professional Network..." />;
@@ -95,6 +101,24 @@ const Connect = () => {
           </p>
         </div>
 
+        {/* Creation buttons for logged-in users */}
+        {!!user && (
+          <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <button
+              className="bg-dna-emerald text-white px-4 py-2 rounded font-semibold shadow hover:bg-dna-forest"
+              onClick={() => setIsCreateEventOpen(true)}
+            >
+              + Create Event
+            </button>
+            <button
+              className="bg-dna-copper text-white px-4 py-2 rounded font-semibold shadow hover:bg-dna-gold"
+              onClick={() => setIsCreateCommunityOpen(true)}
+            >
+              + Create Community / Group
+            </button>
+          </div>
+        )}
+
         <SearchSection 
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -130,6 +154,9 @@ const Connect = () => {
         isRegisterEventDialogOpen={isRegisterEventDialogOpen}
         setIsRegisterEventDialogOpen={setIsRegisterEventDialogOpen}
       />
+
+      <CreateEventDialog open={isCreateEventOpen} setOpen={setIsCreateEventOpen} onCreated={initializeData} />
+      <CreateCommunityDialog open={isCreateCommunityOpen} setOpen={setIsCreateCommunityOpen} onCreated={initializeData} />
 
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
