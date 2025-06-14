@@ -41,7 +41,7 @@ const objectives = [
 
 const timeline = [
   {
-    quarter: "Q3 2025",
+    quarter: "Q1 2026",
     title: "Foundation & Setup",
     items: [
       "Complete backend API development",
@@ -49,10 +49,10 @@ const timeline = [
       "Set up scalable infrastructure",
       "Initial real-time feature scaffolding"
     ],
-    status: "active"
+    status: "active" as const,
   },
   {
-    quarter: "Q4 2025",
+    quarter: "Q2 2026",
     title: "Core Feature Build",
     items: [
       "Messaging, notifications & search",
@@ -60,17 +60,17 @@ const timeline = [
       "Early project collaboration tools",
       "First analytics dashboard"
     ],
-    status: "upcoming"
+    status: "upcoming" as const,
   },
   {
-    quarter: "Q1 2026",
+    quarter: "Q3 2026",
     title: "Refinement & Optimization",
     items: [
       "User feedback implementation",
       "Performance & reliability tuning",
       "Mobile app optimization"
     ],
-    status: "upcoming"
+    status: "upcoming" as const,
   }
 ];
 

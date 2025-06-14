@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PhaseHero from '@/components/phases/PhaseHero';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
@@ -34,7 +33,7 @@ const objectives = [
 
 const timeline = [
   {
-    quarter: "Q3 2025",
+    quarter: "Q2 2026",
     title: "MVP Release",
     items: [
       "Public launch of DNA MVP",
@@ -42,27 +41,27 @@ const timeline = [
       "Onboarding and verification systems",
       "Brand new opportunity marketplace"
     ],
-    status: "active"
+    status: "active" as const,
   },
   {
-    quarter: "Q4 2025",
+    quarter: "Q2 2026",
     title: "Feedback & Monetization",
     items: [
       "Launch premium memberships",
       "Expand corporate partnerships",
       "Run revenue experiments"
     ],
-    status: "upcoming"
+    status: "upcoming" as const,
   },
   {
-    quarter: "Q1 2026",
+    quarter: "Q3 2026",
     title: "Feature Expansion & QA",
     items: [
       "Advanced moderation & safety tooling",
       "Community event rollouts",
       "Continuous platform improvement"
     ],
-    status: "upcoming"
+    status: "upcoming" as const,
   }
 ];
 

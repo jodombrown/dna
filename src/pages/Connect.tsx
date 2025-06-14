@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -11,8 +10,11 @@ import ConnectErrorState from '@/components/connect/ConnectErrorState';
 import ConnectDialogs from '@/components/connect/ConnectDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import { useConnectPageLogic } from '@/hooks/useConnectPageLogic';
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 const Connect = () => {
+  const navigate = useNavigate();
   const {
     professionals,
     communities,
@@ -56,6 +58,21 @@ const Connect = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Navigation pills in top bar */}
+      <div className="flex items-center justify-between px-4 py-3">
+        <button
+          className="flex items-center gap-2 text-dna-forest font-semibold hover:underline bg-white rounded shadow px-3 py-1"
+          onClick={() => navigate("/")}
+        >
+          <ArrowLeft className="w-5 h-5" /> Home
+        </button>
+        <button
+          className="flex items-center gap-2 text-dna-copper font-semibold hover:underline bg-white rounded shadow px-3 py-1"
+          onClick={() => navigate("/contribute")}
+        >
+          Contribute <ArrowRight className="w-5 h-5" />
+        </button>
+      </div>
       <Header />
       
       <ConnectPageHeader totalCount={totalCount} />

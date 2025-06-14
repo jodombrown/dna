@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -23,8 +22,11 @@ import {
   Handshake,
   TrendingUp
 } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Collaborate = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = React.useState('projects');
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = React.useState(false);
   const [isStartProjectDialogOpen, setIsStartProjectDialogOpen] = React.useState(false);
@@ -97,8 +99,22 @@ const Collaborate = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
-      
+      {/* Pillar navigation */}
+      <div className="flex items-center justify-between px-4 py-3">
+        <button
+          className="flex items-center gap-2 text-dna-copper font-semibold hover:underline bg-white rounded shadow px-3 py-1"
+          onClick={() => navigate("/contribute")}
+        >
+          <ArrowLeft className="w-5 h-5" /> Contribute
+        </button>
+        <button
+          className="flex items-center gap-2 text-dna-emerald font-semibold hover:underline bg-white rounded shadow px-3 py-1"
+          onClick={() => navigate("/")}
+        >
+          Home <ArrowRight className="w-5 h-5" />
+        </button>
+      </div>
+
       <CollaborationsPageHeader activeProjectsCount={projects.length} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

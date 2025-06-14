@@ -42,7 +42,7 @@ const timeline = [
       "Initial outreach to diaspora groups",
       "First version of matching algorithm",
     ],
-    status: "active"
+    status: "active" as const,
   },
   {
     quarter: "Q4 2025",
@@ -53,7 +53,7 @@ const timeline = [
       "Feature refinement based on feedback",
       "Growth of core community"
     ],
-    status: "upcoming"
+    status: "upcoming" as const,
   }
 ];
 

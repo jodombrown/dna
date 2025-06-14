@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PhaseHero from '@/components/phases/PhaseHero';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
@@ -41,7 +40,7 @@ const objectives = [
 
 const timeline = [
   {
-    quarter: "Q3 2025",
+    quarter: "Q1 2026",
     title: "Discovery & Validation",
     items: [
       "Complete 500+ user surveys",
@@ -49,26 +48,26 @@ const timeline = [
       "Global diaspora ecosystem mapping",
       "Key opportunity & pain point analysis"
     ],
-    status: "active"
+    status: "active" as const,
   },
   {
-    quarter: "Q4 2025",
+    quarter: "Q2 2026",
     title: "Concept Refinement",
     items: [
       "Validate problem-solution fit with target users",
       "Refine platform and value proposition",
       "Build strategic partnerships"
     ],
-    status: "upcoming"
+    status: "upcoming" as const,
   },
   {
-    quarter: "Q1 2026",
+    quarter: "Q3 2026",
     title: "Stakeholder Buy-In",
     items: [
       "Showcase insights to major diaspora organizations",
       "Finalize MVP requirements via user feedback"
     ],
-    status: "upcoming"
+    status: "upcoming" as const,
   }
 ];
 

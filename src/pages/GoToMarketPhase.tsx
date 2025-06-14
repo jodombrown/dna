@@ -34,34 +34,34 @@ const objectives = [
 
 const timeline = [
   {
-    quarter: "Q3 2025",
+    quarter: "Q3 2026",
     title: "Market Readiness",
     items: [
       "Finalize regional launch plan",
       "Internationalize platform features",
       "Recruit and train local ambassadors"
     ],
-    status: "active"
+    status: "active" as const,
   },
   {
-    quarter: "Q4 2025",
+    quarter: "Q3 2026",
     title: "Soft Launch",
     items: [
       "Roll out in select regions",
       "Early media & PR campaigns",
       "Monitor & optimize user onboarding"
     ],
-    status: "upcoming"
+    status: "upcoming" as const,
   },
   {
-    quarter: "Q1 2026",
+    quarter: "Q3 2026",
     title: "Full Launch",
     items: [
       "Go global across key markets",
       "Scale infrastructure for high demand",
       "Solidify new partnerships"
     ],
-    status: "upcoming"
+    status: "upcoming" as const,
   }
 ];
 

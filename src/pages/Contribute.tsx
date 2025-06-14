@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,11 +14,14 @@ import {
   Globe,
   Award,
   Handshake,
+  ArrowLeft,
   ArrowRight,
   CheckCircle
 } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 const Contribute = () => {
+  const navigate = useNavigate();
   const contributionMethods = [
     {
       icon: DollarSign,
@@ -66,7 +68,21 @@ const Contribute = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-dna-mint/10">
-      <Header />
+      {/* Pillar navigation */}
+      <div className="flex items-center justify-between px-4 py-3">
+        <button
+          className="flex items-center gap-2 text-dna-emerald font-semibold hover:underline bg-white rounded shadow px-3 py-1"
+          onClick={() => navigate("/connect")}
+        >
+          <ArrowLeft className="w-5 h-5" /> Connect
+        </button>
+        <button
+          className="flex items-center gap-2 text-dna-copper font-semibold hover:underline bg-white rounded shadow px-3 py-1"
+          onClick={() => navigate("/collaborate")}
+        >
+          Collaborate <ArrowRight className="w-5 h-5" />
+        </button>
+      </div>
       
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-dna-forest to-dna-emerald text-white py-20">
