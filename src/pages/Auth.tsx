@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AuthForm from '@/components/auth/AuthForm';
 import PasswordResetForm from '@/components/auth/PasswordResetForm';
 import UpdatePasswordForm from '@/components/auth/UpdatePasswordForm';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -24,9 +24,13 @@ const Auth = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    // Redirect authenticated users to home page (except for password update)
-    if (user && !loading && authMode !== 'update') {
-      navigate('/');
+    // Redirect authenticated users to onboarding after signup, or to home if already onboarded
+    if (user && !loading) {
+      if (authMode === 'signup' || !user?.onboarding_completed) {
+        navigate('/onboarding');
+      } else if (authMode !== 'update') {
+        navigate('/');
+      }
     }
   }, [user, loading, navigate, authMode]);
 

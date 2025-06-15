@@ -136,6 +136,18 @@ const MyProfile = () => {
     }
   };
 
+  // If user has not completed onboarding, send to onboarding
+  useEffect(() => {
+    // If user has not completed onboarding, send to onboarding
+    if (user && profile && profile.onboarding_status && (
+      !profile.onboarding_status.profile_completed ||
+      !profile.onboarding_status.community_joined ||
+      !profile.onboarding_status.connection_sent
+    )) {
+      navigate('/onboarding');
+    }
+  }, [user, profile, location, navigate]);
+
   if (authLoading || fetching) {
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center">

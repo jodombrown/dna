@@ -291,6 +291,38 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_events: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       phase_metrics: {
         Row: {
           color: string | null
@@ -418,6 +450,8 @@ export type Database = {
           education: string | null
           email: string | null
           engagement_intentions: string[] | null
+          first_community_joined_at: string | null
+          first_connection_made_at: string | null
           followers_count: number | null
           following_count: number | null
           full_name: string | null
@@ -437,12 +471,14 @@ export type Database = {
           mentorship_areas: string[] | null
           my_dna_statement: string | null
           notifications_enabled: boolean | null
+          onboarding_status: Json | null
           organization: string | null
           past_contributions: string | null
           phone: string | null
           profession: string | null
           professional_role: string | null
           professional_sectors: string[] | null
+          profile_completed_at: string | null
           profile_picture_url: string | null
           skills: string[] | null
           skills_needed: string[] | null
@@ -474,6 +510,8 @@ export type Database = {
           education?: string | null
           email?: string | null
           engagement_intentions?: string[] | null
+          first_community_joined_at?: string | null
+          first_connection_made_at?: string | null
           followers_count?: number | null
           following_count?: number | null
           full_name?: string | null
@@ -493,12 +531,14 @@ export type Database = {
           mentorship_areas?: string[] | null
           my_dna_statement?: string | null
           notifications_enabled?: boolean | null
+          onboarding_status?: Json | null
           organization?: string | null
           past_contributions?: string | null
           phone?: string | null
           profession?: string | null
           professional_role?: string | null
           professional_sectors?: string[] | null
+          profile_completed_at?: string | null
           profile_picture_url?: string | null
           skills?: string[] | null
           skills_needed?: string[] | null
@@ -530,6 +570,8 @@ export type Database = {
           education?: string | null
           email?: string | null
           engagement_intentions?: string[] | null
+          first_community_joined_at?: string | null
+          first_connection_made_at?: string | null
           followers_count?: number | null
           following_count?: number | null
           full_name?: string | null
@@ -549,12 +591,14 @@ export type Database = {
           mentorship_areas?: string[] | null
           my_dna_statement?: string | null
           notifications_enabled?: boolean | null
+          onboarding_status?: Json | null
           organization?: string | null
           past_contributions?: string | null
           phone?: string | null
           profession?: string | null
           professional_role?: string | null
           professional_sectors?: string[] | null
+          profile_completed_at?: string | null
           profile_picture_url?: string | null
           skills?: string[] | null
           skills_needed?: string[] | null
