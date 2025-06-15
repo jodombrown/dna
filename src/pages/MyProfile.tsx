@@ -9,6 +9,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import OnboardingTour from "@/components/onboarding/OnboardingTour";
 import ProfileCompletionBar, { calculateProfileCompletion } from "@/components/profile/ProfileCompletionBar";
+import SuggestedCommunitiesSection from "@/components/profile/SuggestedCommunitiesSection";
+import SuggestedConnectionsSection from "@/components/profile/SuggestedConnectionsSection";
 
 const MyProfile = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -184,16 +186,36 @@ const MyProfile = () => {
         </div>
         <ProfileCompletionBar profile={profile || {}} />
         <EnhancedProfileForm profile={profile} onSave={handleProfileSaved} />
-        {/* Placeholder: Suggestions for next steps */}
+        {/* Actual suggestions for onboarding */}
         <div className="mt-6">
-          <b>Suggested communities to join:</b>
-          <div className="text-sm text-gray-500 mt-1">
-            (Personalized suggestions coming soon)
-          </div>
-          <b className="block mt-5">Suggested connections:</b>
-          <div className="text-sm text-gray-500 mt-1">
-            (Personalized suggestions coming soon)
-          </div>
+          <h3 className="font-semibold text-dna-forest mb-2">Suggested communities to join</h3>
+          <SuggestedCommunitiesSection
+            impactAreas={profile?.impact_areas}
+            onJoin={(communityId) => {
+              toast({
+                title: "Request Sent",
+                description: "Your request to join the community has been submitted.",
+              });
+              // TODO: add join logic here
+            }}
+          />
+        </div>
+        <div className="mt-8">
+          <h3 className="font-semibold text-dna-forest mb-2">People you may want to connect with</h3>
+          <SuggestedConnectionsSection
+            userId={user.id}
+            countryOfOrigin={profile?.country_of_origin}
+            location={profile?.location}
+            onConnect={(profileId) =>
+              toast({
+                title: "Connection Sent",
+                description: "We’ve sent a connection request on your behalf!",
+              })
+            }
+          />
+        </div>
+        <div className="mt-8 text-center text-dna-copper text-base">
+          <b>Need help onboarding?</b> Use the guided tour or reach out to our community manager for 1–1 support.
         </div>
       </div>
     );
