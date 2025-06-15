@@ -14,6 +14,7 @@ import EnhancedProfileForm from "@/components/profile/EnhancedProfileForm";
 import SuggestedCommunitiesSection from "@/components/profile/SuggestedCommunitiesSection";
 import SuggestedConnectionsSection from "@/components/profile/SuggestedConnectionsSection";
 import OnboardingTour from "@/components/onboarding/OnboardingTour";
+import { supabase } from "@/integrations/supabase/client";
 
 const MyProfile = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -69,9 +70,11 @@ const MyProfile = () => {
       setFetching(true);
       setError(null);
       try {
-        const { data, error } = await import("@/integrations/supabase/client").then(mod =>
-          mod.supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()
-        );
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .maybeSingle();
         if (error) throw error;
         setProfile(data || null);
         if (!data && !getEditingFromQuery()) {
@@ -98,9 +101,11 @@ const MyProfile = () => {
   const handleProfileSaved = async () => {
     setFetching(true);
     try {
-      const { data, error } = await import("@/integrations/supabase/client").then(mod =>
-        mod.supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()
-      );
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
       if (error) throw error;
       setProfile(data || null);
       setEditing(false);
@@ -234,3 +239,4 @@ const MyProfile = () => {
   );
 };
 export default MyProfile;
+
