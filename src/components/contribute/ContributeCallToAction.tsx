@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle } from 'lucide-react';
+import { HandHeart } from 'lucide-react';
 
 interface ContributeCallToActionProps {
   onFeedbackClick: () => void;
@@ -13,17 +13,17 @@ const ContributeCallToAction: React.FC<ContributeCallToActionProps> = ({ onFeedb
     <Card className="mt-8 bg-gradient-to-r from-dna-gold/10 to-dna-emerald/10">
       <CardContent className="p-6 sm:p-8 text-center">
         <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
-          Have Ideas for New Ways to Contribute?
+          Don't See Your Ideal Pathway to Impact?
         </h3>
         <p className="text-sm sm:text-base text-gray-600 mb-6">
-          Help us create more meaningful ways for the diaspora to give back to Africa.
+          Help us expand our pathways to include more ways for the diaspora to create meaningful impact in Africa.
         </p>
         <Button 
           onClick={onFeedbackClick}
           className="bg-dna-gold hover:bg-dna-copper text-white"
         >
-          <CheckCircle className="w-4 h-4 mr-2" />
-          Share Your Contribution Ideas
+          <HandHeart className="w-4 h-4 mr-2" />
+          Share Your Pathway Ideas
         </Button>
       </CardContent>
     </Card>

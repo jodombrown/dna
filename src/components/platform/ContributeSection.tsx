@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Heart, TrendingUp, Users, Target, ArrowRight } from 'lucide-react';
+import { Target, TrendingUp, Users, HandHeart, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ContributeSection = () => {
@@ -13,29 +14,29 @@ const ContributeSection = () => {
           <div>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-xl flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
+                <HandHeart className="w-6 h-6 text-white" />
               </div>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
                 Contribute
               </h2>
             </div>
             <p className="text-xl text-gray-600 mb-8">
-              Make your mark on Africa's future. Invest capital, share skills, 
-              or contribute time to projects that create lasting impact.
+              Discover your pathway to impact. Whether through investment, expertise, time, 
+              or advocacy—find meaningful ways to advance Africa's progress.
             </p>
             
             <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Impact Investment Hub</span>
+                <Target className="w-5 h-5 text-dna-emerald" />
+                <span className="font-medium">Seven Pathways to Impact</span>
               </div>
               <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg">
                 <Users className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Skills-Based Volunteering</span>
+                <span className="font-medium">Skills-Based Contributions</span>
               </div>
               <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg">
-                <Target className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Impact Measurement Tools</span>
+                <TrendingUp className="w-5 h-5 text-dna-emerald" />
+                <span className="font-medium">Real-Time Impact Tracking</span>
               </div>
             </div>
 
@@ -43,7 +44,7 @@ const ContributeSection = () => {
               onClick={() => navigate('/contribute')}
               className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-2"
             >
-              Explore Contributions
+              Explore Pathways to Impact
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>

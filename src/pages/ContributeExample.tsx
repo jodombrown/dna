@@ -6,8 +6,7 @@ import ContributePrototypeNotice from '@/components/contribute/ContributePrototy
 import ContributeOverviewStats from '@/components/contribute/ContributeOverviewStats';
 import ImpactDashboard from '@/components/contribute/ImpactDashboard';
 import ContributionBreakdown from '@/components/contribute/ContributionBreakdown';
-import ContributionPathwayCard from '@/components/contribute/ContributionPathwayCard';
-import ContributionMethods from '@/components/contribute/ContributionMethods';
+import PathwaysToImpact from '@/components/contribute/PathwaysToImpact';
 import ContributeCallToAction from '@/components/contribute/ContributeCallToAction';
 import ContributeDialogs from '@/components/contribute/ContributeDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
@@ -45,21 +44,12 @@ const ContributeExample = () => {
         <ImpactDashboard myContributions={myContributions} />
         <ContributionBreakdown impactCategories={impactCategories} />
 
-        <div className="mb-8">
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Active Contribution Pathways</h3>
-          <div className="space-y-6">
-            {contributionPathways.map((pathway) => (
-              <ContributionPathwayCard
-                key={pathway.id}
-                pathway={pathway}
-                onContribute={() => setIsContributeDialogOpen(true)}
-                onLearnMore={handleLearnMore}
-              />
-            ))}
-          </div>
-        </div>
+        <PathwaysToImpact
+          pathways={contributionPathways}
+          onContribute={() => setIsContributeDialogOpen(true)}
+          onLearnMore={handleLearnMore}
+        />
 
-        <ContributionMethods />
         <ContributeCallToAction onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
       </main>
 
