@@ -19,7 +19,7 @@ interface EventCardProps {
 const PLACEHOLDER_BANNER =
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=700&q=80";
 const PLACEHOLDER_PROFILE =
-  "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?fit=crop&w=128&q=80";
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=128&q=80";
 
 const EventCard: React.FC<EventCardProps> = ({
   event,
