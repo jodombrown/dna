@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Spinner } from "@/components/ui/spinner";
+import { Eye, EyeOff } from "lucide-react";
 
 type AuthFormProps = {
   mode: 'signin' | 'signup';
@@ -17,6 +18,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const { signUp, signIn } = useAuth();
@@ -78,14 +80,26 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <div className="relative">
+          <Input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            tabIndex={0}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            onClick={() => setShowPassword((show) => !show)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-dna-copper focus:outline-none"
+            style={{ background: "none", border: "none" }}
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
       </div>
       {formError && (
         <div className="bg-destructive/15 border border-destructive text-destructive rounded px-3 py-1 text-sm font-semibold my-2">
@@ -123,3 +137,4 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
 };
 
 export default AuthForm;
+

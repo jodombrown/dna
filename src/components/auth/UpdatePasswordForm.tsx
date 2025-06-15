@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,10 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from "lucide-react";
 
 const UpdatePasswordForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { updatePassword } = useAuth();
   const { toast } = useToast();
@@ -84,30 +86,54 @@ const UpdatePasswordForm: React.FC = () => {
             <Label htmlFor="password" className="text-dna-forest">
               New Password
             </Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Enter new password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              minLength={6}
-              required
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter new password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+                required
+              />
+              <button
+                type="button"
+                tabIndex={0}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword((show) => !show)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-dna-copper focus:outline-none"
+                style={{ background: "none", border: "none" }}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
           
           <div className="space-y-2">
             <Label htmlFor="confirmPassword" className="text-dna-forest">
               Confirm New Password
             </Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="Confirm new password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              minLength={6}
-              required
-            />
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                minLength={6}
+                required
+              />
+              <button
+                type="button"
+                tabIndex={0}
+                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowConfirmPassword((show) => !show)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-dna-copper focus:outline-none"
+                style={{ background: "none", border: "none" }}
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
           
           <Button 
