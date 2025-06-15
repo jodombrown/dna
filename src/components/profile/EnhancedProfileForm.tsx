@@ -41,7 +41,11 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
     const local = localStorage.getItem(DRAFT_KEY);
     if (local) {
       try {
-        const { formData: f, arrayStates: a, helperStates: h } = JSON.parse(local);
+        // EXPLICIT CASTING for types
+        const parsed = JSON.parse(local);
+        const f = parsed.formData as import("./form/FormDataTypes").FormData;
+        const a = parsed.arrayStates as import("./form/FormDataTypes").ArrayStates;
+        const h = parsed.helperStates as import("./form/FormDataTypes").HelperStates;
         if (f && a && h) {
           handleRestoreDraft(f, a, h);
         }
@@ -61,11 +65,15 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
     return () => clearTimeout(save);
   }, [formData, arrayStates, helperStates]);
 
-  const handleRestoreDraft = (f: any, a: any, h: any) => {
-    // Simple naive implementation for demo (in reality, update useFormState internal states)
+  // Set correct arg types for handleRestoreDraft
+  const handleRestoreDraft = (
+    f: import("./form/FormDataTypes").FormData,
+    a: import("./form/FormDataTypes").ArrayStates,
+    h: import("./form/FormDataTypes").HelperStates
+  ) => {
     Object.entries(f).forEach(([k, v]) => handleInputChange(k, v));
-    Object.entries(a).forEach(([k, v]) => updateArrayState(k as any, v));
-    Object.entries(h).forEach(([k, v]) => updateHelperState(k as any, v));
+    Object.entries(a).forEach(([k, v]) => updateArrayState(k as any, v as string[]));
+    Object.entries(h).forEach(([k, v]) => updateHelperState(k as any, v as string));
   };
 
   const {
