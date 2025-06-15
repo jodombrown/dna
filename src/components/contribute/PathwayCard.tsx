@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
@@ -75,7 +74,7 @@ const PathwayCard: React.FC<PathwayCardProps> = ({
           </CardContent>
         </Card>
       </div>
-      <style jsx>{`
+      <style>{`
         .perspective {
           perspective: 1200px;
         }
