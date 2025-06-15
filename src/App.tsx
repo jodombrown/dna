@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -22,12 +21,18 @@ import { useScrollRestore } from './hooks/useScrollRestore';
 
 const queryClient = new QueryClient();
 
-function App() {
+// Helper component to invoke the hook inside Router
+function ScrollRestoreProvider() {
   useScrollRestore();
+  return null;
+}
 
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        {/* Put scroll management inside BrowserRouter context */}
+        <ScrollRestoreProvider />
         <AuthProvider>
           <div className="min-h-screen bg-background">
             <Routes>
