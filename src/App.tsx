@@ -38,9 +38,9 @@ function App() {
               <Route path="/mvp-phase" element={<MvpPhase />} />
               <Route path="/customer-discovery-phase" element={<CustomerDiscoveryPhase />} />
               <Route path="/go-to-market-phase" element={<GoToMarketPhase />} />
-              <Route path="/connect-example" element={<ConnectExample />} />
-              <Route path="/collaborations-example" element={<CollaborationsExample />} />
-              <Route path="/contribute-example" element={<ContributeExample />} />
+              <Route path="/connect" element={<ConnectExample />} />
+              <Route path="/collaborate" element={<CollaborationsExample />} />
+              <Route path="/contribute" element={<ContributeExample />} />
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/auth" element={<Auth />} />
             </Routes>
