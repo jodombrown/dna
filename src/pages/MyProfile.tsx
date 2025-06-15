@@ -1,6 +1,8 @@
+
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import EnhancedProfileDisplay from "@/components/profile/EnhancedProfileDisplay";
+import EnhancedProfileForm from "@/components/profile/EnhancedProfileForm";
 import { Spinner } from "@/components/ui/spinner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,14 +14,17 @@ const MyProfile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [fetching, setFetching] = useState(true);
+  const [editing, setEditing] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Fetch profile logic
   useEffect(() => {
     async function fetchProfile() {
       if (!user) {
         setFetching(false);
         setProfile(null);
+        setEditing(false);
         return;
       }
       setFetching(true);
@@ -31,11 +36,9 @@ const MyProfile = () => {
           .eq("id", user.id)
           .maybeSingle();
         if (error) throw error;
-        if (!data) {
-          setProfile(null);
-        } else {
-          setProfile(data);
-        }
+        setProfile(data || null);
+        // If no profile, go straight to editing
+        setEditing(!data);
       } catch (err: any) {
         setError(err.message || "Failed to load profile.");
       } finally {
@@ -45,8 +48,8 @@ const MyProfile = () => {
     fetchProfile();
   }, [user]);
 
-  // Hard sign out: sign out, clear storage, show confirmation, redirect
-  const handleHardSignOut = async () => {
+  // Sign out logic
+  const handleSignOut = async () => {
     await signOut();
     localStorage.clear();
     sessionStorage.clear();
@@ -57,6 +60,25 @@ const MyProfile = () => {
     setTimeout(() => {
       navigate("/");
     }, 1200);
+  };
+
+  const handleProfileSaved = async () => {
+    // Refetch profile and exit editing mode after save.
+    setFetching(true);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error) throw error;
+      setProfile(data || null);
+      setEditing(false);
+    } catch (err: any) {
+      setError(err.message || "Failed to load profile.");
+    } finally {
+      setFetching(false);
+    }
   };
 
   if (authLoading || fetching) {
@@ -87,46 +109,47 @@ const MyProfile = () => {
     );
   }
 
-  if (!profile) {
+  if (editing || !profile) {
+    // Show the profile editing form on first visit if profile is missing,
+    // or anytime editing is active.
     return (
-      <div className="flex h-[60vh] flex-col items-center justify-center">
-        <div className="text-gray-700 text-lg mb-2">
-          Welcome! You don’t have a profile yet.
+      <div className="max-w-2xl mx-auto pt-4">
+        <div className="flex justify-end">
+          <Button
+            variant="destructive"
+            className="mb-6"
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </Button>
         </div>
-        <a
-          href="/profile"
-          className="px-6 py-3 bg-dna-copper text-white rounded-xl font-bold shadow hover:bg-dna-forest transition"
-        >
-          Create Your Profile
-        </a>
-        {/* Sign Out Button */}
-        <Button
-          variant="destructive"
-          className="mt-8"
-          onClick={handleHardSignOut}
-        >
-          Sign Out
-        </Button>
+        <EnhancedProfileForm profile={profile} onSave={handleProfileSaved} />
       </div>
     );
   }
 
-  // Profile exists
+  // Show the completed profile
   return (
     <div className="max-w-2xl mx-auto pt-4">
-      {/* Sign Out Button always visible at top */}
       <div className="flex justify-end">
         <Button
           variant="destructive"
           className="mb-6"
-          onClick={handleHardSignOut}
+          onClick={handleSignOut}
         >
           Sign Out
         </Button>
       </div>
-      <EnhancedProfileDisplay profile={profile} isOwnProfile={profile.id === user.id} onEdit={() => {}} onConnect={() => {}} />
+      {/* Show profile display, with Edit function */}
+      <EnhancedProfileDisplay
+        profile={profile}
+        isOwnProfile={profile.id === user.id}
+        onEdit={() => setEditing(true)}
+        onConnect={() => {}}
+      />
     </div>
   );
 };
 
 export default MyProfile;
+
