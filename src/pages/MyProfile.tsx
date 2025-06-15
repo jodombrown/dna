@@ -1,16 +1,19 @@
+
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import EnhancedProfileDisplay from "@/components/profile/EnhancedProfileDisplay";
-import EnhancedProfileForm from "@/components/profile/EnhancedProfileForm";
-import { Spinner } from "@/components/ui/spinner";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/hooks/use-toast";
-import OnboardingTour from "@/components/onboarding/OnboardingTour";
+import { Button } from "@/components/ui/button";
+import ProfileHeroSection from "@/components/profile/ProfileHeroSection";
+import ProfileStatsSection from "@/components/profile/ProfileStatsSection";
+import ProfileAboutSection from "@/components/profile/ProfileAboutSection";
+import ProfileSkillsSection from "@/components/profile/ProfileSkillsSection";
 import ProfileCompletionBar, { calculateProfileCompletion } from "@/components/profile/ProfileCompletionBar";
+import EnhancedProfileForm from "@/components/profile/EnhancedProfileForm";
 import SuggestedCommunitiesSection from "@/components/profile/SuggestedCommunitiesSection";
 import SuggestedConnectionsSection from "@/components/profile/SuggestedConnectionsSection";
+import OnboardingTour from "@/components/onboarding/OnboardingTour";
 
 const MyProfile = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -24,31 +27,22 @@ const MyProfile = () => {
   const location = useLocation();
   const { toast } = useToast();
 
-  // Helper to mark if this is the user's first visit and show tour
+  // Tour for new users
   useEffect(() => {
     if (user && !localStorage.getItem("dna-onboarded")) {
       setShowTour(true);
     }
   }, [user]);
-
   const handleTourClose = () => {
     setShowTour(false);
     localStorage.setItem("dna-onboarded", "1");
   };
 
-  // Parse query param
   function getEditingFromQuery() {
     const searchParams = new URLSearchParams(location.search);
     return searchParams.get("edit") === "1";
   }
-
-  // Keep editing state synced with URL param
-  useEffect(() => {
-    setEditing(getEditingFromQuery());
-    // eslint-disable-next-line
-  }, [location.search]);
-
-  // When editing changes (via code, e.g. user clicks "Edit Profile"), sync to URL
+  useEffect(() => setEditing(getEditingFromQuery()), [location.search]);
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     if (editing) {
@@ -62,10 +56,8 @@ const MyProfile = () => {
         navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
       }
     }
-    // eslint-disable-next-line
   }, [editing]);
 
-  // Fetch profile logic
   useEffect(() => {
     async function fetchProfile() {
       if (!user) {
@@ -77,14 +69,11 @@ const MyProfile = () => {
       setFetching(true);
       setError(null);
       try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .maybeSingle();
+        const { data, error } = await import("@/integrations/supabase/client").then(mod =>
+          mod.supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()
+        );
         if (error) throw error;
         setProfile(data || null);
-        // If no profile, go straight to editing (or respect URL param)
         if (!data && !getEditingFromQuery()) {
           setEditing(true);
         }
@@ -102,27 +91,19 @@ const MyProfile = () => {
     await signOut();
     localStorage.clear();
     sessionStorage.clear();
-    toast({
-      title: "Signed Out",
-      description: "You have been signed out and storage cleared.",
-    });
-    setTimeout(() => {
-      navigate("/");
-    }, 1200);
+    toast({ title: "Signed Out", description: "You have been signed out and storage cleared." });
+    setTimeout(() => navigate("/"), 1200);
   };
 
   const handleProfileSaved = async () => {
     setFetching(true);
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
+      const { data, error } = await import("@/integrations/supabase/client").then(mod =>
+        mod.supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()
+      );
       if (error) throw error;
       setProfile(data || null);
-      setEditing(false); // Clear ?edit param
-      // Show completion notification if new user
+      setEditing(false);
       if (calculateProfileCompletion(data) >= 90 && localStorage.getItem("dna-onboarded")) {
         toast({
           title: "🎉 Profile Nearly Complete!",
@@ -136,18 +117,6 @@ const MyProfile = () => {
     }
   };
 
-  // If user has not completed onboarding, send to onboarding
-  useEffect(() => {
-    // If user has not completed onboarding, send to onboarding
-    if (user && profile && profile.onboarding_status && (
-      !profile.onboarding_status.profile_completed ||
-      !profile.onboarding_status.community_joined ||
-      !profile.onboarding_status.connection_sent
-    )) {
-      navigate('/onboarding');
-    }
-  }, [user, profile, location, navigate]);
-
   if (authLoading || fetching) {
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center">
@@ -156,7 +125,6 @@ const MyProfile = () => {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center">
@@ -165,7 +133,6 @@ const MyProfile = () => {
       </div>
     );
   }
-
   if (!user) {
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center">
@@ -177,13 +144,13 @@ const MyProfile = () => {
             Connect, collaborate, and help shape the future of African impact worldwide.
           </div>
           <div className="mb-6 text-gray-600 text-base">
-            Ready to make meaningful connections and advance your goals? 
+            Ready to make meaningful connections and advance your goals?
             <br />
             <span className="font-semibold">Sign in or join us to unlock the DNA network and community resources!</span>
             <br />
             Already have an account? <a href="/auth?mode=signin" className="underline text-dna-copper">Sign in here</a>.
             <br />
-            New here? 
+            New here?
             <a href="/auth?mode=signup" className="underline text-dna-emerald ml-1">Join now</a>—it's fast, free and impactful!
           </div>
           <a
@@ -196,24 +163,17 @@ const MyProfile = () => {
       </div>
     );
   }
-
-  // Onboarding popup for new users
   if (showTour) {
     return (
       <OnboardingTour open={showTour} onClose={handleTourClose} />
     );
   }
-
-  // Show the profile creation or edit form immediately if user has not created a profile
+  // Profile creation or edit form
   if (!profile || editing) {
     return (
       <div className="max-w-2xl mx-auto pt-4">
         <div className="flex justify-end">
-          <Button
-            variant="destructive"
-            className="mb-6"
-            onClick={handleSignOut}
-          >
+          <Button variant="destructive" className="mb-6" onClick={handleSignOut}>
             Sign Out
           </Button>
         </div>
@@ -228,11 +188,7 @@ const MyProfile = () => {
           <SuggestedCommunitiesSection
             impactAreas={profile?.impact_areas}
             onJoin={(communityId) => {
-              toast({
-                title: "Request Sent",
-                description: "Your request to join the community has been submitted.",
-              });
-              // TODO: add join logic here
+              toast({ title: "Request Sent", description: "Your request to join the community has been submitted." });
             }}
           />
         </div>
@@ -243,10 +199,7 @@ const MyProfile = () => {
             countryOfOrigin={profile?.country_of_origin}
             location={profile?.location}
             onConnect={(profileId) =>
-              toast({
-                title: "Connection Sent",
-                description: "We’ve sent a connection request on your behalf!",
-              })
+              toast({ title: "Connection Sent", description: "We’ve sent a connection request on your behalf!" })
             }
           />
         </div>
@@ -256,35 +209,28 @@ const MyProfile = () => {
       </div>
     );
   }
-
-  // Show the completed profile and dashboard
+  // LinkedIn-style profile layout
   return (
-    <div className="max-w-2xl mx-auto pt-4">
+    <div className="max-w-5xl mx-auto pt-4 space-y-6">
       <div className="flex justify-end">
-        <Button
-          variant="destructive"
-          className="mb-6"
-          onClick={handleSignOut}
-        >
+        <Button variant="destructive" className="mb-6" onClick={handleSignOut}>
           Sign Out
         </Button>
       </div>
       <ProfileCompletionBar profile={profile} />
-      <EnhancedProfileDisplay
-        profile={profile}
-        isOwnProfile={profile.id === user.id}
-        onEdit={() => setEditing(true)}
-        onConnect={() => {}}
-      />
-      {/* Dashboard placeholder */}
-      <div className="mt-8">
-        <b className="block mb-1 text-dna-forest">Your Personalized Dashboard (coming soon)</b>
-        <div className="rounded bg-dna-mint/5 py-3 px-4 text-gray-700">
-          Once onboarding is complete, you’ll see events, community invites, and more here!
+      <ProfileHeroSection profile={profile} isOwnProfile={profile.id === user.id} onEdit={() => setEditing(true)} />
+      <ProfileStatsSection profile={profile} />
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="md:col-span-2 space-y-6">
+          <ProfileAboutSection profile={profile} />
+        </div>
+        <div className="space-y-6">
+          <ProfileSkillsSection profile={profile} />
         </div>
       </div>
+      {/* ...More LinkedIn-style sections/components can be added modularly... */}
+      {/* Feed and activity sections can be added here in the future */}
     </div>
   );
 };
-
 export default MyProfile;

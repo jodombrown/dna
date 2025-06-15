@@ -24,12 +24,14 @@ const Auth = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    // Redirect authenticated users to onboarding after signup, or to home if already onboarded
+    // Redirect authenticated users to my-profile after signup/signin—but NOT for 'update' mode!
     if (user && !loading) {
-      if (authMode === 'signup') {
-        navigate('/onboarding');
-      } else if (authMode !== 'update') {
-        navigate('/');
+      if (authMode === 'signup' || authMode === 'signin') {
+        navigate('/my-profile');
+      } else if (authMode === 'update') {
+        // do nothing
+      } else {
+        navigate('/my-profile');
       }
     }
   }, [user, loading, navigate, authMode]);
