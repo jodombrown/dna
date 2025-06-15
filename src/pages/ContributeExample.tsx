@@ -1,5 +1,6 @@
 
 import React, { useEffect } from 'react';
+import Header from '@/components/Header';
 import ContributePageHeader from '@/components/contribute/ContributePageHeader';
 import ContributePrototypeNotice from '@/components/contribute/ContributePrototypeNotice';
 import ContributeOverviewStats from '@/components/contribute/ContributeOverviewStats';
@@ -12,9 +13,6 @@ import ContributeDialogs from '@/components/contribute/ContributeDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
 import { useContributeLogic } from '@/hooks/useContributeLogic';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 const ContributeExample = () => {
   const {
@@ -35,27 +33,9 @@ const ContributeExample = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Pillar Navigation */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white shadow-sm">
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/connect-example')}
-          className="flex items-center gap-2 text-dna-emerald font-semibold"
-        >
-          <ArrowLeft className="w-5 h-5" /> Connect Example
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/collaborations-example')}
-          className="flex items-center gap-2 text-dna-copper font-semibold"
-        >
-          Collaborate Example <ArrowRight className="w-5 h-5" />
-        </Button>
-      </div>
+      <Header />
 
       <ContributePageHeader />
       <ContributePrototypeNotice />
@@ -103,4 +83,3 @@ const ContributeExample = () => {
 };
 
 export default ContributeExample;
-
