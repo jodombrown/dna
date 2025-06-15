@@ -25,9 +25,9 @@ const AnimatedStat = ({ value, suffix, label, description, bgGradient }: {
 const DiasporaStats = () => {
   return (
     <div className="max-w-4xl mx-auto mb-12">
-      <p className="text-base md:text-lg mb-8 text-gray-700 leading-relaxed">
-        The African Diaspora represents one of the most powerful untapped resources for global development:
-      </p>
+      <h2 className="text-2xl md:text-3xl font-bold text-center text-dna-forest mb-8">
+        The African Diaspora represents one of the most powerful untapped resources for global development
+      </h2>
 
       {/* Statistics Grid */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -108,3 +108,4 @@ const DiasporaStats = () => {
 };
 
 export default DiasporaStats;
+
