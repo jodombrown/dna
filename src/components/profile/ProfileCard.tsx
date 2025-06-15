@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,8 +35,23 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
     navigate(`/connect/${profile.id}`);
   };
 
-  const skillsList = profile.skills ? profile.skills.split(',').map(s => s.trim()).slice(0, 3) : [];
-  const interestsList = profile.interests ? profile.interests.split(',').map(s => s.trim()).slice(0, 2) : [];
+  // SAFELY HANDLE ARRAY OR STRING
+  const getStringArray = (value: any): string[] => {
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value === 'string')
+      return value.split(',').map((s) => s.trim()).filter(Boolean);
+    return [];
+  };
+
+  const skillsList = getStringArray(profile.skills).slice(0, 3);
+  const allSkillsCount =
+    Array.isArray(profile.skills)
+      ? profile.skills.length
+      : typeof profile.skills === 'string'
+        ? profile.skills.split(',').filter(Boolean).length
+        : 0;
+
+  const interestsList = getStringArray(profile.interests).slice(0, 2);
 
   return (
     <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full" onClick={onClick}>
@@ -106,9 +120,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
                   {skill}
                 </Badge>
               ))}
-              {profile.skills && profile.skills.split(',').length > 3 && (
+              {allSkillsCount > 3 && (
                 <Badge variant="outline" className="text-xs text-gray-500">
-                  +{profile.skills.split(',').length - 3} more
+                  +{allSkillsCount - 3} more
                 </Badge>
               )}
             </div>
