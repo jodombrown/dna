@@ -1,11 +1,11 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import PrototypeBanner from '@/components/PrototypeBanner';
-import { useState } from "react";
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import HeroIntroduction from '@/components/HeroIntroduction';
@@ -16,7 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 const Index = () => {
   useScrollToTop();
 
-  const [openJourney, setOpenJourney] = useState(false);
+  // Removed openJourney state and related dialog/modal logic
   const navigate = useNavigate();
 
   const scrollToDNAFramework = () => {
@@ -31,7 +31,7 @@ const Index = () => {
       {/* Navigation Header */}
       <Header />
 
-      {/* Prototype Banner */}
+      {/* Prototype Banner now controls the start journey logic */}
       <PrototypeBanner />
 
       {/* Hero Section with improved layout */}
@@ -78,13 +78,7 @@ const Index = () => {
                     Learn More
                   </Button>
                 </div>
-                <Button
-                  size="lg"
-                  className="bg-dna-copper hover:bg-dna-gold text-white px-8 py-3 text-lg font-bold rounded-xl"
-                  onClick={() => setOpenJourney(true)}
-                >
-                  Start Your Journey, Today
-                </Button>
+                {/* Removed "Start Your Journey, Today" button from here */}
               </div>
             </div>
             {/* Right Column - Introduction */}
@@ -101,32 +95,7 @@ const Index = () => {
           <div className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-dna-copper/10 rounded-full blur-3xl"></div>
         </div>
       </section>
-      <Dialog open={openJourney} onOpenChange={setOpenJourney}>
-        <DialogContent className="max-w-xl mx-auto">
-          <DialogHeader>
-            <DialogTitle className="text-2xl text-dna-forest text-center">
-              Your DNA Journey: What Happens Next?
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <ol className="list-decimal list-inside text-gray-700 text-lg space-y-2">
-              <li><strong>Create Your Profile:</strong> Share your background, skills, and aspirations with the global diaspora network.</li>
-              <li><strong>Discover Opportunities:</strong> Explore professional communities, collaborations, and events tailored to your interests.</li>
-              <li><strong>Connect & Collaborate:</strong> Build relationships, join impactful projects, and unlock new pathways for personal and collective growth.</li>
-              <li><strong>Contribute & Grow:</strong> Empower others and advance your own journey through community-driven engagement.</li>
-            </ol>
-            <p className="text-center text-dna-copper mt-4">
-              We’re committed to making Africa’s diaspora the world’s most connected and impactful community!
-            </p>
-            <Button
-              className="w-full bg-dna-emerald hover:bg-dna-forest text-white rounded-lg"
-              onClick={() => { setOpenJourney(false); navigate('/auth'); }}
-            >
-              Get Started — Create Your Profile
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+
       {/* Statistics Section */}
       <section className="py-20 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -178,3 +147,4 @@ const Index = () => {
 };
 
 export default Index;
+
