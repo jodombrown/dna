@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { Spinner } from "@/components/ui/spinner";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
+// Import the LinkedIn icon from lucide-react
+import { Linkedin } from "lucide-react";
 
 type AuthFormProps = {
   mode: 'signin' | 'signup';
@@ -65,15 +67,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
     }
   };
 
-  const signInWithGoogle = async () => {
+  // Remove Google, replace with LinkedIn
+  const signInWithLinkedIn = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: 'linkedin_oidc',
       options: {
         redirectTo: `${window.location.origin}/onboarding`
       },
     });
     if (error) {
-      alert(error.message || "Google Login failed");
+      alert(error.message || "LinkedIn Login failed");
     }
   };
 
@@ -171,20 +174,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
           <li>For fastest tests, disable "Confirm Email" in your Supabase authentication settings.</li>
         </ul>
       </div>
+      {/* LinkedIn sign in */}
       <Button
         type="button"
-        className="w-full bg-dna-emerald hover:bg-dna-forest mb-4 flex items-center justify-center gap-2"
-        onClick={signInWithGoogle}
+        className="w-full bg-[#0077b5] hover:bg-[#005983] mb-4 flex items-center justify-center gap-2"
+        onClick={signInWithLinkedIn}
       >
-        <svg width="18" height="18" viewBox="0 0 48 48" className="inline mr-2">
-          <g>
-            <path fill="#4285F4" d="M43.6 20.5h-1.9V20H24v8.1h11.2c-1.6 4.3-5.7 7.4-11.2 7.4-6.6 0-12-5.4-12-12s5.4-12 12-12c2.3 0 4.4 0.7 6.2 1.9l6.2-6.2C36.4 6.5 30.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 20-8.9 20-20 0-1.3-0.1-2.7-0.4-3.9z"/>
-            <path fill="#34A853" d="M6.7 14.8l6.6 4.8C15.2 16.2 18.4 14 22 14c2 0 3.8 0.7 5.2 2.1l6.6-6.6C30.3 6.7 27.3 5.1 24 5.1 17.3 5.1 11.6 9.7 9.1 14.8z"/>
-            <path fill="#FBBC05" d="M24 44c3.3 0 6.3-1.1 8.8-3l-6.6-5.4C24.6 35.9 24.3 36 24 36c-3.6 0-6.6-2.2-8-5.4l-6.6 5.1C11.7 41.3 17.3 44 24 44z"/>
-            <path fill="#EA4335" d="M43.6 20.5H24v8.1h11.2c-0.8 2.1-2.4 3.9-4.2 5.1l6.6 5.4c3.9-3.6 6.2-8.9 6.2-14.6 0-1.3-0.1-2.7-0.4-3.9z"/>
-          </g>
-        </svg>
-        Continue with Google
+        <Linkedin size={18} /> Continue with LinkedIn
       </Button>
     </form>
   );
