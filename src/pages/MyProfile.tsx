@@ -169,8 +169,25 @@ const MyProfile = () => {
   if (!user) {
     return (
       <div className="flex h-[60vh] flex-col items-center justify-center">
-        <div className="text-gray-700 text-lg">
-          You are not logged in. Please <a href="/auth" className="underline text-dna-copper">sign in</a>.
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-dna-forest mb-3">
+            Join Africa’s Diaspora Community!
+          </h2>
+          <div className="text-lg text-dna-copper mb-2">
+            Connect, collaborate, and help shape the future of African impact worldwide.
+          </div>
+          <div className="mb-6 text-gray-600 text-base">
+            Already a member? <a href="/auth?mode=signin" className="underline text-dna-copper">Sign in here</a>.
+            <br />
+            New here? 
+            <a href="/auth?mode=signup" className="underline text-dna-emerald ml-1">Join now</a>—it's fast and free!
+          </div>
+          <a
+            href="/auth"
+            className="inline-block px-6 py-3 rounded-full bg-dna-emerald hover:bg-dna-forest transition-colors text-white font-semibold text-lg shadow-md"
+          >
+            Sign In / Join the DNA Network
+          </a>
         </div>
       </div>
     );
