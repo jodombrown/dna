@@ -26,7 +26,7 @@ const Auth = () => {
   useEffect(() => {
     // Redirect authenticated users to onboarding after signup, or to home if already onboarded
     if (user && !loading) {
-      if (authMode === 'signup' || !user?.onboarding_completed) {
+      if (authMode === 'signup') {
         navigate('/onboarding');
       } else if (authMode !== 'update') {
         navigate('/');
