@@ -11,6 +11,7 @@ import {
   Shield,
 } from "lucide-react";
 
+// Only three examples per pathway for tighter card layouts.
 const impactPathwaysData = [
   {
     id: 1,
@@ -20,8 +21,7 @@ const impactPathwaysData = [
     examples: [
       "One-time donations",
       "Recurring contributions",
-      "Equity investment",
-      "Matching funds",
+      "Equity investment"
     ],
     color: "bg-emerald-500",
     bgColor: "bg-emerald-50",
@@ -36,8 +36,7 @@ const impactPathwaysData = [
     examples: [
       "Technical assistance",
       "Mentorship",
-      "Strategic guidance",
-      "Research support",
+      "Strategic guidance"
     ],
     color: "bg-blue-500",
     bgColor: "bg-blue-50",
@@ -52,8 +51,7 @@ const impactPathwaysData = [
     examples: [
       "Project implementation",
       "Event organizing",
-      "Content creation",
-      "Administrative support",
+      "Content creation"
     ],
     color: "bg-purple-500",
     bgColor: "bg-purple-50",
@@ -68,8 +66,7 @@ const impactPathwaysData = [
     examples: [
       "Making introductions",
       "Network sharing",
-      "Leveraging influence",
-      "Recruiting collaborators",
+      "Leveraging influence"
     ],
     color: "bg-orange-500",
     bgColor: "bg-orange-50",
@@ -84,8 +81,7 @@ const impactPathwaysData = [
     examples: [
       "Social media promotion",
       "Public speaking",
-      "Content creation",
-      "Ambassador roles",
+      "Content creation"
     ],
     color: "bg-pink-500",
     bgColor: "bg-pink-50",
@@ -100,8 +96,7 @@ const impactPathwaysData = [
     examples: [
       "Free venue access",
       "Professional services",
-      "Software licenses",
-      "Equipment loans",
+      "Software licenses"
     ],
     color: "bg-teal-500",
     bgColor: "bg-teal-50",
@@ -116,8 +111,7 @@ const impactPathwaysData = [
     examples: [
       "User testing",
       "Survey participation",
-      "Story sharing",
-      "Pilot program feedback",
+      "Story sharing"
     ],
     color: "bg-indigo-500",
     bgColor: "bg-indigo-50",
@@ -133,8 +127,7 @@ const impactPathwaysData = [
     examples: [
       "Sharing cultural context",
       "Providing community insight",
-      "Acting as a bridge/translator",
-      "Explaining norms or traditions",
+      "Acting as a bridge/translator"
     ],
     color: "bg-fuchsia-600",
     bgColor: "bg-fuchsia-50",
@@ -150,8 +143,7 @@ const impactPathwaysData = [
     examples: [
       "Serving on advisory/governance groups",
       "Monitoring progress",
-      "Tracking metrics & impact",
-      "Acting as a mission guardian",
+      "Tracking metrics & impact"
     ],
     color: "bg-gray-700",
     bgColor: "bg-slate-100",
