@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import OnboardingTour from "@/components/onboarding/OnboardingTour";
+import ProfileCompletionBar, { calculateProfileCompletion } from "@/components/profile/ProfileCompletionBar";
 
 const MyProfile = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -14,9 +16,23 @@ const MyProfile = () => {
   const [error, setError] = useState<string | null>(null);
   const [fetching, setFetching] = useState(true);
   const [editing, setEditing] = useState(false);
+  const [showTour, setShowTour] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+
+  // Helper to mark if this is the user's first visit and show tour
+  useEffect(() => {
+    if (user && !localStorage.getItem("dna-onboarded")) {
+      setShowTour(true);
+    }
+  }, [user]);
+
+  const handleTourClose = () => {
+    setShowTour(false);
+    localStorage.setItem("dna-onboarded", "1");
+  };
 
   // Parse query param
   function getEditingFromQuery() {
@@ -26,7 +42,6 @@ const MyProfile = () => {
 
   // Keep editing state synced with URL param
   useEffect(() => {
-    // When location changes, update edit state
     setEditing(getEditingFromQuery());
     // eslint-disable-next-line
   }, [location.search]);
@@ -45,7 +60,6 @@ const MyProfile = () => {
         navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
       }
     }
-    // Only update when editing toggles, not on every render
     // eslint-disable-next-line
   }, [editing]);
 
@@ -96,7 +110,6 @@ const MyProfile = () => {
   };
 
   const handleProfileSaved = async () => {
-    // Refetch profile and exit editing mode after save.
     setFetching(true);
     try {
       const { data, error } = await supabase
@@ -106,7 +119,14 @@ const MyProfile = () => {
         .maybeSingle();
       if (error) throw error;
       setProfile(data || null);
-      setEditing(false); // This will clear the ?edit param
+      setEditing(false); // Clear ?edit param
+      // Show completion notification if new user
+      if (calculateProfileCompletion(data) >= 90 && localStorage.getItem("dna-onboarded")) {
+        toast({
+          title: "🎉 Profile Nearly Complete!",
+          description: "You’re ready to connect and explore the DNA community.",
+        });
+      }
     } catch (err: any) {
       setError(err.message || "Failed to load profile.");
     } finally {
@@ -142,9 +162,15 @@ const MyProfile = () => {
     );
   }
 
+  // Onboarding popup for new users
+  if (showTour) {
+    return (
+      <OnboardingTour open={showTour} onClose={handleTourClose} />
+    );
+  }
+
   if (editing || !profile) {
-    // Show the profile editing form on first visit if profile is missing,
-    // or anytime editing is active.
+    // Show the profile editing form (first visit, or when editing is active)
     return (
       <div className="max-w-2xl mx-auto pt-4">
         <div className="flex justify-end">
@@ -156,12 +182,24 @@ const MyProfile = () => {
             Sign Out
           </Button>
         </div>
+        <ProfileCompletionBar profile={profile || {}} />
         <EnhancedProfileForm profile={profile} onSave={handleProfileSaved} />
+        {/* Placeholder: Suggestions for next steps */}
+        <div className="mt-6">
+          <b>Suggested communities to join:</b>
+          <div className="text-sm text-gray-500 mt-1">
+            (Personalized suggestions coming soon)
+          </div>
+          <b className="block mt-5">Suggested connections:</b>
+          <div className="text-sm text-gray-500 mt-1">
+            (Personalized suggestions coming soon)
+          </div>
+        </div>
       </div>
     );
   }
 
-  // Show the completed profile
+  // Show the completed profile with profile completion and dashboard suggestion
   return (
     <div className="max-w-2xl mx-auto pt-4">
       <div className="flex justify-end">
@@ -173,13 +211,20 @@ const MyProfile = () => {
           Sign Out
         </Button>
       </div>
-      {/* Show profile display, with Edit function */}
+      <ProfileCompletionBar profile={profile} />
       <EnhancedProfileDisplay
         profile={profile}
         isOwnProfile={profile.id === user.id}
         onEdit={() => setEditing(true)}
         onConnect={() => {}}
       />
+      {/* Placeholder for dashboard */}
+      <div className="mt-8">
+        <b className="block mb-1 text-dna-forest">Your Personalized Dashboard (coming soon)</b>
+        <div className="rounded bg-dna-mint/5 py-3 px-4 text-gray-700">
+          Once onboarding is complete, you’ll see events, community invites, and more here!
+        </div>
+      </div>
     </div>
   );
 };
