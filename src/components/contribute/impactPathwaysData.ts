@@ -1,4 +1,3 @@
-
 import {
   DollarSign,
   BookOpen,
@@ -26,7 +25,7 @@ const impactPathwaysData = [
     color: "bg-emerald-500",
     bgColor: "bg-emerald-50",
     whyItMatters:
-      "Every great idea needs fuel. Financial support transforms plans into real-world progress, unlocking opportunities that volunteer effort alone can’t achieve.",
+      "Every great idea needs fuel. Financial support transforms plans into real-world progress, unlocking opportunities that volunteer effort alone can't achieve.",
   },
   {
     id: 2,
@@ -56,7 +55,7 @@ const impactPathwaysData = [
     color: "bg-purple-500",
     bgColor: "bg-purple-50",
     whyItMatters:
-      "Progress happens because real people show up and put in the work. Volunteering builds community, trust, and delivers results that money alone can’t.",
+      "Progress happens because real people show up and put in the work. Volunteering builds community, trust, and delivers results that money alone can't.",
   },
   {
     id: 4,
@@ -121,7 +120,7 @@ const impactPathwaysData = [
   {
     id: 8,
     icon: Eye,
-    title: "Cultural Insight & Lived Experience",
+    title: "Cultural Guidance",
     description:
       "Bridge communities and inform impactful, locally-rooted design",
     examples: [
@@ -139,7 +138,7 @@ const impactPathwaysData = [
     icon: Shield,
     title: "Accountability & Stewardship",
     description:
-      "Safeguard projects’ missions and provide long-term integrity",
+      "Safeguard projects' missions and provide long-term integrity",
     examples: [
       "Serving on advisory/governance groups",
       "Monitoring progress",

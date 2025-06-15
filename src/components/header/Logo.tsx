@@ -16,6 +16,7 @@ const Logo = () => {
           alt="DNA" 
           className="h-8 w-auto"
         />
+        <span className="text-xl font-bold text-dna-forest">DNA</span>
       </button>
     </div>
   );

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
@@ -36,7 +37,7 @@ const PathwayCard: React.FC<PathwayCardProps> = ({
       }}
     >
       <div
-        className={`relative w-full h-full transition-transform duration-500 [transform-style:preserve-3d] ${
+        className={`relative w-full h-full transition-transform duration-700 ease-in-out [transform-style:preserve-3d] ${
           hovered ? "[transform:rotateY(180deg)]" : ""
         }`}
         style={{
