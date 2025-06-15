@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -47,13 +46,9 @@ const Index = () => {
                   <br />
                   <span className="text-dna-copper">Diaspora Network of Africa</span>
                 </h1>
-                <p className="text-2xl md:text-3xl text-dna-forest mb-8 font-bold leading-relaxed">
-                  <span className="block">
-                    <strong>
-                      The African Diaspora represents one of the most powerful untapped resources for global development
-                    </strong>
-                  </span>
-                </p>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-dna-forest mb-6">
+                  The African Diaspora represents one of the most powerful untapped resources for global development
+                </h2>
                 <p className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed">
                   Connecting Africa's diaspora professionals for meaningful global impact through 
                   <span className="font-semibold text-dna-emerald"> capacity building</span>, 
@@ -147,4 +142,3 @@ const Index = () => {
 };
 
 export default Index;
-
