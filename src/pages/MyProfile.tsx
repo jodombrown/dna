@@ -87,7 +87,7 @@ const MyProfile = () => {
   }
 
   // When profile exists
-  return <EnhancedProfileDisplay profile={profile} editable showActions />;
+  return <EnhancedProfileDisplay profile={profile} isOwnProfile={profile.id === user.id} onEdit={() => {}} onConnect={() => {}} />;
 };
 
 export default MyProfile;

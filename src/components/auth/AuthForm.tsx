@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,11 +8,14 @@ import { useNavigate } from 'react-router-dom';
 import { Spinner } from "@/components/ui/spinner";
 
 type AuthFormProps = {
-  type: 'login' | 'register';
+  mode: 'signin' | 'signup';
+  onToggleMode: () => void;
+  onPasswordReset: () => void;
 };
 
-const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset }) => {
   const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -25,8 +29,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
 
     try {
       let error;
-      if (type === 'register') {
-        const { error: signUpError } = await signUp(email, password);
+      if (mode === 'signup') {
+        const { error: signUpError } = await signUp(email, password, fullName);
         error = signUpError;
       } else {
         const { error: signInError } = await signIn(email, password);
@@ -34,7 +38,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
       }
 
       if (error) {
-        setFormError(error.message);
+        setFormError(error.message || "Registration or login failed");
       } else {
         setFormError(null);
         navigate('/my-profile');
@@ -48,6 +52,19 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {mode === 'signup' && (
+        <div className="space-y-2">
+          <Label htmlFor="fullName">Full Name</Label>
+          <Input
+            id="fullName"
+            type="text"
+            placeholder="Enter your full name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+          />
+        </div>
+      )}
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -79,12 +96,28 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
         {loading ? (
           <>
             <Spinner className="mr-2" size="sm" />
-            {type === 'login' ? 'Signing In...' : 'Registering...'}
+            {mode === 'signin' ? 'Signing In...' : 'Registering...'}
           </>
         ) : (
-          type === 'login' ? 'Sign In' : 'Register'
+          mode === 'signin' ? 'Sign In' : 'Register'
         )}
       </Button>
+      <div className="flex justify-between mt-2 text-sm">
+        <button type="button" className="underline" onClick={onToggleMode}>
+          {mode === 'signin'
+            ? "Don't have an account? Register"
+            : "Already have an account? Sign in"}
+        </button>
+        {mode === 'signin' && (
+          <button
+            type="button"
+            className="underline text-dna-copper ml-4"
+            onClick={onPasswordReset}
+          >
+            Forgot password?
+          </button>
+        )}
+      </div>
     </form>
   );
 };
