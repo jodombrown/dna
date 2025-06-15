@@ -23,29 +23,38 @@ const Onboarding = () => {
   const [profile, setProfile] = useState<any>(null);
   const [stepStatus, setStepStatus] = useState<{ [key: string]: boolean }>({});
   const [fetching, setFetching] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const fetchProfileAndStatus = async () => {
     setFetching(true);
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user?.id)
-      .maybeSingle();
-    setProfile(data || null);
+    setError(null);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user?.id)
+        .maybeSingle();
+      setProfile(data || null);
 
-    // Determine onboarding status from DB columns or completion
-    let onboarding_status: any = {};
-    if (data?.onboarding_status) onboarding_status = data.onboarding_status;
-    onboarding_status.profile_completed =
-      calculateProfileCompletion(data) >= 80 || onboarding_status.profile_completed;
-    setStepStatus({
-      profile_completed: onboarding_status.profile_completed,
-      community_joined: !!data?.first_community_joined_at || onboarding_status.community_joined,
-      connection_sent: !!data?.first_connection_made_at || onboarding_status.connection_sent
-    });
-    setFetching(false);
+      // Determine onboarding status from DB columns or completion
+      let onboarding_status: any = {};
+      if (data?.onboarding_status) onboarding_status = data.onboarding_status;
+      onboarding_status.profile_completed =
+        calculateProfileCompletion(data) >= 80 || onboarding_status.profile_completed;
+      setStepStatus({
+        profile_completed: onboarding_status.profile_completed,
+        community_joined: !!data?.first_community_joined_at || onboarding_status.community_joined,
+        connection_sent: !!data?.first_connection_made_at || onboarding_status.connection_sent
+      });
+    } catch (err: any) {
+      setError("Error loading profile: " + (err.message || "Unknown error."));
+      setProfile(null);
+      setStepStatus({});
+    } finally {
+      setFetching(false);
+    }
   };
 
   useEffect(() => {
@@ -85,12 +94,25 @@ const Onboarding = () => {
     await fetchProfileAndStatus();
   };
 
-  if (authLoading || fetching) return (
-    <div className="flex h-[60vh] flex-col items-center justify-center">
-      <Spinner />
-      <div className="mt-2 text-gray-700">Loading onboarding…</div>
-    </div>
-  );
+  // Robust loading UI for bad states
+  if (authLoading || fetching) {
+    return (
+      <div className="flex h-[60vh] flex-col items-center justify-center">
+        <Spinner />
+        <div className="mt-4 text-gray-700 text-lg">Loading onboarding…</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-[60vh] flex-col items-center justify-center">
+        <div className="text-red-600 font-semibold mb-2">Error Loading Profile</div>
+        <div className="mb-4">{error}</div>
+        <Button onClick={fetchProfileAndStatus} className="mt-2">Retry</Button>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
