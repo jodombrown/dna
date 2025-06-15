@@ -1,6 +1,7 @@
-import React from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import React from "react";
+import Header from "@/components/Header";
+import PrototypeBanner from "@/components/PrototypeBanner";
+import Footer from "@/components/Footer";
 import ConnectPageHeader from '@/components/connect/ConnectPageHeader';
 import ConnectTabs from '@/components/connect/ConnectTabs';
 import SearchSection from '@/components/connect/SearchSection';
@@ -65,31 +66,10 @@ const Connect = () => {
   const totalCount = professionals.length + communities.length + events.length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation pills in top bar */}
-      <div className="flex items-center justify-between px-4 py-3">
-        <button
-          className="flex items-center gap-2 text-dna-forest font-semibold hover:underline bg-white rounded shadow px-3 py-1"
-          onClick={() => navigate("/")}
-        >
-          <ArrowLeft className="w-5 h-5" /> Home
-        </button>
-        <button
-          className="flex items-center gap-2 text-dna-copper font-semibold hover:underline bg-white rounded shadow px-3 py-1"
-          onClick={() => navigate("/contribute")}
-        >
-          Contribute <ArrowRight className="w-5 h-5" />
-        </button>
-      </div>
+    <div className="min-h-screen bg-white">
       <Header />
-
-      {/* Prototype Banner Removed */}
-
-      {/* Admin Access Notice Removed */}
-      
-      <ConnectPageHeader totalCount={totalCount} />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <PrototypeBanner />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Creation buttons for logged-in users */}
         {!!user && (
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -131,7 +111,7 @@ const Connect = () => {
         />
 
         <CallToActionSection onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
-      </div>
+      </main>
 
       <ConnectDialogs
         isConnectDialogOpen={isConnectDialogOpen}
