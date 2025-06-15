@@ -32,15 +32,27 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
     try {
       let error;
       if (mode === 'signup') {
+        console.log("Attempting signup for", email, fullName);
         const { error: signUpError } = await signUp(email, password, fullName);
         error = signUpError;
       } else {
+        console.log("Attempting signin for", email);
         const { error: signInError } = await signIn(email, password);
         error = signInError;
       }
 
       if (error) {
-        setFormError(error.message || "Registration or login failed");
+        console.log("Auth error", error);
+        if (error.code === "user_already_registered" || error.message?.match(/already registered|User already/i)) {
+          setFormError("This email is already registered. Please sign in or use 'Forgot password?' if you forgot your password.");
+        } else if (
+          error.code === "invalid_credentials" ||
+          error.message?.toLowerCase().includes("invalid login credentials")
+        ) {
+          setFormError("Invalid email or password. Double-check your credentials or reset your password.");
+        } else {
+          setFormError(error.message || "Registration or login failed");
+        }
       } else {
         setFormError(null);
         navigate('/my-profile');
@@ -72,6 +84,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
         <Input
           id="email"
           type="email"
+          autoComplete="email"
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -88,6 +101,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            minLength={6}
+            autoComplete={mode === 'signin' ? "current-password" : "new-password"}
           />
           <button
             type="button"
@@ -99,6 +114,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
+        </div>
+        <div className="text-xs text-gray-500">
+          Password must be at least 6 characters.
         </div>
       </div>
       {formError && (
@@ -116,7 +134,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
           mode === 'signin' ? 'Sign In' : 'Register'
         )}
       </Button>
-      <div className="flex justify-between mt-2 text-sm">
+      <div className="flex flex-col sm:flex-row justify-between mt-2 text-sm">
         <button type="button" className="underline" onClick={onToggleMode}>
           {mode === 'signin'
             ? "Don't have an account? Register"
@@ -125,16 +143,23 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
         {mode === 'signin' && (
           <button
             type="button"
-            className="underline text-dna-copper ml-4"
+            className="underline text-dna-copper mt-3 sm:mt-0 sm:ml-4"
             onClick={onPasswordReset}
           >
             Forgot password?
           </button>
         )}
       </div>
+      <div className="text-xs text-gray-400 mt-4">
+        Trouble signing up or in?  
+        <ul className="list-disc list-inside ml-1 mt-1 text-gray-400">
+          <li>Double-check email and password.</li>
+          <li>If resetting password, check your spam folder for the reset email.</li>
+          <li>For fastest tests, disable "Confirm Email" in your Supabase authentication settings.</li>
+        </ul>
+      </div>
     </form>
   );
 };
 
 export default AuthForm;
-
