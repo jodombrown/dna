@@ -3,7 +3,6 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import ProfileCompletionBar from "./ProfileCompletionBar";
 import EnhancedProfileForm from "./EnhancedProfileForm";
-import SuggestedCommunitiesSection from "./SuggestedCommunitiesSection";
 import SuggestedConnectionsSection from "./SuggestedConnectionsSection";
 
 const ProfileOnboardingPanel = ({
@@ -24,15 +23,6 @@ const ProfileOnboardingPanel = ({
     </h2>
     <ProfileCompletionBar profile={profile || {}} />
     <EnhancedProfileForm profile={profile} onSave={handleProfileSaved} />
-    <div className="mt-6">
-      <h3 className="font-semibold text-dna-forest mb-2">Suggested communities to join</h3>
-      <SuggestedCommunitiesSection
-        impactAreas={profile?.impact_areas}
-        onJoin={() => {
-          toast({ title: "Request Sent", description: "Your request to join the community has been submitted." });
-        }}
-      />
-    </div>
     <div className="mt-8">
       <h3 className="font-semibold text-dna-forest mb-2">People you may want to connect with</h3>
       <SuggestedConnectionsSection

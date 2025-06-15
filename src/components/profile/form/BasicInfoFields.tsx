@@ -1,8 +1,9 @@
-
 import React from 'react';
+import { Textarea } from '@/components/ui/textarea';
+import LocationAutocomplete from './LocationAutocomplete';
+import { COUNTRIES, STATES_USA, CITIES_SAMPLE } from './locationData';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 
 interface BasicInfoFieldsProps {
   formData: {
@@ -10,7 +11,9 @@ interface BasicInfoFieldsProps {
     profession: string;
     company: string;
     location: string;
-    bio: string;
+    city?: string;
+    state_province?: string;
+    bio?: string;
     country_of_origin?: string;
     current_country?: string;
     years_in_diaspora?: string;
@@ -20,6 +23,8 @@ interface BasicInfoFieldsProps {
     profession?: string;
     company?: string;
     location?: string;
+    city?: string;
+    state_province?: string;
     bio?: string;
     country_of_origin?: string;
     current_country?: string;
@@ -79,60 +84,45 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <Label htmlFor="country_of_origin" className="text-dna-forest">Country of Origin</Label>
-          <Input
-            id="country_of_origin"
-            value={formData.country_of_origin || ''}
-            onChange={(e) => onFieldChange('country_of_origin', e.target.value)}
-            placeholder="Nigeria, Ghana, Kenya, etc."
-            className={errors.country_of_origin ? 'border-dna-crimson' : ''}
+          <LocationAutocomplete
+            id="city"
+            label="City"
+            value={formData.city || ''}
+            placeholder="Enter city"
+            onChange={val => onFieldChange('city', val)}
+            suggestions={CITIES_SAMPLE}
           />
-          {errors.country_of_origin && (
-            <p className="text-sm text-dna-crimson mt-1">{errors.country_of_origin}</p>
+          {errors.city && (
+            <p className="text-sm text-dna-crimson mt-1">{errors.city}</p>
           )}
         </div>
-
         <div>
-          <Label htmlFor="current_country" className="text-dna-forest">Current Country</Label>
-          <Input
+          <LocationAutocomplete
+            id="state_province"
+            label="State / Province"
+            value={formData.state_province || ''}
+            placeholder="Enter state or province"
+            onChange={val => onFieldChange('state_province', val)}
+            suggestions={STATES_USA}
+          />
+          {errors.state_province && (
+            <p className="text-sm text-dna-crimson mt-1">{errors.state_province}</p>
+          )}
+        </div>
+        <div>
+          <LocationAutocomplete
             id="current_country"
+            label="Country"
             value={formData.current_country || ''}
-            onChange={(e) => onFieldChange('current_country', e.target.value)}
-            placeholder="United States, Canada, UK, etc."
-            className={errors.current_country ? 'border-dna-crimson' : ''}
+            placeholder="Enter country"
+            onChange={val => onFieldChange('current_country', val)}
+            suggestions={COUNTRIES}
           />
           {errors.current_country && (
             <p className="text-sm text-dna-crimson mt-1">{errors.current_country}</p>
           )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="location" className="text-dna-forest">Current Location</Label>
-          <Input
-            id="location"
-            value={formData.location}
-            onChange={(e) => onFieldChange('location', e.target.value)}
-            placeholder="City, State/Province"
-            className={errors.location ? 'border-dna-crimson' : ''}
-          />
-          {errors.location && (
-            <p className="text-sm text-dna-crimson mt-1">{errors.location}</p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="years_in_diaspora" className="text-dna-forest">Years in Diaspora</Label>
-          <Input
-            id="years_in_diaspora"
-            type="number"
-            value={formData.years_in_diaspora || ''}
-            onChange={(e) => onFieldChange('years_in_diaspora', e.target.value)}
-            placeholder="5"
-          />
         </div>
       </div>
 

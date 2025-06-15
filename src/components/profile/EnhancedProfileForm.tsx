@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -21,11 +20,13 @@ interface EnhancedProfileFormProps {
   onSave?: () => void;
 }
 
+const DRAFT_KEY = "dna-profile-draft";
+
 const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSave }) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  
+
   const {
     formData,
     arrayStates,
@@ -34,6 +35,38 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
     updateArrayState,
     updateHelperState,
   } = useFormState(profile, user);
+
+  // Draft: Load on mount
+  useEffect(() => {
+    const local = localStorage.getItem(DRAFT_KEY);
+    if (local) {
+      try {
+        const { formData: f, arrayStates: a, helperStates: h } = JSON.parse(local);
+        if (f && a && h) {
+          handleRestoreDraft(f, a, h);
+        }
+      } catch {}
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  // Draft: Save on changes (debounced for perf)
+  useEffect(() => {
+    const save = setTimeout(() => {
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ formData, arrayStates, helperStates })
+      );
+    }, 700);
+    return () => clearTimeout(save);
+  }, [formData, arrayStates, helperStates]);
+
+  const handleRestoreDraft = (f: any, a: any, h: any) => {
+    // Simple naive implementation for demo (in reality, update useFormState internal states)
+    Object.entries(f).forEach(([k, v]) => handleInputChange(k, v));
+    Object.entries(a).forEach(([k, v]) => updateArrayState(k as any, v));
+    Object.entries(h).forEach(([k, v]) => updateHelperState(k as any, v));
+  };
 
   const {
     addSkill,
@@ -48,6 +81,8 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
     removeMentorshipArea,
   } = createArrayHandlers(arrayStates, helperStates, updateArrayState, updateHelperState);
 
+  const handleClearDraft = () => localStorage.removeItem(DRAFT_KEY);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -61,12 +96,11 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
         helperStates.avatarUrl,
         helperStates.bannerUrl
       );
-
+      handleClearDraft();
       toast({
         title: "Success",
         description: "Profile updated successfully!",
       });
-
       if (onSave) onSave();
     } catch (error: any) {
       console.error('Profile update error:', error);
@@ -77,6 +111,14 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    handleClearDraft();
+    toast({ title: "Edits canceled", description: "All unsaved changes have been discarded." });
+    if (window.confirm("Cancel editing and discard unsaved changes?")) {
+      if (onSave) onSave();
     }
   };
 
@@ -164,11 +206,10 @@ const EnhancedProfileForm: React.FC<EnhancedProfileFormProps> = ({ profile, onSa
       />
 
       <div className="flex justify-end space-x-4">
-        <Button 
-          type="submit" 
-          className="bg-dna-copper hover:bg-dna-gold text-white px-8"
-          disabled={loading}
-        >
+        <Button type="button" variant="ghost" onClick={handleCancel} disabled={loading}>
+          Cancel
+        </Button>
+        <Button type="submit" className="bg-dna-copper hover:bg-dna-gold text-white px-8" disabled={loading}>
           {loading ? 'Saving...' : 'Save Profile'}
         </Button>
       </div>
