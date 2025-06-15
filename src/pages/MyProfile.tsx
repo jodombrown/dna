@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import EnhancedProfileDisplay from "@/components/profile/EnhancedProfileDisplay";
@@ -6,7 +5,7 @@ import EnhancedProfileForm from "@/components/profile/EnhancedProfileForm";
 import { Spinner } from "@/components/ui/spinner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const MyProfile = () => {
@@ -16,7 +15,39 @@ const MyProfile = () => {
   const [fetching, setFetching] = useState(true);
   const [editing, setEditing] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  // Parse query param
+  function getEditingFromQuery() {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.get("edit") === "1";
+  }
+
+  // Keep editing state synced with URL param
+  useEffect(() => {
+    // When location changes, update edit state
+    setEditing(getEditingFromQuery());
+    // eslint-disable-next-line
+  }, [location.search]);
+
+  // When editing changes (via code, e.g. user clicks "Edit Profile"), sync to URL
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (editing) {
+      if (searchParams.get("edit") !== "1") {
+        searchParams.set("edit", "1");
+        navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
+      }
+    } else {
+      if (searchParams.get("edit")) {
+        searchParams.delete("edit");
+        navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
+      }
+    }
+    // Only update when editing toggles, not on every render
+    // eslint-disable-next-line
+  }, [editing]);
 
   // Fetch profile logic
   useEffect(() => {
@@ -37,8 +68,10 @@ const MyProfile = () => {
           .maybeSingle();
         if (error) throw error;
         setProfile(data || null);
-        // If no profile, go straight to editing
-        setEditing(!data);
+        // If no profile, go straight to editing (or respect URL param)
+        if (!data && !getEditingFromQuery()) {
+          setEditing(true);
+        }
       } catch (err: any) {
         setError(err.message || "Failed to load profile.");
       } finally {
@@ -73,7 +106,7 @@ const MyProfile = () => {
         .maybeSingle();
       if (error) throw error;
       setProfile(data || null);
-      setEditing(false);
+      setEditing(false); // This will clear the ?edit param
     } catch (err: any) {
       setError(err.message || "Failed to load profile.");
     } finally {
@@ -152,4 +185,3 @@ const MyProfile = () => {
 };
 
 export default MyProfile;
-
