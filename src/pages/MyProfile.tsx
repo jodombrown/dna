@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import EnhancedProfileDisplay from "@/components/profile/EnhancedProfileDisplay";
@@ -100,13 +99,13 @@ const MyProfile = () => {
         >
           Create Your Profile
         </a>
-        {/* Hard Sign Out Button */}
+        {/* Sign Out Button */}
         <Button
           variant="destructive"
           className="mt-8"
           onClick={handleHardSignOut}
         >
-          Hard Sign Out
+          Sign Out
         </Button>
       </div>
     );
@@ -115,14 +114,14 @@ const MyProfile = () => {
   // Profile exists
   return (
     <div className="max-w-2xl mx-auto pt-4">
-      {/* Hard Sign Out Button always visible at top */}
+      {/* Sign Out Button always visible at top */}
       <div className="flex justify-end">
         <Button
           variant="destructive"
           className="mb-6"
           onClick={handleHardSignOut}
         >
-          Hard Sign Out
+          Sign Out
         </Button>
       </div>
       <EnhancedProfileDisplay profile={profile} isOwnProfile={profile.id === user.id} onEdit={() => {}} onConnect={() => {}} />
