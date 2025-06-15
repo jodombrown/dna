@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +10,8 @@ import SuggestedCommunitiesSection from "@/components/profile/SuggestedCommuniti
 import SuggestedConnectionsSection from "@/components/profile/SuggestedConnectionsSection";
 import EnhancedProfileForm from "@/components/profile/EnhancedProfileForm";
 import { supabase } from "@/integrations/supabase/client";
+import OnboardingProgressChecklist from "@/components/onboarding/OnboardingProgressChecklist";
+import OnboardingStepContent from "@/components/onboarding/OnboardingStepContent";
 
 const ONBOARDING_STEPS = [
   "profile_completed",
@@ -134,7 +135,9 @@ const Onboarding = () => {
     <div className="max-w-2xl mx-auto py-6 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-dna-forest">Welcome to DNA! {profile?.full_name && <>👋 {profile.full_name}</>}</CardTitle>
+          <CardTitle className="text-dna-forest">
+            Welcome to DNA! {profile?.full_name && <>👋 {profile.full_name}</>}
+          </CardTitle>
           <div className="mt-2 text-sm text-dna-copper tracking-tight">
             We’ll help you connect, collaborate, and make impact. Complete these steps to unlock your dashboard.
           </div>
@@ -142,54 +145,19 @@ const Onboarding = () => {
         <CardContent>
           <div className="mb-4">
             <ProfileCompletionBar profile={profile} />
-            <div className="flex flex-col gap-2">
-              {ONBOARDING_STEPS.map((step) => (
-                <div className="flex items-center" key={step}>
-                  <span className={`w-5 h-5 rounded-full inline-flex justify-center items-center mr-2 
-                    ${stepStatus[step] ? "bg-dna-emerald text-white" : "bg-gray-200 text-gray-500"}`}>
-                    {stepStatus[step] ? "✓" : (ONBOARDING_STEPS.findIndex(s => !stepStatus[s]) === ONBOARDING_STEPS.indexOf(step) ? "→" : "")}
-                  </span>
-                  <span className={stepStatus[step] ? "font-semibold text-dna-emerald" : ""}>{stepLabels[step]}</span>
-                </div>
-              ))}
-            </div>
+            <OnboardingProgressChecklist
+              stepStatus={stepStatus}
+              stepLabels={stepLabels}
+              onboardingSteps={ONBOARDING_STEPS}
+            />
           </div>
-          {!stepStatus.profile_completed && (
-            <div>
-              <div className="mb-2 font-medium">Step 1: Complete your profile for personalized recommendations</div>
-              <EnhancedProfileForm
-                profile={profile}
-                onSave={async () => await completeStep("profile_completed")}
-              />
-            </div>
-          )}
-          {stepStatus.profile_completed && !stepStatus.community_joined && (
-            <div>
-              <div className="mb-2 font-medium">Step 2: Join a community that matches your interests</div>
-              <SuggestedCommunitiesSection
-                impactAreas={profile?.impact_areas}
-                onJoin={async () => await completeStep("community_joined")}
-              />
-            </div>
-          )}
-          {stepStatus.profile_completed && stepStatus.community_joined && !stepStatus.connection_sent && (
-            <div>
-              <div className="mb-2 font-medium">Step 3: Send your first connection request</div>
-              <SuggestedConnectionsSection
-                userId={user.id}
-                countryOfOrigin={profile?.country_of_origin}
-                location={profile?.location}
-                onConnect={async () => await completeStep("connection_sent")}
-              />
-            </div>
-          )}
-          {stepStatus.profile_completed && stepStatus.community_joined && stepStatus.connection_sent && (
-            <div className="text-center py-6">
-              <b className="text-dna-emerald text-lg">Onboarding complete! 🎉</b>
-              <div>Your personal dashboard is now available.</div>
-              <Button className="mt-4" onClick={() => navigate("/my-profile")}>Go to My Profile</Button>
-            </div>
-          )}
+          <OnboardingStepContent
+            stepStatus={stepStatus}
+            profile={profile}
+            user={user}
+            completeStep={completeStep}
+            navigate={navigate}
+          />
         </CardContent>
       </Card>
     </div>
