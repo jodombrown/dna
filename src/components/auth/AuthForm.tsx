@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -171,7 +170,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
         <ul className="list-disc list-inside ml-1 mt-1 text-gray-400">
           <li>Double-check email and password.</li>
           <li>If resetting password, check your spam folder for the reset email.</li>
-          <li>For fastest tests, disable "Confirm Email" in your Supabase authentication settings.</li>
         </ul>
       </div>
       {/* LinkedIn sign in */}
