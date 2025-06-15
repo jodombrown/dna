@@ -4,13 +4,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import EnhancedProfileDisplay from "@/components/profile/EnhancedProfileDisplay";
 import { Spinner } from "@/components/ui/spinner";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const MyProfile = () => {
-  const { user, loading: authLoading } = useAuth();
-
+  const { user, loading: authLoading, signOut } = useAuth();
   const [profile, setProfile] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [fetching, setFetching] = useState(true);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     async function fetchProfile() {
@@ -41,6 +45,20 @@ const MyProfile = () => {
     }
     fetchProfile();
   }, [user]);
+
+  // Hard sign out: sign out, clear storage, show confirmation, redirect
+  const handleHardSignOut = async () => {
+    await signOut();
+    localStorage.clear();
+    sessionStorage.clear();
+    toast({
+      title: "Signed Out",
+      description: "You have been signed out and storage cleared.",
+    });
+    setTimeout(() => {
+      navigate("/");
+    }, 1200);
+  };
 
   if (authLoading || fetching) {
     return (
@@ -82,12 +100,34 @@ const MyProfile = () => {
         >
           Create Your Profile
         </a>
+        {/* Hard Sign Out Button */}
+        <Button
+          variant="destructive"
+          className="mt-8"
+          onClick={handleHardSignOut}
+        >
+          Hard Sign Out
+        </Button>
       </div>
     );
   }
 
-  // When profile exists
-  return <EnhancedProfileDisplay profile={profile} isOwnProfile={profile.id === user.id} onEdit={() => {}} onConnect={() => {}} />;
+  // Profile exists
+  return (
+    <div className="max-w-2xl mx-auto pt-4">
+      {/* Hard Sign Out Button always visible at top */}
+      <div className="flex justify-end">
+        <Button
+          variant="destructive"
+          className="mb-6"
+          onClick={handleHardSignOut}
+        >
+          Hard Sign Out
+        </Button>
+      </div>
+      <EnhancedProfileDisplay profile={profile} isOwnProfile={profile.id === user.id} onEdit={() => {}} onConnect={() => {}} />
+    </div>
+  );
 };
 
 export default MyProfile;
