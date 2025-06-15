@@ -177,10 +177,14 @@ const MyProfile = () => {
             Connect, collaborate, and help shape the future of African impact worldwide.
           </div>
           <div className="mb-6 text-gray-600 text-base">
-            Already a member? <a href="/auth?mode=signin" className="underline text-dna-copper">Sign in here</a>.
+            Ready to make meaningful connections and advance your goals? 
+            <br />
+            <span className="font-semibold">Sign in or join us to unlock the DNA network and community resources!</span>
+            <br />
+            Already have an account? <a href="/auth?mode=signin" className="underline text-dna-copper">Sign in here</a>.
             <br />
             New here? 
-            <a href="/auth?mode=signup" className="underline text-dna-emerald ml-1">Join now</a>—it's fast and free!
+            <a href="/auth?mode=signup" className="underline text-dna-emerald ml-1">Join now</a>—it's fast, free and impactful!
           </div>
           <a
             href="/auth"
@@ -200,8 +204,8 @@ const MyProfile = () => {
     );
   }
 
-  if (editing || !profile) {
-    // Show the profile editing form (first visit, or when editing is active)
+  // Show the profile creation or edit form immediately if user has not created a profile
+  if (!profile || editing) {
     return (
       <div className="max-w-2xl mx-auto pt-4">
         <div className="flex justify-end">
@@ -213,9 +217,12 @@ const MyProfile = () => {
             Sign Out
           </Button>
         </div>
+        <h2 className="text-2xl font-bold text-dna-forest mb-2">
+          {profile ? "Edit Your Profile" : "Start Your Profile, Today!"}
+        </h2>
         <ProfileCompletionBar profile={profile || {}} />
         <EnhancedProfileForm profile={profile} onSave={handleProfileSaved} />
-        {/* Actual suggestions for onboarding */}
+        {/* Suggestions for onboarding */}
         <div className="mt-6">
           <h3 className="font-semibold text-dna-forest mb-2">Suggested communities to join</h3>
           <SuggestedCommunitiesSection
@@ -244,13 +251,13 @@ const MyProfile = () => {
           />
         </div>
         <div className="mt-8 text-center text-dna-copper text-base">
-          <b>Need help onboarding?</b> Use the guided tour or reach out to our community manager for 1–1 support.
+          <b>Need help getting started?</b> Use the guided tour or reach out to our community manager for personal support.
         </div>
       </div>
     );
   }
 
-  // Show the completed profile with profile completion and dashboard suggestion
+  // Show the completed profile and dashboard
   return (
     <div className="max-w-2xl mx-auto pt-4">
       <div className="flex justify-end">
@@ -269,7 +276,7 @@ const MyProfile = () => {
         onEdit={() => setEditing(true)}
         onConnect={() => {}}
       />
-      {/* Placeholder for dashboard */}
+      {/* Dashboard placeholder */}
       <div className="mt-8">
         <b className="block mb-1 text-dna-forest">Your Personalized Dashboard (coming soon)</b>
         <div className="rounded bg-dna-mint/5 py-3 px-4 text-gray-700">
