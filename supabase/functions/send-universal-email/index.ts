@@ -167,7 +167,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email to admin
     const adminEmailResponse = await resend.emails.send({
-      from: "DNA Platform <onboarding@resend.dev>",
+      from: "DNA Platform <aweh@diasporanetwork.africa>",
       to: ["aweh@diasporanetwork.africa"],
       subject: emailContent.subject,
       html: emailContent.adminHtml,
@@ -178,7 +178,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send confirmation email to user if email provided
     if (userEmail) {
       const userEmailResponse = await resend.emails.send({
-        from: "DNA Platform <onboarding@resend.dev>",
+        from: "DNA Platform <aweh@diasporanetwork.africa>",
         to: [userEmail],
         subject: emailContent.userSubject,
         html: emailContent.userHtml,
