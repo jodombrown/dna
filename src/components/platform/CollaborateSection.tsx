@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -41,7 +42,7 @@ const CollaborateSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/collaborations-example')}
+              onClick={() => navigate('/collaborate')}
               className="bg-dna-copper hover:bg-dna-gold text-white flex items-center gap-2"
             >
               Explore Active Collaborations
@@ -52,7 +53,7 @@ const CollaborateSection = () => {
           <div className="md:order-1">
             <div 
               className="bg-white rounded-3xl shadow-2xl overflow-hidden cursor-pointer hover:shadow-3xl transition-shadow"
-              onClick={() => navigate('/collaborations-example')}
+              onClick={() => navigate('/collaborate')}
             >
               <div className="bg-dna-copper text-white p-4">
                 <h3 className="font-semibold">Active Collaborations</h3>
