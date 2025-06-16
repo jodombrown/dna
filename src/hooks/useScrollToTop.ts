@@ -6,10 +6,11 @@ export const useScrollToTop = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Only scroll to top on route changes, not when going back
-    const isGoingBack = window.history.state && window.history.state.idx > 0;
+    // Check if this is a back navigation by looking at the history state
+    const isBackNavigation = window.history.state && window.history.state.idx !== undefined && window.history.state.idx < window.performance.navigation.TYPE_BACK_FORWARD;
     
-    if (!isGoingBack) {
+    // Only scroll to top if it's NOT a back navigation
+    if (!isBackNavigation) {
       window.scrollTo(0, 0);
     }
   }, [location.pathname]);

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import PhaseHero from '@/components/phases/PhaseHero';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
@@ -57,6 +58,41 @@ const timeline = [
   }
 ];
 
+const fallbackMetrics = [
+  {
+    id: "1",
+    label: "Beta Testers",
+    value: "245",
+    target: "500",
+    icon: "users",
+    color: "bg-dna-emerald"
+  },
+  {
+    id: "2", 
+    label: "Feedback Sessions",
+    value: "18",
+    target: "50",
+    icon: "message-square",
+    color: "bg-dna-copper"
+  },
+  {
+    id: "3",
+    label: "Feature Prototypes",
+    value: "8",
+    target: "15",
+    icon: "code",
+    color: "bg-dna-gold"
+  },
+  {
+    id: "4",
+    label: "Community Partners",
+    value: "12",
+    target: "25",
+    icon: "handshake",
+    color: "bg-dna-forest"
+  }
+];
+
 const PrototypingPhase = () => {
   useScrollToTop();
   return (
@@ -72,7 +108,7 @@ const PrototypingPhase = () => {
       />
       <PhaseObjectives objectives={objectives} color="dna-emerald" />
       <PhaseTimeline milestones={timeline} color="dna-copper" />
-      <PhaseMetrics phaseSlug="prototyping" />
+      <PhaseMetrics phaseSlug="prototyping" fallbackMetrics={fallbackMetrics} />
       <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />

@@ -74,11 +74,39 @@ const timeline = [
   }
 ];
 
-const metrics = [
-  { label: "Code Modules Complete", value: "18", target: "50", color: "bg-dna-copper" },
-  { label: "Beta Testers", value: "210", target: "1000", color: "bg-dna-gold" },
-  { label: "Admin Features", value: "4", target: "10", color: "bg-dna-emerald" },
-  { label: "Stable Deployments", value: "5", target: "20", color: "bg-dna-forest" }
+const fallbackMetrics = [
+  {
+    id: "1",
+    label: "Code Modules Complete",
+    value: "18",
+    target: "50",
+    icon: "code",
+    color: "bg-dna-copper"
+  },
+  {
+    id: "2",
+    label: "Beta Testers",
+    value: "210",
+    target: "1000",
+    icon: "users",
+    color: "bg-dna-gold"
+  },
+  {
+    id: "3",
+    label: "Admin Features",
+    value: "4",
+    target: "10",
+    icon: "settings",
+    color: "bg-dna-emerald"
+  },
+  {
+    id: "4",
+    label: "Stable Deployments",
+    value: "5",
+    target: "20",
+    icon: "rocket",
+    color: "bg-dna-forest"
+  }
 ];
 
 const BuildPhase = () => {
@@ -96,7 +124,7 @@ const BuildPhase = () => {
       />
       <PhaseObjectives objectives={objectives} color="dna-copper" />
       <PhaseTimeline milestones={timeline} color="dna-copper" />
-      <PhaseMetrics phaseSlug="build" />
+      <PhaseMetrics phaseSlug="build" fallbackMetrics={fallbackMetrics} />
       <section className="py-16 bg-gradient-to-r from-dna-copper/10 to-dna-mint/10">
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-5" />

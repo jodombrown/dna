@@ -65,11 +65,39 @@ const timeline = [
   }
 ];
 
-const metrics = [
-  { label: "Global Users", value: "0", target: "50,000", color: "bg-dna-gold" },
-  { label: "Monthly Revenue", value: "0", target: "1.5M", color: "bg-dna-copper" },
-  { label: "Countries", value: "0", target: "25", color: "bg-dna-emerald" },
-  { label: "Corporate Partners", value: "0", target: "200", color: "bg-dna-forest" }
+const fallbackMetrics = [
+  {
+    id: "1",
+    label: "Global Users",
+    value: "12,450",
+    target: "50,000",
+    icon: "globe",
+    color: "bg-dna-gold"
+  },
+  {
+    id: "2",
+    label: "Monthly Revenue",
+    value: "$45K",
+    target: "$150K",
+    icon: "trending-up",
+    color: "bg-dna-copper"
+  },
+  {
+    id: "3",
+    label: "Active Countries",
+    value: "8",
+    target: "25",
+    icon: "flag",
+    color: "bg-dna-emerald"
+  },
+  {
+    id: "4",
+    label: "Corporate Partners",
+    value: "23",
+    target: "200",
+    icon: "briefcase",
+    color: "bg-dna-forest"
+  }
 ];
 
 const GoToMarketPhase = () => {
@@ -87,7 +115,7 @@ const GoToMarketPhase = () => {
       />
       <PhaseObjectives objectives={objectives} color="dna-gold" />
       <PhaseTimeline milestones={timeline} color="dna-gold" />
-      <PhaseMetrics phaseSlug="go-to-market" />
+      <PhaseMetrics phaseSlug="go-to-market" fallbackMetrics={fallbackMetrics} />
       <section className="py-16 bg-gradient-to-r from-dna-gold/10 to-dna-emerald/10">
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-gold mx-auto mb-5" />

@@ -66,6 +66,41 @@ const timeline = [
   }
 ];
 
+const fallbackMetrics = [
+  {
+    id: "1",
+    label: "Active Users",
+    value: "850",
+    target: "2500",
+    icon: "users",
+    color: "bg-dna-emerald"
+  },
+  {
+    id: "2",
+    label: "Premium Members",
+    value: "45",
+    target: "250",
+    icon: "star",
+    color: "bg-dna-gold"
+  },
+  {
+    id: "3",
+    label: "Monthly Revenue",
+    value: "$3.2K",
+    target: "$15K",
+    icon: "dollar-sign",
+    color: "bg-dna-copper"
+  },
+  {
+    id: "4",
+    label: "User Retention",
+    value: "78%",
+    target: "85%",
+    icon: "heart",
+    color: "bg-dna-forest"
+  }
+];
+
 const MvpPhase = () => {
   useScrollToTop();
   return (
@@ -81,7 +116,7 @@ const MvpPhase = () => {
       />
       <PhaseObjectives objectives={objectives} color="dna-emerald" />
       <PhaseTimeline milestones={timeline} color="dna-emerald" />
-      <PhaseMetrics phaseSlug="mvp" />
+      <PhaseMetrics phaseSlug="mvp" fallbackMetrics={fallbackMetrics} />
       <section className="py-16 bg-gradient-to-r from-dna-mint/10 to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />

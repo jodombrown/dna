@@ -72,11 +72,39 @@ const timeline = [
   }
 ];
 
-const metrics = [
-  { label: "User Surveys Completed", value: "430", target: "500", color: "bg-dna-emerald" },
-  { label: "Stakeholder Interviews", value: "97", target: "100", color: "bg-dna-copper" },
-  { label: "Community Partners", value: "32", target: "50", color: "bg-dna-gold" },
-  { label: "Countries Researched", value: "17", target: "25", color: "bg-dna-forest" }
+const fallbackMetrics = [
+  {
+    id: "1",
+    label: "User Surveys Completed",
+    value: "430",
+    target: "500",
+    icon: "bar-chart",
+    color: "bg-dna-emerald"
+  },
+  {
+    id: "2",
+    label: "Stakeholder Interviews",
+    value: "97",
+    target: "100",
+    icon: "message-square",
+    color: "bg-dna-copper"
+  },
+  {
+    id: "3",
+    label: "Community Partners",
+    value: "32",
+    target: "50",
+    icon: "network",
+    color: "bg-dna-gold"
+  },
+  {
+    id: "4",
+    label: "Countries Researched",
+    value: "17",
+    target: "25",
+    icon: "globe",
+    color: "bg-dna-forest"
+  }
 ];
 
 const CustomerDiscoveryPhase = () => {
@@ -94,7 +122,7 @@ const CustomerDiscoveryPhase = () => {
       />
       <PhaseObjectives objectives={objectives} color="dna-emerald" />
       <PhaseTimeline milestones={timeline} color="dna-copper" />
-      <PhaseMetrics phaseSlug="customer-discovery" />
+      <PhaseMetrics phaseSlug="customer-discovery" fallbackMetrics={fallbackMetrics} />
       <section className="py-16 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />

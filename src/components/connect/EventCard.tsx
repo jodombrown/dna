@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +18,7 @@ interface EventCardProps {
 const PLACEHOLDER_BANNER =
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=700&q=80";
 const PLACEHOLDER_PROFILE =
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?fit=crop&w=128&q=80";
+  "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?fit=crop&w=128&q=80";
 
 const EventCard: React.FC<EventCardProps> = ({
   event,
