@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { Users, Rocket, Target } from 'lucide-react';
 
 interface BetaSignupDialogProps {
@@ -70,9 +70,19 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      const { data, error } = await supabase.functions.invoke('send-universal-email', {
+        body: {
+          formType: 'beta-signup',
+          formData: {
+            ...formData,
+            selectedPhase: betaPhases.find(phase => phase.id === formData.betaPhase)?.title || formData.betaPhase
+          },
+          userEmail: formData.email
+        }
+      });
+
+      if (error) throw error;
+
       toast({
         title: "Beta Application Submitted!",
         description: "We'll review your application and get back to you within 48 hours.",
@@ -89,7 +99,8 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
       });
       
       onClose();
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Beta signup error:', error);
       toast({
         title: "Submission Failed",
         description: "Please try again later or contact us directly.",
@@ -113,7 +124,6 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Personal Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Personal Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -159,7 +169,6 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
             </div>
           </div>
 
-          {/* Beta Phase Selection */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Choose Your Beta Phase *</h3>
             <RadioGroup 
@@ -190,7 +199,6 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
             </RadioGroup>
           </div>
 
-          {/* Additional Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Tell Us More</h3>
             <div>
@@ -215,7 +223,6 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
             </div>
           </div>
 
-          {/* Selected Phase Summary */}
           {selectedPhase && (
             <div className="bg-dna-emerald/10 border border-dna-emerald/20 rounded-lg p-4">
               <h4 className="font-semibold text-dna-emerald mb-2">Your Selected Phase:</h4>
@@ -228,7 +235,6 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
             </div>
           )}
 
-          {/* Submit Button */}
           <div className="flex gap-3 pt-4">
             <Button 
               type="submit" 

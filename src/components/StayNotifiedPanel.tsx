@@ -38,12 +38,16 @@ const StayNotifiedPanel: React.FC<StayNotifiedPanelProps> = ({ isOpen, onClose }
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+      const { data, error } = await supabase.functions.invoke('send-universal-email', {
         body: {
-          name: formData.name,
-          email: formData.email,
-          linkedin_url: formData.linkedin_url,
-          message: formData.message || 'I would like to stay notified about the DNA platform launch.'
+          formType: 'contact',
+          formData: {
+            name: formData.name,
+            email: formData.email,
+            message: formData.message || 'I would like to stay notified about the DNA platform launch.',
+            linkedin_url: formData.linkedin_url
+          },
+          userEmail: formData.email
         }
       });
 

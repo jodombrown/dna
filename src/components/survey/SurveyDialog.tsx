@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -48,10 +47,11 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('send-survey-response', {
+      const { data, error } = await supabase.functions.invoke('send-universal-email', {
         body: {
-          ...formData,
-          recipient_email: 'aweh@diasporanetwork.africa'
+          formType: 'survey',
+          formData: formData,
+          userEmail: formData.email || undefined
         }
       });
 

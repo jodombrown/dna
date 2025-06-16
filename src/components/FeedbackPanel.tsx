@@ -89,12 +89,17 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
       const fullName = `${formData.firstName} ${formData.lastName}`;
       const message = `Feedback for ${pageType} page:\n\n${formData.recommendations || 'No specific recommendations provided.'}`;
 
-      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+      const { data, error } = await supabase.functions.invoke('send-universal-email', {
         body: {
-          name: fullName,
-          email: formData.email,
-          linkedin_url: formData.linkedin,
-          message: message
+          formType: 'feedback',
+          formData: {
+            name: fullName,
+            email: formData.email,
+            pageType: pageType,
+            feedback: formData.recommendations,
+            linkedin_url: formData.linkedin
+          },
+          userEmail: formData.email
         }
       });
 
@@ -143,7 +148,6 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
         </SheetHeader>
 
         <div className="space-y-8">
-          {/* Guide Section */}
           <div className="bg-gradient-to-r from-dna-emerald/5 to-dna-copper/5 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-dna-emerald" />
@@ -161,7 +165,6 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
             </div>
           </div>
 
-          {/* Feedback Section */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Help Us Build Better
