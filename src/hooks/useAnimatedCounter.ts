@@ -21,7 +21,7 @@ export const useAnimatedCounter = ({ end, duration = 2000, decimals = 0 }: UseAn
           hasAnimated.current = true;
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.1, rootMargin: '50px' }
     );
 
     if (countRef.current) {
