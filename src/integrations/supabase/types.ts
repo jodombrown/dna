@@ -223,6 +223,21 @@ export type Database = {
         }
         Relationships: []
       }
+      get_posts_with_profiles: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
       initiatives: {
         Row: {
           created_at: string | null
