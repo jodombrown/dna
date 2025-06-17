@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,7 +60,7 @@ const PostCreator: React.FC<PostCreatorProps> = ({ onPostCreated }) => {
         })
         .select(`
           *,
-          profiles!posts_user_id_fkey (
+          profiles (
             full_name,
             avatar_url,
             professional_role,
