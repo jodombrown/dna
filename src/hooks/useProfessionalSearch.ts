@@ -1,35 +1,7 @@
 
 import { useState } from 'react';
-
-// Placeholder interface for search results
-interface SearchResult {
-  id: string;
-  full_name: string;
-  profession?: string;
-  company?: string;
-  location?: string;
-  bio?: string;
-  avatar_url?: string;
-  skills?: string[];
-  is_mentor?: boolean;
-  is_investor?: boolean;
-  looking_for_opportunities?: boolean;
-  years_experience?: number;
-  country_of_origin?: string;
-}
-
-// Placeholder interface for search filters
-interface SearchFilters {
-  searchTerm: string;
-  location: string;
-  profession: string;
-  skills: string[];
-  experience: string;
-  isMentor: boolean;
-  isInvestor: boolean;
-  lookingForOpportunities: boolean;
-  countryOfOrigin: string;
-}
+import { SearchResult, SearchFilters } from '@/types/searchTypes';
+import { buildProfessionalQuery, filterByExperience } from '@/services/searchService';
 
 export const useProfessionalSearch = () => {
   const [loading, setLoading] = useState(false);
@@ -40,11 +12,32 @@ export const useProfessionalSearch = () => {
     setError(null);
     
     try {
-      // Placeholder implementation - will be replaced with actual search logic
-      console.log('Professional search requested with filters:', filters);
-      
-      // Return empty results for now
-      return [];
+      const query = buildProfessionalQuery(filters);
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      // Filter by experience
+      let filteredData = filterByExperience(data || [], filters.experience);
+
+      // Map to SearchResult format
+      const searchResults: SearchResult[] = filteredData.map(profile => ({
+        id: profile.id,
+        full_name: profile.full_name,
+        profession: profile.profession,
+        company: profile.company,
+        location: profile.location,
+        bio: profile.bio,
+        avatar_url: profile.avatar_url,
+        skills: profile.expertise,
+        is_mentor: profile.is_mentor,
+        is_investor: profile.is_investor,
+        looking_for_opportunities: profile.looking_for_opportunities,
+        years_experience: profile.years_experience,
+        country_of_origin: profile.country_of_origin
+      }));
+
+      return searchResults;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Professional search failed';
       setError(errorMessage);

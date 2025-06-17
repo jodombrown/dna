@@ -1,6 +1,7 @@
 
 import React from 'react';
 import Header from '@/components/Header';
+import MemberDirectory from '@/components/profile/MemberDirectory';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Users, Globe, Briefcase, Heart } from 'lucide-react';
@@ -15,7 +16,7 @@ const Members = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              DNA Global Community
+              DiasporaLink Global Community
             </h1>
             <p className="text-xl md:text-2xl text-dna-mint/90 mb-6 max-w-3xl mx-auto">
               Connect with African diaspora professionals, entrepreneurs, and changemakers 
@@ -125,32 +126,21 @@ const Members = () => {
               Create Your Profile
             </Button>
           </div>
-
-          {/* Member Directory Placeholder */}
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-dna-forest mb-2">
-              Meet Our Community Members
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Discover and connect with professionals who share your passion for impact
-            </p>
-            
-            <Card className="border-dna-mint/30 bg-dna-mint/5">
-              <CardContent className="p-12 text-center">
-                <Users className="w-16 h-16 text-dna-copper mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-dna-forest mb-2">
-                  Member Directory Coming Soon
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  We're building an advanced member directory to help you find and connect with diaspora professionals worldwide.
-                </p>
-                <Button variant="outline" className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white">
-                  Get Notified When Available
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
         </div>
+      </div>
+
+      {/* Member Directory */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-dna-forest mb-2">
+            Meet Our Community Members
+          </h2>
+          <p className="text-gray-600">
+            Discover and connect with professionals who share your passion for impact
+          </p>
+        </div>
+        
+        <MemberDirectory />
       </div>
     </div>
   );
