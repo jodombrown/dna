@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,7 +22,7 @@ interface Post {
     avatar_url?: string;
     professional_role?: string;
     company?: string;
-  };
+  } | null;
 }
 
 const SocialFeed = () => {
@@ -44,7 +43,7 @@ const SocialFeed = () => {
         .from('posts')
         .select(`
           *,
-          profiles:user_id (
+          profiles!posts_user_id_fkey (
             full_name,
             avatar_url,
             professional_role,
