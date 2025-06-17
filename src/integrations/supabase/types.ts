@@ -310,6 +310,185 @@ export type Database = {
         }
         Relationships: []
       }
+      post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          article_summary: string | null
+          article_title: string | null
+          comments_count: number | null
+          content: string
+          created_at: string
+          id: string
+          is_published: boolean | null
+          likes_count: number | null
+          media_urls: string[] | null
+          post_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          article_summary?: string | null
+          article_title?: string | null
+          comments_count?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          is_published?: boolean | null
+          likes_count?: number | null
+          media_urls?: string[] | null
+          post_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          article_summary?: string | null
+          article_title?: string | null
+          comments_count?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean | null
+          likes_count?: number | null
+          media_urls?: string[] | null
+          post_type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      professionals: {
+        Row: {
+          availability_for: string[] | null
+          avatar_url: string | null
+          bio: string | null
+          company: string | null
+          country_of_origin: string | null
+          created_at: string
+          education: string | null
+          expertise: string[] | null
+          full_name: string
+          id: string
+          is_investor: boolean | null
+          is_mentor: boolean | null
+          languages: string[] | null
+          linkedin_url: string | null
+          location: string | null
+          looking_for_opportunities: boolean | null
+          profession: string | null
+          updated_at: string
+          website_url: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          availability_for?: string[] | null
+          avatar_url?: string | null
+          bio?: string | null
+          company?: string | null
+          country_of_origin?: string | null
+          created_at?: string
+          education?: string | null
+          expertise?: string[] | null
+          full_name: string
+          id?: string
+          is_investor?: boolean | null
+          is_mentor?: boolean | null
+          languages?: string[] | null
+          linkedin_url?: string | null
+          location?: string | null
+          looking_for_opportunities?: boolean | null
+          profession?: string | null
+          updated_at?: string
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          availability_for?: string[] | null
+          avatar_url?: string | null
+          bio?: string | null
+          company?: string | null
+          country_of_origin?: string | null
+          created_at?: string
+          education?: string | null
+          expertise?: string[] | null
+          full_name?: string
+          id?: string
+          is_investor?: boolean | null
+          is_mentor?: boolean | null
+          languages?: string[] | null
+          linkedin_url?: string | null
+          location?: string | null
+          looking_for_opportunities?: boolean | null
+          profession?: string | null
+          updated_at?: string
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          company: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          professional_role: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          company?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          professional_role?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          company?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          professional_role?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       project_participants: {
         Row: {
           id: string

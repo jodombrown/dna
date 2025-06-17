@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,10 +16,33 @@ interface EventCardProps {
   onClick?: () => void;
 }
 
+// Updated placeholder images with diverse African representation
 const PLACEHOLDER_BANNER =
-  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=700&q=80";
+  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?fit=crop&w=700&q=80";
 const PLACEHOLDER_PROFILE =
-  "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?fit=crop&w=128&q=80";
+  "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?fit=crop&w=128&q=80";
+
+// Event organizer images - diverse African professionals
+const getEventOrganizerImage = (eventTitle: string) => {
+  const organizerImages: { [key: string]: string } = {
+    'African Tech Leaders Summit': 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face',
+    'Diaspora Investment Forum': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    'Women in Finance Networking': 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+    'Climate Solutions Showcase': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face',
+    'Healthcare Innovation': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+    'AgriTech Innovation': 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face'
+  };
+
+  // Find matching organizer image based on event title keywords
+  for (const [keyword, image] of Object.entries(organizerImages)) {
+    if (eventTitle.includes(keyword)) {
+      return image;
+    }
+  }
+
+  // Default to first image if no match found
+  return 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face';
+};
 
 const EventCard: React.FC<EventCardProps> = ({
   event,
@@ -39,7 +63,8 @@ const EventCard: React.FC<EventCardProps> = ({
     }
   };
 
-  // Card click opens detail dialog from parent
+  const organizerImage = event.creator_profile?.avatar_url || getEventOrganizerImage(event.title);
+
   return (
     <>
       <Card
@@ -74,7 +99,7 @@ const EventCard: React.FC<EventCardProps> = ({
               type="button"
             >
               <Avatar className="w-7 h-7">
-                <AvatarImage src={event.creator_profile.avatar_url || PLACEHOLDER_PROFILE} alt={event.creator_profile.full_name} />
+                <AvatarImage src={organizerImage} alt={event.creator_profile.full_name} />
                 <AvatarFallback className="bg-dna-copper text-white">
                   <ImageIcon className="w-3.5 h-3.5" />
                 </AvatarFallback>
@@ -87,7 +112,7 @@ const EventCard: React.FC<EventCardProps> = ({
           <div className="absolute bottom-0 left-3 -mb-6 z-10">
             <Avatar className="w-16 h-16 ring-4 ring-white shadow-lg bg-white">
               <AvatarImage
-                src={event.image_url || PLACEHOLDER_PROFILE}
+                src={event.image_url || organizerImage}
                 alt={event.title}
                 className="object-cover"
               />
@@ -103,7 +128,7 @@ const EventCard: React.FC<EventCardProps> = ({
           <div className="flex gap-2 flex-wrap mt-1">
             <Badge variant="outline">{event.type}</Badge>
             {event.is_virtual && (
-              <Badge variant="virtual" className="cursor-default">Virtual</Badge>
+              <Badge variant="secondary" className="cursor-default">Virtual</Badge>
             )}
           </div>
         </CardHeader>

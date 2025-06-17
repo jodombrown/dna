@@ -11,7 +11,7 @@ interface ProfessionalsTabProps {
 }
 
 const ProfessionalsTab: React.FC<ProfessionalsTabProps> = ({ searchTerm }) => {
-  // Mock data for professionals
+  // Mock data for professionals with diverse African images
   const professionals = [
     {
       id: '1',
@@ -63,6 +63,57 @@ const ProfessionalsTab: React.FC<ProfessionalsTabProps> = ({ searchTerm }) => {
       recentActivity: 'Attended African Startup Summit 2024',
       isOnline: true,
       mutualConnections: 15
+    },
+    {
+      id: '4',
+      name: 'Ibrahim Hassan',
+      title: 'Tech Entrepreneur',
+      company: 'Flutterwave',
+      location: 'San Francisco, USA',
+      origin: 'Cairo, Egypt',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      followers: 4200,
+      connections: 980,
+      skills: ['Fintech', 'Entrepreneurship', 'Market Expansion'],
+      bio: 'Building payment solutions for Africa. Previously scaled tech teams across 3 continents.',
+      connectionStatus: null,
+      recentActivity: 'Launched new payment gateway for SMEs',
+      isOnline: true,
+      mutualConnections: 22
+    },
+    {
+      id: '5',
+      name: 'Dr. Fatima Al-Rashid',
+      title: 'Climate Tech Researcher',
+      company: 'MIT',
+      location: 'Boston, USA',
+      origin: 'Marrakech, Morocco',
+      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+      followers: 2890,
+      connections: 650,
+      skills: ['Climate Technology', 'Renewable Energy', 'Policy'],
+      bio: 'PhD researcher focusing on scalable climate solutions for MENA and Sub-Saharan Africa.',
+      connectionStatus: null,
+      recentActivity: 'Published research on solar energy adoption',
+      isOnline: false,
+      mutualConnections: 7
+    },
+    {
+      id: '6',
+      name: 'Kofi Mensah',
+      title: 'Digital Health Innovator',
+      company: 'mPharma',
+      location: 'Accra, Ghana',
+      origin: 'Accra, Ghana',
+      avatar: 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
+      followers: 1850,
+      connections: 420,
+      skills: ['Healthcare Technology', 'Digital Health', 'Operations'],
+      bio: 'Revolutionizing healthcare access across Africa through technology and innovative supply chain solutions.',
+      connectionStatus: 'connected',
+      recentActivity: 'Expanded operations to 3 new countries',
+      isOnline: true,
+      mutualConnections: 5
     }
   ];
 
