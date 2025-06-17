@@ -25,14 +25,7 @@ const ProfileOnboardingPanel = ({
     <EnhancedProfileForm profile={profile} onSave={handleProfileSaved} />
     <div className="mt-8">
       <h3 className="font-semibold text-dna-forest mb-2">People you may want to connect with</h3>
-      <SuggestedConnectionsSection
-        userId={user.id}
-        countryOfOrigin={profile?.country_of_origin}
-        location={profile?.location}
-        onConnect={() =>
-          toast({ title: "Connection Sent", description: "We’ve sent a connection request on your behalf!" })
-        }
-      />
+      <SuggestedConnectionsSection />
     </div>
     <div className="mt-8 text-center text-dna-copper text-base">
       <b>Need help getting started?</b> Use the guided tour or reach out to our community manager for personal support.

@@ -30,52 +30,41 @@ const SocialFeed = () => {
 
   const fetchPosts = async () => {
     try {
-      // Use direct SQL query since posts table exists but isn't in types
+      // Fetch posts with basic data first
       const { data: postsData, error: postsError } = await supabase
-        .rpc('get_posts_with_profiles')
-        .select('*');
+        .from('posts')
+        .select('*')
+        .eq('is_published', true)
+        .order('created_at', { ascending: false });
 
       if (postsError) {
         console.error('Posts error:', postsError);
-        // Fallback: try to get posts without profiles
-        const { data: basicPosts, error: basicError } = await supabase
-          .from('posts' as any)
-          .select('*')
-          .eq('is_published', true)
-          .order('created_at', { ascending: false });
-
-        if (basicError) {
-          console.error('Basic posts error:', basicError);
-          setPosts([]);
-          return;
-        }
-
-        // Get profiles for each post
-        const postsWithProfiles: Post[] = [];
-        
-        for (const post of basicPosts || []) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('full_name, avatar_url, professional_role, company')
-            .eq('id', post.user_id)
-            .single();
-
-          postsWithProfiles.push({
-            ...post,
-            profiles: profileData || {
-              full_name: 'DNA Member',
-              avatar_url: null,
-              professional_role: null,
-              company: null
-            }
-          });
-        }
-
-        setPosts(postsWithProfiles);
+        setPosts([]);
         return;
       }
 
-      setPosts(postsData || []);
+      // Get profiles for each post
+      const postsWithProfiles: Post[] = [];
+      
+      for (const post of postsData || []) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('full_name, avatar_url, professional_role, company')
+          .eq('id', post.user_id)
+          .single();
+
+        postsWithProfiles.push({
+          ...post,
+          profiles: profileData || {
+            full_name: 'DNA Member',
+            avatar_url: null,
+            professional_role: null,
+            company: null
+          }
+        });
+      }
+
+      setPosts(postsWithProfiles);
     } catch (error) {
       console.error('Error fetching posts:', error);
       setPosts([]);

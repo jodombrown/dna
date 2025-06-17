@@ -55,12 +55,7 @@ const OnboardingStepContent: React.FC<Props> = ({
         <div className="mb-2 font-medium">
           Step 3: Send your first connection request
         </div>
-        <SuggestedConnectionsSection
-          userId={user.id}
-          countryOfOrigin={profile?.country_of_origin}
-          location={profile?.location}
-          onConnect={async () => await completeStep("connection_sent")}
-        />
+        <SuggestedConnectionsSection />
       </div>
     );
   }
