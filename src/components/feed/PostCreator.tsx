@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -78,6 +79,7 @@ const PostCreator: React.FC<PostCreatorProps> = ({ onPostCreated }) => {
         description: "Your post has been shared with the DNA community."
       });
     } catch (error: any) {
+      console.error('Error posting:', error);
       toast({
         title: "Error posting",
         description: error.message,

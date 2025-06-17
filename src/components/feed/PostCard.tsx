@@ -79,6 +79,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
         });
       }
     } catch (error: any) {
+      console.error('Error updating like:', error);
       toast({
         title: "Error",
         description: "Failed to update like",

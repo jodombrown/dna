@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -56,6 +57,7 @@ const SocialFeed = () => {
       if (error) throw error;
       setPosts(data || []);
     } catch (error: any) {
+      console.error('Error loading feed:', error);
       toast({
         title: "Error loading feed",
         description: error.message,
