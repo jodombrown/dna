@@ -1,7 +1,6 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-import { useConnectPageLogic } from '@/hooks/useConnectPageLogic';
 import ConnectPageHeader from '@/components/connect/ConnectPageHeader';
 import ConnectLoadingState from '@/components/connect/ConnectLoadingState';
 import ConnectErrorState from '@/components/connect/ConnectErrorState';
@@ -12,48 +11,51 @@ import CallToActionSection from '@/components/connect/CallToActionSection';
 import ConnectDialogs from '@/components/connect/ConnectDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
-
-// Completely remove pillar nav, just use Header
+import { useAuth } from '@/contexts/AuthContext';
 
 const ConnectExample = () => {
-  const {
-    professionals,
-    communities,
-    events,
-    loading,
-    initializing,
-    dataError,
-    user,
-    searchTerm,
-    setSearchTerm,
-    activeTab,
-    setActiveTab,
-    isConnectDialogOpen,
-    setIsConnectDialogOpen,
-    isMessageDialogOpen,
-    setIsMessageDialogOpen,
-    isJoinCommunityDialogOpen,
-    setIsJoinCommunityDialogOpen,
-    isRegisterEventDialogOpen,
-    setIsRegisterEventDialogOpen,
-    isFeedbackPanelOpen,
-    setIsFeedbackPanelOpen,
-    handleSearch,
-    handleConnect,
-    handleMessage,
-    handleJoinCommunity,
-    handleRegisterEvent,
-    getConnectionStatus,
-    initializeData
-  } = useConnectPageLogic();
+  const { user } = useAuth();
+  const [professionals, setProfessionals] = useState([]);
+  const [communities, setCommunities] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [initializing, setInitializing] = useState(false);
+  const [dataError, setDataError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('professionals');
+  const [isConnectDialogOpen, setIsConnectDialogOpen] = useState(false);
+  const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
+  const [isJoinCommunityDialogOpen, setIsJoinCommunityDialogOpen] = useState(false);
+  const [isRegisterEventDialogOpen, setIsRegisterEventDialogOpen] = useState(false);
+  const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
 
-  if (initializing) {
-    return <ConnectLoadingState />;
-  }
+  const handleSearch = () => {
+    console.log('Search functionality placeholder');
+  };
 
-  if (dataError) {
-    return <ConnectErrorState error={dataError} onRetry={initializeData} />;
-  }
+  const handleConnect = () => {
+    setIsConnectDialogOpen(true);
+  };
+
+  const handleMessage = () => {
+    setIsMessageDialogOpen(true);
+  };
+
+  const handleJoinCommunity = () => {
+    setIsJoinCommunityDialogOpen(true);
+  };
+
+  const handleRegisterEvent = () => {
+    setIsRegisterEventDialogOpen(true);
+  };
+
+  const getConnectionStatus = () => {
+    return 'none';
+  };
+
+  const initializeData = () => {
+    console.log('Initialize data placeholder');
+  };
 
   const totalCount = professionals.length + communities.length + events.length;
 
@@ -86,12 +88,6 @@ const ConnectExample = () => {
           isLoggedIn={!!user}
           onRefresh={initializeData}
         />
-
-        {loading && (
-          <div className="text-center py-12">
-            <div className="text-lg">Loading...</div>
-          </div>
-        )}
 
         <CallToActionSection onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
       </main>

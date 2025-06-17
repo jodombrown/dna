@@ -1,23 +1,21 @@
 
 import { useState } from 'react';
-import { SearchResult, SearchFilters, SearchState } from '@/types/searchTypes';
-import { useProfileSearch } from './useProfileSearch';
+import { SearchResult, SearchFilters } from '@/types/searchTypes';
 import { useProfessionalSearch } from './useProfessionalSearch';
 
 export const useAdvancedSearch = () => {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [error, setError] = useState<string | null>(null);
   
-  const profileSearch = useProfileSearch();
   const professionalSearch = useProfessionalSearch();
 
-  const loading = profileSearch.loading || professionalSearch.loading;
+  const loading = professionalSearch.loading;
 
   const searchProfiles = async (filters: SearchFilters) => {
     try {
-      const searchResults = await profileSearch.searchProfiles(filters);
-      setResults(searchResults);
-      setError(profileSearch.error);
+      // For now, just return empty results since profiles table is removed
+      setResults([]);
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed');
     }

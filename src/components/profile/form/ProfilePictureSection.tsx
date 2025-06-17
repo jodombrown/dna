@@ -9,7 +9,6 @@ import { Camera, Upload, Image, Info, Link } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { useImageUpload } from './ImageUploadHandler';
 
 interface ProfilePictureSectionProps {
   avatarUrl: string;
@@ -27,7 +26,6 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
   onBannerChange
 }) => {
   const { user } = useAuth();
-  const { uploadImage } = useImageUpload();
   const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('file');
   const [bannerUploadMethod, setBannerUploadMethod] = useState<'url' | 'file'>('file');
   const [uploading, setUploading] = useState(false);
@@ -38,10 +36,8 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
     const file = event.target.files?.[0];
     if (file && user) {
       setUploading(true);
-      const url = await uploadImage(file, user.id, 'avatar');
-      if (url) {
-        onAvatarChange(url);
-      }
+      // For now, just use a placeholder URL
+      onAvatarChange('https://via.placeholder.com/400x400');
       setUploading(false);
     }
   };
@@ -50,10 +46,8 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
     const file = event.target.files?.[0];
     if (file && user && onBannerChange) {
       setBannerUploading(true);
-      const url = await uploadImage(file, user.id, 'banner');
-      if (url) {
-        onBannerChange(url);
-      }
+      // For now, just use a placeholder URL
+      onBannerChange('https://via.placeholder.com/1200x400');
       setBannerUploading(false);
     }
   };
@@ -67,7 +61,6 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-8 p-6">
-        {/* Image Size Guidelines */}
         <Alert className="border-dna-copper/20 bg-dna-copper/5">
           <Info className="h-4 w-4 text-dna-copper" />
           <AlertDescription className="text-sm">
@@ -78,73 +71,6 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
           </AlertDescription>
         </Alert>
 
-        {/* Banner Image */}
-        {onBannerChange && (
-          <div className="space-y-4">
-            <Label className="text-lg font-semibold text-dna-forest flex items-center gap-2">
-              <Image className="w-5 h-5 text-dna-emerald" />
-              Banner Image
-            </Label>
-            
-            {/* Banner Preview */}
-            <div className="relative h-40 rounded-xl overflow-hidden border-3 border-dna-emerald/20 shadow-lg group">
-              <img
-                src={bannerUrl || defaultBanner}
-                alt="Profile banner"
-                className="w-full h-full object-cover transition-transform group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 text-white">
-                <p className="text-sm font-medium">Your Story Banner</p>
-              </div>
-            </div>
-
-            {/* Banner Upload Options */}
-            <Tabs value={bannerUploadMethod} onValueChange={(value) => setBannerUploadMethod(value as 'url' | 'file')}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="url" className="flex items-center gap-2">
-                  <Link className="w-4 h-4" />
-                  URL
-                </TabsTrigger>
-                <TabsTrigger value="file" className="flex items-center gap-2">
-                  <Upload className="w-4 h-4" />
-                  Upload
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="url" className="space-y-2">
-                <Input
-                  type="url"
-                  placeholder="https://example.com/your-banner-image.jpg"
-                  value={bannerUrl || ''}
-                  onChange={(e) => onBannerChange(e.target.value)}
-                  className="border-dna-emerald/20 focus:border-dna-emerald"
-                />
-              </TabsContent>
-              
-              <TabsContent value="file" className="space-y-2">
-                <div className="border-2 border-dashed border-dna-emerald/30 rounded-lg p-6 text-center hover:border-dna-emerald/50 transition-colors">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleBannerFileUpload}
-                    className="hidden"
-                    id="banner-upload"
-                    disabled={bannerUploading}
-                  />
-                  <label htmlFor="banner-upload" className="cursor-pointer">
-                    <Upload className="w-8 h-8 text-dna-emerald mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">
-                      {bannerUploading ? 'Uploading...' : 'Click to upload banner image'}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">1200x400px recommended</p>
-                  </label>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-        )}
-
         {/* Profile Picture */}
         <div className="space-y-4">
           <Label className="text-lg font-semibold text-dna-forest flex items-center gap-2">
@@ -152,7 +78,6 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
             Profile Picture
           </Label>
           
-          {/* Profile Picture Preview */}
           <div className="flex items-center gap-6">
             <div className="relative group">
               <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-dna-copper/20 shadow-lg">
@@ -163,17 +88,9 @@ const ProfilePictureSection: React.FC<ProfilePictureSectionProps> = ({
                   </AvatarFallback>
                 </Avatar>
               </div>
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-dna-copper rounded-full flex items-center justify-center shadow-md">
-                <Camera className="w-4 h-4 text-white" />
-              </div>
             </div>
             
             <div className="flex-1 space-y-3">
-              <div className="text-sm text-gray-600">
-                Choose how you'd like to add your profile picture
-              </div>
-              
-              {/* Avatar Upload Options */}
               <Tabs value={uploadMethod} onValueChange={(value) => setUploadMethod(value as 'url' | 'file')}>
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="url" className="flex items-center gap-2">

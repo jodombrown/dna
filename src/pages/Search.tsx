@@ -6,14 +6,11 @@ import AdvancedSearch from '@/components/search/AdvancedSearch';
 import SearchResults from '@/components/search/SearchResults';
 import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
 import { useRecommendations } from '@/hooks/useRecommendations';
-import { useConnections } from '@/hooks/useConnections';
-import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SearchFilters } from '@/types/searchTypes';
-import RecommendationCard from '@/components/connect/RecommendationCard';
 import { Lightbulb } from 'lucide-react';
 
 const Search = () => {
@@ -21,13 +18,10 @@ const Search = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { results, loading, error, searchProfiles, searchProfessionals, clearResults } = useAdvancedSearch();
-  const { recommendations, searchWithRelevance, searchResults } = useRecommendations();
-  const { sendConnectionRequest } = useConnections();
-  const { sendMessage } = useMessages();
+  const { recommendations } = useRecommendations();
   const [activeTab, setActiveTab] = useState('profiles');
   const [showRecommendations, setShowRecommendations] = useState(true);
 
-  // Initialize search from URL parameters
   useEffect(() => {
     const queryParam = searchParams.get('q');
     if (queryParam) {
@@ -51,12 +45,7 @@ const Search = () => {
     setShowRecommendations(false);
     
     if (activeTab === 'profiles') {
-      // Use enhanced search with relevance
-      if (filters.searchTerm) {
-        await searchWithRelevance(filters.searchTerm, filters);
-      } else {
-        await searchProfiles(filters);
-      }
+      await searchProfiles(filters);
     } else {
       await searchProfessionals(filters);
     }
@@ -69,13 +58,7 @@ const Search = () => {
       return;
     }
 
-    try {
-      await sendConnectionRequest(userId, 'I would like to connect with you!');
-      toast.success('Connection request sent successfully!');
-    } catch (error) {
-      console.error('Connection error:', error);
-      toast.error('Failed to send connection request');
-    }
+    toast.success('Connection request functionality placeholder');
   };
 
   const handleMessage = async (recipientId: string, recipientName: string) => {
@@ -85,18 +68,10 @@ const Search = () => {
       return;
     }
 
-    try {
-      await sendMessage(recipientId, `Hi ${recipientName}, I'd like to connect and learn more about your work!`);
-      toast.success('Message sent successfully!');
-      navigate('/messages');
-    } catch (error) {
-      console.error('Message error:', error);
-      toast.error('Failed to send message');
-    }
+    toast.success('Message functionality placeholder');
   };
 
-  // Determine which results to show
-  const displayResults = showRecommendations ? [] : (searchResults.length > 0 ? searchResults : results);
+  const displayResults = showRecommendations ? [] : results;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -113,7 +88,6 @@ const Search = () => {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Search Filters */}
           <div className="lg:col-span-1">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
               <TabsList className="grid w-full grid-cols-2">
@@ -132,7 +106,6 @@ const Search = () => {
             />
           </div>
 
-          {/* Search Results */}
           <div className="lg:col-span-2">
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
@@ -140,7 +113,6 @@ const Search = () => {
               </div>
             )}
 
-            {/* Show recommendations when no search is active */}
             {showRecommendations && user && recommendations.length > 0 && (
               <Card className="mb-6">
                 <CardHeader>
@@ -150,22 +122,13 @@ const Search = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid gap-4">
-                    {recommendations.slice(0, 6).map((profile) => (
-                      <RecommendationCard
-                        key={profile.id}
-                        profile={profile}
-                        onConnect={handleConnect}
-                        onMessage={handleMessage}
-                        isLoggedIn={!!user}
-                      />
-                    ))}
+                  <div className="text-center py-8 text-gray-500">
+                    Recommendations will be displayed here
                   </div>
                 </CardContent>
               </Card>
             )}
 
-            {/* Regular search results */}
             {!showRecommendations && (
               <SearchResults
                 results={displayResults}
@@ -175,7 +138,6 @@ const Search = () => {
               />
             )}
 
-            {/* Initial state for non-authenticated users */}
             {showRecommendations && !user && (
               <Card>
                 <CardContent className="pt-6 text-center">

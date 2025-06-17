@@ -1,9 +1,8 @@
+
 import React from 'react';
-import { Textarea } from '@/components/ui/textarea';
-import LocationAutocomplete from './LocationAutocomplete';
-import { COUNTRIES, STATES_USA, CITIES_SAMPLE } from './locationData';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface BasicInfoFieldsProps {
   formData: {
@@ -46,11 +45,11 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({
           value={formData.full_name}
           onChange={(e) => onFieldChange('full_name', e.target.value)}
           placeholder="Enter your full name"
-          className={errors.full_name ? 'border-dna-crimson' : ''}
+          className={errors.full_name ? 'border-red-500' : ''}
           required
         />
         {errors.full_name && (
-          <p className="text-sm text-dna-crimson mt-1">{errors.full_name}</p>
+          <p className="text-sm text-red-500 mt-1">{errors.full_name}</p>
         )}
       </div>
 
@@ -62,10 +61,10 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({
             value={formData.profession}
             onChange={(e) => onFieldChange('profession', e.target.value)}
             placeholder="Software Engineer, Doctor, etc."
-            className={errors.profession ? 'border-dna-crimson' : ''}
+            className={errors.profession ? 'border-red-500' : ''}
           />
           {errors.profession && (
-            <p className="text-sm text-dna-crimson mt-1">{errors.profession}</p>
+            <p className="text-sm text-red-500 mt-1">{errors.profession}</p>
           )}
         </div>
 
@@ -76,54 +75,26 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({
             value={formData.company}
             onChange={(e) => onFieldChange('company', e.target.value)}
             placeholder="Your company or organization"
-            className={errors.company ? 'border-dna-crimson' : ''}
+            className={errors.company ? 'border-red-500' : ''}
           />
           {errors.company && (
-            <p className="text-sm text-dna-crimson mt-1">{errors.company}</p>
+            <p className="text-sm text-red-500 mt-1">{errors.company}</p>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <LocationAutocomplete
-            id="city"
-            label="City"
-            value={formData.city || ''}
-            placeholder="Enter city"
-            onChange={val => onFieldChange('city', val)}
-            suggestions={CITIES_SAMPLE}
-          />
-          {errors.city && (
-            <p className="text-sm text-dna-crimson mt-1">{errors.city}</p>
-          )}
-        </div>
-        <div>
-          <LocationAutocomplete
-            id="state_province"
-            label="State / Province"
-            value={formData.state_province || ''}
-            placeholder="Enter state or province"
-            onChange={val => onFieldChange('state_province', val)}
-            suggestions={STATES_USA}
-          />
-          {errors.state_province && (
-            <p className="text-sm text-dna-crimson mt-1">{errors.state_province}</p>
-          )}
-        </div>
-        <div>
-          <LocationAutocomplete
-            id="current_country"
-            label="Country"
-            value={formData.current_country || ''}
-            placeholder="Enter country"
-            onChange={val => onFieldChange('current_country', val)}
-            suggestions={COUNTRIES}
-          />
-          {errors.current_country && (
-            <p className="text-sm text-dna-crimson mt-1">{errors.current_country}</p>
-          )}
-        </div>
+      <div>
+        <Label htmlFor="location" className="text-dna-forest">Location</Label>
+        <Input
+          id="location"
+          value={formData.location}
+          onChange={(e) => onFieldChange('location', e.target.value)}
+          placeholder="City, Country"
+          className={errors.location ? 'border-red-500' : ''}
+        />
+        {errors.location && (
+          <p className="text-sm text-red-500 mt-1">{errors.location}</p>
+        )}
       </div>
 
       <div>
@@ -134,10 +105,10 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({
           onChange={(e) => onFieldChange('bio', e.target.value)}
           placeholder="Tell us about yourself and your diaspora journey..."
           rows={4}
-          className={errors.bio ? 'border-dna-crimson' : ''}
+          className={errors.bio ? 'border-red-500' : ''}
         />
         {errors.bio && (
-          <p className="text-sm text-dna-crimson mt-1">{errors.bio}</p>
+          <p className="text-sm text-red-500 mt-1">{errors.bio}</p>
         )}
       </div>
     </div>
