@@ -4,13 +4,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import EnhancedProfileForm from '@/components/profile/EnhancedProfileForm';
-import EnhancedProfileDisplay from '@/components/profile/EnhancedProfileDisplay';
-import ProfileOverview from '@/components/profile/ProfileOverview';
-import MentorshipPreferences from '@/components/profile/MentorshipPreferences';
-import CulturalImpactSection from '@/components/profile/CulturalImpactSection';
+import DNALinkedInProfile from '@/components/profile/DNALinkedInProfile';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Profile = () => {
   const { id } = useParams();
@@ -19,14 +15,18 @@ const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const isOwnProfile = user?.id === id;
 
   useEffect(() => {
     if (id) {
       fetchProfile();
+      if (!isOwnProfile) {
+        checkFollowingStatus();
+      }
     }
-  }, [id]);
+  }, [id, isOwnProfile]);
 
   const fetchProfile = async () => {
     try {
@@ -45,6 +45,23 @@ const Profile = () => {
     }
   };
 
+  const checkFollowingStatus = async () => {
+    if (!user || !id) return;
+    
+    try {
+      const { data } = await supabase
+        .from('user_follows')
+        .select('id')
+        .eq('follower_id', user.id)
+        .eq('following_id', id)
+        .single();
+      
+      setIsFollowing(!!data);
+    } catch (error) {
+      // Not following
+    }
+  };
+
   const handleSave = () => {
     setIsEditing(false);
     fetchProfile();
@@ -54,13 +71,32 @@ const Profile = () => {
     setIsEditing(true);
   };
 
-  const handleConnect = () => {
-    // Navigate to connect functionality
-    navigate(`/connect/${id}`);
+  const handleFollow = async () => {
+    if (!user || !id) return;
+
+    try {
+      if (isFollowing) {
+        await supabase
+          .from('user_follows')
+          .delete()
+          .eq('follower_id', user.id)
+          .eq('following_id', id);
+        setIsFollowing(false);
+      } else {
+        await supabase
+          .from('user_follows')
+          .insert({
+            follower_id: user.id,
+            following_id: id
+          });
+        setIsFollowing(true);
+      }
+    } catch (error) {
+      console.error('Error updating follow status:', error);
+    }
   };
 
   const handleMessage = () => {
-    // Navigate to messages with this user
     navigate(`/messages?user=${id}`);
   };
 
@@ -118,43 +154,13 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-6">
-          {/* Enhanced Profile Display */}
-          <EnhancedProfileDisplay 
-            profile={profile} 
-            isOwnProfile={isOwnProfile}
-            onEdit={handleEdit}
-            onConnect={handleConnect}
-          />
-
-          {/* Tabbed Enhanced Sections */}
-          <Tabs defaultValue="overview" className="mt-8">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="overview">Profile Overview</TabsTrigger>
-              <TabsTrigger value="mentorship">Mentorship & Network</TabsTrigger>
-              <TabsTrigger value="impact">Cultural Impact</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview" className="mt-6">
-              <ProfileOverview profile={profile} />
-            </TabsContent>
-            
-            <TabsContent value="mentorship" className="mt-6">
-              <MentorshipPreferences 
-                profile={profile} 
-                isOwnProfile={isOwnProfile}
-                onConnect={handleConnect}
-                onMessage={handleMessage}
-              />
-            </TabsContent>
-            
-            <TabsContent value="impact" className="mt-6">
-              <CulturalImpactSection profile={profile} />
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
+      <DNALinkedInProfile
+        profile={profile}
+        isOwnProfile={isOwnProfile}
+        onEdit={handleEdit}
+        onFollow={handleFollow}
+        onMessage={handleMessage}
+      />
     </div>
   );
 };

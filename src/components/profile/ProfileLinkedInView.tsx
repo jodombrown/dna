@@ -2,35 +2,42 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import ProfileCompletionBar from "./ProfileCompletionBar";
-import ProfileHeroSection from "./ProfileHeroSection";
-import ProfileStatsSection from "./ProfileStatsSection";
-import ProfileAboutSection from "./ProfileAboutSection";
-import ProfileSkillsSection from "./ProfileSkillsSection";
+import DNALinkedInProfile from "./DNALinkedInProfile";
 
 const ProfileLinkedInView = ({
   user,
   profile,
   handleSignOut,
   setEditing
-}: any) => (
-  <div className="max-w-5xl mx-auto pt-4 space-y-6">
-    <div className="flex justify-end">
-      <Button variant="destructive" className="mb-6" onClick={handleSignOut}>
-        Sign Out
-      </Button>
-    </div>
-    <ProfileCompletionBar profile={profile} />
-    <ProfileHeroSection profile={profile} isOwnProfile={profile.id === user.id} onEdit={() => setEditing(true)} />
-    <ProfileStatsSection profile={profile} />
-    <div className="grid md:grid-cols-3 gap-6">
-      <div className="md:col-span-2 space-y-6">
-        <ProfileAboutSection profile={profile} />
+}: any) => {
+  const handleEdit = () => {
+    setEditing(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <h1 className="text-lg font-semibold text-dna-forest">My DNA Profile</h1>
+          <Button variant="destructive" onClick={handleSignOut}>
+            Sign Out
+          </Button>
+        </div>
       </div>
-      <div className="space-y-6">
-        <ProfileSkillsSection profile={profile} />
+      
+      <div className="pb-8">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <ProfileCompletionBar profile={profile} />
+        </div>
+        
+        <DNALinkedInProfile
+          profile={profile}
+          isOwnProfile={true}
+          onEdit={handleEdit}
+        />
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ProfileLinkedInView;
