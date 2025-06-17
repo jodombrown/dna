@@ -17,7 +17,20 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 
 interface PostCardProps {
-  post: any;
+  post: {
+    id: string;
+    content: string | null;
+    created_at: string | null;
+    user_id: string | null;
+    likes_count?: number;
+    comments_count?: number;
+    profiles: {
+      full_name: string | null;
+      avatar_url?: string | null;
+      professional_role?: string | null;
+      company?: string | null;
+    } | null;
+  };
   onPostUpdate: (post: any) => void;
 }
 
@@ -25,6 +38,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likes_count || 0);
   const { toast } = useToast();
 
   React.useEffect(() => {
@@ -36,7 +50,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
     
     try {
       const { data } = await supabase
-        .from('post_likes' as any)
+        .from('post_likes')
         .select('id')
         .eq('post_id', post.id)
         .eq('user_id', user.id)
@@ -54,28 +68,32 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
     try {
       if (isLiked) {
         await supabase
-          .from('post_likes' as any)
+          .from('post_likes')
           .delete()
           .eq('post_id', post.id)
           .eq('user_id', user.id);
         
         setIsLiked(false);
+        const newCount = Math.max(0, likesCount - 1);
+        setLikesCount(newCount);
         onPostUpdate({
           ...post,
-          likes_count: Math.max(0, (post.likes_count || 0) - 1)
+          likes_count: newCount
         });
       } else {
         await supabase
-          .from('post_likes' as any)
+          .from('post_likes')
           .insert({
             post_id: post.id,
             user_id: user.id
           });
         
         setIsLiked(true);
+        const newCount = likesCount + 1;
+        setLikesCount(newCount);
         onPostUpdate({
           ...post,
-          likes_count: (post.likes_count || 0) + 1
+          likes_count: newCount
         });
       }
     } catch (error: any) {
@@ -89,8 +107,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
   };
 
   const profile = post.profiles;
-  const likesCount = post.likes_count || 0;
   const commentsCount = post.comments_count || 0;
+
+  if (!post.content || !post.created_at) {
+    return null;
+  }
 
   return (
     <Card className="border hover:shadow-lg transition-shadow">
@@ -99,7 +120,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
         <div className="flex items-start justify-between mb-4">
           <div className="flex gap-3">
             <Avatar className="w-12 h-12">
-              <AvatarImage src={profile?.avatar_url} alt={profile?.full_name} />
+              <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.full_name || 'User'} />
               <AvatarFallback className="bg-dna-copper text-white">
                 {profile?.full_name?.split(' ').map((n: string) => n[0]).join('') || 'U'}
               </AvatarFallback>

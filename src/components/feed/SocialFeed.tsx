@@ -6,21 +6,17 @@ import PostCreator from './PostCreator';
 
 interface Post {
   id: string;
-  content: string;
-  created_at: string;
-  likes_count: number;
-  comments_count: number;
-  is_published: boolean;
-  post_type: string;
-  media_urls: string[];
-  article_title: string | null;
-  article_summary: string | null;
-  user_id: string;
+  content: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  user_id: string | null;
+  likes_count?: number;
+  comments_count?: number;
   profiles: {
-    full_name: string;
-    avatar_url?: string;
-    professional_role?: string;
-    company?: string;
+    full_name: string | null;
+    avatar_url?: string | null;
+    professional_role?: string | null;
+    company?: string | null;
   } | null;
 }
 
@@ -34,7 +30,6 @@ const SocialFeed = () => {
       const { data: postsData, error: postsError } = await supabase
         .from('posts')
         .select('*')
-        .eq('is_published', true)
         .order('created_at', { ascending: false });
 
       if (postsError) {
@@ -43,7 +38,7 @@ const SocialFeed = () => {
         return;
       }
 
-      // Get profiles for each post
+      // Get profiles for each post and add default values for missing properties
       const postsWithProfiles: Post[] = [];
       
       for (const post of postsData || []) {
@@ -55,6 +50,8 @@ const SocialFeed = () => {
 
         postsWithProfiles.push({
           ...post,
+          likes_count: 0, // Default value since we don't have likes_count in the database yet
+          comments_count: 0, // Default value since we don't have comments_count in the database yet
           profiles: profileData || {
             full_name: 'DNA Member',
             avatar_url: null,
