@@ -25,11 +25,14 @@ const PostCreator: React.FC<PostCreatorProps> = ({ onPostCreated }) => {
     setIsPosting(true);
     try {
       const { error } = await supabase
-        .from('posts')
+        .from('posts' as any)
         .insert({
           user_id: user.id,
           content: content.trim(),
-          post_type: 'text'
+          post_type: 'text',
+          is_published: true,
+          likes_count: 0,
+          comments_count: 0
         });
 
       if (error) throw error;

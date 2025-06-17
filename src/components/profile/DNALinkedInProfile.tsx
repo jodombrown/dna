@@ -48,13 +48,19 @@ const DNALinkedInProfile: React.FC<DNALinkedInProfileProps> = ({
 
   const fetchUserContent = async () => {
     try {
-      // Fetch user's posts
-      const { data: posts } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('user_id', profile.id)
-        .order('created_at', { ascending: false })
-        .limit(5);
+      // Fetch user's posts - use fallback approach since posts table exists but isn't in types
+      try {
+        const { data: posts } = await supabase
+          .from('posts' as any)
+          .select('*')
+          .eq('user_id', profile.id)
+          .order('created_at', { ascending: false })
+          .limit(5);
+        setUserPosts(posts || []);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+        setUserPosts([]);
+      }
 
       // Fetch user's events
       const { data: events } = await supabase
@@ -70,7 +76,6 @@ const DNALinkedInProfile: React.FC<DNALinkedInProfileProps> = ({
         .eq('created_by', profile.id)
         .limit(5);
 
-      setUserPosts(posts || []);
       setUserEvents(events || []);
       setUserCommunities(communities || []);
     } catch (error) {

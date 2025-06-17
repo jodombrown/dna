@@ -1,80 +1,132 @@
 
-import React, { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { User } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { getProfileRecommendations, RecommendationProfile } from '@/services/recommendationsService';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { Users, UserPlus } from 'lucide-react';
 
-interface SuggestedConnectionsSectionProps {
-  userId: string;
-  countryOfOrigin?: string;
-  location?: string;
-  onConnect?: (profileId: string) => void;
-}
-
-const SuggestedConnectionsSection: React.FC<SuggestedConnectionsSectionProps> = ({
-  userId,
-  countryOfOrigin,
-  location,
-  onConnect,
-}) => {
-  const [profiles, setProfiles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+const SuggestedConnectionsSection: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [recommendations, setRecommendations] = useState<RecommendationProfile[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchSuggestions() {
-      setLoading(true);
-      try {
-        // Simple query to get profiles
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .neq('user_id', userId)
-          .limit(5);
-
-        if (error) {
-          console.error('Error fetching suggestions:', error);
-          setProfiles([]);
-        } else {
-          setProfiles(data || []);
-        }
-      } catch (e) {
-        console.error('Error in fetchSuggestions:', e);
-        setProfiles([]);
-      } finally {
-        setLoading(false);
-      }
+    if (user) {
+      fetchRecommendations();
     }
+  }, [user]);
+
+  const fetchRecommendations = async () => {
+    if (!user) return;
     
-    if (userId) {
-      fetchSuggestions();
+    try {
+      setLoading(true);
+      const recs = await getProfileRecommendations(user.id, 6);
+      setRecommendations(recs);
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+      setRecommendations([]);
+    } finally {
+      setLoading(false);
     }
-  }, [userId, countryOfOrigin, location]);
+  };
 
-  if (loading) return <div className="text-sm text-gray-400 py-4">Loading…</div>;
-  if (!profiles.length)
-    return <div className="text-sm text-gray-500 py-4">No suggestions yet—fill out more profile fields for better matches.</div>;
+  const handleViewProfile = (profileId: string) => {
+    navigate(`/profile/${profileId}`);
+  };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-dna-forest">
+            <Users className="w-5 h-5" />
+            Suggested Connections
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-gray-500">
+            Loading suggestions...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (recommendations.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-dna-forest">
+            <Users className="w-5 h-5" />
+            Suggested Connections
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-gray-500">
+            No suggestions available at the moment.
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <div className="grid gap-3">
-      {profiles.map((p) => (
-        <Card key={p.id} className="flex flex-row gap-4 items-center p-4">
-          <img
-            src={p.avatar_url || "/placeholder.svg"}
-            className="w-10 h-10 rounded-full border bg-gray-100"
-            alt={p.full_name || 'Profile'}
-          />
-          <div className="flex flex-col min-w-0 flex-1">
-            <span className="font-medium text-dna-forest truncate">{p.full_name || 'DNA Member'}</span>
-            <span className="text-xs text-gray-600 truncate">{p.professional_role || 'Professional'}</span>
-            <span className="text-xs text-gray-400">{p.company || ''}</span>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-dna-forest">
+          <Users className="w-5 h-5" />
+          Suggested Connections
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {recommendations.slice(0, 3).map((recommendation) => (
+          <div key={recommendation.id} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+            <Avatar className="w-12 h-12">
+              <AvatarImage src={recommendation.avatar_url} alt={recommendation.full_name} />
+              <AvatarFallback className="bg-dna-copper text-white">
+                {recommendation.full_name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div className="flex-1 min-w-0">
+              <h4 className="font-medium text-gray-900 truncate">
+                {recommendation.full_name}
+              </h4>
+              <p className="text-sm text-gray-600 truncate">
+                {recommendation.profession}
+              </p>
+              <p className="text-xs text-dna-copper">
+                {recommendation.connection_reason}
+              </p>
+            </div>
+
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
+              onClick={() => handleViewProfile(recommendation.id)}
+            >
+              <UserPlus className="w-4 h-4" />
+            </Button>
           </div>
-          <Button variant="outline" size="sm" onClick={() => onConnect?.(p.id)}>
-            <User className="w-4 h-4 mr-1" /> Connect
+        ))}
+        
+        <div className="pt-2">
+          <Button 
+            variant="ghost" 
+            className="w-full text-dna-emerald hover:bg-dna-emerald/10"
+            onClick={() => navigate('/members')}
+          >
+            View All Suggestions
           </Button>
-        </Card>
-      ))}
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

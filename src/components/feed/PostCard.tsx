@@ -36,7 +36,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
     
     try {
       const { data } = await supabase
-        .from('post_likes')
+        .from('post_likes' as any)
         .select('id')
         .eq('post_id', post.id)
         .eq('user_id', user.id)
@@ -54,7 +54,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
     try {
       if (isLiked) {
         await supabase
-          .from('post_likes')
+          .from('post_likes' as any)
           .delete()
           .eq('post_id', post.id)
           .eq('user_id', user.id);
@@ -62,11 +62,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
         setIsLiked(false);
         onPostUpdate({
           ...post,
-          likes_count: post.likes_count - 1
+          likes_count: Math.max(0, (post.likes_count || 0) - 1)
         });
       } else {
         await supabase
-          .from('post_likes')
+          .from('post_likes' as any)
           .insert({
             post_id: post.id,
             user_id: user.id
@@ -75,10 +75,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
         setIsLiked(true);
         onPostUpdate({
           ...post,
-          likes_count: post.likes_count + 1
+          likes_count: (post.likes_count || 0) + 1
         });
       }
     } catch (error: any) {
+      console.error('Error updating like:', error);
       toast({
         title: "Error",
         description: "Failed to update like",
@@ -88,6 +89,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
   };
 
   const profile = post.profiles;
+  const likesCount = post.likes_count || 0;
+  const commentsCount = post.comments_count || 0;
 
   return (
     <Card className="border hover:shadow-lg transition-shadow">
@@ -142,19 +145,19 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
         </div>
 
         {/* Engagement Stats */}
-        {(post.likes_count > 0 || post.comments_count > 0) && (
+        {(likesCount > 0 || commentsCount > 0) && (
           <div className="flex items-center justify-between py-3 border-b border-gray-100 mb-3">
             <div className="flex items-center gap-4 text-sm text-gray-600">
-              {post.likes_count > 0 && (
+              {likesCount > 0 && (
                 <span className="flex items-center gap-1">
                   <div className="w-5 h-5 bg-dna-crimson rounded-full flex items-center justify-center">
                     <Heart className="w-3 h-3 text-white fill-current" />
                   </div>
-                  {post.likes_count}
+                  {likesCount}
                 </span>
               )}
-              {post.comments_count > 0 && (
-                <span>{post.comments_count} comments</span>
+              {commentsCount > 0 && (
+                <span>{commentsCount} comments</span>
               )}
             </div>
           </div>
