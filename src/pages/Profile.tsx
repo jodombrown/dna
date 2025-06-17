@@ -50,7 +50,7 @@ const Profile = () => {
     
     try {
       const { data } = await supabase
-        .from('user_follows')
+        .from('user_connections')
         .select('id')
         .eq('follower_id', user.id)
         .eq('following_id', id)
@@ -77,14 +77,14 @@ const Profile = () => {
     try {
       if (isFollowing) {
         await supabase
-          .from('user_follows')
+          .from('user_connections')
           .delete()
           .eq('follower_id', user.id)
           .eq('following_id', id);
         setIsFollowing(false);
       } else {
         await supabase
-          .from('user_follows')
+          .from('user_connections')
           .insert({
             follower_id: user.id,
             following_id: id

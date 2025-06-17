@@ -65,19 +65,27 @@ const Onboarding = () => {
 
   // On completing each onboarding step: notify, update profile onboarding_status, and refetch
   const completeStep = async (step: string, extra: Record<string, any> = {}) => {
+    const updateData: any = {
+      onboarding_status: { ...profile?.onboarding_status, [step]: true }
+    };
+    
+    if (step === "profile_completed") {
+      updateData.profile_completed_at = new Date().toISOString();
+    } else if (step === "community_joined") {
+      updateData.first_community_joined_at = new Date().toISOString();
+    } else if (step === "connection_sent") {
+      updateData.first_connection_made_at = new Date().toISOString();
+    }
+
     await supabase
       .from("profiles")
-      .update({
-        onboarding_status: { ...profile?.onboarding_status, [step]: true },
-        ...(step === "profile_completed" ? { profile_completed_at: new Date().toISOString() } : {}),
-        ...(step === "community_joined" ? { first_community_joined_at: new Date().toISOString() } : {}),
-        ...(step === "connection_sent" ? { first_connection_made_at: new Date().toISOString() } : {})
-      })
+      .update(updateData)
       .eq("id", user.id);
+      
     if (step === "profile_completed") {
       toast({
         title: "🎉 Profile Complete!",
-        description: "Way to go! You’re ready for the next step: join a community."
+        description: "Way to go! You're ready for the next step: join a community."
       });
     }
     if (step === "community_joined") {
@@ -89,7 +97,7 @@ const Onboarding = () => {
     if (step === "connection_sent") {
       toast({
         title: "🌟 First Connection Sent!",
-        description: "You’re officially part of the community. Dashboard unlocked!"
+        description: "You're officially part of the community. Dashboard unlocked!"
       });
     }
     await fetchProfileAndStatus();
@@ -139,7 +147,7 @@ const Onboarding = () => {
             Welcome to DNA! {profile?.full_name && <>👋 {profile.full_name}</>}
           </CardTitle>
           <div className="mt-2 text-sm text-dna-copper tracking-tight">
-            We’ll help you connect, collaborate, and make impact. Complete these steps to unlock your dashboard.
+            We'll help you connect, collaborate, and make impact. Complete these steps to unlock your dashboard.
           </div>
         </CardHeader>
         <CardContent>

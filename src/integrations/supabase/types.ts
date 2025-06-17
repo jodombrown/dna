@@ -96,7 +96,7 @@ export type Database = {
           message?: string | null
           recipient_id: string
           requester_id: string
-          status?: string
+          status: string
           updated_at?: string
         }
         Update: {
@@ -251,7 +251,15 @@ export type Database = {
           title?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "initiatives_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -305,7 +313,15 @@ export type Database = {
           metadata?: Json | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       phase_metrics: {
         Row: {
@@ -340,80 +356,6 @@ export type Database = {
         }
         Relationships: []
       }
-      post_likes: {
-        Row: {
-          created_at: string
-          id: string
-          post_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          post_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          post_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "post_likes_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      posts: {
-        Row: {
-          article_summary: string | null
-          article_title: string | null
-          comments_count: number | null
-          content: string
-          created_at: string
-          id: string
-          is_published: boolean | null
-          likes_count: number | null
-          media_urls: string[] | null
-          post_type: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          article_summary?: string | null
-          article_title?: string | null
-          comments_count?: number | null
-          content: string
-          created_at?: string
-          id?: string
-          is_published?: boolean | null
-          likes_count?: number | null
-          media_urls?: string[] | null
-          post_type?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          article_summary?: string | null
-          article_title?: string | null
-          comments_count?: number | null
-          content?: string
-          created_at?: string
-          id?: string
-          is_published?: boolean | null
-          likes_count?: number | null
-          media_urls?: string[] | null
-          post_type?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       professionals: {
         Row: {
           availability_for: string[] | null
@@ -434,6 +376,7 @@ export type Database = {
           looking_for_opportunities: boolean | null
           profession: string | null
           updated_at: string
+          user_id: string | null
           website_url: string | null
           years_experience: number | null
         }
@@ -456,6 +399,7 @@ export type Database = {
           looking_for_opportunities?: boolean | null
           profession?: string | null
           updated_at?: string
+          user_id?: string | null
           website_url?: string | null
           years_experience?: number | null
         }
@@ -478,6 +422,7 @@ export type Database = {
           looking_for_opportunities?: boolean | null
           profession?: string | null
           updated_at?: string
+          user_id?: string | null
           website_url?: string | null
           years_experience?: number | null
         }
@@ -485,37 +430,184 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_visibility: string | null
+          achievements: string | null
+          availability_for_mentoring: boolean | null
+          available_for: string[] | null
           avatar_url: string | null
+          banner_image_url: string | null
+          banner_url: string | null
           bio: string | null
+          certifications: string | null
+          city: string | null
+          community_involvement: string | null
           company: string | null
+          country_of_origin: string | null
           created_at: string
+          current_country: string | null
+          diaspora_networks: string[] | null
+          diaspora_origin: string | null
+          education: string | null
+          email: string | null
+          engagement_intentions: string[] | null
+          first_community_joined_at: string | null
+          first_connection_made_at: string | null
+          followers_count: number | null
+          following_count: number | null
           full_name: string | null
+          giving_back_initiatives: string | null
+          headline: string | null
+          home_country_projects: string | null
           id: string
+          impact_areas: string[] | null
+          industry: string | null
+          innovation_pathways: string | null
+          interests: string[] | null
+          is_public: boolean | null
+          languages: string | null
+          linkedin_url: string | null
+          location: string | null
+          looking_for_opportunities: boolean | null
+          mentorship_areas: string[] | null
+          my_dna_statement: string | null
+          notifications_enabled: boolean | null
+          onboarding_status: Json | null
+          organization: string | null
+          past_contributions: string | null
+          phone: string | null
+          profession: string | null
           professional_role: string | null
+          professional_sectors: string[] | null
+          profile_completed_at: string | null
+          profile_picture_url: string | null
+          skills: string[] | null
+          skills_needed: string[] | null
+          skills_offered: string[] | null
           updated_at: string
-          user_id: string | null
+          volunteer_experience: string | null
+          website_url: string | null
+          years_experience: number | null
+          years_in_diaspora: number | null
         }
         Insert: {
+          account_visibility?: string | null
+          achievements?: string | null
+          availability_for_mentoring?: boolean | null
+          available_for?: string[] | null
           avatar_url?: string | null
+          banner_image_url?: string | null
+          banner_url?: string | null
           bio?: string | null
+          certifications?: string | null
+          city?: string | null
+          community_involvement?: string | null
           company?: string | null
+          country_of_origin?: string | null
           created_at?: string
+          current_country?: string | null
+          diaspora_networks?: string[] | null
+          diaspora_origin?: string | null
+          education?: string | null
+          email?: string | null
+          engagement_intentions?: string[] | null
+          first_community_joined_at?: string | null
+          first_connection_made_at?: string | null
+          followers_count?: number | null
+          following_count?: number | null
           full_name?: string | null
-          id?: string
+          giving_back_initiatives?: string | null
+          headline?: string | null
+          home_country_projects?: string | null
+          id: string
+          impact_areas?: string[] | null
+          industry?: string | null
+          innovation_pathways?: string | null
+          interests?: string[] | null
+          is_public?: boolean | null
+          languages?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          looking_for_opportunities?: boolean | null
+          mentorship_areas?: string[] | null
+          my_dna_statement?: string | null
+          notifications_enabled?: boolean | null
+          onboarding_status?: Json | null
+          organization?: string | null
+          past_contributions?: string | null
+          phone?: string | null
+          profession?: string | null
           professional_role?: string | null
+          professional_sectors?: string[] | null
+          profile_completed_at?: string | null
+          profile_picture_url?: string | null
+          skills?: string[] | null
+          skills_needed?: string[] | null
+          skills_offered?: string[] | null
           updated_at?: string
-          user_id?: string | null
+          volunteer_experience?: string | null
+          website_url?: string | null
+          years_experience?: number | null
+          years_in_diaspora?: number | null
         }
         Update: {
+          account_visibility?: string | null
+          achievements?: string | null
+          availability_for_mentoring?: boolean | null
+          available_for?: string[] | null
           avatar_url?: string | null
+          banner_image_url?: string | null
+          banner_url?: string | null
           bio?: string | null
+          certifications?: string | null
+          city?: string | null
+          community_involvement?: string | null
           company?: string | null
+          country_of_origin?: string | null
           created_at?: string
+          current_country?: string | null
+          diaspora_networks?: string[] | null
+          diaspora_origin?: string | null
+          education?: string | null
+          email?: string | null
+          engagement_intentions?: string[] | null
+          first_community_joined_at?: string | null
+          first_connection_made_at?: string | null
+          followers_count?: number | null
+          following_count?: number | null
           full_name?: string | null
+          giving_back_initiatives?: string | null
+          headline?: string | null
+          home_country_projects?: string | null
           id?: string
+          impact_areas?: string[] | null
+          industry?: string | null
+          innovation_pathways?: string | null
+          interests?: string[] | null
+          is_public?: boolean | null
+          languages?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          looking_for_opportunities?: boolean | null
+          mentorship_areas?: string[] | null
+          my_dna_statement?: string | null
+          notifications_enabled?: boolean | null
+          onboarding_status?: Json | null
+          organization?: string | null
+          past_contributions?: string | null
+          phone?: string | null
+          profession?: string | null
           professional_role?: string | null
+          professional_sectors?: string[] | null
+          profile_completed_at?: string | null
+          profile_picture_url?: string | null
+          skills?: string[] | null
+          skills_needed?: string[] | null
+          skills_offered?: string[] | null
           updated_at?: string
-          user_id?: string | null
+          volunteer_experience?: string | null
+          website_url?: string | null
+          years_experience?: number | null
+          years_in_diaspora?: number | null
         }
         Relationships: []
       }
@@ -547,6 +639,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -582,28 +681,51 @@ export type Database = {
           title?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "projects_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_connections: {
         Row: {
-          created_at: string
-          follower_id: string
-          following_id: string
+          created_at: string | null
+          follower_id: string | null
+          following_id: string | null
           id: string
         }
         Insert: {
-          created_at?: string
-          follower_id: string
-          following_id: string
+          created_at?: string | null
+          follower_id?: string | null
+          following_id?: string | null
           id?: string
         }
         Update: {
-          created_at?: string
-          follower_id?: string
-          following_id?: string
+          created_at?: string | null
+          follower_id?: string | null
+          following_id?: string | null
           id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_connections_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_connections_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

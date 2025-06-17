@@ -74,9 +74,11 @@ export const getProfileRecommendations = async (userId: string, limit: number = 
       }
 
       // Profession similarity
-      if (profile.profession === currentUser.profession && profile.profession) {
+      const profileProfession = profile.profession || profile.professional_role;
+      const currentProfession = currentUser.profession || currentUser.professional_role;
+      if (profileProfession === currentProfession && profileProfession) {
         score += 25;
-        reasons.push(`Both work in ${profile.profession}`);
+        reasons.push(`Both work in ${profileProfession}`);
       }
 
       // Company match
@@ -138,7 +140,7 @@ export const getProfileRecommendations = async (userId: string, limit: number = 
       return {
         id: profile.id,
         full_name: profile.full_name,
-        profession: profile.profession,
+        profession: profile.profession || profile.professional_role,
         company: profile.company,
         location: profile.location,
         country_of_origin: profile.country_of_origin,
@@ -177,7 +179,7 @@ export const searchProfilesByRelevance = async (
     // Apply search term
     if (searchTerm) {
       query = query.or(
-        `full_name.ilike.%${searchTerm}%,profession.ilike.%${searchTerm}%,company.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`
+        `full_name.ilike.%${searchTerm}%,profession.ilike.%${searchTerm}%,professional_role.ilike.%${searchTerm}%,company.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`
       );
     }
 
@@ -187,7 +189,7 @@ export const searchProfilesByRelevance = async (
     }
 
     if (filters.profession) {
-      query = query.eq('profession', filters.profession);
+      query = query.or(`profession.eq.${filters.profession},professional_role.eq.${filters.profession}`);
     }
 
     if (filters.country_of_origin) {
@@ -215,6 +217,7 @@ export const searchProfilesByRelevance = async (
         const term = searchTerm.toLowerCase();
         if (profile.full_name?.toLowerCase().includes(term)) score += 20;
         if (profile.profession?.toLowerCase().includes(term)) score += 15;
+        if (profile.professional_role?.toLowerCase().includes(term)) score += 15;
         if (profile.company?.toLowerCase().includes(term)) score += 10;
         if (profile.bio?.toLowerCase().includes(term)) score += 5;
       }
@@ -225,9 +228,11 @@ export const searchProfilesByRelevance = async (
         reasons.push(`Both from ${profile.country_of_origin}`);
       }
 
-      if (profile.profession === userProfile.profession && profile.profession) {
+      const profileProfession = profile.profession || profile.professional_role;
+      const userProfession = userProfile.profession || userProfile.professional_role;
+      if (profileProfession === userProfession && profileProfession) {
         score += 8;
-        reasons.push(`Both in ${profile.profession}`);
+        reasons.push(`Both in ${profileProfession}`);
       }
 
       if (reasons.length === 0) {
@@ -237,7 +242,7 @@ export const searchProfilesByRelevance = async (
       return {
         id: profile.id,
         full_name: profile.full_name,
-        profession: profile.profession,
+        profession: profile.profession || profile.professional_role,
         company: profile.company,
         location: profile.location,
         country_of_origin: profile.country_of_origin,

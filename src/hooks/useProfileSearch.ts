@@ -28,21 +28,21 @@ export const useProfileSearch = () => {
 
       filteredData = filterByExperience(filteredData, filters.experience);
 
-      // Map to SearchResult format
+      // Map to SearchResult format with safe property access
       const searchResults: SearchResult[] = filteredData.map(profile => ({
         id: profile.id,
         full_name: profile.full_name || 'Unknown',
-        profession: profile.profession,
+        profession: profile.profession || profile.professional_role,
         company: profile.company,
         location: profile.location,
         bio: profile.bio,
         avatar_url: profile.avatar_url,
-        skills: profile.skills,
+        skills: profile.skills || [],
         is_mentor: profile.mentorship_areas && profile.mentorship_areas.length > 0,
         is_investor: false,
-        looking_for_opportunities: false,
+        looking_for_opportunities: profile.looking_for_opportunities || false,
         years_experience: profile.years_in_diaspora,
-        country_of_origin: undefined
+        country_of_origin: profile.country_of_origin
       }));
 
       return searchResults;
