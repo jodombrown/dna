@@ -8,6 +8,7 @@ import Index from './pages/Index';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Members from './pages/Members';
+import Connect from './pages/Connect';
 import PrototypingPhase from './pages/PrototypingPhase';
 import BuildPhase from './pages/BuildPhase';
 import MvpPhase from './pages/MvpPhase';
@@ -31,6 +32,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/members" element={<Members />} />
+              <Route path="/connect" element={<Connect />} />
               <Route path="/prototyping" element={<PrototypingPhase />} />
               <Route path="/build" element={<BuildPhase />} />
               <Route path="/mvp" element={<MvpPhase />} />
