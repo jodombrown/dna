@@ -38,7 +38,7 @@ const SocialFeed = () => {
         .from('posts')
         .select(`
           *,
-          profiles:user_id (
+          profiles!posts_user_id_fkey (
             full_name,
             avatar_url,
             bio,

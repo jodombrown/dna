@@ -59,7 +59,7 @@ const PostCreator: React.FC<PostCreatorProps> = ({ onPostCreated }) => {
         })
         .select(`
           *,
-          profiles:user_id (
+          profiles!posts_user_id_fkey (
             full_name,
             avatar_url,
             bio,
