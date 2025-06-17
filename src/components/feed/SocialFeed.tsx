@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,19 +10,13 @@ interface Post {
   id: string;
   user_id: string;
   content: string;
-  post_type: string;
-  media_urls?: string[];
-  article_title?: string;
-  article_summary?: string;
-  likes_count: number;
-  comments_count: number;
-  shares_count: number;
   created_at: string;
+  updated_at: string;
   profiles?: {
     full_name: string;
     avatar_url?: string;
-    professional_role?: string;
-    company?: string;
+    bio?: string;
+    location?: string;
   } | null;
 }
 
@@ -46,8 +41,8 @@ const SocialFeed = () => {
           profiles:user_id (
             full_name,
             avatar_url,
-            professional_role,
-            company
+            bio,
+            location
           )
         `)
         .order('created_at', { ascending: false })

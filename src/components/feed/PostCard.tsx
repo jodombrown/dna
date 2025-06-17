@@ -12,7 +12,7 @@ import {
   Share2, 
   MoreHorizontal,
   Globe,
-  Building
+  MapPin
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -24,11 +24,15 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
   const [showComments, setShowComments] = useState(false);
   const { toast } = useToast();
 
   React.useEffect(() => {
-    checkIfLiked();
+    if (user) {
+      checkIfLiked();
+      fetchLikesCount();
+    }
   }, [post.id, user]);
 
   const checkIfLiked = async () => {
@@ -48,6 +52,19 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
     }
   };
 
+  const fetchLikesCount = async () => {
+    try {
+      const { count } = await supabase
+        .from('post_likes')
+        .select('*', { count: 'exact', head: true })
+        .eq('post_id', post.id);
+      
+      setLikesCount(count || 0);
+    } catch (error) {
+      console.error('Error fetching likes count:', error);
+    }
+  };
+
   const handleLike = async () => {
     if (!user) return;
 
@@ -60,10 +77,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
           .eq('user_id', user.id);
         
         setIsLiked(false);
-        onPostUpdate({
-          ...post,
-          likes_count: post.likes_count - 1
-        });
+        setLikesCount(prev => prev - 1);
       } else {
         await supabase
           .from('post_likes')
@@ -73,10 +87,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
           });
         
         setIsLiked(true);
-        onPostUpdate({
-          ...post,
-          likes_count: post.likes_count + 1
-        });
+        setLikesCount(prev => prev + 1);
       }
     } catch (error: any) {
       console.error('Error updating like:', error);
@@ -108,18 +119,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
                 {profile?.full_name || 'DNA Member'}
               </h3>
               <div className="text-sm text-gray-600 space-y-1">
-                {profile?.professional_role && (
+                {profile?.bio && (
+                  <div className="text-sm">{profile.bio}</div>
+                )}
+                {profile?.location && (
                   <div className="flex items-center gap-1">
-                    <span>{profile.professional_role}</span>
-                    {profile?.company && (
-                      <>
-                        <span>at</span>
-                        <div className="flex items-center gap-1">
-                          <Building className="w-3 h-3" />
-                          <span className="text-dna-copper font-medium">{profile.company}</span>
-                        </div>
-                      </>
-                    )}
+                    <MapPin className="w-3 h-3" />
+                    <span>{profile.location}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2 text-xs text-gray-500">
@@ -143,20 +149,15 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
         </div>
 
         {/* Engagement Stats */}
-        {(post.likes_count > 0 || post.comments_count > 0) && (
+        {likesCount > 0 && (
           <div className="flex items-center justify-between py-3 border-b border-gray-100 mb-3">
             <div className="flex items-center gap-4 text-sm text-gray-600">
-              {post.likes_count > 0 && (
-                <span className="flex items-center gap-1">
-                  <div className="w-5 h-5 bg-dna-crimson rounded-full flex items-center justify-center">
-                    <Heart className="w-3 h-3 text-white fill-current" />
-                  </div>
-                  {post.likes_count}
-                </span>
-              )}
-              {post.comments_count > 0 && (
-                <span>{post.comments_count} comments</span>
-              )}
+              <span className="flex items-center gap-1">
+                <div className="w-5 h-5 bg-dna-crimson rounded-full flex items-center justify-center">
+                  <Heart className="w-3 h-3 text-white fill-current" />
+                </div>
+                {likesCount}
+              </span>
             </div>
           </div>
         )}

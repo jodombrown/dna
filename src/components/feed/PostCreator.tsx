@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,6 @@ interface PostCreatorProps {
 const PostCreator: React.FC<PostCreatorProps> = ({ onPostCreated }) => {
   const { user } = useAuth();
   const [content, setContent] = useState('');
-  const [postType, setPostType] = useState<'text' | 'article' | 'event_share'>('text');
   const [isPosting, setIsPosting] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const { toast } = useToast();
@@ -37,7 +37,7 @@ const PostCreator: React.FC<PostCreatorProps> = ({ onPostCreated }) => {
     try {
       const { data } = await supabase
         .from('profiles')
-        .select('full_name, avatar_url, professional_role, company')
+        .select('full_name, avatar_url, bio, location')
         .eq('id', user?.id)
         .single();
       setProfile(data);
@@ -55,16 +55,15 @@ const PostCreator: React.FC<PostCreatorProps> = ({ onPostCreated }) => {
         .from('posts')
         .insert({
           user_id: user.id,
-          content: content.trim(),
-          post_type: postType
+          content: content.trim()
         })
         .select(`
           *,
           profiles:user_id (
             full_name,
             avatar_url,
-            professional_role,
-            company
+            bio,
+            location
           )
         `)
         .single();
