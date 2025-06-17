@@ -25,24 +25,30 @@ const SuggestedConnectionsSection: React.FC<SuggestedConnectionsSectionProps> = 
     async function fetchSuggestions() {
       setLoading(true);
       try {
-        let base = supabase
-          .from("profiles")
-          .select("*")
-          .eq("is_public", true)
-          .neq("id", userId)
+        // Simple query to get profiles
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .neq('user_id', userId)
           .limit(5);
-        if (countryOfOrigin) base = base.eq("country_of_origin", countryOfOrigin);
-        if (location) base = base.eq("location", location);
 
-        const { data, error } = await base;
-        setProfiles(data || []);
+        if (error) {
+          console.error('Error fetching suggestions:', error);
+          setProfiles([]);
+        } else {
+          setProfiles(data || []);
+        }
       } catch (e) {
+        console.error('Error in fetchSuggestions:', e);
         setProfiles([]);
       } finally {
         setLoading(false);
       }
     }
-    if (userId) fetchSuggestions();
+    
+    if (userId) {
+      fetchSuggestions();
+    }
   }, [userId, countryOfOrigin, location]);
 
   if (loading) return <div className="text-sm text-gray-400 py-4">Loading…</div>;
@@ -56,12 +62,12 @@ const SuggestedConnectionsSection: React.FC<SuggestedConnectionsSectionProps> = 
           <img
             src={p.avatar_url || "/placeholder.svg"}
             className="w-10 h-10 rounded-full border bg-gray-100"
-            alt={p.full_name}
+            alt={p.full_name || 'Profile'}
           />
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="font-medium text-dna-forest truncate">{p.full_name}</span>
-            <span className="text-xs text-gray-600 truncate">{p.profession}</span>
-            <span className="text-xs text-gray-400">{p.location}</span>
+            <span className="font-medium text-dna-forest truncate">{p.full_name || 'DNA Member'}</span>
+            <span className="text-xs text-gray-600 truncate">{p.professional_role || 'Professional'}</span>
+            <span className="text-xs text-gray-400">{p.company || ''}</span>
           </div>
           <Button variant="outline" size="sm" onClick={() => onConnect?.(p.id)}>
             <User className="w-4 h-4 mr-1" /> Connect

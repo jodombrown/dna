@@ -10,15 +10,22 @@ export const useProfileConnectionHandlers = (profile: any, isOwnProfile: boolean
       const { data: currentUser } = await supabase.auth.getUser();
       if (!currentUser.user) return false;
 
-      const { data } = await supabase
+      // Use a simple query without complex joins
+      const { data, error } = await supabase
         .from('user_connections')
         .select('id')
         .eq('follower_id', currentUser.user.id)
         .eq('following_id', profile.id)
-        .single();
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error checking follow status:', error);
+        return false;
+      }
 
       return !!data;
     } catch (error) {
+      console.error('Error in checkFollowingStatus:', error);
       return false;
     }
   };
@@ -38,11 +45,13 @@ export const useProfileConnectionHandlers = (profile: any, isOwnProfile: boolean
 
       if (isFollowing) {
         // Unfollow
-        await supabase
+        const { error } = await supabase
           .from('user_connections')
           .delete()
           .eq('follower_id', currentUser.user.id)
           .eq('following_id', profile.id);
+
+        if (error) throw error;
 
         setIsFollowing(false);
         toast({
@@ -51,12 +60,14 @@ export const useProfileConnectionHandlers = (profile: any, isOwnProfile: boolean
         });
       } else {
         // Follow
-        await supabase
+        const { error } = await supabase
           .from('user_connections')
           .insert({
             follower_id: currentUser.user.id,
             following_id: profile.id
           });
+
+        if (error) throw error;
 
         setIsFollowing(true);
         toast({

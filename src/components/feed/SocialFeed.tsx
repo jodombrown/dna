@@ -15,12 +15,13 @@ interface Post {
   media_urls: string[];
   article_title: string | null;
   article_summary: string | null;
+  user_id: string;
   profiles: {
     full_name: string;
     avatar_url?: string;
     professional_role?: string;
     company?: string;
-  };
+  } | null;
 }
 
 const SocialFeed = () => {
@@ -29,39 +30,49 @@ const SocialFeed = () => {
 
   const fetchPosts = async () => {
     try {
-      const { data, error } = await supabase
+      // First get the posts
+      const { data: postsData, error: postsError } = await supabase
         .from('posts')
-        .select(`
-          *,
-          profiles:user_id (
-            full_name,
-            avatar_url,
-            professional_role,
-            company
-          )
-        `)
+        .select('*')
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (postsError) throw postsError;
 
-      // Transform the data to match our Post interface
-      const transformedPosts: Post[] = (data || []).map(post => ({
-        ...post,
-        profiles: post.profiles || {
-          full_name: 'Anonymous User',
-          avatar_url: null,
-          professional_role: null,
-          company: null
-        }
-      }));
+      // Then get profiles for each post
+      const postsWithProfiles: Post[] = [];
+      
+      for (const post of postsData || []) {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('full_name, avatar_url, professional_role, company')
+          .eq('user_id', post.user_id)
+          .single();
 
-      setPosts(transformedPosts);
+        postsWithProfiles.push({
+          ...post,
+          profiles: profileData || {
+            full_name: 'DNA Member',
+            avatar_url: null,
+            professional_role: null,
+            company: null
+          }
+        });
+      }
+
+      setPosts(postsWithProfiles);
     } catch (error) {
       console.error('Error fetching posts:', error);
+      setPosts([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePostUpdate = (updatedPost: Post) => {
+    setPosts(prev => prev.map(post => 
+      post.id === updatedPost.id ? updatedPost : post
+    ));
   };
 
   useEffect(() => {
@@ -83,7 +94,11 @@ const SocialFeed = () => {
           </div>
         ) : (
           posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard 
+              key={post.id} 
+              post={post} 
+              onPostUpdate={handlePostUpdate}
+            />
           ))
         )}
       </div>
