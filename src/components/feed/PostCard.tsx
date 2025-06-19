@@ -22,8 +22,8 @@ interface PostCardProps {
     content: string | null;
     created_at: string | null;
     user_id: string | null;
-    likes_count?: number;
-    comments_count?: number;
+    likes_count: number;
+    comments_count: number;
     profiles: {
       full_name: string | null;
       avatar_url?: string | null;
@@ -38,7 +38,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
   const { user } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const [likesCount, setLikesCount] = useState(post.likes_count || 0);
+  const [likesCount, setLikesCount] = useState(post.likes_count);
   const { toast } = useToast();
 
   React.useEffect(() => {
@@ -107,7 +107,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdate }) => {
   };
 
   const profile = post.profiles;
-  const commentsCount = post.comments_count || 0;
+  const commentsCount = post.comments_count;
 
   if (!post.content || !post.created_at) {
     return null;

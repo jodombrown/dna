@@ -10,8 +10,10 @@ interface Post {
   created_at: string | null;
   updated_at: string | null;
   user_id: string | null;
-  likes_count?: number;
-  comments_count?: number;
+  likes_count: number;
+  comments_count: number;
+  post_type: string;
+  is_published: boolean;
   profiles: {
     full_name: string | null;
     avatar_url?: string | null;
@@ -26,10 +28,11 @@ const SocialFeed = () => {
 
   const fetchPosts = async () => {
     try {
-      // Fetch posts with basic data first
+      // Fetch posts with proper schema
       const { data: postsData, error: postsError } = await supabase
         .from('posts')
         .select('*')
+        .eq('is_published', true)
         .order('created_at', { ascending: false });
 
       if (postsError) {
@@ -38,7 +41,7 @@ const SocialFeed = () => {
         return;
       }
 
-      // Get profiles for each post and add default values for missing properties
+      // Get profiles for each post
       const postsWithProfiles: Post[] = [];
       
       for (const post of postsData || []) {
@@ -50,8 +53,8 @@ const SocialFeed = () => {
 
         postsWithProfiles.push({
           ...post,
-          likes_count: 0, // Default value since we don't have likes_count in the database yet
-          comments_count: 0, // Default value since we don't have comments_count in the database yet
+          likes_count: post.likes_count || 0,
+          comments_count: post.comments_count || 0,
           profiles: profileData || {
             full_name: 'DNA Member',
             avatar_url: null,

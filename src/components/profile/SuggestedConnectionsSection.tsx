@@ -3,10 +3,18 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getProfileRecommendations, RecommendationProfile } from '@/services/recommendationsService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Users, UserPlus } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface RecommendationProfile {
+  id: string;
+  full_name: string;
+  avatar_url?: string;
+  profession?: string;
+  connection_reason: string;
+}
 
 const SuggestedConnectionsSection: React.FC = () => {
   const { user } = useAuth();
@@ -25,8 +33,26 @@ const SuggestedConnectionsSection: React.FC = () => {
     
     try {
       setLoading(true);
-      const recs = await getProfileRecommendations(user.id, 6);
-      setRecommendations(recs);
+      
+      // Get a few random profiles excluding the current user
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url, profession')
+        .neq('id', user.id)
+        .limit(6);
+
+      if (error) throw error;
+
+      // Transform to match the expected interface
+      const transformedProfiles: RecommendationProfile[] = (profiles || []).map(profile => ({
+        id: profile.id,
+        full_name: profile.full_name || 'DNA Member',
+        avatar_url: profile.avatar_url || undefined,
+        profession: profile.profession || 'Professional',
+        connection_reason: 'Similar interests and background'
+      }));
+
+      setRecommendations(transformedProfiles);
     } catch (error) {
       console.error('Error fetching recommendations:', error);
       setRecommendations([]);
