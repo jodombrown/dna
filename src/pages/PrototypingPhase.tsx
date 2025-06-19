@@ -1,13 +1,14 @@
 
-import React from 'react';
-import PhaseHero from '@/components/phases/PhaseHero';
+import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
 import PhaseMetrics from '@/components/phases/PhaseMetrics';
-import { Users, Code, Target, CheckCircle, BarChart3, Lightbulb, Palette, Zap } from "lucide-react";
+import { Users, Code, Target, CheckCircle, BarChart3, Lightbulb, Palette, Zap, ArrowRight } from "lucide-react";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { useNavigate } from 'react-router-dom';
 
 const objectives = [
   {
@@ -106,6 +107,9 @@ const fallbackMetrics = [
 
 const PrototypingPhase = () => {
   useScrollToTop();
+  const navigate = useNavigate();
+  const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 flex flex-col">
       <Header />
@@ -113,29 +117,36 @@ const PrototypingPhase = () => {
       {/* Hero Section with Design/Prototyping Image */}
       <section className="relative py-20 overflow-hidden">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
+            backgroundImage: "url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-600/90 via-orange-600/90 to-yellow-600/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-900/85 via-orange-900/85 to-yellow-900/85" />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
             <Palette className="w-5 h-5 mr-2" />
             <span className="font-semibold">Phase 2 • Design & Prototyping</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Prototyping & Concept Testing
+            Design & Prototyping
           </h1>
           <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
             Creating and testing the product experience through interactive prototypes and comprehensive usability testing before building the full platform.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
-            <button className="bg-white text-orange-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+            <button 
+              onClick={() => setIsBetaSignupOpen(true)}
+              className="bg-white text-orange-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+            >
               Join Testing Community
             </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors">
-              View Prototypes
+            <button 
+              onClick={() => navigate('/customer-discovery-phase')}
+              className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors flex items-center"
+            >
+              Next Phase
+              <ArrowRight className="w-5 h-5 ml-2" />
             </button>
           </div>
         </div>
@@ -149,7 +160,7 @@ const PrototypingPhase = () => {
             <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
               This phase transforms our research insights into tangible, testable experiences. We're creating interactive prototypes 
               that let our community actually experience DNA before we build it. Every button, every flow, every interaction is 
-              designed with intention and tested with real users to ensure we create something truly valuable.
+              designed with intention and tested with real users to ensure we create something truly valuable for the African diaspora.
             </p>
           </div>
           
@@ -159,7 +170,7 @@ const PrototypingPhase = () => {
                 <Palette className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Interactive Design</h3>
-              <p className="text-gray-600 leading-relaxed">Creating wireframes and interactive prototypes that bring the DNA vision to life with realistic user experiences and flows.</p>
+              <p className="text-gray-600 leading-relaxed">Creating wireframes and interactive prototypes that bring the DNA vision to life with realistic user experiences and flows tailored for diaspora professionals.</p>
             </div>
             
             <div className="text-center p-8 bg-gradient-to-br from-orange-50 to-yellow-50 rounded-2xl border border-orange-200">
@@ -167,7 +178,7 @@ const PrototypingPhase = () => {
                 <Users className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">User Testing</h3>
-              <p className="text-gray-600 leading-relaxed">Comprehensive usability testing with diaspora community members to identify friction points and optimize user experience.</p>
+              <p className="text-gray-600 leading-relaxed">Comprehensive usability testing with diaspora community members to identify friction points and optimize user experience across cultural contexts.</p>
             </div>
             
             <div className="text-center p-8 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200">
@@ -175,7 +186,7 @@ const PrototypingPhase = () => {
                 <Zap className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">AI Optimization</h3>
-              <p className="text-gray-600 leading-relaxed">Leveraging AI to analyze user feedback and prioritize features based on impact, usability, and community value.</p>
+              <p className="text-gray-600 leading-relaxed">Leveraging AI to analyze user feedback and prioritize features based on impact, usability, and community value for maximum diaspora engagement.</p>
             </div>
           </div>
         </div>
@@ -195,10 +206,13 @@ const PrototypingPhase = () => {
             </h2>
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
               Help us design DNA by testing our prototypes, sharing feedback, and ensuring we create an experience that truly 
-              serves the African diaspora community. Your input shapes every interaction and feature.
+              serves the African diaspora community. Your input shapes every interaction and feature that will strengthen our global network.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-orange-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-orange-600 transition-colors">
+              <button 
+                onClick={() => setIsBetaSignupOpen(true)}
+                className="bg-orange-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-orange-600 transition-colors"
+              >
                 Join Design Testing
               </button>
               <button className="border-2 border-orange-500 text-orange-500 px-8 py-3 rounded-full font-semibold hover:bg-orange-50 transition-colors">
@@ -208,6 +222,11 @@ const PrototypingPhase = () => {
           </div>
         </div>
       </section>
+
+      <BetaSignupDialog 
+        isOpen={isBetaSignupOpen} 
+        onClose={() => setIsBetaSignupOpen(false)} 
+      />
       
       <Footer />
     </div>
