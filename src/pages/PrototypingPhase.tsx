@@ -11,48 +11,59 @@ import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const objectives = [
   {
-    icon: <Users className="w-5 h-5" />,
-    title: "Community Validation",
-    description: "Work directly with early adopters and DNA community members to validate our framework and gather actionable feedback.",
-    status: "Ongoing",
-    completion: 70
+    icon: <Code className="w-5 h-5" />,
+    title: "Create Product Experience",
+    description: "Build and test the product experience through wireframes and interactive prototypes before full development.",
+    status: "Upcoming",
+    completion: 0
   },
   {
-    icon: <Code className="w-5 h-5" />,
-    title: "Core Infrastructure",
-    description: "Develop and test the technical foundations needed to build and scale the DNA platform.",
-    status: "In Progress",
-    completion: 65
+    icon: <Users className="w-5 h-5" />,
+    title: "Usability Testing",
+    description: "Conduct comprehensive usability tests to identify friction points and optimize user experience.",
+    status: "Planned",
+    completion: 0
   },
   {
     icon: <Target className="w-5 h-5" />,
-    title: "Product-Market Fit",
-    description: "Refine the value proposition and key features to ensure our solution meets real-world diaspora needs.",
-    status: "Active",
-    completion: 50
+    title: "Feature Prioritization",
+    description: "Use AI-powered analysis to prioritize features based on user feedback and business impact.",
+    status: "Planned",
+    completion: 0
   },
 ];
 
 const timeline = [
   {
-    quarter: "Q3 2025",
-    title: "Community & Prototype Launch",
+    quarter: "Oct 2025",
+    title: "Design & Wireframing",
     items: [
-      "Early adopter feedback gathering",
-      "Core concept prototyping and validation",
-      "Initial outreach to diaspora groups",
-      "First version of matching algorithm",
+      "Wireframes by UI/UX AI agent",
+      "Design system development",
+      "User flow mapping",
+      "Initial prototype framework"
     ],
-    status: "active" as const,
+    status: "upcoming" as const,
   },
   {
-    quarter: "Q4 2025",
-    title: "Refinement & Early Growth",
+    quarter: "Nov 2025",
+    title: "Prototype Development",
     items: [
-      "Prototype iterations and bug fixing",
-      "Beta user expansion",
-      "Feature refinement based on feedback",
-      "Growth of core community"
+      "AI-assisted interactive prototype (Figma)",
+      "Clickable prototype creation",
+      "Feature interaction testing",
+      "User testing preparation"
+    ],
+    status: "upcoming" as const,
+  },
+  {
+    quarter: "Dec 2025",
+    title: "Testing & Refinement",
+    items: [
+      "10-20 usability tests with friction point identification",
+      "AI-powered feature prioritization",
+      "Usability report compilation",
+      "Updated product roadmap"
     ],
     status: "upcoming" as const,
   }
@@ -61,34 +72,34 @@ const timeline = [
 const fallbackMetrics = [
   {
     id: "1",
-    label: "Beta Testers",
-    value: "245",
-    target: "500",
-    icon: "users",
+    label: "Wireframes Created",
+    value: "0",
+    target: "25",
+    icon: "code",
     color: "bg-dna-emerald"
   },
   {
     id: "2", 
-    label: "Feedback Sessions",
-    value: "18",
-    target: "50",
-    icon: "message-square",
+    label: "Usability Tests",
+    value: "0",
+    target: "20",
+    icon: "users",
     color: "bg-dna-copper"
   },
   {
     id: "3",
-    label: "Feature Prototypes",
-    value: "8",
-    target: "15",
-    icon: "code",
+    label: "Prototype Iterations",
+    value: "0",
+    target: "5",
+    icon: "target",
     color: "bg-dna-gold"
   },
   {
     id: "4",
-    label: "Community Partners",
-    value: "12",
-    target: "25",
-    icon: "handshake",
+    label: "Feature Priorities",
+    value: "0",
+    target: "15",
+    icon: "star",
     color: "bg-dna-forest"
   }
 ];
@@ -99,11 +110,11 @@ const PrototypingPhase = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <PhaseHero
-        badge="Phase 1"
-        title="Prototyping Phase"
-        description="The foundation stage where we validate our DNA framework concept, gather early community feedback, and establish core functionalities for the journey ahead."
-        prevPhase={undefined}
-        nextPhase={{ label: "Next: Build Phase", url: "/build-phase" }}
+        badge="Phase 2"
+        title="Prototyping & Concept Testing"
+        description="Creating and testing the product experience through interactive prototypes and comprehensive usability testing before building the full platform."
+        prevPhase={{ label: "Previous: Market Research", url: "/market-research-phase" }}
+        nextPhase={{ label: "Next: Customer Discovery #1", url: "/customer-discovery-phase" }}
         gradient="bg-gradient-to-br from-dna-mint to-dna-emerald"
       />
       <PhaseObjectives objectives={objectives} color="dna-emerald" />
@@ -113,10 +124,10 @@ const PrototypingPhase = () => {
         <div className="max-w-4xl mx-auto text-center px-4">
           <Lightbulb className="w-16 h-16 text-dna-copper mx-auto mb-5" />
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Join Us at the Start of the DNA Journey
+            Be Part of the Design Process
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Be part of our prototyping community and make your voice heard.
+            Join our prototype testing community and help shape the DNA platform experience.
           </p>
         </div>
       </section>
