@@ -20,7 +20,7 @@ const DNALinkedInProfile: React.FC<DNALinkedInProfileProps> = ({
   onFollow,
   onMessage
 }) => {
-  const [activeTab, setActiveTab] = useState('posts');
+  const [activeTab, setActiveTab] = useState('about');
   const { userPosts, userEvents, userCommunities } = useProfileContent(profile?.id);
 
   return (
@@ -39,8 +39,6 @@ const DNALinkedInProfile: React.FC<DNALinkedInProfileProps> = ({
         {/* Left Sidebar */}
         <DNAProfileSidebar
           profile={profile}
-          userPosts={userPosts}
-          userEvents={userEvents}
           isOwnProfile={isOwnProfile}
         />
 

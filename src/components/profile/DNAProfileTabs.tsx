@@ -10,7 +10,6 @@ import {
   Users,
   Plus
 } from 'lucide-react';
-import SocialFeed from '../feed/SocialFeed';
 import LinkedInAboutSection from './LinkedInAboutSection';
 import LinkedInExperienceSection from './LinkedInExperienceSection';
 
@@ -38,13 +37,13 @@ const DNAProfileTabs: React.FC<DNAProfileTabsProps> = ({
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
       <TabsList className="grid w-full grid-cols-4 mb-6">
-        <TabsTrigger value="posts" className="flex items-center gap-2">
-          <Activity className="w-4 h-4" />
-          Posts
-        </TabsTrigger>
         <TabsTrigger value="about" className="flex items-center gap-2">
           <User className="w-4 h-4" />
           About
+        </TabsTrigger>
+        <TabsTrigger value="activity" className="flex items-center gap-2">
+          <Activity className="w-4 h-4" />
+          Activity
         </TabsTrigger>
         <TabsTrigger value="events" className="flex items-center gap-2">
           <Calendar className="w-4 h-4" />
@@ -55,38 +54,6 @@ const DNAProfileTabs: React.FC<DNAProfileTabsProps> = ({
           Communities
         </TabsTrigger>
       </TabsList>
-
-      <TabsContent value="posts" className="space-y-6">
-        {isOwnProfile ? (
-          <SocialFeed />
-        ) : (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-dna-forest">
-                {profile?.full_name}'s Posts
-              </h3>
-            </div>
-            {userPosts.length > 0 ? (
-              <div className="space-y-4">
-                {userPosts.map((post: any) => (
-                  <Card key={post.id}>
-                    <CardContent className="p-4">
-                      <p className="text-gray-800">{post.content}</p>
-                      <div className="mt-2 text-sm text-gray-500">
-                        {new Date(post.created_at).toLocaleDateString()}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-gray-500">
-                No posts yet
-              </div>
-            )}
-          </div>
-        )}
-      </TabsContent>
 
       <TabsContent value="about" className="space-y-6">
         <LinkedInAboutSection 
@@ -99,6 +66,18 @@ const DNAProfileTabs: React.FC<DNAProfileTabsProps> = ({
           isOwnProfile={isOwnProfile}
           onEdit={onEdit}
         />
+      </TabsContent>
+
+      <TabsContent value="activity" className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-semibold text-dna-forest">Recent Activity</h3>
+        </div>
+        
+        <div className="text-center py-12 text-gray-500">
+          <Activity className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+          <p className="text-lg mb-2">Activity feed coming soon</p>
+          <p className="text-sm">We're building an enhanced activity system to showcase your DNA journey.</p>
+        </div>
       </TabsContent>
 
       <TabsContent value="events" className="space-y-6">
