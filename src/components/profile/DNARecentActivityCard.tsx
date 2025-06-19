@@ -1,19 +1,41 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity } from 'lucide-react';
+import { Activity, Calendar, Users, Award } from 'lucide-react';
 
 interface DNARecentActivityCardProps {
-  userPosts: any[];
   isOwnProfile: boolean;
+  profile?: any;
 }
 
 const DNARecentActivityCard: React.FC<DNARecentActivityCardProps> = ({
-  userPosts,
-  isOwnProfile
+  isOwnProfile,
+  profile
 }) => {
-  if (isOwnProfile || userPosts.length === 0) {
-    return null;
+  // Sample recent activities - in a real app, this would come from a user activity log
+  const recentActivities = [
+    {
+      type: 'community',
+      icon: Users,
+      action: 'Joined Tech Innovators community',
+      time: '2 days ago'
+    },
+    {
+      type: 'event',
+      icon: Calendar,
+      action: 'Registered for African Diaspora Summit',
+      time: '1 week ago'
+    },
+    {
+      type: 'achievement',
+      icon: Award,
+      action: 'Completed profile setup',
+      time: '2 weeks ago'
+    }
+  ];
+
+  if (isOwnProfile) {
+    return null; // Don't show on own profile
   }
 
   return (
@@ -26,14 +48,20 @@ const DNARecentActivityCard: React.FC<DNARecentActivityCardProps> = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {userPosts.slice(0, 3).map((post: any) => (
-            <div key={post.id} className="text-sm">
-              <p className="text-gray-800 line-clamp-2">{post.content}</p>
-              <span className="text-xs text-gray-500">
-                {new Date(post.created_at).toLocaleDateString()}
-              </span>
-            </div>
-          ))}
+          {recentActivities.map((activity, index) => {
+            const IconComponent = activity.icon;
+            return (
+              <div key={index} className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-dna-emerald/10 flex items-center justify-center flex-shrink-0">
+                  <IconComponent className="w-4 h-4 text-dna-emerald" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-800">{activity.action}</p>
+                  <span className="text-xs text-gray-500">{activity.time}</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </CardContent>
     </Card>

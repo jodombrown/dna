@@ -1,39 +1,57 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, Calendar, Award, TrendingUp } from 'lucide-react';
 
 interface DNAQuickStatsCardProps {
   profile: any;
-  userPosts: any[];
-  userEvents: any[];
 }
 
-const DNAQuickStatsCard: React.FC<DNAQuickStatsCardProps> = ({
-  profile,
-  userPosts,
-  userEvents
-}) => {
+const DNAQuickStatsCard: React.FC<DNAQuickStatsCardProps> = ({ profile }) => {
+  const stats = [
+    {
+      icon: Users,
+      label: 'Network',
+      value: profile?.followers_count || 0,
+      description: 'connections'
+    },
+    {
+      icon: Calendar,
+      label: 'Experience',
+      value: profile?.years_experience || 0,
+      description: 'years'
+    },
+    {
+      icon: Award,
+      label: 'Impact Areas',
+      value: profile?.impact_areas?.length || 0,
+      description: 'areas'
+    },
+    {
+      icon: TrendingUp,
+      label: 'Engagement',
+      value: '4.8',
+      description: 'rating'
+    }
+  ];
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg text-dna-forest">DNA Impact</CardTitle>
+        <CardTitle className="text-lg text-dna-forest">Quick Stats</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Profile Views</span>
-          <span className="font-semibold text-dna-emerald">42</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Network Size</span>
-          <span className="font-semibold text-dna-emerald">{profile?.followers_count || 0}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Posts Created</span>
-          <span className="font-semibold text-dna-emerald">{userPosts.length}</span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Events Hosted</span>
-          <span className="font-semibold text-dna-emerald">{userEvents.length}</span>
+      <CardContent>
+        <div className="grid grid-cols-2 gap-4">
+          {stats.map((stat, index) => {
+            const IconComponent = stat.icon;
+            return (
+              <div key={index} className="text-center p-3 rounded-lg bg-gray-50">
+                <IconComponent className="w-6 h-6 mx-auto mb-2 text-dna-copper" />
+                <div className="text-2xl font-bold text-dna-forest">{stat.value}</div>
+                <div className="text-xs text-gray-600">{stat.description}</div>
+              </div>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
