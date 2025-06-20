@@ -1,13 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
+import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 
   const scrollToDNAFramework = () => {
     const frameworkSection = document.getElementById('dna-framework');
@@ -36,7 +38,7 @@ const HeroSection = () => {
                 <p className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed">
                   Connecting Africa's diaspora professionals for meaningful global impact through 
                   <span className="font-semibold text-dna-emerald"> capacity building</span>, 
-                  <span className="font-semibold text-dna-copper"> venture development</span>, and 
+                  <span className="font-semibold text-dna-copper"> venture building</span>, and 
                   <span className="font-semibold text-dna-forest"> ecosystem building</span>.
                 </p>
 
@@ -53,9 +55,9 @@ const HeroSection = () => {
                     variant="outline" 
                     size="lg"
                     className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full"
-                    onClick={() => navigate('/about')}
+                    onClick={() => setIsFeedbackOpen(true)}
                   >
-                    Learn More
+                    Give Feedback
                   </Button>
                 </div>
               </div>
@@ -96,6 +98,11 @@ const HeroSection = () => {
           <PlatformBadges />
         </div>
       </section>
+
+      <MainPageFeedbackPanel 
+        isOpen={isFeedbackOpen} 
+        onClose={() => setIsFeedbackOpen(false)} 
+      />
     </>
   );
 };

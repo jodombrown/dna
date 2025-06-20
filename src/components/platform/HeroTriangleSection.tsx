@@ -34,7 +34,7 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-forest mb-4">Connect</h3>
               <p className="text-gray-600 leading-relaxed">
-                Build powerful relationships across the global African Diaspora. Engage with leaders, innovators, and change agents working to unlock Africa's full potential. This is where shared heritage meets collective ambition.
+                Forge powerful bonds across the global African Diaspora. Tap into a vibrant ecosystem of innovators, leaders, and changemakers ready to move the continent forward—together.
               </p>
             </div>
 
@@ -47,7 +47,7 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-copper mb-4">Collaborate</h3>
               <p className="text-gray-600 leading-relaxed">
-                Be part of bold initiatives driving Africa's transformation. From breakthrough technologies to grassroots solutions, amplify your impact by working side by side with mission-aligned peers.
+                Transform shared vision into action. Partner on high-impact initiatives, co-create solutions, and mobilize talent to build what Africa needs now and next.
               </p>
             </div>
 
@@ -60,7 +60,7 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-emerald mb-4">Contribute</h3>
               <p className="text-gray-600 leading-relaxed">
-                Turn insight into action and purpose into progress. Offer your expertise, invest in ideas that matter, and help shape a legacy that spans borders and generations. Your unique skills and resources become catalysts for sustainable development.
+                Step into your role in Africa's future. Invest your skills, capital, or influence in ways that drive tangible change and leave a legacy that matters.
               </p>
             </div>
           </div>
