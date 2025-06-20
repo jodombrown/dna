@@ -163,7 +163,7 @@ const BetaValidationPhase = () => {
               <div className="w-12 h-12 bg-fuchsia-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-semibull text-gray-900 mb-2">Monetization Testing</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Monetization Testing</h3>
               <p className="text-gray-600 text-sm">Validating revenue models and pricing strategies with real user data.</p>
             </div>
             
@@ -192,7 +192,8 @@ const BetaValidationPhase = () => {
             </h2>
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
               Be among the first to experience DNA and help us perfect the platform before public launch. Beta testers get 
-              exclusive access, direct input on features, and the opportunity to shape the future of diaspora networking.
+              exclusive access, direct input on features, and the opportunity to shape the future of diaspora networking. 
+              Your participation helps us validate our approach and ensures we launch with a platform that truly serves your needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
