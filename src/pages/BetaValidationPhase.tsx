@@ -1,13 +1,14 @@
 
-import React from 'react';
-import PhaseHero from '@/components/phases/PhaseHero';
+import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
 import PhaseMetrics from '@/components/phases/PhaseMetrics';
-import { Users, BarChart3, MessageSquare, Target, TrendingUp, CheckCircle, Shield, Rocket } from "lucide-react";
+import { Users, BarChart3, MessageSquare, Target, TrendingUp, CheckCircle, Shield, Rocket, ArrowRight } from "lucide-react";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { useNavigate } from 'react-router-dom';
 
 const objectives = [
   {
@@ -84,6 +85,9 @@ const fallbackMetrics = [
 
 const BetaValidationPhase = () => {
   useScrollToTop();
+  const navigate = useNavigate();
+  const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-fuchsia-50 flex flex-col">
       <Header />
@@ -96,24 +100,31 @@ const BetaValidationPhase = () => {
             backgroundImage: "url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/90 via-violet-900/90 to-fuchsia-900/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/85 via-violet-900/85 to-fuchsia-900/85" />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
             <Shield className="w-5 h-5 mr-2" />
             <span className="font-semibold">Phase 5 • Beta Validation</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Customer Discovery #2 (Beta MVP)
+            Beta Validation
           </h1>
           <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
-            Validating MVP performance, retention, and monetization readiness through comprehensive beta testing with real users.
+            Validating MVP performance, retention, and monetization readiness through comprehensive beta testing with real users from the diaspora community.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
-            <button className="bg-white text-purple-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+            <button 
+              onClick={() => setIsBetaSignupOpen(true)}
+              className="bg-white text-purple-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+            >
               Apply for Beta
             </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors">
-              Beta Testing Guide
+            <button 
+              onClick={() => navigate('/go-to-market-phase')}
+              className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors flex items-center"
+            >
+              Next Phase
+              <ArrowRight className="w-5 h-5 ml-2" />
             </button>
           </div>
         </div>
@@ -152,7 +163,7 @@ const BetaValidationPhase = () => {
               <div className="w-12 h-12 bg-fuchsia-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Monetization Testing</h3>
+              <h3 className="text-lg font-semibull text-gray-900 mb-2">Monetization Testing</h3>
               <p className="text-gray-600 text-sm">Validating revenue models and pricing strategies with real user data.</p>
             </div>
             
@@ -184,7 +195,10 @@ const BetaValidationPhase = () => {
               exclusive access, direct input on features, and the opportunity to shape the future of diaspora networking.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-700 transition-colors">
+              <button 
+                onClick={() => setIsBetaSignupOpen(true)}
+                className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-700 transition-colors"
+              >
                 Apply for Beta Access
               </button>
               <button className="border-2 border-purple-600 text-purple-600 px-8 py-3 rounded-full font-semibold hover:bg-purple-50 transition-colors">
@@ -194,6 +208,11 @@ const BetaValidationPhase = () => {
           </div>
         </div>
       </section>
+
+      <BetaSignupDialog 
+        isOpen={isBetaSignupOpen} 
+        onClose={() => setIsBetaSignupOpen(false)} 
+      />
       
       <Footer />
     </div>
