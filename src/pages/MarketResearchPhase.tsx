@@ -1,13 +1,14 @@
 
-import React from 'react';
-import PhaseHero from '@/components/phases/PhaseHero';
+import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
 import PhaseMetrics from '@/components/phases/PhaseMetrics';
-import { Search, Users, FileText, Target, TrendingUp, MessageSquare, BookOpen, BarChart3 } from "lucide-react";
+import { Search, Users, FileText, Target, TrendingUp, MessageSquare, BookOpen, BarChart3, ArrowRight } from "lucide-react";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { useNavigate } from 'react-router-dom';
 
 const objectives = [
   {
@@ -106,6 +107,9 @@ const fallbackMetrics = [
 
 const MarketResearchPhase = () => {
   useScrollToTop();
+  const navigate = useNavigate();
+  const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex flex-col">
       <Header />
@@ -125,17 +129,24 @@ const MarketResearchPhase = () => {
             <span className="font-semibold">Phase 1 • Foundation Research</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Market Research & Validation
+            Foundation Research
           </h1>
           <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
             Understanding diaspora needs, motivations, and behaviors to validate DNA's concept and market fit through comprehensive research.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
-            <button className="bg-blue-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-600 transition-colors">
+            <button 
+              onClick={() => setIsBetaSignupOpen(true)}
+              className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+            >
               Join Research Community
             </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors">
-              View Progress
+            <button 
+              onClick={() => navigate('/prototyping-phase')}
+              className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors flex items-center"
+            >
+              Next Phase
+              <ArrowRight className="w-5 h-5 ml-2" />
             </button>
           </div>
         </div>
@@ -206,7 +217,10 @@ const MarketResearchPhase = () => {
               to share your experiences, insights, and vision for how we can better strengthen our global network.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors">
+              <button 
+                onClick={() => setIsBetaSignupOpen(true)}
+                className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors"
+              >
                 Participate in Research
               </button>
               <button className="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-50 transition-colors">
@@ -216,6 +230,11 @@ const MarketResearchPhase = () => {
           </div>
         </div>
       </section>
+
+      <BetaSignupDialog 
+        isOpen={isBetaSignupOpen} 
+        onClose={() => setIsBetaSignupOpen(false)} 
+      />
       
       <Footer />
     </div>
