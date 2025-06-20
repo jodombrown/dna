@@ -202,11 +202,12 @@ const PrototypingPhase = () => {
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-orange-200">
             <Lightbulb className="w-16 h-16 text-orange-500 mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Be Part of the Design Process
+              Shape DNA Through Design Testing
             </h2>
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              Help us design DNA by testing our prototypes, sharing feedback, and ensuring we create an experience that truly 
-              serves the African diaspora community. Your input shapes every interaction and feature that will strengthen our global network.
+              Join our design testing community to experience DNA prototypes firsthand and provide crucial feedback that shapes 
+              the platform's user experience. Your insights help us create intuitive, culturally-relevant interfaces that truly 
+              serve the African diaspora community's networking and collaboration needs.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
