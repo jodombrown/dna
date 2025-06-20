@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -7,7 +6,9 @@ import { Megaphone, Globe, TrendingUp, BarChart3, CheckCircle, Lightbulb, Rocket
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
+import AmbassadorSignupDialog from '@/components/AmbassadorSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { useNavigate } from 'react-router-dom';
 
 const objectives = [
   {
@@ -106,7 +107,9 @@ const fallbackMetrics = [
 
 const GoToMarketPhase = () => {
   useScrollToTop();
+  const navigate = useNavigate();
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
+  const [isAmbassadorSignupOpen, setIsAmbassadorSignupOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex flex-col">
@@ -140,10 +143,10 @@ const GoToMarketPhase = () => {
               Join Launch Community
             </button>
             <button 
-              className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors opacity-50 cursor-not-allowed"
-              disabled
+              onClick={() => navigate('/market-research-phase')}
+              className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors"
             >
-              Final Phase
+              Phase 1
             </button>
           </div>
         </div>
@@ -213,7 +216,10 @@ const GoToMarketPhase = () => {
               >
                 Join Launch Community
               </button>
-              <button className="border-2 border-green-600 text-green-600 px-8 py-3 rounded-full font-semibold hover:bg-green-50 transition-colors">
+              <button 
+                onClick={() => setIsAmbassadorSignupOpen(true)}
+                className="border-2 border-green-600 text-green-600 px-8 py-3 rounded-full font-semibold hover:bg-green-50 transition-colors"
+              >
                 Become an Ambassador
               </button>
             </div>
@@ -224,6 +230,11 @@ const GoToMarketPhase = () => {
       <BetaSignupDialog 
         isOpen={isBetaSignupOpen} 
         onClose={() => setIsBetaSignupOpen(false)} 
+      />
+
+      <AmbassadorSignupDialog 
+        isOpen={isAmbassadorSignupOpen} 
+        onClose={() => setIsAmbassadorSignupOpen(false)} 
       />
       
       <Footer />
