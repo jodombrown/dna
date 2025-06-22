@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { ChevronLeft, ChevronRight, ArrowRight, ExternalLink } from 'lucide-react';
 
 const AnimatedStat = ({ value, suffix, label, description, bgGradient }: {
@@ -24,36 +25,22 @@ const AnimatedStat = ({ value, suffix, label, description, bgGradient }: {
   );
 };
 
-const TimelineItem = ({ year, events, isActive, onClick, expandedContent }: {
+const TimelineItem = ({ year, events, isActive, onClick }: {
   year: string;
   events: string[];
   isActive: boolean;
   onClick: () => void;
-  expandedContent: {
-    title: string;
-    description: string;
-  };
 }) => (
-  <div className="space-y-4">
-    <div 
-      className={`cursor-pointer p-4 rounded-lg transition-all duration-300 ${
-        isActive ? 'bg-dna-emerald text-white shadow-lg' : 'bg-white/50 hover:bg-white/70'
-      }`}
-      onClick={onClick}
-    >
-      <div className="font-bold text-lg mb-2">{year}</div>
-      {events.map((event, idx) => (
-        <div key={idx} className="text-sm mb-1">• {event}</div>
-      ))}
-    </div>
-    
-    {/* Expanded Content */}
-    {isActive && (
-      <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-dna-emerald animate-fade-in">
-        <h4 className="text-xl font-bold text-dna-forest mb-3">{expandedContent.title}</h4>
-        <p className="text-gray-700 leading-relaxed">{expandedContent.description}</p>
-      </div>
-    )}
+  <div 
+    className={`cursor-pointer p-4 rounded-lg transition-all duration-300 ${
+      isActive ? 'bg-dna-emerald text-white shadow-lg' : 'bg-white/50 hover:bg-white/70'
+    }`}
+    onClick={onClick}
+  >
+    <div className="font-bold text-lg mb-2">{year}</div>
+    {events.map((event, idx) => (
+      <div key={idx} className="text-sm mb-1">• {event}</div>
+    ))}
   </div>
 );
 
@@ -78,7 +65,8 @@ const TestimonialCard = ({ quote, author, title, image }: {
 );
 
 const DiasporaStats = () => {
-  const [activeTimelineYear, setActiveTimelineYear] = useState('2024');
+  const [activeTimelineYear, setActiveTimelineYear] = useState('');
+  const [isTimelineSheetOpen, setIsTimelineSheetOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   const timelineData = [
@@ -153,6 +141,11 @@ const DiasporaStats = () => {
     }
   ];
 
+  const handleTimelineClick = (year: string) => {
+    setActiveTimelineYear(year);
+    setIsTimelineSheetOpen(true);
+  };
+
   const nextTestimonial = () => {
     setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
   };
@@ -160,6 +153,8 @@ const DiasporaStats = () => {
   const prevTestimonial = () => {
     setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
+
+  const activeTimelineData = timelineData.find(item => item.year === activeTimelineYear);
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -215,8 +210,7 @@ const DiasporaStats = () => {
                 year={item.year}
                 events={item.events}
                 isActive={activeTimelineYear === item.year}
-                onClick={() => setActiveTimelineYear(item.year)}
-                expandedContent={item.expandedContent}
+                onClick={() => handleTimelineClick(item.year)}
               />
             ))}
           </div>
@@ -230,6 +224,25 @@ const DiasporaStats = () => {
           </div>
         </div>
       </section>
+
+      {/* Timeline Detail Sheet */}
+      <Sheet open={isTimelineSheetOpen} onOpenChange={setIsTimelineSheetOpen}>
+        <SheetContent side="left" className="w-[400px] sm:w-[540px]">
+          <SheetHeader>
+            <SheetTitle className="text-2xl font-bold text-dna-forest">
+              {activeTimelineData?.expandedContent.title}
+            </SheetTitle>
+            <SheetDescription className="text-lg font-semibold text-dna-emerald">
+              {activeTimelineYear}
+            </SheetDescription>
+          </SheetHeader>
+          <div className="mt-6">
+            <p className="text-gray-700 leading-relaxed">
+              {activeTimelineData?.expandedContent.description}
+            </p>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* "What You're Missing" Infographic */}
       <section className="mb-16">
