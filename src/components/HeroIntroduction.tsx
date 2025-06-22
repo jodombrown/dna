@@ -14,10 +14,21 @@ const HeroIntroduction = () => {
         >
           Jaune Odombrown
         </a>
-        , an ecosystem builder and entrepreneur dedicated to uniting Africa's diaspora for meaningful impact.
+        , an ecosystem builder and entrepreneur committed to uniting visionary leaders, builders, and changemakers across the African diaspora. These are individuals driven by purpose, rich in talent, and ready to accelerate Africa's transformation.
       </p>
-      <p className="text-lg md:text-xl text-dna-forest leading-relaxed">
-        We're building a bold new platform to redefine how the African Diaspora fuels Africa's rise. This isn't just a network, it's a launchpad for co-creation, co-investment, and co-leadership in shaping the systems that drive lasting impact.
+      
+      <div className="border-l-4 border-dna-copper pl-6 mb-6">
+        <p className="text-lg md:text-xl text-dna-forest leading-relaxed font-medium">
+          This is more than a network.
+        </p>
+      </div>
+      
+      <p className="text-lg md:text-xl mb-6 text-dna-forest leading-relaxed">
+        It is a dynamic platform for co-creation, co-investment, and shared leadership, designed to harness the full potential of the diaspora in shaping the systems that drive scalable, lasting impact.
+      </p>
+      
+      <p className="text-lg md:text-xl text-dna-forest leading-relaxed font-medium">
+        We are reimagining how the African diaspora fuels Africa's rise, transforming collective ambition into actionable, systemic change.
       </p>
     </div>
   );
