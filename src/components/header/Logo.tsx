@@ -12,7 +12,7 @@ const Logo = () => {
         className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
       >
         <img 
-          src="/lovable-uploads/c1ba44bd-c5a7-432e-8341-3ce5576c120f.png" 
+          src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
           alt="DNA" 
           className="h-8 w-auto"
         />
