@@ -1,18 +1,11 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Users, Handshake, Heart, Play } from 'lucide-react';
+import { MessageSquare, Users, Handshake, Heart } from 'lucide-react';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
 
 const HeroTriangleSection = () => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  
-  const scrollToConnectSection = () => {
-    const connectSection = document.getElementById('connect-section');
-    if (connectSection) {
-      connectSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   return (
     <>
@@ -70,11 +63,11 @@ const HeroTriangleSection = () => {
             </div>
 
             <Button 
-              onClick={scrollToConnectSection}
+              onClick={() => setIsFeedbackOpen(true)}
               className="bg-dna-emerald hover:bg-dna-forest text-white rounded-full px-8 py-3 flex items-center gap-2 mx-auto"
             >
-              <Play className="w-4 h-4" />
-              See how it works
+              <MessageSquare className="w-4 h-4" />
+              Give Feedback
             </Button>
           </div>
         </div>
