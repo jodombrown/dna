@@ -6,7 +6,7 @@ import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
-import { Play } from 'lucide-react';
+import { Play, MessageSquare } from 'lucide-react';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -48,9 +48,10 @@ const HeroSection = () => {
                   <Button 
                     size="lg" 
                     className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full flex items-center gap-2"
-                    onClick={() => navigate('/about')}
+                    onClick={() => setIsFeedbackOpen(true)}
                   >
-                    Learn More
+                    <MessageSquare className="w-4 h-4" />
+                    Give Feedback
                   </Button>
                   <Button 
                     variant="outline" 
