@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Users, Handshake, Heart } from 'lucide-react';
+import { MessageSquare, Users, Handshake, Heart, Play } from 'lucide-react';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
 
 const HeroTriangleSection = () => {
