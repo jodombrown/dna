@@ -25,7 +25,7 @@ const HeroSection = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh] py-16">
             
-            {/* Left Column - Main Content */}
+            {/* Left Column, Main Content */}
             <div className="space-y-8">
               {/* Main Headline */}
               <div className="text-center lg:text-left">
@@ -63,7 +63,7 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Right Column - Introduction */}
+            {/* Right Column, Introduction */}
             <div className="space-y-8">
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-dna-mint/20">
                 <HeroIntroduction />

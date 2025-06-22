@@ -35,7 +35,7 @@ const ConnectHero = () => {
           
           <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-2xl mx-auto">
             <p className="text-white/80 text-sm">
-              🧭 <strong>Platform Preview - Prototype Stage:</strong> Experience our vision for diaspora networking. 
+              🧭 <strong>Platform Preview, Prototype Stage:</strong> Experience our vision for diaspora networking. 
               This demonstrates the seamless connection capabilities we're developing to unite the African diaspora globally.
             </p>
           </div>

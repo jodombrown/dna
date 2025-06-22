@@ -34,7 +34,7 @@ const HeroTriangleSection = () => {
               </div>
               <h3 className="text-2xl font-bold text-dna-forest mb-4">🔗 Connect</h3>
               <p className="text-gray-600 leading-relaxed">
-                Forge powerful bonds across the global African Diaspora. Tap into a vibrant ecosystem of innovators, leaders, and changemakers ready to move the continent forward—together.
+                Forge powerful bonds across the global African Diaspora. Tap into a vibrant ecosystem of innovators, leaders, and changemakers ready to move the continent forward, together.
               </p>
             </div>
 

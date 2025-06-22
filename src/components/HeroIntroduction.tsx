@@ -16,6 +16,9 @@ const HeroIntroduction = () => {
         </a>
         , an ecosystem builder and entrepreneur dedicated to uniting Africa's diaspora for meaningful impact.
       </p>
+      <p className="text-lg md:text-xl text-dna-forest leading-relaxed">
+        We're building a bold new platform to redefine how the African Diaspora fuels Africa's rise. This isn't just a network, it's a launchpad for co-creation, co-investment, and co-leadership in shaping the systems that drive lasting impact.
+      </p>
     </div>
   );
 };
