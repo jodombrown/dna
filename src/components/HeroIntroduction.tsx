@@ -17,14 +17,8 @@ const HeroIntroduction = () => {
         , an ecosystem builder and entrepreneur committed to uniting visionary leaders, builders, and changemakers across the African diaspora. These are individuals driven by purpose, rich in talent, and ready to accelerate Africa's transformation.
       </p>
       
-      <div className="border-l-4 border-dna-copper pl-6 mb-6">
-        <p className="text-lg md:text-xl text-dna-forest leading-relaxed font-medium">
-          This is more than a network.
-        </p>
-      </div>
-      
       <p className="text-lg md:text-xl mb-6 text-dna-forest leading-relaxed">
-        It is a dynamic platform for co-creation, co-investment, and shared leadership, designed to harness the full potential of the diaspora in shaping the systems that drive scalable, lasting impact.
+        We are building the infrastructure for actionable, systemic change by mobilizing talent, capital, and expertise. We turn collective ambition into coordinated efforts that reshape systems, unlock opportunity, and drive sustainable development.
       </p>
       
       <p className="text-lg md:text-xl text-dna-forest leading-relaxed font-medium">
