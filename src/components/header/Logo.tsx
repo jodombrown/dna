@@ -14,7 +14,7 @@ const Logo = () => {
         <img 
           src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
           alt="DNA" 
-          className="h-8 w-auto"
+          className="h-12 w-auto"
         />
       </button>
     </div>
