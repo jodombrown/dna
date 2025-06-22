@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -126,10 +125,10 @@ const MarketResearchPhase = () => {
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
             <BookOpen className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Phase 1 • Foundation Research</span>
+            <span className="font-semibold">Phase 1 • Market Research</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Foundation Research
+            Market Research
           </h1>
           <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
             Understanding diaspora needs, motivations, and behaviors to validate DNA's concept and market fit through comprehensive research.

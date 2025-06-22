@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
 import PhaseMetrics from '@/components/phases/PhaseMetrics';
-import { Users, Code, Target, CheckCircle, BarChart3, Lightbulb, Palette, Zap, ArrowRight } from "lucide-react";
+import { Palette, Code, Users, Target, TrendingUp, CheckCircle, Lightbulb, Rocket, ArrowRight } from "lucide-react";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
@@ -111,28 +110,28 @@ const PrototypingPhase = () => {
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex flex-col">
       <Header />
       
-      {/* Hero Section with Design/Prototyping Image */}
+      {/* Hero Section with Design/Development Image */}
       <section className="relative py-20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
+            backgroundImage: "url('https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-900/85 via-orange-900/85 to-yellow-900/85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-900/85 via-amber-900/85 to-yellow-900/85" />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
             <Palette className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Phase 2 • Design & Prototyping</span>
+            <span className="font-semibold">Phase 2 • Prototyping</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Design & Prototyping
+            Prototyping
           </h1>
           <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
-            Creating and testing the product experience through interactive prototypes and comprehensive usability testing before building the full platform.
+            Transforming research insights into tangible designs and interactive prototypes that bring the DNA vision to life.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
             <button 

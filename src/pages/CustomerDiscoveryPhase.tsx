@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -115,10 +114,10 @@ const CustomerDiscoveryPhase = () => {
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
             <UserCheck className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Phase 3 • Customer Discovery #1</span>
+            <span className="font-semibold">Phase 3 • Customer Discovery</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Customer Discovery #1
+            Customer Discovery
           </h1>
           <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
             Measuring early adopter interest and validation without product build through community engagement and targeted outreach across the diaspora.
@@ -145,7 +144,7 @@ const CustomerDiscoveryPhase = () => {
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">What is Customer Discovery #1?</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">What is Customer Discovery?</h2>
             <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
               This phase is about understanding our community before building. We're measuring genuine interest from the African diaspora, 
               validating our assumptions about their networking and collaboration needs, and building relationships with early adopters who will help shape DNA's future. 

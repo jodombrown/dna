@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';

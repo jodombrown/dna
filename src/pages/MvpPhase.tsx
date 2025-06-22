@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
 import PhaseMetrics from '@/components/phases/PhaseMetrics';
-import { Code, Users, Target, Zap, Database, Settings, Lightbulb, Rocket, ArrowRight } from "lucide-react";
+import { Rocket, Code, Users, Target, TrendingUp, CheckCircle, Lightbulb, Settings, ArrowRight } from "lucide-react";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
@@ -114,25 +113,25 @@ const MvpPhase = () => {
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 flex flex-col">
       <Header />
       
-      {/* Hero Section with Development/Building Image */}
+      {/* Hero Section with MVP Development Image */}
       <section className="relative py-20 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
+            backgroundImage: "url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2015&q=80')"
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-red-900/85 via-pink-900/85 to-rose-900/85" />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
             <Rocket className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Phase 4 • MVP Development</span>
+            <span className="font-semibold">Phase 4 • MVP Build</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Minimal Viable Product (MVP)
+            MVP Build
           </h1>
           <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
-            Building the core DNA platform with essential features for diaspora networking, collaboration, and contribution, validated through comprehensive testing and user feedback.
+            Building the minimum viable product with core features that enable diaspora connections, collaborations, and contributions.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
             <button 
