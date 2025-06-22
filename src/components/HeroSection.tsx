@@ -6,6 +6,7 @@ import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
+import { Play } from 'lucide-react';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -42,22 +43,23 @@ const HeroSection = () => {
                   <span className="font-semibold text-dna-forest"> ecosystem building</span>.
                 </p>
 
-                {/* Primary CTA */}
+                {/* Primary CTA - Swapped buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
                   <Button 
                     size="lg" 
-                    className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full"
-                    onClick={scrollToDNAFramework}
+                    className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full flex items-center gap-2"
+                    onClick={() => setIsFeedbackOpen(true)}
                   >
-                    Get Started
+                    Give Feedback
                   </Button>
                   <Button 
                     variant="outline" 
                     size="lg"
-                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full"
-                    onClick={() => setIsFeedbackOpen(true)}
+                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full flex items-center gap-2"
+                    onClick={scrollToDNAFramework}
                   >
-                    Give Feedback
+                    <Play className="w-4 h-4" />
+                    See how it works
                   </Button>
                 </div>
               </div>
