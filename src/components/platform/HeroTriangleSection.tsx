@@ -16,19 +16,19 @@ const HeroTriangleSection = () => {
 
   return (
     <>
-      <section className="py-24 bg-gray-50">
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
+          <div className="text-center mb-16">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
               The DNA Framework
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-20">
+            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
               Our framework transforms how Africa's diaspora creates change. 
               Each pillar strengthens the others, multiplying your impact across the continent.
             </p>
 
             {/* Three Pillars Grid */}
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
               {/* Connect Pillar */}
               <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div className="flex justify-center mb-6">
@@ -70,11 +70,11 @@ const HeroTriangleSection = () => {
             </div>
 
             <Button 
-              onClick={() => setIsFeedbackOpen(true)}
-              className="bg-gray-800 hover:bg-gray-900 text-white rounded-full px-8 py-3 flex items-center gap-2 mx-auto"
+              onClick={scrollToConnectSection}
+              className="bg-dna-emerald hover:bg-dna-forest text-white rounded-full px-8 py-3 flex items-center gap-2 mx-auto"
             >
-              <MessageSquare className="w-4 h-4" />
-              Give Feedback
+              <Play className="w-4 h-4" />
+              See how it works
             </Button>
           </div>
         </div>

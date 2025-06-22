@@ -21,22 +21,22 @@ const HeroSection = () => {
 
   return (
     <>
-      {/* Main Hero Section with adjusted spacing */}
-      <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-8">
+      {/* Main Hero Section with optimized spacing */}
+      <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh] py-16">
+          <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[65vh] py-8">
             
             {/* Left Column, Main Content */}
-            <div className="space-y-8">
+            <div className="space-y-6">
               {/* Main Headline */}
               <div className="text-center lg:text-left">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-dna-forest mb-6">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-dna-forest mb-4">
                   Welcome to the
                   <br />
                   <span className="text-dna-copper">Diaspora Network of Africa</span>
                 </h1>
                 
-                <p className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed">
+                <p className="text-xl md:text-2xl text-gray-700 mb-6 leading-relaxed">
                   Connecting Africa's diaspora professionals for meaningful global impact through 
                   <span className="font-semibold text-dna-emerald"> capacity building</span>, 
                   <span className="font-semibold text-dna-copper"> venture building</span>, and 
@@ -44,7 +44,7 @@ const HeroSection = () => {
                 </p>
 
                 {/* Primary CTA */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
                   <Button 
                     size="lg" 
                     className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full flex items-center gap-2"
@@ -66,8 +66,8 @@ const HeroSection = () => {
             </div>
 
             {/* Right Column, Introduction */}
-            <div className="space-y-8">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-dna-mint/20">
+            <div className="space-y-6">
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-dna-mint/20">
                 <HeroIntroduction />
               </div>
             </div>
@@ -82,19 +82,19 @@ const HeroSection = () => {
       </section>
 
       {/* Statistics Section */}
-      <section className="py-20 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
+      <section className="py-12 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <DiasporaStats />
         </div>
       </section>
 
-      {/* Platform Development Section with increased spacing */}
-      <section id="dna-framework" className="py-24 bg-gray-50">
+      {/* Platform Development Section with optimized spacing */}
+      <section id="dna-framework" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-dna-forest mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold text-dna-forest mb-8">
             From Idea to Implementation
           </h2>
-          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 mb-10 max-w-3xl mx-auto">
             Follow our transparent development process as we build the future of diaspora engagement
           </p>
           <PlatformBadges />

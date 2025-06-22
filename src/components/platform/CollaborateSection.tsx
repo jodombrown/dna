@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,9 +8,9 @@ const CollaborateSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="md:order-2">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
@@ -21,12 +20,12 @@ const CollaborateSection = () => {
                 Collaborate
               </h2>
             </div>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-gray-600 mb-6">
               Work together on meaningful projects that drive African development. 
               Pool resources, share knowledge, and amplify collective impact.
             </p>
             
-            <div className="space-y-4 mb-8">
+            <div className="space-y-3 mb-8">
               <div className="flex items-center gap-3 p-4 bg-dna-copper/10 rounded-lg">
                 <Briefcase className="w-5 h-5 text-dna-copper" />
                 <span className="font-medium">Cross-Border Project Teams</span>

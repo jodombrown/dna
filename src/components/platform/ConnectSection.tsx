@@ -7,9 +7,9 @@ const ConnectSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section id="connect-section" className="py-20">
+    <section id="connect-section" className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center">
@@ -19,12 +19,12 @@ const ConnectSection = () => {
                 Connect
               </h2>
             </div>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-gray-600 mb-6">
               Build meaningful professional relationships across the diaspora. 
               Discover opportunities, expand your network, and find your tribe.
             </p>
             
-            <div className="space-y-4 mb-8">
+            <div className="space-y-3 mb-8">
               <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
                 <Globe className="w-5 h-5 text-dna-emerald" />
                 <span className="font-medium">Global Network Access</span>
