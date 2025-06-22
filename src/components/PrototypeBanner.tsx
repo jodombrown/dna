@@ -13,7 +13,7 @@ const PrototypeBanner: React.FC = () => {
     // Trigger the slide-down animation after a brief delay
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
