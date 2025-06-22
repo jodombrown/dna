@@ -89,23 +89,9 @@ const DiasporaStats = () => {
         <p className="text-base md:text-lg text-gray-700 leading-relaxed">
           We're in the early stages of building a transformative platform designed to elevate the African Diaspora's role in Africa's development. This isn't just about joining a network—it's about co-creating, co-investing, and co-executing the infrastructure that empowers us to connect, collaborate, and contribute meaningful change across Africa and beyond.
         </p>
-
-        <div className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 rounded-xl p-6">
-          <p className="text-base md:text-lg font-medium text-dna-forest mb-2">
-            Your expertise matters. Your voice matters.
-          </p>
-          <p className="text-sm md:text-base text-gray-700">
-            Let's build a future where the African Diaspora thrives and where Africa's potential is fully realized.
-          </p>
-        </div>
-
-        <p className="text-lg md:text-xl font-semibold text-dna-forest">
-          Join me on this journey. Let's build this together.
-        </p>
       </div>
     </div>
   );
 };
 
 export default DiasporaStats;
-
