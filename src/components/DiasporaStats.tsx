@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ChevronLeft, ChevronRight, ArrowRight, ExternalLink } from 'lucide-react';
 
 const AnimatedStat = ({ value, suffix, label, description, bgGradient }: {
@@ -66,7 +65,7 @@ const TestimonialCard = ({ quote, author, title, image }: {
 
 const DiasporaStats = () => {
   const [activeTimelineYear, setActiveTimelineYear] = useState('');
-  const [isTimelineSheetOpen, setIsTimelineSheetOpen] = useState(false);
+  const [isTimelineDialogOpen, setIsTimelineDialogOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   const timelineData = [
@@ -143,7 +142,7 @@ const DiasporaStats = () => {
 
   const handleTimelineClick = (year: string) => {
     setActiveTimelineYear(year);
-    setIsTimelineSheetOpen(true);
+    setIsTimelineDialogOpen(true);
   };
 
   const nextTestimonial = () => {
@@ -225,24 +224,24 @@ const DiasporaStats = () => {
         </div>
       </section>
 
-      {/* Timeline Detail Sheet */}
-      <Sheet open={isTimelineSheetOpen} onOpenChange={setIsTimelineSheetOpen}>
-        <SheetContent side="left" className="w-[400px] sm:w-[540px]">
-          <SheetHeader>
-            <SheetTitle className="text-2xl font-bold text-dna-forest">
+      {/* Timeline Detail Dialog */}
+      <Dialog open={isTimelineDialogOpen} onOpenChange={setIsTimelineDialogOpen}>
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-dna-forest">
               {activeTimelineData?.expandedContent.title}
-            </SheetTitle>
-            <SheetDescription className="text-lg font-semibold text-dna-emerald">
+            </DialogTitle>
+            <DialogDescription className="text-lg font-semibold text-dna-emerald">
               {activeTimelineYear}
-            </SheetDescription>
-          </SheetHeader>
+            </DialogDescription>
+          </DialogHeader>
           <div className="mt-6">
             <p className="text-gray-700 leading-relaxed">
               {activeTimelineData?.expandedContent.description}
             </p>
           </div>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
 
       {/* "What You're Missing" Infographic */}
       <section className="mb-16">
