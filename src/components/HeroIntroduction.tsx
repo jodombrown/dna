@@ -3,8 +3,8 @@ import React from 'react';
 
 const HeroIntroduction = () => {
   return (
-    <div className="max-w-3xl mx-auto mb-6">
-      <p className="text-lg md:text-xl mb-6 text-dna-forest leading-relaxed">
+    <div className="max-w-3xl mx-auto mb-3">
+      <p className="text-lg md:text-xl mb-4 text-dna-forest leading-relaxed">
         I'm{' '}
         <a 
           href="https://www.linkedin.com/in/jaunelamarr/" 
