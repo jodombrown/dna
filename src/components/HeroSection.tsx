@@ -67,7 +67,7 @@ const HeroSection = () => {
 
             {/* Right Column, Introduction */}
             <div className="space-y-6">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-dna-mint/20">
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg border-0 overflow-hidden">
                 <HeroIntroduction />
               </div>
             </div>

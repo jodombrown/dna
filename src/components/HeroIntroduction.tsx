@@ -3,7 +3,7 @@ import React from 'react';
 
 const HeroIntroduction = () => {
   return (
-    <div className="max-w-3xl mx-auto mb-12">
+    <div className="max-w-3xl mx-auto mb-6">
       <p className="text-lg md:text-xl mb-6 text-dna-forest leading-relaxed">
         I'm{' '}
         <a 
@@ -17,7 +17,7 @@ const HeroIntroduction = () => {
         , an ecosystem builder and entrepreneur committed to uniting visionary leaders, builders, and changemakers across the African diaspora. These are individuals driven by purpose, rich in talent, and ready to accelerate Africa's transformation.
       </p>
       
-      <p className="text-lg md:text-xl mb-6 text-dna-forest leading-relaxed">
+      <p className="text-lg md:text-xl text-dna-forest leading-relaxed">
         We are building the infrastructure for actionable, systemic change by mobilizing talent, capital, and expertise. We turn collective ambition into coordinated efforts that reshape systems, unlock opportunity, and drive sustainable development.
       </p>
     </div>
