@@ -20,10 +20,6 @@ const HeroIntroduction = () => {
       <p className="text-lg md:text-xl mb-6 text-dna-forest leading-relaxed">
         We are building the infrastructure for actionable, systemic change by mobilizing talent, capital, and expertise. We turn collective ambition into coordinated efforts that reshape systems, unlock opportunity, and drive sustainable development.
       </p>
-      
-      <p className="text-lg md:text-xl text-dna-forest leading-relaxed font-medium">
-        We are reimagining how the African diaspora fuels Africa's rise, transforming collective ambition into actionable, systemic change.
-      </p>
     </div>
   );
 };
