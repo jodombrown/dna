@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -8,26 +9,27 @@ import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useNavigate } from 'react-router-dom';
+import PrototypeBanner from '@/components/PrototypeBanner';
 
 const objectives = [
   {
     icon: <Users className="w-5 h-5" />,
     title: "Deep Diaspora Needs Analysis",
-    description: "Conduct comprehensive research into diaspora motivations, behaviors, challenges, and unmet needs across different regions, demographics, and professional backgrounds. This involves both quantitative data analysis and qualitative insights gathering to build a complete picture of our target community's experiences and aspirations.",
+    description: "Conduct comprehensive research into diaspora motivations, behaviors, challenges, and unmet needs across different regions, demographics, and professional backgrounds.",
     status: "In Progress",
     completion: 85
   },
   {
     icon: <Target className="w-5 h-5" />,
     title: "DNA Concept Market Validation",
-    description: "Test and validate our core platform concept, value propositions, and potential market fit through structured feedback sessions, surveys, and stakeholder interviews. Ensure our vision aligns with real community needs and has strong potential for adoption and engagement.",
+    description: "Test and validate our core platform concept, value propositions, and potential market fit through structured feedback sessions, surveys, and stakeholder interviews.",
     status: "Active",
     completion: 70
   },
   {
     icon: <TrendingUp className="w-5 h-5" />,
     title: "Market Opportunity Quantification",
-    description: "Quantify the total addressable market and specific market segments using public data sources, proprietary research, competitive analysis, and demographic studies. Establish clear metrics for market size, growth potential, and revenue opportunities within the diaspora ecosystem.",
+    description: "Quantify the total addressable market and specific market segments using public data sources, proprietary research, competitive analysis, and demographic studies.",
     status: "Active",
     completion: 60
   },
@@ -76,7 +78,7 @@ const fallbackMetrics = [
     value: "32",
     target: "50",
     icon: "message-square",
-    color: "bg-blue-500"
+    color: "bg-dna-emerald"
   },
   {
     id: "2", 
@@ -84,7 +86,7 @@ const fallbackMetrics = [
     value: "127",
     target: "200",
     icon: "users",
-    color: "bg-indigo-500"
+    color: "bg-dna-copper"
   },
   {
     id: "3",
@@ -92,7 +94,7 @@ const fallbackMetrics = [
     value: "240",
     target: "400",
     icon: "clock",
-    color: "bg-purple-500"
+    color: "bg-dna-gold"
   },
   {
     id: "4",
@@ -100,7 +102,7 @@ const fallbackMetrics = [
     value: "3",
     target: "5",
     icon: "target",
-    color: "bg-blue-600"
+    color: "bg-dna-forest"
   }
 ];
 
@@ -110,8 +112,9 @@ const MarketResearchPhase = () => {
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-dna-mint/10 flex flex-col">
       <Header />
+      <PrototypeBanner />
       
       {/* Hero Section with Research/Analytics Image */}
       <section className="relative py-20 overflow-hidden">
@@ -121,7 +124,7 @@ const MarketResearchPhase = () => {
             backgroundImage: "url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/85 via-blue-900/85 to-indigo-900/85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-dna-forest/85 via-dna-emerald/85 to-dna-copper/85" />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
             <BookOpen className="w-5 h-5 mr-2" />
@@ -136,7 +139,7 @@ const MarketResearchPhase = () => {
           <div className="flex justify-center gap-4 flex-wrap">
             <button 
               onClick={() => setIsBetaSignupOpen(true)}
-              className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+              className="bg-white text-dna-emerald px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
             >
               Join Research Community
             </button>
@@ -164,32 +167,32 @@ const MarketResearchPhase = () => {
           </div>
           
           <div className="grid md:grid-cols-4 gap-6">
-            <div className="text-center p-6 bg-slate-50 rounded-xl border border-slate-200">
-              <div className="w-12 h-12 bg-slate-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 bg-dna-mint/10 rounded-xl border border-dna-mint/30">
+              <div className="w-12 h-12 bg-dna-forest rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Deep Research</h3>
               <p className="text-gray-600 text-sm">AI-powered analysis of diaspora trends, behaviors, and market dynamics.</p>
             </div>
             
-            <div className="text-center p-6 bg-blue-50 rounded-xl border border-blue-200">
-              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 bg-dna-emerald/10 rounded-xl border border-dna-emerald/30">
+              <div className="w-12 h-12 bg-dna-emerald rounded-full flex items-center justify-center mx-auto mb-4">
                 <MessageSquare className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Stakeholder Voices</h3>
               <p className="text-gray-600 text-sm">50+ interviews with diaspora leaders, entrepreneurs, and community builders.</p>
             </div>
             
-            <div className="text-center p-6 bg-indigo-50 rounded-xl border border-indigo-200">
-              <div className="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 bg-dna-copper/10 rounded-xl border border-dna-copper/30">
+              <div className="w-12 h-12 bg-dna-copper rounded-full flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Data Analysis</h3>
               <p className="text-gray-600 text-sm">Quantitative validation of market size, opportunities, and growth potential.</p>
             </div>
             
-            <div className="text-center p-6 bg-purple-50 rounded-xl border border-purple-200">
-              <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 bg-dna-gold/10 rounded-xl border border-dna-gold/30">
+              <div className="w-12 h-12 bg-dna-gold rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Validation</h3>
@@ -199,15 +202,15 @@ const MarketResearchPhase = () => {
         </div>
       </section>
 
-      <PhaseObjectives objectives={objectives} color="blue-600" />
-      <PhaseTimeline milestones={timeline} color="indigo-600" />
+      <PhaseObjectives objectives={objectives} color="dna-emerald" />
+      <PhaseTimeline milestones={timeline} color="dna-copper" />
       <PhaseMetrics phaseSlug="market-research" fallbackMetrics={fallbackMetrics} />
       
       {/* Research Community CTA */}
-      <section className="py-16 bg-gradient-to-r from-slate-500/10 via-blue-500/10 to-indigo-500/10">
+      <section className="py-16 bg-gradient-to-r from-dna-mint/20 via-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-slate-200">
-            <Search className="w-16 h-16 text-blue-600 mx-auto mb-6" />
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-mint/30">
+            <Search className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Help Shape DNA Through Research
             </h2>
@@ -218,11 +221,11 @@ const MarketResearchPhase = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
                 onClick={() => setIsBetaSignupOpen(true)}
-                className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors"
+                className="bg-dna-emerald text-white px-8 py-3 rounded-full font-semibold hover:bg-dna-forest transition-colors"
               >
                 Participate in Research
               </button>
-              <button className="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-50 transition-colors">
+              <button className="border-2 border-dna-emerald text-dna-emerald px-8 py-3 rounded-full font-semibold hover:bg-dna-emerald/10 transition-colors">
                 View Research Updates
               </button>
             </div>

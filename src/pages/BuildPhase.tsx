@@ -1,3 +1,4 @@
+
 import React from 'react';
 import PhaseHero from '@/components/phases/PhaseHero';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
@@ -7,6 +8,7 @@ import { Code, Users, Zap, Settings, Hammer, Database, CheckCircle, BarChart3, L
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import PrototypeBanner from '@/components/PrototypeBanner';
 
 const objectives = [
   {
@@ -114,6 +116,7 @@ const BuildPhase = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
+      <PrototypeBanner />
       <PhaseHero
         badge="Phase 2"
         title="Build Phase"
