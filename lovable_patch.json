@@ -1,0 +1,16 @@
+{
+  "description": "Fix Supabase performance advisor warnings by referencing auth functions using subqueries instead of direct calls.",
+  "replacements": [
+    {"file": "supabase/migrations/20250610215537-119827a6-7368-43c9-9e47-ce0656747e20.sql", "find": "auth.uid()", "replace": "(select auth.uid())"},
+    {"file": "supabase/migrations/20250610225529-c33fbeab-f6fd-4262-ad96-3dd2cc7437e0.sql", "find": "auth.uid()", "replace": "(select auth.uid())"},
+    {"file": "supabase/migrations/20250613035728-4486fe45-0cb9-403a-94ec-7dda4ce6ffb0.sql", "find": "auth.uid()", "replace": "(select auth.uid())"},
+    {"file": "supabase/migrations/20250613165905-fb8b7c04-d9b3-49cf-8c0b-e67e33e8d89b.sql", "find": "auth.uid()", "replace": "(select auth.uid())"},
+    {"file": "supabase/migrations/20250614193617-33987830-fea7-4964-8500-8acc1db47be4.sql", "find": "auth.uid()", "replace": "(select auth.uid())"},
+    {"file": "supabase/migrations/20250614204553-4c47a939-4b14-4c67-8365-a1925c1a64a1.sql", "find": "auth.uid()", "replace": "(select auth.uid())"},
+    {"file": "supabase/migrations/20250614205355-99697e05-30fa-4482-b3c4-f48f19aae44d.sql", "find": "auth.uid()", "replace": "(select auth.uid())"},
+    {"file": "supabase/migrations/20250615053931-dc73abd0-3b9e-4cb7-8fe6-aa27ee234180.sql", "find": "auth.uid()", "replace": "(select auth.uid())"},
+    {"file": "supabase/migrations/20250617153138-5d0e7f01-c1df-4a03-a0ad-36f3d10214ed.sql", "find": "auth.uid()", "replace": "(select auth.uid())"},
+    {"file": "supabase/migrations/20250617182056-9bf1509a-86c5-4bd5-a137-66d8082d19ca.sql", "find": "auth.uid()", "replace": "(select auth.uid())"},
+    {"file": "supabase/migrations/20250619163752-386205bf-2bf3-4dbd-a229-81d092a8564d.sql", "find": "auth.uid()", "replace": "(select auth.uid())"}
+  ]
+}
