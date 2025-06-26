@@ -22,7 +22,7 @@ const PhaseObjectives: React.FC<PhaseObjectivesProps> = ({ objectives, color = "
     <div className="w-full px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Phase Objectives</h2>
-        <p className="text-lg text-gray-600 max-w-4xl mx-auto">
+        <p className="text-lg text-gray-600 max-w-5xl mx-auto">
           Our focused approach to driving this phase's success
         </p>
       </div>

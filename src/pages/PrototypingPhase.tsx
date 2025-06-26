@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -111,7 +112,7 @@ const PrototypingPhase = () => {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-blue-900/85 via-indigo-900/85 to-purple-900/85" />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
             <Palette className="w-5 h-5 mr-2" />
             <span className="font-semibold">Phase 2 • Prototyping</span>
@@ -119,7 +120,7 @@ const PrototypingPhase = () => {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
             Prototyping
           </h1>
-          <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
+          <p className="text-xl md:text-2xl max-w-5xl mx-auto text-white/90 mb-8 leading-relaxed">
             Designing and testing user experiences, wireframes, and interactive prototypes based on market research insights and user feedback validation.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
@@ -142,17 +143,17 @@ const PrototypingPhase = () => {
 
       {/* Phase Overview */}
       <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">From Concept to Clickable</h2>
-            <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-5xl mx-auto leading-relaxed">
               This phase is where ideas take shape. We're translating our market research and user insights into tangible designs, 
               wireframes, and interactive prototypes. By putting these prototypes in front of real users from the diaspora community, 
               we're able to validate our assumptions, refine our user experience, and ensure we're building a platform that truly meets their needs.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 px-4 lg:px-16">
             <div className="text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200">
               <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Palette className="w-8 h-8 text-white" />
@@ -186,8 +187,8 @@ const PrototypingPhase = () => {
       
       {/* Design Testing CTA */}
       <section className="py-16 bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-blue-200">
+        <div className="w-full text-center px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-blue-200 max-w-5xl mx-auto">
             <Lightbulb className="w-16 h-16 text-blue-500 mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Help Us Design the Future of DNA

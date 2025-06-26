@@ -129,14 +129,16 @@ const BuildPhase = () => {
       <PhaseTimeline milestones={timeline} color="dna-copper" />
       <PhaseMetrics phaseSlug="build" fallbackMetrics={fallbackMetrics} />
       <section className="py-16 bg-gradient-to-r from-dna-copper/10 to-dna-mint/10">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-5" />
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Ready to See DNA Go Live?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Help us build and test new features—join our beta community!
-          </p>
+        <div className="w-full text-center px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-mint/30 max-w-5xl mx-auto">
+            <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-5" />
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Ready to See DNA Go Live?
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Help us build and test new features—join our beta community!
+            </p>
+          </div>
         </div>
       </section>
       <Footer />

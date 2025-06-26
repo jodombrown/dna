@@ -31,7 +31,7 @@ const PhaseHero: React.FC<PhaseHeroProps> = ({
           {badge}
         </Badge>
         <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white drop-shadow-xl">{title}</h1>
-        <p className="text-xl max-w-4xl mx-auto text-white/90 mb-10">{description}</p>
+        <p className="text-xl max-w-5xl mx-auto text-white/90 mb-10">{description}</p>
         <div className="flex justify-center gap-4 mt-4 flex-wrap">
           {prevPhase && (
             <Button

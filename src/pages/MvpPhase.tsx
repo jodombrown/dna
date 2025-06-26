@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -122,7 +123,7 @@ const MvpPhase = () => {
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-red-900/85 via-pink-900/85 to-rose-900/85" />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+        <div className="relative w-full px-4 sm:px-6 lg:px-8 text-center text-white">
           <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
             <Rocket className="w-5 h-5 mr-2" />
             <span className="font-semibold">Phase 4 • MVP Build</span>
@@ -130,7 +131,7 @@ const MvpPhase = () => {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
             MVP Build
           </h1>
-          <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
+          <p className="text-xl md:text-2xl max-w-5xl mx-auto text-white/90 mb-8 leading-relaxed">
             Building the minimum viable product with core features that enable diaspora connections, collaborations, and contributions.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
@@ -153,17 +154,17 @@ const MvpPhase = () => {
 
       {/* MVP Development Overview */}
       <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Building the Foundation</h2>
-            <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-5xl mx-auto leading-relaxed">
               This phase transforms our validated designs and research into a working platform. We're building the core DNA experience 
               that enables diaspora professionals to connect meaningfully, collaborate on impactful projects, and contribute their skills 
               to initiatives that strengthen Africa's development. Every feature is purposefully designed to serve our community's unique needs.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 px-4 lg:px-16">
             <div className="text-center p-8 bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl border border-red-200">
               <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Code className="w-8 h-8 text-white" />
@@ -197,8 +198,8 @@ const MvpPhase = () => {
       
       {/* Alpha Testing CTA */}
       <section className="py-16 bg-gradient-to-r from-red-500/10 via-pink-500/10 to-rose-500/10">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-red-200">
+        <div className="w-full text-center px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-red-200 max-w-5xl mx-auto">
             <Lightbulb className="w-16 h-16 text-red-500 mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Help Us Build DNA Together
