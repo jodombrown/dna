@@ -16,13 +16,13 @@ DROP POLICY IF EXISTS "Users can update messages they received" ON public.messag
 CREATE POLICY "Users can send messages" 
   ON public.messages 
   FOR INSERT 
-  WITH CHECK (auth.uid() = sender_id);
+  WITH CHECK ((select auth.uid()) = sender_id);
 
 -- Policy: Users can mark their received messages as read
 CREATE POLICY "Users can update messages they received" 
   ON public.messages 
   FOR UPDATE 
-  USING (auth.uid() = recipient_id);
+  USING ((select auth.uid()) = recipient_id);
 
 -- Create indexes for better performance on message queries
 CREATE INDEX IF NOT EXISTS idx_messages_conversation 

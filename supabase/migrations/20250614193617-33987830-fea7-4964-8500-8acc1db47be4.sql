@@ -20,14 +20,14 @@ CREATE POLICY "Allow read to all" ON public.phase_metrics FOR SELECT USING (true
 -- Only allow admin users to insert metrics (WITH CHECK only)
 CREATE POLICY "Admins can insert metrics"
     ON public.phase_metrics FOR INSERT
-    WITH CHECK (public.has_role(auth.uid(), 'admin'));
+    WITH CHECK (public.has_role((select auth.uid()), 'admin'));
 
 -- Only allow admin users to update metrics
 CREATE POLICY "Admins can update metrics"
     ON public.phase_metrics FOR UPDATE
-    USING (public.has_role(auth.uid(), 'admin'));
+    USING (public.has_role((select auth.uid()), 'admin'));
 
 -- Only allow admin users to delete metrics
 CREATE POLICY "Admins can delete metrics"
     ON public.phase_metrics FOR DELETE
-    USING (public.has_role(auth.uid(), 'admin'));
+    USING (public.has_role((select auth.uid()), 'admin'));

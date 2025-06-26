@@ -21,19 +21,19 @@ CREATE POLICY "Users can upload their own event images"
   ON storage.objects FOR INSERT
   WITH CHECK (
     bucket_id = 'event-images'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (select auth.uid())::text = (storage.foldername(name))[1]
   );
 
 CREATE POLICY "Users can update their own event images"
   ON storage.objects FOR UPDATE
   USING (
     bucket_id = 'event-images'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (select auth.uid())::text = (storage.foldername(name))[1]
   );
   
 CREATE POLICY "Users can delete their own event images"
   ON storage.objects FOR DELETE
   USING (
     bucket_id = 'event-images'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (select auth.uid())::text = (storage.foldername(name))[1]
   );

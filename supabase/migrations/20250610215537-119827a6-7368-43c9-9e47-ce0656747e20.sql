@@ -36,7 +36,7 @@ DROP POLICY IF EXISTS "Users can delete their own profile pictures" ON storage.o
 
 CREATE POLICY "Users can upload their own profile pictures"
   ON storage.objects FOR INSERT
-  WITH CHECK (bucket_id = 'profile-pictures' AND auth.uid()::text = (storage.foldername(name))[1]);
+  WITH CHECK (bucket_id = 'profile-pictures' AND (select auth.uid())::text = (storage.foldername(name))[1]);
 
 CREATE POLICY "Anyone can view profile pictures"
   ON storage.objects FOR SELECT
@@ -44,11 +44,11 @@ CREATE POLICY "Anyone can view profile pictures"
 
 CREATE POLICY "Users can update their own profile pictures"
   ON storage.objects FOR UPDATE
-  USING (bucket_id = 'profile-pictures' AND auth.uid()::text = (storage.foldername(name))[1]);
+  USING (bucket_id = 'profile-pictures' AND (select auth.uid())::text = (storage.foldername(name))[1]);
 
 CREATE POLICY "Users can delete their own profile pictures"
   ON storage.objects FOR DELETE
-  USING (bucket_id = 'profile-pictures' AND auth.uid()::text = (storage.foldername(name))[1]);
+  USING (bucket_id = 'profile-pictures' AND (select auth.uid())::text = (storage.foldername(name))[1]);
 
 -- Add RLS policies for profiles if they don't exist
 DROP POLICY IF EXISTS "Users can view public profiles" ON public.profiles;
@@ -59,14 +59,14 @@ DROP POLICY IF EXISTS "Users can update their own profile" ON public.profiles;
 CREATE POLICY "Users can view public profiles" 
   ON public.profiles 
   FOR SELECT 
-  USING (is_public = true OR auth.uid() = id);
+  USING (is_public = true OR (select auth.uid()) = id);
 
 CREATE POLICY "Users can create their own profile" 
   ON public.profiles 
   FOR INSERT 
-  WITH CHECK (auth.uid() = id);
+  WITH CHECK ((select auth.uid()) = id);
 
 CREATE POLICY "Users can update their own profile" 
   ON public.profiles 
   FOR UPDATE 
-  USING (auth.uid() = id);
+  USING ((select auth.uid()) = id);

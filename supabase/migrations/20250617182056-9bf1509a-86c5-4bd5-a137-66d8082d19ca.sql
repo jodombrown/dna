@@ -26,24 +26,24 @@ ALTER TABLE public.connections ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies for user_connections
 CREATE POLICY "Users can view connections" ON public.user_connections FOR SELECT USING (
-  auth.uid() = follower_id OR auth.uid() = following_id
+  (select auth.uid()) = follower_id OR (select auth.uid()) = following_id
 );
 CREATE POLICY "Users can create connections" ON public.user_connections FOR INSERT WITH CHECK (
-  auth.uid() = follower_id
+  (select auth.uid()) = follower_id
 );
 CREATE POLICY "Users can delete their connections" ON public.user_connections FOR DELETE USING (
-  auth.uid() = follower_id
+  (select auth.uid()) = follower_id
 );
 
 -- Create RLS policies for connections
 CREATE POLICY "Users can view their connections" ON public.connections FOR SELECT USING (
-  auth.uid() = requester_id OR auth.uid() = recipient_id
+  (select auth.uid()) = requester_id OR (select auth.uid()) = recipient_id
 );
 CREATE POLICY "Users can create connection requests" ON public.connections FOR INSERT WITH CHECK (
-  auth.uid() = requester_id
+  (select auth.uid()) = requester_id
 );
 CREATE POLICY "Users can update connections they're involved in" ON public.connections FOR UPDATE USING (
-  auth.uid() = requester_id OR auth.uid() = recipient_id
+  (select auth.uid()) = requester_id OR (select auth.uid()) = recipient_id
 );
 
 -- Update profiles table to have proper foreign key relationship
