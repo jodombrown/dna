@@ -58,46 +58,46 @@ CREATE POLICY "Users can view published posts" ON public.posts
   FOR SELECT USING (is_published = true);
 
 CREATE POLICY "Users can insert their own posts" ON public.posts
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own posts" ON public.posts
-  FOR UPDATE USING (auth.uid() = user_id);
+  FOR UPDATE USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete their own posts" ON public.posts
-  FOR DELETE USING (auth.uid() = user_id);
+  FOR DELETE USING ((select auth.uid()) = user_id);
 
 -- RLS Policies for post_likes
 CREATE POLICY "Users can view all likes" ON public.post_likes
   FOR SELECT USING (true);
 
 CREATE POLICY "Users can like posts" ON public.post_likes
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can unlike their own likes" ON public.post_likes
-  FOR DELETE USING (auth.uid() = user_id);
+  FOR DELETE USING ((select auth.uid()) = user_id);
 
 -- RLS Policies for post_comments
 CREATE POLICY "Users can view all comments" ON public.post_comments
   FOR SELECT USING (true);
 
 CREATE POLICY "Users can create comments" ON public.post_comments
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update their own comments" ON public.post_comments
-  FOR UPDATE USING (auth.uid() = user_id);
+  FOR UPDATE USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can delete their own comments" ON public.post_comments
-  FOR DELETE USING (auth.uid() = user_id);
+  FOR DELETE USING ((select auth.uid()) = user_id);
 
 -- RLS Policies for user_follows
 CREATE POLICY "Users can view all follows" ON public.user_follows
   FOR SELECT USING (true);
 
 CREATE POLICY "Users can follow others" ON public.user_follows
-  FOR INSERT WITH CHECK (auth.uid() = follower_id);
+  FOR INSERT WITH CHECK ((select auth.uid()) = follower_id);
 
 CREATE POLICY "Users can unfollow" ON public.user_follows
-  FOR DELETE USING (auth.uid() = follower_id);
+  FOR DELETE USING ((select auth.uid()) = follower_id);
 
 -- Create indexes for performance
 CREATE INDEX idx_posts_user_id ON public.posts(user_id);

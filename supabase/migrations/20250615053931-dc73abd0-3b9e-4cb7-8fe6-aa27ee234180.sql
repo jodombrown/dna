@@ -20,5 +20,5 @@ ALTER TABLE public.onboarding_events ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Owner can access their onboarding events"
 ON public.onboarding_events
 FOR ALL
-USING (auth.uid() = user_id)
-WITH CHECK (auth.uid() = user_id);
+USING ((select auth.uid()) = user_id)
+WITH CHECK ((select auth.uid()) = user_id);

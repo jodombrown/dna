@@ -69,25 +69,25 @@ ALTER TABLE public.initiatives ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for user_connections
 CREATE POLICY "Users can view connections" ON public.user_connections FOR SELECT USING (true);
-CREATE POLICY "Users can create connections" ON public.user_connections FOR INSERT WITH CHECK (auth.uid() = follower_id);
-CREATE POLICY "Users can delete their connections" ON public.user_connections FOR DELETE USING (auth.uid() = follower_id);
+CREATE POLICY "Users can create connections" ON public.user_connections FOR INSERT WITH CHECK ((select auth.uid()) = follower_id);
+CREATE POLICY "Users can delete their connections" ON public.user_connections FOR DELETE USING ((select auth.uid()) = follower_id);
 
 -- RLS policies for projects
 CREATE POLICY "Users can view public projects" ON public.projects FOR SELECT USING (true);
-CREATE POLICY "Users can create projects" ON public.projects FOR INSERT WITH CHECK (auth.uid() = creator_id);
-CREATE POLICY "Project creators can update projects" ON public.projects FOR UPDATE USING (auth.uid() = creator_id);
-CREATE POLICY "Project creators can delete projects" ON public.projects FOR DELETE USING (auth.uid() = creator_id);
+CREATE POLICY "Users can create projects" ON public.projects FOR INSERT WITH CHECK ((select auth.uid()) = creator_id);
+CREATE POLICY "Project creators can update projects" ON public.projects FOR UPDATE USING ((select auth.uid()) = creator_id);
+CREATE POLICY "Project creators can delete projects" ON public.projects FOR DELETE USING ((select auth.uid()) = creator_id);
 
 -- RLS policies for project_participants
 CREATE POLICY "Users can view project participants" ON public.project_participants FOR SELECT USING (true);
-CREATE POLICY "Users can join projects" ON public.project_participants FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can leave projects" ON public.project_participants FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Users can join projects" ON public.project_participants FOR INSERT WITH CHECK ((select auth.uid()) = user_id);
+CREATE POLICY "Users can leave projects" ON public.project_participants FOR DELETE USING ((select auth.uid()) = user_id);
 
 -- RLS policies for initiatives
 CREATE POLICY "Users can view initiatives" ON public.initiatives FOR SELECT USING (true);
-CREATE POLICY "Users can create initiatives" ON public.initiatives FOR INSERT WITH CHECK (auth.uid() = creator_id);
-CREATE POLICY "Initiative creators can update initiatives" ON public.initiatives FOR UPDATE USING (auth.uid() = creator_id);
-CREATE POLICY "Initiative creators can delete initiatives" ON public.initiatives FOR DELETE USING (auth.uid() = creator_id);
+CREATE POLICY "Users can create initiatives" ON public.initiatives FOR INSERT WITH CHECK ((select auth.uid()) = creator_id);
+CREATE POLICY "Initiative creators can update initiatives" ON public.initiatives FOR UPDATE USING ((select auth.uid()) = creator_id);
+CREATE POLICY "Initiative creators can delete initiatives" ON public.initiatives FOR DELETE USING ((select auth.uid()) = creator_id);
 
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_user_connections_follower ON public.user_connections(follower_id);
