@@ -18,34 +18,34 @@ CREATE POLICY "Allow public read communities"
 CREATE POLICY "Allow users to create events"
   ON public.events
   FOR INSERT
-  WITH CHECK (auth.uid()::text = created_by::text);
+  WITH CHECK ((select auth.uid())::text = created_by::text);
 
 CREATE POLICY "Allow users to create communities"
   ON public.communities
   FOR INSERT
-  WITH CHECK (auth.uid()::text = created_by::text);
+  WITH CHECK ((select auth.uid())::text = created_by::text);
 
 -- Policy: Only creator can UPDATE or DELETE their own events/communities (split into two separate policies each)
 CREATE POLICY "Allow user to update own event"
   ON public.events
   FOR UPDATE
-  USING (auth.uid()::text = created_by::text);
+  USING ((select auth.uid())::text = created_by::text);
 
 CREATE POLICY "Allow user to delete own event"
   ON public.events
   FOR DELETE
-  USING (auth.uid()::text = created_by::text);
+  USING ((select auth.uid())::text = created_by::text);
 
 CREATE POLICY "Allow user to update own community"
   ON public.communities
   FOR UPDATE
-  USING (auth.uid()::text = created_by::text);
+  USING ((select auth.uid())::text = created_by::text);
 
 CREATE POLICY "Allow user to delete own community"
   ON public.communities
   FOR DELETE
-  USING (auth.uid()::text = created_by::text);
+  USING ((select auth.uid())::text = created_by::text);
 
--- Make sure both created_by columns default to auth.uid() if not set by client
-ALTER TABLE public.events ALTER COLUMN created_by SET DEFAULT auth.uid();
-ALTER TABLE public.communities ALTER COLUMN created_by SET DEFAULT auth.uid();
+-- Make sure both created_by columns default to (select auth.uid()) if not set by client
+ALTER TABLE public.events ALTER COLUMN created_by SET DEFAULT (select auth.uid());
+ALTER TABLE public.communities ALTER COLUMN created_by SET DEFAULT (select auth.uid());
