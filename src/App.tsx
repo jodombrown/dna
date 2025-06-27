@@ -1,69 +1,103 @@
 
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/toaster';
-import { AuthProvider } from './contexts/AuthContext';
-import Index from './pages/Index';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Members from './pages/Members';
-import MyProfile from './pages/MyProfile';
-import MarketResearchPhase from './pages/MarketResearchPhase';
-import PrototypingPhase from './pages/PrototypingPhase';
-import CustomerDiscoveryPhase from './pages/CustomerDiscoveryPhase';
-import MvpPhase from './pages/MvpPhase';
-import BetaValidationPhase from './pages/BetaValidationPhase';
-import GoToMarketPhase from './pages/GoToMarketPhase';
-import ConnectExample from './pages/ConnectExample';
-import CollaborationsExample from './pages/CollaborationsExample';
-import ContributeExample from './pages/ContributeExample';
-import AdminLogin from './pages/AdminLogin';
-import Auth from './pages/Auth';
-import OnboardingWizard from './pages/OnboardingWizard';
-import SocialFeedPage from './pages/SocialFeedPage';
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import Index from "./pages/Index";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
+import MyProfile from "./pages/MyProfile";
+import Connect from "./pages/Connect";
+import Members from "./pages/Members";
+import Search from "./pages/Search";
+import Messages from "./pages/Messages";
+import Dashboard from "./pages/Dashboard";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDataSeeder from "./pages/AdminDataSeeder";
+import Onboarding from "./pages/Onboarding";
+import OnboardingWizard from "./pages/OnboardingWizard";
+import SocialFeedPage from "./pages/SocialFeedPage";
+import Events from "./pages/Events";
+import Opportunities from "./pages/Opportunities";
+import Resources from "./pages/Resources";
+import Programs from "./pages/Programs";
+import Services from "./pages/Services";
+import InnovationPathways from "./pages/InnovationPathways";
+import InnovationPathwayDetail from "./pages/InnovationPathwayDetail";
+import ConnectExample from "./pages/ConnectExample";
+import CollaborationsExample from "./pages/CollaborationsExample";
+import ContributeExample from "./pages/ContributeExample";
+import ProfileConnect from "./pages/ProfileConnect";
+import NotFound from "./pages/NotFound";
+import ComingSoon from "./pages/ComingSoon";
+
+// Phase pages
+import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
+import MarketResearchPhase from "./pages/MarketResearchPhase";
+import PrototypingPhase from "./pages/PrototypingPhase";
+import BetaValidationPhase from "./pages/BetaValidationPhase";
+import MvpPhase from "./pages/MvpPhase";
+import GoToMarketPhase from "./pages/GoToMarketPhase";
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <div className="min-h-screen bg-background">
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <BrowserRouter>
             <Routes>
-              {/* Main landing page */}
               <Route path="/" element={<Index />} />
-              
-              {/* Public landing/marketing pages */}
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/connect" element={<ConnectExample />} />
-              <Route path="/collaborate" element={<CollaborationsExample />} />
-              <Route path="/contribute" element={<ContributeExample />} />
-              
-              {/* Phase pages (renamed to phase-1 through phase-6) */}
-              <Route path="/phase-1" element={<MarketResearchPhase />} />
-              <Route path="/phase-2" element={<PrototypingPhase />} />
-              <Route path="/phase-3" element={<CustomerDiscoveryPhase />} />
-              <Route path="/phase-4" element={<MvpPhase />} />
-              <Route path="/phase-5" element={<BetaValidationPhase />} />
-              <Route path="/phase-6" element={<GoToMarketPhase />} />
-              
-              {/* Authentication and user pages */}
               <Route path="/auth" element={<Auth />} />
-              <Route path="/members" element={<Members />} />
+              <Route path="/profile/:id" element={<Profile />} />
               <Route path="/my-profile" element={<MyProfile />} />
+              <Route path="/connect" element={<Connect />} />
+              <Route path="/members" element={<Members />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/messages" element={<Messages />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin" element={<AdminLogin />} />
+              <Route path="/admin/data-seeder" element={<AdminDataSeeder />} />
+              <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/onboarding-wizard" element={<OnboardingWizard />} />
-              <Route path="/social-feed" element={<SocialFeedPage />} />
+              <Route path="/social" element={<SocialFeedPage />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/opportunities" element={<Opportunities />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/programs" element={<Programs />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/innovation-pathways" element={<InnovationPathways />} />
+              <Route path="/innovation-pathway/:id" element={<InnovationPathwayDetail />} />
+              <Route path="/connect-example" element={<ConnectExample />} />
+              <Route path="/collaborations-example" element={<CollaborationsExample />} />
+              <Route path="/contribute-example" element={<ContributeExample />} />
+              <Route path="/profile-connect" element={<ProfileConnect />} />
               
-              {/* Admin */}
-              <Route path="/admin-login" element={<AdminLogin />} />
+              {/* Phase routes */}
+              <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
+              <Route path="/phase/market-research" element={<MarketResearchPhase />} />
+              <Route path="/phase/prototyping" element={<PrototypingPhase />} />
+              <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
+              <Route path="/phase/mvp" element={<MvpPhase />} />
+              <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
+              
+              {/* Coming soon pages */}
+              <Route path="/collaborate" element={<ComingSoon />} />
+              <Route path="/contribute" element={<ComingSoon />} />
+              
+              {/* 404 */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
-            <Toaster />
-          </div>
-        </AuthProvider>
-      </BrowserRouter>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
