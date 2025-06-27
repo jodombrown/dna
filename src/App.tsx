@@ -21,6 +21,8 @@ import CollaborationsExample from './pages/CollaborationsExample';
 import ContributeExample from './pages/ContributeExample';
 import AdminLogin from './pages/AdminLogin';
 import Auth from './pages/Auth';
+import OnboardingWizard from './pages/OnboardingWizard';
+import SocialFeedPage from './pages/SocialFeedPage';
 
 const queryClient = new QueryClient();
 
@@ -48,6 +50,8 @@ function App() {
               <Route path="/contribute" element={<ContributeExample />} />
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/onboarding-wizard" element={<OnboardingWizard />} />
+              <Route path="/social-feed" element={<SocialFeedPage />} />
             </Routes>
             <Toaster />
           </div>
