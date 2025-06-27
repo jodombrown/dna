@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -9,6 +8,7 @@ import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useNavigate } from 'react-router-dom';
+import PhaseHero from '@/components/phases/PhaseHero';
 
 const objectives = [
   {
@@ -103,43 +103,14 @@ const PrototypingPhase = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex flex-col">
       <Header />
       
-      {/* Hero Section with Design/Prototyping Image */}
-      <section className="relative py-20 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/85 via-indigo-900/85 to-purple-900/85" />
-        <div className="relative w-full px-4 sm:px-6 lg:px-8 text-center text-white">
-          <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
-            <Palette className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Phase 2 • Prototyping</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Prototyping
-          </h1>
-          <p className="text-xl md:text-2xl max-w-5xl mx-auto text-white/90 mb-8 leading-relaxed">
-            Designing and testing user experiences, wireframes, and interactive prototypes based on market research insights and user feedback validation.
-          </p>
-          <div className="flex justify-center gap-4 flex-wrap">
-            <button 
-              onClick={() => setIsBetaSignupOpen(true)}
-              className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Join Design Testing
-            </button>
-            <button 
-              onClick={() => navigate('/customer-discovery-phase')}
-              className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors flex items-center"
-            >
-              Next Phase
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </button>
-          </div>
-        </div>
-      </section>
+      <PhaseHero
+        badge="Phase 2 • Prototyping"
+        title="Prototyping"
+        description="Designing and testing user experiences, wireframes, and interactive prototypes based on market research insights and user feedback validation."
+        prevPhase={{ label: "Previous Phase", url: "/phase-1" }}
+        nextPhase={{ label: "Next Phase", url: "/phase-3" }}
+        gradient="bg-gradient-to-r from-blue-900/85 via-indigo-900/85 to-purple-900/85"
+      />
 
       {/* Phase Overview */}
       <section className="py-16 bg-white">

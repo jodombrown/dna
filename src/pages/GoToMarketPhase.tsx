@@ -9,6 +9,7 @@ import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import AmbassadorSignupDialog from '@/components/AmbassadorSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useNavigate } from 'react-router-dom';
+import PhaseHero from '@/components/phases/PhaseHero';
 
 const objectives = [
   {
@@ -115,42 +116,13 @@ const GoToMarketPhase = () => {
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex flex-col">
       <Header />
       
-      {/* Hero Section with Global Launch Image */}
-      <section className="relative py-20 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-green-900/85 via-emerald-900/85 to-teal-900/85" />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
-            <Rocket className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Phase 6 • Go-to-Market</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Go-to-Market
-          </h1>
-          <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
-            Launching DNA globally to connect the African diaspora worldwide, creating sustainable growth through strategic partnerships and community-driven expansion.
-          </p>
-          <div className="flex justify-center gap-4 flex-wrap">
-            <button 
-              onClick={() => setIsBetaSignupOpen(true)}
-              className="bg-white text-green-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Join Launch Community
-            </button>
-            <button 
-              onClick={() => navigate('/market-research-phase')}
-              className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors"
-            >
-              Phase 1
-            </button>
-          </div>
-        </div>
-      </section>
+      <PhaseHero
+        badge="Phase 6 • Go-to-Market"
+        title="Go-to-Market"
+        description="Launching DNA globally to connect the African diaspora worldwide, creating sustainable growth through strategic partnerships and community-driven expansion."
+        prevPhase={{ label: "Previous Phase", url: "/phase-5" }}
+        gradient="bg-gradient-to-r from-green-900/85 via-emerald-900/85 to-teal-900/85"
+      />
 
       {/* Launch Strategy Overview */}
       <section className="py-16 bg-white">
