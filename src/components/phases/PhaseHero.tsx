@@ -39,7 +39,7 @@ const PhaseHero: React.FC<PhaseHeroProps> = ({
   }, []);
 
   const navigationButtons = (
-    <div className="flex flex-col sm:flex-row justify-center gap-4">
+    <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
       {prevPhase && (
         <Button
           onClick={() => navigate(prevPhase.url)}
@@ -118,14 +118,14 @@ const PhaseHero: React.FC<PhaseHeroProps> = ({
         </div>
       )}
 
-      <section className={`phase-hero-section py-12 ${gradient} text-white`}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className={`phase-hero-section py-12 ${gradient} text-white overflow-hidden`}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <Badge className="mb-6 bg-white/90 text-dna-emerald hover:bg-dna-mint hover:text-dna-forest font-semibold px-6 py-2 rounded-full text-base shadow">
+            <Badge className="mb-6 bg-white/20 text-white hover:bg-dna-emerald hover:text-white font-semibold px-6 py-2 rounded-full text-base shadow backdrop-blur-sm">
               {badge}
             </Badge>
             <h1 className="text-3xl md:text-5xl font-bold mb-6 text-white drop-shadow-xl">{title}</h1>
-            <p className="text-lg md:text-xl max-w-3xl mx-auto text-white/90 mb-8 leading-relaxed">{description}</p>
+            <p className="text-lg md:text-xl max-w-3xl mx-auto text-white/90 mb-8 leading-relaxed drop-shadow-lg">{description}</p>
             
             {/* Navigation & Engagement */}
             <div className="mb-6">

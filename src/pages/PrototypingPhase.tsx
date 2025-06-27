@@ -110,7 +110,7 @@ const PrototypingPhase = () => {
         description="Designing and testing user experiences, wireframes, and interactive prototypes based on market research insights and user feedback validation."
         prevPhase={{ label: "Previous Phase", url: "/phase-1" }}
         nextPhase={{ label: "Next Phase", url: "/phase-3" }}
-        gradient="bg-gradient-to-r from-dna-emerald/90 via-dna-forest/90 to-dna-copper/90 bg-[url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center bg-blend-multiply"
+        gradient="relative bg-gradient-to-r from-dna-emerald/90 via-dna-forest/90 to-dna-copper/90 bg-[url('https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center before:absolute before:inset-0 before:bg-gradient-to-r before:from-dna-emerald/80 before:via-dna-forest/80 before:to-dna-copper/80 before:z-0"
       />
 
       {/* Phase Overview */}
