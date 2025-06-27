@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { ChevronRight, Clock, MousePointer2 } from 'lucide-react';
+import { ChevronRight, Calendar, MousePointer2 } from 'lucide-react';
 
 const TimelineItem = ({ year, events, isActive, onClick }: {
   year: string;
@@ -30,7 +30,7 @@ const TimelineItem = ({ year, events, isActive, onClick }: {
     
     <div className="relative z-10">
       <div className="flex items-center gap-2 mb-3">
-        <Clock className="w-5 h-5" />
+        <Calendar className="w-5 h-5" />
         <div className="font-bold text-xl">{year}</div>
         <ChevronRight className={`w-4 h-4 transition-transform duration-200 ${
           isActive ? 'rotate-90' : 'group-hover:translate-x-1'
@@ -124,14 +124,6 @@ const InteractiveTimeline = () => {
       <div className="text-center mb-8">
         <h3 className="text-3xl font-bold text-dna-forest mb-4">Interactive Timeline (2014 – 2024)</h3>
         <p className="text-lg text-gray-600 mb-4">Explore a decade of diaspora growth and impact</p>
-        
-        {/* Enhanced CTA with visual indicators */}
-        <div className="bg-dna-emerald/10 rounded-lg p-4 max-w-md mx-auto">
-          <div className="flex items-center justify-center gap-2 text-dna-forest">
-            <MousePointer2 className="w-5 h-5 animate-bounce" />
-            <span className="font-medium">Click any year below to explore the full story</span>
-          </div>
-        </div>
       </div>
       
       <div className="bg-gray-50 rounded-2xl p-8">

@@ -17,13 +17,9 @@ const CTASection = () => {
           
           {/* Main CTA */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-8">
               Join Us in Shaping Africa's Future
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              We're building this platform openly with the community. Your voice, feedback, 
-              and participation directly shape what we create.
-            </p>
           </div>
 
           {/* Engagement Options */}
