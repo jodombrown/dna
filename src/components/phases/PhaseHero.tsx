@@ -44,7 +44,7 @@ const PhaseHero: React.FC<PhaseHeroProps> = ({
         <Button
           onClick={() => navigate(prevPhase.url)}
           variant="outline"
-          className="bg-white/20 text-white border-white/30 hover:bg-white/30 font-medium px-6 py-3"
+          className="bg-white/20 text-white border-white/30 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald font-medium px-6 py-3"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           {prevPhase.label}
@@ -53,7 +53,7 @@ const PhaseHero: React.FC<PhaseHeroProps> = ({
       
       <Button
         onClick={() => navigate('/contact')}
-        className="bg-white text-dna-emerald hover:bg-gray-100 font-medium px-6 py-3"
+        className="bg-white text-dna-emerald hover:bg-dna-mint hover:text-dna-forest font-medium px-6 py-3"
       >
         <MessageCircle className="w-4 h-4 mr-2" />
         Share Feedback
@@ -121,7 +121,7 @@ const PhaseHero: React.FC<PhaseHeroProps> = ({
       <section className={`phase-hero-section py-12 ${gradient} text-white`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <Badge className="mb-6 bg-white/90 text-dna-emerald font-semibold px-6 py-2 rounded-full text-base shadow">
+            <Badge className="mb-6 bg-white/90 text-dna-emerald hover:bg-dna-mint hover:text-dna-forest font-semibold px-6 py-2 rounded-full text-base shadow">
               {badge}
             </Badge>
             <h1 className="text-3xl md:text-5xl font-bold mb-6 text-white drop-shadow-xl">{title}</h1>
