@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -43,7 +42,7 @@ const CTASection = () => {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/phase-1')}>
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/phase/market-research')}>
               <CardContent className="p-6 text-center">
                 <div className="w-12 h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Eye className="w-6 h-6 text-dna-emerald" />

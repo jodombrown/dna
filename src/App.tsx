@@ -76,16 +76,16 @@ function App() {
               <Route path="/innovation-pathways" element={<InnovationPathways />} />
               <Route path="/innovation-pathway/:id" element={<InnovationPathwayDetail />} />
               <Route path="/connect-example" element={<ConnectExample />} />
-              <Route path="/collaborations-example" element={<CollaborationsExample />} />
+              <Route path="/collaborate-example" element={<CollaborationsExample />} />
               <Route path="/contribute-example" element={<ContributeExample />} />
               <Route path="/profile-connect" element={<ProfileConnect />} />
               
               {/* Phase routes */}
-              <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
               <Route path="/phase/market-research" element={<MarketResearchPhase />} />
               <Route path="/phase/prototyping" element={<PrototypingPhase />} />
-              <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
+              <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
               <Route path="/phase/mvp" element={<MvpPhase />} />
+              <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
               <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
               
               {/* Coming soon pages */}
