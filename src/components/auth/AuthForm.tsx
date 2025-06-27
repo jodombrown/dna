@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { Spinner } from "@/components/ui/spinner";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from '@/integrations/supabase/client';
-// Import the LinkedIn icon from lucide-react
 import { Linkedin } from "lucide-react";
 
 type AuthFormProps = {
@@ -57,7 +57,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
         }
       } else {
         setFormError(null);
-        navigate('/my-profile');
+        // Don't navigate here - let the Auth component handle the redirect based on profile status
       }
     } catch (err: any) {
       setFormError(err.message || "Registration or login failed");
@@ -66,12 +66,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
     }
   };
 
-  // Remove Google, replace with LinkedIn
   const signInWithLinkedIn = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'linkedin_oidc',
       options: {
-        redirectTo: `${window.location.origin}/onboarding`
+        redirectTo: `${window.location.origin}/onboarding-wizard`
       },
     });
     if (error) {
@@ -172,7 +171,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
           <li>If resetting password, check your spam folder for the reset email.</li>
         </ul>
       </div>
-      {/* LinkedIn sign in */}
       <Button
         type="button"
         className="w-full bg-[#0077b5] hover:bg-[#005983] mb-4 flex items-center justify-center gap-2"

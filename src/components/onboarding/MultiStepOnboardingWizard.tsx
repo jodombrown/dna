@@ -121,6 +121,7 @@ const MultiStepOnboardingWizard: React.FC = () => {
         .from('profiles')
         .upsert({
           id: user.id,
+          email: user.email,
           full_name: formData.full_name,
           display_name: formData.display_name,
           avatar_url,
@@ -138,6 +139,7 @@ const MultiStepOnboardingWizard: React.FC = () => {
           profile_completed_at: new Date().toISOString(),
           onboarding_status: { profile_completed: true },
           updated_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
         });
 
       if (error) throw error;
@@ -147,8 +149,8 @@ const MultiStepOnboardingWizard: React.FC = () => {
         description: "Welcome to the DNA community!",
       });
 
-      // Redirect to profile or dashboard
-      window.location.href = '/my-profile';
+      // Redirect to social feed after successful onboarding
+      window.location.href = '/social-feed';
     } catch (error: any) {
       console.error('Onboarding error:', error);
       toast({

@@ -24,15 +24,37 @@ const Auth = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    // Redirect authenticated users to my-profile after signup/signin—but NOT for 'update' mode!
+    // Handle authenticated user redirection
     if (user && !loading) {
-      if (authMode === 'signup' || authMode === 'signin') {
-        navigate('/my-profile');
-      } else if (authMode === 'update') {
-        // do nothing
-      } else {
-        navigate('/my-profile');
+      if (authMode === 'update') {
+        // Stay on update page
+        return;
       }
+      
+      // Check if user has a profile to determine where to redirect
+      const checkProfileAndRedirect = async () => {
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle();
+
+          if (!profile || !profile.full_name) {
+            // New user or incomplete profile - go to onboarding
+            navigate('/onboarding-wizard');
+          } else {
+            // Existing user with profile - go to my-profile
+            navigate('/my-profile');
+          }
+        } catch (error) {
+          console.error('Error checking profile:', error);
+          // Default to onboarding if there's an error
+          navigate('/onboarding-wizard');
+        }
+      };
+
+      checkProfileAndRedirect();
     }
   }, [user, loading, navigate, authMode]);
 
