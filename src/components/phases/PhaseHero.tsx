@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Users, MessageCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface PhaseHeroProps {
@@ -112,37 +112,24 @@ const PhaseHero: React.FC<PhaseHeroProps> = ({
       {/* Sticky Navigation Bar */}
       {showStickyButtons && (
         <div className="fixed top-16 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 py-3 z-40 transition-all duration-300">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             {stickyNavigationButtons}
           </div>
         </div>
       )}
 
       <section className={`phase-hero-section py-12 ${gradient} text-white`}>
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <Badge className="mb-6 bg-white/90 text-dna-emerald font-semibold px-6 py-2 rounded-full text-base shadow">
               {badge}
             </Badge>
             <h1 className="text-3xl md:text-5xl font-bold mb-6 text-white drop-shadow-xl">{title}</h1>
-            <p className="text-lg md:text-xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">{description}</p>
+            <p className="text-lg md:text-xl max-w-3xl mx-auto text-white/90 mb-8 leading-relaxed">{description}</p>
             
             {/* Navigation & Engagement */}
             <div className="mb-6">
               {navigationButtons}
-            </div>
-
-            {/* Community Involvement */}
-            <div className="flex justify-center">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/about')}
-                className="text-white/80 hover:text-white hover:bg-white/10"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Join Our Community
-              </Button>
             </div>
           </div>
         </div>
