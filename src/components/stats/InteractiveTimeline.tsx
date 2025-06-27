@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ChevronRight, Calendar, MousePointer2, ArrowLeft, ArrowRight } from 'lucide-react';
@@ -168,7 +169,7 @@ const InteractiveTimeline = () => {
         </div>
       </div>
 
-      {/* Timeline Detail Dialog with Bottom Navigation */}
+      {/* Timeline Detail Dialog */}
       <Dialog open={isTimelineDialogOpen} onOpenChange={setIsTimelineDialogOpen}>
         <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
@@ -183,41 +184,37 @@ const InteractiveTimeline = () => {
           </DialogHeader>
           
           <div className="mt-6">
-            <p className="text-gray-700 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed text-center">
               {activeTimelineData?.expandedContent.description}
             </p>
             
             {/* Bottom Navigation */}
-            <div className="mt-8 flex items-center justify-center gap-8">
-              <Button
-                variant="ghost"
-                size="lg"
-                onClick={() => navigateToYear('prev')}
-                className={`flex items-center gap-2 transition-all duration-300 ${
-                  canNavigatePrev 
-                    ? 'text-dna-emerald hover:text-dna-forest' 
-                    : 'text-gray-300 cursor-not-allowed opacity-50'
-                }`}
-                disabled={!canNavigatePrev}
-              >
-                <ArrowLeft className={`w-5 h-5 ${canNavigatePrev ? 'animate-bounce' : ''}`} />
-                <span>Previous</span>
-              </Button>
+            <div className={`mt-8 flex items-center gap-8 ${
+              !canNavigatePrev ? 'justify-center' : 'justify-center'
+            }`}>
+              {canNavigatePrev && (
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={() => navigateToYear('prev')}
+                  className="flex items-center gap-2 text-dna-emerald hover:text-dna-forest transition-all duration-300"
+                >
+                  <ArrowLeft className="w-5 h-5 animate-[bounce_1s_ease-in-out_infinite]" style={{animationDirection: 'reverse'}} />
+                  <span>Previous</span>
+                </Button>
+              )}
 
-              <Button
-                variant="ghost"
-                size="lg"
-                onClick={() => navigateToYear('next')}
-                className={`flex items-center gap-2 transition-all duration-300 ${
-                  canNavigateNext 
-                    ? 'text-dna-emerald hover:text-dna-forest' 
-                    : 'text-gray-300 cursor-not-allowed opacity-50'
-                }`}
-                disabled={!canNavigateNext}
-              >
-                <span>Next</span>
-                <ArrowRight className={`w-5 h-5 ${canNavigateNext ? 'animate-bounce' : ''}`} />
-              </Button>
+              {canNavigateNext && (
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={() => navigateToYear('next')}
+                  className="flex items-center gap-2 text-dna-emerald hover:text-dna-forest transition-all duration-300"
+                >
+                  <span>Next</span>
+                  <ArrowRight className="w-5 h-5 animate-[bounce_1s_ease-in-out_infinite]" />
+                </Button>
+              )}
             </div>
           </div>
         </DialogContent>
