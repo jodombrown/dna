@@ -6,7 +6,7 @@ import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
-import { Play } from 'lucide-react';
+import { Play, Eye, Users, Lightbulb } from 'lucide-react';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -21,6 +21,26 @@ const HeroSection = () => {
 
   return (
     <>
+      {/* Transparency Banner */}
+      <div className="bg-gradient-to-r from-dna-copper to-dna-gold text-white py-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-sm font-medium flex items-center justify-center gap-2">
+              <Eye className="w-4 h-4" />
+              <span>🔍 <strong>Transparent Development:</strong> Follow our real-time journey from idea to impact</span>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/phase-1')}
+                className="text-white hover:text-dna-copper hover:bg-white/20 ml-2"
+              >
+                See Our Progress →
+              </Button>
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Main Hero Section with optimized spacing */}
       <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,6 +63,14 @@ const HeroSection = () => {
                   <span className="font-semibold text-dna-forest"> ecosystem building</span>.
                 </p>
 
+                {/* Value Proposition */}
+                <div className="bg-dna-emerald/10 p-4 rounded-lg mb-6">
+                  <p className="text-lg text-dna-forest">
+                    <strong>Why we're building in the open:</strong> We believe transparency builds trust. 
+                    Watch us create the platform, share feedback, and join our community as we grow together.
+                  </p>
+                </div>
+
                 {/* Primary CTA */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
                   <Button 
@@ -50,7 +78,8 @@ const HeroSection = () => {
                     className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full"
                     onClick={() => navigate('/about')}
                   >
-                    Learn More
+                    <Users className="w-5 h-5 mr-2" />
+                    Join Our Journey
                   </Button>
                   <Button 
                     variant="outline" 
@@ -59,7 +88,29 @@ const HeroSection = () => {
                     onClick={scrollToDNAFramework}
                   >
                     <Play className="w-4 h-4" />
-                    See how it works
+                    See How It Works
+                  </Button>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => navigate('/contact')}
+                    className="text-dna-forest hover:bg-dna-mint/20"
+                  >
+                    <Lightbulb className="w-4 h-4 mr-2" />
+                    Share Feedback
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => navigate('/phase-1')}
+                    className="text-dna-forest hover:bg-dna-mint/20"
+                  >
+                    <Eye className="w-4 h-4 mr-2" />
+                    Track Progress
                   </Button>
                 </div>
               </div>
@@ -91,12 +142,19 @@ const HeroSection = () => {
       {/* Platform Development Section with optimized spacing */}
       <section id="dna-framework" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-dna-forest mb-8">
-            From Idea to Implementation
+          <h2 className="text-4xl md:text-5xl font-bold text-dna-forest mb-4">
+            Building Together: From Idea to Impact
           </h2>
-          <p className="text-lg text-gray-600 mb-10 max-w-3xl mx-auto">
-            Follow our transparent development process as we build the future of diaspora engagement
+          <p className="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">
+            Follow our transparent development journey. Each phase shows you exactly what we're building, 
+            why we're building it, and how you can get involved.
           </p>
+          <div className="bg-white p-6 rounded-lg shadow-sm max-w-4xl mx-auto mb-8">
+            <p className="text-dna-forest font-medium">
+              🎯 <strong>Our Promise:</strong> Complete transparency in our development process. 
+              See our progress, challenges, wins, and setbacks as we build the future of diaspora collaboration.
+            </p>
+          </div>
           <PlatformBadges />
         </div>
       </section>
