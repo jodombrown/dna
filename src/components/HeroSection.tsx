@@ -6,7 +6,7 @@ import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
-import { Play, Users, Lightbulb } from 'lucide-react';
+import { Play, Users } from 'lucide-react';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -69,19 +69,6 @@ const HeroSection = () => {
                   >
                     <Play className="w-4 h-4" />
                     See How It Works
-                  </Button>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => navigate('/contact')}
-                    className="text-dna-forest hover:bg-dna-mint/20"
-                  >
-                    <Lightbulb className="w-4 h-4 mr-2" />
-                    Share Feedback
                   </Button>
                 </div>
               </div>
