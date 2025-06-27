@@ -10,7 +10,7 @@ const PlatformBadges = () => {
   return (
     <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
       <Button 
-        onClick={() => navigate('/market-research-phase')}
+        onClick={() => navigate('/phase-1')}
         variant="outline"
         className="bg-blue-500/10 text-dna-forest border-blue-500 px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
@@ -21,7 +21,7 @@ const PlatformBadges = () => {
         Phase 1: Market Research
       </Button>
       <Button 
-        onClick={() => navigate('/prototyping-phase')}
+        onClick={() => navigate('/phase-2')}
         variant="outline"
         className="bg-dna-emerald/10 text-dna-forest border-dna-emerald px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
@@ -33,7 +33,7 @@ const PlatformBadges = () => {
         Phase 2: Prototyping
       </Button>
       <Button 
-        onClick={() => navigate('/customer-discovery-phase')}
+        onClick={() => navigate('/phase-3')}
         variant="outline"
         className="bg-green-500/10 text-dna-forest border-green-500 px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
@@ -45,7 +45,7 @@ const PlatformBadges = () => {
         Phase 3: Customer Discovery
       </Button>
       <Button 
-        onClick={() => navigate('/mvp-phase')}
+        onClick={() => navigate('/phase-4')}
         variant="outline"
         className="bg-dna-copper/10 text-dna-forest border-dna-copper px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
@@ -56,30 +56,34 @@ const PlatformBadges = () => {
         <Target className="w-4 h-4 mr-2" />
         Phase 4: MVP Build
       </Button>
-      <Button 
-        onClick={() => navigate('/beta-validation-phase')}
-        variant="outline"
-        className="bg-purple-500/10 text-dna-forest border-purple-500 px-4 py-3 text-sm font-semibold 
-                   shadow-lg hover:shadow-xl hover:-translate-y-1 
-                   transition-all duration-300 ease-out delay-300
-                   hover:bg-purple-500 hover:text-white hover:scale-105 hover:border-purple-500
-                   hover:-rotate-2"
-      >
-        <BarChart3 className="w-4 h-4 mr-2" />
-        Phase 5: Beta Validation
-      </Button>
-      <Button 
-        onClick={() => navigate('/go-to-market-phase')}
-        variant="outline"
-        className="bg-dna-gold/10 text-dna-forest border-dna-gold px-4 py-3 text-sm font-semibold 
-                   shadow-lg hover:shadow-xl hover:-translate-y-1 
-                   transition-all duration-300 ease-out delay-375
-                   hover:bg-dna-gold hover:text-dna-forest hover:scale-105 hover:border-dna-gold
-                   hover:rotate-1"
-      >
-        <TrendingUp className="w-4 h-4 mr-2" />
-        Phase 6: Go-to-Market
-      </Button>
+      
+      {/* Phase 5 and 6 on the same row */}
+      <div className="flex flex-wrap gap-4 justify-center">
+        <Button 
+          onClick={() => navigate('/phase-5')}
+          variant="outline"
+          className="bg-purple-500/10 text-dna-forest border-purple-500 px-4 py-3 text-sm font-semibold 
+                     shadow-lg hover:shadow-xl hover:-translate-y-1 
+                     transition-all duration-300 ease-out delay-300
+                     hover:bg-purple-500 hover:text-white hover:scale-105 hover:border-purple-500
+                     hover:-rotate-2"
+        >
+          <BarChart3 className="w-4 h-4 mr-2" />
+          Phase 5: Beta Validation
+        </Button>
+        <Button 
+          onClick={() => navigate('/phase-6')}
+          variant="outline"
+          className="bg-dna-gold/10 text-dna-forest border-dna-gold px-4 py-3 text-sm font-semibold 
+                     shadow-lg hover:shadow-xl hover:-translate-y-1 
+                     transition-all duration-300 ease-out delay-375
+                     hover:bg-dna-gold hover:text-dna-forest hover:scale-105 hover:border-dna-gold
+                     hover:rotate-1"
+        >
+          <TrendingUp className="w-4 h-4 mr-2" />
+          Phase 6: Go-to-Market
+        </Button>
+      </div>
     </div>
   );
 };

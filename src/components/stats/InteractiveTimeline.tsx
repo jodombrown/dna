@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { ChevronRight, Clock, MousePointer2 } from 'lucide-react';
 
 const TimelineItem = ({ year, events, isActive, onClick }: {
   year: string;
@@ -9,15 +10,50 @@ const TimelineItem = ({ year, events, isActive, onClick }: {
   onClick: () => void;
 }) => (
   <div 
-    className={`cursor-pointer p-4 rounded-lg transition-all duration-300 ${
-      isActive ? 'bg-dna-emerald text-white shadow-lg' : 'bg-white/50 hover:bg-white/70'
+    className={`cursor-pointer p-6 rounded-lg transition-all duration-300 relative group ${
+      isActive ? 'bg-dna-emerald text-white shadow-lg transform scale-105' : 'bg-white/50 hover:bg-white/70 hover:shadow-md hover:scale-102'
     }`}
     onClick={onClick}
   >
-    <div className="font-bold text-lg mb-2">{year}</div>
-    {events.map((event, idx) => (
-      <div key={idx} className="text-sm mb-1">• {event}</div>
-    ))}
+    {/* Click indicator */}
+    <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      <div className="flex items-center gap-1 text-xs">
+        <MousePointer2 className="w-3 h-3" />
+        <span className={isActive ? 'text-white/70' : 'text-gray-500'}>Click to explore</span>
+      </div>
+    </div>
+    
+    {/* Hover effect border */}
+    <div className={`absolute inset-0 rounded-lg border-2 transition-all duration-300 ${
+      isActive ? 'border-white/30' : 'border-transparent group-hover:border-dna-emerald/50'
+    }`} />
+    
+    <div className="relative z-10">
+      <div className="flex items-center gap-2 mb-3">
+        <Clock className="w-5 h-5" />
+        <div className="font-bold text-xl">{year}</div>
+        <ChevronRight className={`w-4 h-4 transition-transform duration-200 ${
+          isActive ? 'rotate-90' : 'group-hover:translate-x-1'
+        }`} />
+      </div>
+      
+      {events.map((event, idx) => (
+        <div key={idx} className="text-sm mb-2 flex items-start gap-2">
+          <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${
+            isActive ? 'bg-white' : 'bg-dna-emerald'
+          }`} />
+          <span>{event}</span>
+        </div>
+      ))}
+      
+      {/* Interactive hint */}
+      <div className={`mt-3 text-xs opacity-70 flex items-center gap-1 ${
+        isActive ? 'text-white' : 'text-gray-600'
+      }`}>
+        <span>📖</span>
+        <span>Click to read the full story</span>
+      </div>
+    </div>
   </div>
 );
 
@@ -87,7 +123,15 @@ const InteractiveTimeline = () => {
     <section className="mb-16">
       <div className="text-center mb-8">
         <h3 className="text-3xl font-bold text-dna-forest mb-4">Interactive Timeline (2014 – 2024)</h3>
-        <p className="text-lg text-gray-600">Explore a decade of diaspora growth and impact</p>
+        <p className="text-lg text-gray-600 mb-4">Explore a decade of diaspora growth and impact</p>
+        
+        {/* Enhanced CTA with visual indicators */}
+        <div className="bg-dna-emerald/10 rounded-lg p-4 max-w-md mx-auto">
+          <div className="flex items-center justify-center gap-2 text-dna-forest">
+            <MousePointer2 className="w-5 h-5 animate-bounce" />
+            <span className="font-medium">Click any year below to explore the full story</span>
+          </div>
+        </div>
       </div>
       
       <div className="bg-gray-50 rounded-2xl p-8">

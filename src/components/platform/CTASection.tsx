@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import StayNotifiedPanel from '@/components/StayNotifiedPanel';
-import { Users, MessageCircle, Eye, ArrowRight } from 'lucide-react';
+import { MessageCircle, Eye, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CTASection = () => {
@@ -24,15 +24,6 @@ const CTASection = () => {
               We're building this platform transparently with the community. Your voice, feedback, 
               and participation directly shape what we create.
             </p>
-            
-            <Button 
-              onClick={() => setIsStayNotifiedOpen(true)}
-              size="lg" 
-              className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 rounded-full text-lg font-semibold mb-8"
-            >
-              <Users className="w-5 h-5 mr-2" />
-              Join Our Community
-            </Button>
           </div>
 
           {/* Engagement Options */}
@@ -70,7 +61,7 @@ const CTASection = () => {
             <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/about')}>
               <CardContent className="p-6 text-center">
                 <div className="w-12 h-12 bg-dna-forest/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-6 h-6 text-dna-forest" />
+                  <Eye className="w-6 h-6 text-dna-forest" />
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-2">Learn About DNA</h3>
                 <p className="text-gray-600 text-sm mb-4">
