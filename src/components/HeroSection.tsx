@@ -43,14 +43,6 @@ const HeroSection = () => {
                   <span className="font-semibold text-dna-forest"> ecosystem building</span>.
                 </p>
 
-                {/* Value Proposition */}
-                <div className="bg-dna-emerald/10 p-4 rounded-lg mb-6">
-                  <p className="text-lg text-dna-forest">
-                    <strong>Why we're building in the open:</strong> We believe openness builds trust. 
-                    Watch us create the platform, share feedback, and join our community as we grow together.
-                  </p>
-                </div>
-
                 {/* Primary CTA */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
                   <Button 
