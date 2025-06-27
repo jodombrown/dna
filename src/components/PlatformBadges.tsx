@@ -10,7 +10,7 @@ const PlatformBadges = () => {
   return (
     <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
       <Button 
-        onClick={() => navigate('/phase-1')}
+        onClick={() => navigate('/phase/market-research')}
         variant="outline"
         className="bg-blue-500/10 text-dna-forest border-blue-500 px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
@@ -21,7 +21,7 @@ const PlatformBadges = () => {
         Phase 1: Market Research
       </Button>
       <Button 
-        onClick={() => navigate('/phase-2')}
+        onClick={() => navigate('/phase/prototyping')}
         variant="outline"
         className="bg-dna-emerald/10 text-dna-forest border-dna-emerald px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
@@ -33,7 +33,7 @@ const PlatformBadges = () => {
         Phase 2: Prototyping
       </Button>
       <Button 
-        onClick={() => navigate('/phase-3')}
+        onClick={() => navigate('/phase/customer-discovery')}
         variant="outline"
         className="bg-green-500/10 text-dna-forest border-green-500 px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
@@ -45,7 +45,7 @@ const PlatformBadges = () => {
         Phase 3: Customer Discovery
       </Button>
       <Button 
-        onClick={() => navigate('/phase-4')}
+        onClick={() => navigate('/phase/mvp')}
         variant="outline"
         className="bg-dna-copper/10 text-dna-forest border-dna-copper px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
@@ -60,7 +60,7 @@ const PlatformBadges = () => {
       {/* Phase 5 and 6 on the same row */}
       <div className="flex flex-wrap gap-4 justify-center">
         <Button 
-          onClick={() => navigate('/phase-5')}
+          onClick={() => navigate('/phase/beta-validation')}
           variant="outline"
           className="bg-purple-500/10 text-dna-forest border-purple-500 px-4 py-3 text-sm font-semibold 
                      shadow-lg hover:shadow-xl hover:-translate-y-1 
@@ -72,7 +72,7 @@ const PlatformBadges = () => {
           Phase 5: Beta Validation
         </Button>
         <Button 
-          onClick={() => navigate('/phase-6')}
+          onClick={() => navigate('/phase/go-to-market')}
           variant="outline"
           className="bg-dna-gold/10 text-dna-forest border-dna-gold px-4 py-3 text-sm font-semibold 
                      shadow-lg hover:shadow-xl hover:-translate-y-1 
