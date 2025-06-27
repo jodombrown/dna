@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -55,7 +56,7 @@ const fallbackMetrics = [
     value: "0",
     target: "500",
     icon: "users",
-    color: "bg-purple-500"
+    color: "bg-dna-copper"
   },
   {
     id: "2", 
@@ -63,7 +64,7 @@ const fallbackMetrics = [
     value: "0",
     target: "50",
     icon: "thumbs-up",
-    color: "bg-violet-500"
+    color: "bg-dna-gold"
   },
   {
     id: "3",
@@ -71,7 +72,7 @@ const fallbackMetrics = [
     value: "0",
     target: "20",
     icon: "bar-chart",
-    color: "bg-fuchsia-500"
+    color: "bg-dna-emerald"
   },
   {
     id: "4",
@@ -79,7 +80,7 @@ const fallbackMetrics = [
     value: "0",
     target: "25",
     icon: "message-square",
-    color: "bg-purple-600"
+    color: "bg-dna-forest"
   }
 ];
 
@@ -89,7 +90,7 @@ const BetaValidationPhase = () => {
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-fuchsia-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-dna-gold/20 via-white to-dna-copper/10 flex flex-col">
       <Header />
       
       <PhaseHero
@@ -98,7 +99,7 @@ const BetaValidationPhase = () => {
         description="Validating MVP performance, retention, and monetization readiness through comprehensive beta testing with real users from the diaspora community."
         prevPhase={{ label: "Previous Phase", url: "/phase-4" }}
         nextPhase={{ label: "Next Phase", url: "/phase-6" }}
-        gradient="bg-gradient-to-r from-purple-900/85 via-violet-900/85 to-fuchsia-900/85"
+        gradient="bg-gradient-to-r from-dna-copper/90 via-dna-gold/90 to-dna-emerald/90 bg-[url('https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center bg-blend-multiply"
       />
 
       {/* Beta Testing Overview */}
@@ -114,32 +115,32 @@ const BetaValidationPhase = () => {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center p-6 bg-purple-50 rounded-xl border border-purple-200">
-              <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 bg-dna-copper/10 rounded-xl border border-dna-copper/30">
+              <div className="w-12 h-12 bg-dna-copper rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Real Users</h3>
               <p className="text-gray-600 text-sm">500 beta testers from across the diaspora community testing real scenarios.</p>
             </div>
             
-            <div className="text-center p-6 bg-violet-50 rounded-xl border border-violet-200">
-              <div className="w-12 h-12 bg-violet-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 bg-dna-gold/10 rounded-xl border border-dna-gold/30">
+              <div className="w-12 h-12 bg-dna-gold rounded-full flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Performance Metrics</h3>
               <p className="text-gray-600 text-sm">Comprehensive tracking of user engagement, retention, and satisfaction.</p>
             </div>
             
-            <div className="text-center p-6 bg-fuchsia-50 rounded-xl border border-fuchsia-200">
-              <div className="w-12 h-12 bg-fuchsia-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 bg-dna-emerald/10 rounded-xl border border-dna-emerald/30">
+              <div className="w-12 h-12 bg-dna-emerald rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Monetization Testing</h3>
               <p className="text-gray-600 text-sm">Validating revenue models and pricing strategies with real user data.</p>
             </div>
             
-            <div className="text-center p-6 bg-purple-50 rounded-xl border border-purple-300">
-              <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center p-6 bg-dna-forest/10 rounded-xl border border-dna-forest/30">
+              <div className="w-12 h-12 bg-dna-forest rounded-full flex items-center justify-center mx-auto mb-4">
                 <Rocket className="w-6 h-6 text-white" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Launch Readiness</h3>
@@ -149,15 +150,15 @@ const BetaValidationPhase = () => {
         </div>
       </section>
 
-      <PhaseObjectives objectives={objectives} color="purple-600" />
-      <PhaseTimeline milestones={timeline} color="violet-600" />
+      <PhaseObjectives objectives={objectives} color="dna-copper" />
+      <PhaseTimeline milestones={timeline} color="dna-gold" />
       <PhaseMetrics phaseSlug="beta-validation" fallbackMetrics={fallbackMetrics} />
       
       {/* Beta Community CTA */}
-      <section className="py-16 bg-gradient-to-r from-purple-500/10 via-violet-500/10 to-fuchsia-500/10">
+      <section className="py-16 bg-gradient-to-r from-dna-copper/20 via-dna-gold/10 to-dna-emerald/20">
         <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-purple-200">
-            <CheckCircle className="w-16 h-16 text-purple-600 mx-auto mb-6" />
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-copper/30">
+            <CheckCircle className="w-16 h-16 text-dna-copper mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Join Our Beta Testing Community
             </h2>
@@ -169,11 +170,11 @@ const BetaValidationPhase = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
                 onClick={() => setIsBetaSignupOpen(true)}
-                className="bg-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-700 transition-colors"
+                className="bg-dna-copper text-white px-8 py-3 rounded-full font-semibold hover:bg-dna-gold transition-colors"
               >
                 Apply for Beta Access
               </button>
-              <button className="border-2 border-purple-600 text-purple-600 px-8 py-3 rounded-full font-semibold hover:bg-purple-50 transition-colors">
+              <button className="border-2 border-dna-copper text-dna-copper px-8 py-3 rounded-full font-semibold hover:bg-dna-mint hover:text-dna-forest hover:border-dna-forest transition-colors">
                 Learn About Beta Program
               </button>
             </div>

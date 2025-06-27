@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -66,7 +67,7 @@ const fallbackMetrics = [
     value: "0",
     target: "20",
     icon: "palette",
-    color: "bg-blue-500"
+    color: "bg-dna-emerald"
   },
   {
     id: "2", 
@@ -74,7 +75,7 @@ const fallbackMetrics = [
     value: "0",
     target: "50",
     icon: "users",
-    color: "bg-indigo-500"
+    color: "bg-dna-forest"
   },
   {
     id: "3",
@@ -82,7 +83,7 @@ const fallbackMetrics = [
     value: "0",
     target: "80",
     icon: "trending-up",
-    color: "bg-purple-500"
+    color: "bg-dna-copper"
   },
   {
     id: "4",
@@ -90,7 +91,7 @@ const fallbackMetrics = [
     value: "0",
     target: "100",
     icon: "zap",
-    color: "bg-blue-600"
+    color: "bg-dna-gold"
   }
 ];
 
@@ -100,7 +101,7 @@ const PrototypingPhase = () => {
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex flex-col">
       <Header />
       
       <PhaseHero
@@ -109,7 +110,7 @@ const PrototypingPhase = () => {
         description="Designing and testing user experiences, wireframes, and interactive prototypes based on market research insights and user feedback validation."
         prevPhase={{ label: "Previous Phase", url: "/phase-1" }}
         nextPhase={{ label: "Next Phase", url: "/phase-3" }}
-        gradient="bg-gradient-to-r from-blue-900/85 via-indigo-900/85 to-purple-900/85"
+        gradient="bg-gradient-to-r from-dna-emerald/90 via-dna-forest/90 to-dna-copper/90 bg-[url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center bg-blend-multiply"
       />
 
       {/* Phase Overview */}
@@ -125,24 +126,24 @@ const PrototypingPhase = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 px-4 lg:px-16">
-            <div className="text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-2xl border border-dna-emerald/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Palette className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">UI/UX Design</h3>
               <p className="text-gray-600 leading-relaxed">Crafting intuitive user interfaces and seamless experiences that make diaspora networking feel effortless and engaging.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-200">
-              <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-2xl border border-dna-forest/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-forest to-dna-copper rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Users className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">User Feedback</h3>
               <p className="text-gray-600 leading-relaxed">Gathering continuous feedback from diaspora community members to ensure our designs resonate with their needs and preferences.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl border border-purple-200">
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-2xl border border-dna-copper/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <TestTube className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Tech Validation</h3>
@@ -152,15 +153,15 @@ const PrototypingPhase = () => {
         </div>
       </section>
 
-      <PhaseObjectives objectives={objectives} color="blue-600" />
-      <PhaseTimeline milestones={timeline} color="indigo-600" />
+      <PhaseObjectives objectives={objectives} color="dna-emerald" />
+      <PhaseTimeline milestones={timeline} color="dna-forest" />
       <PhaseMetrics phaseSlug="prototyping" fallbackMetrics={fallbackMetrics} />
       
       {/* Design Testing CTA */}
-      <section className="py-16 bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10">
+      <section className="py-16 bg-gradient-to-r from-dna-mint/20 via-dna-emerald/10 to-dna-copper/20">
         <div className="w-full text-center px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-blue-200 max-w-5xl mx-auto">
-            <Lightbulb className="w-16 h-16 text-blue-500 mx-auto mb-6" />
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-emerald/30 max-w-5xl mx-auto">
+            <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Help Us Design the Future of DNA
             </h2>
@@ -171,11 +172,11 @@ const PrototypingPhase = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
                 onClick={() => setIsBetaSignupOpen(true)}
-                className="bg-blue-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-600 transition-colors"
+                className="bg-dna-emerald text-white px-8 py-3 rounded-full font-semibold hover:bg-dna-forest transition-colors"
               >
                 Join Design Testing
               </button>
-              <button className="border-2 border-blue-500 text-blue-500 px-8 py-3 rounded-full font-semibold hover:bg-blue-50 transition-colors">
+              <button className="border-2 border-dna-emerald text-dna-emerald px-8 py-3 rounded-full font-semibold hover:bg-dna-mint hover:text-dna-forest hover:border-dna-forest transition-colors">
                 View Prototype Designs
               </button>
             </div>
