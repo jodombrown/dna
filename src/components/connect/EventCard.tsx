@@ -16,31 +16,85 @@ interface EventCardProps {
   onClick?: () => void;
 }
 
-// Updated placeholder images with diverse African representation
-const PLACEHOLDER_BANNER =
-  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?fit=crop&w=700&q=80";
-const PLACEHOLDER_PROFILE =
-  "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?fit=crop&w=128&q=80";
+// Event logo images - relevant to event types
+const getEventLogo = (eventTitle: string, eventType: string) => {
+  // Tech/Innovation events
+  if (eventTitle.toLowerCase().includes('tech') || eventTitle.toLowerCase().includes('innovation')) {
+    return 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=150&h=150&fit=crop'; // Tech/circuit board design
+  }
+  // Investment/Finance events
+  if (eventTitle.toLowerCase().includes('investment') || eventTitle.toLowerCase().includes('finance')) {
+    return 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=150&h=150&fit=crop'; // Financial/growth chart
+  }
+  // Healthcare events
+  if (eventTitle.toLowerCase().includes('health')) {
+    return 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop'; // Medical/health symbol
+  }
+  // Agriculture events
+  if (eventTitle.toLowerCase().includes('agri')) {
+    return 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=150&h=150&fit=crop'; // Agriculture/farming
+  }
+  // Climate/Environment events
+  if (eventTitle.toLowerCase().includes('climate') || eventTitle.toLowerCase().includes('environment')) {
+    return 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=150&h=150&fit=crop'; // Nature/environment
+  }
+  // Women/Leadership events
+  if (eventTitle.toLowerCase().includes('women') || eventTitle.toLowerCase().includes('leadership')) {
+    return 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=150&h=150&fit=crop'; // Leadership/empowerment symbol
+  }
+  // Default event logo
+  return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=150&h=150&fit=crop'; // Conference/networking
+};
 
-// Event organizer images - diverse African professionals
-const getEventOrganizerImage = (eventTitle: string) => {
-  const organizerImages: { [key: string]: string } = {
-    'African Tech Leaders Summit': 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face',
-    'Diaspora Investment Forum': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-    'Women in Finance Networking': 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
-    'Climate Solutions Showcase': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face',
-    'Healthcare Innovation': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-    'AgriTech Innovation': 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face'
+// Event banner images - contextually relevant
+const getEventBanner = (eventTitle: string, eventType: string) => {
+  // Tech events
+  if (eventTitle.toLowerCase().includes('tech') || eventTitle.toLowerCase().includes('innovation')) {
+    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=700&h=300&fit=crop'; // Tech conference
+  }
+  // Investment events
+  if (eventTitle.toLowerCase().includes('investment') || eventTitle.toLowerCase().includes('finance')) {
+    return 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=700&h=300&fit=crop'; // Business meeting
+  }
+  // Healthcare events
+  if (eventTitle.toLowerCase().includes('health')) {
+    return 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=700&h=300&fit=crop'; // Healthcare conference
+  }
+  // Agriculture events
+  if (eventTitle.toLowerCase().includes('agri')) {
+    return 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=700&h=300&fit=crop'; // Agricultural field
+  }
+  // Climate events
+  if (eventTitle.toLowerCase().includes('climate') || eventTitle.toLowerCase().includes('environment')) {
+    return 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=700&h=300&fit=crop'; // Environmental/forest
+  }
+  // Women/Networking events
+  if (eventTitle.toLowerCase().includes('women') || eventTitle.toLowerCase().includes('networking')) {
+    return 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=700&h=300&fit=crop'; // Professional networking
+  }
+  // Default conference banner
+  return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=700&h=300&fit=crop';
+};
+
+// Event creator images - diverse African professionals
+const getEventCreatorImage = (eventTitle: string) => {
+  const creatorImages: { [key: string]: string } = {
+    'African Tech': 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face', // African man - tech professional
+    'Diaspora Investment': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face', // African man - business professional
+    'Women in Finance': 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face', // African woman - finance professional
+    'Climate Solutions': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face', // African woman - environmental professional
+    'Healthcare Innovation': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face', // African man - healthcare professional
+    'AgriTech': 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face' // African man - agriculture professional
   };
 
-  // Find matching organizer image based on event title keywords
-  for (const [keyword, image] of Object.entries(organizerImages)) {
+  // Find matching creator image based on event title keywords
+  for (const [keyword, image] of Object.entries(creatorImages)) {
     if (eventTitle.includes(keyword)) {
       return image;
     }
   }
 
-  // Default to first image if no match found
+  // Default to first African professional if no match found
   return 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face';
 };
 
@@ -63,7 +117,9 @@ const EventCard: React.FC<EventCardProps> = ({
     }
   };
 
-  const organizerImage = event.creator_profile?.avatar_url || getEventOrganizerImage(event.title);
+  const eventLogo = getEventLogo(event.title, event.type);
+  const eventBanner = event.banner_url || getEventBanner(event.title, event.type);
+  const creatorImage = event.creator_profile?.avatar_url || getEventCreatorImage(event.title);
 
   return (
     <>
@@ -80,15 +136,15 @@ const EventCard: React.FC<EventCardProps> = ({
           style={{ backgroundColor: "#f4f6f4" }}
         >
           <img
-            src={event.banner_url || PLACEHOLDER_BANNER}
+            src={eventBanner}
             alt={`${event.title} banner`}
             className="w-full h-full object-cover object-center transition-transform group-hover:scale-105 duration-300"
             loading="lazy"
           />
-          {/* Creator avatar bottom-right on banner */}
+          {/* Creator avatar bottom-right on banner - clickable */}
           {event.creator_profile && (
             <button
-              className="absolute bottom-2 right-2 rounded-full shadow border-2 border-white bg-white/80 hover:bg-dna-emerald/80 transition-all flex items-center gap-2 px-2 py-0.5 z-20"
+              className="absolute bottom-2 right-2 rounded-full shadow border-2 border-white bg-white/90 hover:bg-dna-emerald/80 transition-all flex items-center gap-2 px-2 py-0.5 z-20"
               onClick={e => {
                 e.stopPropagation();
                 navigate(`/profile/${event.creator_profile.id}`);
@@ -99,7 +155,7 @@ const EventCard: React.FC<EventCardProps> = ({
               type="button"
             >
               <Avatar className="w-7 h-7">
-                <AvatarImage src={organizerImage} alt={event.creator_profile.full_name} />
+                <AvatarImage src={creatorImage} alt={event.creator_profile.full_name} />
                 <AvatarFallback className="bg-dna-copper text-white">
                   <ImageIcon className="w-3.5 h-3.5" />
                 </AvatarFallback>
@@ -108,12 +164,12 @@ const EventCard: React.FC<EventCardProps> = ({
             </button>
           )}
 
-          {/* Profile image avatar - overlap bottom left */}
+          {/* Event logo avatar - overlap bottom left */}
           <div className="absolute bottom-0 left-3 -mb-6 z-10">
             <Avatar className="w-16 h-16 ring-4 ring-white shadow-lg bg-white">
               <AvatarImage
-                src={event.image_url || organizerImage}
-                alt={event.title}
+                src={eventLogo}
+                alt={`${event.title} logo`}
                 className="object-cover"
               />
               <AvatarFallback className="bg-dna-copper text-white">

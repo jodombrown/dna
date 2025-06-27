@@ -10,7 +10,7 @@ interface EventsTabProps {
 }
 
 const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
-  // Mock data for events with diverse African representation
+  // Mock data for events with proper event logos and diverse African representation
   const events = [
     {
       id: '1',
@@ -24,8 +24,9 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       attendeeCount: 450,
       maxAttendees: 500,
       isFeatured: true,
-      bannerImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=300&fit=crop',
-      organizerImage: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face'
+      bannerImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=300&fit=crop', // Tech conference
+      eventLogo: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=150&h=150&fit=crop', // Tech logo
+      organizerImage: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face' // African tech professional
     },
     {
       id: '2',
@@ -39,8 +40,9 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       attendeeCount: 280,
       maxAttendees: 300,
       isFeatured: true,
-      bannerImage: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&h=300&fit=crop',
-      organizerImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
+      bannerImage: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&h=300&fit=crop', // Business meeting
+      eventLogo: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=150&h=150&fit=crop', // Investment logo
+      organizerImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face' // African business professional
     },
     {
       id: '3',
@@ -54,8 +56,9 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       attendeeCount: 120,
       maxAttendees: 150,
       isFeatured: false,
-      bannerImage: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=600&h=300&fit=crop',
-      organizerImage: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face'
+      bannerImage: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=600&h=300&fit=crop', // Professional networking
+      eventLogo: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=150&h=150&fit=crop', // Women leadership logo
+      organizerImage: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face' // African woman professional
     }
   ];
 
@@ -77,14 +80,29 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
             <div className="relative">
               <img
                 src={event.bannerImage}
-                alt={event.title}
+                alt={`${event.title} banner`}
                 className="w-full h-48 object-cover"
               />
+              {/* Event creator on banner - clickable */}
               <div className="absolute bottom-4 right-4">
+                <button
+                  className="rounded-full shadow border-2 border-white bg-white/90 hover:bg-dna-emerald/80 transition-all flex items-center gap-2 px-2 py-0.5"
+                  title="View event creator profile"
+                >
+                  <img
+                    src={event.organizerImage}
+                    alt="Event creator"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  <span className="text-xs font-medium text-dna-forest">Creator</span>
+                </button>
+              </div>
+              {/* Event logo - bottom left overlap */}
+              <div className="absolute bottom-0 left-4 -mb-6 z-10">
                 <img
-                  src={event.organizerImage}
-                  alt="Event organizer"
-                  className="w-12 h-12 rounded-full border-4 border-white object-cover"
+                  src={event.eventLogo}
+                  alt={`${event.title} logo`}
+                  className="w-16 h-16 rounded-full border-4 border-white shadow-lg object-cover bg-white"
                 />
               </div>
               {event.isFeatured && (
@@ -94,7 +112,7 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
               )}
             </div>
             
-            <CardHeader>
+            <CardHeader className="pt-8">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <CardTitle className="text-lg mb-2">{event.title}</CardTitle>

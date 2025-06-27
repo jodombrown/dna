@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -15,10 +16,58 @@ type Props = {
   isLoggedIn: boolean;
 };
 
-const PLACEHOLDER_BANNER =
-  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=900&q=80";
-const PLACEHOLDER_PROFILE =
-  "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?fit=crop&w=128&q=80";
+// Event logo images - contextually relevant
+const getEventLogo = (eventTitle: string, eventType: string) => {
+  if (eventTitle.toLowerCase().includes('tech') || eventTitle.toLowerCase().includes('innovation')) {
+    return 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=150&h=150&fit=crop';
+  }
+  if (eventTitle.toLowerCase().includes('investment') || eventTitle.toLowerCase().includes('finance')) {
+    return 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=150&h=150&fit=crop';
+  }
+  if (eventTitle.toLowerCase().includes('health')) {
+    return 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=150&h=150&fit=crop';
+  }
+  if (eventTitle.toLowerCase().includes('agri')) {
+    return 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=150&h=150&fit=crop';
+  }
+  if (eventTitle.toLowerCase().includes('women') || eventTitle.toLowerCase().includes('leadership')) {
+    return 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=150&h=150&fit=crop';
+  }
+  return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=150&h=150&fit=crop';
+};
+
+// Event banner images
+const getEventBanner = (eventTitle: string, eventType: string) => {
+  if (eventTitle.toLowerCase().includes('tech') || eventTitle.toLowerCase().includes('innovation')) {
+    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=900&h=400&fit=crop';
+  }
+  if (eventTitle.toLowerCase().includes('investment') || eventTitle.toLowerCase().includes('finance')) {
+    return 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=900&h=400&fit=crop';
+  }
+  if (eventTitle.toLowerCase().includes('women') || eventTitle.toLowerCase().includes('networking')) {
+    return 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=900&h=400&fit=crop';
+  }
+  return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=900&h=400&fit=crop';
+};
+
+// Creator images - diverse African professionals
+const getCreatorImage = (eventTitle: string) => {
+  const creatorImages: { [key: string]: string } = {
+    'African Tech': 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face',
+    'Diaspora Investment': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    'Women in Finance': 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+    'Climate Solutions': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face',
+    'Healthcare Innovation': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+    'AgriTech': 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face'
+  };
+
+  for (const [keyword, image] of Object.entries(creatorImages)) {
+    if (eventTitle.includes(keyword)) {
+      return image;
+    }
+  }
+  return 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face';
+};
 
 export default function EventDetailDialog({
   open,
@@ -30,13 +79,17 @@ export default function EventDetailDialog({
   const navigate = useNavigate();
   if (!event) return null;
 
+  const eventLogo = getEventLogo(event.title, event.type);
+  const eventBanner = event.banner_url || getEventBanner(event.title, event.type);
+  const creatorImage = event.creator_profile?.avatar_url || getCreatorImage(event.title);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg w-full p-0 rounded-2xl overflow-hidden sm:max-w-2xl shadow-xl">
         {/* Banner */}
         <div className="relative w-full h-40 sm:h-56 bg-gray-100">
           <img
-            src={event.banner_url || PLACEHOLDER_BANNER}
+            src={eventBanner}
             alt={`${event.title} banner`}
             className="h-full w-full object-cover object-center"
             loading="lazy"
@@ -52,7 +105,7 @@ export default function EventDetailDialog({
               type="button"
             >
               <Avatar className="w-8 h-8">
-                <AvatarImage src={event.creator_profile.avatar_url || PLACEHOLDER_PROFILE} alt={event.creator_profile.full_name} />
+                <AvatarImage src={creatorImage} alt={event.creator_profile.full_name} />
                 <AvatarFallback className="bg-dna-copper text-white">
                   <ImageIcon className="w-4 h-4" />
                 </AvatarFallback>
@@ -60,12 +113,12 @@ export default function EventDetailDialog({
               <span className="text-sm font-medium text-dna-forest opacity-90 max-w-[8em] truncate">{event.creator_profile.full_name}</span>
             </button>
           )}
-          {/* Profile image avatar - absolute, overlap banner bottom left */}
+          {/* Event logo avatar - absolute, overlap banner bottom left */}
           <div className="absolute left-5 -bottom-10 z-10">
             <Avatar className="w-20 h-20 ring-4 ring-white shadow-xl bg-white">
               <AvatarImage
-                src={event.image_url || PLACEHOLDER_PROFILE}
-                alt={event.title}
+                src={eventLogo}
+                alt={`${event.title} logo`}
                 className="object-cover"
               />
               <AvatarFallback className="bg-dna-copper text-white">
@@ -82,7 +135,7 @@ export default function EventDetailDialog({
               <div className="flex gap-2 flex-wrap mb-2">
                 <Badge variant="outline">{event.type}</Badge>
                 {event.is_virtual && (
-                  <Badge variant="virtual" className="cursor-default">Virtual</Badge>
+                  <Badge variant="secondary" className="cursor-default">Virtual</Badge>
                 )}
               </div>
             </div>
