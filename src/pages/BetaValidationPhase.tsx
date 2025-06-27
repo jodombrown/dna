@@ -99,7 +99,7 @@ const BetaValidationPhase = () => {
         description="Validating MVP performance, retention, and monetization readiness through comprehensive beta testing with real users from the diaspora community."
         prevPhase={{ label: "Previous Phase", url: "/phase-4" }}
         nextPhase={{ label: "Next Phase", url: "/phase-6" }}
-        gradient="relative bg-gradient-to-r from-dna-copper/90 via-dna-gold/90 to-dna-emerald/90 bg-[url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center before:absolute before:inset-0 before:bg-gradient-to-r before:from-dna-copper/80 before:via-dna-gold/80 before:to-dna-emerald/80 before:z-0"
+        gradient="relative bg-gradient-to-r from-dna-copper/90 via-dna-gold/90 to-dna-emerald/90 bg-[url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center before:absolute before:inset-0 before:bg-gradient-to-r before:from-dna-copper/80 before:via-dna-gold/80 before:to-dna-emerald/80 before:z-0"
       />
 
       {/* Beta Testing Overview */}
