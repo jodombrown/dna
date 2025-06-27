@@ -18,7 +18,7 @@ interface PhaseTimelineProps {
 
 const PhaseTimeline: React.FC<PhaseTimelineProps> = ({ milestones, color = "dna-copper" }) => (
   <section className="py-16 bg-white">
-    <div className="w-full px-4 sm:px-6 lg:px-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Phase Timeline</h2>
         <p className="text-lg text-gray-600">
