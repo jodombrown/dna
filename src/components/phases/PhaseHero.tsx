@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Users, MessageCircle } from "lucide-react";
@@ -23,72 +23,131 @@ const PhaseHero: React.FC<PhaseHeroProps> = ({
   gradient,
 }) => {
   const navigate = useNavigate();
+  const [showStickyButtons, setShowStickyButtons] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroSection = document.querySelector('.phase-hero-section');
+      if (heroSection) {
+        const heroBottom = heroSection.getBoundingClientRect().bottom;
+        setShowStickyButtons(heroBottom < 0);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navigationButtons = (
+    <div className="flex flex-col sm:flex-row justify-center gap-4">
+      {prevPhase && (
+        <Button
+          onClick={() => navigate(prevPhase.url)}
+          variant="outline"
+          className="bg-white/20 text-white border-white/30 hover:bg-white/30 font-medium px-6 py-3"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          {prevPhase.label}
+        </Button>
+      )}
+      
+      <Button
+        onClick={() => navigate('/contact')}
+        className="bg-white text-dna-emerald hover:bg-gray-100 font-medium px-6 py-3"
+      >
+        <MessageCircle className="w-4 h-4 mr-2" />
+        Share Feedback
+      </Button>
+      
+      {nextPhase && (
+        <Button
+          onClick={() => navigate(nextPhase.url)}
+          className="bg-dna-copper hover:bg-dna-gold text-white font-medium px-6 py-3"
+        >
+          {nextPhase.label}
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      )}
+    </div>
+  );
+
+  const stickyNavigationButtons = (
+    <div className="flex justify-center gap-4">
+      {prevPhase && (
+        <Button
+          onClick={() => navigate(prevPhase.url)}
+          variant="outline"
+          size="sm"
+          className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          {prevPhase.label}
+        </Button>
+      )}
+      
+      <Button
+        onClick={() => navigate('/contact')}
+        size="sm"
+        className="bg-dna-emerald hover:bg-dna-forest text-white"
+      >
+        <MessageCircle className="w-4 h-4 mr-2" />
+        Feedback
+      </Button>
+      
+      {nextPhase && (
+        <Button
+          onClick={() => navigate(nextPhase.url)}
+          size="sm"
+          className="bg-dna-copper hover:bg-dna-gold text-white"
+        >
+          {nextPhase.label}
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      )}
+    </div>
+  );
 
   return (
-    <section className={`py-12 ${gradient} text-white`}>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <Badge className="mb-6 bg-white/90 text-dna-emerald font-semibold px-6 py-2 rounded-full text-base shadow">
-            {badge}
-          </Badge>
-          <h1 className="text-3xl md:text-5xl font-bold mb-6 text-white drop-shadow-xl">{title}</h1>
-          <p className="text-lg md:text-xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">{description}</p>
-          
-          {/* Transparency Message */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-8 max-w-3xl mx-auto">
-            <p className="text-white/90 text-sm">
-              <strong>🔍 Transparent Development:</strong> This page shows our real progress, current challenges, and next steps. 
-              Your feedback shapes what we build next.
-            </p>
-          </div>
-
-          {/* Navigation & Engagement */}
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
-            {prevPhase && (
-              <Button
-                onClick={() => navigate(prevPhase.url)}
-                variant="outline"
-                className="bg-white/20 text-white border-white/30 hover:bg-white/30 font-medium px-6 py-3"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                {prevPhase.label}
-              </Button>
-            )}
-            
-            <Button
-              onClick={() => navigate('/contact')}
-              className="bg-white text-dna-emerald hover:bg-gray-100 font-medium px-6 py-3"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Share Feedback
-            </Button>
-            
-            {nextPhase && (
-              <Button
-                onClick={() => navigate(nextPhase.url)}
-                className="bg-dna-copper hover:bg-dna-gold text-white font-medium px-6 py-3"
-              >
-                {nextPhase.label}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            )}
-          </div>
-
-          {/* Community Involvement */}
-          <div className="flex justify-center">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate('/about')}
-              className="text-white/80 hover:text-white hover:bg-white/10"
-            >
-              <Users className="w-4 h-4 mr-2" />
-              Join Our Community
-            </Button>
+    <>
+      {/* Sticky Navigation Bar */}
+      {showStickyButtons && (
+        <div className="fixed top-16 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 py-3 z-40 transition-all duration-300">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            {stickyNavigationButtons}
           </div>
         </div>
-      </div>
-    </section>
+      )}
+
+      <section className={`phase-hero-section py-12 ${gradient} text-white`}>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <Badge className="mb-6 bg-white/90 text-dna-emerald font-semibold px-6 py-2 rounded-full text-base shadow">
+              {badge}
+            </Badge>
+            <h1 className="text-3xl md:text-5xl font-bold mb-6 text-white drop-shadow-xl">{title}</h1>
+            <p className="text-lg md:text-xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">{description}</p>
+            
+            {/* Navigation & Engagement */}
+            <div className="mb-6">
+              {navigationButtons}
+            </div>
+
+            {/* Community Involvement */}
+            <div className="flex justify-center">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => navigate('/about')}
+                className="text-white/80 hover:text-white hover:bg-white/10"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Join Our Community
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 

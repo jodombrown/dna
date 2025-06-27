@@ -8,12 +8,12 @@ export const publicNavItems = [
 ];
 
 export const phases = [
-  { name: 'Market Research', path: '/market-research-phase', phase: 1, timeline: 'Jun - Sep 2025' },
-  { name: 'Prototyping', path: '/prototyping-phase', phase: 2, timeline: 'Oct - Dec 2025' },
-  { name: 'Customer Discovery', path: '/customer-discovery-phase', phase: 3, timeline: 'Jan - Feb 2026' },
-  { name: 'MVP Build', path: '/mvp-phase', phase: 4, timeline: 'Mar - Jul 2026' },
-  { name: 'Beta Validation', path: '/beta-validation-phase', phase: 5, timeline: 'Aug 2026' },
-  { name: 'Go-to-Market', path: '/go-to-market-phase', phase: 6, timeline: 'Sep 2026+' },
+  { name: 'Market Research', path: '/phase-1', phase: 1, timeline: 'Jun - Sep 2025' },
+  { name: 'Prototyping', path: '/phase-2', phase: 2, timeline: 'Oct - Dec 2025' },
+  { name: 'Customer Discovery', path: '/phase-3', phase: 3, timeline: 'Jan - Feb 2026' },
+  { name: 'MVP Build', path: '/phase-4', phase: 4, timeline: 'Mar - Jul 2026' },
+  { name: 'Beta Validation', path: '/phase-5', phase: 5, timeline: 'Aug 2026' },
+  { name: 'Go-to-Market', path: '/phase-6', phase: 6, timeline: 'Sep 2026+' },
 ];
 
 // Example pages for landing page showcase

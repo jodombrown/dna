@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -9,7 +8,7 @@ import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useNavigate } from 'react-router-dom';
-import PrototypeBanner from '@/components/PrototypeBanner';
+import PhaseHero from '@/components/phases/PhaseHero';
 
 const objectives = [
   {
@@ -114,49 +113,18 @@ const MarketResearchPhase = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-dna-mint/10 flex flex-col">
       <Header />
-      <PrototypeBanner />
       
-      {/* Hero Section with Research/Analytics Image */}
-      <section className="relative py-20 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-dna-forest/85 via-dna-emerald/85 to-dna-copper/85" />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
-            <BookOpen className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Phase 1 • Market Research</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Market Research
-          </h1>
-          <p className="text-xl md:text-2xl max-w-4xl mx-auto text-white/90 mb-8 leading-relaxed">
-            Understanding diaspora needs, motivations, and behaviors to validate DNA's concept and market fit through comprehensive research.
-          </p>
-          <div className="flex justify-center gap-4 flex-wrap">
-            <button 
-              onClick={() => setIsBetaSignupOpen(true)}
-              className="bg-white text-dna-emerald px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Join Research Community
-            </button>
-            <button 
-              onClick={() => navigate('/prototyping-phase')}
-              className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors flex items-center"
-            >
-              Next Phase
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </button>
-          </div>
-        </div>
-      </section>
+      <PhaseHero
+        badge="Phase 1 • Market Research"
+        title="Market Research"
+        description="Understanding diaspora needs, motivations, and behaviors to validate DNA's concept and market fit through comprehensive research."
+        nextPhase={{ label: "Next Phase", url: "/phase-2" }}
+        gradient="bg-gradient-to-r from-dna-forest/85 via-dna-emerald/85 to-dna-copper/85"
+      />
 
       {/* Research Overview */}
       <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Research First?</h2>
             <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">

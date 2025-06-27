@@ -82,17 +82,6 @@ const CTASection = () => {
               </CardContent>
             </Card>
           </div>
-
-          {/* Transparency Promise */}
-          <div className="mt-12 text-center">
-            <div className="bg-gradient-to-r from-dna-mint/20 to-dna-emerald/20 p-6 rounded-lg max-w-4xl mx-auto">
-              <h3 className="font-semibold text-dna-forest mb-2">Our Commitment to Transparency</h3>
-              <p className="text-gray-700 text-sm">
-                We believe in building with our community, not for them. Every decision, every setback, 
-                every victory is shared openly. Join us and be part of creating something meaningful together.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 

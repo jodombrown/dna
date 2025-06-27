@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -9,7 +8,7 @@ import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useNavigate } from 'react-router-dom';
-import PrototypeBanner from '@/components/PrototypeBanner';
+import PhaseHero from '@/components/phases/PhaseHero';
 
 const objectives = [
   {
@@ -103,45 +102,15 @@ const CustomerDiscoveryPhase = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex flex-col">
       <Header />
-      <PrototypeBanner />
       
-      {/* Hero Section with Community Discovery Image */}
-      <section className="relative py-20 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-dna-forest/85 via-dna-emerald/85 to-dna-copper/85" />
-        <div className="relative w-full px-4 sm:px-6 lg:px-8 text-center text-white">
-          <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
-            <UserCheck className="w-5 h-5 mr-2" />
-            <span className="font-semibold">Phase 3 • Customer Discovery</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Customer Discovery
-          </h1>
-          <p className="text-xl md:text-2xl max-w-5xl mx-auto text-white/90 mb-8 leading-relaxed">
-            Measuring early adopter interest and validation without product build through community engagement and targeted outreach across the diaspora.
-          </p>
-          <div className="flex justify-center gap-4 flex-wrap">
-            <button 
-              onClick={() => setIsBetaSignupOpen(true)}
-              className="bg-white text-dna-emerald px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Join Founders Circle
-            </button>
-            <button 
-              onClick={() => navigate('/mvp-phase')}
-              className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors flex items-center"
-            >
-              Next Phase
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </button>
-          </div>
-        </div>
-      </section>
+      <PhaseHero
+        badge="Phase 3 • Customer Discovery"
+        title="Customer Discovery"
+        description="Measuring early adopter interest and validation without product build through community engagement and targeted outreach across the diaspora."
+        prevPhase={{ label: "Previous Phase", url: "/phase-2" }}
+        nextPhase={{ label: "Next Phase", url: "/phase-4" }}
+        gradient="bg-gradient-to-r from-dna-forest/85 via-dna-emerald/85 to-dna-copper/85"
+      />
 
       {/* Phase Overview */}
       <section className="py-16 bg-white">

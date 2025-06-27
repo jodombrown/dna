@@ -6,7 +6,7 @@ import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
-import { Play, Eye, Users, Lightbulb } from 'lucide-react';
+import { Play, Users, Lightbulb } from 'lucide-react';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -21,26 +21,6 @@ const HeroSection = () => {
 
   return (
     <>
-      {/* Transparency Banner */}
-      <div className="bg-gradient-to-r from-dna-copper to-dna-gold text-white py-3">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-sm font-medium flex items-center justify-center gap-2">
-              <Eye className="w-4 h-4" />
-              <span>🔍 <strong>Transparent Development:</strong> Follow our real-time journey from idea to impact</span>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/phase-1')}
-                className="text-white hover:text-dna-copper hover:bg-white/20 ml-2"
-              >
-                See Our Progress →
-              </Button>
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Main Hero Section with optimized spacing */}
       <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -103,15 +83,6 @@ const HeroSection = () => {
                     <Lightbulb className="w-4 h-4 mr-2" />
                     Share Feedback
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => navigate('/phase-1')}
-                    className="text-dna-forest hover:bg-dna-mint/20"
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    Track Progress
-                  </Button>
                 </div>
               </div>
             </div>
@@ -149,12 +120,6 @@ const HeroSection = () => {
             Follow our transparent development journey. Each phase shows you exactly what we're building, 
             why we're building it, and how you can get involved.
           </p>
-          <div className="bg-white p-6 rounded-lg shadow-sm max-w-4xl mx-auto mb-8">
-            <p className="text-dna-forest font-medium">
-              🎯 <strong>Our Promise:</strong> Complete transparency in our development process. 
-              See our progress, challenges, wins, and setbacks as we build the future of diaspora collaboration.
-            </p>
-          </div>
           <PlatformBadges />
         </div>
       </section>
