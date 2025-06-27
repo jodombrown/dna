@@ -62,10 +62,10 @@ const PlatformBadges = () => {
         <Button 
           onClick={() => navigate('/phase/beta-validation')}
           variant="outline"
-          className="bg-purple-500/10 text-dna-forest border-purple-500 px-4 py-3 text-sm font-semibold 
+          className="bg-dna-mint/10 text-dna-forest border-dna-mint px-4 py-3 text-sm font-semibold 
                      shadow-lg hover:shadow-xl hover:-translate-y-1 
                      transition-all duration-300 ease-out delay-300
-                     hover:bg-purple-500 hover:text-white hover:scale-105 hover:border-purple-500
+                     hover:bg-dna-mint hover:text-dna-forest hover:scale-105 hover:border-dna-mint
                      hover:-rotate-2"
         >
           <BarChart3 className="w-4 h-4 mr-2" />
