@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ChevronRight, Calendar, MousePointer2, ArrowLeft, ArrowRight } from 'lucide-react';
@@ -169,52 +168,17 @@ const InteractiveTimeline = () => {
         </div>
       </div>
 
-      {/* Timeline Detail Dialog with Navigation */}
+      {/* Timeline Detail Dialog with Bottom Navigation */}
       <Dialog open={isTimelineDialogOpen} onOpenChange={setIsTimelineDialogOpen}>
         <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <div className="flex items-center justify-between">
-              {/* Previous Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigateToYear('prev')}
-                className={`flex items-center gap-1 transition-all duration-300 ${
-                  canNavigatePrev 
-                    ? 'text-dna-emerald hover:text-dna-forest animate-pulse' 
-                    : 'text-gray-300 cursor-not-allowed opacity-50'
-                }`}
-                disabled={!canNavigatePrev}
-              >
-                <ArrowLeft className={`w-4 h-4 ${canNavigatePrev ? 'animate-bounce' : ''}`} />
-                <span className="text-xs">Previous</span>
-              </Button>
-
-              {/* Title Section */}
-              <div className="flex-1 text-center">
-                <DialogTitle className="text-2xl font-bold text-dna-forest">
-                  {activeTimelineData?.expandedContent.title}
-                </DialogTitle>
-                <DialogDescription className="text-lg font-semibold text-dna-emerald">
-                  {activeTimelineYear}
-                </DialogDescription>
-              </div>
-
-              {/* Next Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigateToYear('next')}
-                className={`flex items-center gap-1 transition-all duration-300 ${
-                  canNavigateNext 
-                    ? 'text-dna-emerald hover:text-dna-forest animate-pulse' 
-                    : 'text-gray-300 cursor-not-allowed opacity-50'
-                }`}
-                disabled={!canNavigateNext}
-              >
-                <span className="text-xs">Next</span>
-                <ArrowRight className={`w-4 h-4 ${canNavigateNext ? 'animate-bounce' : ''}`} />
-              </Button>
+            <div className="text-center">
+              <DialogTitle className="text-2xl font-bold text-dna-forest">
+                {activeTimelineData?.expandedContent.title}
+              </DialogTitle>
+              <DialogDescription className="text-lg font-semibold text-dna-emerald">
+                {activeTimelineYear}
+              </DialogDescription>
             </div>
           </DialogHeader>
           
@@ -223,13 +187,37 @@ const InteractiveTimeline = () => {
               {activeTimelineData?.expandedContent.description}
             </p>
             
-            {/* Navigation Hint */}
-            <div className="mt-6 text-center">
-              <div className="inline-flex items-center gap-2 text-sm text-gray-500 bg-gray-50 px-3 py-2 rounded-full">
-                <ArrowLeft className="w-3 h-3 animate-pulse" />
-                <span>Use arrows to explore other years</span>
-                <ArrowRight className="w-3 h-3 animate-pulse" />
-              </div>
+            {/* Bottom Navigation */}
+            <div className="mt-8 flex items-center justify-center gap-8">
+              <Button
+                variant="ghost"
+                size="lg"
+                onClick={() => navigateToYear('prev')}
+                className={`flex items-center gap-2 transition-all duration-300 ${
+                  canNavigatePrev 
+                    ? 'text-dna-emerald hover:text-dna-forest' 
+                    : 'text-gray-300 cursor-not-allowed opacity-50'
+                }`}
+                disabled={!canNavigatePrev}
+              >
+                <ArrowLeft className={`w-5 h-5 ${canNavigatePrev ? 'animate-bounce' : ''}`} />
+                <span>Previous</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="lg"
+                onClick={() => navigateToYear('next')}
+                className={`flex items-center gap-2 transition-all duration-300 ${
+                  canNavigateNext 
+                    ? 'text-dna-emerald hover:text-dna-forest' 
+                    : 'text-gray-300 cursor-not-allowed opacity-50'
+                }`}
+                disabled={!canNavigateNext}
+              >
+                <span>Next</span>
+                <ArrowRight className={`w-5 h-5 ${canNavigateNext ? 'animate-bounce' : ''}`} />
+              </Button>
             </div>
           </div>
         </DialogContent>
