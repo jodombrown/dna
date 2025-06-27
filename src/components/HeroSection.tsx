@@ -46,7 +46,7 @@ const HeroSection = () => {
                 {/* Value Proposition */}
                 <div className="bg-dna-emerald/10 p-4 rounded-lg mb-6">
                   <p className="text-lg text-dna-forest">
-                    <strong>Why we're building in the open:</strong> We believe transparency builds trust. 
+                    <strong>Why we're building in the open:</strong> We believe openness builds trust. 
                     Watch us create the platform, share feedback, and join our community as we grow together.
                   </p>
                 </div>
@@ -104,7 +104,7 @@ const HeroSection = () => {
             Building Together: From Idea to Impact
           </h2>
           <p className="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">
-            Follow our transparent development journey. Each phase shows you exactly what we're building, 
+            Follow our open development journey. Each phase shows you exactly what we're building, 
             why we're building it, and how you can get involved.
           </p>
           <PlatformBadges />

@@ -21,7 +21,7 @@ const CTASection = () => {
               Join Us in Shaping Africa's Future
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              We're building this platform transparently with the community. Your voice, feedback, 
+              We're building this platform openly with the community. Your voice, feedback, 
               and participation directly shape what we create.
             </p>
           </div>

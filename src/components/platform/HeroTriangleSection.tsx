@@ -61,14 +61,6 @@ const HeroTriangleSection = () => {
                 </p>
               </div>
             </div>
-
-            <Button 
-              onClick={() => setIsFeedbackOpen(true)}
-              className="bg-dna-emerald hover:bg-dna-forest text-white rounded-full px-8 py-3 flex items-center gap-2 mx-auto"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Give Feedback
-            </Button>
           </div>
         </div>
       </section>
