@@ -20,6 +20,10 @@ const CTASection = () => {
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-8">
               Join Us in Shaping Africa's Future
             </h2>
+            <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
+              <strong>Why we're building in the open:</strong> We believe openness builds trust. 
+              Watch us create the platform, share feedback, and join our community as we grow together.
+            </p>
           </div>
 
           {/* Engagement Options */}
