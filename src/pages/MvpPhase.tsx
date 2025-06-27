@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -77,7 +78,7 @@ const fallbackMetrics = [
     value: "0",
     target: "30",
     icon: "code",
-    color: "bg-red-500"
+    color: "bg-dna-copper"
   },
   {
     id: "2", 
@@ -85,7 +86,7 @@ const fallbackMetrics = [
     value: "0",
     target: "100",
     icon: "users",
-    color: "bg-pink-500"
+    color: "bg-dna-gold"
   },
   {
     id: "3",
@@ -93,7 +94,7 @@ const fallbackMetrics = [
     value: "0",
     target: "200",
     icon: "target",
-    color: "bg-rose-500"
+    color: "bg-dna-emerald"
   },
   {
     id: "4",
@@ -101,7 +102,7 @@ const fallbackMetrics = [
     value: "0",
     target: "95",
     icon: "zap",
-    color: "bg-red-600"
+    color: "bg-dna-forest"
   }
 ];
 
@@ -111,7 +112,7 @@ const MvpPhase = () => {
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex flex-col">
       <Header />
       
       <PhaseHero
@@ -120,7 +121,7 @@ const MvpPhase = () => {
         description="Building the minimum viable product with core features that enable diaspora connections, collaborations, and contributions."
         prevPhase={{ label: "Previous Phase", url: "/phase-3" }}
         nextPhase={{ label: "Next Phase", url: "/phase-5" }}
-        gradient="bg-gradient-to-r from-red-900/85 via-pink-900/85 to-rose-900/85"
+        gradient="relative bg-gradient-to-r from-dna-forest/90 via-dna-emerald/90 to-dna-copper/90 bg-[url('https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center before:absolute before:inset-0 before:bg-gradient-to-r before:from-dna-forest/80 before:via-dna-emerald/80 before:to-dna-copper/80 before:z-0"
       />
 
       {/* MVP Development Overview */}
@@ -136,24 +137,24 @@ const MvpPhase = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 px-4 lg:px-16">
-            <div className="text-center p-8 bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl border border-red-200">
-              <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-2xl border border-dna-emerald/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Code className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Core Development</h3>
               <p className="text-gray-600 leading-relaxed">Building robust backend systems and user-friendly interfaces that support authentic diaspora networking and collaboration at scale.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl border border-pink-200">
-              <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-2xl border border-dna-copper/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-copper rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Users className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">User Experience</h3>
               <p className="text-gray-600 leading-relaxed">Implementing intuitive user flows that make it easy for diaspora professionals to discover opportunities and build meaningful connections.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-rose-50 to-red-50 rounded-2xl border border-rose-200">
-              <div className="w-16 h-16 bg-gradient-to-r from-rose-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-2xl border border-dna-gold/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Target className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Quality Assurance</h3>
@@ -163,15 +164,15 @@ const MvpPhase = () => {
         </div>
       </section>
 
-      <PhaseObjectives objectives={objectives} color="red-600" />
-      <PhaseTimeline milestones={timeline} color="pink-600" />
+      <PhaseObjectives objectives={objectives} color="dna-emerald" />
+      <PhaseTimeline milestones={timeline} color="dna-copper" />
       <PhaseMetrics phaseSlug="mvp" fallbackMetrics={fallbackMetrics} />
       
       {/* Alpha Testing CTA */}
-      <section className="py-16 bg-gradient-to-r from-red-500/10 via-pink-500/10 to-rose-500/10">
+      <section className="py-16 bg-gradient-to-r from-dna-mint/20 via-dna-emerald/10 to-dna-copper/20">
         <div className="w-full text-center px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-red-200 max-w-5xl mx-auto">
-            <Lightbulb className="w-16 h-16 text-red-500 mx-auto mb-6" />
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-mint/30 max-w-5xl mx-auto">
+            <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Help Us Build DNA Together
             </h2>
@@ -183,11 +184,11 @@ const MvpPhase = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
                 onClick={() => setIsBetaSignupOpen(true)}
-                className="bg-red-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-red-600 transition-colors"
+                className="bg-dna-emerald text-white px-8 py-3 rounded-full font-semibold hover:bg-dna-forest transition-colors"
               >
                 Join Alpha Testing
               </button>
-              <button className="border-2 border-red-500 text-red-500 px-8 py-3 rounded-full font-semibold hover:bg-red-50 transition-colors">
+              <button className="border-2 border-dna-emerald text-dna-emerald px-8 py-3 rounded-full font-semibold hover:bg-dna-emerald/10 transition-colors">
                 View Development Updates
               </button>
             </div>

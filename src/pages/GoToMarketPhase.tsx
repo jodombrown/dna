@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
@@ -78,7 +79,7 @@ const fallbackMetrics = [
     value: "0",
     target: "50,000",
     icon: "globe",
-    color: "bg-green-500"
+    color: "bg-dna-emerald"
   },
   {
     id: "2",
@@ -86,7 +87,7 @@ const fallbackMetrics = [
     value: "$0",
     target: "$150K",
     icon: "trending-up",
-    color: "bg-emerald-500"
+    color: "bg-dna-copper"
   },
   {
     id: "3",
@@ -94,7 +95,7 @@ const fallbackMetrics = [
     value: "0",
     target: "25",
     icon: "flag",
-    color: "bg-teal-500"
+    color: "bg-dna-gold"
   },
   {
     id: "4",
@@ -102,7 +103,7 @@ const fallbackMetrics = [
     value: "0",
     target: "200",
     icon: "briefcase",
-    color: "bg-green-600"
+    color: "bg-dna-forest"
   }
 ];
 
@@ -113,7 +114,7 @@ const GoToMarketPhase = () => {
   const [isAmbassadorSignupOpen, setIsAmbassadorSignupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex flex-col">
       <Header />
       
       <PhaseHero
@@ -121,7 +122,7 @@ const GoToMarketPhase = () => {
         title="Go-to-Market"
         description="Launching DNA globally to connect the African diaspora worldwide, creating sustainable growth through strategic partnerships and community-driven expansion."
         prevPhase={{ label: "Previous Phase", url: "/phase-5" }}
-        gradient="bg-gradient-to-r from-green-900/85 via-emerald-900/85 to-teal-900/85"
+        gradient="relative bg-gradient-to-r from-dna-forest/90 via-dna-emerald/90 to-dna-copper/90 bg-[url('https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center before:absolute before:inset-0 before:bg-gradient-to-r before:from-dna-forest/80 before:via-dna-emerald/80 before:to-dna-copper/80 before:z-0"
       />
 
       {/* Launch Strategy Overview */}
@@ -137,24 +138,24 @@ const GoToMarketPhase = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-2xl border border-dna-emerald/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Megaphone className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Strategic Launch</h3>
               <p className="text-gray-600 leading-relaxed">Coordinated global launch across key diaspora markets with culturally-relevant messaging and community-driven growth strategies.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200">
-              <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-2xl border border-dna-copper/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-copper rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Globe className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Global Expansion</h3>
               <p className="text-gray-600 leading-relaxed">International expansion through local partnerships, regional adaptation, and community leadership across diaspora hubs worldwide.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-teal-50 to-green-50 rounded-2xl border border-teal-200">
-              <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-green-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-2xl border border-dna-gold/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <TrendingUp className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Sustainable Growth</h3>
@@ -164,15 +165,15 @@ const GoToMarketPhase = () => {
         </div>
       </section>
 
-      <PhaseObjectives objectives={objectives} color="green-600" />
-      <PhaseTimeline milestones={timeline} color="emerald-600" />
+      <PhaseObjectives objectives={objectives} color="dna-emerald" />
+      <PhaseTimeline milestones={timeline} color="dna-copper" />
       <PhaseMetrics phaseSlug="go-to-market" fallbackMetrics={fallbackMetrics} />
       
       {/* Launch Community CTA */}
-      <section className="py-16 bg-gradient-to-r from-green-500/10 via-emerald-500/10 to-teal-500/10">
+      <section className="py-16 bg-gradient-to-r from-dna-mint/20 via-dna-emerald/10 to-dna-copper/20">
         <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-green-200">
-            <Lightbulb className="w-16 h-16 text-green-600 mx-auto mb-6" />
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-mint/30">
+            <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Be Part of the DNA Movement
             </h2>
@@ -184,13 +185,13 @@ const GoToMarketPhase = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
                 onClick={() => setIsBetaSignupOpen(true)}
-                className="bg-green-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-green-700 transition-colors"
+                className="bg-dna-emerald text-white px-8 py-3 rounded-full font-semibold hover:bg-dna-forest transition-colors"
               >
                 Join Launch Community
               </button>
               <button 
                 onClick={() => setIsAmbassadorSignupOpen(true)}
-                className="border-2 border-green-600 text-green-600 px-8 py-3 rounded-full font-semibold hover:bg-green-50 transition-colors"
+                className="border-2 border-dna-emerald text-dna-emerald px-8 py-3 rounded-full font-semibold hover:bg-dna-emerald/10 transition-colors"
               >
                 Become an Ambassador
               </button>

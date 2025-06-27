@@ -90,7 +90,7 @@ const BetaValidationPhase = () => {
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dna-gold/20 via-white to-dna-copper/10 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex flex-col">
       <Header />
       
       <PhaseHero
@@ -99,7 +99,7 @@ const BetaValidationPhase = () => {
         description="Validating MVP performance, retention, and monetization readiness through comprehensive beta testing with real users from the diaspora community."
         prevPhase={{ label: "Previous Phase", url: "/phase-4" }}
         nextPhase={{ label: "Next Phase", url: "/phase-6" }}
-        gradient="relative bg-gradient-to-r from-dna-copper/90 via-dna-gold/90 to-dna-emerald/90 bg-[url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center before:absolute before:inset-0 before:bg-gradient-to-r before:from-dna-copper/80 before:via-dna-gold/80 before:to-dna-emerald/80 before:z-0"
+        gradient="relative bg-gradient-to-r from-dna-copper/90 via-dna-gold/90 to-dna-emerald/90 bg-[url('https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center before:absolute before:inset-0 before:bg-gradient-to-r before:from-dna-copper/80 before:via-dna-gold/80 before:to-dna-emerald/80 before:z-0"
       />
 
       {/* Beta Testing Overview */}
@@ -174,7 +174,7 @@ const BetaValidationPhase = () => {
               >
                 Apply for Beta Access
               </button>
-              <button className="border-2 border-dna-copper text-dna-copper px-8 py-3 rounded-full font-semibold hover:bg-dna-mint hover:text-dna-forest hover:border-dna-forest transition-colors">
+              <button className="border-2 border-dna-copper text-dna-copper px-8 py-3 rounded-full font-semibold hover:bg-dna-copper/10 transition-colors">
                 Learn About Beta Program
               </button>
             </div>
