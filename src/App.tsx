@@ -15,7 +15,6 @@ import CustomerDiscoveryPhase from './pages/CustomerDiscoveryPhase';
 import MvpPhase from './pages/MvpPhase';
 import BetaValidationPhase from './pages/BetaValidationPhase';
 import GoToMarketPhase from './pages/GoToMarketPhase';
-import BuildPhase from './pages/BuildPhase';
 import ConnectExample from './pages/ConnectExample';
 import CollaborationsExample from './pages/CollaborationsExample';
 import ContributeExample from './pages/ContributeExample';
@@ -33,25 +32,33 @@ function App() {
         <AuthProvider>
           <div className="min-h-screen bg-background">
             <Routes>
+              {/* Main landing page */}
               <Route path="/" element={<Index />} />
+              
+              {/* Public landing/marketing pages */}
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/members" element={<Members />} />
-              <Route path="/my-profile" element={<MyProfile />} />
-              <Route path="/market-research-phase" element={<MarketResearchPhase />} />
-              <Route path="/prototyping-phase" element={<PrototypingPhase />} />
-              <Route path="/customer-discovery-phase" element={<CustomerDiscoveryPhase />} />
-              <Route path="/mvp-phase" element={<MvpPhase />} />
-              <Route path="/beta-validation-phase" element={<BetaValidationPhase />} />
-              <Route path="/go-to-market-phase" element={<GoToMarketPhase />} />
-              <Route path="/build-phase" element={<BuildPhase />} />
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
-              <Route path="/admin-login" element={<AdminLogin />} />
+              
+              {/* Phase pages (renamed to phase-1 through phase-6) */}
+              <Route path="/phase-1" element={<MarketResearchPhase />} />
+              <Route path="/phase-2" element={<PrototypingPhase />} />
+              <Route path="/phase-3" element={<CustomerDiscoveryPhase />} />
+              <Route path="/phase-4" element={<MvpPhase />} />
+              <Route path="/phase-5" element={<BetaValidationPhase />} />
+              <Route path="/phase-6" element={<GoToMarketPhase />} />
+              
+              {/* Authentication and user pages */}
               <Route path="/auth" element={<Auth />} />
+              <Route path="/members" element={<Members />} />
+              <Route path="/my-profile" element={<MyProfile />} />
               <Route path="/onboarding-wizard" element={<OnboardingWizard />} />
               <Route path="/social-feed" element={<SocialFeedPage />} />
+              
+              {/* Admin */}
+              <Route path="/admin-login" element={<AdminLogin />} />
             </Routes>
             <Toaster />
           </div>
