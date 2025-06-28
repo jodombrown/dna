@@ -2,7 +2,6 @@
 import React from 'react';
 import Header from '@/components/Header';
 import { useCollaborationsLogic } from '@/hooks/useCollaborationsLogic';
-import CollaborationsPageHeader from '@/components/collaborations/CollaborationsPageHeader';
 import CollaborationsPrototypeNotice from '@/components/collaborations/CollaborationsPrototypeNotice';
 import CollaborationsQuickStats from '@/components/collaborations/CollaborationsQuickStats';
 import ProjectCard from '@/components/collaborations/ProjectCard';
@@ -32,10 +31,14 @@ const CollaborationsExample = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <CollaborationsPageHeader activeProjectsCount={activeProjects.length} />
       <CollaborationsPrototypeNotice />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Active Collaborations</h1>
+          <p className="text-gray-600">You're part of {activeProjects.length} collaborative projects</p>
+        </div>
+
         <CollaborationsQuickStats stats={stats} />
 
         <div className="space-y-6">

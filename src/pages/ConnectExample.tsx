@@ -2,7 +2,6 @@
 import React from 'react';
 import Header from '@/components/Header';
 import { useConnectPageLogic } from '@/hooks/useConnectPageLogic';
-import ConnectPageHeader from '@/components/connect/ConnectPageHeader';
 import ConnectLoadingState from '@/components/connect/ConnectLoadingState';
 import ConnectErrorState from '@/components/connect/ConnectErrorState';
 import SearchSection from '@/components/connect/SearchSection';
@@ -12,8 +11,6 @@ import CallToActionSection from '@/components/connect/CallToActionSection';
 import ConnectDialogs from '@/components/connect/ConnectDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
-
-// Completely remove pillar nav, just use Header
 
 const ConnectExample = () => {
   const {
@@ -61,10 +58,14 @@ const ConnectExample = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <ConnectPageHeader totalCount={totalCount} />
       <PrototypeNotice />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Professional Network</h1>
+          <p className="text-gray-600">Connect with {totalCount}+ diaspora professionals worldwide</p>
+        </div>
+
         <SearchSection
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
