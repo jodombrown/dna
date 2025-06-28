@@ -10,6 +10,7 @@ export interface Message {
   content: string;
   created_at: string;
   is_read: boolean;
+  subject?: string; // Added missing subject property
 }
 
 export const useMessages = () => {

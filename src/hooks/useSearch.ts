@@ -13,6 +13,8 @@ export interface Professional {
   is_mentor: boolean;
   is_investor: boolean;
   looking_for_opportunities: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export const useSearch = () => {
@@ -46,6 +48,78 @@ export const useSearch = () => {
     }
   };
 
+  const searchProfessionals = async (query: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      toast({
+        title: "Feature Coming Soon",
+        description: "Professional search will be implemented in a future update",
+      });
+      setProfessionals([]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to search professionals');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const searchCommunities = async (query: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      toast({
+        title: "Feature Coming Soon",
+        description: "Community search will be implemented in a future update",
+      });
+      setCommunities([]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to search communities');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const searchEvents = async (query: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      toast({
+        title: "Feature Coming Soon",
+        description: "Event search will be implemented in a future update",
+      });
+      setEvents([]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to search events');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAllData = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      toast({
+        title: "Feature Coming Soon",
+        description: "Data loading will be implemented in a future update",
+      });
+      
+      setProfessionals([]);
+      setCommunities([]);
+      setEvents([]);
+      setProjects([]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     professionals,
     communities,
@@ -53,6 +127,10 @@ export const useSearch = () => {
     projects,
     loading,
     error,
-    searchAll
+    searchAll,
+    searchProfessionals,
+    searchCommunities,
+    searchEvents,
+    getAllData
   };
 };

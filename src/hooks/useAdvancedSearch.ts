@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { SearchResult, SearchFilters, SearchState } from '@/types/searchTypes';
+import { SearchResult, SearchFilters } from '@/types/searchTypes';
 import { useProfileSearch } from './useProfileSearch';
 import { useProfessionalSearch } from './useProfessionalSearch';
 
@@ -15,8 +15,9 @@ export const useAdvancedSearch = () => {
 
   const searchProfiles = async (filters: SearchFilters) => {
     try {
-      const searchResults = await profileSearch.searchProfiles(filters);
-      setResults(searchResults);
+      // For now, just show coming soon message
+      await profileSearch.searchProfiles(''); // Pass empty string instead of filters
+      setResults([]);
       setError(profileSearch.error);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed');
@@ -25,8 +26,9 @@ export const useAdvancedSearch = () => {
 
   const searchProfessionals = async (filters: SearchFilters) => {
     try {
-      const searchResults = await professionalSearch.searchProfessionals(filters);
-      setResults(searchResults);
+      // For now, just show coming soon message  
+      await professionalSearch.searchProfessionals(''); // Pass empty string instead of filters
+      setResults([]);
       setError(professionalSearch.error);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed');

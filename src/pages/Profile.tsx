@@ -2,16 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import EnhancedProfileForm from '@/components/profile/EnhancedProfileForm';
 import DNALinkedInProfile from '@/components/profile/DNALinkedInProfile';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 const Profile = () => {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -22,11 +24,8 @@ const Profile = () => {
   useEffect(() => {
     if (id) {
       fetchProfile();
-      if (!isOwnProfile) {
-        checkFollowingStatus();
-      }
     }
-  }, [id, isOwnProfile]);
+  }, [id]);
 
   const fetchProfile = async () => {
     try {
@@ -45,23 +44,6 @@ const Profile = () => {
     }
   };
 
-  const checkFollowingStatus = async () => {
-    if (!user || !id) return;
-    
-    try {
-      const { data } = await supabase
-        .from('user_connections')
-        .select('id')
-        .eq('follower_id', user.id)
-        .eq('following_id', id)
-        .single();
-      
-      setIsFollowing(!!data);
-    } catch (error) {
-      // Not following
-    }
-  };
-
   const handleSave = () => {
     setIsEditing(false);
     fetchProfile();
@@ -75,22 +57,11 @@ const Profile = () => {
     if (!user || !id) return;
 
     try {
-      if (isFollowing) {
-        await supabase
-          .from('user_connections')
-          .delete()
-          .eq('follower_id', user.id)
-          .eq('following_id', id);
-        setIsFollowing(false);
-      } else {
-        await supabase
-          .from('user_connections')
-          .insert({
-            follower_id: user.id,
-            following_id: id
-          });
-        setIsFollowing(true);
-      }
+      // Since user_connections table doesn't exist, just show demo message
+      toast({
+        title: "Feature Coming Soon",
+        description: "Connection system will be implemented in a future update",
+      });
     } catch (error) {
       console.error('Error updating follow status:', error);
     }
@@ -121,10 +92,10 @@ const Profile = () => {
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">Profile not found.</p>
             <Button 
-              onClick={() => navigate('/members')}
+              onClick={() => navigate('/connect')}
               className="mt-4 bg-dna-copper hover:bg-dna-gold text-white"
             >
-              Browse Members
+              Browse Professionals
             </Button>
           </div>
         </div>

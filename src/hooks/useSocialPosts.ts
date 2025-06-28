@@ -19,12 +19,18 @@ export interface SocialPost {
   user_name: string;
   user_avatar?: string;
   user_role?: string;
+  author?: {
+    full_name: string;
+    avatar_url?: string;
+    professional_role?: string;
+  };
 }
 
 export const useSocialPosts = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [posts, setPosts] = useState<SocialPost[]>([]);
+  const [userReactions, setUserReactions] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,7 +55,12 @@ export const useSocialPosts = () => {
           is_published: true,
           user_name: 'Amara Okafor',
           user_avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=400',
-          user_role: 'Tech Entrepreneur'
+          user_role: 'Tech Entrepreneur',
+          author: {
+            full_name: 'Amara Okafor',
+            avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=400',
+            professional_role: 'Tech Entrepreneur'
+          }
         },
         {
           id: '2',
@@ -65,7 +76,12 @@ export const useSocialPosts = () => {
           is_published: true,
           user_name: 'Kwame Asante',
           user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-          user_role: 'Social Impact Investor'
+          user_role: 'Social Impact Investor',
+          author: {
+            full_name: 'Kwame Asante',
+            avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+            professional_role: 'Social Impact Investor'
+          }
         }
       ];
       
@@ -103,6 +119,23 @@ export const useSocialPosts = () => {
     }
   };
 
+  const reactToPost = async (postId: string, reactionType: string) => {
+    if (!user) return;
+    
+    try {
+      setUserReactions(prev => ({
+        ...prev,
+        [postId]: reactionType
+      }));
+      toast({
+        title: "Feature Coming Soon",
+        description: "Post reactions will be implemented in a future update",
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to react to post');
+    }
+  };
+
   const sharePost = async (postId: string) => {
     if (!user) return;
     
@@ -124,9 +157,11 @@ export const useSocialPosts = () => {
     posts,
     loading,
     error,
+    userReactions,
     fetchPosts,
     createPost,
     likePost,
+    reactToPost,
     sharePost
   };
 };

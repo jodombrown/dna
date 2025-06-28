@@ -10,6 +10,7 @@ export interface Message {
   content: string;
   is_read: boolean;
   created_at: string;
+  subject?: string; // Added missing subject property
 }
 
 export interface Conversation {
@@ -20,6 +21,13 @@ export interface Conversation {
   last_message: string;
   last_message_time: string;
   unread_count: number;
+}
+
+export interface ConversationSummary {
+  otherUserId: string;
+  otherUserName: string;
+  lastMessage: Message;
+  unreadCount: number;
 }
 
 export const useEnhancedMessages = () => {
