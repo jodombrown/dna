@@ -48,6 +48,65 @@ export type Database = {
         }
         Relationships: []
       }
+      contribution_cards: {
+        Row: {
+          amount_needed: number | null
+          amount_raised: number | null
+          contribution_type: string
+          created_at: string | null
+          created_by: string
+          description: string | null
+          id: string
+          image_url: string | null
+          impact_area: string | null
+          location: string | null
+          status: string | null
+          target_date: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount_needed?: number | null
+          amount_raised?: number | null
+          contribution_type: string
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          impact_area?: string | null
+          location?: string | null
+          status?: string | null
+          target_date?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount_needed?: number | null
+          amount_raised?: number | null
+          contribution_type?: string
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          impact_area?: string | null
+          location?: string | null
+          status?: string | null
+          target_date?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contribution_cards_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           attendee_count: number | null
@@ -237,6 +296,113 @@ export type Database = {
           target?: string | null
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          comments_count: number | null
+          content: string
+          created_at: string | null
+          hashtags: string[] | null
+          id: string
+          is_published: boolean | null
+          likes_count: number | null
+          media_urls: string[] | null
+          post_type: string | null
+          shares_count: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          comments_count?: number | null
+          content: string
+          created_at?: string | null
+          hashtags?: string[] | null
+          id?: string
+          is_published?: boolean | null
+          likes_count?: number | null
+          media_urls?: string[] | null
+          post_type?: string | null
+          shares_count?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          comments_count?: number | null
+          content?: string
+          created_at?: string | null
+          hashtags?: string[] | null
+          id?: string
+          is_published?: boolean | null
+          likes_count?: number | null
+          media_urls?: string[] | null
+          post_type?: string | null
+          shares_count?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          company: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          interests: string[] | null
+          is_public: boolean | null
+          linkedin_url: string | null
+          location: string | null
+          profession: string | null
+          skills: string[] | null
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          interests?: string[] | null
+          is_public?: boolean | null
+          linkedin_url?: string | null
+          location?: string | null
+          profession?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          interests?: string[] | null
+          is_public?: boolean | null
+          linkedin_url?: string | null
+          location?: string | null
+          profession?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          website_url?: string | null
         }
         Relationships: []
       }

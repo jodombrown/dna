@@ -1,10 +1,10 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
 
-export interface ContributionCard {
+export interface CleanContributionCard {
   id: string;
   created_by: string;
   title: string;
@@ -24,10 +24,10 @@ export interface ContributionCard {
   };
 }
 
-export const useContributionCards = () => {
+export const useCleanContributionCards = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [cards, setCards] = useState<ContributionCard[]>([]);
+  const [cards, setCards] = useState<CleanContributionCard[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchCards = async () => {
@@ -47,18 +47,18 @@ export const useContributionCards = () => {
 
       if (error) throw error;
 
-      const formattedCards: ContributionCard[] = data?.map(card => ({
+      const formattedCards: CleanContributionCard[] = data?.map(card => ({
         id: card.id,
         created_by: card.created_by,
         title: card.title,
         description: card.description,
-        contribution_type: card.contribution_type as ContributionCard['contribution_type'],
+        contribution_type: card.contribution_type as CleanContributionCard['contribution_type'],
         impact_area: card.impact_area,
         location: card.location,
         amount_needed: card.amount_needed,
         amount_raised: card.amount_raised || 0,
         target_date: card.target_date,
-        status: card.status as ContributionCard['status'],
+        status: card.status as CleanContributionCard['status'],
         image_url: card.image_url,
         created_at: card.created_at,
         creator: card.profiles ? {
@@ -80,7 +80,7 @@ export const useContributionCards = () => {
     }
   };
 
-  const createCard = async (cardData: Omit<ContributionCard, 'id' | 'created_by' | 'amount_raised' | 'created_at' | 'creator'>) => {
+  const createCard = async (cardData: Omit<CleanContributionCard, 'id' | 'created_by' | 'amount_raised' | 'created_at' | 'creator'>) => {
     if (!user) return;
 
     try {
@@ -101,18 +101,18 @@ export const useContributionCards = () => {
 
       if (error) throw error;
 
-      const newCard: ContributionCard = {
+      const newCard: CleanContributionCard = {
         id: data.id,
         created_by: data.created_by,
         title: data.title,
         description: data.description,
-        contribution_type: data.contribution_type as ContributionCard['contribution_type'],
+        contribution_type: data.contribution_type as CleanContributionCard['contribution_type'],
         impact_area: data.impact_area,
         location: data.location,
         amount_needed: data.amount_needed,
         amount_raised: data.amount_raised || 0,
         target_date: data.target_date,
-        status: data.status as ContributionCard['status'],
+        status: data.status as CleanContributionCard['status'],
         image_url: data.image_url,
         created_at: data.created_at,
         creator: data.profiles ? {
