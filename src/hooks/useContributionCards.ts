@@ -47,25 +47,28 @@ export const useContributionCards = () => {
 
       if (error) throw error;
 
-      const formattedCards: ContributionCard[] = data?.map(card => ({
-        id: card.id,
-        created_by: card.created_by,
-        title: card.title,
-        description: card.description,
-        contribution_type: card.contribution_type as ContributionCard['contribution_type'],
-        impact_area: card.impact_area,
-        location: card.location,
-        amount_needed: card.amount_needed,
-        amount_raised: card.amount_raised || 0,
-        target_date: card.target_date,
-        status: card.status as ContributionCard['status'],
-        image_url: card.image_url,
-        created_at: card.created_at,
-        creator: (card.profiles && typeof card.profiles === 'object' && 'full_name' in card.profiles && card.profiles !== null) ? {
-          full_name: card.profiles.full_name || 'Unknown User',
-          avatar_url: card.profiles.avatar_url || undefined
-        } : undefined
-      })) || [];
+      const formattedCards: ContributionCard[] = data?.map(card => {
+        const profiles = card.profiles;
+        return {
+          id: card.id,
+          created_by: card.created_by,
+          title: card.title,
+          description: card.description,
+          contribution_type: card.contribution_type as ContributionCard['contribution_type'],
+          impact_area: card.impact_area,
+          location: card.location,
+          amount_needed: card.amount_needed,
+          amount_raised: card.amount_raised || 0,
+          target_date: card.target_date,
+          status: card.status as ContributionCard['status'],
+          image_url: card.image_url,
+          created_at: card.created_at,
+          creator: (profiles && typeof profiles === 'object' && 'full_name' in profiles && profiles !== null) ? {
+            full_name: profiles.full_name || 'Unknown User',
+            avatar_url: profiles.avatar_url || undefined
+          } : undefined
+        };
+      }) || [];
 
       setCards(formattedCards);
     } catch (error) {
@@ -101,6 +104,7 @@ export const useContributionCards = () => {
 
       if (error) throw error;
 
+      const profiles = data.profiles;
       const newCard: ContributionCard = {
         id: data.id,
         created_by: data.created_by,
@@ -115,9 +119,9 @@ export const useContributionCards = () => {
         status: data.status as ContributionCard['status'],
         image_url: data.image_url,
         created_at: data.created_at,
-        creator: (data.profiles && typeof data.profiles === 'object' && 'full_name' in data.profiles && data.profiles !== null) ? {
-          full_name: data.profiles.full_name || 'Unknown User',
-          avatar_url: data.profiles.avatar_url || undefined
+        creator: (profiles && typeof profiles === 'object' && 'full_name' in profiles && profiles !== null) ? {
+          full_name: profiles.full_name || 'Unknown User',
+          avatar_url: profiles.avatar_url || undefined
         } : undefined
       };
 

@@ -63,25 +63,28 @@ export const useSocialPosts = () => {
 
       if (error) throw error;
 
-      const formattedPosts: SocialPost[] = data?.map(post => ({
-        id: post.id,
-        user_id: post.user_id,
-        content: post.content,
-        post_type: post.post_type as SocialPost['post_type'],
-        media_urls: post.media_urls,
-        hashtags: post.hashtags,
-        likes_count: post.likes_count || 0,
-        comments_count: post.comments_count || 0,
-        shares_count: post.shares_count || 0,
-        created_at: post.created_at,
-        author: (post.profiles && typeof post.profiles === 'object' && 'full_name' in post.profiles && post.profiles !== null) ? {
-          full_name: post.profiles.full_name || 'Unknown User',
-          avatar_url: post.profiles.avatar_url || undefined,
-          professional_role: post.profiles.professional_role || undefined
-        } : undefined,
-        shared_event: post.events,
-        shared_community: post.communities
-      })) || [];
+      const formattedPosts: SocialPost[] = data?.map(post => {
+        const profiles = post.profiles;
+        return {
+          id: post.id,
+          user_id: post.user_id,
+          content: post.content,
+          post_type: post.post_type as SocialPost['post_type'],
+          media_urls: post.media_urls,
+          hashtags: post.hashtags,
+          likes_count: post.likes_count || 0,
+          comments_count: post.comments_count || 0,
+          shares_count: post.shares_count || 0,
+          created_at: post.created_at,
+          author: (profiles && typeof profiles === 'object' && 'full_name' in profiles && profiles !== null) ? {
+            full_name: profiles.full_name || 'Unknown User',
+            avatar_url: profiles.avatar_url || undefined,
+            professional_role: profiles.professional_role || undefined
+          } : undefined,
+          shared_event: post.events,
+          shared_community: post.communities
+        };
+      }) || [];
 
       setPosts(formattedPosts);
     } catch (error) {
@@ -123,6 +126,7 @@ export const useSocialPosts = () => {
 
       if (error) throw error;
 
+      const profiles = data.profiles;
       const newPost: SocialPost = {
         id: data.id,
         user_id: data.user_id,
@@ -134,10 +138,10 @@ export const useSocialPosts = () => {
         comments_count: data.comments_count || 0,
         shares_count: data.shares_count || 0,
         created_at: data.created_at,
-        author: (data.profiles && typeof data.profiles === 'object' && 'full_name' in data.profiles && data.profiles !== null) ? {
-          full_name: data.profiles.full_name || 'Unknown User',
-          avatar_url: data.profiles.avatar_url || undefined,
-          professional_role: data.profiles.professional_role || undefined
+        author: (profiles && typeof profiles === 'object' && 'full_name' in profiles && profiles !== null) ? {
+          full_name: profiles.full_name || 'Unknown User',
+          avatar_url: profiles.avatar_url || undefined,
+          professional_role: profiles.professional_role || undefined
         } : undefined
       };
 
