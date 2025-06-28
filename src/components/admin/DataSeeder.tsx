@@ -24,9 +24,9 @@ const DataSeeder = () => {
   const fetchCounts = async () => {
     try {
       const [professionalsCount, communitiesCount, eventsCount] = await Promise.all([
-        supabase.from('professionals').select('id', { count: 'exact', head: true }),
-        supabase.from('communities').select('id', { count: 'exact', head: true }),
-        supabase.from('events').select('id', { count: 'exact', head: true })
+        supabase.from('professionals' as any).select('id', { count: 'exact', head: true }),
+        supabase.from('communities' as any).select('id', { count: 'exact', head: true }),
+        supabase.from('events' as any).select('id', { count: 'exact', head: true })
       ]);
 
       setCounts({
@@ -83,7 +83,10 @@ const DataSeeder = () => {
     }
 
     try {
-      const { error } = await supabase.from(type).delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      const { error } = await supabase
+        .from(type as any)
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000');
       
       if (error) throw error;
 
