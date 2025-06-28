@@ -42,6 +42,7 @@ export const additionalEvents: Event[] = [
     is_featured: false,
     created_at: "2024-07-01T00:00:00Z",
     updated_at: "2024-07-01T00:00:00Z",
+    banner_url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=200&fit=crop",
     creator_profile: sampleCreators[0]
   },
   {
@@ -56,6 +57,7 @@ export const additionalEvents: Event[] = [
     is_featured: false,
     created_at: "2024-07-01T00:00:00Z",
     updated_at: "2024-07-01T00:00:00Z",
+    banner_url: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=500&h=200&fit=crop",
     creator_profile: sampleCreators[2]
   },
   {
@@ -70,6 +72,7 @@ export const additionalEvents: Event[] = [
     is_featured: false,
     created_at: "2024-07-01T00:00:00Z",
     updated_at: "2024-07-01T00:00:00Z",
+    banner_url: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=500&h=200&fit=crop",
     creator_profile: sampleCreators[3]
   }
 ];

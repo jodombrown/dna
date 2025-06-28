@@ -19,21 +19,21 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({ event, onEventClick, 
 
   const getEventLogo = (eventTitle: string, eventType: string) => {
     if (eventTitle.toLowerCase().includes('tech') || eventTitle.toLowerCase().includes('innovation')) {
-      return 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop';
+      return 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop&crop=face';
     }
     if (eventTitle.toLowerCase().includes('investment') || eventTitle.toLowerCase().includes('finance')) {
-      return 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=120&h=120&fit=crop';
+      return 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=120&h=120&fit=crop&crop=face';
     }
     if (eventTitle.toLowerCase().includes('health')) {
-      return 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=120&h=120&fit=crop';
+      return 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=120&h=120&fit=crop&crop=face';
     }
     if (eventTitle.toLowerCase().includes('women') || eventTitle.toLowerCase().includes('leadership')) {
-      return 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=120&h=120&fit=crop';
+      return 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=120&h=120&fit=crop&crop=face';
     }
     if (eventTitle.toLowerCase().includes('climate') || eventTitle.toLowerCase().includes('environment')) {
-      return 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=120&fit=crop';
+      return 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=120&fit=crop&crop=face';
     }
-    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=120&h=120&fit=crop';
+    return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=120&h=120&fit=crop&crop=face';
   };
 
   const getEventBanner = (eventTitle: string, eventType: string) => {
@@ -64,6 +64,9 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({ event, onEventClick, 
           src={eventBanner}
           alt={event.title}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=200&fit=crop';
+          }}
         />
         
         {/* Creator on banner - top right */}
@@ -92,6 +95,9 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({ event, onEventClick, 
               src={eventLogo}
               alt={`${event.title} logo`}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=120&h=120&fit=crop&crop=face';
+              }}
             />
           </div>
         </div>
