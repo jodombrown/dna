@@ -63,7 +63,7 @@ export const useContributionCards = () => {
           status: card.status as ContributionCard['status'],
           image_url: card.image_url,
           created_at: card.created_at,
-          creator: profiles ? {
+          creator: (profiles && typeof profiles === 'object' && !Array.isArray(profiles) && 'full_name' in profiles) ? {
             full_name: profiles.full_name || 'Unknown User',
             avatar_url: profiles.avatar_url || undefined
           } : undefined
@@ -119,7 +119,7 @@ export const useContributionCards = () => {
         status: data.status as ContributionCard['status'],
         image_url: data.image_url,
         created_at: data.created_at,
-        creator: profiles ? {
+        creator: (profiles && typeof profiles === 'object' && !Array.isArray(profiles) && 'full_name' in profiles) ? {
           full_name: profiles.full_name || 'Unknown User',
           avatar_url: profiles.avatar_url || undefined
         } : undefined
