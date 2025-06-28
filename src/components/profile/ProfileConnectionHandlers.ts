@@ -6,80 +6,23 @@ export const useProfileConnectionHandlers = (profile: any, isOwnProfile: boolean
   const { toast } = useToast();
 
   const checkFollowingStatus = async () => {
-    try {
-      const { data: currentUser } = await supabase.auth.getUser();
-      if (!currentUser.user) return false;
-
-      // Use a simple query without complex joins
-      const { data, error } = await supabase
-        .from('user_connections')
-        .select('id')
-        .eq('follower_id', currentUser.user.id)
-        .eq('following_id', profile.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error checking follow status:', error);
-        return false;
-      }
-
-      return !!data;
-    } catch (error) {
-      console.error('Error in checkFollowingStatus:', error);
-      return false;
-    }
+    // Connection system has been removed - return false for now
+    return false;
   };
 
   const handleFollow = async (isFollowing: boolean, setIsFollowing: (value: boolean) => void, setLoading: (value: boolean) => void) => {
     setLoading(true);
     try {
-      const { data: currentUser } = await supabase.auth.getUser();
-      if (!currentUser.user) {
-        toast({
-          title: "Authentication required",
-          description: "Please log in to follow users",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (isFollowing) {
-        // Unfollow
-        const { error } = await supabase
-          .from('user_connections')
-          .delete()
-          .eq('follower_id', currentUser.user.id)
-          .eq('following_id', profile.id);
-
-        if (error) throw error;
-
-        setIsFollowing(false);
-        toast({
-          title: "Unfollowed",
-          description: `You're no longer following ${profile.full_name}`,
-        });
-      } else {
-        // Follow
-        const { error } = await supabase
-          .from('user_connections')
-          .insert({
-            follower_id: currentUser.user.id,
-            following_id: profile.id
-          });
-
-        if (error) throw error;
-
-        setIsFollowing(true);
-        toast({
-          title: "Following",
-          description: `You're now following ${profile.full_name}`,
-        });
-      }
+      // Connection system has been removed - show placeholder message
+      toast({
+        title: "Feature Coming Soon",
+        description: "Connection system will be implemented in a future update",
+      });
     } catch (error: any) {
-      console.error('Error toggling follow:', error);
+      console.error('Error in follow handler:', error);
       toast({
         title: "Error",
-        description: "Failed to update follow status",
+        description: "Feature temporarily unavailable",
         variant: "destructive",
       });
     } finally {

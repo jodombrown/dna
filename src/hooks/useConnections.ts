@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 
 export interface Connection {
   id: string;
@@ -26,21 +25,8 @@ export const useConnections = () => {
     setError(null);
     
     try {
-      const { data, error } = await supabase
-        .from('connections')
-        .insert({
-          requester_id: user.id,
-          recipient_id: recipientId,
-          status: 'pending' as const,
-          message: message || undefined
-        })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      
-      setConnections(prev => [...prev, data as Connection]);
-      return data;
+      // Connection system has been removed - return placeholder
+      throw new Error('Connection system will be implemented in a future update');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send connection request');
       throw err;
@@ -56,24 +42,8 @@ export const useConnections = () => {
     setError(null);
     
     try {
-      const { data, error } = await supabase
-        .from('connections')
-        .update({ 
-          status,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', connectionId)
-        .eq('recipient_id', user.id)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      
-      setConnections(prev => 
-        prev.map(conn => conn.id === connectionId ? data as Connection : conn)
-      );
-      
-      return data;
+      // Connection system has been removed - return placeholder
+      throw new Error('Connection system will be implemented in a future update');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to respond to connection');
       throw err;
@@ -89,14 +59,8 @@ export const useConnections = () => {
     setError(null);
     
     try {
-      const { data, error } = await supabase
-        .from('connections')
-        .select('*')
-        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      setConnections((data || []) as Connection[]);
+      // Connection system has been removed - return empty array
+      setConnections([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch connections');
     } finally {
@@ -107,13 +71,8 @@ export const useConnections = () => {
   const checkConnectionStatus = (userId: string): string | null => {
     if (!user) return null;
     
-    const connection = connections.find(
-      conn => 
-        (conn.requester_id === user.id && conn.recipient_id === userId) ||
-        (conn.recipient_id === user.id && conn.requester_id === userId)
-    );
-    
-    return connection?.status || null;
+    // Connection system has been removed - return null
+    return null;
   };
 
   useEffect(() => {

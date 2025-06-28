@@ -1,10 +1,9 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { MessageSquare } from 'lucide-react';
-import EnhancedMessageCenter from '@/components/messaging/EnhancedMessageCenter';
 
 const Messages: React.FC = () => {
   const { user } = useAuth();
@@ -42,7 +41,22 @@ const Messages: React.FC = () => {
           </p>
         </div>
         
-        <EnhancedMessageCenter />
+        <div className="bg-white rounded-lg shadow p-8 text-center">
+          <MessageSquare className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            Messaging System Coming Soon
+          </h2>
+          <p className="text-gray-600 mb-6">
+            We're building a powerful messaging system to help you connect with other diaspora professionals. 
+            This feature will be available in a future update.
+          </p>
+          <Button 
+            onClick={() => navigate('/clean-social-feed')}
+            className="bg-dna-emerald hover:bg-dna-forest text-white"
+          >
+            Explore Community Feed
+          </Button>
+        </div>
       </div>
     </div>
   );
