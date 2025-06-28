@@ -6,7 +6,6 @@ import CommunityCard from './CommunityCard';
 import EmptyState from './EmptyState';
 import EventDetailDialog from "./EventDetailDialog";
 import { Professional, Community, Event } from '@/types/search';
-import { additionalEvents, sampleCreators } from './eventData';
 import PopularEventsSection from './PopularEventsSection';
 import EventCategoriesSection from './EventCategoriesSection';
 import FeaturedCalendarsSection from './FeaturedCalendarsSection';
@@ -44,33 +43,6 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
   const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = React.useState(false);
 
-  // Filter out specific professionals
-  const filteredProfessionals = professionals.filter(professional => 
-    professional.full_name !== "Zara Hassan" && 
-    professional.full_name !== "Emmanuel Nyong"
-  );
-
-  // Filter out specific communities
-  const filteredCommunities = communities.filter(community => 
-    !community.name.includes("Pan-African Researchers")
-  );
-
-  // Filter out the Pan-African Researchers event
-  const filteredEvents = events.filter(event => 
-    !event.title.includes("Pan-African Researchers")
-  );
-
-  // Combine filtered events with additional events
-  const allEventsWithCreators = [...filteredEvents, ...additionalEvents].map((event, idx) => {
-    if (idx < 9 && !event.creator_profile) {
-      return {
-        ...event,
-        creator_profile: sampleCreators[idx % sampleCreators.length]
-      };
-    }
-    return event;
-  });
-
   const openEventDialog = (event: Event) => {
     setSelectedEvent(event);
     setDetailDialogOpen(true);
@@ -80,17 +52,17 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
     <>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="professionals">Professionals ({filteredProfessionals.length})</TabsTrigger>
-          <TabsTrigger value="communities">Communities ({filteredCommunities.length})</TabsTrigger>
-          <TabsTrigger value="events">Events ({allEventsWithCreators.length})</TabsTrigger>
+          <TabsTrigger value="professionals">Professionals ({professionals.length})</TabsTrigger>
+          <TabsTrigger value="communities">Communities ({communities.length})</TabsTrigger>
+          <TabsTrigger value="events">Events ({events.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="professionals">
-          {filteredProfessionals.length === 0 ? (
+          {professionals.length === 0 ? (
             <EmptyState type="professionals" onRefresh={onRefresh} />
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
-              {filteredProfessionals.map((professional) => (
+              {professionals.map((professional) => (
                 <ProfessionalCard
                   key={professional.id}
                   professional={professional}
@@ -105,11 +77,11 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
         </TabsContent>
 
         <TabsContent value="communities">
-          {filteredCommunities.length === 0 ? (
+          {communities.length === 0 ? (
             <EmptyState type="communities" onRefresh={onRefresh} />
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCommunities.map((community) => (
+              {communities.map((community) => (
                 <CommunityCard 
                   key={community.id} 
                   community={community} 
@@ -122,7 +94,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
         </TabsContent>
 
         <TabsContent value="events">
-          {allEventsWithCreators.length === 0 ? (
+          {events.length === 0 ? (
             <EmptyState type="events" onRefresh={onRefresh} />
           ) : (
             <div className="space-y-12">
@@ -135,7 +107,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
               </div>
 
               <PopularEventsSection 
-                events={allEventsWithCreators}
+                events={events}
                 onEventClick={openEventDialog}
                 onRegisterEvent={onRegisterEvent}
               />

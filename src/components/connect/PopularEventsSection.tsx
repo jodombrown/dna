@@ -32,7 +32,7 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
       <div className="relative px-16">
         <Carousel className="w-full">
           <CarouselContent className="-ml-2 md:-ml-4">
-            {events.slice(0, 9).map((event) => (
+            {events.map((event) => (
               <CarouselItem key={event.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
                 <ModernEventCard 
                   event={event} 
