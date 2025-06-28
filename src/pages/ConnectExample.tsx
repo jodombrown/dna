@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-import { useConnectPageLogic } from '@/hooks/useConnectPageLogic';
+import { useSearch } from '@/hooks/useSearch';
 import ConnectLoadingState from '@/components/connect/ConnectLoadingState';
 import ConnectErrorState from '@/components/connect/ConnectErrorState';
 import SearchSection from '@/components/connect/SearchSection';
@@ -11,38 +11,94 @@ import CallToActionSection from '@/components/connect/CallToActionSection';
 import ConnectDialogs from '@/components/connect/ConnectDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const ConnectExample = () => {
-  const {
-    professionals,
-    communities,
-    events,
-    loading,
-    initializing,
-    dataError,
-    user,
-    searchTerm,
-    setSearchTerm,
-    activeTab,
-    setActiveTab,
-    isConnectDialogOpen,
-    setIsConnectDialogOpen,
-    isMessageDialogOpen,
-    setIsMessageDialogOpen,
-    isJoinCommunityDialogOpen,
-    setIsJoinCommunityDialogOpen,
-    isRegisterEventDialogOpen,
-    setIsRegisterEventDialogOpen,
-    isFeedbackPanelOpen,
-    setIsFeedbackPanelOpen,
-    handleSearch,
-    handleConnect,
-    handleMessage,
-    handleJoinCommunity,
-    handleRegisterEvent,
-    getConnectionStatus,
-    initializeData
-  } = useConnectPageLogic();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const { professionals, communities, events, loading, error, searchAll, getAllData } = useSearch();
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('professionals');
+  const [initializing, setInitializing] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
+  
+  // Dialog states
+  const [isConnectDialogOpen, setIsConnectDialogOpen] = useState(false);
+  const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
+  const [isJoinCommunityDialogOpen, setIsJoinCommunityDialogOpen] = useState(false);
+  const [isRegisterEventDialogOpen, setIsRegisterEventDialogOpen] = useState(false);
+  const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
+
+  useEffect(() => {
+    initializeData();
+  }, []);
+
+  const initializeData = async () => {
+    try {
+      setInitializing(true);
+      await getAllData();
+    } catch (err) {
+      setDataError(err instanceof Error ? err.message : 'Failed to load data');
+    } finally {
+      setInitializing(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (searchTerm.trim()) {
+      await searchAll(searchTerm);
+    }
+  };
+
+  const handleConnect = (userId: string) => {
+    if (!user) {
+      toast({
+        title: "Sign In Required",
+        description: "Please sign in to connect with professionals",
+      });
+      return;
+    }
+    setIsConnectDialogOpen(true);
+  };
+
+  const handleMessage = (userId: string, userName: string) => {
+    if (!user) {
+      toast({
+        title: "Sign In Required", 
+        description: "Please sign in to send messages",
+      });
+      return;
+    }
+    setIsMessageDialogOpen(true);
+  };
+
+  const handleJoinCommunity = (communityId: string) => {
+    if (!user) {
+      toast({
+        title: "Sign In Required",
+        description: "Please sign in to join communities", 
+      });
+      return;
+    }
+    setIsJoinCommunityDialogOpen(true);
+  };
+
+  const handleRegisterEvent = (eventId: string) => {
+    if (!user) {
+      toast({
+        title: "Sign In Required",
+        description: "Please sign in to register for events",
+      });
+      return;
+    }
+    setIsRegisterEventDialogOpen(true);
+  };
+
+  const getConnectionStatus = (userId: string) => {
+    return 'none'; // Demo status
+  };
 
   if (initializing) {
     return <ConnectLoadingState />;

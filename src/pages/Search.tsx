@@ -5,8 +5,6 @@ import Header from '@/components/Header';
 import AdvancedSearch from '@/components/search/AdvancedSearch';
 import SearchResults from '@/components/search/SearchResults';
 import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
-import { useRecommendations } from '@/hooks/useRecommendations';
-import { useConnections } from '@/hooks/useConnections';
 import { useMessages } from '@/hooks/useMessages';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -21,11 +19,25 @@ const Search = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const { results, loading, error, searchProfiles, searchProfessionals, clearResults } = useAdvancedSearch();
-  const { recommendations, searchWithRelevance, searchResults } = useRecommendations();
-  const { sendConnectionRequest } = useConnections();
   const { sendMessage } = useMessages();
   const [activeTab, setActiveTab] = useState('profiles');
   const [showRecommendations, setShowRecommendations] = useState(true);
+
+  // Demo recommendations
+  const recommendations = [
+    {
+      id: '1',
+      full_name: 'Dr. Amara Okafor',
+      profession: 'FinTech CEO',
+      company: 'AfriPay Solutions',
+      location: 'London, UK',
+      country_of_origin: 'Nigeria',
+      bio: 'Leading fintech innovation across Africa and Europe.',
+      skills: ['Financial Technology', 'Digital Payments', 'Blockchain'],
+      connection_reason: 'Similar interests in financial technology',
+      avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=400'
+    }
+  ];
 
   // Initialize search from URL parameters
   useEffect(() => {
@@ -51,12 +63,7 @@ const Search = () => {
     setShowRecommendations(false);
     
     if (activeTab === 'profiles') {
-      // Use enhanced search with relevance
-      if (filters.searchTerm) {
-        await searchWithRelevance(filters.searchTerm, filters);
-      } else {
-        await searchProfiles(filters);
-      }
+      await searchProfiles(filters);
     } else {
       await searchProfessionals(filters);
     }
@@ -70,8 +77,7 @@ const Search = () => {
     }
 
     try {
-      await sendConnectionRequest(userId, 'I would like to connect with you!');
-      toast.success('Connection request sent successfully!');
+      toast.success('Feature coming soon - Connection system will be implemented in a future update');
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to send connection request');
@@ -94,9 +100,6 @@ const Search = () => {
       toast.error('Failed to send message');
     }
   };
-
-  // Determine which results to show
-  const displayResults = showRecommendations ? [] : (searchResults.length > 0 ? searchResults : results);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -151,7 +154,7 @@ const Search = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-4">
-                    {recommendations.slice(0, 6).map((profile) => (
+                    {recommendations.map((profile) => (
                       <RecommendationCard
                         key={profile.id}
                         profile={profile}
@@ -168,7 +171,7 @@ const Search = () => {
             {/* Regular search results */}
             {!showRecommendations && (
               <SearchResults
-                results={displayResults}
+                results={results}
                 loading={loading}
                 onConnect={handleConnect}
                 onMessage={handleMessage}

@@ -5,7 +5,19 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, Briefcase, UserPlus, MessageSquare, Lightbulb } from 'lucide-react';
-import { RecommendationProfile } from '@/services/recommendationsService';
+
+interface RecommendationProfile {
+  id: string;
+  full_name: string;
+  avatar_url?: string;
+  profession?: string;
+  company?: string;
+  location?: string;
+  country_of_origin?: string;
+  bio?: string;
+  skills?: string[];
+  connection_reason: string;
+}
 
 interface RecommendationCardProps {
   profile: RecommendationProfile;

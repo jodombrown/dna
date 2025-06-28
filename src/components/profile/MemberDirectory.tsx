@@ -8,7 +8,6 @@ import ProfileCard from './ProfileCard';
 import RecommendationsSection from './RecommendationsSection';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useConnections } from '@/hooks/useConnections';
 import { useMessages } from '@/hooks/useMessages';
 import { toast } from 'sonner';
 import { sanitizeText } from '@/utils/securityValidation';
@@ -20,7 +19,6 @@ const MemberDirectory = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { sendConnectionRequest } = useConnections();
   const { sendMessage } = useMessages();
 
   useEffect(() => {
@@ -82,8 +80,7 @@ const MemberDirectory = () => {
     }
 
     try {
-      await sendConnectionRequest(userId, 'I would like to connect with you!');
-      toast.success('Connection request sent successfully!');
+      toast.success('Feature coming soon - Connection system will be implemented in a future update');
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to send connection request');
