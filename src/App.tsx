@@ -14,6 +14,13 @@ import Connect from "./pages/Connect";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 
+// Import all your marketing pages
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import ConnectExample from "./pages/ConnectExample";
+import ContributeExample from "./pages/ContributeExample";
+import CollaborationsExample from "./pages/CollaborationsExample";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -33,6 +40,13 @@ function App() {
               <Route path="/connect" element={<Connect />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/profile/:id" element={<Profile />} />
+              
+              {/* Marketing and demo pages */}
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/connect-example" element={<ConnectExample />} />
+              <Route path="/contribute-example" element={<ContributeExample />} />
+              <Route path="/collaborations-example" element={<CollaborationsExample />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
