@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -182,7 +181,7 @@ const demoProfessionals: Professional[] = [
   }
 ];
 
-// Demo data for communities (10 communities)
+// Demo data for communities (9 communities - removed Climate Solutions Network)
 const demoCommunities: Community[] = [
   {
     id: '1',
@@ -273,20 +272,10 @@ const demoCommunities: Community[] = [
     is_featured: true,
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z'
-  },
-  {
-    id: '10',
-    name: 'Climate Solutions Network',
-    description: 'Collaborative platform for climate change solutions and environmental sustainability.',
-    category: 'Environment',
-    member_count: 285,
-    is_featured: false,
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z'
   }
 ];
 
-// Demo data for events (12 events)
+// Demo data for events (10 events created by the 8 professionals)
 const demoEvents: Event[] = [
   {
     id: '1',
@@ -302,7 +291,7 @@ const demoEvents: Event[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
-      id: 'u1',
+      id: '1',
       full_name: 'Dr. Amara Okafor',
       avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
     }
@@ -321,8 +310,8 @@ const demoEvents: Event[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
-      id: 'u2',
-      full_name: 'Kwame Asante',
+      id: '2',
+      full_name: 'Prof. Kwame Asante',
       avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80'
     }
   },
@@ -340,7 +329,7 @@ const demoEvents: Event[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
-      id: 'u3',
+      id: '3',
       full_name: 'Sarah Mwangi',
       avatar_url: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=80'
     }
@@ -359,7 +348,7 @@ const demoEvents: Event[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
-      id: 'u4',
+      id: '4',
       full_name: 'Ibrahim Diallo',
       avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80'
     }
@@ -378,7 +367,7 @@ const demoEvents: Event[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
-      id: 'u5',
+      id: '5',
       full_name: 'Fatima Al-Rashid',
       avatar_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80'
     }
@@ -397,7 +386,7 @@ const demoEvents: Event[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
-      id: 'u6',
+      id: '6',
       full_name: 'Dr. Chinedu Okonkwo',
       avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80'
     }
@@ -416,7 +405,7 @@ const demoEvents: Event[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
-      id: 'u7',
+      id: '7',
       full_name: 'Aisha Kone',
       avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80'
     }
@@ -435,7 +424,7 @@ const demoEvents: Event[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
-      id: 'u8',
+      id: '8',
       full_name: 'Kofi Mensah',
       avatar_url: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=80'
     }
@@ -454,7 +443,7 @@ const demoEvents: Event[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
-      id: 'u1',
+      id: '1',
       full_name: 'Dr. Amara Okafor',
       avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
     }
@@ -473,8 +462,8 @@ const demoEvents: Event[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
-      id: 'u2',
-      full_name: 'Kwame Asante',
+      id: '2',
+      full_name: 'Prof. Kwame Asante',
       avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80'
     }
   }

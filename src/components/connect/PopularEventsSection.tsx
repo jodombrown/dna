@@ -10,12 +10,16 @@ interface PopularEventsSectionProps {
   events: Event[];
   onEventClick: (event: Event) => void;
   onRegisterEvent: () => void;
+  onCreatorClick?: (creatorId: string) => void;
+  onViewAll?: () => void;
 }
 
 const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({ 
   events, 
   onEventClick, 
-  onRegisterEvent 
+  onRegisterEvent,
+  onCreatorClick,
+  onViewAll
 }) => {
   return (
     <div className="space-y-6">
@@ -24,7 +28,11 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
           <h3 className="text-2xl font-bold text-gray-900">Popular Events</h3>
           <p className="text-gray-600">Trending events in your network</p>
         </div>
-        <Button variant="ghost" className="text-dna-emerald hover:text-dna-forest">
+        <Button 
+          variant="ghost" 
+          className="text-dna-emerald hover:text-dna-forest"
+          onClick={onViewAll}
+        >
           View All <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
@@ -38,6 +46,7 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
                   event={event} 
                   onEventClick={onEventClick}
                   onRegisterEvent={onRegisterEvent}
+                  onCreatorClick={onCreatorClick}
                 />
               </CarouselItem>
             ))}

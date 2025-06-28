@@ -6,17 +6,20 @@ import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Event } from '@/types/search';
-import { useNavigate } from "react-router-dom";
 
 interface ModernEventCardProps {
   event: Event;
   onEventClick: (event: Event) => void;
   onRegisterEvent: () => void;
+  onCreatorClick?: (creatorId: string) => void;
 }
 
-const ModernEventCard: React.FC<ModernEventCardProps> = ({ event, onEventClick, onRegisterEvent }) => {
-  const navigate = useNavigate();
-
+const ModernEventCard: React.FC<ModernEventCardProps> = ({ 
+  event, 
+  onEventClick, 
+  onRegisterEvent,
+  onCreatorClick 
+}) => {
   const getEventLogo = (eventTitle: string, eventType: string) => {
     if (eventTitle.toLowerCase().includes('tech') || eventTitle.toLowerCase().includes('innovation')) {
       return 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop&crop=face';
@@ -57,7 +60,7 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({ event, onEventClick, 
   const creatorImage = event.creator_profile?.avatar_url;
 
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden bg-white border-0 shadow-sm hover:shadow-2xl hover:-translate-y-1 h-[480px] flex flex-col"
+    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden bg-white border-0 shadow-sm hover:shadow-2xl hover:-translate-y-1 h-[520px] flex flex-col"
           onClick={() => onEventClick(event)}>
       <div className="relative">
         <img
@@ -75,7 +78,7 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({ event, onEventClick, 
             className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-md hover:bg-dna-emerald/90 hover:text-white transition-all flex items-center gap-2 text-sm font-medium z-20"
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/profile/${event.creator_profile.id}`);
+              onCreatorClick?.(event.creator_profile.id);
             }}
           >
             <Avatar className="w-6 h-6">
