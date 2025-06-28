@@ -11,109 +11,28 @@ import {
   Lightbulb, 
   HandHeart, 
   MessageCircle,
-  MoreHorizontal
+  Share,
+  MoreHorizontal,
+  Calendar,
+  Users,
+  DollarSign
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import PostCreator from './PostCreator';
+import EnhancedPostCreator from './EnhancedPostCreator';
+import { useSocialPosts } from '@/hooks/useSocialPosts';
+import { useAuth } from '@/contexts/AuthContext';
 
-interface Post {
-  id: string;
-  user_id: string;
-  content: string;
-  hashtags: string[];
-  created_at: string;
-  reactions: {
-    '👍': number;
-    '❤️': number;
-    '🔥': number;
-    '💡': number;
-    '🙌': number;
-  };
-  comments_count: number;
-  author?: {
-    full_name: string;
-    avatar_url?: string;
-    professional_role?: string;
-  };
-}
-
-const REACTION_ICONS: Record<string, React.ReactNode> = {
-  '👍': <ThumbsUp className="w-4 h-4" />,
-  '❤️': <Heart className="w-4 h-4" />,
-  '🔥': <Flame className="w-4 h-4" />,
-  '💡': <Lightbulb className="w-4 h-4" />,
-  '🙌': <HandHeart className="w-4 h-4" />
+const REACTION_ICONS: Record<string, { icon: React.ReactNode; emoji: string }> = {
+  'like': { icon: <ThumbsUp className="w-4 h-4" />, emoji: '👍' },
+  'love': { icon: <Heart className="w-4 h-4" />, emoji: '❤️' },
+  'celebrate': { icon: <Flame className="w-4 h-4" />, emoji: '🎉' },
+  'support': { icon: <HandHeart className="w-4 h-4" />, emoji: '🙌' },
+  'insightful': { icon: <Lightbulb className="w-4 h-4" />, emoji: '💡' }
 };
 
 const SocialFeed: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [userReactions, setUserReactions] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    loadPosts();
-  }, []);
-
-  const loadPosts = () => {
-    // Load posts from localStorage (in production, this would be from Supabase)
-    const storedPosts = JSON.parse(localStorage.getItem('dna_posts') || '[]');
-    
-    // Add mock author data for demo purposes
-    const postsWithAuthors = storedPosts.map((post: Post) => ({
-      ...post,
-      author: {
-        full_name: 'Community Member',
-        professional_role: 'Professional',
-        avatar_url: undefined
-      }
-    }));
-    
-    setPosts(postsWithAuthors);
-  };
-
-  const handlePostCreated = (newPost: Post) => {
-    setPosts(prev => [newPost, ...prev]);
-  };
-
-  const handleReaction = (postId: string, reaction: string) => {
-    const currentReaction = userReactions[postId];
-    
-    if (currentReaction === reaction) {
-      // Remove reaction
-      setUserReactions(prev => {
-        const newReactions = { ...prev };
-        delete newReactions[postId];
-        return newReactions;
-      });
-      
-      setPosts(prev => prev.map(post => 
-        post.id === postId 
-          ? {
-              ...post,
-              reactions: {
-                ...post.reactions,
-                [reaction]: Math.max(0, post.reactions[reaction as keyof typeof post.reactions] - 1)
-              }
-            }
-          : post
-      ));
-    } else {
-      // Add new reaction (remove old one if exists)
-      setUserReactions(prev => ({ ...prev, [postId]: reaction }));
-      
-      setPosts(prev => prev.map(post => 
-        post.id === postId 
-          ? {
-              ...post,
-              reactions: {
-                ...post.reactions,
-                ...(currentReaction && { [currentReaction]: Math.max(0, post.reactions[currentReaction as keyof typeof post.reactions] - 1) }),
-                [reaction]: post.reactions[reaction as keyof typeof post.reactions] + 1
-              }
-            }
-          : post
-      ));
-    }
-  };
+  const { user } = useAuth();
+  const { posts, loading, userReactions, reactToPost, sharePost } = useSocialPosts();
 
   const renderContent = (content: string) => {
     return content.split(/(\s+)/).map((word, index) => {
@@ -128,14 +47,82 @@ const SocialFeed: React.FC = () => {
     });
   };
 
+  const renderPostTypeIcon = (postType: string) => {
+    switch (postType) {
+      case 'event_share':
+        return <Calendar className="w-4 h-4 text-dna-copper" />;
+      case 'community_share':
+        return <Users className="w-4 h-4 text-dna-emerald" />;
+      case 'contribution_card':
+        return <DollarSign className="w-4 h-4 text-dna-gold" />;
+      default:
+        return null;
+    }
+  };
+
+  const renderSharedContent = (post: any) => {
+    if (post.post_type === 'event_share' && post.shared_event) {
+      return (
+        <div className="mt-4 p-4 bg-dna-copper/10 border border-dna-copper/20 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <Calendar className="w-4 h-4 text-dna-copper" />
+            <span className="font-semibold text-dna-copper">Event</span>
+          </div>
+          <h4 className="font-semibold">{post.shared_event.title}</h4>
+          <p className="text-sm text-gray-600 mt-1">{post.shared_event.description}</p>
+          <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+            <span>📅 {new Date(post.shared_event.date_time).toLocaleDateString()}</span>
+            <span>📍 {post.shared_event.location || 'Virtual'}</span>
+          </div>
+        </div>
+      );
+    }
+
+    if (post.post_type === 'community_share' && post.shared_community) {
+      return (
+        <div className="mt-4 p-4 bg-dna-emerald/10 border border-dna-emerald/20 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="w-4 h-4 text-dna-emerald" />
+            <span className="font-semibold text-dna-emerald">Community</span>
+          </div>
+          <h4 className="font-semibold">{post.shared_community.name}</h4>
+          <p className="text-sm text-gray-600 mt-1">{post.shared_community.description}</p>
+          <Badge variant="outline" className="mt-2">
+            {post.shared_community.category}
+          </Badge>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  if (!user) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <p className="text-gray-500 mb-4">Sign in to see posts from the diaspora community</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      {/* Post Creator */}
-      <PostCreator onPostCreated={handlePostCreated} />
+      {/* Enhanced Post Creator */}
+      <EnhancedPostCreator />
 
       {/* Feed */}
       <div className="space-y-4">
-        {posts.length === 0 ? (
+        {loading ? (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <p className="text-gray-500">Loading posts...</p>
+            </CardContent>
+          </Card>
+        ) : posts.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
               <p className="text-gray-500 mb-4">No posts yet. Be the first to share something!</p>
@@ -155,9 +142,12 @@ const SocialFeed: React.FC = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-semibold text-gray-900">
-                        {post.author?.full_name || 'Community Member'}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-gray-900">
+                          {post.author?.full_name || 'Community Member'}
+                        </p>
+                        {renderPostTypeIcon(post.post_type)}
+                      </div>
                       <p className="text-sm text-gray-600">
                         {post.author?.professional_role && `${post.author.professional_role} • `}
                         {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
@@ -176,31 +166,45 @@ const SocialFeed: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Reactions and Comments */}
+                {/* Shared Content */}
+                {renderSharedContent(post)}
+
+                {/* Actions */}
                 <div className="flex items-center justify-between pt-4 border-t">
                   <div className="flex items-center gap-1">
-                    {Object.entries(post.reactions).map(([emoji, count]) => (
+                    {Object.entries(REACTION_ICONS).map(([reactionType, { icon, emoji }]) => (
                       <Button
-                        key={emoji}
+                        key={reactionType}
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleReaction(post.id, emoji)}
+                        onClick={() => reactToPost(post.id, reactionType)}
                         className={`flex items-center gap-1 ${
-                          userReactions[post.id] === emoji 
+                          userReactions[post.id] === reactionType 
                             ? 'bg-dna-mint text-dna-forest' 
                             : 'hover:bg-gray-100'
                         }`}
                       >
                         <span className="text-base">{emoji}</span>
-                        <span className="text-sm">{count}</span>
+                        <span className="text-sm">{post.likes_count || 0}</span>
                       </Button>
                     ))}
                   </div>
 
-                  <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4" />
-                    <span className="text-sm">{post.comments_count}</span>
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4" />
+                      <span className="text-sm">{post.comments_count}</span>
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="flex items-center gap-2"
+                      onClick={() => sharePost(post.id)}
+                    >
+                      <Share className="w-4 h-4" />
+                      <span className="text-sm">{post.shares_count}</span>
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

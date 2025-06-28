@@ -1,0 +1,227 @@
+
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+
+export interface SocialPost {
+  id: string;
+  user_id: string;
+  content: string;
+  post_type: 'text' | 'article' | 'event_share' | 'community_share' | 'contribution_card' | 'newsletter';
+  media_urls?: string[];
+  hashtags?: string[];
+  likes_count: number;
+  comments_count: number;
+  shares_count: number;
+  created_at: string;
+  author?: {
+    full_name: string;
+    avatar_url?: string;
+    professional_role?: string;
+  };
+  shared_event?: any;
+  shared_community?: any;
+}
+
+export const useSocialPosts = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [posts, setPosts] = useState<SocialPost[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [userReactions, setUserReactions] = useState<Record<string, string>>({});
+
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('posts')
+        .select(`
+          *,
+          profiles!posts_user_id_fkey (
+            full_name,
+            avatar_url,
+            professional_role
+          ),
+          events!posts_shared_event_id_fkey (
+            id,
+            title,
+            description,
+            date_time,
+            location
+          ),
+          communities!posts_shared_community_id_fkey (
+            id,
+            name,
+            description,
+            category
+          )
+        `)
+        .eq('is_published', true)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+
+      const formattedPosts = data?.map(post => ({
+        ...post,
+        author: post.profiles,
+        shared_event: post.events,
+        shared_community: post.communities
+      })) || [];
+
+      setPosts(formattedPosts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load posts",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createPost = async (content: string, postType: string = 'text', additionalData?: any) => {
+    if (!user) return;
+
+    try {
+      const postData = {
+        user_id: user.id,
+        content,
+        post_type: postType,
+        hashtags: extractHashtags(content),
+        ...additionalData
+      };
+
+      const { data, error } = await supabase
+        .from('posts')
+        .insert(postData)
+        .select(`
+          *,
+          profiles!posts_user_id_fkey (
+            full_name,
+            avatar_url,
+            professional_role
+          )
+        `)
+        .single();
+
+      if (error) throw error;
+
+      const newPost = {
+        ...data,
+        author: data.profiles
+      };
+
+      setPosts(prev => [newPost, ...prev]);
+      
+      toast({
+        title: "Success",
+        description: "Post created successfully!",
+      });
+
+      return newPost;
+    } catch (error) {
+      console.error('Error creating post:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create post",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const reactToPost = async (postId: string, reactionType: string) => {
+    if (!user) return;
+
+    try {
+      const existingReaction = userReactions[postId];
+      
+      if (existingReaction === reactionType) {
+        // Remove reaction
+        await supabase
+          .from('post_reactions')
+          .delete()
+          .match({ post_id: postId, user_id: user.id, reaction_type: reactionType });
+        
+        setUserReactions(prev => {
+          const newReactions = { ...prev };
+          delete newReactions[postId];
+          return newReactions;
+        });
+      } else {
+        // Add/update reaction
+        await supabase
+          .from('post_reactions')
+          .upsert({ 
+            post_id: postId, 
+            user_id: user.id, 
+            reaction_type: reactionType 
+          });
+        
+        setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
+      }
+      
+      // Refresh posts to get updated counts
+      fetchPosts();
+    } catch (error) {
+      console.error('Error reacting to post:', error);
+      toast({
+        title: "Error",
+        description: "Failed to react to post",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const sharePost = async (postId: string, sharedContent?: string) => {
+    if (!user) return;
+
+    try {
+      await supabase
+        .from('post_shares')
+        .insert({
+          post_id: postId,
+          user_id: user.id,
+          shared_content: sharedContent
+        });
+
+      toast({
+        title: "Success",
+        description: "Post shared successfully!",
+      });
+      
+      fetchPosts(); // Refresh to update share counts
+    } catch (error) {
+      console.error('Error sharing post:', error);
+      toast({
+        title: "Error",
+        description: "Failed to share post",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const extractHashtags = (text: string): string[] => {
+    const hashtagRegex = /#[a-zA-Z0-9_]+/g;
+    return text.match(hashtagRegex) || [];
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchPosts();
+    }
+  }, [user]);
+
+  return {
+    posts,
+    loading,
+    userReactions,
+    createPost,
+    reactToPost,
+    sharePost,
+    refreshPosts: fetchPosts
+  };
+};
