@@ -91,7 +91,7 @@ export const featuredCalendars = [
     id: 'tech-innovators',
     name: 'African Tech Innovators',
     description: 'Curating the best tech events across Africa',
-    logo: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop',
+    logo: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=120&h=120&fit=crop&crop=face',
     eventCount: 24,
     followers: 1200
   },
