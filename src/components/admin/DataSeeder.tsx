@@ -225,6 +225,9 @@ const DataSeeder = () => {
                   variant="destructive"
                   size="sm"
                   className="w-full"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Clear Data
                 </Button>
               )}
             </div>
