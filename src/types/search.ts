@@ -1,3 +1,4 @@
+
 export interface Professional {
   id: string;
   full_name: string;
@@ -14,6 +15,7 @@ export interface Professional {
   linkedin_url?: string;
   website_url?: string;
   avatar_url?: string;
+  skills?: string[]; // Added skills property
   is_mentor: boolean;
   is_investor: boolean;
   looking_for_opportunities: boolean;
