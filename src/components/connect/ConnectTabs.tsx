@@ -351,7 +351,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
                   </Button>
                 </div>
 
-                <div className="relative">
+                <div className="relative px-6">
                   <Carousel className="w-full">
                     <CarouselContent className="-ml-2 md:-ml-4">
                       {eventsWithCreators.slice(0, 6).map((event) => (
@@ -361,9 +361,9 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
                       ))}
                     </CarouselContent>
                     
-                    {/* Enhanced Carousel Navigation */}
-                    <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2 h-12 w-12 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
-                    <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2 h-12 w-12 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+                    {/* Enhanced Carousel Navigation - positioned further out */}
+                    <CarouselPrevious className="absolute -left-6 top-1/2 -translate-y-1/2 h-10 w-10 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+                    <CarouselNext className="absolute -right-6 top-1/2 -translate-y-1/2 h-10 w-10 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
                   </Carousel>
                 </div>
               </div>
