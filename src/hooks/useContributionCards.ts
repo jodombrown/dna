@@ -47,9 +47,24 @@ export const useContributionCards = () => {
 
       if (error) throw error;
 
-      const formattedCards = data?.map(card => ({
-        ...card,
-        creator: card.profiles
+      const formattedCards: ContributionCard[] = data?.map(card => ({
+        id: card.id,
+        created_by: card.created_by,
+        title: card.title,
+        description: card.description,
+        contribution_type: card.contribution_type as ContributionCard['contribution_type'],
+        impact_area: card.impact_area,
+        location: card.location,
+        amount_needed: card.amount_needed,
+        amount_raised: card.amount_raised || 0,
+        target_date: card.target_date,
+        status: card.status as ContributionCard['status'],
+        image_url: card.image_url,
+        created_at: card.created_at,
+        creator: card.profiles ? {
+          full_name: card.profiles.full_name || 'Unknown User',
+          avatar_url: card.profiles.avatar_url
+        } : undefined
       })) || [];
 
       setCards(formattedCards);
@@ -86,9 +101,24 @@ export const useContributionCards = () => {
 
       if (error) throw error;
 
-      const newCard = {
-        ...data,
-        creator: data.profiles
+      const newCard: ContributionCard = {
+        id: data.id,
+        created_by: data.created_by,
+        title: data.title,
+        description: data.description,
+        contribution_type: data.contribution_type as ContributionCard['contribution_type'],
+        impact_area: data.impact_area,
+        location: data.location,
+        amount_needed: data.amount_needed,
+        amount_raised: data.amount_raised || 0,
+        target_date: data.target_date,
+        status: data.status as ContributionCard['status'],
+        image_url: data.image_url,
+        created_at: data.created_at,
+        creator: data.profiles ? {
+          full_name: data.profiles.full_name || 'Unknown User',
+          avatar_url: data.profiles.avatar_url
+        } : undefined
       };
 
       setCards(prev => [newCard, ...prev]);

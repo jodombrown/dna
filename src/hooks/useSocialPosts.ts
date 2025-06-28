@@ -63,9 +63,22 @@ export const useSocialPosts = () => {
 
       if (error) throw error;
 
-      const formattedPosts = data?.map(post => ({
-        ...post,
-        author: post.profiles,
+      const formattedPosts: SocialPost[] = data?.map(post => ({
+        id: post.id,
+        user_id: post.user_id,
+        content: post.content,
+        post_type: post.post_type as SocialPost['post_type'],
+        media_urls: post.media_urls,
+        hashtags: post.hashtags,
+        likes_count: post.likes_count || 0,
+        comments_count: post.comments_count || 0,
+        shares_count: post.shares_count || 0,
+        created_at: post.created_at,
+        author: post.profiles ? {
+          full_name: post.profiles.full_name || 'Unknown User',
+          avatar_url: post.profiles.avatar_url,
+          professional_role: post.profiles.professional_role
+        } : undefined,
         shared_event: post.events,
         shared_community: post.communities
       })) || [];
@@ -110,9 +123,22 @@ export const useSocialPosts = () => {
 
       if (error) throw error;
 
-      const newPost = {
-        ...data,
-        author: data.profiles
+      const newPost: SocialPost = {
+        id: data.id,
+        user_id: data.user_id,
+        content: data.content,
+        post_type: data.post_type as SocialPost['post_type'],
+        media_urls: data.media_urls,
+        hashtags: data.hashtags,
+        likes_count: data.likes_count || 0,
+        comments_count: data.comments_count || 0,
+        shares_count: data.shares_count || 0,
+        created_at: data.created_at,
+        author: data.profiles ? {
+          full_name: data.profiles.full_name || 'Unknown User',
+          avatar_url: data.profiles.avatar_url,
+          professional_role: data.profiles.professional_role
+        } : undefined
       };
 
       setPosts(prev => [newPost, ...prev]);
