@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Target, TrendingUp, Users, HandHeart, ArrowRight } from 'lucide-react';
@@ -20,8 +21,8 @@ const ContributeSection = () => {
               </h2>
             </div>
             <p className="text-xl text-gray-600 mb-8">
-              Discover your pathway to impact. Whether through investment, expertise, time, 
-              or advocacy—find meaningful ways to advance Africa's progress.
+              Discover pathways to create lasting impact. Whether through investment, expertise, time, 
+              or advocacy—find purposeful ways to advance Africa's progress.
             </p>
             
             <div className="space-y-4 mb-8">

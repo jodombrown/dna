@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   DollarSign,
@@ -46,7 +47,7 @@ const PathwaysToImpact: React.FC<PathwaysToImpactProps> = ({
         </h2>
         <p className="text-lg text-gray-600 max-w-3xl mx-auto">
           There are many ways to contribute to Africa's progress beyond financial investment.
-          Discover how your unique skills, network, and resources can create meaningful impact.
+          Discover how your unique skills, network, and resources can create transformative impact.
         </p>
       </div>
 

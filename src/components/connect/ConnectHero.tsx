@@ -22,7 +22,7 @@ const ConnectHero = () => {
           </div>
           
           <p className="text-xl text-white/90 mb-6 max-w-3xl mx-auto">
-            Build meaningful professional relationships across the diaspora. 
+            Build powerful professional relationships across the diaspora. 
             Discover opportunities, expand your network, and find your tribe through purpose-driven connections.
           </p>
           

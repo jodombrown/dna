@@ -21,10 +21,10 @@ const HeroSection = () => {
 
   return (
     <>
-      {/* Main Hero Section with optimized spacing */}
-      <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-4">
+      {/* Main Hero Section with reduced spacing */}
+      <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[65vh] py-8">
+          <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[60vh] py-6">
             
             {/* Left Column, Main Content */}
             <div className="space-y-6">
@@ -37,7 +37,7 @@ const HeroSection = () => {
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-gray-700 mb-6 leading-relaxed">
-                  Connecting Africa's diaspora professionals for meaningful global impact through 
+                  Connecting Africa's diaspora professionals for transformative global impact through 
                   <span className="font-semibold text-dna-emerald"> capacity building</span>, 
                   <span className="font-semibold text-dna-copper"> venture building</span>, and 
                   <span className="font-semibold text-dna-forest"> ecosystem building</span>.
@@ -83,14 +83,14 @@ const HeroSection = () => {
       </section>
 
       {/* Statistics Section */}
-      <section className="py-12 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
+      <section className="py-10 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <DiasporaStats />
         </div>
       </section>
 
       {/* Platform Development Section with optimized spacing */}
-      <section id="dna-framework" className="py-16 bg-gray-50">
+      <section id="dna-framework" className="py-14 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-dna-forest mb-4">
             Building Together: From Idea to Impact
