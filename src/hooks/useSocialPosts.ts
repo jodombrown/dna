@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -76,7 +75,7 @@ export const useSocialPosts = () => {
           comments_count: post.comments_count || 0,
           shares_count: post.shares_count || 0,
           created_at: post.created_at,
-          author: (profiles && typeof profiles === 'object' && 'full_name' in profiles && profiles !== null) ? {
+          author: profiles ? {
             full_name: profiles.full_name || 'Unknown User',
             avatar_url: profiles.avatar_url || undefined,
             professional_role: profiles.professional_role || undefined
@@ -138,7 +137,7 @@ export const useSocialPosts = () => {
         comments_count: data.comments_count || 0,
         shares_count: data.shares_count || 0,
         created_at: data.created_at,
-        author: (profiles && typeof profiles === 'object' && 'full_name' in profiles && profiles !== null) ? {
+        author: profiles ? {
           full_name: profiles.full_name || 'Unknown User',
           avatar_url: profiles.avatar_url || undefined,
           professional_role: profiles.professional_role || undefined
