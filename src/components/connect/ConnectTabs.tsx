@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -64,7 +63,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
     {
       id: "u3",
       full_name: "Sarah Mwangi",
-      avatar_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&crop=face"
+      avatar_url: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=80&h=80&fit=crop&crop=face"
     },
     {
       id: "u4",
@@ -332,18 +331,12 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
             <EmptyState type="events" onRefresh={onRefresh} />
           ) : (
             <div className="space-y-12">
-              {/* Header with Create Event Button */}
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Discover Events</h2>
-                  <p className="text-gray-600">
-                    Explore events near you, browse by category, or check out featured calendars
-                  </p>
-                </div>
-                <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Event
-                </Button>
+              {/* Header without Create Event Button */}
+              <div className="text-center">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Discover Events</h2>
+                <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                  Explore events near you, share opportunities with your network, and create meaningful connections through gatherings that matter
+                </p>
               </div>
 
               {/* Popular Events Section */}
@@ -358,17 +351,21 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
                   </Button>
                 </div>
 
-                <Carousel className="w-full">
-                  <CarouselContent className="-ml-2 md:-ml-4">
-                    {eventsWithCreators.slice(0, 6).map((event) => (
-                      <CarouselItem key={event.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-                        <ModernEventCard event={event} />
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious />
-                  <CarouselNext />
-                </Carousel>
+                <div className="relative">
+                  <Carousel className="w-full">
+                    <CarouselContent className="-ml-2 md:-ml-4">
+                      {eventsWithCreators.slice(0, 6).map((event) => (
+                        <CarouselItem key={event.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                          <ModernEventCard event={event} />
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    
+                    {/* Enhanced Carousel Navigation */}
+                    <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2 h-12 w-12 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+                    <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2 h-12 w-12 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+                  </Carousel>
+                </div>
               </div>
 
               {/* Browse by Category Section */}
