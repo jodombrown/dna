@@ -50,6 +50,11 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
     professional.full_name !== "Emmanuel Nyong"
   );
 
+  // Filter out specific communities
+  const filteredCommunities = communities.filter(community => 
+    !community.name.includes("Pan-African Researchers")
+  );
+
   // Filter out the Pan-African Researchers event
   const filteredEvents = events.filter(event => 
     !event.title.includes("Pan-African Researchers")
@@ -76,7 +81,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="professionals">Professionals ({filteredProfessionals.length})</TabsTrigger>
-          <TabsTrigger value="communities">Communities ({communities.length})</TabsTrigger>
+          <TabsTrigger value="communities">Communities ({filteredCommunities.length})</TabsTrigger>
           <TabsTrigger value="events">Events ({allEventsWithCreators.length})</TabsTrigger>
         </TabsList>
 
@@ -100,11 +105,11 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
         </TabsContent>
 
         <TabsContent value="communities">
-          {communities.length === 0 ? (
+          {filteredCommunities.length === 0 ? (
             <EmptyState type="communities" onRefresh={onRefresh} />
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {communities.map((community) => (
+              {filteredCommunities.map((community) => (
                 <CommunityCard 
                   key={community.id} 
                   community={community} 

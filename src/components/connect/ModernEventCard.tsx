@@ -57,7 +57,7 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({ event, onEventClick, 
   const creatorImage = event.creator_profile?.avatar_url;
 
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden bg-white border-0 shadow-sm hover:shadow-2xl hover:-translate-y-1"
+    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden bg-white border-0 shadow-sm hover:shadow-2xl hover:-translate-y-1 h-[480px] flex flex-col"
           onClick={() => onEventClick(event)}>
       <div className="relative">
         <img
@@ -106,13 +106,13 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({ event, onEventClick, 
         )}
       </div>
       
-      <CardContent className="pt-12 pb-6 px-6">
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-bold text-lg text-gray-900 line-clamp-2 mb-2 group-hover:text-dna-emerald transition-colors">
+      <CardContent className="pt-12 pb-6 px-6 flex-1 flex flex-col">
+        <div className="space-y-4 flex-1 flex flex-col">
+          <div className="flex-1">
+            <h3 className="font-bold text-lg text-gray-900 line-clamp-2 mb-2 group-hover:text-dna-emerald transition-colors min-h-[3.5rem]">
               {event.title}
             </h3>
-            <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed">
+            <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed min-h-[4rem]">
               {event.description}
             </p>
           </div>
@@ -145,7 +145,7 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({ event, onEventClick, 
           </div>
 
           <Button 
-            className="w-full mt-4 bg-dna-emerald hover:bg-dna-forest text-white font-medium py-2.5 rounded-xl transition-all"
+            className="w-full mt-auto bg-dna-emerald hover:bg-dna-forest text-white font-medium py-2.5 rounded-xl transition-all"
             onClick={(e) => {
               e.stopPropagation();
               onRegisterEvent();

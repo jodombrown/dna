@@ -20,9 +20,9 @@ const FeaturedCalendarsSection: React.FC = () => {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {featuredCalendars.map((calendar) => (
-          <Card key={calendar.id} className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white border-0 shadow-sm">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4 mb-4">
+          <Card key={calendar.id} className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white border-0 shadow-sm h-[200px] flex flex-col">
+            <CardContent className="p-6 flex-1 flex flex-col">
+              <div className="flex items-start gap-4 mb-4 flex-1">
                 <div className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
                   <img
                     src={calendar.logo}
@@ -32,14 +32,14 @@ const FeaturedCalendarsSection: React.FC = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="font-bold text-gray-900 mb-2 truncate">{calendar.name}</h4>
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-3">{calendar.description}</p>
+                  <p className="text-sm text-gray-600 line-clamp-2 mb-3 min-h-[2.5rem]">{calendar.description}</p>
                   <div className="flex items-center gap-4 text-xs text-gray-500">
                     <span className="font-medium">{calendar.eventCount} events</span>
                     <span>{calendar.followers} followers</span>
                   </div>
                 </div>
               </div>
-              <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg">
+              <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg mt-auto">
                 Subscribe
               </Button>
             </CardContent>
