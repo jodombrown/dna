@@ -9,10 +9,8 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import AdminLogin from "./pages/AdminLogin";
 import SocialFeedPage from "./pages/SocialFeedPage";
-import AdminPhaseDashboard from "./pages/AdminPhaseDashboard";
+import CleanSocialFeedPage from "./pages/CleanSocialFeedPage";
 import Connect from "./pages/Connect";
-import Collaborate from "./pages/Collaborate";
-import Contribute from "./pages/Contribute";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 
@@ -31,10 +29,8 @@ function App() {
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/social-feed" element={<SocialFeedPage />} />
-              <Route path="/admin-phase-dashboard" element={<AdminPhaseDashboard />} />
+              <Route path="/clean-social-feed" element={<CleanSocialFeedPage />} />
               <Route path="/connect" element={<Connect />} />
-              <Route path="/collaborate" element={<Collaborate />} />
-              <Route path="/contribute" element={<Contribute />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/profile/:id" element={<Profile />} />
             </Routes>

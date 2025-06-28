@@ -5,17 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Users, Calendar, Building2, Database, Trash2, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { seedProfessionals, seedCommunities, seedEvents } from '@/utils/seedData';
 import { useToast } from '@/components/ui/use-toast';
 
 const DataSeeder = () => {
   const [isSeeding, setIsSeeding] = useState({
-    professionals: false,
+    profiles: false,
     communities: false,
     events: false
   });
   const [counts, setCounts] = useState({
-    professionals: 0,
+    profiles: 0,
     communities: 0,
     events: 0
   });
@@ -23,14 +22,14 @@ const DataSeeder = () => {
 
   const fetchCounts = async () => {
     try {
-      const [professionalsCount, communitiesCount, eventsCount] = await Promise.all([
-        supabase.from('professionals').select('id', { count: 'exact', head: true }),
+      const [profilesCount, communitiesCount, eventsCount] = await Promise.all([
+        supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('communities').select('id', { count: 'exact', head: true }),
         supabase.from('events').select('id', { count: 'exact', head: true })
       ]);
 
       setCounts({
-        professionals: professionalsCount.count || 0,
+        profiles: profilesCount.count || 0,
         communities: communitiesCount.count || 0,
         events: eventsCount.count || 0
       });
@@ -43,26 +42,13 @@ const DataSeeder = () => {
     fetchCounts();
   }, []);
 
-  const handleSeed = async (type: 'professionals' | 'communities' | 'events') => {
+  const handleSeed = async (type: 'profiles' | 'communities' | 'events') => {
     setIsSeeding(prev => ({ ...prev, [type]: true }));
     
     try {
-      let result;
-      switch (type) {
-        case 'professionals':
-          result = await seedProfessionals();
-          break;
-        case 'communities':
-          result = await seedCommunities();
-          break;
-        case 'events':
-          result = await seedEvents();
-          break;
-      }
-
       toast({
-        title: "Success!",
-        description: `Successfully seeded ${result?.length || 0} ${type}`,
+        title: "Info",
+        description: `Seeding for ${type} is not implemented yet`,
       });
       
       await fetchCounts();
@@ -77,7 +63,7 @@ const DataSeeder = () => {
     }
   };
 
-  const handleClearData = async (type: 'professionals' | 'communities' | 'events') => {
+  const handleClearData = async (type: 'profiles' | 'communities' | 'events') => {
     if (!confirm(`Are you sure you want to delete all ${type}? This cannot be undone.`)) {
       return;
     }
@@ -107,7 +93,7 @@ const DataSeeder = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Test Data Management</h1>
-          <p className="text-gray-600 mt-2">Seed your database with realistic African diaspora profiles for testing</p>
+          <p className="text-gray-600 mt-2">Manage your database content for testing</p>
         </div>
         <Button onClick={fetchCounts} variant="outline" size="sm">
           <RefreshCw className="w-4 h-4 mr-2" />
@@ -118,22 +104,22 @@ const DataSeeder = () => {
       <div className="grid md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Professionals</CardTitle>
+            <CardTitle className="text-sm font-medium">Profiles</CardTitle>
             <Users className="w-4 h-4 ml-auto text-dna-emerald" />
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between mb-4">
-              <div className="text-2xl font-bold">{counts.professionals}</div>
-              <Badge variant="outline">{counts.professionals > 0 ? 'Populated' : 'Empty'}</Badge>
+              <div className="text-2xl font-bold">{counts.profiles}</div>
+              <Badge variant="outline">{counts.profiles > 0 ? 'Populated' : 'Empty'}</Badge>
             </div>
             <div className="space-y-2">
               <Button 
-                onClick={() => handleSeed('professionals')} 
-                disabled={isSeeding.professionals}
+                onClick={() => handleSeed('profiles')} 
+                disabled={isSeeding.profiles}
                 className="w-full bg-dna-emerald hover:bg-dna-forest"
                 size="sm"
               >
-                {isSeeding.professionals ? (
+                {isSeeding.profiles ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Seeding...
@@ -141,13 +127,13 @@ const DataSeeder = () => {
                 ) : (
                   <>
                     <Database className="w-4 h-4 mr-2" />
-                    Seed Professionals
+                    Seed Profiles
                   </>
                 )}
               </Button>
-              {counts.professionals > 0 && (
+              {counts.profiles > 0 && (
                 <Button 
-                  onClick={() => handleClearData('professionals')} 
+                  onClick={() => handleClearData('profiles')} 
                   variant="destructive"
                   size="sm"
                   className="w-full"
@@ -239,55 +225,12 @@ const DataSeeder = () => {
                   variant="destructive"
                   size="sm"
                   className="w-full"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Clear Data
                 </Button>
               )}
             </div>
           </CardContent>
         </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>What This Creates</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-3 gap-6 text-sm">
-            <div>
-              <h4 className="font-semibold text-dna-emerald mb-2">50 Diverse Professionals</h4>
-              <ul className="space-y-1 text-gray-600">
-                <li>• Tech leaders, investors, entrepreneurs</li>
-                <li>• Various African countries of origin</li>
-                <li>• Global diaspora locations</li>
-                <li>• Realistic bios and experience</li>
-                <li>• Multiple languages and skills</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-dna-copper mb-2">10 Active Communities</h4>
-              <ul className="space-y-1 text-gray-600">
-                <li>• Tech, Business, Healthcare</li>
-                <li>• Creative Industries, Energy</li>
-                <li>• Youth Development, Research</li>
-                <li>• Various member counts</li>
-                <li>• Featured and regular communities</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-dna-forest mb-2">10 Upcoming Events</h4>
-              <ul className="space-y-1 text-gray-600">
-                <li>• Conferences, Workshops, Meetups</li>
-                <li>• Virtual and in-person events</li>
-                <li>• Various locations and dates</li>
-                <li>• Different attendee counts</li>
-                <li>• Registration links included</li>
-              </ul>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };

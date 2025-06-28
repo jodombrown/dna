@@ -1,12 +1,11 @@
 
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import Logo from './header/Logo';
 import DesktopNavigation from './header/DesktopNavigation';
 import MobileNavigation from './header/MobileNavigation';
 import UserActions from './header/UserActions';
-import MessageNotifications from './messaging/MessageNotifications';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -28,10 +27,6 @@ const Header = () => {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
-            {user && (
-              <MessageNotifications className="cursor-pointer" />
-            )}
-            
             <UserActions />
 
             {/* Mobile menu */}

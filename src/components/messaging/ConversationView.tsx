@@ -3,10 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { useMessages, Message } from '@/hooks/useMessages';
-import { useAuth } from '@/contexts/AuthContext';
-import { format } from 'date-fns';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { ArrowLeft, Send, User } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -20,56 +17,24 @@ const ConversationView: React.FC<ConversationViewProps> = ({
   onBack
 }) => {
   const { user } = useAuth();
-  const { getConversation, sendMessage, markAsRead } = useMessages();
-  const [conversation, setConversation] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    loadConversation();
+    // For now, just set loading to false since we don't have messages table
+    setLoading(false);
   }, [otherUserId]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [conversation]);
-
-  const loadConversation = async () => {
-    setLoading(true);
-    try {
-      const messages = await getConversation(otherUserId);
-      setConversation(messages);
-      
-      // Mark unread messages as read
-      const unreadMessages = messages.filter(
-        msg => msg.recipient_id === user?.id && !msg.is_read
-      );
-      
-      for (const msg of unreadMessages) {
-        await markAsRead(msg.id);
-      }
-    } catch (error) {
-      console.error('Error loading conversation:', error);
-      toast.error('Failed to load conversation');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !user) return;
 
     setSending(true);
     try {
-      const sentMessage = await sendMessage(otherUserId, newMessage.trim());
-      setConversation(prev => [...prev, sentMessage]);
+      // TODO: Implement message sending when messages table is created
       setNewMessage('');
-      toast.success('Message sent!');
+      toast.success('Message functionality will be implemented soon!');
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
@@ -114,43 +79,9 @@ const ConversationView: React.FC<ConversationViewProps> = ({
       <CardContent className="flex-1 flex flex-col p-0">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {conversation.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No messages yet. Start the conversation!
-            </div>
-          ) : (
-            conversation.map((message) => {
-              const isFromMe = message.sender_id === user?.id;
-              return (
-                <div
-                  key={message.id}
-                  className={`flex ${isFromMe ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[70%] p-3 rounded-lg ${
-                      isFromMe
-                        ? 'bg-dna-emerald text-white'
-                        : 'bg-gray-100 text-gray-900'
-                    }`}
-                  >
-                    <p className="text-sm">{message.content}</p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className={`text-xs ${
-                        isFromMe ? 'text-dna-emerald-100' : 'text-gray-500'
-                      }`}>
-                        {format(new Date(message.created_at), 'MMM d, h:mm a')}
-                      </span>
-                      {!isFromMe && !message.is_read && (
-                        <Badge variant="secondary" className="text-xs">
-                          New
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          )}
+          <div className="text-center py-8 text-gray-500">
+            Messaging system will be implemented soon. Start the conversation!
+          </div>
           <div ref={messagesEndRef} />
         </div>
 
