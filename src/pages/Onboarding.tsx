@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import MultiStepOnboardingWizard from '@/components/onboarding/MultiStepOnboardingWizard';
-import OnboardingProgressChecklist from '@/components/onboarding/OnboardingProgressChecklist';
 import Header from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,7 +14,6 @@ const Onboarding = () => {
   const { toast } = useToast();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [onboardingStep, setOnboardingStep] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -41,15 +38,6 @@ const Onboarding = () => {
       }
 
       setProfile(data);
-      
-      // Calculate onboarding progress based on available profile data
-      let progress = 0;
-      if (data?.full_name) progress++;
-      if (data?.bio) progress++;
-      if (data?.profession) progress++;
-      if (data?.location) progress++;
-      
-      setOnboardingStep(progress);
     } catch (error) {
       console.error('Error fetching profile:', error);
       toast({
@@ -60,20 +48,6 @@ const Onboarding = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const getOnboardingProgress = () => {
-    if (!profile) return {
-      profileComplete: false,
-      connectionsComplete: false,
-      communityComplete: false
-    };
-
-    return {
-      profileComplete: !!(profile.full_name && profile.bio && profile.profession),
-      connectionsComplete: false, // Demo: connections don't exist yet
-      communityComplete: false, // Demo: community features don't exist yet
-    };
   };
 
   const handleCompleteOnboarding = () => {
@@ -118,32 +92,36 @@ const Onboarding = () => {
     );
   }
 
-  const progress = getOnboardingProgress();
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Onboarding Content */}
-          <div className="lg:col-span-2">
-            <MultiStepOnboardingWizard 
-              user={user}
-              profile={profile}
-              onComplete={handleCompleteOnboarding}
-              currentStep={onboardingStep}
-              onStepChange={setOnboardingStep}
-            />
-          </div>
-
-          {/* Progress Sidebar */}
-          <div className="lg:col-span-1">
-            <OnboardingProgressChecklist 
-              progress={progress}
-              onComplete={handleCompleteOnboarding}
-            />
-          </div>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Welcome to DNA</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 mb-6">
+              Thank you for joining the Diaspora Network of Africa. We're building something amazing together!
+            </p>
+            
+            <div className="space-y-4">
+              <div className="bg-dna-mint/20 rounded-lg p-4">
+                <h3 className="font-semibold text-dna-forest mb-2">Platform Development</h3>
+                <p className="text-sm text-gray-600">
+                  We're currently in the market research phase, building features based on community feedback.
+                </p>
+              </div>
+              
+              <Button 
+                onClick={handleCompleteOnboarding}
+                className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
+              >
+                Explore Platform
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

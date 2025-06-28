@@ -1,37 +1,43 @@
 
 import { useState } from 'react';
 import { SearchResult, SearchFilters } from '@/types/searchTypes';
-import { useProfileSearch } from './useProfileSearch';
-import { useProfessionalSearch } from './useProfessionalSearch';
+import { useToast } from '@/hooks/use-toast';
 
 export const useAdvancedSearch = () => {
+  const { toast } = useToast();
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const profileSearch = useProfileSearch();
-  const professionalSearch = useProfessionalSearch();
-
-  const loading = profileSearch.loading || professionalSearch.loading;
 
   const searchProfiles = async (filters: SearchFilters) => {
+    setLoading(true);
     try {
-      // For now, just show coming soon message
-      await profileSearch.searchProfiles(''); // Pass empty string instead of filters
+      toast({
+        title: "Feature Coming Soon",
+        description: "Advanced profile search will be implemented in a future update",
+      });
       setResults([]);
-      setError(profileSearch.error);
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   const searchProfessionals = async (filters: SearchFilters) => {
+    setLoading(true);
     try {
-      // For now, just show coming soon message  
-      await professionalSearch.searchProfessionals(''); // Pass empty string instead of filters
+      toast({
+        title: "Feature Coming Soon",
+        description: "Professional search will be implemented in a future update",
+      });
       setResults([]);
-      setError(professionalSearch.error);
+      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed');
+    } finally {
+      setLoading(false);
     }
   };
 

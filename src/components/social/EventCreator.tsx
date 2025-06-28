@@ -5,15 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { useSocialPosts } from '@/hooks/useSocialPosts';
 
 const EventCreator: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { createPost } = useSocialPosts();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -30,33 +27,9 @@ const EventCreator: React.FC = () => {
 
     setLoading(true);
     try {
-      const { data: event, error } = await supabase
-        .from('events')
-        .insert({
-          title: formData.title,
-          description: formData.description,
-          date_time: formData.date_time,
-          location: formData.location,
-          is_virtual: formData.is_virtual,
-          max_attendees: formData.max_attendees ? parseInt(formData.max_attendees) : null,
-          registration_url: formData.registration_url,
-          created_by: user.id
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Create a post about this event
-      await createPost(
-        `📅 New Event: ${formData.title}\n\n${formData.description}\n\n📍 ${formData.is_virtual ? 'Virtual Event' : formData.location}\n🗓️ ${new Date(formData.date_time).toLocaleDateString()}\n\n#DiasporaEvents #DNACommunity`,
-        'event_share',
-        { shared_event_id: event.id }
-      );
-
       toast({
-        title: "Success",
-        description: "Event created successfully!",
+        title: "Feature Coming Soon",
+        description: "Event creation will be implemented in a future update",
       });
 
       // Reset form

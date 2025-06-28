@@ -5,15 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { useSocialPosts } from '@/hooks/useSocialPosts';
 
 const CommunityCreator: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { createPost } = useSocialPosts();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -26,29 +23,9 @@ const CommunityCreator: React.FC = () => {
 
     setLoading(true);
     try {
-      const { data: community, error } = await supabase
-        .from('communities')
-        .insert({
-          name: formData.name,
-          description: formData.description,
-          category: formData.category,
-          created_by: user.id
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Create a post about this community
-      await createPost(
-        `🌍 New Community: ${formData.name}\n\n${formData.description}\n\nCategory: ${formData.category}\n\nJoin us and let's build together! #DNACommunity #${formData.category.replace(/\s+/g, '')}`,
-        'community_share',
-        { shared_community_id: community.id }
-      );
-
       toast({
-        title: "Success",
-        description: "Community created successfully!",
+        title: "Feature Coming Soon",
+        description: "Community creation will be implemented in a future update",
       });
 
       // Reset form
