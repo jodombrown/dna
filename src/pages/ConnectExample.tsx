@@ -52,8 +52,6 @@ const ConnectExample = () => {
     return <ConnectErrorState error={dataError} onRetry={initializeData} />;
   }
 
-  const totalCount = professionals.length + communities.length + events.length;
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -61,11 +59,6 @@ const ConnectExample = () => {
       <PrototypeNotice />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Professional Network</h1>
-          <p className="text-gray-600">Connect with {totalCount}+ diaspora professionals worldwide</p>
-        </div>
-
         <SearchSection
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}

@@ -1,14 +1,12 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Filter } from 'lucide-react';
-import AdvancedSearchDialog from '@/components/search/AdvancedSearchDialog';
+import { Search, Loader2 } from 'lucide-react';
 
 interface SearchSectionProps {
   searchTerm: string;
-  onSearchChange: (value: string) => void;
+  onSearchChange: (term: string) => void;
   onSearch: () => void;
   loading: boolean;
 }
@@ -19,8 +17,6 @@ const SearchSection: React.FC<SearchSectionProps> = ({
   onSearch,
   loading
 }) => {
-  const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
-
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       onSearch();
@@ -28,52 +24,32 @@ const SearchSection: React.FC<SearchSectionProps> = ({
   };
 
   return (
-    <>
-      <Card className="mb-6 sm:mb-8">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-            <Search className="w-5 h-5" />
-            Find Your Network
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 mb-4">
-            <Input 
-              placeholder="Search by name, expertise, company, events..." 
-              className="flex-1"
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              onKeyPress={handleKeyPress}
-            />
-            <div className="flex gap-2">
-              <Button 
-                className="bg-dna-emerald hover:bg-dna-forest text-white"
-                onClick={onSearch}
-                disabled={loading}
-              >
-                {loading ? 'Searching...' : 'Search'}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setIsAdvancedSearchOpen(true)}
-                className="flex items-center gap-2"
-              >
-                <Filter className="w-4 h-4" />
-                Advanced
-              </Button>
-            </div>
-          </div>
-          <p className="text-sm text-gray-600">
-            Search across professionals, communities, and events with keywords like "events", "networking", or specific skills
-          </p>
-        </CardContent>
-      </Card>
-
-      <AdvancedSearchDialog 
-        isOpen={isAdvancedSearchOpen}
-        onClose={() => setIsAdvancedSearchOpen(false)}
-      />
-    </>
+    <div className="mb-8">
+      <div className="flex gap-4 max-w-2xl mx-auto">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Input
+            type="text"
+            placeholder="Search professionals, communities, events..."
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="pl-10"
+          />
+        </div>
+        <Button 
+          onClick={onSearch} 
+          disabled={loading}
+          className="bg-dna-emerald hover:bg-dna-forest"
+        >
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Search className="w-4 h-4" />
+          )}
+        </Button>
+      </div>
+    </div>
   );
 };
 

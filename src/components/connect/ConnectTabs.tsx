@@ -77,9 +77,57 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
     }
   ];
 
-  // Assign creators to first 5 events for demo
-  const eventsWithCreators = events.map((event, idx) => {
-    if (idx < 5 && !event.creator_profile) {
+  // Filter out specific professionals
+  const filteredProfessionals = professionals.filter(professional => 
+    professional.full_name !== "Zara Hassan" && 
+    professional.full_name !== "Emmanuel Nyong"
+  );
+
+  // Filter out the Pan-African Researchers event
+  const filteredEvents = events.filter(event => 
+    !event.title.includes("Pan-African Researchers")
+  );
+
+  // Add 3 more sample events to make 9 total for better horizontal scrolling
+  const additionalEvents: Event[] = [
+    {
+      id: "evt7",
+      title: "Climate Innovation Summit",
+      description: "Exploring climate solutions and green technology innovations across Africa and the diaspora community.",
+      type: "Summit",
+      date_time: "2024-08-15T14:00:00Z",
+      location: "Accra, Ghana",
+      is_virtual: false,
+      attendee_count: 320,
+      creator_profile: sampleCreators[0]
+    },
+    {
+      id: "evt8", 
+      title: "Women in STEM Leadership Forum",
+      description: "Empowering the next generation of African women leaders in science, technology, engineering, and mathematics.",
+      type: "Forum",
+      date_time: "2024-08-20T16:00:00Z",
+      location: "Virtual",
+      is_virtual: true,
+      attendee_count: 180,
+      creator_profile: sampleCreators[2]
+    },
+    {
+      id: "evt9",
+      title: "Digital Financial Services Conference",
+      description: "Revolutionizing financial inclusion through mobile money, fintech, and digital banking solutions.",
+      type: "Conference",
+      date_time: "2024-08-25T10:00:00Z", 
+      location: "Nairobi, Kenya",
+      is_virtual: false,
+      attendee_count: 250,
+      creator_profile: sampleCreators[3]
+    }
+  ];
+
+  // Combine filtered events with additional events
+  const allEventsWithCreators = [...filteredEvents, ...additionalEvents].map((event, idx) => {
+    if (idx < 9 && !event.creator_profile) {
       return {
         ...event,
         creator_profile: sampleCreators[idx % sampleCreators.length]
@@ -109,6 +157,9 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
       if (eventTitle.toLowerCase().includes('women') || eventTitle.toLowerCase().includes('leadership')) {
         return 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=120&h=120&fit=crop';
       }
+      if (eventTitle.toLowerCase().includes('climate') || eventTitle.toLowerCase().includes('environment')) {
+        return 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=120&h=120&fit=crop';
+      }
       return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=120&h=120&fit=crop';
     };
 
@@ -122,6 +173,9 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
       }
       if (eventTitle.toLowerCase().includes('women') || eventTitle.toLowerCase().includes('networking')) {
         return 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=500&h=200&fit=crop';
+      }
+      if (eventTitle.toLowerCase().includes('climate') || eventTitle.toLowerCase().includes('environment')) {
+        return 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=200&fit=crop';
       }
       return 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=200&fit=crop';
     };
@@ -243,7 +297,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
     { id: 'climate', name: 'Climate & Environment', icon: '🌍', count: '34 Events', color: 'bg-emerald-500' }
   ];
 
-  // Featured Calendars/Communities
+  // Featured Calendars/Communities - Updated with subscribe buttons
   const featuredCalendars = [
     {
       id: 'tech-innovators',
@@ -285,17 +339,17 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
     <>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="professionals">Professionals ({professionals.length})</TabsTrigger>
+          <TabsTrigger value="professionals">Professionals ({filteredProfessionals.length})</TabsTrigger>
           <TabsTrigger value="communities">Communities ({communities.length})</TabsTrigger>
-          <TabsTrigger value="events">Events ({events.length})</TabsTrigger>
+          <TabsTrigger value="events">Events ({allEventsWithCreators.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="professionals">
-          {professionals.length === 0 ? (
+          {filteredProfessionals.length === 0 ? (
             <EmptyState type="professionals" onRefresh={onRefresh} />
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
-              {professionals.map((professional) => (
+              {filteredProfessionals.map((professional) => (
                 <ProfessionalCard
                   key={professional.id}
                   professional={professional}
@@ -327,15 +381,15 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
         </TabsContent>
 
         <TabsContent value="events">
-          {eventsWithCreators.length === 0 ? (
+          {allEventsWithCreators.length === 0 ? (
             <EmptyState type="events" onRefresh={onRefresh} />
           ) : (
             <div className="space-y-12">
-              {/* Header without Create Event Button */}
+              {/* Header */}
               <div className="text-center">
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">Discover Events</h2>
                 <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                  Explore events near you, share opportunities with your network, and create meaningful connections through gatherings that matter
+                  Explore, share, and create events near you, building meaningful connections through gatherings that matter
                 </p>
               </div>
 
@@ -351,10 +405,10 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
                   </Button>
                 </div>
 
-                <div className="relative px-6">
+                <div className="relative px-8">
                   <Carousel className="w-full">
                     <CarouselContent className="-ml-2 md:-ml-4">
-                      {eventsWithCreators.slice(0, 6).map((event) => (
+                      {allEventsWithCreators.slice(0, 9).map((event) => (
                         <CarouselItem key={event.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
                           <ModernEventCard event={event} />
                         </CarouselItem>
@@ -362,8 +416,8 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
                     </CarouselContent>
                     
                     {/* Enhanced Carousel Navigation - positioned further out */}
-                    <CarouselPrevious className="absolute -left-6 top-1/2 -translate-y-1/2 h-10 w-10 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
-                    <CarouselNext className="absolute -right-6 top-1/2 -translate-y-1/2 h-10 w-10 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+                    <CarouselPrevious className="absolute -left-8 top-1/2 -translate-y-1/2 h-10 w-10 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+                    <CarouselNext className="absolute -right-8 top-1/2 -translate-y-1/2 h-10 w-10 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
                   </Carousel>
                 </div>
               </div>
@@ -406,7 +460,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
                   {featuredCalendars.map((calendar) => (
                     <Card key={calendar.id} className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white border-0 shadow-sm">
                       <CardContent className="p-6">
-                        <div className="flex items-start gap-4">
+                        <div className="flex items-start gap-4 mb-4">
                           <div className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
                             <img
                               src={calendar.logo}
@@ -422,8 +476,10 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
                               <span>{calendar.followers} followers</span>
                             </div>
                           </div>
-                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-dna-emerald transition-colors" />
                         </div>
+                        <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg">
+                          Subscribe
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}
@@ -434,7 +490,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
               <div className="space-y-6">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">Explore Local Events</h3>
-                  <p className="text-gray-600">Discover what's happening in major African cities and diaspora hubs</p>
+                  <p className="text-gray-600">See what's happening in major cities and diaspora hubs</p>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
