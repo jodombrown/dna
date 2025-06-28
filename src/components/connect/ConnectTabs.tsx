@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
@@ -99,6 +100,9 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
       location: "Accra, Ghana",
       is_virtual: false,
       attendee_count: 320,
+      is_featured: false,
+      created_at: "2024-07-01T00:00:00Z",
+      updated_at: "2024-07-01T00:00:00Z",
       creator_profile: sampleCreators[0]
     },
     {
@@ -110,6 +114,9 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
       location: "Virtual",
       is_virtual: true,
       attendee_count: 180,
+      is_featured: false,
+      created_at: "2024-07-01T00:00:00Z",
+      updated_at: "2024-07-01T00:00:00Z",
       creator_profile: sampleCreators[2]
     },
     {
@@ -121,6 +128,9 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
       location: "Nairobi, Kenya",
       is_virtual: false,
       attendee_count: 250,
+      is_featured: false,
+      created_at: "2024-07-01T00:00:00Z",
+      updated_at: "2024-07-01T00:00:00Z",
       creator_profile: sampleCreators[3]
     }
   ];
@@ -405,7 +415,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
                   </Button>
                 </div>
 
-                <div className="relative px-8">
+                <div className="relative px-16">
                   <Carousel className="w-full">
                     <CarouselContent className="-ml-2 md:-ml-4">
                       {allEventsWithCreators.slice(0, 9).map((event) => (
@@ -416,8 +426,8 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
                     </CarouselContent>
                     
                     {/* Enhanced Carousel Navigation - positioned further out */}
-                    <CarouselPrevious className="absolute -left-8 top-1/2 -translate-y-1/2 h-10 w-10 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
-                    <CarouselNext className="absolute -right-8 top-1/2 -translate-y-1/2 h-10 w-10 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+                    <CarouselPrevious className="absolute -left-16 top-1/2 -translate-y-1/2 h-8 w-8 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+                    <CarouselNext className="absolute -right-16 top-1/2 -translate-y-1/2 h-8 w-8 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
                   </Carousel>
                 </div>
               </div>
