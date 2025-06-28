@@ -1,26 +1,24 @@
+
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 export interface SocialPost {
   id: string;
-  user_id: string;
   content: string;
-  post_type: 'text' | 'article' | 'event_share' | 'community_share' | 'contribution_card' | 'newsletter';
-  media_urls?: string[];
-  hashtags?: string[];
+  user_id: string;
+  created_at: string;
+  updated_at: string;
   likes_count: number;
   comments_count: number;
   shares_count: number;
-  created_at: string;
-  author?: {
-    full_name: string;
-    avatar_url?: string;
-    professional_role?: string;
-  };
-  shared_event?: any;
-  shared_community?: any;
+  post_type: string;
+  media_urls?: string[];
+  hashtags?: string[];
+  is_published: boolean;
+  user_name: string;
+  user_avatar?: string;
+  user_role?: string;
 }
 
 export const useSocialPosts = () => {
@@ -28,229 +26,107 @@ export const useSocialPosts = () => {
   const { toast } = useToast();
   const [posts, setPosts] = useState<SocialPost[]>([]);
   const [loading, setLoading] = useState(false);
-  const [userReactions, setUserReactions] = useState<Record<string, string>>({});
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPosts = async () => {
     setLoading(true);
+    setError(null);
+    
     try {
-      const { data, error } = await supabase
-        .from('posts')
-        .select(`
-          *,
-          profiles!posts_user_id_fkey (
-            full_name,
-            avatar_url,
-            professional_role
-          ),
-          events!posts_shared_event_id_fkey (
-            id,
-            title,
-            description,
-            date_time,
-            location
-          ),
-          communities!posts_shared_community_id_fkey (
-            id,
-            name,
-            description,
-            category
-          )
-        `)
-        .eq('is_published', true)
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-      if (error) throw error;
-
-      const formattedPosts: SocialPost[] = data?.map(post => {
-        const profiles = post.profiles;
-        return {
-          id: post.id,
-          user_id: post.user_id,
-          content: post.content,
-          post_type: post.post_type as SocialPost['post_type'],
-          media_urls: post.media_urls,
-          hashtags: post.hashtags,
-          likes_count: post.likes_count || 0,
-          comments_count: post.comments_count || 0,
-          shares_count: post.shares_count || 0,
-          created_at: post.created_at,
-          author: (profiles && typeof profiles === 'object' && !Array.isArray(profiles) && 'full_name' in profiles) ? {
-            full_name: profiles.full_name || 'Unknown User',
-            avatar_url: profiles.avatar_url || undefined,
-            professional_role: profiles.professional_role || undefined
-          } : undefined,
-          shared_event: post.events,
-          shared_community: post.communities
-        };
-      }) || [];
-
-      setPosts(formattedPosts);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load posts",
-        variant: "destructive",
-      });
+      // Demo functionality - return sample posts
+      const samplePosts: SocialPost[] = [
+        {
+          id: '1',
+          content: 'Excited to connect with fellow diaspora professionals! 🌍 #DiasporaNetwork #DNACommunity',
+          user_id: 'demo-user-1',
+          created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          updated_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          likes_count: 12,
+          comments_count: 3,
+          shares_count: 2,
+          post_type: 'text',
+          hashtags: ['DiasporaNetwork', 'DNACommunity'],
+          is_published: true,
+          user_name: 'Amara Okafor',
+          user_avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=400',
+          user_role: 'Tech Entrepreneur'
+        },
+        {
+          id: '2',
+          content: 'Looking forward to collaborating on projects that impact Africa positively. Let\'s build together! 🚀',
+          user_id: 'demo-user-2',
+          created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          updated_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+          likes_count: 8,
+          comments_count: 5,
+          shares_count: 1,
+          post_type: 'text',
+          hashtags: ['Collaboration', 'Africa'],
+          is_published: true,
+          user_name: 'Kwame Asante',
+          user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+          user_role: 'Social Impact Investor'
+        }
+      ];
+      
+      setPosts(samplePosts);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch posts');
     } finally {
       setLoading(false);
     }
   };
 
-  const createPost = async (content: string, postType: string = 'text', additionalData?: any) => {
+  const createPost = async (content: string, postType: string = 'text') => {
     if (!user) return;
-
+    
     try {
-      const postData = {
-        user_id: user.id,
-        content,
-        post_type: postType,
-        hashtags: extractHashtags(content),
-        ...additionalData
-      };
-
-      const { data, error } = await supabase
-        .from('posts')
-        .insert(postData)
-        .select(`
-          *,
-          profiles!posts_user_id_fkey (
-            full_name,
-            avatar_url,
-            professional_role
-          )
-        `)
-        .single();
-
-      if (error) throw error;
-
-      const profiles = data.profiles;
-      const newPost: SocialPost = {
-        id: data.id,
-        user_id: data.user_id,
-        content: data.content,
-        post_type: data.post_type as SocialPost['post_type'],
-        media_urls: data.media_urls,
-        hashtags: data.hashtags,
-        likes_count: data.likes_count || 0,
-        comments_count: data.comments_count || 0,
-        shares_count: data.shares_count || 0,
-        created_at: data.created_at,
-        author: (profiles && typeof profiles === 'object' && !Array.isArray(profiles) && 'full_name' in profiles) ? {
-          full_name: profiles.full_name || 'Unknown User',
-          avatar_url: profiles.avatar_url || undefined,
-          professional_role: profiles.professional_role || undefined
-        } : undefined
-      };
-
-      setPosts(prev => [newPost, ...prev]);
-      
       toast({
-        title: "Success",
-        description: "Post created successfully!",
+        title: "Feature Coming Soon",
+        description: "Post creation will be implemented in a future update",
       });
-
-      return newPost;
-    } catch (error) {
-      console.error('Error creating post:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create post",
-        variant: "destructive",
-      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create post');
     }
   };
 
-  const reactToPost = async (postId: string, reactionType: string) => {
+  const likePost = async (postId: string) => {
     if (!user) return;
-
+    
     try {
-      const existingReaction = userReactions[postId];
-      
-      if (existingReaction === reactionType) {
-        // Remove reaction
-        await supabase
-          .from('post_reactions')
-          .delete()
-          .match({ post_id: postId, user_id: user.id, reaction_type: reactionType });
-        
-        setUserReactions(prev => {
-          const newReactions = { ...prev };
-          delete newReactions[postId];
-          return newReactions;
-        });
-      } else {
-        // Add/update reaction
-        await supabase
-          .from('post_reactions')
-          .upsert({ 
-            post_id: postId, 
-            user_id: user.id, 
-            reaction_type: reactionType 
-          });
-        
-        setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
-      }
-      
-      // Refresh posts to get updated counts
-      fetchPosts();
-    } catch (error) {
-      console.error('Error reacting to post:', error);
       toast({
-        title: "Error",
-        description: "Failed to react to post",
-        variant: "destructive",
+        title: "Feature Coming Soon",
+        description: "Post interactions will be implemented in a future update",
       });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to like post');
     }
   };
 
-  const sharePost = async (postId: string, sharedContent?: string) => {
+  const sharePost = async (postId: string) => {
     if (!user) return;
-
+    
     try {
-      await supabase
-        .from('post_shares')
-        .insert({
-          post_id: postId,
-          user_id: user.id,
-          shared_content: sharedContent
-        });
-
       toast({
-        title: "Success",
-        description: "Post shared successfully!",
+        title: "Feature Coming Soon",
+        description: "Post sharing will be implemented in a future update",
       });
-      
-      fetchPosts(); // Refresh to update share counts
-    } catch (error) {
-      console.error('Error sharing post:', error);
-      toast({
-        title: "Error",
-        description: "Failed to share post",
-        variant: "destructive",
-      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to share post');
     }
-  };
-
-  const extractHashtags = (text: string): string[] => {
-    const hashtagRegex = /#[a-zA-Z0-9_]+/g;
-    return text.match(hashtagRegex) || [];
   };
 
   useEffect(() => {
-    if (user) {
-      fetchPosts();
-    }
-  }, [user]);
+    fetchPosts();
+  }, []);
 
   return {
     posts,
     loading,
-    userReactions,
+    error,
+    fetchPosts,
     createPost,
-    reactToPost,
-    sharePost,
-    refreshPosts: fetchPosts
+    likePost,
+    sharePost
   };
 };

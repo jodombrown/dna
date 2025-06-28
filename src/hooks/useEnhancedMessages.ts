@@ -35,7 +35,6 @@ export const useEnhancedMessages = () => {
     
     setLoading(true);
     try {
-      // Demo functionality - just show a toast
       toast({
         title: "Feature Coming Soon",
         description: "Messaging system will be implemented in a future update",
@@ -51,7 +50,6 @@ export const useEnhancedMessages = () => {
     if (!user) return;
     
     try {
-      // Demo functionality - just show a toast
       toast({
         title: "Feature Coming Soon",
         description: "Message read status will be implemented in a future update",
@@ -66,7 +64,6 @@ export const useEnhancedMessages = () => {
     
     setLoading(true);
     try {
-      // Demo functionality - return empty array
       setConversations([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch conversations');
@@ -80,7 +77,6 @@ export const useEnhancedMessages = () => {
     
     setLoading(true);
     try {
-      // Demo functionality - return empty array
       setMessages([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch messages');

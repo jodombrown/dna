@@ -21,6 +21,14 @@ import ConnectExample from "./pages/ConnectExample";
 import ContributeExample from "./pages/ContributeExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 
+// Import all phase pages
+import MarketResearchPhase from "./pages/MarketResearchPhase";
+import PrototypingPhase from "./pages/PrototypingPhase";
+import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
+import MvpPhase from "./pages/MvpPhase";
+import BetaValidationPhase from "./pages/BetaValidationPhase";
+import GoToMarketPhase from "./pages/GoToMarketPhase";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -46,7 +54,15 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/connect-example" element={<ConnectExample />} />
               <Route path="/contribute-example" element={<ContributeExample />} />
-              <Route path="/collaborations-example" element={<CollaborationsExample />} />
+              <Route path="/collaborate-example" element={<CollaborationsExample />} />
+              
+              {/* Phase pages */}
+              <Route path="/phase/market-research" element={<MarketResearchPhase />} />
+              <Route path="/phase/prototyping" element={<PrototypingPhase />} />
+              <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
+              <Route path="/phase/mvp" element={<MvpPhase />} />
+              <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
+              <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

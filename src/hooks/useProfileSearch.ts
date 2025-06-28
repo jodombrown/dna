@@ -1,64 +1,69 @@
 
 import { useState } from 'react';
-import { SearchResult, SearchFilters } from '@/types/searchTypes';
-import { buildProfileQuery, filterByExperience } from '@/services/searchService';
+import { useToast } from '@/hooks/use-toast';
+
+export interface Profile {
+  id: string;
+  full_name: string;
+  avatar_url?: string;
+  bio?: string;
+  location?: string;
+  profession?: string;
+  company?: string;
+  linkedin_url?: string;
+  website_url?: string;
+  skills?: string[];
+  interests?: string[];
+  email?: string;
+  is_public: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 export const useProfileSearch = () => {
+  const { toast } = useToast();
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const searchProfiles = async (filters: SearchFilters): Promise<SearchResult[]> => {
+  const searchProfiles = async (query: string) => {
     setLoading(true);
     setError(null);
     
     try {
-      const query = buildProfileQuery(filters);
-      const { data, error } = await query;
-
-      if (error) throw error;
-
-      // Filter by boolean fields and experience
-      let filteredData = data || [];
-
-      if (filters.isMentor) {
-        filteredData = filteredData.filter(profile => 
-          profile.mentorship_areas && profile.mentorship_areas.length > 0
-        );
-      }
-
-      filteredData = filterByExperience(filteredData, filters.experience);
-
-      // Map to SearchResult format with safe property access
-      const searchResults: SearchResult[] = filteredData.map(profile => ({
-        id: profile.id,
-        full_name: profile.full_name || 'Unknown',
-        profession: profile.profession || profile.professional_role,
-        company: profile.company,
-        location: profile.location,
-        bio: profile.bio,
-        avatar_url: profile.avatar_url,
-        skills: profile.skills || [],
-        is_mentor: profile.mentorship_areas && profile.mentorship_areas.length > 0,
-        is_investor: false,
-        looking_for_opportunities: profile.looking_for_opportunities || false,
-        years_experience: profile.years_in_diaspora,
-        country_of_origin: profile.country_of_origin
-      }));
-
-      return searchResults;
+      // Demo functionality - return empty array
+      toast({
+        title: "Feature Coming Soon",
+        description: "Profile search will be implemented in a future update",
+      });
+      setProfiles([]);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Profile search failed';
-      setError(errorMessage);
-      console.error('Profile search error:', err);
-      return [];
+      setError(err instanceof Error ? err.message : 'Failed to search profiles');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getProfileById = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Demo functionality - return null
+      return null;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch profile');
+      return null;
     } finally {
       setLoading(false);
     }
   };
 
   return {
-    searchProfiles,
+    profiles,
     loading,
-    error
+    error,
+    searchProfiles,
+    getProfileById
   };
 };
