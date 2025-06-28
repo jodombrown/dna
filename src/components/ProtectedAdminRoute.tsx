@@ -17,10 +17,13 @@ const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       // Check admin using Supabase RPC
-      const { data, error } = await supabase.rpc("has_role", {
-        _user_id: user.id,
-        _role: "admin"
-      });
+      const { data, error } = await supabase.rpc(
+        "has_role" as any,
+        {
+          _user_id: user.id,
+          _role: "admin"
+        }
+      );
       if (error || !data) {
         navigate("/admin-login");
         return;

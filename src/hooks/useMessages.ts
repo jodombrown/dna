@@ -9,7 +9,7 @@ export interface Message {
   recipient_id: string;
   subject?: string;
   content: string;
-  is_read: boolean;
+  is_read: boolean | null;
   created_at: string;
 }
 
@@ -19,7 +19,11 @@ export const useMessages = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const sendMessage = async (recipientId: string, content: string, subject?: string) => {
+  const sendMessage = async (
+    recipientId: string,
+    content: string,
+    subject?: string
+  ): Promise<Message> => {
     if (!user) throw new Error('User must be authenticated');
     
     setLoading(true);
@@ -90,7 +94,7 @@ export const useMessages = () => {
     }
   };
 
-  const getConversation = async (otherUserId: string) => {
+  const getConversation = async (otherUserId: string): Promise<Message[]> => {
     if (!user) return [];
     
     try {
