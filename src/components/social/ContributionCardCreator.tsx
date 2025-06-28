@@ -29,8 +29,10 @@ const ContributionCardCreator: React.FC = () => {
     try {
       const cardData = {
         ...formData,
+        contribution_type: formData.contribution_type as 'funding' | 'skills' | 'time' | 'network' | 'advocacy' | 'mentorship' | 'resources',
         amount_needed: formData.amount_needed ? parseFloat(formData.amount_needed) : undefined,
-        target_date: formData.target_date || undefined
+        target_date: formData.target_date || undefined,
+        status: 'active' as const
       };
 
       const newCard = await createCard(cardData);
