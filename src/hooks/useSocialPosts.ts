@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -73,10 +74,10 @@ export const useSocialPosts = () => {
         comments_count: post.comments_count || 0,
         shares_count: post.shares_count || 0,
         created_at: post.created_at,
-        author: (post.profiles && typeof post.profiles === 'object' && 'full_name' in post.profiles) ? {
+        author: (post.profiles && typeof post.profiles === 'object' && 'full_name' in post.profiles && post.profiles !== null) ? {
           full_name: post.profiles.full_name || 'Unknown User',
-          avatar_url: post.profiles.avatar_url,
-          professional_role: post.profiles.professional_role
+          avatar_url: post.profiles.avatar_url || undefined,
+          professional_role: post.profiles.professional_role || undefined
         } : undefined,
         shared_event: post.events,
         shared_community: post.communities
@@ -133,10 +134,10 @@ export const useSocialPosts = () => {
         comments_count: data.comments_count || 0,
         shares_count: data.shares_count || 0,
         created_at: data.created_at,
-        author: (data.profiles && typeof data.profiles === 'object' && 'full_name' in data.profiles) ? {
+        author: (data.profiles && typeof data.profiles === 'object' && 'full_name' in data.profiles && data.profiles !== null) ? {
           full_name: data.profiles.full_name || 'Unknown User',
-          avatar_url: data.profiles.avatar_url,
-          professional_role: data.profiles.professional_role
+          avatar_url: data.profiles.avatar_url || undefined,
+          professional_role: data.profiles.professional_role || undefined
         } : undefined
       };
 

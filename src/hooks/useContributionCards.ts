@@ -61,9 +61,9 @@ export const useContributionCards = () => {
         status: card.status as ContributionCard['status'],
         image_url: card.image_url,
         created_at: card.created_at,
-        creator: (card.profiles && typeof card.profiles === 'object' && 'full_name' in card.profiles) ? {
+        creator: (card.profiles && typeof card.profiles === 'object' && 'full_name' in card.profiles && card.profiles !== null) ? {
           full_name: card.profiles.full_name || 'Unknown User',
-          avatar_url: card.profiles.avatar_url
+          avatar_url: card.profiles.avatar_url || undefined
         } : undefined
       })) || [];
 
@@ -115,9 +115,9 @@ export const useContributionCards = () => {
         status: data.status as ContributionCard['status'],
         image_url: data.image_url,
         created_at: data.created_at,
-        creator: (data.profiles && typeof data.profiles === 'object' && 'full_name' in data.profiles) ? {
+        creator: (data.profiles && typeof data.profiles === 'object' && 'full_name' in data.profiles && data.profiles !== null) ? {
           full_name: data.profiles.full_name || 'Unknown User',
-          avatar_url: data.profiles.avatar_url
+          avatar_url: data.profiles.avatar_url || undefined
         } : undefined
       };
 
