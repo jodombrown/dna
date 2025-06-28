@@ -74,7 +74,7 @@ const ConnectExample = () => {
     setIsMessageDialogOpen(true);
   };
 
-  const handleJoinCommunity = (communityId: string) => {
+  const handleJoinCommunity = () => {
     if (!user) {
       toast({
         title: "Sign In Required",
@@ -85,7 +85,7 @@ const ConnectExample = () => {
     setIsJoinCommunityDialogOpen(true);
   };
 
-  const handleRegisterEvent = (eventId: string) => {
+  const handleRegisterEvent = () => {
     if (!user) {
       toast({
         title: "Sign In Required",
