@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
+
+type AdminRole = Database['public']['Enums']['admin_role'];
 
 interface EditAdminUserDialogProps {
   open: boolean;
@@ -21,7 +24,7 @@ const EditAdminUserDialog: React.FC<EditAdminUserDialogProps> = ({
   user,
   onSuccess
 }) => {
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState<AdminRole>('analytics_viewer');
   const [isActive, setIsActive] = useState(true);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -89,7 +92,7 @@ const EditAdminUserDialog: React.FC<EditAdminUserDialogProps> = ({
           
           <div>
             <Label htmlFor="role">Admin Role</Label>
-            <Select value={role} onValueChange={setRole}>
+            <Select value={role} onValueChange={(value: AdminRole) => setRole(value)}>
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>

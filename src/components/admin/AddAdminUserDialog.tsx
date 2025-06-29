@@ -7,6 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
+
+type AdminRole = Database['public']['Enums']['admin_role'];
 
 interface AddAdminUserDialogProps {
   open: boolean;
@@ -20,7 +23,7 @@ const AddAdminUserDialog: React.FC<AddAdminUserDialogProps> = ({
   onSuccess
 }) => {
   const [userId, setUserId] = useState('');
-  const [role, setRole] = useState('analytics_viewer');
+  const [role, setRole] = useState<AdminRole>('analytics_viewer');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -39,13 +42,11 @@ const AddAdminUserDialog: React.FC<AddAdminUserDialogProps> = ({
     try {
       const { error } = await supabase
         .from('admin_users')
-        .insert([
-          {
-            user_id: userId.trim(),
-            role: role,
-            is_active: true
-          }
-        ]);
+        .insert({
+          user_id: userId.trim(),
+          role: role,
+          is_active: true
+        });
 
       if (error) throw error;
 
@@ -97,7 +98,7 @@ const AddAdminUserDialog: React.FC<AddAdminUserDialogProps> = ({
           
           <div>
             <Label htmlFor="role">Admin Role</Label>
-            <Select value={role} onValueChange={setRole}>
+            <Select value={role} onValueChange={(value: AdminRole) => setRole(value)}>
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
