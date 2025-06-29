@@ -41,6 +41,7 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
   const [demoExplanationOpen, setDemoExplanationOpen] = React.useState(false);
   const [contactHostDialogOpen, setContactHostDialogOpen] = React.useState(false);
   const [reportEventDialogOpen, setReportEventDialogOpen] = React.useState(false);
+  const [viewAllEventsDialogOpen, setViewAllEventsDialogOpen] = React.useState(false);
 
   if (!event) return null;
 
@@ -100,6 +101,8 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
           setContactHostDialogOpen={setContactHostDialogOpen}
           reportEventDialogOpen={reportEventDialogOpen}
           setReportEventDialogOpen={setReportEventDialogOpen}
+          viewAllEventsDialogOpen={viewAllEventsDialogOpen}
+          setViewAllEventsDialogOpen={setViewAllEventsDialogOpen}
         />
       </div>
     </>

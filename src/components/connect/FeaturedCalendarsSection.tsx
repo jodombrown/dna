@@ -5,7 +5,11 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { featuredCalendars } from './eventData';
 
-const FeaturedCalendarsSection: React.FC = () => {
+interface FeaturedCalendarsSectionProps {
+  onViewAll?: () => void;
+}
+
+const FeaturedCalendarsSection: React.FC<FeaturedCalendarsSectionProps> = ({ onViewAll }) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -13,7 +17,11 @@ const FeaturedCalendarsSection: React.FC = () => {
           <h3 className="text-2xl font-bold text-gray-900">Featured Calendars</h3>
           <p className="text-gray-600">Curated event collections from community leaders</p>
         </div>
-        <Button variant="ghost" className="text-dna-emerald hover:text-dna-forest">
+        <Button 
+          variant="ghost" 
+          className="text-dna-emerald hover:text-dna-forest"
+          onClick={onViewAll}
+        >
           View All <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
       </div>

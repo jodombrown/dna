@@ -11,6 +11,8 @@ interface EventDemoDialogsProps {
   setContactHostDialogOpen: (open: boolean) => void;
   reportEventDialogOpen: boolean;
   setReportEventDialogOpen: (open: boolean) => void;
+  viewAllEventsDialogOpen: boolean;
+  setViewAllEventsDialogOpen: (open: boolean) => void;
 }
 
 const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
@@ -19,13 +21,15 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
   contactHostDialogOpen,
   setContactHostDialogOpen,
   reportEventDialogOpen,
-  setReportEventDialogOpen
+  setReportEventDialogOpen,
+  viewAllEventsDialogOpen,
+  setViewAllEventsDialogOpen
 }) => {
   return (
     <>
       {/* Demo Explanation Dialog */}
       <Dialog open={demoExplanationOpen} onOpenChange={setDemoExplanationOpen}>
-        <DialogContent className="max-w-lg [&>button]:hidden">
+        <DialogContent className="max-w-lg [&>button]:hidden animate-fade-in">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               Event Registration - DNA Platform Demo
@@ -66,9 +70,51 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
         </DialogContent>
       </Dialog>
 
+      {/* View All Events Dialog */}
+      <Dialog open={viewAllEventsDialogOpen} onOpenChange={setViewAllEventsDialogOpen}>
+        <DialogContent className="max-w-lg animate-fade-in">
+          <DialogHeader>
+            <DialogTitle>View All Events - Coming Soon</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              The comprehensive events directory will be your gateway to discovering impactful opportunities across the African diaspora.
+            </p>
+            <div className="space-y-3">
+              <div>
+                <h4 className="font-semibold text-gray-900">What you'll find:</h4>
+                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                  <li>• Curated events from verified community leaders</li>
+                  <li>• Advanced filtering by sector, region, and impact focus</li>
+                  <li>• Networking events, conferences, and workshops</li>
+                  <li>• Investment opportunities and pitch competitions</li>
+                  <li>• Cultural celebrations and community gatherings</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Enhanced features:</h4>
+                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                  <li>• Personalized recommendations based on your interests</li>
+                  <li>• Calendar integration and smart notifications</li>
+                  <li>• Pre-event networking with other attendees</li>
+                  <li>• Follow-up collaboration opportunities</li>
+                  <li>• Impact measurement and community feedback</li>
+                </ul>
+              </div>
+            </div>
+            <Button 
+              onClick={() => setViewAllEventsDialogOpen(false)}
+              className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
+            >
+              Got it!
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Contact Host Dialog */}
       <Dialog open={contactHostDialogOpen} onOpenChange={setContactHostDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg animate-fade-in">
           <DialogHeader>
             <DialogTitle>Contact the Host - Demo Feature</DialogTitle>
           </DialogHeader>
@@ -108,7 +154,7 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
 
       {/* Report Event Dialog */}
       <Dialog open={reportEventDialogOpen} onOpenChange={setReportEventDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg animate-fade-in">
           <DialogHeader>
             <DialogTitle>Report Event - Community Safety</DialogTitle>
           </DialogHeader>
