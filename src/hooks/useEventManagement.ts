@@ -43,7 +43,7 @@ export const useEventManagement = () => {
         .from('events')
         .select(`
           *,
-          profiles!inner(full_name, email)
+          profiles!created_by(full_name, email)
         `)
         .order('created_at', { ascending: false });
 
