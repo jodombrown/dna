@@ -18,17 +18,22 @@ export const useAdminUsers = () => {
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { hasRole } = useAdminAuth();
+  const { adminUser, loading: authLoading } = useAdminAuth();
 
   const fetchAdminUsers = async () => {
-    if (!hasRole('super_admin')) {
-      setError('Insufficient permissions');
+    // Don't fetch if auth is still loading or user is not a super admin
+    if (authLoading || !adminUser || adminUser.role !== 'super_admin') {
       setLoading(false);
+      if (!authLoading && (!adminUser || adminUser.role !== 'super_admin')) {
+        setError('Insufficient permissions');
+      }
       return;
     }
 
     try {
       setLoading(true);
+      setError(null);
+      
       const { data, error } = await supabase
         .from('admin_users')
         .select('*')
@@ -37,7 +42,6 @@ export const useAdminUsers = () => {
       if (error) throw error;
 
       setAdminUsers(data || []);
-      setError(null);
     } catch (err: any) {
       console.error('Error fetching admin users:', err);
       setError(err.message);
@@ -48,7 +52,7 @@ export const useAdminUsers = () => {
 
   useEffect(() => {
     fetchAdminUsers();
-  }, [hasRole]);
+  }, [authLoading, adminUser?.role]); // Only depend on authLoading and the role, not the whole adminUser object
 
   const refetch = () => {
     fetchAdminUsers();
