@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,7 @@ import CleanSocialFeedPage from "./pages/CleanSocialFeedPage";
 import Connect from "./pages/Connect";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
+import AdminUserManagement from "./pages/AdminUserManagement";
 
 // Import all your marketing pages
 import About from "./pages/About";
@@ -48,6 +48,11 @@ function App() {
               <Route path="/admin-dashboard" element={
                 <ProtectedAdminRoute>
                   <AdminDashboard />
+                </ProtectedAdminRoute>
+              } />
+              <Route path="/admin/users" element={
+                <ProtectedAdminRoute>
+                  <AdminUserManagement />
                 </ProtectedAdminRoute>
               } />
               <Route path="/social-feed" element={<SocialFeedPage />} />

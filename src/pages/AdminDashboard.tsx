@@ -68,10 +68,10 @@ const AdminDashboard = () => {
   const quickActions = [
     {
       title: "User Management",
-      description: "Manage user accounts and permissions",
+      description: "Manage admin users and permissions",
       icon: Users,
-      action: () => console.log('Navigate to user management'),
-      roles: ['super_admin', 'user_manager']
+      action: () => navigate('/admin/users'),
+      roles: ['super_admin']
     },
     {
       title: "Content Moderation",
