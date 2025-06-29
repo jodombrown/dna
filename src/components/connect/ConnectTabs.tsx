@@ -36,13 +36,16 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
   onRefresh
 }) => {
   const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null);
+  const [selectedEventIndex, setSelectedEventIndex] = React.useState(0);
   const [registrationSidebarOpen, setRegistrationSidebarOpen] = React.useState(false);
   const [selectedProfessional, setSelectedProfessional] = React.useState<Professional | null>(null);
   const [professionalDialogOpen, setProfessionalDialogOpen] = React.useState(false);
   const [demoExplanationOpen, setDemoExplanationOpen] = React.useState(false);
 
   const openRegistrationSidebar = (event: Event) => {
+    const eventIndex = events.findIndex(e => e.id === event.id);
     setSelectedEvent(event);
+    setSelectedEventIndex(eventIndex);
     setRegistrationSidebarOpen(true);
   };
 
@@ -61,6 +64,24 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
   const handleRegisterFromSidebar = () => {
     setRegistrationSidebarOpen(false);
     onRegisterEvent();
+  };
+
+  const handlePreviousEvent = () => {
+    if (selectedEventIndex > 0) {
+      const newIndex = selectedEventIndex - 1;
+      const newEvent = events[newIndex];
+      setSelectedEvent(newEvent);
+      setSelectedEventIndex(newIndex);
+    }
+  };
+
+  const handleNextEvent = () => {
+    if (selectedEventIndex < events.length - 1) {
+      const newIndex = selectedEventIndex + 1;
+      const newEvent = events[newIndex];
+      setSelectedEvent(newEvent);
+      setSelectedEventIndex(newIndex);
+    }
   };
 
   return (
@@ -97,6 +118,10 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
         event={selectedEvent}
         onRegister={handleRegisterFromSidebar}
         onCreatorClick={openProfessionalDialog}
+        onPreviousEvent={handlePreviousEvent}
+        onNextEvent={handleNextEvent}
+        hasPreviousEvent={selectedEventIndex > 0}
+        hasNextEvent={selectedEventIndex < events.length - 1}
       />
 
       <ConnectDialogsManager

@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Event } from '@/types/search';
+import EventNavigationHeader from './sidebar/EventNavigationHeader';
 import EventRegistrationHeader from './sidebar/EventRegistrationHeader';
 import EventTicketSection from './sidebar/EventTicketSection';
 import EventDetailsSection from './sidebar/EventDetailsSection';
@@ -19,6 +20,11 @@ interface EventRegistrationSidebarProps {
   event: Event | null;
   onRegister: () => void;
   onCreatorClick?: (creatorId: string) => void;
+  // New props for navigation
+  onPreviousEvent?: () => void;
+  onNextEvent?: () => void;
+  hasPreviousEvent?: boolean;
+  hasNextEvent?: boolean;
 }
 
 const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
@@ -26,7 +32,11 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
   onOpenChange,
   event,
   onRegister,
-  onCreatorClick
+  onCreatorClick,
+  onPreviousEvent,
+  onNextEvent,
+  hasPreviousEvent = true,
+  hasNextEvent = true
 }) => {
   const [demoExplanationOpen, setDemoExplanationOpen] = React.useState(false);
   const [contactHostDialogOpen, setContactHostDialogOpen] = React.useState(false);
@@ -49,6 +59,14 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
           }}
         >
           <div className="flex flex-col h-full">
+            <EventNavigationHeader
+              event={event}
+              onPrevious={onPreviousEvent}
+              onNext={onNextEvent}
+              hasPrevious={hasPreviousEvent}
+              hasNext={hasNextEvent}
+            />
+            
             <EventRegistrationHeader event={event} />
 
             <div className="flex-1 p-6 space-y-8">
