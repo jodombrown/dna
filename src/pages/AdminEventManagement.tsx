@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -63,7 +62,7 @@ const AdminEventManagement = () => {
         .from('events')
         .select(`
           *,
-          creator_profile:profiles!events_created_by_fkey(full_name, email)
+          profiles!created_by(full_name, email)
         `)
         .order('created_at', { ascending: false });
 
@@ -83,9 +82,10 @@ const AdminEventManagement = () => {
         is_virtual: event.is_virtual || false,
         created_at: event.created_at,
         created_by: event.created_by || '',
-        creator_profile: event.creator_profile && Array.isArray(event.creator_profile) && event.creator_profile.length > 0
-          ? event.creator_profile[0]
-          : null
+        creator_profile: event.profiles ? {
+          full_name: event.profiles.full_name || 'Unknown',
+          email: event.profiles.email || ''
+        } : null
       }));
       
       setEvents(transformedData);
