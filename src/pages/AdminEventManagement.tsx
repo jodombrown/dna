@@ -4,29 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import EventCreationDialog from '@/components/admin/EventCreationDialog';
-import { 
-  Calendar, 
-  Users, 
-  MapPin, 
-  Clock,
-  CheckCircle,
-  XCircle,
-  Eye,
-  Edit,
-  Trash2,
-  Search,
-  Filter,
-  Plus,
-  ArrowLeft
-} from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import AdminEventStats from '@/components/admin/AdminEventStats';
+import AdminEventFilters from '@/components/admin/AdminEventFilters';
+import AdminEventList from '@/components/admin/AdminEventList';
+import { Plus, ArrowLeft } from 'lucide-react';
 
 interface Event {
   id: string;
@@ -55,7 +40,6 @@ const AdminEventManagement = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [activeTab, setActiveTab] = useState('all');
   const [createEventOpen, setCreateEventOpen] = useState(false);
@@ -84,7 +68,16 @@ const AdminEventManagement = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setEvents(data || []);
+      
+      // Transform the data to handle the profile relationship properly
+      const transformedData = (data || []).map(event => ({
+        ...event,
+        creator_profile: event.creator_profile && !('error' in event.creator_profile) 
+          ? event.creator_profile 
+          : null
+      }));
+      
+      setEvents(transformedData);
     } catch (error: any) {
       console.error('Error fetching events:', error);
       toast({
@@ -157,28 +150,6 @@ const AdminEventManagement = () => {
     return matchesSearch && matchesType && matchesTab;
   });
 
-  const getEventStatus = (event: Event) => {
-    const now = new Date();
-    const eventDate = new Date(event.date_time);
-    
-    if (eventDate > now) return 'upcoming';
-    return 'past';
-  };
-
-  const getStatusBadge = (event: Event) => {
-    const status = getEventStatus(event);
-    const colors = {
-      upcoming: 'bg-green-100 text-green-800',
-      past: 'bg-gray-100 text-gray-800'
-    };
-    
-    return (
-      <Badge className={colors[status]}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    );
-  };
-
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -236,87 +207,13 @@ const AdminEventManagement = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Total Events</CardTitle>
-              <Calendar className="w-4 h-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{events.length}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Upcoming Events</CardTitle>
-              <Clock className="w-4 h-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {events.filter(e => new Date(e.date_time) > new Date()).length}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Featured Events</CardTitle>
-              <Eye className="w-4 h-4 text-purple-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {events.filter(e => e.is_featured).length}
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Total Attendees</CardTitle>
-              <Users className="w-4 h-4 text-orange-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {events.reduce((sum, e) => sum + e.attendee_count, 0)}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filters */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search events..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Filter by type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="networking">Networking</SelectItem>
-                  <SelectItem value="workshop">Workshop</SelectItem>
-                  <SelectItem value="conference">Conference</SelectItem>
-                  <SelectItem value="meetup">Meetup</SelectItem>
-                  <SelectItem value="webinar">Webinar</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+        <AdminEventStats events={events} />
+        <AdminEventFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          typeFilter={typeFilter}
+          setTypeFilter={setTypeFilter}
+        />
 
         {/* Events Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -328,96 +225,12 @@ const AdminEventManagement = () => {
           </TabsList>
 
           <TabsContent value={activeTab}>
-            <div className="space-y-4">
-              {filteredEvents.map((event) => (
-                <Card key={event.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{event.title}</h3>
-                          {getStatusBadge(event)}
-                          {event.is_featured && (
-                            <Badge className="bg-purple-100 text-purple-800">Featured</Badge>
-                          )}
-                          {event.is_virtual && (
-                            <Badge className="bg-blue-100 text-blue-800">Virtual</Badge>
-                          )}
-                        </div>
-                        
-                        <p className="text-gray-600 mb-4">{event.description}</p>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-500">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4" />
-                            <span>{new Date(event.date_time).toLocaleDateString()}</span>
-                          </div>
-                          
-                          <div className="flex items-center gap-2">
-                            <MapPin className="w-4 h-4" />
-                            <span>{event.location || 'Virtual'}</span>
-                          </div>
-                          
-                          <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4" />
-                            <span>
-                              {event.attendee_count}
-                              {event.max_attendees && ` / ${event.max_attendees}`} attendees
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="mt-4 text-sm text-gray-500">
-                          Created by {event.creator_profile?.full_name || 'Unknown'} • 
-                          {formatDistanceToNow(new Date(event.created_at))} ago
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 ml-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEventAction(event.id, event.is_featured ? 'unfeature' : 'feature')}
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          {event.is_featured ? 'Unfeature' : 'Feature'}
-                        </Button>
-                        
-                        <Button variant="outline" size="sm">
-                          <Edit className="w-4 h-4 mr-1" />
-                          Edit
-                        </Button>
-                        
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEventAction(event.id, 'delete')}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-4 h-4 mr-1" />
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              
-              {filteredEvents.length === 0 && (
-                <Card>
-                  <CardContent className="p-12 text-center">
-                    <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                    <h3 className="text-lg font-semibold mb-2">No Events Found</h3>
-                    <p className="text-gray-500">
-                      {searchTerm || typeFilter !== 'all' 
-                        ? 'Try adjusting your search or filters.'
-                        : 'No events have been created yet.'
-                      }
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
+            <AdminEventList
+              events={filteredEvents}
+              searchTerm={searchTerm}
+              typeFilter={typeFilter}
+              onEventAction={handleEventAction}
+            />
           </TabsContent>
         </Tabs>
       </div>
