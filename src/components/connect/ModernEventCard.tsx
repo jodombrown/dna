@@ -60,13 +60,13 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
   const creatorImage = event.creator_profile?.avatar_url;
 
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden bg-white border-0 shadow-sm hover:shadow-2xl hover:-translate-y-1 h-[520px] flex flex-col"
+    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden bg-white border-0 shadow-sm hover:shadow-2xl hover:-translate-y-1 w-full max-w-sm"
           onClick={() => onEventClick(event)}>
       <div className="relative">
         <img
           src={eventBanner}
           alt={event.title}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => {
             e.currentTarget.src = 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=200&fit=crop';
           }}
@@ -75,25 +75,25 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
         {/* Creator on banner - top right */}
         {event.creator_profile && (
           <button
-            className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-md hover:bg-dna-emerald/90 hover:text-white transition-all flex items-center gap-2 text-sm font-medium z-20"
+            className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm rounded-full px-2 py-1 shadow-md hover:bg-dna-emerald/90 hover:text-white transition-all flex items-center gap-1.5 text-xs font-medium z-20"
             onClick={(e) => {
               e.stopPropagation();
               onCreatorClick?.(event.creator_profile.id);
             }}
           >
-            <Avatar className="w-6 h-6">
+            <Avatar className="w-5 h-5">
               <AvatarImage src={creatorImage} alt={event.creator_profile.full_name} />
               <AvatarFallback className="bg-dna-copper text-white text-xs">
                 {event.creator_profile.full_name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
-            <span className="max-w-[80px] truncate">{event.creator_profile.full_name}</span>
+            <span className="max-w-[60px] truncate">{event.creator_profile.full_name}</span>
           </button>
         )}
 
         {/* Event logo - bottom left overlap */}
-        <div className="absolute -bottom-8 left-6">
-          <div className="w-16 h-16 rounded-2xl border-4 border-white shadow-xl overflow-hidden bg-white">
+        <div className="absolute -bottom-6 left-4">
+          <div className="w-12 h-12 rounded-xl border-3 border-white shadow-lg overflow-hidden bg-white">
             <img
               src={eventLogo}
               alt={`${event.title} logo`}
@@ -107,34 +107,35 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
 
         {/* Virtual badge */}
         {event.is_virtual && (
-          <div className="absolute top-3 left-3">
-            <Badge className="bg-dna-emerald/90 text-white border-0 backdrop-blur-sm">
+          <div className="absolute top-2 left-2">
+            <Badge className="bg-dna-emerald/90 text-white border-0 backdrop-blur-sm text-xs px-2 py-0.5">
               Virtual
             </Badge>
           </div>
         )}
       </div>
       
-      <CardContent className="pt-12 pb-6 px-6 flex-1 flex flex-col">
-        <div className="space-y-4 flex-1 flex flex-col">
-          <div className="flex-1">
-            <h3 className="font-bold text-lg text-gray-900 line-clamp-2 mb-2 group-hover:text-dna-emerald transition-colors min-h-[3.5rem]">
-              {event.title}
-            </h3>
-            <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed min-h-[4rem]">
+      <CardContent className="pt-8 pb-4 px-4">
+        <div className="space-y-3">
+          {/* Title and Type */}
+          <div className="space-y-2">
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="font-bold text-base text-gray-900 line-clamp-2 group-hover:text-dna-emerald transition-colors flex-1">
+                {event.title}
+              </h3>
+              <Badge variant="outline" className="font-medium text-xs shrink-0">
+                {event.type}
+              </Badge>
+            </div>
+            <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed">
               {event.description}
             </p>
           </div>
           
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="font-medium">
-              {event.type}
-            </Badge>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Calendar className="w-4 h-4" />
+          {/* Event Details */}
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <Calendar className="w-3.5 h-3.5" />
               <span>{event.date_time ? new Date(event.date_time).toLocaleDateString('en-US', { 
                 weekday: 'short', 
                 month: 'short', 
@@ -143,18 +144,19 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
                 minute: '2-digit'
               }) : 'TBD'}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <MapPin className="w-4 h-4" />
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <MapPin className="w-3.5 h-3.5" />
               <span className="truncate">{event.location}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Users className="w-4 h-4" />
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <Users className="w-3.5 h-3.5" />
               <span>{event.attendee_count ?? 0} attending</span>
             </div>
           </div>
 
+          {/* Register Button */}
           <Button 
-            className="w-full mt-auto bg-dna-emerald hover:bg-dna-forest text-white font-medium py-2.5 rounded-xl transition-all"
+            className="w-full bg-dna-emerald hover:bg-dna-forest text-white font-medium py-2 rounded-lg transition-all text-sm mt-3"
             onClick={(e) => {
               e.stopPropagation();
               onRegisterEvent();

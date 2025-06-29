@@ -37,23 +37,31 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
         </Button>
       </div>
 
-      <div className="relative px-16">
-        <Carousel className="w-full">
+      <div className="relative px-12">
+        <Carousel 
+          className="w-full"
+          opts={{
+            align: "start",
+            loop: false,
+          }}
+        >
           <CarouselContent className="-ml-2 md:-ml-4">
             {events.map((event) => (
-              <CarouselItem key={event.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
-                <ModernEventCard 
-                  event={event} 
-                  onEventClick={onEventClick}
-                  onRegisterEvent={onRegisterEvent}
-                  onCreatorClick={onCreatorClick}
-                />
+              <CarouselItem key={event.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                <div className="h-full">
+                  <ModernEventCard 
+                    event={event} 
+                    onEventClick={onEventClick}
+                    onRegisterEvent={onRegisterEvent}
+                    onCreatorClick={onCreatorClick}
+                  />
+                </div>
               </CarouselItem>
             ))}
           </CarouselContent>
           
-          <CarouselPrevious className="absolute -left-16 top-1/2 -translate-y-1/2 h-8 w-8 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
-          <CarouselNext className="absolute -right-16 top-1/2 -translate-y-1/2 h-8 w-8 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+          <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-8 w-8 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+          <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-8 w-8 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
         </Carousel>
       </div>
     </div>
