@@ -70,10 +70,21 @@ const AdminEventManagement = () => {
       if (error) throw error;
       
       // Transform the data to handle the profile relationship properly
-      const transformedData = (data || []).map(event => ({
-        ...event,
-        creator_profile: event.creator_profile && !('error' in event.creator_profile) 
-          ? event.creator_profile 
+      const transformedData: Event[] = (data || []).map(event => ({
+        id: event.id,
+        title: event.title,
+        description: event.description || '',
+        date_time: event.date_time || '',
+        location: event.location || '',
+        type: event.type || '',
+        attendee_count: event.attendee_count || 0,
+        max_attendees: event.max_attendees,
+        is_featured: event.is_featured || false,
+        is_virtual: event.is_virtual || false,
+        created_at: event.created_at,
+        created_by: event.created_by || '',
+        creator_profile: event.creator_profile && Array.isArray(event.creator_profile) && event.creator_profile.length > 0
+          ? event.creator_profile[0]
           : null
       }));
       
