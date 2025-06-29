@@ -39,35 +39,55 @@ export const useEventManagement = () => {
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      
+      // First fetch events
+      const { data: eventsData, error: eventsError } = await supabase
         .from('events')
-        .select(`
-          *,
-          profiles!created_by(full_name, email)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (eventsError) throw eventsError;
+
+      // Then fetch profiles for creators
+      const creatorIds = eventsData?.map(event => event.created_by).filter(Boolean) || [];
       
-      // Transform the data to handle the profile relationship properly
-      const transformedData: Event[] = (data || []).map(event => ({
-        id: event.id,
-        title: event.title,
-        description: event.description || '',
-        date_time: event.date_time || '',
-        location: event.location || '',
-        type: event.type || '',
-        attendee_count: event.attendee_count || 0,
-        max_attendees: event.max_attendees,
-        is_featured: event.is_featured || false,
-        is_virtual: event.is_virtual || false,
-        created_at: event.created_at,
-        created_by: event.created_by || '',
-        creator_profile: event.profiles ? {
-          full_name: event.profiles.full_name || 'Unknown',
-          email: event.profiles.email || ''
-        } : null
-      }));
+      let profilesData = [];
+      if (creatorIds.length > 0) {
+        const { data: profiles, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, full_name, email')
+          .in('id', creatorIds);
+        
+        if (profilesError) {
+          console.error('Error fetching profiles:', profilesError);
+        } else {
+          profilesData = profiles || [];
+        }
+      }
+
+      // Combine the data
+      const transformedData: Event[] = (eventsData || []).map(event => {
+        const creatorProfile = profilesData.find(profile => profile.id === event.created_by);
+        
+        return {
+          id: event.id,
+          title: event.title,
+          description: event.description || '',
+          date_time: event.date_time || '',
+          location: event.location || '',
+          type: event.type || '',
+          attendee_count: event.attendee_count || 0,
+          max_attendees: event.max_attendees,
+          is_featured: event.is_featured || false,
+          is_virtual: event.is_virtual || false,
+          created_at: event.created_at,
+          created_by: event.created_by || '',
+          creator_profile: creatorProfile ? {
+            full_name: creatorProfile.full_name || 'Unknown',
+            email: creatorProfile.email || ''
+          } : null
+        };
+      });
       
       setEvents(transformedData);
     } catch (error: any) {
