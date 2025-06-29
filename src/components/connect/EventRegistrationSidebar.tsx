@@ -3,7 +3,7 @@ import React from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Users, Clock, ExternalLink, Instagram, Linkedin, Link, MessageSquare, Phone } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, ExternalLink, Instagram, Linkedin, Link, MessageSquare, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Event } from '@/types/search';
@@ -24,6 +24,8 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
   onCreatorClick
 }) => {
   const [demoExplanationOpen, setDemoExplanationOpen] = React.useState(false);
+  const [contactHostDialogOpen, setContactHostDialogOpen] = React.useState(false);
+  const [reportEventDialogOpen, setReportEventDialogOpen] = React.useState(false);
 
   if (!event) return null;
 
@@ -63,6 +65,14 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
 
   const handleRegisterClick = () => {
     setDemoExplanationOpen(true);
+  };
+
+  const getGoogleMapsEmbedUrl = (location: string) => {
+    // For demo purposes, we'll use specific locations for each event
+    if (event.title === "African Tech Summit 2024") {
+      return "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.2847474!2d-0.1419!3d51.5074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2!2sLondon%2C%20UK!5e0!3m2!1sen!2sus!4v1234567890";
+    }
+    return "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.2847474!2d-0.1419!3d51.5074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b2!2sLondon%2C%20UK!5e0!3m2!1sen!2sus!4v1234567890";
   };
 
   return (
@@ -163,9 +173,6 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
                   <MapPin className="w-5 h-5 text-dna-emerald" />
                   <div>
                     <div className="font-medium">{event.location}</div>
-                    {!event.is_virtual && (
-                      <div className="text-sm text-gray-500">Register to see full address</div>
-                    )}
                   </div>
                 </div>
 
@@ -203,16 +210,23 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
                 )}
               </div>
 
-              {/* Location */}
+              {/* Location with Google Maps */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900">Location</h3>
-                <div className="bg-gray-50 rounded-lg p-4">
+                <div className="bg-gray-50 rounded-lg p-4 space-y-3">
                   <div className="font-medium text-gray-900">{event.location}</div>
-                  {!event.is_virtual && (
-                    <div className="text-sm text-gray-600 mt-1">
-                      Please register to see the exact location of this event.
-                    </div>
-                  )}
+                  <div className="w-full h-48 rounded-lg overflow-hidden">
+                    <iframe
+                      src={getGoogleMapsEmbedUrl(event.location)}
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen={false}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title={`Map showing ${event.location}`}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -220,11 +234,16 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900">Presented by</h3>
                 <div className="flex items-center gap-3">
-                  <img 
-                    src="/lovable-uploads/dea2fe8e-c718-403d-b6be-24cd5152c4a4.png" 
-                    alt="DNA Logo" 
-                    className="w-12 h-12 rounded-lg object-contain"
-                  />
+                  <button
+                    onClick={() => window.open('https://diasporanetworkafrica.com', '_blank')}
+                    className="hover:opacity-80 transition-opacity"
+                  >
+                    <img 
+                      src="/lovable-uploads/c6f51307-c7df-4a26-a66e-b99e88b55c53.png" 
+                      alt="DNA Logo" 
+                      className="w-12 h-12 rounded-lg object-contain"
+                    />
+                  </button>
                   <div>
                     <div className="font-medium text-gray-900">Diaspora Network of Africa</div>
                     <div className="text-sm text-gray-600">#1 Professional Networking and Impact Investment Platform for the African Diaspora</div>
@@ -258,10 +277,18 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
               {/* Contact & Actions */}
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-3">
-                  <Button variant="outline" className="justify-start gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="justify-start gap-2"
+                    onClick={() => setContactHostDialogOpen(true)}
+                  >
                     <span>Contact the Host</span>
                   </Button>
-                  <Button variant="outline" className="justify-start gap-2 text-red-600 hover:text-red-700">
+                  <Button 
+                    variant="outline" 
+                    className="justify-start gap-2 text-red-600 hover:text-red-700"
+                    onClick={() => setReportEventDialogOpen(true)}
+                  >
                     <span>Report Event</span>
                   </Button>
                 </div>
@@ -269,7 +296,7 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
 
               {/* Social Links */}
               <div className="space-y-4 pb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Follow DNA</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Follow {event.title}</h3>
                 <div className="flex gap-3">
                   <Button 
                     variant="outline" 
@@ -326,7 +353,15 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
       <Dialog open={demoExplanationOpen} onOpenChange={setDemoExplanationOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Event Registration - DNA Platform Demo</DialogTitle>
+            <DialogTitle className="flex items-center justify-between">
+              Event Registration - DNA Platform Demo
+              <button
+                onClick={() => setDemoExplanationOpen(false)}
+                className="bg-dna-copper text-white rounded-full p-1.5 hover:bg-dna-copper/80 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-gray-600">
@@ -353,14 +388,85 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
                 </ul>
               </div>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Contact Host Dialog */}
+      <Dialog open={contactHostDialogOpen} onOpenChange={setContactHostDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Contact the Host - Demo Feature</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              This feature allows you to reach out directly to event organizers for questions, partnership opportunities, or special requests.
+            </p>
+            <div className="space-y-3">
+              <div>
+                <h4 className="font-semibold text-gray-900">How it works:</h4>
+                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                  <li>• Send direct messages through our secure platform</li>
+                  <li>• Share your professional background and interests</li>
+                  <li>• Request speaking opportunities or sponsorship info</li>
+                  <li>• Ask about accessibility accommodations</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">Why contact hosts:</h4>
+                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                  <li>• Network before the event begins</li>
+                  <li>• Explore collaboration opportunities</li>
+                  <li>• Get insider insights about the agenda</li>
+                  <li>• Build meaningful professional relationships</li>
+                </ul>
+              </div>
+            </div>
             <Button 
-              onClick={() => {
-                setDemoExplanationOpen(false);
-                onRegister();
-              }}
+              onClick={() => setContactHostDialogOpen(false)}
               className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
             >
-              Continue with Demo Registration
+              Got it!
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Report Event Dialog */}
+      <Dialog open={reportEventDialogOpen} onOpenChange={setReportEventDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Report Event - Community Safety</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Help us maintain a safe and professional environment by reporting events that violate our community standards.
+            </p>
+            <div className="space-y-3">
+              <div>
+                <h4 className="font-semibold text-gray-900">When to report:</h4>
+                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                  <li>• Misleading or fraudulent event information</li>
+                  <li>• Inappropriate content or discrimination</li>
+                  <li>• Spam or unrelated commercial promotion</li>
+                  <li>• Safety concerns or suspicious activity</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900">What happens next:</h4>
+                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                  <li>• Our team reviews all reports within 24 hours</li>
+                  <li>• We investigate and take appropriate action</li>
+                  <li>• You'll receive updates on the resolution</li>
+                  <li>• Reporter identity remains confidential</li>
+                </ul>
+              </div>
+            </div>
+            <Button 
+              onClick={() => setReportEventDialogOpen(false)}
+              className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
+            >
+              Understood
             </Button>
           </div>
         </DialogContent>
