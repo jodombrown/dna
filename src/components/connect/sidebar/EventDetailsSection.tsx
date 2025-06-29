@@ -8,21 +8,40 @@ interface EventDetailsSectionProps {
 }
 
 const EventDetailsSection: React.FC<EventDetailsSectionProps> = ({ event }) => {
-  // Update dates to July 2025 and beyond
+  // Update dates to 2025 and beyond - ensuring no events are before 2025
   const getUpdatedEventDate = (eventTitle: string) => {
-    if (eventTitle === "African Tech Summit 2024") {
+    if (eventTitle === "African Tech Summit 2025") {
       return new Date('2025-07-15T09:00:00');
     }
     if (eventTitle.toLowerCase().includes('investment')) {
-      return new Date('2025-08-20T10:00:00');
+      return new Date('2025-08-20T18:00:00');
     }
     if (eventTitle.toLowerCase().includes('women')) {
-      return new Date('2025-09-12T14:00:00');
+      return new Date('2025-09-25T14:00:00');
     }
     if (eventTitle.toLowerCase().includes('health')) {
-      return new Date('2025-10-08T11:00:00');
+      return new Date('2025-11-10T10:00:00');
     }
-    return new Date('2025-07-25T15:00:00');
+    if (eventTitle.toLowerCase().includes('energy') || eventTitle.toLowerCase().includes('sustainable')) {
+      return new Date('2025-10-05T19:00:00');
+    }
+    if (eventTitle.toLowerCase().includes('financial') && eventTitle.includes('2025')) {
+      return new Date('2025-08-22T11:00:00');
+    }
+    if (eventTitle.toLowerCase().includes('agri')) {
+      return new Date('2025-09-30T15:00:00');
+    }
+    if (eventTitle.toLowerCase().includes('creative')) {
+      return new Date('2025-10-28T18:30:00');
+    }
+    if (eventTitle.toLowerCase().includes('youth') && eventTitle.includes('2025')) {
+      return new Date('2025-11-05T09:00:00');
+    }
+    if (eventTitle.toLowerCase().includes('bootcamp')) {
+      return new Date('2025-12-15T09:00:00');
+    }
+    // Default to a future date in 2025
+    return new Date('2025-08-15T15:00:00');
   };
 
   const eventDate = getUpdatedEventDate(event.title);

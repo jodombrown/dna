@@ -60,8 +60,8 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
 
   return (
     <div className="flex items-center justify-between px-4 py-3 bg-white border-b sticky top-0 z-[100] shadow-sm">
-      {/* Left side - Navigation arrows */}
-      <div className="flex items-center gap-1">
+      {/* Navigation arrows - evenly spaced */}
+      <div className="flex items-center gap-1 flex-1 justify-start">
         <Button
           variant="ghost"
           size="icon"
@@ -83,8 +83,8 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         </Button>
       </div>
 
-      {/* Center - Action buttons */}
-      <div className="flex items-center gap-2">
+      {/* Action buttons - center */}
+      <div className="flex items-center gap-2 flex-1 justify-center">
         <Button
           variant="ghost"
           size="sm"
@@ -106,15 +106,17 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         </Button>
       </div>
 
-      {/* Right side - Close button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
-        onClick={onClose}
-      >
-        <X className="h-4 w-4 text-gray-600" />
-      </Button>
+      {/* Close button - right */}
+      <div className="flex-1 justify-end flex">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
+          onClick={onClose}
+        >
+          <X className="h-4 w-4 text-gray-600" />
+        </Button>
+      </div>
     </div>
   );
 };
