@@ -11,6 +11,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  updatePassword: (password: string) => Promise<{ error: any }>;
 }
 
 const CleanAuthContext = createContext<AuthContextType | undefined>(undefined);

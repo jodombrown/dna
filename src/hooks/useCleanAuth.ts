@@ -11,6 +11,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  updatePassword: (password: string) => Promise<{ error: any }>;
 }
 
 export const useCleanAuth = (): AuthContextType => {
@@ -104,6 +105,13 @@ export const useCleanAuth = (): AuthContextType => {
     setProfile(null);
   };
 
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({
+      password: password
+    });
+    return { error };
+  };
+
   return {
     user,
     session,
@@ -112,5 +120,6 @@ export const useCleanAuth = (): AuthContextType => {
     signUp,
     signIn,
     signOut,
+    updatePassword,
   };
 };
