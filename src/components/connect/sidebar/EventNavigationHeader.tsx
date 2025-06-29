@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Copy, ExternalLink } from 'lucide-react';
 import { Event } from '@/types/search';
