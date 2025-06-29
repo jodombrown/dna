@@ -25,7 +25,7 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
     <>
       {/* Demo Explanation Dialog */}
       <Dialog open={demoExplanationOpen} onOpenChange={setDemoExplanationOpen}>
-        <DialogContent className="max-w-lg z-[1200]" style={{ zIndex: 1200 }}>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               Event Registration - DNA Platform Demo
@@ -68,7 +68,7 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
 
       {/* Contact Host Dialog */}
       <Dialog open={contactHostDialogOpen} onOpenChange={setContactHostDialogOpen}>
-        <DialogContent className="max-w-lg z-[1200]" style={{ zIndex: 1200 }}>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Contact the Host - Demo Feature</DialogTitle>
           </DialogHeader>
@@ -108,7 +108,7 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
 
       {/* Report Event Dialog */}
       <Dialog open={reportEventDialogOpen} onOpenChange={setReportEventDialogOpen}>
-        <DialogContent className="max-w-lg z-[1200]" style={{ zIndex: 1200 }}>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Report Event - Community Safety</DialogTitle>
           </DialogHeader>

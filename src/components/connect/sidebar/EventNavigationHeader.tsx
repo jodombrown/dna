@@ -29,7 +29,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
     const eventSlug = event.title.toLowerCase()
       .replace(/[^a-z0-9\s]/g, '')
       .replace(/\s+/g, '-')
-      .substring(0, 20);
+      .substring(0, 30);
     const eventId = event.id.substring(0, 8);
     return `https://diasporanetworkafrica.com/events/${eventSlug}-${eventId}`;
   };
@@ -43,6 +43,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         description: "Event link has been copied to your clipboard.",
       });
     } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
       toast({
         title: "Copy Failed",
         description: "Unable to copy link. Please try again.",
@@ -59,9 +60,9 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 bg-white border-b sticky top-0 z-[100] shadow-sm">
-      {/* Navigation arrows - left section */}
-      <div className="flex items-center gap-2 flex-1">
+    <div className="flex items-center justify-evenly px-4 py-3 bg-white border-b sticky top-0 z-[100] shadow-sm">
+      {/* Navigation arrows */}
+      <div className="flex items-center gap-2">
         <Button
           variant="ghost"
           size="icon"
@@ -83,40 +84,37 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         </Button>
       </div>
 
-      {/* Action buttons - center section with better spacing */}
-      <div className="flex items-center gap-4 flex-1 justify-center">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-3 py-1.5 transition-colors"
-          onClick={handleCopyLink}
-        >
-          <Copy className="h-3 w-3" />
-          Copy Link
-        </Button>
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-3 py-1.5 transition-colors"
-          onClick={handleEventPageClick}
-        >
-          Event Page
-          <ExternalLink className="h-3 w-3" />
-        </Button>
-      </div>
+      {/* Copy Link button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-3 py-1.5 transition-colors"
+        onClick={handleCopyLink}
+      >
+        <Copy className="h-3 w-3" />
+        Copy Link
+      </Button>
+      
+      {/* Event Page button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-3 py-1.5 transition-colors"
+        onClick={handleEventPageClick}
+      >
+        Event Page
+        <ExternalLink className="h-3 w-3" />
+      </Button>
 
-      {/* Close button - right section */}
-      <div className="flex-1 justify-end flex">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
-          onClick={onClose}
-        >
-          <X className="h-4 w-4 text-gray-600" />
-        </Button>
-      </div>
+      {/* Close button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
+        onClick={onClose}
+      >
+        <X className="h-4 w-4 text-gray-600" />
+      </Button>
     </div>
   );
 };
