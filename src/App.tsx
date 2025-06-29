@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,7 +7,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CleanAuthProvider } from "@/contexts/CleanAuthContext";
 import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
+import FunctionalAuth from "./pages/FunctionalAuth";
+import UserDashboard from "./pages/UserDashboard";
+import MyProfile from "./pages/MyProfile";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import SocialFeedPage from "./pages/SocialFeedPage";
@@ -45,7 +48,9 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
+              <Route path="/auth" element={<FunctionalAuth />} />
+              <Route path="/dashboard" element={<UserDashboard />} />
+              <Route path="/profile/my" element={<MyProfile />} />
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/admin-dashboard" element={
                 <ProtectedAdminRoute>
