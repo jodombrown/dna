@@ -53,7 +53,7 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent 
           side="right" 
-          className="w-full sm:max-w-lg p-0 overflow-y-auto shadow-2xl border-l-4 border-dna-emerald rounded-l-2xl"
+          className="w-full sm:max-w-lg p-0 overflow-y-auto shadow-2xl border-l-4 border-dna-emerald rounded-l-2xl z-[200]"
           style={{ 
             boxShadow: '-8px 0 24px -4px rgba(0, 0, 0, 0.1), -4px 0 8px -2px rgba(0, 0, 0, 0.06)',
             marginTop: '20px',
