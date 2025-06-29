@@ -1,14 +1,18 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { Eye, EyeOff } from "lucide-react";
 
-const UpdatePasswordForm: React.FC = () => {
+interface UpdatePasswordFormProps {
+  onComplete: () => void;
+}
+
+const UpdatePasswordForm: React.FC<UpdatePasswordFormProps> = ({ onComplete }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -16,7 +20,6 @@ const UpdatePasswordForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { updatePassword } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +59,7 @@ const UpdatePasswordForm: React.FC = () => {
           title: "Password Updated",
           description: "Your password has been successfully updated.",
         });
-        navigate('/my-profile');
+        onComplete();
       }
     } catch (error: any) {
       console.error('Unexpected password update error:', error);
