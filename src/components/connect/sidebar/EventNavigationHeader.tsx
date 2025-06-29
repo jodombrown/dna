@@ -59,71 +59,62 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
   };
 
   return (
-    <div className="flex flex-col bg-white border-b sticky top-0 z-[1001] shadow-sm">
-      {/* Top row - Close button and action buttons */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
-        <div className="flex-1" /> {/* Spacer */}
-        
-        {/* Action buttons */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-2 py-1.5 transition-colors"
-            onClick={handleCopyLink}
-          >
-            <Copy className="h-3 w-3" />
-            Copy Link
-          </Button>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-2 py-1.5 transition-colors"
-            onClick={handleEventPageClick}
-          >
-            Event Page
-            <ExternalLink className="h-3 w-3" />
-          </Button>
-        </div>
-
-        {/* Close button */}
+    <div className="flex items-center justify-between px-4 py-3 bg-white border-b sticky top-0 z-[100] shadow-sm">
+      {/* Left side - Navigation arrows */}
+      <div className="flex items-center gap-1">
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 rounded-full hover:bg-gray-100 transition-colors ml-2"
-          onClick={onClose}
+          className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
+          onClick={onPrevious}
+          disabled={!hasPrevious}
         >
-          <X className="h-4 w-4 text-gray-600" />
+          <ChevronLeft className="h-4 w-4 text-gray-600" />
+        </Button>
+        
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
+          onClick={onNext}
+          disabled={!hasNext}
+        >
+          <ChevronRight className="h-4 w-4 text-gray-600" />
         </Button>
       </div>
 
-      {/* Bottom row - Navigation arrows */}
-      <div className="flex items-center justify-center px-4 py-2">
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
-            onClick={onPrevious}
-            disabled={!hasPrevious}
-          >
-            <ChevronLeft className="h-4 w-4 text-gray-600" />
-          </Button>
-          
-          <span className="text-sm text-gray-500 px-3">Navigate Events</span>
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
-            onClick={onNext}
-            disabled={!hasNext}
-          >
-            <ChevronRight className="h-4 w-4 text-gray-600" />
-          </Button>
-        </div>
+      {/* Center - Action buttons */}
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-2 py-1.5 transition-colors"
+          onClick={handleCopyLink}
+        >
+          <Copy className="h-3 w-3" />
+          Copy Link
+        </Button>
+        
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-2 py-1.5 transition-colors"
+          onClick={handleEventPageClick}
+        >
+          Event Page
+          <ExternalLink className="h-3 w-3" />
+        </Button>
       </div>
+
+      {/* Right side - Close button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
+        onClick={onClose}
+      >
+        <X className="h-4 w-4 text-gray-600" />
+      </Button>
     </div>
   );
 };
