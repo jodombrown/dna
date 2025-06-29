@@ -9,7 +9,7 @@ import ModernEventCard from './ModernEventCard';
 interface PopularEventsSectionProps {
   events: Event[];
   onEventClick: (event: Event) => void;
-  onRegisterEvent: () => void;
+  onRegisterEvent: (event: Event) => void;
   onCreatorClick?: (creatorId: string) => void;
   onViewAll?: () => void;
 }
@@ -52,7 +52,7 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
                   <ModernEventCard 
                     event={event} 
                     onEventClick={onEventClick}
-                    onRegisterEvent={onRegisterEvent}
+                    onRegisterEvent={() => onRegisterEvent(event)}
                     onCreatorClick={onCreatorClick}
                   />
                 </div>

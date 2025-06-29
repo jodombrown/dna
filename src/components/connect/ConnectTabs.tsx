@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -7,6 +6,7 @@ import ProfessionalCard from './ProfessionalCard';
 import CommunityCard from './CommunityCard';
 import EmptyState from './EmptyState';
 import EventDetailDialog from "./EventDetailDialog";
+import EventRegistrationSidebar from './EventRegistrationSidebar';
 import { Professional, Community, Event } from '@/types/search';
 import PopularEventsSection from './PopularEventsSection';
 import EventCategoriesSection from './EventCategoriesSection';
@@ -44,6 +44,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
 }) => {
   const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = React.useState(false);
+  const [registrationSidebarOpen, setRegistrationSidebarOpen] = React.useState(false);
   const [selectedProfessional, setSelectedProfessional] = React.useState<Professional | null>(null);
   const [professionalDialogOpen, setProfessionalDialogOpen] = React.useState(false);
   const [demoExplanationOpen, setDemoExplanationOpen] = React.useState(false);
@@ -51,6 +52,11 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
   const openEventDialog = (event: Event) => {
     setSelectedEvent(event);
     setDetailDialogOpen(true);
+  };
+
+  const openRegistrationSidebar = (event: Event) => {
+    setSelectedEvent(event);
+    setRegistrationSidebarOpen(true);
   };
 
   const openProfessionalDialog = (professionalId: string) => {
@@ -63,6 +69,11 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
 
   const handleViewAll = () => {
     setDemoExplanationOpen(true);
+  };
+
+  const handleRegisterFromSidebar = () => {
+    setRegistrationSidebarOpen(false);
+    onRegisterEvent();
   };
 
   return (
@@ -127,7 +138,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
                 <PopularEventsSection 
                   events={events}
                   onEventClick={openEventDialog}
-                  onRegisterEvent={onRegisterEvent}
+                  onRegisterEvent={(event) => openRegistrationSidebar(event)}
                   onCreatorClick={openProfessionalDialog}
                   onViewAll={handleViewAll}
                 />
@@ -152,6 +163,14 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
         event={selectedEvent}
         onRegister={onRegisterEvent}
         isLoggedIn={isLoggedIn}
+      />
+
+      <EventRegistrationSidebar
+        open={registrationSidebarOpen}
+        onOpenChange={setRegistrationSidebarOpen}
+        event={selectedEvent}
+        onRegister={handleRegisterFromSidebar}
+        onCreatorClick={openProfessionalDialog}
       />
 
       {/* Professional Profile Dialog */}
