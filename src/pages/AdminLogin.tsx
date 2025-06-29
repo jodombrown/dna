@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,14 +14,15 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { signIn, user } = useAuth();
+  const { isAdmin, loading: adminLoading } = useAdminAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (user) {
-      navigate('/admin-phase-dashboard');
+    if (user && !adminLoading && isAdmin) {
+      navigate('/admin-dashboard');
     }
-  }, [user, navigate]);
+  }, [user, isAdmin, adminLoading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,21 +33,21 @@ const AdminLogin = () => {
       
       if (error) {
         toast({
-          title: "Access Denied",
-          description: "Incorrect email or password, or you are not authorized as an admin.",
+          title: "Login Failed",
+          description: "Invalid credentials or you don't have admin access.",
           variant: "destructive",
         });
       } else {
+        // The useEffect will handle the redirect once admin status is confirmed
         toast({
-          title: "Welcome Administrator",
-          description: "You are now logged in.",
+          title: "Login Successful",
+          description: "Checking admin privileges...",
         });
-        navigate('/admin-phase-dashboard');
       }
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "An error occurred.",
+        description: "An unexpected error occurred.",
         variant: "destructive",
       });
     } finally {

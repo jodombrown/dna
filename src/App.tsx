@@ -5,9 +5,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CleanAuthProvider } from "@/contexts/CleanAuthContext";
+import ProtectedAdminRoute from "@/components/ProtectedAdminRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 import SocialFeedPage from "./pages/SocialFeedPage";
 import CleanSocialFeedPage from "./pages/CleanSocialFeedPage";
 import Connect from "./pages/Connect";
@@ -43,6 +45,11 @@ function App() {
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin-login" element={<AdminLogin />} />
+              <Route path="/admin-dashboard" element={
+                <ProtectedAdminRoute>
+                  <AdminDashboard />
+                </ProtectedAdminRoute>
+              } />
               <Route path="/social-feed" element={<SocialFeedPage />} />
               <Route path="/clean-social-feed" element={<CleanSocialFeedPage />} />
               <Route path="/connect" element={<Connect />} />

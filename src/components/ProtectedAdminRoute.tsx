@@ -1,17 +1,17 @@
 
-import React, { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/CleanAuthContext";
+import React, { useEffect } from "react";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useNavigate } from "react-router-dom";
 
 const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { isAdmin, loading } = useAdminAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !isAdmin) {
       navigate("/admin-login");
     }
-  }, [user, loading, navigate]);
+  }, [isAdmin, loading, navigate]);
 
   if (loading) {
     return (
@@ -21,7 +21,7 @@ const ProtectedAdminRoute: React.FC<{ children: React.ReactNode }> = ({ children
     );
   }
 
-  if (!user) {
+  if (!isAdmin) {
     return null;
   }
 
