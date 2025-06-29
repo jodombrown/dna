@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 
 export type AdminRole = 'super_admin' | 'content_moderator' | 'analytics_viewer' | 'user_manager' | 'event_manager';
 
@@ -9,7 +10,7 @@ interface AdminUser {
   id: string;
   user_id: string;
   role: AdminRole;
-  permissions: Record<string, any>;
+  permissions: Json;
   is_active: boolean;
   created_at: string;
   updated_at: string;
