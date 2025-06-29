@@ -62,7 +62,7 @@ const AdminEventManagement = () => {
         .from('events')
         .select(`
           *,
-          profiles!created_by(full_name, email)
+          profiles!events_created_by_fkey(full_name, email)
         `)
         .order('created_at', { ascending: false });
 
