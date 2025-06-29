@@ -48,12 +48,16 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
     setDemoExplanationOpen(true);
   };
 
+  const handleClose = () => {
+    onOpenChange(false);
+  };
+
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent 
           side="right" 
-          className="w-full sm:max-w-xl p-0 overflow-hidden bg-white border-0 shadow-2xl"
+          className="w-full sm:max-w-xl p-0 overflow-hidden bg-white border-0 shadow-2xl [&>button]:hidden"
           style={{ 
             zIndex: 1000,
           }}
@@ -65,6 +69,7 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
               onNext={onNextEvent}
               hasPrevious={hasPreviousEvent}
               hasNext={hasNextEvent}
+              onClose={handleClose}
             />
             
             <EventRegistrationHeader event={event} />
