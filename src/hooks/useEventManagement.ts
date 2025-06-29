@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -36,7 +37,13 @@ export const useEventManagement = () => {
 
   const canManageEvents = hasAnyRole(['super_admin', 'event_manager']);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
+    // Don't fetch if auth is still loading or user can't manage events
+    if (authLoading || !canManageEvents) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       
@@ -100,7 +107,11 @@ export const useEventManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [authLoading, canManageEvents, toast]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   const handleEventAction = async (eventId: string, action: 'feature' | 'unfeature' | 'delete') => {
     try {
