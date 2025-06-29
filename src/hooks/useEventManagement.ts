@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -44,7 +43,7 @@ export const useEventManagement = () => {
         .from('events')
         .select(`
           *,
-          creator_profile:profiles!created_by(full_name, email)
+          profiles!inner(full_name, email)
         `)
         .order('created_at', { ascending: false });
 
@@ -64,9 +63,9 @@ export const useEventManagement = () => {
         is_virtual: event.is_virtual || false,
         created_at: event.created_at,
         created_by: event.created_by || '',
-        creator_profile: event.creator_profile ? {
-          full_name: event.creator_profile.full_name || 'Unknown',
-          email: event.creator_profile.email || ''
+        creator_profile: event.profiles ? {
+          full_name: event.profiles.full_name || 'Unknown',
+          email: event.profiles.email || ''
         } : null
       }));
       
