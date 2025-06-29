@@ -60,8 +60,8 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-evenly px-4 py-3 bg-white border-b sticky top-0 z-[100] shadow-sm">
-      {/* Navigation arrows */}
+    <div className="flex items-center justify-between px-4 py-3 bg-white border-b sticky top-0 z-[100] shadow-sm">
+      {/* Navigation arrows - Left side */}
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
@@ -84,29 +84,30 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         </Button>
       </div>
 
-      {/* Copy Link button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-3 py-1.5 transition-colors"
-        onClick={handleCopyLink}
-      >
-        <Copy className="h-3 w-3" />
-        Copy Link
-      </Button>
-      
-      {/* Event Page button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-3 py-1.5 transition-colors"
-        onClick={handleEventPageClick}
-      >
-        Event Page
-        <ExternalLink className="h-3 w-3" />
-      </Button>
+      {/* Copy Link and Event Page buttons - Center */}
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-3 py-1.5 transition-colors"
+          onClick={handleCopyLink}
+        >
+          <Copy className="h-3 w-3" />
+          Copy Link
+        </Button>
+        
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-3 py-1.5 transition-colors"
+          onClick={handleEventPageClick}
+        >
+          Event Page
+          <ExternalLink className="h-3 w-3" />
+        </Button>
+      </div>
 
-      {/* Close button */}
+      {/* Close button - Right side */}
       <Button
         variant="ghost"
         size="icon"
