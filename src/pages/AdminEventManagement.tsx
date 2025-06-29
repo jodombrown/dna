@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import EventCreationDialog from '@/components/admin/EventCreationDialog';
 import { 
   Calendar, 
   Users, 
@@ -43,7 +44,7 @@ interface Event {
   creator_profile?: {
     full_name: string;
     email: string;
-  };
+  } | null;
 }
 
 const AdminEventManagement = () => {
@@ -57,6 +58,7 @@ const AdminEventManagement = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [activeTab, setActiveTab] = useState('all');
+  const [createEventOpen, setCreateEventOpen] = useState(false);
 
   const canManageEvents = hasAnyRole(['super_admin', 'event_manager']);
 
@@ -77,7 +79,7 @@ const AdminEventManagement = () => {
         .from('events')
         .select(`
           *,
-          creator_profile:profiles!created_by(full_name, email)
+          creator_profile:profiles!events_created_by_fkey(full_name, email)
         `)
         .order('created_at', { ascending: false });
 
@@ -221,7 +223,10 @@ const AdminEventManagement = () => {
                 <p className="text-sm text-gray-500">Manage community events and activities</p>
               </div>
             </div>
-            <Button className="bg-dna-emerald hover:bg-dna-emerald/90">
+            <Button 
+              className="bg-dna-emerald hover:bg-dna-emerald/90"
+              onClick={() => setCreateEventOpen(true)}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Create Event
             </Button>
@@ -416,6 +421,12 @@ const AdminEventManagement = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <EventCreationDialog
+        open={createEventOpen}
+        onOpenChange={setCreateEventOpen}
+        onEventCreated={fetchEvents}
+      />
     </div>
   );
 };
