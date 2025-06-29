@@ -53,12 +53,14 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent 
           side="right" 
-          className="w-full sm:max-w-lg p-0 overflow-y-auto shadow-2xl border-l-4 border-dna-emerald"
+          className="w-full sm:max-w-lg p-0 overflow-y-auto shadow-2xl border-l-4 border-dna-emerald top-0"
           style={{ 
-            boxShadow: '-8px 0 24px -4px rgba(0, 0, 0, 0.1), -4px 0 8px -2px rgba(0, 0, 0, 0.06)' 
+            boxShadow: '-8px 0 24px -4px rgba(0, 0, 0, 0.1), -4px 0 8px -2px rgba(0, 0, 0, 0.06)',
+            marginTop: '0px',
+            height: '100vh'
           }}
         >
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col h-full pt-0">
             <EventNavigationHeader
               event={event}
               onPrevious={onPreviousEvent}
