@@ -9,9 +9,9 @@ BEGIN
         WHERE constraint_name = 'events_created_by_fkey' 
         AND table_name = 'events'
     ) THEN
-        ALTER TABLE public.events 
-        ADD CONSTRAINT events_created_by_fkey 
-        FOREIGN KEY (created_by) REFERENCES public.profiles(id) ON DELETE CASCADE;
+        ALTER TABLE public.events
+        ADD CONSTRAINT events_created_by_fkey
+        FOREIGN KEY (created_by) REFERENCES public.profiles(id) ON DELETE SET NULL;
     END IF;
 END $$;
 
