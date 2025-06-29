@@ -140,6 +140,63 @@ export type Database = {
         }
         Relationships: []
       }
+      content_flags: {
+        Row: {
+          content_id: string
+          content_type: string
+          created_at: string
+          flag_type: Database["public"]["Enums"]["flag_type"]
+          flagged_by: string | null
+          id: string
+          moderator_notes: string | null
+          reason: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: Database["public"]["Enums"]["moderation_status"]
+        }
+        Insert: {
+          content_id: string
+          content_type: string
+          created_at?: string
+          flag_type: Database["public"]["Enums"]["flag_type"]
+          flagged_by?: string | null
+          id?: string
+          moderator_notes?: string | null
+          reason?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["moderation_status"]
+        }
+        Update: {
+          content_id?: string
+          content_type?: string
+          created_at?: string
+          flag_type?: Database["public"]["Enums"]["flag_type"]
+          flagged_by?: string | null
+          id?: string
+          moderator_notes?: string | null
+          reason?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: Database["public"]["Enums"]["moderation_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_flags_flagged_by_fkey"
+            columns: ["flagged_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_flags_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contribution_cards: {
         Row: {
           amount_needed: number | null
@@ -401,6 +458,11 @@ export type Database = {
           is_published: boolean | null
           likes_count: number | null
           media_urls: string[] | null
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_status:
+            | Database["public"]["Enums"]["moderation_status"]
+            | null
           post_type: string | null
           shares_count: number | null
           updated_at: string | null
@@ -415,6 +477,11 @@ export type Database = {
           is_published?: boolean | null
           likes_count?: number | null
           media_urls?: string[] | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_status?:
+            | Database["public"]["Enums"]["moderation_status"]
+            | null
           post_type?: string | null
           shares_count?: number | null
           updated_at?: string | null
@@ -429,12 +496,24 @@ export type Database = {
           is_published?: boolean | null
           likes_count?: number | null
           media_urls?: string[] | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_status?:
+            | Database["public"]["Enums"]["moderation_status"]
+            | null
           post_type?: string | null
           shares_count?: number | null
           updated_at?: string | null
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "posts_moderated_by_fkey"
+            columns: ["moderated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "posts_user_id_fkey"
             columns: ["user_id"]
@@ -568,6 +647,19 @@ export type Database = {
         | "analytics_viewer"
         | "user_manager"
         | "event_manager"
+      flag_type:
+        | "inappropriate_content"
+        | "spam"
+        | "harassment"
+        | "misinformation"
+        | "copyright_violation"
+        | "other"
+      moderation_status:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "hidden"
+        | "deleted"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -689,6 +781,21 @@ export const Constants = {
         "analytics_viewer",
         "user_manager",
         "event_manager",
+      ],
+      flag_type: [
+        "inappropriate_content",
+        "spam",
+        "harassment",
+        "misinformation",
+        "copyright_violation",
+        "other",
+      ],
+      moderation_status: [
+        "pending",
+        "approved",
+        "rejected",
+        "hidden",
+        "deleted",
       ],
     },
   },

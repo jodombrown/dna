@@ -77,7 +77,7 @@ const AdminDashboard = () => {
       title: "Content Moderation",
       description: "Review flagged content and posts",
       icon: MessageSquare,
-      action: () => console.log('Navigate to content moderation'),
+      action: () => navigate('/admin/moderation'),
       roles: ['super_admin', 'content_moderator']
     },
     {
