@@ -91,14 +91,17 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
         </SheetContent>
       </Sheet>
 
-      <EventDemoDialogs
-        demoExplanationOpen={demoExplanationOpen}
-        setDemoExplanationOpen={setDemoExplanationOpen}
-        contactHostDialogOpen={contactHostDialogOpen}
-        setContactHostDialogOpen={setContactHostDialogOpen}
-        reportEventDialogOpen={reportEventDialogOpen}
-        setReportEventDialogOpen={setReportEventDialogOpen}
-      />
+      {/* Dialogs with higher z-index to appear above the sidebar */}
+      <div style={{ zIndex: 1100 }}>
+        <EventDemoDialogs
+          demoExplanationOpen={demoExplanationOpen}
+          setDemoExplanationOpen={setDemoExplanationOpen}
+          contactHostDialogOpen={contactHostDialogOpen}
+          setContactHostDialogOpen={setContactHostDialogOpen}
+          reportEventDialogOpen={reportEventDialogOpen}
+          setReportEventDialogOpen={setReportEventDialogOpen}
+        />
+      </div>
     </>
   );
 };

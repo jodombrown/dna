@@ -60,8 +60,8 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
 
   return (
     <div className="flex items-center justify-between px-4 py-3 bg-white border-b sticky top-0 z-[100] shadow-sm">
-      {/* Navigation arrows - evenly spaced */}
-      <div className="flex items-center gap-1 flex-1 justify-start">
+      {/* Navigation arrows - left section */}
+      <div className="flex items-center gap-2 flex-1">
         <Button
           variant="ghost"
           size="icon"
@@ -83,12 +83,12 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         </Button>
       </div>
 
-      {/* Action buttons - center */}
-      <div className="flex items-center gap-2 flex-1 justify-center">
+      {/* Action buttons - center section with better spacing */}
+      <div className="flex items-center gap-4 flex-1 justify-center">
         <Button
           variant="ghost"
           size="sm"
-          className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-2 py-1.5 transition-colors"
+          className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-3 py-1.5 transition-colors"
           onClick={handleCopyLink}
         >
           <Copy className="h-3 w-3" />
@@ -98,7 +98,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-2 py-1.5 transition-colors"
+          className="flex items-center gap-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg px-3 py-1.5 transition-colors"
           onClick={handleEventPageClick}
         >
           Event Page
@@ -106,7 +106,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         </Button>
       </div>
 
-      {/* Close button - right */}
+      {/* Close button - right section */}
       <div className="flex-1 justify-end flex">
         <Button
           variant="ghost"
