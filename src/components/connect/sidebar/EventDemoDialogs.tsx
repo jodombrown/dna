@@ -25,7 +25,7 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
     <>
       {/* Demo Explanation Dialog */}
       <Dialog open={demoExplanationOpen} onOpenChange={setDemoExplanationOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg [&>button]:hidden">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               Event Registration - DNA Platform Demo
