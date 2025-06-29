@@ -16,6 +16,7 @@ import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import AdminUserManagement from "./pages/AdminUserManagement";
 import AdminContentModeration from "./pages/AdminContentModeration";
+import AdminEventManagement from "./pages/AdminEventManagement";
 
 // Import all your marketing pages
 import About from "./pages/About";
@@ -59,6 +60,11 @@ function App() {
               <Route path="/admin/moderation" element={
                 <ProtectedAdminRoute>
                   <AdminContentModeration />
+                </ProtectedAdminRoute>
+              } />
+              <Route path="/admin/events" element={
+                <ProtectedAdminRoute>
+                  <AdminEventManagement />
                 </ProtectedAdminRoute>
               } />
               <Route path="/social-feed" element={<SocialFeedPage />} />

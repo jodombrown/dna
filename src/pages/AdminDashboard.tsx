@@ -84,7 +84,7 @@ const AdminDashboard = () => {
       title: "Event Management",
       description: "Oversee community events",
       icon: Calendar,
-      action: () => console.log('Navigate to event management'),
+      action: () => navigate('/admin/events'),
       roles: ['super_admin', 'event_manager']
     },
     {
