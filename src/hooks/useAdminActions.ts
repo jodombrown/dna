@@ -2,6 +2,9 @@
 import { useAuditLog } from './useAuditLog';
 import { useToast } from './use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
+
+type AdminRole = Database['public']['Enums']['admin_role'];
 
 export const useAdminActions = () => {
   const { logAction } = useAuditLog();
@@ -100,11 +103,16 @@ export const useAdminActions = () => {
     }
   };
 
-  const createAdminUser = async (userData: { user_id: string; role: string; permissions?: any }) => {
+  const createAdminUser = async (userData: { user_id: string; role: AdminRole; permissions?: any }) => {
     try {
       const { error } = await supabase
         .from('admin_users')
-        .insert(userData);
+        .insert({
+          user_id: userData.user_id,
+          role: userData.role,
+          is_active: true,
+          permissions: userData.permissions || {}
+        });
 
       if (error) throw error;
 
