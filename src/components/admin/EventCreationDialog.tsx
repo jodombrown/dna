@@ -60,6 +60,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     e.preventDefault();
     
     if (!user) {
+      console.error('No user found');
       toast({
         title: "Authentication Required",
         description: "You must be logged in to create events.",
@@ -68,12 +69,18 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
       return;
     }
 
+    console.log('Starting event creation process...');
+    console.log('User ID:', user.id);
+    console.log('Form data:', formData);
+
     setLoading(true);
 
     try {
       let imageUrl = null;
       
+      // Handle image upload if there's an image
       if (imageFile) {
+        console.log('Uploading image...');
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${user.id}/${Date.now()}.${fileExt}`;
         
@@ -83,7 +90,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
 
         if (uploadError) {
           console.error('Upload error:', uploadError);
-          throw uploadError;
+          throw new Error(`Image upload failed: ${uploadError.message}`);
         }
 
         const { data: { publicUrl } } = supabase.storage
@@ -91,32 +98,54 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
           .getPublicUrl(fileName);
         
         imageUrl = publicUrl;
+        console.log('Image uploaded successfully:', imageUrl);
       }
 
+      // Prepare event data
       const eventData = {
-        title: formData.title,
-        description: formData.description,
-        type: formData.type,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        type: formData.type.trim(),
         date_time: formData.dateTime,
-        location: formData.isVirtual ? null : formData.location,
+        location: formData.isVirtual ? null : formData.location.trim(),
         is_virtual: formData.isVirtual,
         is_featured: formData.isFeatured,
         max_attendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : null,
-        registration_url: formData.registrationUrl || null,
+        registration_url: formData.registrationUrl.trim() || null,
         image_url: imageUrl,
         created_by: user.id
       };
 
       console.log('Creating event with data:', eventData);
 
-      const { error } = await supabase
+      // Validate required fields
+      if (!eventData.title) {
+        throw new Error('Event title is required');
+      }
+      if (!eventData.description) {
+        throw new Error('Event description is required');
+      }
+      if (!eventData.type) {
+        throw new Error('Event type is required');
+      }
+      if (!eventData.date_time) {
+        throw new Error('Event date and time is required');
+      }
+      if (!eventData.is_virtual && !eventData.location) {
+        throw new Error('Location is required for non-virtual events');
+      }
+
+      const { data, error } = await supabase
         .from('events')
-        .insert([eventData]);
+        .insert([eventData])
+        .select();
 
       if (error) {
         console.error('Database error:', error);
-        throw error;
+        throw new Error(`Database error: ${error.message}`);
       }
+
+      console.log('Event created successfully:', data);
 
       toast({
         title: "Event Created",

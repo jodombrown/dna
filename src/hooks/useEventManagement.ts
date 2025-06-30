@@ -46,6 +46,7 @@ export const useEventManagement = () => {
 
     try {
       setLoading(true);
+      console.log('Fetching events...');
       
       // First fetch events
       const { data: eventsData, error: eventsError } = await supabase
@@ -53,7 +54,12 @@ export const useEventManagement = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (eventsError) throw eventsError;
+      if (eventsError) {
+        console.error('Events fetch error:', eventsError);
+        throw eventsError;
+      }
+
+      console.log('Events fetched:', eventsData?.length || 0);
 
       // Then fetch profiles for creators
       const creatorIds = eventsData?.map(event => event.created_by).filter(Boolean) || [];
@@ -96,12 +102,13 @@ export const useEventManagement = () => {
         };
       });
       
+      console.log('Transformed events:', transformedData.length);
       setEvents(transformedData);
     } catch (error: any) {
       console.error('Error fetching events:', error);
       toast({
         title: "Error",
-        description: "Failed to load events.",
+        description: `Failed to load events: ${error.message}`,
         variant: "destructive",
       });
     } finally {
@@ -113,40 +120,58 @@ export const useEventManagement = () => {
     fetchEvents();
   }, [fetchEvents]);
 
-  const handleEventAction = async (eventId: string, action: 'feature' | 'unfeature' | 'delete') => {
+  const handleEventAction = async (eventId: string, action: 'feature' | 'unfeature' | 'delete' | 'edit') => {
+    console.log('Event action:', action, 'for event:', eventId);
+    
     try {
       if (action === 'delete') {
+        console.log('Attempting to delete event:', eventId);
         const { error } = await supabase
           .from('events')
           .delete()
           .eq('id', eventId);
         
-        if (error) throw error;
+        if (error) {
+          console.error('Delete error:', error);
+          throw error;
+        }
         
         toast({
           title: "Event Deleted",
           description: "The event has been permanently deleted.",
         });
-      } else {
+      } else if (action === 'feature' || action === 'unfeature') {
+        console.log('Attempting to', action, 'event:', eventId);
         const { error } = await supabase
           .from('events')
           .update({ is_featured: action === 'feature' })
           .eq('id', eventId);
         
-        if (error) throw error;
+        if (error) {
+          console.error('Feature toggle error:', error);
+          throw error;
+        }
         
         toast({
           title: action === 'feature' ? "Event Featured" : "Event Unfeatured",
           description: `The event has been ${action === 'feature' ? 'featured' : 'unfeatured'}.`,
         });
+      } else if (action === 'edit') {
+        // For now, just show a message that edit functionality is coming
+        toast({
+          title: "Edit Event",
+          description: "Edit functionality is coming soon!",
+        });
+        return; // Don't refresh events for edit action yet
       }
       
+      // Refresh events after successful action
       await fetchEvents();
     } catch (error: any) {
       console.error('Error updating event:', error);
       toast({
         title: "Error",
-        description: "Failed to update event.",
+        description: `Failed to ${action} event: ${error.message}`,
         variant: "destructive",
       });
     }

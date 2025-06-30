@@ -27,7 +27,7 @@ interface Event {
 
 interface AdminEventCardProps {
   event: Event;
-  onEventAction: (eventId: string, action: 'feature' | 'unfeature' | 'delete') => void;
+  onEventAction: (eventId: string, action: 'feature' | 'unfeature' | 'delete' | 'edit') => void;
 }
 
 const AdminEventCard: React.FC<AdminEventCardProps> = ({ event, onEventAction }) => {
@@ -51,6 +51,23 @@ const AdminEventCard: React.FC<AdminEventCardProps> = ({ event, onEventAction })
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
+  };
+
+  const handleFeatureToggle = () => {
+    console.log('Feature toggle clicked for event:', event.id, 'Current featured status:', event.is_featured);
+    onEventAction(event.id, event.is_featured ? 'unfeature' : 'feature');
+  };
+
+  const handleEdit = () => {
+    console.log('Edit clicked for event:', event.id);
+    onEventAction(event.id, 'edit');
+  };
+
+  const handleDelete = () => {
+    console.log('Delete clicked for event:', event.id);
+    if (window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+      onEventAction(event.id, 'delete');
+    }
   };
 
   return (
@@ -101,13 +118,17 @@ const AdminEventCard: React.FC<AdminEventCardProps> = ({ event, onEventAction })
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onEventAction(event.id, event.is_featured ? 'unfeature' : 'feature')}
+              onClick={handleFeatureToggle}
             >
               <Eye className="w-4 h-4 mr-1" />
               {event.is_featured ? 'Unfeature' : 'Feature'}
             </Button>
             
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={handleEdit}
+            >
               <Edit className="w-4 h-4 mr-1" />
               Edit
             </Button>
@@ -115,7 +136,7 @@ const AdminEventCard: React.FC<AdminEventCardProps> = ({ event, onEventAction })
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onEventAction(event.id, 'delete')}
+              onClick={handleDelete}
               className="text-red-600 hover:text-red-700"
             >
               <Trash2 className="w-4 h-4 mr-1" />
