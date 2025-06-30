@@ -30,8 +30,6 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [customEventType, setCustomEventType] = useState('');
-  const [showCustomType, setShowCustomType] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -75,32 +73,16 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
   };
 
   const handleEventTypeChange = (value: string) => {
-    if (value === 'custom') {
-      setShowCustomType(true);
-      setFormData({ ...formData, type: '' });
-    } else {
-      setShowCustomType(false);
-      setFormData({ ...formData, type: value });
-    }
+    setFormData({ ...formData, type: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.dateTime) {
+    if (!formData.title || !formData.dateTime || !formData.type) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const finalEventType = showCustomType ? customEventType : formData.type;
-    if (!finalEventType) {
-      toast({
-        title: "Error",
-        description: "Please select or enter an event type.",
+        description: "Please fill in all required fields including event type.",
         variant: "destructive",
       });
       return;
@@ -112,11 +94,16 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
 
       // Upload image if provided
       if (imageFile && user?.id) {
-        imageUrl = await uploadImage(imageFile, user.id, 'avatar');
-        if (!imageUrl) {
+        try {
+          imageUrl = await uploadImage(imageFile, user.id, 'event-images');
+          if (!imageUrl) {
+            console.warn('Image upload failed, continuing without image');
+          }
+        } catch (error) {
+          console.error('Image upload error:', error);
           toast({
             title: "Warning",
-            description: "Event created but image upload failed.",
+            description: "Event will be created but image upload failed.",
             variant: "destructive",
           });
         }
@@ -127,14 +114,15 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         .insert({
           title: formData.title,
           description: formData.description,
-          type: finalEventType,
+          type: formData.type,
           location: formData.isVirtual ? 'Virtual' : formData.location,
           is_virtual: formData.isVirtual,
           is_featured: formData.isFeatured,
           max_attendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : null,
           registration_url: formData.registrationUrl || null,
           date_time: new Date(formData.dateTime).toISOString(),
-          image_url: imageUrl
+          image_url: imageUrl,
+          banner_url: imageUrl
         });
 
       if (error) throw error;
@@ -156,8 +144,6 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         registrationUrl: '',
         dateTime: ''
       });
-      setCustomEventType('');
-      setShowCustomType(false);
       setImageFile(null);
       setImagePreview(null);
       
@@ -200,32 +186,32 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
             
             <div>
               <Label htmlFor="type">Event Type *</Label>
-              <Select
-                value={showCustomType ? 'custom' : formData.type}
-                onValueChange={handleEventTypeChange}
-                required
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select event type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {predefinedEventTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="custom">Custom Type</SelectItem>
-                </SelectContent>
-              </Select>
-              {showCustomType && (
-                <Input
-                  className="mt-2"
-                  value={customEventType}
-                  onChange={(e) => setCustomEventType(e.target.value)}
-                  placeholder="Enter custom event type"
+              <div className="space-y-2">
+                <Select
+                  value={formData.type}
+                  onValueChange={handleEventTypeChange}
                   required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select or type event type" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border shadow-lg z-50">
+                    {predefinedEventTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="text-sm text-gray-600">
+                  Or create a custom type:
+                </div>
+                <Input
+                  placeholder="Type custom event type (e.g., 'fundraiser', 'showcase')"
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                 />
-              )}
+              </div>
             </div>
           </div>
 
