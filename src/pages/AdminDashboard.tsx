@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
@@ -78,6 +77,13 @@ const AdminDashboard = () => {
       description: "Review flagged content and posts",
       icon: MessageSquare,
       action: () => navigate('/admin/moderation'),
+      roles: ['super_admin', 'content_moderator']
+    },
+    {
+      title: "Community Management",
+      description: "Review and moderate communities",
+      icon: Users,
+      action: () => navigate('/admin/communities'),
       roles: ['super_admin', 'content_moderator']
     },
     {

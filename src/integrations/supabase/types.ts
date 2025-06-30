@@ -111,7 +111,12 @@ export type Database = {
           image_url: string | null
           is_featured: boolean | null
           member_count: number | null
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_status: string | null
+          moderator_notes: string | null
           name: string
+          rejection_reason: string | null
           updated_at: string
         }
         Insert: {
@@ -123,7 +128,12 @@ export type Database = {
           image_url?: string | null
           is_featured?: boolean | null
           member_count?: number | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_status?: string | null
+          moderator_notes?: string | null
           name: string
+          rejection_reason?: string | null
           updated_at?: string
         }
         Update: {
@@ -135,10 +145,62 @@ export type Database = {
           image_url?: string | null
           is_featured?: boolean | null
           member_count?: number | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_status?: string | null
+          moderator_notes?: string | null
           name?: string
+          rejection_reason?: string | null
           updated_at?: string
         }
         Relationships: []
+      }
+      community_flags: {
+        Row: {
+          community_id: string
+          created_at: string
+          flag_type: string
+          flagged_by: string | null
+          id: string
+          moderator_notes: string | null
+          reason: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+        }
+        Insert: {
+          community_id: string
+          created_at?: string
+          flag_type: string
+          flagged_by?: string | null
+          id?: string
+          moderator_notes?: string | null
+          reason?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Update: {
+          community_id?: string
+          created_at?: string
+          flag_type?: string
+          flagged_by?: string | null
+          id?: string
+          moderator_notes?: string | null
+          reason?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_flags_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       content_flags: {
         Row: {
