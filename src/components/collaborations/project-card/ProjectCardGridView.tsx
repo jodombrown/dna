@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +16,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { CollaborationProject } from '@/types/collaborationTypes';
-import { formatFunding, getStatusColor } from '../projectUtils';
+import { formatFunding, getStatusColor, getStatusDisplayName } from '../projectUtils';
 
 interface ProjectCardGridViewProps {
   project: CollaborationProject;
@@ -53,7 +52,7 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
           {/* Status badges - moved to left */}
           <div className="absolute top-2 left-2 flex gap-2">
             <Badge className={getStatusColor(project.status)} variant="secondary">
-              {project.status}
+              {getStatusDisplayName(project.status)}
             </Badge>
             {project.urgency === 'high' && (
               <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200">

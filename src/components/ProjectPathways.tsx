@@ -19,7 +19,7 @@ const ProjectPathways = () => {
       currentFunding: 185000,
       backers: 156,
       daysLeft: 23,
-      stage: "Go-to-Market",
+      stage: "active",
       impactMetrics: "50,000 farmers impacted",
       featured: true,
       tags: ["Technology", "Agriculture", "Sustainability"]
@@ -34,7 +34,7 @@ const ProjectPathways = () => {
       currentFunding: 320000,
       backers: 243,
       daysLeft: 45,
-      stage: "Scale",
+      stage: "testing",
       impactMetrics: "200,000 accounts opened",
       featured: true,
       tags: ["FinTech", "Inclusion", "Mobile"]
@@ -49,7 +49,7 @@ const ProjectPathways = () => {
       currentFunding: 750000,
       backers: 89,
       daysLeft: 67,
-      stage: "Grow",
+      stage: "approved",
       impactMetrics: "25 communities powered",
       featured: false,
       tags: ["Energy", "Infrastructure", "Environment"]
@@ -64,7 +64,7 @@ const ProjectPathways = () => {
       currentFunding: 95000,
       backers: 178,
       daysLeft: 12,
-      stage: "Launch",
+      stage: "planning",
       impactMetrics: "5,000 students enrolled",
       featured: false,
       tags: ["Education", "AI", "Technology"]
@@ -79,7 +79,7 @@ const ProjectPathways = () => {
       currentFunding: 165000,
       backers: 134,
       daysLeft: 38,
-      stage: "Prototype",
+      stage: "discovery",
       impactMetrics: "10,000 consultations completed",
       featured: true,
       tags: ["Healthcare", "Telemedicine", "Access"]
@@ -94,12 +94,41 @@ const ProjectPathways = () => {
       currentFunding: 120000,
       backers: 67,
       daysLeft: 56,
-      stage: "Concept",
+      stage: "idea",
       impactMetrics: "100 suppliers onboarded",
       featured: false,
       tags: ["Blockchain", "Trade", "Transparency"]
     }
   ];
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'idea':
+        return 'bg-gray-100 text-gray-700';
+      case 'discovery':
+        return 'bg-blue-100 text-blue-700';
+      case 'scoping':
+        return 'bg-purple-100 text-purple-700';
+      case 'planning':
+        return 'bg-yellow-100 text-yellow-700';
+      case 'approved':
+        return 'bg-green-100 text-green-700';
+      case 'active':
+        return 'bg-dna-copper/20 text-dna-copper';
+      case 'testing':
+        return 'bg-orange-100 text-orange-700';
+      case 'complete':
+        return 'bg-emerald-100 text-emerald-700';
+      case 'maintenance':
+        return 'bg-indigo-100 text-indigo-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const getStatusDisplayName = (status: string): string => {
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
 
   const calculateFundingPercentage = (current: number, goal: number) => {
     return Math.round((current / goal) * 100);
@@ -142,9 +171,9 @@ const ProjectPathways = () => {
                 )}
                 <Badge 
                   variant="secondary" 
-                  className="absolute top-3 right-3 bg-white/90 text-gray-700"
+                  className={`absolute top-3 right-3 ${getStatusColor(project.stage)}`}
                 >
-                  {project.stage}
+                  {getStatusDisplayName(project.stage)}
                 </Badge>
               </div>
               

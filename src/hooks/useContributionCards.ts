@@ -15,7 +15,7 @@ export interface ContributionCard {
   amount_needed?: number;
   amount_raised: number;
   target_date?: string;
-  status: 'active' | 'completed' | 'paused' | 'cancelled';
+  status: 'idea' | 'discovery' | 'scoping' | 'planning' | 'approved' | 'active' | 'testing' | 'complete' | 'maintenance';
   image_url?: string;
   created_at: string;
   creator?: {

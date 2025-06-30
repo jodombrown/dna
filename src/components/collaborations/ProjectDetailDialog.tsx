@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Dialog,
@@ -32,7 +31,7 @@ import {
 } from 'lucide-react';
 import { CollaborationProject } from '@/types/collaborationTypes';
 import { formatDistanceToNow } from 'date-fns';
-import { getUrgencyColor, getStatusColor, formatFunding } from './projectUtils';
+import { getUrgencyColor, getStatusColor, getStatusDisplayName, formatFunding } from './projectUtils';
 
 interface ProjectDetailDialogProps {
   project: CollaborationProject | null;
@@ -92,7 +91,7 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
             {/* Status badges */}
             <div className="absolute top-4 right-4 flex gap-2">
               <Badge className={getStatusColor(project.status)}>
-                {project.status}
+                {getStatusDisplayName(project.status)}
               </Badge>
               <Badge variant="outline" className={`${getUrgencyColor(project.urgency)} bg-white/90`}>
                 {project.urgency === 'high' && <AlertCircle className="w-3 h-3 mr-1" />}

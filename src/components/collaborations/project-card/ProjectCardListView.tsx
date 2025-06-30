@@ -14,7 +14,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import { CollaborationProject } from '@/types/collaborationTypes';
-import { getStatusColor, getUrgencyColor } from '../projectUtils';
+import { getStatusColor, getStatusDisplayName, getUrgencyColor } from '../projectUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProjectCardListViewProps {
@@ -57,7 +57,7 @@ const ProjectCardListView: React.FC<ProjectCardListViewProps> = ({
                     {project.title}
                   </h3>
                   <Badge className={getStatusColor(project.status)} variant="secondary">
-                    {project.status}
+                    {getStatusDisplayName(project.status)}
                   </Badge>
                   {project.urgency === 'high' && (
                     <Badge variant="outline" className={getUrgencyColor(project.urgency)}>
