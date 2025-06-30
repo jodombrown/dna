@@ -42,70 +42,72 @@ const CollaborationFiltersComponent: React.FC<CollaborationFiltersProps> = ({
     onFiltersChange({ [filterKey]: newArray });
   };
 
+  const filterSections = [
+    {
+      title: "Impact Areas",
+      icon: filterIcons.Target,
+      options: impactAreas,
+      selectedValues: filters.impact_area,
+      filterKey: 'impact_area' as keyof CollaborationFilters
+    },
+    {
+      title: "African Regions",
+      icon: filterIcons.MapPin,
+      options: regions,
+      selectedValues: filters.region,
+      filterKey: 'region' as keyof CollaborationFilters
+    },
+    {
+      title: "Ways to Contribute",
+      icon: filterIcons.Users,
+      options: contributionTypes,
+      selectedValues: filters.contribution_types,
+      filterKey: 'contribution_types' as keyof CollaborationFilters
+    },
+    {
+      title: "Time Commitment",
+      icon: filterIcons.Clock,
+      options: timeCommitments,
+      selectedValues: filters.time_commitment,
+      filterKey: 'time_commitment' as keyof CollaborationFilters
+    },
+    {
+      title: "Priority Level",
+      icon: filterIcons.AlertCircle,
+      options: urgencyLevels,
+      selectedValues: filters.urgency,
+      filterKey: 'urgency' as keyof CollaborationFilters
+    }
+  ];
+
   return (
     <div className="space-y-4">
-      <Card>
+      <Card className="border-gray-200 shadow-sm">
         <FilterHeader
           hasActiveFilters={hasActiveFilters}
           resultCount={resultCount}
           onClearFilters={onClearFilters}
         />
 
-        <CardContent className="space-y-4 p-4">
+        <CardContent className="p-4 space-y-1">
           <SearchSection
             searchQuery={filters.search_query}
             onFiltersChange={onFiltersChange}
           />
 
-          <FilterSection
-            title="Impact Areas"
-            icon={filterIcons.Target}
-            options={impactAreas}
-            selectedValues={filters.impact_area}
-            onSelectionChange={(value, checked) =>
-              handleCheckboxChange('impact_area', value, checked)
-            }
-          />
-
-          <FilterSection
-            title="African Regions"
-            icon={filterIcons.MapPin}
-            options={regions}
-            selectedValues={filters.region}
-            onSelectionChange={(value, checked) =>
-              handleCheckboxChange('region', value, checked)
-            }
-          />
-
-          <FilterSection
-            title="How You Can Contribute"
-            icon={filterIcons.Users}
-            options={contributionTypes}
-            selectedValues={filters.contribution_types}
-            onSelectionChange={(value, checked) =>
-              handleCheckboxChange('contribution_types', value, checked)
-            }
-          />
-
-          <FilterSection
-            title="Time Commitment"
-            icon={filterIcons.Clock}
-            options={timeCommitments}
-            selectedValues={filters.time_commitment}
-            onSelectionChange={(value, checked) =>
-              handleCheckboxChange('time_commitment', value, checked)
-            }
-          />
-
-          <FilterSection
-            title="Priority Level"
-            icon={filterIcons.AlertCircle}
-            options={urgencyLevels}
-            selectedValues={filters.urgency}
-            onSelectionChange={(value, checked) =>
-              handleCheckboxChange('urgency', value, checked)
-            }
-          />
+          {filterSections.map((section, index) => (
+            <FilterSection
+              key={section.title}
+              title={section.title}
+              icon={section.icon}
+              options={section.options}
+              selectedValues={section.selectedValues}
+              onSelectionChange={(value, checked) =>
+                handleCheckboxChange(section.filterKey, value, checked)
+              }
+              isLast={index === filterSections.length - 1}
+            />
+          ))}
         </CardContent>
       </Card>
     </div>
