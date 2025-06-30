@@ -4,7 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { CollaborationFilters } from '@/types/collaborationTypes';
 import FilterHeader from './filters/FilterHeader';
 import SearchSection from './filters/SearchSection';
-import FilterSection from './filters/FilterSection';
+import CollapsibleFilterSection from './filters/CollapsibleFilterSection';
 import { 
   impactAreas, 
   regions, 
@@ -48,35 +48,45 @@ const CollaborationFiltersComponent: React.FC<CollaborationFiltersProps> = ({
       icon: filterIcons.Target,
       options: impactAreas,
       selectedValues: filters.impact_area,
-      filterKey: 'impact_area' as keyof CollaborationFilters
+      filterKey: 'impact_area' as keyof CollaborationFilters,
+      defaultOpen: true,
+      useToggleButtons: true
     },
     {
       title: "African Regions",
       icon: filterIcons.MapPin,
       options: regions,
       selectedValues: filters.region,
-      filterKey: 'region' as keyof CollaborationFilters
+      filterKey: 'region' as keyof CollaborationFilters,
+      defaultOpen: false,
+      useToggleButtons: true
     },
     {
       title: "Ways to Contribute",
       icon: filterIcons.Users,
       options: contributionTypes,
       selectedValues: filters.contribution_types,
-      filterKey: 'contribution_types' as keyof CollaborationFilters
+      filterKey: 'contribution_types' as keyof CollaborationFilters,
+      defaultOpen: false,
+      useToggleButtons: true
     },
     {
       title: "Time Commitment",
       icon: filterIcons.Clock,
       options: timeCommitments,
       selectedValues: filters.time_commitment,
-      filterKey: 'time_commitment' as keyof CollaborationFilters
+      filterKey: 'time_commitment' as keyof CollaborationFilters,
+      defaultOpen: false,
+      useToggleButtons: false
     },
     {
       title: "Priority Level",
       icon: filterIcons.AlertCircle,
       options: urgencyLevels,      
       selectedValues: filters.urgency,
-      filterKey: 'urgency' as keyof CollaborationFilters
+      filterKey: 'urgency' as keyof CollaborationFilters,
+      defaultOpen: false,
+      useToggleButtons: false
     }
   ];
 
@@ -89,14 +99,14 @@ const CollaborationFiltersComponent: React.FC<CollaborationFiltersProps> = ({
       />
 
       <ScrollArea className="flex-1">
-        <div className="p-4 space-y-4">
+        <div className="p-4 space-y-3">
           <SearchSection
             searchQuery={filters.search_query}
             onFiltersChange={onFiltersChange}
           />
 
-          {filterSections.map((section, index) => (
-            <FilterSection
+          {filterSections.map((section) => (
+            <CollapsibleFilterSection
               key={section.title}
               title={section.title}
               icon={section.icon}
@@ -105,7 +115,8 @@ const CollaborationFiltersComponent: React.FC<CollaborationFiltersProps> = ({
               onSelectionChange={(value, checked) =>
                 handleCheckboxChange(section.filterKey, value, checked)
               }
-              isLast={index === filterSections.length - 1}
+              defaultOpen={section.defaultOpen}
+              useToggleButtons={section.useToggleButtons}
             />
           ))}
         </div>
