@@ -24,11 +24,22 @@ const Profile = () => {
   useEffect(() => {
     if (id) {
       fetchProfile();
+    } else {
+      console.error('No profile ID provided');
+      setLoading(false);
     }
   }, [id]);
 
   const fetchProfile = async () => {
+    if (!id) {
+      console.error('Profile ID is missing');
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log('Fetching profile for ID:', id);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -37,8 +48,12 @@ const Profile = () => {
 
       if (error) {
         console.error('Error fetching profile:', error);
+        if (error.code === '22P02') {
+          console.error('Invalid UUID format for profile ID:', id);
+        }
         setProfile(null);
       } else {
+        console.log('Profile data fetched:', data);
         setProfile(data);
       }
     } catch (error) {
@@ -62,7 +77,6 @@ const Profile = () => {
     if (!user || !id) return;
 
     try {
-      // Since user_connections table doesn't exist, just show demo message
       toast({
         title: "Feature Coming Soon",
         description: "Connection system will be implemented in a future update",
@@ -73,6 +87,7 @@ const Profile = () => {
   };
 
   const handleMessage = () => {
+    if (!id) return;
     navigate(`/messages?user=${id}`);
   };
 
@@ -96,6 +111,9 @@ const Profile = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">Profile not found.</p>
+            <p className="text-gray-400 text-sm mt-2">
+              {id ? `Profile ID: ${id}` : 'No profile ID provided'}
+            </p>
             <Button 
               onClick={() => navigate('/connect')}
               className="mt-4 bg-dna-copper hover:bg-dna-gold text-white"

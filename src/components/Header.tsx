@@ -78,7 +78,14 @@ const Header = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : null}
+            ) : (
+              <Button 
+                onClick={() => navigate('/auth')}
+                className="bg-dna-emerald hover:bg-dna-forest text-white"
+              >
+                Sign In
+              </Button>
+            )}
             
             <MobileNavigation />
           </div>

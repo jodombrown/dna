@@ -39,22 +39,27 @@ const MyProfileContainer = () => {
     return searchParams.get("edit") === "1";
   }
 
-  useEffect(() => setEditing(getEditingFromQuery()), [location.search]);
+  // Fix: Prevent infinite loop by managing URL updates more carefully
+  useEffect(() => {
+    const shouldEdit = getEditingFromQuery();
+    if (shouldEdit !== editing) {
+      setEditing(shouldEdit);
+    }
+  }, [location.search]);
 
+  // Fix: Only update URL when editing state actually changes
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    if (editing) {
-      if (searchParams.get("edit") !== "1") {
-        searchParams.set("edit", "1");
-        navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
-      }
-    } else {
-      if (searchParams.get("edit")) {
-        searchParams.delete("edit");
-        navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
-      }
+    const currentEdit = searchParams.get("edit");
+    
+    if (editing && currentEdit !== "1") {
+      searchParams.set("edit", "1");
+      navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
+    } else if (!editing && currentEdit === "1") {
+      searchParams.delete("edit");
+      navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
     }
-  }, [editing, navigate, location.pathname]);
+  }, [editing]);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -64,25 +69,38 @@ const MyProfileContainer = () => {
         setEditing(false);
         return;
       }
+      
       setFetching(true);
       setError(null);
+      
       try {
+        console.log('Fetching profile for user:', user.id);
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", user.id)
           .maybeSingle();
-        if (error) throw error;
+          
+        if (error) {
+          console.error('Profile fetch error:', error);
+          throw error;
+        }
+        
+        console.log('Profile data:', data);
         setProfile(data || null);
+        
+        // Only auto-enable editing if no profile exists and not already editing
         if (!data && !getEditingFromQuery()) {
           setEditing(true);
         }
       } catch (err: any) {
+        console.error('Error fetching profile:', err);
         setError(err.message || "Failed to load profile.");
       } finally {
         setFetching(false);
       }
     }
+    
     fetchProfile();
   }, [user]);
 
@@ -95,6 +113,8 @@ const MyProfileContainer = () => {
   };
 
   const handleProfileSaved = async () => {
+    if (!user) return;
+    
     setFetching(true);
     try {
       const { data, error } = await supabase
@@ -102,18 +122,24 @@ const MyProfileContainer = () => {
         .select("*")
         .eq("id", user.id)
         .maybeSingle();
+        
       if (error) throw error;
+      
       setProfile(data || null);
       setEditing(false);
-      // Show toast if completion >= 90 and they have been onboarded
-      const { calculateProfileCompletion } = await import("./ProfileCompletionBar");
-      if (calculateProfileCompletion(data) >= 90 && localStorage.getItem("dna-onboarded")) {
-        toast({
-          title: "🎉 Profile Nearly Complete!",
-          description: "You're ready to connect and explore the DNA community.",
-        });
+      
+      // Show completion toast if profile is nearly complete
+      if (data) {
+        const { calculateProfileCompletion } = await import("./ProfileCompletionBar");
+        if (calculateProfileCompletion(data) >= 90 && localStorage.getItem("dna-onboarded")) {
+          toast({
+            title: "🎉 Profile Nearly Complete!",
+            description: "You're ready to connect and explore the DNA community.",
+          });
+        }
       }
     } catch (err: any) {
+      console.error('Error saving profile:', err);
       setError(err.message || "Failed to load profile.");
     } finally {
       setFetching(false);
