@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -6,11 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Connect from "./pages/Connect";
-import Collaborate from "./pages/Collaborate";
-import Contribute from "./pages/Contribute";
 import Events from "./pages/Events";
-import Communities from "./pages/Communities";
-import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminUserManagement from "./pages/AdminUserManagement";
@@ -19,25 +16,25 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
-import { AuthProvider } from "./contexts/CleanAuthContext";
+import { CleanAuthProvider } from "./contexts/CleanAuthContext";
 
 const queryClient = new QueryClient();
 
-const QueryClient = ({ children }: { children: React.ReactNode }) => (
+const QueryClientWrapper = ({ children }: { children: React.ReactNode }) => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
+      <CleanAuthProvider>
         {children}
         <Toaster />
         <Sonner />
-      </AuthProvider>
+      </CleanAuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
 
 function App() {
   return (
-    <QueryClient>
+    <QueryClientWrapper>
       <BrowserRouter>
         <div className="min-h-screen bg-background font-sans antialiased">
           <Toaster />
@@ -45,23 +42,12 @@ function App() {
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/connect" element={<Connect />} />
-            <Route path="/collaborate" element={<Collaborate />} />
-            <Route path="/contribute" element={<Contribute />} />
             <Route path="/events" element={<Events />} />
-            <Route path="/communities" element={<Communities />} />
             <Route
               path="/profile/:userId"
               element={
                 <ProtectedRoute>
                   <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute>
-                  <Admin />
                 </ProtectedRoute>
               }
             />
@@ -95,7 +81,7 @@ function App() {
           </Routes>
         </div>
       </BrowserRouter>
-    </QueryClient>
+    </QueryClientWrapper>
   );
 }
 
