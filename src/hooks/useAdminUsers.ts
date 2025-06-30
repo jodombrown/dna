@@ -1,65 +1,92 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useToast } from '@/hooks/use-toast';
 
 interface AdminUser {
   id: string;
   user_id: string;
   role: string;
-  permissions: any;
   is_active: boolean;
+  permissions: any;
   created_at: string;
   updated_at: string;
-  created_by: string | null;
+  created_by?: string;
+}
+
+interface RegularUser {
+  id: string;
+  email: string;
+  full_name?: string;
+  is_public: boolean;
+  created_at: string;
+  updated_at: string;
+  location?: string;
+  profession?: string;
+  bio?: string;
 }
 
 export const useAdminUsers = () => {
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
+  const [regularUsers, setRegularUsers] = useState<RegularUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { adminUser, loading: authLoading } = useAdminAuth();
+  const { toast } = useToast();
 
   const fetchAdminUsers = async () => {
-    // Don't fetch if auth is still loading or user is not a super admin
-    if (authLoading || !adminUser || adminUser.role !== 'super_admin') {
-      setLoading(false);
-      if (!authLoading && (!adminUser || adminUser.role !== 'super_admin')) {
-        setError('Insufficient permissions');
-      }
-      return;
-    }
-
     try {
-      setLoading(true);
-      setError(null);
-      
       const { data, error } = await supabase
         .from('admin_users')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-
       setAdminUsers(data || []);
     } catch (err: any) {
       console.error('Error fetching admin users:', err);
       setError(err.message);
-    } finally {
-      setLoading(false);
+      toast({
+        title: "Error",
+        description: "Failed to fetch admin users",
+        variant: "destructive"
+      });
     }
   };
 
-  useEffect(() => {
-    fetchAdminUsers();
-  }, [authLoading, adminUser?.role]); // Only depend on authLoading and the role, not the whole adminUser object
+  const fetchRegularUsers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(100);
 
-  const refetch = () => {
-    fetchAdminUsers();
+      if (error) throw error;
+      setRegularUsers(data || []);
+    } catch (err: any) {
+      console.error('Error fetching regular users:', err);
+      setError(err.message);
+      toast({
+        title: "Error",
+        description: "Failed to fetch users",
+        variant: "destructive"
+      });
+    }
   };
+
+  const refetch = async () => {
+    setLoading(true);
+    await Promise.all([fetchAdminUsers(), fetchRegularUsers()]);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   return {
     adminUsers,
+    regularUsers,
     loading,
     error,
     refetch
