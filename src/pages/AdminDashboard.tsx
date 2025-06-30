@@ -91,7 +91,7 @@ const AdminDashboard = () => {
       title: "System Settings",
       description: "Configure platform settings",
       icon: Settings,
-      action: () => console.log('Navigate to system settings'),
+      action: () => navigate('/admin/settings'),
       roles: ['super_admin']
     }
   ];

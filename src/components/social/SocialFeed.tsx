@@ -20,7 +20,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import EnhancedPostCreator from './EnhancedPostCreator';
 import { useSocialPosts } from '@/hooks/useSocialPosts';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 
 const REACTION_ICONS: Record<string, { icon: React.ReactNode; emoji: string }> = {
   'like': { icon: <ThumbsUp className="w-4 h-4" />, emoji: '👍' },

@@ -12,6 +12,7 @@ import UserDashboard from "./pages/UserDashboard";
 import MyProfile from "./pages/MyProfile";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminSystemSettings from "./pages/AdminSystemSettings";
 import SocialFeedPage from "./pages/SocialFeedPage";
 import CleanSocialFeedPage from "./pages/CleanSocialFeedPage";
 import Connect from "./pages/Connect";
@@ -70,6 +71,11 @@ function App() {
               <Route path="/admin/events" element={
                 <ProtectedAdminRoute>
                   <AdminEventManagement />
+                </ProtectedAdminRoute>
+              } />
+              <Route path="/admin/settings" element={
+                <ProtectedAdminRoute>
+                  <AdminSystemSettings />
                 </ProtectedAdminRoute>
               } />
               <Route path="/social-feed" element={<SocialFeedPage />} />
