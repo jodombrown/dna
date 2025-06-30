@@ -113,8 +113,8 @@ const CollaborationsExample = () => {
       <Header />
       <CollaborationsPrototypeNotice />
 
-      {/* Enhanced Page Header - Fixed height */}
-      <div className="flex-shrink-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 text-center">
+      {/* Enhanced Page Header */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 text-center">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Users className="w-8 h-8 text-dna-copper" />
           <Zap className="w-6 h-6 text-dna-gold" />
@@ -139,33 +139,31 @@ const CollaborationsExample = () => {
         </div>
       </div>
 
-      {/* Quick Stats - Fixed height */}
-      <div className="flex-shrink-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Quick Stats */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <CollaborationsQuickStats stats={stats} />
       </div>
 
-      {/* Main Content Area - Takes remaining height */}
-      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 min-h-0">
-        <div className="grid lg:grid-cols-4 gap-6 h-full">
-          {/* Compact Sidebar with its own scroll */}
-          <div className="lg:col-span-1 h-full">
-            <div className="h-[calc(100vh-400px)] min-h-[600px]">
-              <ScrollArea className="h-full">
-                <CollaborationFiltersComponent
-                  filters={filters}
-                  onFiltersChange={updateFilters}
-                  onClearFilters={clearFilters}
-                  hasActiveFilters={hasActiveFilters}
-                  resultCount={projects.length}
-                />
-              </ScrollArea>
+      {/* Main Content with Fixed Heights */}
+      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid lg:grid-cols-4 gap-6 h-[calc(100vh-500px)]">
+          {/* Sidebar - Fixed Width with Internal Scroll */}
+          <div className="lg:col-span-1">
+            <div className="h-full bg-white rounded-xl border border-gray-200 shadow-sm">
+              <CollaborationFiltersComponent
+                filters={filters}
+                onFiltersChange={updateFilters}
+                onClearFilters={clearFilters}
+                hasActiveFilters={hasActiveFilters}
+                resultCount={projects.length}
+              />
             </div>
           </div>
 
-          {/* Main Content with its own scroll */}
-          <div className="lg:col-span-3 h-full flex flex-col">
+          {/* Projects Area with Controls and Scrollable Content */}
+          <div className="lg:col-span-3 flex flex-col h-full">
             {/* Controls Bar - Fixed at top */}
-            <div className="flex-shrink-0 mb-4">
+            <div className="mb-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
@@ -213,10 +211,10 @@ const CollaborationsExample = () => {
               </div>
             </div>
 
-            {/* Scrollable Projects Area */}
-            <div className="flex-1 min-h-0">
+            {/* Scrollable Projects Container */}
+            <div className="flex-1 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <ScrollArea className="h-full">
-                <div className="pr-4">
+                <div className="p-6">
                   <EnhancedProjectDiscovery
                     projects={projects}
                     viewMode={viewMode}

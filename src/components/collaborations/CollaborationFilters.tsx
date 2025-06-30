@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { CollaborationFilters } from '@/types/collaborationTypes';
 import FilterHeader from './filters/FilterHeader';
 import SearchSection from './filters/SearchSection';
@@ -81,15 +81,15 @@ const CollaborationFiltersComponent: React.FC<CollaborationFiltersProps> = ({
   ];
 
   return (
-    <div className="space-y-4">
-      <Card className="border-gray-200 shadow-sm">
-        <FilterHeader
-          hasActiveFilters={hasActiveFilters}
-          resultCount={resultCount}
-          onClearFilters={onClearFilters}
-        />
+    <div className="h-full flex flex-col">
+      <FilterHeader
+        hasActiveFilters={hasActiveFilters}
+        resultCount={resultCount}
+        onClearFilters={onClearFilters}
+      />
 
-        <CardContent className="p-4 space-y-1">
+      <ScrollArea className="flex-1 px-4">
+        <div className="space-y-1 pb-4">
           <SearchSection
             searchQuery={filters.search_query}
             onFiltersChange={onFiltersChange}
@@ -108,8 +108,8 @@ const CollaborationFiltersComponent: React.FC<CollaborationFiltersProps> = ({
               isLast={index === filterSections.length - 1}
             />
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </ScrollArea>
     </div>
   );
 };
