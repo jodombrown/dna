@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,11 +5,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { useContributionCards } from '@/hooks/useContributionCards';
-import { useSocialPosts } from '@/hooks/useSocialPosts';
+import { useCleanSocialPosts } from '@/hooks/useCleanSocialPosts';
 
 const ContributionCardCreator: React.FC = () => {
   const { createCard } = useContributionCards();
-  const { createPost } = useSocialPosts();
+  const { createPost } = useCleanSocialPosts();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
