@@ -65,18 +65,18 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
 
   return (
     <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-      <div className={`flex gap-6 ${isMobile ? 'flex-col' : ''} h-[calc(100vh-400px)]`}>
+      <div className={`flex gap-6 ${isMobile ? 'flex-col' : ''}`}>
         {/* Desktop Sidebar */}
         {!isMobile && (
-          <div className="w-80 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col">
+          <div className="w-80 bg-white rounded-lg shadow-sm border border-gray-200">
             <FiltersSidebar />
           </div>
         )}
 
         {/* Main Content Area */}
-        <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col">
+        <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200">
           {/* Controls Header */}
-          <div className="p-4 sm:p-6 border-b border-gray-200 flex-shrink-0">
+          <div className="p-4 sm:p-6 border-b border-gray-200">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
                 {/* Mobile Filter Button */}
@@ -167,7 +167,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
           </div>
 
           {/* Projects Grid/List with Vertical Scroll */}
-          <div className="flex-1 overflow-hidden">
+          <div className="h-[600px] overflow-hidden">
             <ScrollArea className="h-full">
               <div className="p-4 sm:p-6">
                 {projects.length === 0 ? (
