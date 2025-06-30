@@ -6,7 +6,7 @@ import AdvancedSearch from '@/components/search/AdvancedSearch';
 import SearchResults from '@/components/search/SearchResults';
 import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
 import { useMessages } from '@/hooks/useMessages';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +18,19 @@ const Search = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuth();
-  const { results, loading, error, searchProfiles, searchProfessionals, clearResults } = useAdvancedSearch();
+  const { 
+    searchTerm, 
+    setSearchTerm, 
+    filters, 
+    setFilters,
+    professionals, 
+    communities, 
+    events, 
+    loading, 
+    clearSearch,
+    performSearch,
+    resultCounts 
+  } = useAdvancedSearch();
   const { sendMessage } = useMessages();
   const [activeTab, setActiveTab] = useState('profiles');
   const [showRecommendations, setShowRecommendations] = useState(true);
@@ -43,30 +55,26 @@ const Search = () => {
   useEffect(() => {
     const queryParam = searchParams.get('q');
     if (queryParam) {
-      const initialFilters: SearchFilters = {
-        searchTerm: queryParam,
-        location: '',
-        profession: '',
-        skills: [],
-        experience: '',
-        isMentor: false,
-        isInvestor: false,
-        lookingForOpportunities: false,
-        countryOfOrigin: ''
-      };
-      handleSearch(initialFilters);
+      setSearchTerm(queryParam);
       setShowRecommendations(false);
     }
-  }, [searchParams]);
+  }, [searchParams, setSearchTerm]);
 
-  const handleSearch = async (filters: SearchFilters) => {
+  const handleSearch = async (searchFilters: SearchFilters) => {
     setShowRecommendations(false);
     
-    if (activeTab === 'profiles') {
-      await searchProfiles(filters);
-    } else {
-      await searchProfessionals(filters);
-    }
+    // Update the search term and filters
+    setSearchTerm(searchFilters.searchTerm);
+    setFilters({
+      location: searchFilters.location,
+      skills: searchFilters.skills,
+      isMentor: searchFilters.isMentor,
+      isInvestor: searchFilters.isInvestor,
+      lookingForOpportunities: searchFilters.lookingForOpportunities
+    });
+    
+    // Perform the search
+    performSearch();
   };
 
   const handleConnect = async (userId: string) => {
@@ -101,6 +109,26 @@ const Search = () => {
     }
   };
 
+  // Convert data to SearchResults format
+  const results = {
+    professionals: professionals.map(prof => ({
+      id: prof.id,
+      full_name: prof.full_name,
+      profession: prof.profession,
+      company: prof.company,
+      location: prof.location,
+      bio: prof.bio,
+      avatar_url: prof.avatar_url,
+      skills: prof.skills,
+      is_mentor: prof.is_mentor,
+      is_investor: prof.is_investor,
+      looking_for_opportunities: prof.looking_for_opportunities,
+      country_of_origin: prof.country_of_origin
+    })),
+    communities: communities,
+    events: events
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -128,7 +156,7 @@ const Search = () => {
             <AdvancedSearch
               onSearch={handleSearch}
               onClear={() => {
-                clearResults();
+                clearSearch();
                 setShowRecommendations(true);
               }}
               loading={loading}
@@ -137,12 +165,6 @@ const Search = () => {
 
           {/* Search Results */}
           <div className="lg:col-span-2">
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <p className="text-red-600">Error: {error}</p>
-              </div>
-            )}
-
             {/* Show recommendations when no search is active */}
             {showRecommendations && user && recommendations.length > 0 && (
               <Card className="mb-6">
