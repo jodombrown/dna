@@ -38,7 +38,6 @@ export const useEventManagement = () => {
   const canManageEvents = hasAnyRole(['super_admin', 'event_manager']);
 
   const fetchEvents = useCallback(async () => {
-    // Don't fetch if auth is still loading or user can't manage events
     if (authLoading || !canManageEvents) {
       setLoading(false);
       return;
@@ -48,7 +47,6 @@ export const useEventManagement = () => {
       setLoading(true);
       console.log('Fetching events...');
       
-      // First fetch events
       const { data: eventsData, error: eventsError } = await supabase
         .from('events')
         .select('*')
@@ -61,7 +59,6 @@ export const useEventManagement = () => {
 
       console.log('Events fetched:', eventsData?.length || 0);
 
-      // Then fetch profiles for creators
       const creatorIds = eventsData?.map(event => event.created_by).filter(Boolean) || [];
       
       let profilesData = [];
@@ -78,7 +75,6 @@ export const useEventManagement = () => {
         }
       }
 
-      // Combine the data
       const transformedData: Event[] = (eventsData || []).map(event => {
         const creatorProfile = profilesData.find(profile => profile.id === event.created_by);
         
@@ -157,21 +153,27 @@ export const useEventManagement = () => {
           description: `The event has been ${action === 'feature' ? 'featured' : 'unfeatured'}.`,
         });
       } else if (action === 'edit') {
-        // For now, just show a message that edit functionality is coming
         toast({
           title: "Edit Event",
           description: "Edit functionality is coming soon!",
         });
-        return; // Don't refresh events for edit action yet
+        return;
       }
       
-      // Refresh events after successful action
       await fetchEvents();
     } catch (error: any) {
       console.error('Error updating event:', error);
+      
+      let errorMessage = `Failed to ${action} event`;
+      if (error.message.includes('insufficient_privilege') || error.message.includes('permission denied')) {
+        errorMessage = `You don't have permission to ${action} this event`;
+      } else if (error.message) {
+        errorMessage += `: ${error.message}`;
+      }
+      
       toast({
         title: "Error",
-        description: `Failed to ${action} event: ${error.message}`,
+        description: errorMessage,
         variant: "destructive",
       });
     }

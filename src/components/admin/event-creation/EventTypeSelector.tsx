@@ -1,8 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Plus, X } from 'lucide-react';
 
 interface EventTypeSelectorProps {
   value: string;
@@ -10,6 +12,10 @@ interface EventTypeSelectorProps {
 }
 
 const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({ value, onChange }) => {
+  const [customTypes, setCustomTypes] = useState<string[]>([]);
+  const [newCustomType, setNewCustomType] = useState('');
+  const [showCustomInput, setShowCustomInput] = useState(false);
+
   const predefinedEventTypes = [
     'Professional Networking',
     'Investment & Funding',
@@ -20,55 +26,139 @@ const EventTypeSelector: React.FC<EventTypeSelectorProps> = ({ value, onChange }
     'Community Roundtables',
     'Impact Project Showcases',
     'Policy & Advocacy Dialogues',
-    'Academic & Research Forums'
+    'Academic & Research Forums',
+    'Technology & Innovation',
+    'Health & Wellness',
+    'Arts & Creative Expression',
+    'Business Development',
+    'Youth & Education'
   ];
 
+  const allEventTypes = [...predefinedEventTypes, ...customTypes];
+
   const handleSelectChange = (selectedValue: string) => {
+    if (selectedValue === 'add_custom') {
+      setShowCustomInput(true);
+      return;
+    }
     onChange(selectedValue);
+    setShowCustomInput(false);
   };
 
-  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
+  const handleAddCustomType = () => {
+    if (newCustomType.trim() && !allEventTypes.includes(newCustomType.trim())) {
+      const customType = newCustomType.trim();
+      setCustomTypes(prev => [...prev, customType]);
+      onChange(customType);
+      setNewCustomType('');
+      setShowCustomInput(false);
+    }
+  };
+
+  const handleRemoveCustomType = (typeToRemove: string) => {
+    setCustomTypes(prev => prev.filter(type => type !== typeToRemove));
+    if (value === typeToRemove) {
+      onChange('');
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      // Value is already updated via onChange, so we don't need to do anything else
+      handleAddCustomType();
+    }
+    if (e.key === 'Escape') {
+      setShowCustomInput(false);
+      setNewCustomType('');
     }
   };
 
   return (
-    <div>
+    <div className="space-y-3">
       <Label htmlFor="type">Event Type *</Label>
-      <div className="space-y-2">
-        <Select
-          value={predefinedEventTypes.includes(value) ? value : ''}
-          onValueChange={handleSelectChange}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select event type" />
-          </SelectTrigger>
-          <SelectContent className="bg-white border shadow-lg z-50">
-            {predefinedEventTypes.map((type) => (
-              <SelectItem key={type} value={type}>
+      
+      <Select
+        value={allEventTypes.includes(value) ? value : ''}
+        onValueChange={handleSelectChange}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select event type" />
+        </SelectTrigger>
+        <SelectContent className="bg-white border shadow-lg z-50 max-h-60 overflow-y-auto">
+          {predefinedEventTypes.map((type) => (
+            <SelectItem key={type} value={type}>
+              {type}
+            </SelectItem>
+          ))}
+          
+          {customTypes.length > 0 && <div className="px-2 py-1 text-sm font-medium text-gray-500 border-t">Custom Types</div>}
+          
+          {customTypes.map((type) => (
+            <div key={type} className="flex items-center justify-between px-2 py-2 hover:bg-gray-50">
+              <SelectItem value={type} className="flex-1 border-none">
                 {type}
               </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        
-        <div className="text-sm text-gray-600">
-          Or create a custom type:
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleRemoveCustomType(type);
+                }}
+                className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+              >
+                <X className="w-3 h-3" />
+              </Button>
+            </div>
+          ))}
+          
+          <SelectItem value="add_custom" className="text-blue-600 font-medium">
+            <div className="flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              Add Custom Type
+            </div>
+          </SelectItem>
+        </SelectContent>
+      </Select>
+
+      {showCustomInput && (
+        <div className="flex gap-2">
+          <Input
+            placeholder="Enter custom event type"
+            value={newCustomType}
+            onChange={(e) => setNewCustomType(e.target.value)}
+            onKeyPress={handleKeyPress}
+            autoFocus
+          />
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleAddCustomType}
+            disabled={!newCustomType.trim()}
+          >
+            Add
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setShowCustomInput(false);
+              setNewCustomType('');
+            }}
+          >
+            Cancel
+          </Button>
         </div>
-        
-        <Input
-          placeholder="Type custom event type"
-          value={value}
-          onChange={handleCustomInputChange}
-          onKeyPress={handleKeyPress}
-        />
-      </div>
+      )}
+
+      {!allEventTypes.includes(value) && value && (
+        <div className="text-sm text-gray-600">
+          Current selection: <span className="font-medium">{value}</span>
+        </div>
+      )}
     </div>
   );
 };

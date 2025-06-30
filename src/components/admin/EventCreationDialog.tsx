@@ -56,11 +56,38 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     setImagePreview(null);
   };
 
+  const validateForm = () => {
+    const errors: string[] = [];
+    
+    if (!formData.title.trim()) errors.push('Event title is required');
+    if (!formData.description.trim()) errors.push('Event description is required');
+    if (!formData.type.trim()) errors.push('Event type is required');
+    if (!formData.dateTime) errors.push('Event date and time is required');
+    if (!formData.isVirtual && !formData.location.trim()) {
+      errors.push('Location is required for non-virtual events');
+    }
+    
+    // Validate date is in the future
+    if (formData.dateTime) {
+      const eventDate = new Date(formData.dateTime);
+      const now = new Date();
+      if (eventDate <= now) {
+        errors.push('Event date must be in the future');
+      }
+    }
+    
+    // Validate max attendees if provided
+    if (formData.maxAttendees && parseInt(formData.maxAttendees) <= 0) {
+      errors.push('Maximum attendees must be greater than 0');
+    }
+    
+    return errors;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!user) {
-      console.error('No user found');
       toast({
         title: "Authentication Required",
         description: "You must be logged in to create events.",
@@ -69,10 +96,17 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
       return;
     }
 
-    console.log('Starting event creation process...');
-    console.log('User ID:', user.id);
-    console.log('Form data:', formData);
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
+      toast({
+        title: "Validation Error",
+        description: validationErrors.join(', '),
+        variant: "destructive",
+      });
+      return;
+    }
 
+    console.log('Starting event creation process...');
     setLoading(true);
 
     try {
@@ -84,21 +118,25 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${user.id}/${Date.now()}.${fileExt}`;
         
+        // Check if bucket exists, if not we'll handle the error gracefully
         const { error: uploadError } = await supabase.storage
           .from('event-images')
           .upload(fileName, imageFile);
 
         if (uploadError) {
-          console.error('Upload error:', uploadError);
-          throw new Error(`Image upload failed: ${uploadError.message}`);
+          console.warn('Image upload failed, proceeding without image:', uploadError.message);
+          toast({
+            title: "Image Upload Warning",
+            description: "Could not upload image, but event will be created without it.",
+          });
+        } else {
+          const { data: { publicUrl } } = supabase.storage
+            .from('event-images')
+            .getPublicUrl(fileName);
+          
+          imageUrl = publicUrl;
+          console.log('Image uploaded successfully:', imageUrl);
         }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('event-images')
-          .getPublicUrl(fileName);
-        
-        imageUrl = publicUrl;
-        console.log('Image uploaded successfully:', imageUrl);
       }
 
       // Prepare event data
@@ -113,27 +151,11 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         max_attendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : null,
         registration_url: formData.registrationUrl.trim() || null,
         image_url: imageUrl,
-        created_by: user.id
+        created_by: user.id,
+        attendee_count: 0
       };
 
       console.log('Creating event with data:', eventData);
-
-      // Validate required fields
-      if (!eventData.title) {
-        throw new Error('Event title is required');
-      }
-      if (!eventData.description) {
-        throw new Error('Event description is required');
-      }
-      if (!eventData.type) {
-        throw new Error('Event type is required');
-      }
-      if (!eventData.date_time) {
-        throw new Error('Event date and time is required');
-      }
-      if (!eventData.is_virtual && !eventData.location) {
-        throw new Error('Location is required for non-virtual events');
-      }
 
       const { data, error } = await supabase
         .from('events')
@@ -142,7 +164,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
 
       if (error) {
         console.error('Database error:', error);
-        throw new Error(`Database error: ${error.message}`);
+        throw new Error(`Failed to create event: ${error.message}`);
       }
 
       console.log('Event created successfully:', data);
