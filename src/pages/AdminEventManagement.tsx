@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { useEventManagement } from '@/hooks/useEventManagement';
 import EventCreationDialog from '@/components/admin/EventCreationDialog';
+import EventEditDialog from '@/components/admin/EventEditDialog';
 import AdminEventStats from '@/components/admin/AdminEventStats';
 import AdminEventFilters from '@/components/admin/AdminEventFilters';
 import AdminEventTabs from '@/components/admin/AdminEventTabs';
 import AdminEventHeader from '@/components/admin/AdminEventHeader';
 import AdminEventAccessControl from '@/components/admin/AdminEventAccessControl';
 import AdminEventLoadingState from '@/components/admin/AdminEventLoadingState';
+import { Event } from '@/types/eventTypes';
 
 const AdminEventManagement = () => {
   const {
@@ -28,6 +30,20 @@ const AdminEventManagement = () => {
   } = useEventManagement();
 
   const [createEventOpen, setCreateEventOpen] = useState(false);
+  const [editEventOpen, setEditEventOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+  const handleEventActionWithEdit = async (eventId: string, action: 'feature' | 'unfeature' | 'delete' | 'edit', eventData?: Event) => {
+    if (action === 'edit' && eventData) {
+      console.log('Opening edit dialog for event:', eventData);
+      setSelectedEvent(eventData);
+      setEditEventOpen(true);
+      return;
+    }
+    
+    // Handle other actions normally
+    await handleEventAction(eventId, action);
+  };
 
   useEffect(() => {
     if (!authLoading && !canManageEvents) {
@@ -72,7 +88,7 @@ const AdminEventManagement = () => {
               filteredEvents={filteredEvents}
               searchTerm={searchTerm}
               typeFilter={typeFilter}
-              onEventAction={handleEventAction}
+              onEventAction={handleEventActionWithEdit}
             />
           </div>
 
@@ -80,6 +96,13 @@ const AdminEventManagement = () => {
             open={createEventOpen}
             onOpenChange={setCreateEventOpen}
             onEventCreated={fetchEvents}
+          />
+
+          <EventEditDialog
+            open={editEventOpen}
+            onOpenChange={setEditEventOpen}
+            onEventUpdated={fetchEvents}
+            event={selectedEvent}
           />
         </div>
       )}

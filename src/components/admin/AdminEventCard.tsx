@@ -27,7 +27,7 @@ interface Event {
 
 interface AdminEventCardProps {
   event: Event;
-  onEventAction: (eventId: string, action: 'feature' | 'unfeature' | 'delete' | 'edit') => void;
+  onEventAction: (eventId: string, action: 'feature' | 'unfeature' | 'delete' | 'edit', eventData?: Event) => void;
 }
 
 const AdminEventCard: React.FC<AdminEventCardProps> = ({ event, onEventAction }) => {
@@ -60,7 +60,7 @@ const AdminEventCard: React.FC<AdminEventCardProps> = ({ event, onEventAction })
 
   const handleEdit = () => {
     console.log('Edit clicked for event:', event.id);
-    onEventAction(event.id, 'edit');
+    onEventAction(event.id, 'edit', event);
   };
 
   const handleDelete = () => {

@@ -44,10 +44,8 @@ export const useEventActions = (onEventUpdated: () => void) => {
           description: `The event has been ${action === 'feature' ? 'featured' : 'unfeatured'}.`,
         });
       } else if (action === 'edit') {
-        toast({
-          title: "Edit Event",
-          description: "Edit functionality is coming soon!",
-        });
+        // Edit action is handled by the component that calls this hook
+        // We don't need to do anything here, just return
         return;
       }
       

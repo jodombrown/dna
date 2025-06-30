@@ -78,16 +78,7 @@ const Header = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Button
-                  onClick={() => navigate('/auth?mode=signup')}
-                  className="bg-dna-emerald hover:bg-dna-forest text-white"
-                >
-                  Join DNA
-                </Button>
-              </div>
-            )}
+            ) : null}
             
             <MobileNavigation />
           </div>
