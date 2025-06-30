@@ -22,6 +22,7 @@ import AdminEventManagement from "./pages/AdminEventManagement";
 import AdminCommunityManagement from "@/pages/AdminCommunityManagement";
 import AdminAnalyticsDashboard from "./pages/AdminAnalyticsDashboard";
 import AdminAdvancedSettings from "./pages/AdminAdvancedSettings";
+import AdminAuditLog from "./pages/AdminAuditLog";
 
 // Import all your marketing pages
 import About from "./pages/About";
@@ -82,6 +83,11 @@ function App() {
               <Route path="/admin/analytics" element={
                 <ProtectedAdminRoute>
                   <AdminAnalyticsDashboard />
+                </ProtectedAdminRoute>
+              } />
+              <Route path="/admin/audit-log" element={
+                <ProtectedAdminRoute>
+                  <AdminAuditLog />
                 </ProtectedAdminRoute>
               } />
               <Route path="/admin/advanced-settings" element={

@@ -1,9 +1,12 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, MessageSquare, Calendar, TrendingUp, Shield, Settings } from 'lucide-react';
+import { Users, MessageSquare, Calendar, TrendingUp, Shield, Settings, History, BarChart3 } from 'lucide-react';
+import RealTimeNotifications from '@/components/admin/RealTimeNotifications';
+import AdvancedAnalyticsCharts from '@/components/admin/AdvancedAnalyticsCharts';
 
 const AdminDashboard = () => {
   const { adminUser, loading, isAdmin } = useAdminAuth();
@@ -101,6 +104,13 @@ const AdminDashboard = () => {
       roles: ['super_admin', 'event_manager']
     },
     {
+      title: "Audit Log",
+      description: "View admin activity and system logs",
+      icon: History,
+      action: () => navigate('/admin/audit-log'),
+      roles: ['super_admin']
+    },
+    {
       title: "Advanced Settings",
       description: "Configure advanced platform settings",
       icon: Settings,
@@ -129,13 +139,16 @@ const AdminDashboard = () => {
                 <p className="text-sm text-gray-500">Welcome back, {adminUser?.role.replace('_', ' ')}</p>
               </div>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/')}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              Back to Site
-            </Button>
+            <div className="flex items-center gap-4">
+              <RealTimeNotifications />
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/')}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                Back to Site
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -169,6 +182,15 @@ const AdminDashboard = () => {
               </Card>
             );
           })}
+        </div>
+
+        {/* Advanced Analytics Charts */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <BarChart3 className="w-5 h-5" />
+            Analytics Overview
+          </h3>
+          <AdvancedAnalyticsCharts />
         </div>
 
         {/* Quick Actions */}
