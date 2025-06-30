@@ -32,7 +32,7 @@ export const useAdvancedSearch = () => {
   const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
-  // Demo data (same as useSearch)
+  // Demo data - updated to include Kenya professionals
   const demoProfessionals: Professional[] = [
     {
       id: '1',
@@ -161,9 +161,42 @@ export const useAdvancedSearch = () => {
       looking_for_opportunities: true,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: '9',
+      full_name: 'Grace Wanjiku',
+      profession: 'Mobile Banking Specialist',
+      company: 'M-Pesa Kenya',
+      location: 'Nairobi, Kenya',
+      country_of_origin: 'Kenya',
+      bio: 'Driving financial inclusion through mobile money solutions across East Africa.',
+      skills: ['Mobile Banking', 'Financial Inclusion', 'Product Strategy', 'East Africa Markets'],
+      avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400',
+      is_mentor: true,
+      is_investor: false,
+      looking_for_opportunities: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: '10',
+      full_name: 'David Kiprotich',
+      profession: 'Clean Energy Consultant',
+      company: 'Kenya Power Solutions',
+      location: 'Mombasa, Kenya',
+      country_of_origin: 'Kenya',
+      bio: 'Implementing renewable energy projects to power rural communities in Kenya.',
+      skills: ['Solar Power', 'Wind Energy', 'Rural Electrification', 'Project Management'],
+      avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
+      is_mentor: false,
+      is_investor: true,
+      looking_for_opportunities: true,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     }
   ];
 
+  // Demo data (same as useSearch)
   const demoCommunities: Community[] = [
     {
       id: '1',
@@ -463,7 +496,7 @@ export const useAdvancedSearch = () => {
     }
   }, [initialized]);
 
-  // Apply filters and search
+  // Apply filters and search with improved case-insensitive matching
   useEffect(() => {
     if (!initialized) return;
 
@@ -471,23 +504,27 @@ export const useAdvancedSearch = () => {
     
     // Simulate search delay
     const timeoutId = setTimeout(() => {
-      const searchLower = searchTerm.toLowerCase();
+      const searchLower = searchTerm.toLowerCase().trim();
       
-      // Filter professionals
+      // Filter professionals with improved search logic
       let filteredProfs = allProfessionals.filter(prof => {
         const matchesSearch = !searchTerm || 
           prof.full_name.toLowerCase().includes(searchLower) ||
           prof.profession?.toLowerCase().includes(searchLower) ||
           prof.company?.toLowerCase().includes(searchLower) ||
           prof.bio?.toLowerCase().includes(searchLower) ||
+          prof.location?.toLowerCase().includes(searchLower) ||
+          prof.country_of_origin?.toLowerCase().includes(searchLower) ||
           prof.skills?.some(skill => skill.toLowerCase().includes(searchLower));
 
         const matchesLocation = !filters.location || 
-          prof.location?.includes(filters.location) ||
-          prof.country_of_origin?.includes(filters.location);
+          prof.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
+          prof.country_of_origin?.toLowerCase().includes(filters.location.toLowerCase());
 
         const matchesSkills = filters.skills.length === 0 ||
-          filters.skills.some(skill => prof.skills?.includes(skill));
+          filters.skills.some(skill => prof.skills?.some(profSkill => 
+            profSkill.toLowerCase().includes(skill.toLowerCase())
+          ));
 
         const matchesMentor = !filters.isMentor || prof.is_mentor;
         const matchesInvestor = !filters.isInvestor || prof.is_investor;
@@ -497,23 +534,24 @@ export const useAdvancedSearch = () => {
                matchesMentor && matchesInvestor && matchesOpportunities;
       });
 
-      // Filter communities
+      // Filter communities with case-insensitive search
       let filteredComms = allCommunities.filter(comm => {
         return !searchTerm || 
           comm.name.toLowerCase().includes(searchLower) ||
-          comm.description.toLowerCase().includes(searchLower) ||
-          comm.category.toLowerCase().includes(searchLower);
+          comm.description?.toLowerCase().includes(searchLower) ||
+          comm.category?.toLowerCase().includes(searchLower);
       });
 
-      // Filter events
+      // Filter events with case-insensitive search and location filtering
       let filteredEvs = allEvents.filter(event => {
         const matchesSearch = !searchTerm || 
           event.title.toLowerCase().includes(searchLower) ||
-          event.description.toLowerCase().includes(searchLower) ||
-          event.type.toLowerCase().includes(searchLower);
+          event.description?.toLowerCase().includes(searchLower) ||
+          event.type?.toLowerCase().includes(searchLower) ||
+          event.location?.toLowerCase().includes(searchLower);
 
         const matchesLocation = !filters.location || 
-          event.location?.includes(filters.location);
+          event.location?.toLowerCase().includes(filters.location.toLowerCase());
 
         return matchesSearch && matchesLocation;
       });
