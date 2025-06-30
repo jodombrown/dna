@@ -53,6 +53,45 @@ export type Database = {
           },
         ]
       }
+      admin_reports: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          is_scheduled: boolean | null
+          last_generated: string | null
+          report_config: Json
+          report_name: string
+          report_type: string
+          schedule_config: Json | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          is_scheduled?: boolean | null
+          last_generated?: string | null
+          report_config: Json
+          report_name: string
+          report_type: string
+          schedule_config?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_scheduled?: boolean | null
+          last_generated?: string | null
+          report_config?: Json
+          report_name?: string
+          report_type?: string
+          schedule_config?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string | null
@@ -100,6 +139,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      analytics_events: {
+        Row: {
+          created_at: string
+          event_name: string
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          properties: Json | null
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          properties?: Json | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          properties?: Json | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       communities: {
         Row: {
@@ -672,6 +747,36 @@ export type Database = {
         }
         Relationships: []
       }
+      system_metrics: {
+        Row: {
+          id: string
+          metadata: Json | null
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          recorded_at: string
+          time_period: string
+        }
+        Insert: {
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          metric_type: string
+          metric_value: number
+          recorded_at?: string
+          time_period: string
+        }
+        Update: {
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          metric_type?: string
+          metric_value?: number
+          recorded_at?: string
+          time_period?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -696,6 +801,10 @@ export type Database = {
           user_id: string
           is_public: boolean
         }[]
+      }
+      get_platform_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       is_admin_user: {
         Args: { _user_id: string }

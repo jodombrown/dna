@@ -20,6 +20,8 @@ import AdminUserManagement from "./pages/AdminUserManagement";
 import AdminContentModeration from "./pages/AdminContentModeration";
 import AdminEventManagement from "./pages/AdminEventManagement";
 import AdminCommunityManagement from "@/pages/AdminCommunityManagement";
+import AdminAnalyticsDashboard from "./pages/AdminAnalyticsDashboard";
+import AdminAdvancedSettings from "./pages/AdminAdvancedSettings";
 
 // Import all your marketing pages
 import About from "./pages/About";
@@ -72,14 +74,24 @@ function App() {
                   <AdminEventManagement />
                 </ProtectedAdminRoute>
               } />
-              <Route path="/admin/settings" element={
-                <ProtectedAdminRoute>
-                  <AdminSystemSettings />
-                </ProtectedAdminRoute>
-              } />
               <Route path="/admin/communities" element={
                 <ProtectedAdminRoute>
                   <AdminCommunityManagement />
+                </ProtectedAdminRoute>
+              } />
+              <Route path="/admin/analytics" element={
+                <ProtectedAdminRoute>
+                  <AdminAnalyticsDashboard />
+                </ProtectedAdminRoute>
+              } />
+              <Route path="/admin/advanced-settings" element={
+                <ProtectedAdminRoute>
+                  <AdminAdvancedSettings />
+                </ProtectedAdminRoute>
+              } />
+              <Route path="/admin/settings" element={
+                <ProtectedAdminRoute>
+                  <AdminSystemSettings />
                 </ProtectedAdminRoute>
               } />
               <Route path="/social-feed" element={<SocialFeedPage />} />

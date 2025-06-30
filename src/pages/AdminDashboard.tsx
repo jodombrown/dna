@@ -66,6 +66,13 @@ const AdminDashboard = () => {
 
   const quickActions = [
     {
+      title: "Analytics Dashboard",
+      description: "View platform analytics and insights",
+      icon: TrendingUp,
+      action: () => navigate('/admin/analytics'),
+      roles: ['super_admin', 'analytics_viewer']
+    },
+    {
       title: "User Management",
       description: "Manage admin users and permissions",
       icon: Users,
@@ -94,8 +101,15 @@ const AdminDashboard = () => {
       roles: ['super_admin', 'event_manager']
     },
     {
+      title: "Advanced Settings",
+      description: "Configure advanced platform settings",
+      icon: Settings,
+      action: () => navigate('/admin/advanced-settings'),
+      roles: ['super_admin']
+    },
+    {
       title: "System Settings",
-      description: "Configure platform settings",
+      description: "Basic platform configuration",
       icon: Settings,
       action: () => navigate('/admin/settings'),
       roles: ['super_admin']
