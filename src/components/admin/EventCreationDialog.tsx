@@ -67,7 +67,6 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
       errors.push('Location is required for non-virtual events');
     }
     
-    // Validate date is in the future
     if (formData.dateTime) {
       const eventDate = new Date(formData.dateTime);
       const now = new Date();
@@ -76,7 +75,6 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
       }
     }
     
-    // Validate max attendees if provided
     if (formData.maxAttendees && parseInt(formData.maxAttendees) <= 0) {
       errors.push('Maximum attendees must be greater than 0');
     }
@@ -112,13 +110,11 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     try {
       let imageUrl = null;
       
-      // Handle image upload if there's an image
       if (imageFile) {
         console.log('Uploading image...');
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${user.id}/${Date.now()}.${fileExt}`;
         
-        // Check if bucket exists, if not we'll handle the error gracefully
         const { error: uploadError } = await supabase.storage
           .from('event-images')
           .upload(fileName, imageFile);
@@ -139,7 +135,6 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         }
       }
 
-      // Prepare event data
       const eventData = {
         title: formData.title.trim(),
         description: formData.description.trim(),
