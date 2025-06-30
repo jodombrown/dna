@@ -50,14 +50,19 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10" />
           
-          {/* Status badge */}
-          <div className="absolute top-2 left-2">
+          {/* Status badges - moved to left */}
+          <div className="absolute top-2 left-2 flex gap-2">
             <Badge className={getStatusColor(project.status)} variant="secondary">
               {project.status}
             </Badge>
+            {project.urgency === 'high' && (
+              <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200">
+                High Priority
+              </Badge>
+            )}
           </div>
           
-          {/* Quick actions */}
+          {/* Quick actions - moved further right to avoid overlap */}
           <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <Button
               size="sm"
