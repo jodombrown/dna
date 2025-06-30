@@ -73,7 +73,7 @@ export const filterEvents = (
 };
 
 export const hasActiveFilters = (filters: SearchFilters): boolean => {
-  return filters.location || 
+  return Boolean(filters.location) || 
          filters.skills.length > 0 || 
          filters.isMentor || 
          filters.isInvestor || 
