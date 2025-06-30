@@ -10,7 +10,7 @@ interface AuditLogEntry {
   target_type: string;
   target_id: string | null;
   details: any;
-  ip_address: string | null;
+  ip_address: unknown | null;
   user_agent: string | null;
   created_at: string;
 }
