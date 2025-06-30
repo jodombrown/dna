@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -109,22 +108,9 @@ const Search = () => {
     }
   };
 
-  // Convert data to SearchResults format
+  // Data structure for SearchResults component
   const results = {
-    professionals: professionals.map(prof => ({
-      id: prof.id,
-      full_name: prof.full_name,
-      profession: prof.profession,
-      company: prof.company,
-      location: prof.location,
-      bio: prof.bio,
-      avatar_url: prof.avatar_url,
-      skills: prof.skills,
-      is_mentor: prof.is_mentor,
-      is_investor: prof.is_investor,
-      looking_for_opportunities: prof.looking_for_opportunities,
-      country_of_origin: prof.country_of_origin
-    })),
+    professionals: professionals,
     communities: communities,
     events: events
   };
