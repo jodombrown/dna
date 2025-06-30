@@ -38,7 +38,7 @@ export const useAnalytics = () => {
       if (error) throw error;
       
       // Properly cast the JSONB response to our PlatformStats interface
-      setStats(data as PlatformStats);
+      setStats(data as unknown as PlatformStats);
     } catch (err: any) {
       console.error('Error fetching platform stats:', err);
       setError(err.message);
