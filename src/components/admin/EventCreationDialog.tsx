@@ -1,17 +1,11 @@
 
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useImageUpload } from '@/components/profile/form/ImageUploadHandler';
 import { useAuth } from '@/contexts/CleanAuthContext';
-import { Upload, X } from 'lucide-react';
+import EventCreationForm from './event-creation/EventCreationForm';
 
 interface EventCreationDialogProps {
   open: boolean;
@@ -42,19 +36,6 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     dateTime: ''
   });
 
-  const predefinedEventTypes = [
-    'Professional Networking',
-    'Investment & Funding',
-    'Mentorship & Coaching',
-    'Cultural Celebrations',
-    'Startup Pitch Sessions',
-    'Skill-Building Workshops',
-    'Community Roundtables',
-    'Impact Project Showcases',
-    'Policy & Advocacy Dialogues',
-    'Academic & Research Forums'
-  ];
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -72,12 +53,8 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     setImagePreview(null);
   };
 
-  const handleEventTypeChange = (value: string) => {
-    setFormData({ ...formData, type: value });
-  };
-
-  const handleCustomTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, type: e.target.value });
+  const handleFormDataChange = (updates: Partial<typeof formData>) => {
+    setFormData(prev => ({ ...prev, ...updates }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -175,185 +152,16 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="title">Event Title *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Enter event title"
-                required
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="type">Event Type *</Label>
-              <div className="space-y-2">
-                <Select
-                  value={formData.type}
-                  onValueChange={handleEventTypeChange}
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select or type event type" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border shadow-lg z-50">
-                    {predefinedEventTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="text-sm text-gray-600">
-                  Or create a custom type:
-                </div>
-                <Input
-                  placeholder="Type custom event type (e.g., 'fundraiser', 'showcase')"
-                  value={formData.type}
-                  onChange={handleCustomTypeChange}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <Label htmlFor="description">Description *</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Describe what this event is about..."
-              rows={4}
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="dateTime">Event Date & Time *</Label>
-            <Input
-              id="dateTime"
-              type="datetime-local"
-              value={formData.dateTime}
-              onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })}
-              required
-              min={new Date().toISOString().slice(0, 16)}
-            />
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="isVirtual"
-                checked={formData.isVirtual}
-                onCheckedChange={(checked) => setFormData({ ...formData, isVirtual: checked })}
-              />
-              <Label htmlFor="isVirtual">Virtual Event</Label>
-            </div>
-
-            {!formData.isVirtual && (
-              <div>
-                <Label htmlFor="location">Event Location *</Label>
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="Enter event location"
-                  required={!formData.isVirtual}
-                />
-              </div>
-            )}
-          </div>
-
-          <div>
-            <Label>Event Image</Label>
-            <div className="mt-2">
-              {imagePreview ? (
-                <div className="relative inline-block">
-                  <img
-                    src={imagePreview}
-                    alt="Event preview"
-                    className="w-32 h-32 object-cover rounded-lg border"
-                  />
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                    <p className="text-xs text-gray-500">Upload Image</p>
-                  </div>
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                </label>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="maxAttendees">Max Attendees (Optional)</Label>
-              <Input
-                id="maxAttendees"
-                type="number"
-                value={formData.maxAttendees}
-                onChange={(e) => setFormData({ ...formData, maxAttendees: e.target.value })}
-                placeholder="Leave empty for unlimited"
-                min="1"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="registrationUrl">Registration URL (Optional)</Label>
-              <Input
-                id="registrationUrl"
-                type="url"
-                value={formData.registrationUrl}
-                onChange={(e) => setFormData({ ...formData, registrationUrl: e.target.value })}
-                placeholder="https://..."
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="isFeatured"
-              checked={formData.isFeatured}
-              onCheckedChange={(checked) => setFormData({ ...formData, isFeatured: checked })}
-            />
-            <Label htmlFor="isFeatured">Feature this event</Label>
-          </div>
-
-          <div className="flex justify-end space-x-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="bg-dna-emerald hover:bg-dna-emerald/90"
-            >
-              {loading ? 'Creating...' : 'Create Event'}
-            </Button>
-          </div>
-        </form>
+        <EventCreationForm
+          formData={formData}
+          imagePreview={imagePreview}
+          loading={loading}
+          onFormDataChange={handleFormDataChange}
+          onImageChange={handleImageChange}
+          onRemoveImage={removeImage}
+          onSubmit={handleSubmit}
+          onCancel={() => onOpenChange(false)}
+        />
       </DialogContent>
     </Dialog>
   );
