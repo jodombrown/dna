@@ -1,52 +1,59 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-
-interface StatsData {
-  totalCollaborators: number;
-  countriesInvolved: number;
-  totalFunding: string;
-  avgProgress: number;
-}
+import { Users, Globe, DollarSign, TrendingUp } from 'lucide-react';
+import { CollaborationStats } from '@/types/collaborationTypes';
 
 interface CollaborationsQuickStatsProps {
-  stats?: StatsData;
+  stats: CollaborationStats;
 }
 
-const CollaborationsQuickStats: React.FC<CollaborationsQuickStatsProps> = ({ 
-  stats = {
-    totalCollaborators: 156,
-    countriesInvolved: 12,
-    totalFunding: '$2.4M',
-    avgProgress: 68
-  }
-}) => {
+const CollaborationsQuickStats: React.FC<CollaborationsQuickStatsProps> = ({ stats }) => {
+  const statItems = [
+    {
+      icon: <TrendingUp className="w-6 h-6 text-dna-emerald" />,
+      label: "Active Projects",
+      value: stats.total_projects.toString(),
+      description: "High-impact initiatives"
+    },
+    {
+      icon: <Users className="w-6 h-6 text-dna-copper" />,
+      label: "Active Collaborators",
+      value: stats.active_collaborators.toString(),
+      description: "Diaspora members contributing"
+    },
+    {
+      icon: <Globe className="w-6 h-6 text-dna-gold" />,
+      label: "Countries Involved",
+      value: stats.countries_involved.toString(),
+      description: "Across Africa and diaspora"
+    },
+    {
+      icon: <DollarSign className="w-6 h-6 text-dna-forest" />,
+      label: "Total Funding",
+      value: stats.total_funding,
+      description: "Mobilized for impact"
+    }
+  ];
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-      <Card>
-        <CardContent className="p-4 sm:p-6 text-center">
-          <div className="text-xl sm:text-2xl font-bold text-dna-copper mb-1 sm:mb-2">{stats.totalCollaborators}</div>
-          <div className="text-xs sm:text-sm text-gray-600">Total Collaborators</div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="p-4 sm:p-6 text-center">
-          <div className="text-xl sm:text-2xl font-bold text-dna-emerald mb-1 sm:mb-2">{stats.countriesInvolved}</div>
-          <div className="text-xs sm:text-sm text-gray-600">Countries Involved</div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="p-4 sm:p-6 text-center">
-          <div className="text-xl sm:text-2xl font-bold text-dna-forest mb-1 sm:mb-2">{stats.totalFunding}</div>
-          <div className="text-xs sm:text-sm text-gray-600">Total Funding</div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="p-4 sm:p-6 text-center">
-          <div className="text-xl sm:text-2xl font-bold text-dna-gold mb-1 sm:mb-2">{stats.avgProgress}%</div>
-          <div className="text-xs sm:text-sm text-gray-600">Avg Progress</div>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {statItems.map((stat, index) => (
+        <Card key={index} className="hover:shadow-md transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-2 bg-gray-50 rounded-lg">
+                {stat.icon}
+              </div>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+              <p className="text-sm font-medium text-gray-700 mt-1">{stat.label}</p>
+              <p className="text-xs text-gray-500 mt-1">{stat.description}</p>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 };
