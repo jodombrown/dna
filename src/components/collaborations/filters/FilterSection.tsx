@@ -29,21 +29,21 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   onSelectionChange
 }) => {
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <Label className="flex items-center gap-2 text-sm font-medium">
         <Icon className="w-4 h-4" />
         {title}
       </Label>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {options.map((option) => (
-          <div key={option.value} className="flex items-start space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+          <div key={option.value} className="flex items-start space-x-2 p-1 rounded hover:bg-gray-50 transition-colors">
             <Checkbox
               id={`${title.toLowerCase()}-${option.value}`}
               checked={selectedValues.includes(option.value)}
               onCheckedChange={(checked) =>
                 onSelectionChange(option.value, checked as boolean)
               }
-              className="mt-1"
+              className="mt-0.5"
             />
             <div className="flex-1 min-w-0">
               <Label 
@@ -51,15 +51,15 @@ const FilterSection: React.FC<FilterSectionProps> = ({
                 className={`text-sm font-medium flex items-center gap-2 cursor-pointer ${option.color || ''}`}
               >
                 {typeof option.icon === 'string' ? (
-                  <span className="text-lg">{option.icon}</span>
+                  <span className="text-base">{option.icon}</span>
                 ) : option.icon ? (
                   option.icon
                 ) : null}
-                {option.flag && <span className="text-lg">{option.flag}</span>}
+                {option.flag && <span className="text-base">{option.flag}</span>}
                 {option.label}
               </Label>
               {option.description && (
-                <p className="text-xs text-gray-500 mt-1">{option.description}</p>
+                <p className="text-xs text-gray-500">{option.description}</p>
               )}
             </div>
           </div>

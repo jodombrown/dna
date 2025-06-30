@@ -43,15 +43,15 @@ const CollaborationFiltersComponent: React.FC<CollaborationFiltersProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="sticky top-4">
+    <div className="space-y-4">
+      <Card>
         <FilterHeader
           hasActiveFilters={hasActiveFilters}
           resultCount={resultCount}
           onClearFilters={onClearFilters}
         />
 
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 p-4">
           <SearchSection
             searchQuery={filters.search_query}
             onFiltersChange={onFiltersChange}

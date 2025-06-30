@@ -17,10 +17,10 @@ const FilterHeader: React.FC<FilterHeaderProps> = ({
   onClearFilters
 }) => {
   return (
-    <CardHeader className="pb-4">
+    <CardHeader className="pb-2 p-4">
       <div className="flex items-center justify-between">
-        <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-          <Filter className="w-5 h-5" />
+        <CardTitle className="flex items-center gap-2 text-base font-semibold">
+          <Filter className="w-4 h-4" />
           Discover Initiatives
         </CardTitle>
         {hasActiveFilters && (
@@ -28,19 +28,19 @@ const FilterHeader: React.FC<FilterHeaderProps> = ({
             onClick={onClearFilters}
             variant="ghost"
             size="sm"
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 h-6 px-2"
           >
-            <X className="w-4 h-4 mr-1" />
+            <X className="w-3 h-3 mr-1" />
             Clear
           </Button>
         )}
       </div>
       <div className="flex items-center gap-2">
-        <Badge variant="secondary" className="font-medium">
+        <Badge variant="secondary" className="font-medium text-xs">
           {resultCount} initiative{resultCount !== 1 ? 's' : ''}
         </Badge>
         {hasActiveFilters && (
-          <Badge variant="outline" className="text-dna-copper">
+          <Badge variant="outline" className="text-dna-copper text-xs">
             Filtered
           </Badge>
         )}
