@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-import { useSearch } from '@/hooks/useSearch';
+import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
 import ConnectLoadingState from '@/components/connect/ConnectLoadingState';
 import ConnectErrorState from '@/components/connect/ConnectErrorState';
 import SearchSection from '@/components/connect/SearchSection';
@@ -17,11 +17,21 @@ import { useToast } from '@/hooks/use-toast';
 const ConnectExample = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { professionals, communities, events, loading, error, searchAll, getAllData } = useSearch();
+  const { 
+    searchTerm, 
+    setSearchTerm, 
+    filters, 
+    setFilters,
+    professionals, 
+    communities, 
+    events, 
+    loading, 
+    clearSearch,
+    performSearch,
+    resultCounts 
+  } = useAdvancedSearch();
   
-  const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('professionals');
-  const [initializing, setInitializing] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
   
   // Dialog states
@@ -30,27 +40,6 @@ const ConnectExample = () => {
   const [isJoinCommunityDialogOpen, setIsJoinCommunityDialogOpen] = useState(false);
   const [isRegisterEventDialogOpen, setIsRegisterEventDialogOpen] = useState(false);
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
-
-  useEffect(() => {
-    initializeData();
-  }, []);
-
-  const initializeData = async () => {
-    try {
-      setInitializing(true);
-      await getAllData();
-    } catch (err) {
-      setDataError(err instanceof Error ? err.message : 'Failed to load data');
-    } finally {
-      setInitializing(false);
-    }
-  };
-
-  const handleSearch = async () => {
-    if (searchTerm.trim()) {
-      await searchAll(searchTerm);
-    }
-  };
 
   const handleConnect = (userId: string) => {
     if (!user) {
@@ -100,13 +89,10 @@ const ConnectExample = () => {
     return 'none'; // Demo status
   };
 
-  if (initializing) {
-    return <ConnectLoadingState />;
-  }
-
-  if (dataError) {
-    return <ConnectErrorState error={dataError} onRetry={initializeData} />;
-  }
+  const initializeData = () => {
+    // This is handled automatically by useAdvancedSearch
+    console.log('Data initialized automatically');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -118,8 +104,12 @@ const ConnectExample = () => {
         <SearchSection
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
-          onSearch={handleSearch}
+          onSearch={performSearch}
+          onClearSearch={clearSearch}
           loading={loading}
+          filters={filters}
+          onFiltersChange={setFilters}
+          resultCounts={resultCounts}
         />
 
         <ConnectTabs
@@ -136,12 +126,6 @@ const ConnectExample = () => {
           isLoggedIn={!!user}
           onRefresh={initializeData}
         />
-
-        {loading && (
-          <div className="text-center py-12">
-            <div className="text-lg">Loading...</div>
-          </div>
-        )}
 
         <CallToActionSection onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
       </main>
