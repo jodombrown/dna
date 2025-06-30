@@ -74,7 +74,7 @@ const CollaborationFiltersComponent: React.FC<CollaborationFiltersProps> = ({
     {
       title: "Priority Level",
       icon: filterIcons.AlertCircle,
-      options: urgencyLevels,
+      options: urgencyLevels,      
       selectedValues: filters.urgency,
       filterKey: 'urgency' as keyof CollaborationFilters
     }
@@ -88,8 +88,8 @@ const CollaborationFiltersComponent: React.FC<CollaborationFiltersProps> = ({
         onClearFilters={onClearFilters}
       />
 
-      <ScrollArea className="flex-1 px-4">
-        <div className="space-y-1 pb-4">
+      <ScrollArea className="flex-1">
+        <div className="p-4 space-y-4">
           <SearchSection
             searchQuery={filters.search_query}
             onFiltersChange={onFiltersChange}
