@@ -7,12 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import { useImageUpload } from '@/components/profile/form/ImageUploadHandler';
+import { useAuth } from '@/contexts/CleanAuthContext';
+import { Upload, X } from 'lucide-react';
 
 interface EventCreationDialogProps {
   open: boolean;
@@ -26,7 +25,13 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
   onEventCreated
 }) => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { uploadImage } = useImageUpload();
   const [loading, setLoading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [customEventType, setCustomEventType] = useState('');
+  const [showCustomType, setShowCustomType] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -35,18 +40,67 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     isVirtual: false,
     isFeatured: false,
     maxAttendees: '',
-    registrationUrl: ''
+    registrationUrl: '',
+    dateTime: ''
   });
-  const [selectedDate, setSelectedDate] = useState<Date>();
-  const [selectedTime, setSelectedTime] = useState('');
+
+  const predefinedEventTypes = [
+    'networking',
+    'workshop', 
+    'conference',
+    'meetup',
+    'webinar',
+    'social',
+    'panel-discussion',
+    'hackathon',
+    'career-fair',
+    'mentorship'
+  ];
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+  };
+
+  const handleEventTypeChange = (value: string) => {
+    if (value === 'custom') {
+      setShowCustomType(true);
+      setFormData({ ...formData, type: '' });
+    } else {
+      setShowCustomType(false);
+      setFormData({ ...formData, type: value });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedDate || !selectedTime) {
+    if (!formData.title || !formData.dateTime) {
       toast({
         title: "Error",
-        description: "Please select both date and time for the event.",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const finalEventType = showCustomType ? customEventType : formData.type;
+    if (!finalEventType) {
+      toast({
+        title: "Error",
+        description: "Please select or enter an event type.",
         variant: "destructive",
       });
       return;
@@ -54,22 +108,33 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
 
     setLoading(true);
     try {
-      const [hours, minutes] = selectedTime.split(':');
-      const eventDateTime = new Date(selectedDate);
-      eventDateTime.setHours(parseInt(hours), parseInt(minutes));
+      let imageUrl = null;
+
+      // Upload image if provided
+      if (imageFile && user?.id) {
+        imageUrl = await uploadImage(imageFile, user.id, 'avatar');
+        if (!imageUrl) {
+          toast({
+            title: "Warning",
+            description: "Event created but image upload failed.",
+            variant: "destructive",
+          });
+        }
+      }
 
       const { error } = await supabase
         .from('events')
         .insert({
           title: formData.title,
           description: formData.description,
-          type: formData.type,
+          type: finalEventType,
           location: formData.isVirtual ? 'Virtual' : formData.location,
           is_virtual: formData.isVirtual,
           is_featured: formData.isFeatured,
           max_attendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : null,
           registration_url: formData.registrationUrl || null,
-          date_time: eventDateTime.toISOString()
+          date_time: new Date(formData.dateTime).toISOString(),
+          image_url: imageUrl
         });
 
       if (error) throw error;
@@ -88,10 +153,13 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         isVirtual: false,
         isFeatured: false,
         maxAttendees: '',
-        registrationUrl: ''
+        registrationUrl: '',
+        dateTime: ''
       });
-      setSelectedDate(undefined);
-      setSelectedTime('');
+      setCustomEventType('');
+      setShowCustomType(false);
+      setImageFile(null);
+      setImagePreview(null);
       
       onOpenChange(false);
       onEventCreated?.();
@@ -133,22 +201,31 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
             <div>
               <Label htmlFor="type">Event Type *</Label>
               <Select
-                value={formData.type}
-                onValueChange={(value) => setFormData({ ...formData, type: value })}
+                value={showCustomType ? 'custom' : formData.type}
+                onValueChange={handleEventTypeChange}
                 required
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select event type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="networking">Networking</SelectItem>
-                  <SelectItem value="workshop">Workshop</SelectItem>
-                  <SelectItem value="conference">Conference</SelectItem>
-                  <SelectItem value="meetup">Meetup</SelectItem>
-                  <SelectItem value="webinar">Webinar</SelectItem>
-                  <SelectItem value="social">Social</SelectItem>
+                  {predefinedEventTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="custom">Custom Type</SelectItem>
                 </SelectContent>
               </Select>
+              {showCustomType && (
+                <Input
+                  className="mt-2"
+                  value={customEventType}
+                  onChange={(e) => setCustomEventType(e.target.value)}
+                  placeholder="Enter custom event type"
+                  required
+                />
+              )}
             </div>
           </div>
 
@@ -164,41 +241,16 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Event Date *</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-left font-normal"
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    disabled={(date) => date < new Date()}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            
-            <div>
-              <Label htmlFor="time">Event Time *</Label>
-              <Input
-                id="time"
-                type="time"
-                value={selectedTime}
-                onChange={(e) => setSelectedTime(e.target.value)}
-                required
-              />
-            </div>
+          <div>
+            <Label htmlFor="dateTime">Event Date & Time *</Label>
+            <Input
+              id="dateTime"
+              type="datetime-local"
+              value={formData.dateTime}
+              onChange={(e) => setFormData({ ...formData, dateTime: e.target.value })}
+              required
+              min={new Date().toISOString().slice(0, 16)}
+            />
           </div>
 
           <div className="space-y-4">
@@ -223,6 +275,41 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                 />
               </div>
             )}
+          </div>
+
+          <div>
+            <Label>Event Image</Label>
+            <div className="mt-2">
+              {imagePreview ? (
+                <div className="relative inline-block">
+                  <img
+                    src={imagePreview}
+                    alt="Event preview"
+                    className="w-32 h-32 object-cover rounded-lg border"
+                  />
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <Upload className="w-8 h-8 mb-2 text-gray-400" />
+                    <p className="text-xs text-gray-500">Upload Image</p>
+                  </div>
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                </label>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
