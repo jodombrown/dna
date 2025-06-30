@@ -13,9 +13,13 @@ const Logo = () => {
       >
         <img 
           src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
-          alt="DNA" 
+          alt="DNA Logo" 
           className="h-12 w-auto"
+          onError={(e) => {
+            console.log('Logo failed to load:', e);
+          }}
         />
+        <span className="text-xl font-bold text-dna-forest">DNA</span>
       </button>
     </div>
   );
