@@ -36,7 +36,9 @@ export const useAnalytics = () => {
     try {
       const { data, error } = await supabase.rpc('get_platform_stats');
       if (error) throw error;
-      setStats(data);
+      
+      // Properly cast the JSONB response to our PlatformStats interface
+      setStats(data as PlatformStats);
     } catch (err: any) {
       console.error('Error fetching platform stats:', err);
       setError(err.message);
