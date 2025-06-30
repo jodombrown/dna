@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
-import { ArrowUpDown, Grid, List } from 'lucide-react';
+import { ArrowUpDown, Grid, List, Heart, Share2, Bookmark, Users, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const CollaborationsExample = () => {
@@ -30,13 +30,73 @@ const CollaborationsExample = () => {
   const { toast } = useToast();
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [likedProjects, setLikedProjects] = useState<Set<string>>(new Set());
+  const [bookmarkedProjects, setBookmarkedProjects] = useState<Set<string>>(new Set());
 
   const handleJoinProject = (projectId: string) => {
     const project = projects.find(p => p.id === projectId);
     toast({
-      title: "Interest Registered!",
-      description: `We've noted your interest in "${project?.title}". The project team will be in touch soon.`,
+      title: "Interest Registered! 🎉",
+      description: `Your expertise could be exactly what "${project?.title}" needs. The team will reach out within 24 hours to discuss how you can contribute.`,
+      duration: 5000,
     });
+  };
+
+  const handleLikeProject = (projectId: string) => {
+    const newLiked = new Set(likedProjects);
+    const project = projects.find(p => p.id === projectId);
+    
+    if (likedProjects.has(projectId)) {
+      newLiked.delete(projectId);
+      toast({
+        title: "Removed from liked",
+        description: `"${project?.title}" removed from your liked initiatives.`,
+      });
+    } else {
+      newLiked.add(projectId);
+      toast({
+        title: "Added to liked! ❤️",
+        description: `"${project?.title}" added to your liked initiatives. We'll keep you updated on progress.`,
+      });
+    }
+    setLikedProjects(newLiked);
+  };
+
+  const handleBookmarkProject = (projectId: string) => {
+    const newBookmarked = new Set(bookmarkedProjects);
+    const project = projects.find(p => p.id === projectId);
+    
+    if (bookmarkedProjects.has(projectId)) {
+      newBookmarked.delete(projectId);
+      toast({
+        title: "Bookmark removed",
+        description: `"${project?.title}" removed from saved initiatives.`,
+      });
+    } else {
+      newBookmarked.add(projectId);
+      toast({
+        title: "Initiative bookmarked! 🔖",
+        description: `"${project?.title}" saved for later. Access it anytime from your profile.`,
+      });
+    }
+    setBookmarkedProjects(newBookmarked);
+  };
+
+  const handleShareProject = (projectId: string) => {
+    const project = projects.find(p => p.id === projectId);
+    if (navigator.share) {
+      navigator.share({
+        title: `Join "${project?.title}" - DNA Initiative`,
+        text: `Check out this impactful African initiative: ${project?.description}`,
+        url: window.location.href + `?project=${projectId}`,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href + `?project=${projectId}`);
+      toast({
+        title: "Link copied! 📋",
+        description: `Share "${project?.title}" with your network to amplify its impact.`,
+      });
+    }
   };
 
   const handleViewDetails = (projectId: string) => {
@@ -48,27 +108,42 @@ const CollaborationsExample = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Header />
       <CollaborationsPrototypeNotice />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        {/* Enhanced Page Header */}
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Users className="w-8 h-8 text-dna-copper" />
+            <Zap className="w-6 h-6 text-dna-gold" />
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Discover Impact Initiatives
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Join meaningful projects driving positive change across Africa. 
-            Your skills, network, and passion can make a real difference.
+            Your unique skills, global network, and diaspora perspective can create lasting impact.
           </p>
+          <div className="flex items-center justify-center gap-4 mt-6">
+            <Badge className="bg-dna-emerald text-white px-4 py-2">
+              🌍 Pan-African Focus
+            </Badge>
+            <Badge className="bg-dna-copper text-white px-4 py-2">
+              🤝 Diaspora-Led
+            </Badge>
+            <Badge className="bg-dna-gold text-white px-4 py-2">
+              📈 Impact-Driven
+            </Badge>
+          </div>
         </div>
 
         {/* Quick Stats */}
         <CollaborationsQuickStats stats={stats} />
 
         <div className="grid lg:grid-cols-4 gap-8 mt-8">
-          {/* Filters Sidebar */}
+          {/* Enhanced Filters Sidebar */}
           <div className="lg:col-span-1">
             <CollaborationFiltersComponent
               filters={filters}
@@ -81,27 +156,27 @@ const CollaborationsExample = () => {
 
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-6">
-            {/* Controls Bar */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-lg shadow-sm">
+            {/* Enhanced Controls Bar */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <ArrowUpDown className="w-4 h-4 text-gray-500" />
                   <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
-                    <SelectTrigger className="w-40">
+                    <SelectTrigger className="w-48">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="relevance">Most Relevant</SelectItem>
-                      <SelectItem value="urgency">Most Urgent</SelectItem>
-                      <SelectItem value="progress">Most Progress</SelectItem>
-                      <SelectItem value="recent">Most Recent</SelectItem>
+                      <SelectItem value="relevance">🎯 Most Relevant</SelectItem>
+                      <SelectItem value="urgency">🚨 Most Urgent</SelectItem>
+                      <SelectItem value="progress">📈 Most Progress</SelectItem>
+                      <SelectItem value="recent">🆕 Most Recent</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {hasActiveFilters && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    {projects.length} filtered results
+                  <Badge variant="secondary" className="flex items-center gap-1 bg-dna-mint text-dna-forest">
+                    ✨ {projects.length} filtered results
                   </Badge>
                 )}
               </div>
@@ -111,48 +186,65 @@ const CollaborationsExample = () => {
                   variant={viewMode === 'list' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('list')}
+                  className={viewMode === 'list' ? 'bg-dna-copper hover:bg-dna-gold' : ''}
                 >
                   <List className="w-4 h-4" />
+                  <span className="hidden sm:inline ml-2">List</span>
                 </Button>
                 <Button
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
+                  className={viewMode === 'grid' ? 'bg-dna-copper hover:bg-dna-gold' : ''}
                 >
                   <Grid className="w-4 h-4" />
+                  <span className="hidden sm:inline ml-2">Grid</span>
                 </Button>
               </div>
             </div>
 
-            {/* Projects List */}
+            {/* Projects Display */}
             <EnhancedProjectDiscovery
               projects={projects}
+              viewMode={viewMode}
+              likedProjects={likedProjects}
+              bookmarkedProjects={bookmarkedProjects}
               onJoinProject={handleJoinProject}
+              onLikeProject={handleLikeProject}
+              onBookmarkProject={handleBookmarkProject}
+              onShareProject={handleShareProject}
               onViewDetails={handleViewDetails}
             />
 
-            {/* Call to Action */}
+            {/* Enhanced Call to Action */}
             {projects.length > 0 && (
-              <div className="text-center py-12 bg-white rounded-lg">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Don't see a project that matches your vision?
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Start your own initiative and invite other diaspora members to collaborate.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button 
-                    className="bg-dna-copper hover:bg-dna-gold text-white"
-                    onClick={() => setIsFeedbackPanelOpen(true)}
-                  >
-                    Start New Initiative
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    onClick={() => setIsFeedbackPanelOpen(true)}
-                  >
-                    Share Feedback
-                  </Button>
+              <div className="bg-gradient-to-r from-dna-copper/10 via-dna-emerald/10 to-dna-gold/10 rounded-xl p-8 text-center border border-dna-copper/20">
+                <div className="max-w-2xl mx-auto">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    Ready to Start Your Own Initiative?
+                  </h3>
+                  <p className="text-gray-600 mb-6 text-lg">
+                    Don't see a project that matches your vision? The African diaspora is powerful when we unite our diverse skills and perspectives.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button 
+                      size="lg"
+                      className="bg-dna-copper hover:bg-dna-gold text-white shadow-lg hover:shadow-xl transition-all"
+                      onClick={() => setIsFeedbackPanelOpen(true)}
+                    >
+                      <Zap className="w-5 h-5 mr-2" />
+                      Launch New Initiative
+                    </Button>
+                    <Button 
+                      size="lg"
+                      variant="outline"
+                      className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
+                      onClick={() => setIsFeedbackPanelOpen(true)}
+                    >
+                      <Heart className="w-5 h-5 mr-2" />
+                      Share Your Ideas
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
