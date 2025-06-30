@@ -1,5 +1,6 @@
 
 import { MapPin, Target, Users, Clock, DollarSign, AlertCircle } from 'lucide-react';
+import React from 'react';
 
 export const impactAreas = [
   { value: 'healthtech', label: 'HealthTech', icon: '🏥', description: 'Healthcare innovation' },
@@ -22,7 +23,7 @@ export const regions = [
 ];
 
 export const contributionTypes = [
-  { value: 'funding', label: 'Funding', icon: <DollarSign className="w-4 h-4" />, description: 'Financial investment' },
+  { value: 'funding', label: 'Funding', icon: React.createElement(DollarSign, { className: "w-4 h-4" }), description: 'Financial investment' },
   { value: 'technical-skills', label: 'Technical Skills', icon: '⚙️', description: 'Development & engineering' },
   { value: 'business-expertise', label: 'Business Expertise', icon: '📊', description: 'Strategy & operations' },
   { value: 'mentorship', label: 'Mentorship', icon: '🤝', description: 'Guidance & advice' },
