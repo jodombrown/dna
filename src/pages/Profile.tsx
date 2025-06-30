@@ -33,12 +33,17 @@ const Profile = () => {
         .from('profiles')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
-      setProfile(data);
+      if (error) {
+        console.error('Error fetching profile:', error);
+        setProfile(null);
+      } else {
+        setProfile(data);
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
+      setProfile(null);
     } finally {
       setLoading(false);
     }

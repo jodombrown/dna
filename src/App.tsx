@@ -14,7 +14,6 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminSystemSettings from "./pages/AdminSystemSettings";
 import SocialFeedPage from "./pages/SocialFeedPage";
-import CleanSocialFeedPage from "./pages/CleanSocialFeedPage";
 import Connect from "./pages/Connect";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
@@ -79,7 +78,6 @@ function App() {
                 </ProtectedAdminRoute>
               } />
               <Route path="/social-feed" element={<SocialFeedPage />} />
-              <Route path="/clean-social-feed" element={<CleanSocialFeedPage />} />
               <Route path="/connect" element={<Connect />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/profile/:id" element={<Profile />} />

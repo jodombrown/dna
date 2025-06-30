@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/CleanAuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import ProfileSignInPanel from "./ProfileSignInPanel";
 import ProfileLoadingState from "./ProfileLoadingState";
@@ -28,6 +28,7 @@ const MyProfileContainer = () => {
       setShowTour(true);
     }
   }, [user]);
+
   const handleTourClose = () => {
     setShowTour(false);
     localStorage.setItem("dna-onboarded", "1");
@@ -37,7 +38,9 @@ const MyProfileContainer = () => {
     const searchParams = new URLSearchParams(location.search);
     return searchParams.get("edit") === "1";
   }
+
   useEffect(() => setEditing(getEditingFromQuery()), [location.search]);
+
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     if (editing) {
@@ -51,7 +54,7 @@ const MyProfileContainer = () => {
         navigate({ pathname: location.pathname, search: searchParams.toString() }, { replace: true });
       }
     }
-  }, [editing]);
+  }, [editing, navigate, location.pathname]);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -107,7 +110,7 @@ const MyProfileContainer = () => {
       if (calculateProfileCompletion(data) >= 90 && localStorage.getItem("dna-onboarded")) {
         toast({
           title: "🎉 Profile Nearly Complete!",
-          description: "You’re ready to connect and explore the DNA community.",
+          description: "You're ready to connect and explore the DNA community.",
         });
       }
     } catch (err: any) {
