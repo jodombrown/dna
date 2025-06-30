@@ -1,16 +1,15 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useImageUpload } from '@/components/profile/form/ImageUploadHandler';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import EventCreationForm from './event-creation/EventCreationForm';
 
 interface EventCreationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onEventCreated?: () => void;
+  onEventCreated: () => void;
 }
 
 const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
@@ -20,10 +19,10 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
 }) => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const { uploadImage } = useImageUpload();
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -36,81 +35,92 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     dateTime: ''
   });
 
+  const handleFormDataChange = (data: Partial<typeof formData>) => {
+    setFormData(prev => ({ ...prev, ...data }));
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setImageFile(file);
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
+      reader.onload = () => {
+        setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const removeImage = () => {
+  const handleRemoveImage = () => {
     setImageFile(null);
     setImagePreview(null);
-  };
-
-  const handleFormDataChange = (updates: Partial<typeof formData>) => {
-    setFormData(prev => ({ ...prev, ...updates }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.dateTime || !formData.type) {
+    if (!user) {
       toast({
-        title: "Error",
-        description: "Please fill in all required fields including event type.",
+        title: "Authentication Required",
+        description: "You must be logged in to create events.",
         variant: "destructive",
       });
       return;
     }
 
     setLoading(true);
+
     try {
       let imageUrl = null;
+      
+      if (imageFile) {
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('event-images')
+          .upload(fileName, imageFile);
 
-      // Upload image if provided
-      if (imageFile && user?.id) {
-        try {
-          imageUrl = await uploadImage(imageFile, user.id, 'event-images');
-          if (!imageUrl) {
-            console.warn('Image upload failed, continuing without image');
-          }
-        } catch (error) {
-          console.error('Image upload error:', error);
-          toast({
-            title: "Warning",
-            description: "Event will be created but image upload failed.",
-            variant: "destructive",
-          });
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          throw uploadError;
         }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('event-images')
+          .getPublicUrl(fileName);
+        
+        imageUrl = publicUrl;
       }
+
+      const eventData = {
+        title: formData.title,
+        description: formData.description,
+        type: formData.type,
+        date_time: formData.dateTime,
+        location: formData.isVirtual ? null : formData.location,
+        is_virtual: formData.isVirtual,
+        is_featured: formData.isFeatured,
+        max_attendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : null,
+        registration_url: formData.registrationUrl || null,
+        image_url: imageUrl,
+        created_by: user.id
+      };
+
+      console.log('Creating event with data:', eventData);
 
       const { error } = await supabase
         .from('events')
-        .insert({
-          title: formData.title,
-          description: formData.description,
-          type: formData.type,
-          location: formData.isVirtual ? 'Virtual' : formData.location,
-          is_virtual: formData.isVirtual,
-          is_featured: formData.isFeatured,
-          max_attendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : null,
-          registration_url: formData.registrationUrl || null,
-          date_time: new Date(formData.dateTime).toISOString(),
-          image_url: imageUrl,
-          banner_url: imageUrl
-        });
+        .insert([eventData]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
 
       toast({
         title: "Event Created",
-        description: "The event has been successfully created.",
+        description: "Your event has been created successfully.",
       });
 
       // Reset form
@@ -128,13 +138,13 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
       setImageFile(null);
       setImagePreview(null);
       
+      onEventCreated();
       onOpenChange(false);
-      onEventCreated?.();
     } catch (error: any) {
       console.error('Error creating event:', error);
       toast({
         title: "Error",
-        description: "Failed to create event. Please try again.",
+        description: error.message || "Failed to create event. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -142,14 +152,28 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     }
   };
 
+  const handleCancel = () => {
+    setFormData({
+      title: '',
+      description: '',
+      type: '',
+      location: '',
+      isVirtual: false,
+      isFeatured: false,
+      maxAttendees: '',
+      registrationUrl: '',
+      dateTime: ''
+    });
+    setImageFile(null);
+    setImagePreview(null);
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Event</DialogTitle>
-          <DialogDescription>
-            Create a new community event. All fields marked with * are required.
-          </DialogDescription>
         </DialogHeader>
         
         <EventCreationForm
@@ -158,9 +182,9 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
           loading={loading}
           onFormDataChange={handleFormDataChange}
           onImageChange={handleImageChange}
-          onRemoveImage={removeImage}
+          onRemoveImage={handleRemoveImage}
           onSubmit={handleSubmit}
-          onCancel={() => onOpenChange(false)}
+          onCancel={handleCancel}
         />
       </DialogContent>
     </Dialog>
