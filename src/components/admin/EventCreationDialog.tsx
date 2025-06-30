@@ -43,16 +43,16 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
   });
 
   const predefinedEventTypes = [
-    'networking',
-    'workshop', 
-    'conference',
-    'meetup',
-    'webinar',
-    'social',
-    'panel-discussion',
-    'hackathon',
-    'career-fair',
-    'mentorship'
+    'Professional Networking',
+    'Investment & Funding',
+    'Mentorship & Coaching',
+    'Cultural Celebrations',
+    'Startup Pitch Sessions',
+    'Skill-Building Workshops',
+    'Community Roundtables',
+    'Impact Project Showcases',
+    'Policy & Advocacy Dialogues',
+    'Academic & Research Forums'
   ];
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,6 +74,10 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
 
   const handleEventTypeChange = (value: string) => {
     setFormData({ ...formData, type: value });
+  };
+
+  const handleCustomTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, type: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -198,7 +202,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                   <SelectContent className="bg-white border shadow-lg z-50">
                     {predefinedEventTypes.map((type) => (
                       <SelectItem key={type} value={type}>
-                        {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}
+                        {type}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -209,7 +213,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                 <Input
                   placeholder="Type custom event type (e.g., 'fundraiser', 'showcase')"
                   value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                  onChange={handleCustomTypeChange}
                 />
               </div>
             </div>
