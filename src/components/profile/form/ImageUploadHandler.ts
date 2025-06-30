@@ -5,13 +5,22 @@ import { useToast } from '@/hooks/use-toast';
 export const useImageUpload = () => {
   const { toast } = useToast();
 
-  const uploadImage = async (file: File, userId: string, type: 'avatar' | 'banner'): Promise<string | null> => {
+  const uploadImage = async (file: File, userId: string, type: 'avatar' | 'banner' | 'event-images'): Promise<string | null> => {
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${userId}/${type}-${Date.now()}.${fileExt}`;
+      let fileName: string;
+      let bucketName: string;
+
+      if (type === 'event-images') {
+        bucketName = 'event-images';
+        fileName = `${userId}/event-${Date.now()}.${fileExt}`;
+      } else {
+        bucketName = 'profile-images';
+        fileName = `${userId}/${type}-${Date.now()}.${fileExt}`;
+      }
 
       const { data, error } = await supabase.storage
-        .from('profile-images')
+        .from(bucketName)
         .upload(fileName, file, {
           cacheControl: '3600',
           upsert: true
@@ -29,7 +38,7 @@ export const useImageUpload = () => {
 
       // Get the public URL
       const { data: urlData } = supabase.storage
-        .from('profile-images')
+        .from(bucketName)
         .getPublicUrl(data.path);
 
       return urlData.publicUrl;
