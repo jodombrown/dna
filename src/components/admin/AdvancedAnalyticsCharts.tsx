@@ -18,28 +18,12 @@ import {
   ResponsiveContainer,
   Legend
 } from 'recharts';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const AdvancedAnalyticsCharts: React.FC = () => {
-  // Mock data for demo purposes
-  const userGrowthData = [
-    { month: 'Jan', users: 120, active: 85 },
-    { month: 'Feb', users: 180, active: 142 },
-    { month: 'Mar', users: 220, active: 189 },
-    { month: 'Apr', users: 290, active: 245 },
-    { month: 'May', users: 350, active: 298 },
-    { month: 'Jun', users: 420, active: 365 }
-  ];
+  const { userGrowthData, engagementData, loading } = useAnalytics();
 
-  const engagementData = [
-    { day: 'Mon', posts: 45, comments: 123, likes: 234 },
-    { day: 'Tue', posts: 52, comments: 145, likes: 287 },
-    { day: 'Wed', posts: 38, comments: 98, likes: 201 },
-    { day: 'Thu', posts: 61, comments: 167, likes: 342 },
-    { day: 'Fri', posts: 48, comments: 134, likes: 298 },
-    { day: 'Sat', posts: 35, comments: 89, likes: 187 },
-    { day: 'Sun', posts: 42, comments: 112, likes: 234 }
-  ];
-
+  // Mock region data for now - this could be enhanced with real geolocation data
   const regionData = [
     { name: 'North America', value: 35, color: '#8884d8' },
     { name: 'Europe', value: 28, color: '#82ca9d' },
@@ -48,33 +32,46 @@ const AdvancedAnalyticsCharts: React.FC = () => {
     { name: 'Others', value: 3, color: '#00ff00' }
   ];
 
-  const communityGrowthData = [
-    { month: 'Jan', communities: 12, members: 450 },
-    { month: 'Feb', communities: 18, members: 720 },
-    { month: 'Mar', communities: 25, members: 980 },
-    { month: 'Apr', communities: 32, members: 1340 },
-    { month: 'May', communities: 41, members: 1680 },
-    { month: 'Jun', communities: 48, members: 2120 }
-  ];
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i}>
+            <CardHeader>
+              <CardTitle>Loading...</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64 bg-gray-100 animate-pulse rounded"></div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* User Growth Chart */}
       <Card>
         <CardHeader>
-          <CardTitle>User Growth Trend</CardTitle>
+          <CardTitle>User Growth Trend (30 days)</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={userGrowthData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
+              <XAxis 
+                dataKey="date" 
+                tickFormatter={(value) => new Date(value).toLocaleDateString()}
+              />
               <YAxis />
-              <Tooltip />
+              <Tooltip 
+                labelFormatter={(value) => new Date(value).toLocaleDateString()}
+              />
               <Legend />
               <Area 
                 type="monotone" 
-                dataKey="users" 
+                dataKey="total_users" 
                 stackId="1" 
                 stroke="#8884d8" 
                 fill="#8884d8"
@@ -82,11 +79,11 @@ const AdvancedAnalyticsCharts: React.FC = () => {
               />
               <Area 
                 type="monotone" 
-                dataKey="active" 
-                stackId="1" 
+                dataKey="new_users" 
+                stackId="2" 
                 stroke="#82ca9d" 
                 fill="#82ca9d"
-                name="Active Users"
+                name="New Users"
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -96,15 +93,20 @@ const AdvancedAnalyticsCharts: React.FC = () => {
       {/* Engagement Analytics */}
       <Card>
         <CardHeader>
-          <CardTitle>Weekly Engagement</CardTitle>
+          <CardTitle>Weekly Engagement (7 days)</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={engagementData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
+              <XAxis 
+                dataKey="date"
+                tickFormatter={(value) => new Date(value).toLocaleDateString()}
+              />
               <YAxis />
-              <Tooltip />
+              <Tooltip 
+                labelFormatter={(value) => new Date(value).toLocaleDateString()}
+              />
               <Legend />
               <Bar dataKey="posts" fill="#8884d8" name="Posts" />
               <Bar dataKey="comments" fill="#82ca9d" name="Comments" />
@@ -142,28 +144,30 @@ const AdvancedAnalyticsCharts: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Community Growth */}
+      {/* Growth Rate Chart */}
       <Card>
         <CardHeader>
-          <CardTitle>Community Growth</CardTitle>
+          <CardTitle>Daily Growth Rate</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={communityGrowthData}>
+            <LineChart data={userGrowthData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis yAxisId="left" />
-              <YAxis yAxisId="right" orientation="right" />
-              <Tooltip />
+              <XAxis 
+                dataKey="date"
+                tickFormatter={(value) => new Date(value).toLocaleDateString()}
+              />
+              <YAxis />
+              <Tooltip 
+                labelFormatter={(value) => new Date(value).toLocaleDateString()}
+              />
               <Legend />
-              <Bar yAxisId="left" dataKey="communities" fill="#8884d8" name="Communities" />
               <Line 
-                yAxisId="right" 
                 type="monotone" 
-                dataKey="members" 
+                dataKey="new_users" 
                 stroke="#ff7300" 
                 strokeWidth={2}
-                name="Total Members"
+                name="New Users Per Day"
               />
             </LineChart>
           </ResponsiveContainer>

@@ -25,9 +25,24 @@ interface AnalyticsEvent {
   created_at: string;
 }
 
+interface UserGrowthData {
+  date: string;
+  new_users: number;
+  total_users: number;
+}
+
+interface EngagementData {
+  date: string;
+  posts: number;
+  comments: number;
+  likes: number;
+}
+
 export const useAnalytics = () => {
   const [stats, setStats] = useState<PlatformStats | null>(null);
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
+  const [userGrowthData, setUserGrowthData] = useState<UserGrowthData[]>([]);
+  const [engagementData, setEngagementData] = useState<EngagementData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -37,7 +52,6 @@ export const useAnalytics = () => {
       const { data, error } = await supabase.rpc('get_platform_stats');
       if (error) throw error;
       
-      // Properly cast the JSONB response to our PlatformStats interface
       setStats(data as unknown as PlatformStats);
     } catch (err: any) {
       console.error('Error fetching platform stats:', err);
@@ -61,19 +75,115 @@ export const useAnalytics = () => {
     }
   };
 
+  const fetchUserGrowthData = async () => {
+    try {
+      // Get user registration data for the last 30 days
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('created_at')
+        .gte('created_at', thirtyDaysAgo.toISOString())
+        .order('created_at');
+
+      if (error) throw error;
+
+      // Process the data to get daily growth
+      const growthMap = new Map<string, number>();
+      data?.forEach(profile => {
+        const date = new Date(profile.created_at).toISOString().split('T')[0];
+        growthMap.set(date, (growthMap.get(date) || 0) + 1);
+      });
+
+      // Convert to array format needed for charts
+      const growthData: UserGrowthData[] = [];
+      let totalUsers = 0;
+      
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        const newUsers = growthMap.get(dateStr) || 0;
+        totalUsers += newUsers;
+        
+        growthData.push({
+          date: dateStr,
+          new_users: newUsers,
+          total_users: totalUsers
+        });
+      }
+
+      setUserGrowthData(growthData);
+    } catch (err: any) {
+      console.error('Error fetching user growth data:', err);
+    }
+  };
+
+  const fetchEngagementData = async () => {
+    try {
+      // Get post engagement data for the last 7 days
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const { data, error } = await supabase
+        .from('posts')
+        .select('created_at, likes_count, comments_count')
+        .gte('created_at', sevenDaysAgo.toISOString())
+        .order('created_at');
+
+      if (error) throw error;
+
+      // Process the data by day
+      const engagementMap = new Map<string, { posts: number; likes: number; comments: number }>();
+      
+      data?.forEach(post => {
+        const date = new Date(post.created_at).toISOString().split('T')[0];
+        const current = engagementMap.get(date) || { posts: 0, likes: 0, comments: 0 };
+        engagementMap.set(date, {
+          posts: current.posts + 1,
+          likes: current.likes + (post.likes_count || 0),
+          comments: current.comments + (post.comments_count || 0)
+        });
+      });
+
+      // Convert to array format
+      const engagement: EngagementData[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        const dayData = engagementMap.get(dateStr) || { posts: 0, likes: 0, comments: 0 };
+        
+        engagement.push({
+          date: dateStr,
+          posts: dayData.posts,
+          comments: dayData.comments,
+          likes: dayData.likes
+        });
+      }
+
+      setEngagementData(engagement);
+    } catch (err: any) {
+      console.error('Error fetching engagement data:', err);
+    }
+  };
+
   const trackEvent = async (
     eventType: string,
     eventName: string,
     properties: any = {}
   ) => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const { error } = await supabase
         .from('analytics_events')
         .insert({
           event_type: eventType,
           event_name: eventName,
           properties,
-          user_id: (await supabase.auth.getUser()).data.user?.id
+          user_id: user?.id
         });
 
       if (error) throw error;
@@ -84,7 +194,12 @@ export const useAnalytics = () => {
 
   const refetch = async () => {
     setLoading(true);
-    await Promise.all([fetchPlatformStats(), fetchRecentEvents()]);
+    await Promise.all([
+      fetchPlatformStats(), 
+      fetchRecentEvents(),
+      fetchUserGrowthData(),
+      fetchEngagementData()
+    ]);
     setLoading(false);
   };
 
@@ -95,6 +210,8 @@ export const useAnalytics = () => {
   return {
     stats,
     events,
+    userGrowthData,
+    engagementData,
     loading,
     error,
     trackEvent,

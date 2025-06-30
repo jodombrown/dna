@@ -47,6 +47,12 @@ export const useAuditLog = () => {
     details: any = {}
   ) => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.error('No authenticated user for audit log');
+        return;
+      }
+
       const { error } = await supabase
         .from('admin_audit_log')
         .insert({
@@ -54,12 +60,24 @@ export const useAuditLog = () => {
           target_type: targetType,
           target_id: targetId,
           details,
-          admin_user_id: (await supabase.auth.getUser()).data.user?.id
+          admin_user_id: user.id,
+          ip_address: null, // Could be enhanced to capture real IP
+          user_agent: navigator.userAgent
         });
 
       if (error) throw error;
+      
+      // Refresh the audit logs to show the new entry
+      await fetchAuditLogs();
+      
+      console.log(`Audit log created: ${action} on ${targetType}`);
     } catch (err: any) {
       console.error('Error logging action:', err);
+      toast({
+        title: "Audit Log Error",
+        description: "Failed to log admin action",
+        variant: "destructive"
+      });
     }
   };
 

@@ -18,7 +18,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 interface Notification {
   id: string;
-  type: 'user_registration' | 'content_flag' | 'event_created' | 'admin_action';
+  type: 'user_registration' | 'content_flag' | 'event_created' | 'admin_action' | 'community_created';
   title: string;
   message: string;
   data?: any;
@@ -32,36 +32,147 @@ const RealTimeNotifications: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Simulate real-time notifications for demo
-    const mockNotifications: Notification[] = [
-      {
-        id: '1',
-        type: 'user_registration',
-        title: 'New User Registration',
-        message: 'john.doe@example.com has joined the platform',
-        read: false,
-        created_at: new Date(Date.now() - 2 * 60 * 1000).toISOString()
-      },
-      {
-        id: '2',
-        type: 'content_flag',
-        title: 'Content Flagged',
-        message: 'A post has been flagged for inappropriate content',
-        read: false,
-        created_at: new Date(Date.now() - 15 * 60 * 1000).toISOString()
-      },
-      {
-        id: '3',
-        type: 'event_created',
-        title: 'New Event Created',
-        message: 'Tech Talk: AI in Africa has been submitted for review',
-        read: true,
-        created_at: new Date(Date.now() - 60 * 60 * 1000).toISOString()
-      }
-    ];
+    // Fetch recent activities that would generate notifications
+    const fetchRecentActivities = async () => {
+      try {
+        const notifications: Notification[] = [];
 
-    setNotifications(mockNotifications);
-    setUnreadCount(mockNotifications.filter(n => !n.read).length);
+        // Get recent user registrations
+        const { data: recentProfiles } = await supabase
+          .from('profiles')
+          .select('id, email, full_name, created_at')
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        recentProfiles?.forEach(profile => {
+          notifications.push({
+            id: `user-${profile.id}`,
+            type: 'user_registration',
+            title: 'New User Registration',
+            message: `${profile.full_name || profile.email} has joined the platform`,
+            data: { userId: profile.id },
+            read: false,
+            created_at: profile.created_at
+          });
+        });
+
+        // Get recent content flags
+        const { data: recentFlags } = await supabase
+          .from('content_flags')
+          .select('id, content_type, reason, created_at')
+          .eq('status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        recentFlags?.forEach(flag => {
+          notifications.push({
+            id: `flag-${flag.id}`,
+            type: 'content_flag',
+            title: 'Content Flagged',
+            message: `A ${flag.content_type} has been flagged: ${flag.reason}`,
+            data: { flagId: flag.id },
+            read: false,
+            created_at: flag.created_at
+          });
+        });
+
+        // Get recent communities pending approval
+        const { data: pendingCommunities } = await supabase
+          .from('communities')
+          .select('id, name, created_at')
+          .eq('moderation_status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        pendingCommunities?.forEach(community => {
+          notifications.push({
+            id: `community-${community.id}`,
+            type: 'community_created',
+            title: 'Community Awaiting Approval',
+            message: `"${community.name}" community needs review`,
+            data: { communityId: community.id },
+            read: false,
+            created_at: community.created_at
+          });
+        });
+
+        // Get recent events
+        const { data: recentEvents } = await supabase
+          .from('events')
+          .select('id, title, created_at')
+          .order('created_at', { ascending: false })
+          .limit(3);
+
+        recentEvents?.forEach(event => {
+          notifications.push({
+            id: `event-${event.id}`,
+            type: 'event_created',
+            title: 'New Event Created',
+            message: `"${event.title}" event has been created`,
+            data: { eventId: event.id },
+            read: true, // Mark events as read by default
+            created_at: event.created_at
+          });
+        });
+
+        // Sort by creation date and limit
+        notifications.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        const limitedNotifications = notifications.slice(0, 10);
+
+        setNotifications(limitedNotifications);
+        setUnreadCount(limitedNotifications.filter(n => !n.read).length);
+
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    fetchRecentActivities();
+
+    // Set up real-time subscriptions for new content
+    const channel = supabase
+      .channel('admin-notifications')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'profiles'
+      }, (payload) => {
+        const newNotification: Notification = {
+          id: `user-${payload.new.id}-${Date.now()}`,
+          type: 'user_registration',
+          title: 'New User Registration',
+          message: `${payload.new.full_name || payload.new.email} has joined the platform`,
+          data: { userId: payload.new.id },
+          read: false,
+          created_at: payload.new.created_at
+        };
+        
+        setNotifications(prev => [newNotification, ...prev.slice(0, 9)]);
+        setUnreadCount(prev => prev + 1);
+      })
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'content_flags'
+      }, (payload) => {
+        const newNotification: Notification = {
+          id: `flag-${payload.new.id}-${Date.now()}`,
+          type: 'content_flag',
+          title: 'Content Flagged',
+          message: `A ${payload.new.content_type} has been flagged`,
+          data: { flagId: payload.new.id },
+          read: false,
+          created_at: payload.new.created_at
+        };
+        
+        setNotifications(prev => [newNotification, ...prev.slice(0, 9)]);
+        setUnreadCount(prev => prev + 1);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const getNotificationIcon = (type: string) => {
@@ -72,6 +183,8 @@ const RealTimeNotifications: React.FC = () => {
         return <AlertTriangle className="w-4 h-4 text-red-600" />;
       case 'event_created':
         return <Calendar className="w-4 h-4 text-green-600" />;
+      case 'community_created':
+        return <MessageSquare className="w-4 h-4 text-purple-600" />;
       default:
         return <MessageSquare className="w-4 h-4 text-gray-600" />;
     }
