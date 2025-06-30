@@ -19,7 +19,6 @@ const Logo = () => {
             console.log('Logo failed to load:', e);
           }}
         />
-        <span className="text-xl font-bold text-dna-forest">DNA</span>
       </button>
     </div>
   );

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Logo from './header/Logo';
 import DesktopNavigation from './header/DesktopNavigation';
 import MobileNavigation from './header/MobileNavigation';
-import SearchBar from './header/SearchBar';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { Button } from '@/components/ui/button';
 import { User } from 'lucide-react';
@@ -31,10 +30,6 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Logo />
-          </div>
-          
-          <div className="hidden md:block flex-1 max-w-md mx-8">
-            <SearchBar />
           </div>
           
           <div className="flex items-center space-x-4">
@@ -85,12 +80,6 @@ const Header = () => {
               </DropdownMenu>
             ) : (
               <div className="flex items-center space-x-2">
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate('/auth')}
-                >
-                  Sign In
-                </Button>
                 <Button
                   onClick={() => navigate('/auth?mode=signup')}
                   className="bg-dna-emerald hover:bg-dna-forest text-white"
