@@ -14,30 +14,30 @@ const FilterCheckboxes: React.FC<FilterCheckboxesProps> = ({ filters, onCheckbox
     <>
       <div className="flex items-center space-x-2">
         <Checkbox
-          id="isMentor"
-          name="isMentor"
-          checked={filters.isMentor}
-          onCheckedChange={(checked) => onCheckboxChange('isMentor', !!checked)}
+          id="is_mentor"
+          name="is_mentor"
+          checked={filters.is_mentor}
+          onCheckedChange={(checked) => onCheckboxChange('is_mentor', !!checked)}
         />
-        <Label htmlFor="isMentor">Is Mentor</Label>
+        <Label htmlFor="is_mentor">Is Mentor</Label>
       </div>
       <div className="flex items-center space-x-2">
         <Checkbox
-          id="isInvestor"
-          name="isInvestor"
-          checked={filters.isInvestor}
-          onCheckedChange={(checked) => onCheckboxChange('isInvestor', !!checked)}
+          id="is_investor"
+          name="is_investor"
+          checked={filters.is_investor}
+          onCheckedChange={(checked) => onCheckboxChange('is_investor', !!checked)}
         />
-        <Label htmlFor="isInvestor">Is Investor</Label>
+        <Label htmlFor="is_investor">Is Investor</Label>
       </div>
       <div className="flex items-center space-x-2">
         <Checkbox
-          id="lookingForOpportunities"
-          name="lookingForOpportunities"
-          checked={filters.lookingForOpportunities}
-          onCheckedChange={(checked) => onCheckboxChange('lookingForOpportunities', !!checked)}
+          id="looking_for_opportunities"
+          name="looking_for_opportunities"
+          checked={filters.looking_for_opportunities}
+          onCheckedChange={(checked) => onCheckboxChange('looking_for_opportunities', !!checked)}
         />
-        <Label htmlFor="lookingForOpportunities">Looking for Opportunities</Label>
+        <Label htmlFor="looking_for_opportunities">Looking for Opportunities</Label>
       </div>
     </>
   );

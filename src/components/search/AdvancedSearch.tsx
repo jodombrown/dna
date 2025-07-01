@@ -18,10 +18,12 @@ const defaultFilters: SearchFilters = {
   location: '',
   profession: '',
   skills: [],
+  interests: [],
+  company: '',
   experience: '',
-  isMentor: false,
-  isInvestor: false,
-  lookingForOpportunities: false,
+  is_mentor: false,
+  is_investor: false,
+  looking_for_opportunities: false,
   countryOfOrigin: ''
 };
 
