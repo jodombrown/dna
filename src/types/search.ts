@@ -26,7 +26,7 @@ export interface Professional {
 export interface Community {
   id: string;
   name: string;
-  description: string; // Made required to match useSearch hook
+  description: string;
   category?: string;
   member_count: number;
   is_featured: boolean;
@@ -38,7 +38,7 @@ export interface Community {
 export interface Event {
   id: string;
   title: string;
-  description: string; // Made required to match useSearch hook
+  description: string;
   type?: string;
   date_time?: string;
   location?: string;

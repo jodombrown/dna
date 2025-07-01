@@ -62,7 +62,7 @@ const Search = () => {
     setShowRecommendations(true);
   };
 
-  // Data structure for SearchResults component
+  // Data structure for SearchResults component - convert to expected format
   const results = {
     professionals: professionals,
     communities: communities,

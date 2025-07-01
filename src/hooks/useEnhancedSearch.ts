@@ -1,11 +1,22 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { enhancedDemoProfessionals, enhancedDemoCommunities, enhancedDemoEvents } from '@/data/enhancedDemoData';
-import { Professional, Community, Event, SearchFilters } from '@/types/search';
+import { Professional, Community, Event } from '@/types/search';
+
+interface EnhancedSearchFilters {
+  location: string;
+  skills: string[];
+  interests: string[];
+  profession: string;
+  company: string;
+  is_mentor: boolean;
+  is_investor: boolean;
+  looking_for_opportunities: boolean;
+}
 
 export const useEnhancedSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState<SearchFilters>({
+  const [filters, setFilters] = useState<EnhancedSearchFilters>({
     location: '',
     skills: [],
     interests: [],
@@ -39,7 +50,7 @@ export const useEnhancedSearch = () => {
         filters.skills.some(skill => 
           Array.isArray(professional.skills) 
             ? professional.skills.some(pSkill => pSkill.toLowerCase().includes(skill.toLowerCase()))
-            : professional.skills?.toLowerCase().includes(skill.toLowerCase())
+            : false
         );
 
       const matchesMentor = !filters.is_mentor || professional.is_mentor;
