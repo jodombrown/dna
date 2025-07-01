@@ -10,11 +10,15 @@ export const useAdvancedSearch = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<SearchFilters>({
+    searchTerm: '',
     location: '',
     skills: [],
-    isMentor: false,
-    isInvestor: false,
-    lookingForOpportunities: false
+    interests: [],
+    profession: '',
+    company: '',
+    is_mentor: false,
+    is_investor: false,
+    looking_for_opportunities: false
   });
   
   const [allProfessionals, setAllProfessionals] = useState<Professional[]>([]);
@@ -49,9 +53,18 @@ export const useAdvancedSearch = () => {
     
     // Simulate search delay
     const timeoutId = setTimeout(() => {
-      const filteredProfs = filterProfessionals(allProfessionals, searchTerm, filters);
+      // Convert filters to the format expected by filter functions
+      const filterForUtils = {
+        location: filters.location,
+        skills: filters.skills,
+        isMentor: filters.is_mentor,
+        isInvestor: filters.is_investor,
+        lookingForOpportunities: filters.looking_for_opportunities
+      };
+
+      const filteredProfs = filterProfessionals(allProfessionals, searchTerm, filterForUtils);
       const filteredComms = filterCommunities(allCommunities, searchTerm);
-      const filteredEvs = filterEvents(allEvents, searchTerm, filters);
+      const filteredEvs = filterEvents(allEvents, searchTerm, filterForUtils);
 
       setFilteredProfessionals(filteredProfs);
       setFilteredCommunities(filteredComms);
@@ -59,7 +72,7 @@ export const useAdvancedSearch = () => {
       setLoading(false);
 
       // Show search results toast
-      if (searchTerm || hasActiveFilters(filters)) {
+      if (searchTerm || hasActiveFilters(filterForUtils)) {
         toast({
           title: "Search Results",
           description: `Found ${filteredProfs.length} professionals, ${filteredComms.length} communities, and ${filteredEvs.length} events`,
@@ -73,17 +86,30 @@ export const useAdvancedSearch = () => {
   const clearSearch = () => {
     setSearchTerm('');
     setFilters({
+      searchTerm: '',
       location: '',
       skills: [],
-      isMentor: false,
-      isInvestor: false,
-      lookingForOpportunities: false
+      interests: [],
+      profession: '',
+      company: '',
+      is_mentor: false,
+      is_investor: false,
+      looking_for_opportunities: false
     });
   };
 
   const performSearch = () => {
+    // Convert filters for hasActiveFilters check
+    const filterForUtils = {
+      location: filters.location,
+      skills: filters.skills,
+      isMentor: filters.is_mentor,
+      isInvestor: filters.is_investor,
+      lookingForOpportunities: filters.looking_for_opportunities
+    };
+    
     // Trigger re-filter (useEffect will handle the actual filtering)
-    if (searchTerm || hasActiveFilters(filters)) {
+    if (searchTerm || hasActiveFilters(filterForUtils)) {
       console.log('Performing search with:', { searchTerm, filters });
     }
   };

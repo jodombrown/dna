@@ -8,7 +8,8 @@ import SearchContent from '@/components/search/SearchContent';
 import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
 import { useSearchHandlers } from '@/hooks/useSearchHandlers';
 import { useAuth } from '@/contexts/CleanAuthContext';
-import { SearchFilters } from '@/types/search';
+import { SearchFilters as AdvancedSearchFilters } from '@/types/advancedSearchTypes';
+import { SearchFilters as SearchTypesFilters } from '@/types/searchTypes';
 import { demoRecommendations } from '@/data/searchRecommendations';
 
 const Search = () => {
@@ -40,17 +41,20 @@ const Search = () => {
     }
   }, [searchParams, setSearchTerm]);
 
-  const handleSearch = async (searchFilters: SearchFilters) => {
+  const handleSearch = async (searchFilters: SearchTypesFilters) => {
     setShowRecommendations(false);
     
-    // Update the search term and filters
+    // Update the search term and filters - convert between interface types
     setSearchTerm(searchFilters.searchTerm);
     setFilters({
       location: searchFilters.location,
       skills: searchFilters.skills,
-      is_mentor: searchFilters.is_mentor,
-      is_investor: searchFilters.is_investor,
-      looking_for_opportunities: searchFilters.looking_for_opportunities
+      interests: searchFilters.interests || [],
+      profession: searchFilters.profession || '',
+      company: searchFilters.company || '',
+      is_mentor: searchFilters.isMentor,
+      is_investor: searchFilters.isInvestor,
+      looking_for_opportunities: searchFilters.lookingForOpportunities
     });
     
     // Perform the search

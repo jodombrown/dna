@@ -1,10 +1,14 @@
 
 export interface SearchFilters {
+  searchTerm: string;
   location: string;
   skills: string[];
-  isMentor: boolean;
-  isInvestor: boolean;
-  lookingForOpportunities: boolean;
+  interests: string[];
+  profession: string;
+  company: string;
+  is_mentor: boolean;
+  is_investor: boolean;
+  looking_for_opportunities: boolean;
 }
 
 export interface ResultCounts {
