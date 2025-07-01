@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { Professional, Community, Event } from './useSearch';
+import { Professional, Community, Event } from '@/types/search';
 import { SearchFilters, ResultCounts } from '@/types/advancedSearchTypes';
 import { demoProfessionals, demoCommunities, demoEvents } from '@/data/demoSearchData';
 import { filterProfessionals, filterCommunities, filterEvents, hasActiveFilters } from '@/utils/searchFilters';

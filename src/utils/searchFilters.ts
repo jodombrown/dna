@@ -1,5 +1,5 @@
 
-import { Professional, Community, Event } from '@/hooks/useSearch';
+import { Professional, Community, Event } from '@/types/search';
 import { SearchFilters } from '@/types/advancedSearchTypes';
 
 export const filterProfessionals = (
@@ -46,7 +46,7 @@ export const filterCommunities = (
   return communities.filter(comm => {
     return !searchTerm || 
       comm.name.toLowerCase().includes(searchLower) ||
-      comm.description?.toLowerCase().includes(searchLower) ||
+      comm.description.toLowerCase().includes(searchLower) ||
       comm.category?.toLowerCase().includes(searchLower);
   });
 };
@@ -61,7 +61,7 @@ export const filterEvents = (
   return events.filter(event => {
     const matchesSearch = !searchTerm || 
       event.title.toLowerCase().includes(searchLower) ||
-      event.description?.toLowerCase().includes(searchLower) ||
+      event.description.toLowerCase().includes(searchLower) ||
       event.type?.toLowerCase().includes(searchLower) ||
       event.location?.toLowerCase().includes(searchLower);
 

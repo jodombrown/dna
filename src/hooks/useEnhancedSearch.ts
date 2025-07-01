@@ -56,7 +56,7 @@ export const useEnhancedSearch = () => {
     return enhancedDemoCommunities.filter(community => {
       const matchesSearch = !searchTerm ||
         community.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        community.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        community.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         community.category?.toLowerCase().includes(searchTerm.toLowerCase());
 
       return matchesSearch;
@@ -67,7 +67,7 @@ export const useEnhancedSearch = () => {
     return enhancedDemoEvents.filter(event => {
       const matchesSearch = !searchTerm ||
         event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         event.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         event.location?.toLowerCase().includes(searchTerm.toLowerCase());
 
