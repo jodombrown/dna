@@ -23,7 +23,7 @@ const ConnectHero = () => {
           
           <p className="text-xl text-white/90 mb-6 max-w-3xl mx-auto">
             Build powerful professional relationships across the diaspora. 
-            Discover opportunities, expand your network, and find your tribe through purpose-driven connections.
+            Discover opportunities, expand your network, and find your community through purpose-driven connections.
           </p>
           
           <div className="flex justify-center gap-4 mb-8">

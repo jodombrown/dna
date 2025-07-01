@@ -21,14 +21,14 @@ const ContributeSection = () => {
               </h2>
             </div>
             <p className="text-xl text-gray-600 mb-8">
-              Discover pathways to create lasting impact. Whether through investment, expertise, time, 
+              Discover pathways to create lasting change. Whether through investment, expertise, time, 
               or advocacy—find purposeful ways to advance Africa's progress.
             </p>
             
             <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg">
                 <Target className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Seven Pathways to Impact</span>
+                <span className="font-medium">Seven Pathways to Transformation</span>
               </div>
               <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg">
                 <Users className="w-5 h-5 text-dna-emerald" />
@@ -36,7 +36,7 @@ const ContributeSection = () => {
               </div>
               <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg">
                 <TrendingUp className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Real-Time Impact Tracking</span>
+                <span className="font-medium">Real-Time Progress Tracking</span>
               </div>
             </div>
 
@@ -44,7 +44,7 @@ const ContributeSection = () => {
               onClick={() => navigate('/contribute-example')}
               className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-2"
             >
-              Explore Pathways to Impact
+              Explore Pathways to Change
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
@@ -54,7 +54,7 @@ const ContributeSection = () => {
               className="bg-white rounded-3xl shadow-2xl p-8 cursor-pointer hover:shadow-3xl transition-shadow"
               onClick={() => navigate('/contribute-example')}
             >
-              <h3 className="text-xl font-semibold mb-6 text-center">Your Impact Dashboard</h3>
+              <h3 className="text-xl font-semibold mb-6 text-center">Your Change Dashboard</h3>
               
               <div className="space-y-6">
                 <div className="text-center">
@@ -65,7 +65,7 @@ const ContributeSection = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-dna-mint/20 rounded-xl p-4 text-center">
                     <div className="text-lg font-bold text-dna-emerald">847</div>
-                    <div className="text-xs text-gray-600">Lives Impacted</div>
+                    <div className="text-xs text-gray-600">Lives Transformed</div>
                   </div>
                   <div className="bg-dna-copper/20 rounded-xl p-4 text-center">
                     <div className="text-lg font-bold text-dna-copper">23</div>
@@ -77,7 +77,7 @@ const ContributeSection = () => {
                   <h4 className="font-medium text-sm mb-2">Recent Contribution</h4>
                   <p className="text-xs text-gray-600 mb-2">Solar Education Initiative</p>
                   <div className="text-sm font-bold text-dna-forest">$15,000 invested</div>
-                  <div className="text-xs text-dna-emerald">+12% projected impact ROI</div>
+                  <div className="text-xs text-dna-emerald">+12% projected change ROI</div>
                 </div>
               </div>
             </div>
