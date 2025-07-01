@@ -21,6 +21,11 @@ import UserDashboard from './pages/UserDashboard';
 import Programs from './pages/Programs';
 import PrototypingPhase from './pages/PrototypingPhase';
 import MarketResearchPhase from './pages/MarketResearchPhase';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Auth from './pages/Auth';
+import Connect from './pages/Connect';
+import ConnectExample from './pages/ConnectExample';
 
 function App() {
   return (
@@ -28,7 +33,13 @@ function App() {
       <div className="min-h-screen bg-background font-sans antialiased">
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/connect" element={<Connect />} />
+          <Route path="/connect-example" element={<ConnectExample />} />
           <Route path="/collaborate" element={<CollaborationsExample />} />
+          <Route path="/collaborate-example" element={<CollaborationsExample />} />
           <Route path="/contribute-example" element={<ContributeExample />} />
           <Route path="/contribute-enhanced" element={<EnhancedContributeExample />} />
           <Route path="/get-started" element={<Onboarding />} />
