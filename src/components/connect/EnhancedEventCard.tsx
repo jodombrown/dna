@@ -7,8 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, MapPin, Users, Clock, Video, ExternalLink } from 'lucide-react';
 import { Event } from '@/types/search';
 import { format } from 'date-fns';
-import AddToCalendarButton from '@/components/calendar/AddToCalendarButton';
-import { CalendarEvent } from '@/utils/calendarUtils';
 
 interface EnhancedEventCardProps {
   event: Event;
@@ -36,20 +34,6 @@ const EnhancedEventCard: React.FC<EnhancedEventCardProps> = ({
       'Cultural Event': 'bg-pink-500'
     };
     return colors[type as keyof typeof colors] || 'bg-gray-500';
-  };
-
-  const convertToCalendarEvent = (): CalendarEvent => {
-    const startDate = new Date(event.date_time);
-    const endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000)); // Default 2 hours
-    
-    return {
-      id: event.id,
-      title: event.title,
-      description: event.description,
-      startDate,
-      endDate,
-      location: event.location,
-    };
   };
 
   return (
@@ -155,30 +139,18 @@ const EnhancedEventCard: React.FC<EnhancedEventCardProps> = ({
           </div>
         )}
 
-        {/* Calendar and Register buttons */}
-        <div className="flex flex-col gap-3">
-          {/* Add to Calendar Button */}
-          <div onClick={(e) => e.stopPropagation()}>
-            <AddToCalendarButton 
-              event={convertToCalendarEvent()}
-              variant="outline"
-              className="w-full"
-            />
-          </div>
-
-          {/* Register Button */}
-          <EnhancedButton
-            onClick={(e) => {
-              e.stopPropagation();
-              onRegister();
-            }}
-            variant={isUpcoming ? "dna" : "outline"}
-            disabled={!isUpcoming}
-            className="w-full"
-          >
-            {isUpcoming ? 'Register Now' : 'Event Ended'}
-          </EnhancedButton>
-        </div>
+        {/* Action button */}
+        <EnhancedButton
+          onClick={(e) => {
+            e.stopPropagation();
+            onRegister();
+          }}
+          variant={isUpcoming ? "dna" : "outline"}
+          disabled={!isUpcoming}
+          className="w-full"
+        >
+          {isUpcoming ? 'Register Now' : 'Event Ended'}
+        </EnhancedButton>
       </CardContent>
     </Card>
   );

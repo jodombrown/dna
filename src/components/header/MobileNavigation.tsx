@@ -1,49 +1,44 @@
 
-import React from 'react';
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import SurveyDialog from '@/components/survey/SurveyDialog';
+import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
+import MobileSheetMenu from './MobileSheetMenu';
+import { TouchFriendlyButton } from '@/components/ui/mobile-optimized';
 
-interface NavigationItem {
-  path: string;
-  label: string;
-}
+const MobileNavigation = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
+  const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
-interface MobileNavigationProps {
-  navigationItems: NavigationItem[];
-}
+  const handleSurveyClick = () => {
+    setIsMobileMenuOpen(false);
+    setIsSurveyOpen(true);
+  };
 
-const MobileNavigation: React.FC<MobileNavigationProps> = ({ navigationItems }) => {
-  const location = useLocation();
-
-  const isActive = (path: string) => location.pathname === path;
+  const handleBetaSignup = () => {
+    setIsMobileMenuOpen(false);
+    setIsBetaSignupOpen(true);
+  };
 
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-5 w-5" />
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="right" className="w-80">
-        <div className="flex flex-col space-y-4 mt-8">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive(item.path)
-                  ? 'text-dna-emerald bg-dna-emerald/10'
-                  : 'text-gray-600 hover:text-dna-emerald hover:bg-dna-emerald/5'
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
-      </SheetContent>
-    </Sheet>
+    <>
+      <MobileSheetMenu 
+        isOpen={isMobileMenuOpen}
+        onOpenChange={setIsMobileMenuOpen}
+        onSurveyClick={handleSurveyClick}
+        onBetaSignup={handleBetaSignup}
+      />
+
+      <SurveyDialog 
+        isOpen={isSurveyOpen} 
+        onClose={() => setIsSurveyOpen(false)} 
+      />
+
+      <BetaSignupDialog 
+        isOpen={isBetaSignupOpen} 
+        onClose={() => setIsBetaSignupOpen(false)} 
+      />
+    </>
   );
 };
 

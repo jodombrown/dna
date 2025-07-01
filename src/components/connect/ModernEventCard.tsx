@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -5,8 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Event } from '@/types/search';
-import AddToCalendarButton from '@/components/calendar/AddToCalendarButton';
-import { CalendarEvent } from '@/utils/calendarUtils';
 
 interface ModernEventCardProps {
   event: Event;
@@ -59,20 +58,6 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
   const eventLogo = getEventLogo(event.title, event.type || '');
   const eventBanner = event.banner_url || getEventBanner(event.title, event.type || '');
   const creatorImage = event.creator_profile?.avatar_url;
-
-  const convertToCalendarEvent = (): CalendarEvent => {
-    const startDate = new Date(event.date_time);
-    const endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000)); // Default 2 hours
-    
-    return {
-      id: event.id,
-      title: event.title,
-      description: event.description,
-      startDate,
-      endDate,
-      location: event.location,
-    };
-  };
 
   return (
     <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden bg-white border-0 shadow-sm hover:shadow-2xl hover:-translate-y-1 w-full max-w-sm"
@@ -169,27 +154,16 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
             </div>
           </div>
 
-          {/* Calendar Integration and Register Buttons */}
-          <div className="flex flex-col gap-2 mt-3" onClick={(e) => e.stopPropagation()}>
-            {/* Add to Calendar Button */}
-            <AddToCalendarButton 
-              event={convertToCalendarEvent()}
-              variant="outline"
-              size="sm"
-              className="w-full text-xs"
-            />
-            
-            {/* Register Button */}
-            <Button 
-              className="w-full bg-dna-emerald hover:bg-dna-forest text-white font-medium py-2 rounded-lg transition-all text-sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                onRegisterEvent();
-              }}
-            >
-              Register for Event
-            </Button>
-          </div>
+          {/* Register Button */}
+          <Button 
+            className="w-full bg-dna-emerald hover:bg-dna-forest text-white font-medium py-2 rounded-lg transition-all text-sm mt-3"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRegisterEvent();
+            }}
+          >
+            Register for Event
+          </Button>
         </div>
       </CardContent>
     </Card>
