@@ -5,6 +5,7 @@ import { Menu } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { TouchFriendlyButton } from '@/components/ui/mobile-optimized';
 import { publicNavItems, phases } from './navigationConfig';
 
 interface MobileSheetMenuProps {
@@ -35,9 +36,9 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="sm" className="md:hidden">
+        <TouchFriendlyButton variant="outline" size="sm" className="md:hidden p-2 min-h-[44px] min-w-[44px]">
           <Menu className="w-5 h-5" />
-        </Button>
+        </TouchFriendlyButton>
       </SheetTrigger>
       <SheetContent side="left" className="w-80 p-0">
         <div className="flex flex-col h-full">
@@ -52,52 +53,56 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
           </SheetHeader>
           
           <ScrollArea className="flex-1 px-6">
-            <nav className="flex flex-col space-y-4 py-6">
+            <nav className="flex flex-col space-y-2 py-6">
               {filteredNavItems.map((item) => (
-                <Button
+                <TouchFriendlyButton
                   key={item.name}
-                  variant="ghost"
-                  className="justify-start text-left"
+                  variant="outline"
+                  size="md"
                   onClick={() => handleNavClick(item)}
+                  className="justify-start text-left w-full"
                 >
                   {item.name}
-                </Button>
+                </TouchFriendlyButton>
               ))}
               
-              <Button
-                variant="ghost"
-                className="justify-start text-left bg-dna-copper/10 text-dna-copper"
+              <TouchFriendlyButton
+                variant="secondary"
+                size="md"
                 onClick={onSurveyClick}
+                className="justify-start text-left w-full bg-dna-copper/10 text-dna-copper border-dna-copper/20"
               >
                 Take Survey
-              </Button>
+              </TouchFriendlyButton>
               
-              <Button
-                variant="ghost"
-                className="justify-start text-left bg-dna-emerald/10 text-dna-emerald"
+              <TouchFriendlyButton
+                variant="primary"
+                size="md"
                 onClick={onBetaSignup}
+                className="justify-start text-left w-full bg-dna-emerald/10 text-dna-emerald border-dna-emerald/20"
               >
                 Join Beta Program
-              </Button>
+              </TouchFriendlyButton>
               
               <div className="border-t pt-4 mt-4">
-                <p className="text-sm text-gray-600 mb-4">Development Phases</p>
+                <p className="text-sm text-gray-600 mb-4 px-2">Development Phases</p>
                 <div className="space-y-2">
                   {phases.map((phase) => (
-                    <Button
+                    <TouchFriendlyButton
                       key={phase.path}
-                      variant="ghost"
-                      className="justify-start text-left w-full"
+                      variant="outline"
+                      size="md"
                       onClick={() => {
                         navigate(phase.path);
                         onOpenChange(false);
                       }}
+                      className="justify-start text-left w-full"
                     >
-                      <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">
+                      <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
                         {phase.phase}
                       </div>
-                      {phase.name}
-                    </Button>
+                      <span className="truncate">{phase.name}</span>
+                    </TouchFriendlyButton>
                   ))}
                 </div>
               </div>
