@@ -75,7 +75,8 @@ const Search = () => {
     events: events.map(event => ({
       ...event,
       type: event.type || '',
-      location: event.location || ''
+      location: event.location || '',
+      date_time: event.date_time || ''
     }))
   };
 
