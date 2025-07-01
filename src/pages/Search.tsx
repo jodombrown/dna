@@ -48,9 +48,9 @@ const Search = () => {
     setFilters({
       location: searchFilters.location,
       skills: searchFilters.skills,
-      isMentor: searchFilters.isMentor,
-      isInvestor: searchFilters.isInvestor,
-      lookingForOpportunities: searchFilters.lookingForOpportunities
+      is_mentor: searchFilters.is_mentor,
+      is_investor: searchFilters.is_investor,
+      looking_for_opportunities: searchFilters.looking_for_opportunities
     });
     
     // Perform the search

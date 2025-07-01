@@ -60,6 +60,7 @@ export interface Event {
 }
 
 export interface SearchFilters {
+  searchTerm: string;
   location: string;
   skills: string[];
   interests: string[];
