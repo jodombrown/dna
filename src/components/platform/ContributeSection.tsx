@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Target, TrendingUp, Users, HandHeart, ArrowRight } from 'lucide-react';
@@ -40,7 +41,7 @@ const ContributeSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/contribute-enhanced')}
+              onClick={() => navigate('/contribute-example')}
               className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-2"
             >
               Explore Pathways to Impact
@@ -51,7 +52,7 @@ const ContributeSection = () => {
           <div className="relative">
             <div 
               className="bg-white rounded-3xl shadow-2xl p-8 cursor-pointer hover:shadow-3xl transition-shadow"
-              onClick={() => navigate('/contribute-enhanced')}
+              onClick={() => navigate('/contribute-example')}
             >
               <h3 className="text-xl font-semibold mb-6 text-center">Your Impact Dashboard</h3>
               
