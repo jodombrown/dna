@@ -20,10 +20,12 @@ export interface SearchFilters {
   location: string;
   profession: string;
   skills: string[];
+  interests: string[];
+  company: string;
   experience: string;
-  isMentor: boolean;
-  isInvestor: boolean;
-  lookingForOpportunities: boolean;
+  is_mentor: boolean;
+  is_investor: boolean;
+  looking_for_opportunities: boolean;
   countryOfOrigin: string;
 }
 
