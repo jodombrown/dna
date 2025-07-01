@@ -193,13 +193,8 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
                       <CompactProjectCard
                         key={project.id}
                         project={project}
-                        viewMode={isMobile ? 'list' : viewMode}
-                        likedProjects={likedProjects}
-                        bookmarkedProjects={bookmarkedProjects}
-                        onJoinProject={onJoinProject}
-                        onLikeProject={onLikeProject}
-                        onBookmarkProject={onBookmarkProject}
-                        onViewDetails={() => onViewDetails(project)}
+                        onProjectClick={onViewDetails}
+                        onSupportClick={(project) => onJoinProject(project.id)}
                       />
                     ))}
                   </div>

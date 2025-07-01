@@ -7,14 +7,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CleanAuthProvider } from "@/contexts/CleanAuthContext";
 import Index from "./pages/Index";
 import Connect from "./pages/Connect";
-import Collaborations from "./pages/Collaborations";
+import CollaborationsExample from "./pages/CollaborationsExample";
 import Events from "./pages/Events";
 import Calendar from "./pages/Calendar";
 import EnhancedSearch from "./pages/EnhancedSearch";
 import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
-import Admin from "./pages/Admin";
-import Newsletter from "./pages/Newsletter";
+import AdminDashboard from "./pages/AdminDashboard";
+import ComingSoon from "./pages/ComingSoon";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 
@@ -46,7 +46,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/connect" element={<Connect />} />
-              <Route path="/collaborations" element={<Collaborations />} />
+              <Route path="/collaborations" element={<CollaborationsExample />} />
               <Route path="/events" element={<Events />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/search" element={<EnhancedSearch />} />
@@ -63,11 +63,11 @@ function App() {
                 path="/admin" 
                 element={
                   <ProtectedAdminRoute>
-                    <Admin />
+                    <AdminDashboard />
                   </ProtectedAdminRoute>
                 } 
               />
-              <Route path="/newsletter" element={<Newsletter />} />
+              <Route path="/newsletter" element={<ComingSoon />} />
             </Routes>
           </BrowserRouter>
         </CleanAuthProvider>

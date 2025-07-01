@@ -23,6 +23,7 @@ const mockEvents: Event[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-01-01T00:00:00Z',
+    updated_at: '2025-01-01T00:00:00Z',
     created_by: 'user1',
     banner_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=200&fit=crop'
   },
@@ -38,6 +39,7 @@ const mockEvents: Event[] = [
     is_featured: false,
     is_virtual: false,
     created_at: '2025-01-01T00:00:00Z',
+    updated_at: '2025-01-01T00:00:00Z',
     created_by: 'user2'
   },
   {
@@ -51,6 +53,7 @@ const mockEvents: Event[] = [
     is_featured: false,
     is_virtual: true,
     created_at: '2025-01-01T00:00:00Z',
+    updated_at: '2025-01-01T00:00:00Z',
     created_by: 'user3'
   },
   {
@@ -65,6 +68,7 @@ const mockEvents: Event[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-01-01T00:00:00Z',
+    updated_at: '2025-01-01T00:00:00Z',
     created_by: 'user4'
   },
   {
@@ -78,6 +82,7 @@ const mockEvents: Event[] = [
     is_featured: false,
     is_virtual: true,
     created_at: '2025-01-01T00:00:00Z',
+    updated_at: '2025-01-01T00:00:00Z',
     created_by: 'user5'
   }
 ];

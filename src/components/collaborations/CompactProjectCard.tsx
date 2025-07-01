@@ -4,13 +4,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Target, Clock, Users, Heart, Share2 } from 'lucide-react';
-import { Project } from '@/types/collaborationTypes';
+import { CollaborationProject } from '@/types/collaborationTypes';
 import SetReminderButton from '@/components/calendar/SetReminderButton';
 
 interface CompactProjectCardProps {
-  project: Project;
-  onProjectClick: (project: Project) => void;
-  onSupportClick: (project: Project) => void;
+  project: CollaborationProject;
+  onProjectClick: (project: CollaborationProject) => void;
+  onSupportClick: (project: CollaborationProject) => void;
 }
 
 const CompactProjectCard: React.FC<CompactProjectCardProps> = ({
@@ -58,10 +58,10 @@ const CompactProjectCard: React.FC<CompactProjectCardProps> = ({
 
         <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
           <div className="flex items-center gap-3">
-            {project.location && (
+            {project.region && (
               <div className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
-                <span className="truncate max-w-20">{project.location}</span>
+                <span className="truncate max-w-20">{project.region}</span>
               </div>
             )}
             
@@ -75,7 +75,7 @@ const CompactProjectCard: React.FC<CompactProjectCardProps> = ({
           
           <div className="flex items-center gap-1">
             <Users className="w-3 h-3" />
-            <span>{project.supporters_count || 0}</span>
+            <span>{project.collaborators || 0}</span>
           </div>
         </div>
 

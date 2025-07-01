@@ -261,7 +261,7 @@ const FullCalendarView: React.FC<FullCalendarViewProps> = ({
       </Dialog>
 
       {/* Custom Calendar Styles */}
-      <style jsx global>{`
+      <style>{`
         .dna-calendar .rbc-calendar {
           font-family: inherit;
         }
