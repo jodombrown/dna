@@ -7,6 +7,14 @@ interface CollaborationsPageHeaderProps {
   activeProjectsCount?: number;
 }
 
+const navigationItems = [
+  { path: "/", label: "Home" },
+  { path: "/connect", label: "Connect" },
+  { path: "/collaborations", label: "Collaborate" },
+  { path: "/events", label: "Events" },
+  { path: "/calendar", label: "Calendar" },
+];
+
 const CollaborationsPageHeader: React.FC<CollaborationsPageHeaderProps> = ({ 
   activeProjectsCount = 0 
 }) => {
@@ -15,7 +23,7 @@ const CollaborationsPageHeader: React.FC<CollaborationsPageHeaderProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
-            <MobileNavigation />
+            <MobileNavigation navigationItems={navigationItems} />
             <div>
               <h1 className="text-lg sm:text-xl font-bold text-gray-900">Active Collaborations</h1>
               <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Manage your collaborative projects</p>
