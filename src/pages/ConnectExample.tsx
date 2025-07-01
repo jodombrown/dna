@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
+import { useEnhancedSearch } from '@/hooks/useEnhancedSearch';
+import { SkipToContent } from '@/components/ui/accessibility-focus';
 import ConnectLoadingState from '@/components/connect/ConnectLoadingState';
 import ConnectErrorState from '@/components/connect/ConnectErrorState';
 import SearchSection from '@/components/connect/SearchSection';
@@ -29,7 +29,7 @@ const ConnectExample = () => {
     clearSearch,
     performSearch,
     resultCounts 
-  } = useAdvancedSearch();
+  } = useEnhancedSearch();
   
   const [activeTab, setActiveTab] = useState('professionals');
   const [dataError, setDataError] = useState<string | null>(null);
@@ -96,11 +96,12 @@ const ConnectExample = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SkipToContent />
       <Header />
 
       <PrototypeNotice />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <SearchSection
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}

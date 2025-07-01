@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { TabsContent } from '@/components/ui/tabs';
-import ProfessionalCard from './ProfessionalCard';
-import CommunityCard from './CommunityCard';
+import EnhancedProfessionalCard from './EnhancedProfessionalCard';
+import EnhancedCommunityCard from './EnhancedCommunityCard';
+import EnhancedEventCard from './EnhancedEventCard';
 import EmptyState from './EmptyState';
-import ConnectEventsTab from './tabs/ConnectEventsTab';
 import { Professional, Community, Event } from '@/types/search';
 
 interface ConnectTabsContentProps {
@@ -51,7 +51,7 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
             {professionals.map((professional) => (
-              <ProfessionalCard
+              <EnhancedProfessionalCard
                 key={professional.id}
                 professional={professional}
                 onConnect={() => onConnect(professional.id)}
@@ -70,7 +70,7 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {communities.map((community) => (
-              <CommunityCard 
+              <EnhancedCommunityCard 
                 key={community.id} 
                 community={community} 
                 onJoin={onJoinCommunity}
@@ -85,13 +85,17 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
         {events.length === 0 ? (
           <EmptyState type="events" onRefresh={onRefresh} />
         ) : (
-          <ConnectEventsTab
-            events={events}
-            onEventClick={onEventClick}
-            onRegisterEvent={onRegisterEvent}
-            onCreatorClick={onCreatorClick}
-            onViewAll={onViewAll}
-          />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {events.map((event) => (
+              <EnhancedEventCard
+                key={event.id}
+                event={event}
+                onRegister={() => onRegisterEvent(event)}
+                onEventClick={() => onEventClick(event)}
+                onCreatorClick={onCreatorClick}
+              />
+            ))}
+          </div>
         )}
       </TabsContent>
     </>
