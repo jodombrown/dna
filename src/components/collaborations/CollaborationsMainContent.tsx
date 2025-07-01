@@ -187,7 +187,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
                   <div className={
                     isMobile || viewMode === 'list'
                       ? 'space-y-4' 
-                      : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                      : 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 place-items-center'
                   }>
                     {projects.map((project) => (
                       <CompactProjectCard

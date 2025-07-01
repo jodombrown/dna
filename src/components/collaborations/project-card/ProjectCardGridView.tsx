@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,32 +38,53 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
   onBookmarkProject,
   onViewDetails
 }) => {
+  // Get country-specific colors for individual tags
+  const getCountryColor = (country: string) => {
+    const colors = {
+      'Nigeria': 'bg-green-100 text-green-800 border-green-200',
+      'Ghana': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      'Kenya': 'bg-red-100 text-red-800 border-red-200',
+      'South Africa': 'bg-blue-100 text-blue-800 border-blue-200',
+      'Rwanda': 'bg-purple-100 text-purple-800 border-purple-200',
+      'Uganda': 'bg-indigo-100 text-indigo-800 border-indigo-200',
+      'Tanzania': 'bg-pink-100 text-pink-800 border-pink-200',
+      'Ethiopia': 'bg-orange-100 text-orange-800 border-orange-200',
+      'Morocco': 'bg-cyan-100 text-cyan-800 border-cyan-200',
+      'Egypt': 'bg-amber-100 text-amber-800 border-amber-200'
+    };
+    return colors[country as keyof typeof colors] || 'bg-gray-100 text-gray-800 border-gray-200';
+  };
+
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 group overflow-hidden border-l-4 border-l-dna-copper h-fit">
-      {/* Header with image */}
+    <Card className="hover:shadow-lg transition-all duration-200 group overflow-hidden border-l-4 border-l-dna-copper h-fit max-w-sm mx-auto">
+      {/* Header with image - Fixed corner radius */}
       {project.image_url && (
-        <div className="relative h-32 overflow-hidden">
+        <div className="relative h-40 overflow-hidden">
           <img 
             src={project.image_url} 
             alt={project.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-t-lg"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10 rounded-t-lg" />
           
-          {/* Status badges - moved to left */}
-          <div className="absolute top-2 left-2 flex gap-2">
+          {/* Status badges - positioned to avoid overlap */}
+          <div className="absolute top-3 left-3 flex gap-2">
             <Badge className={getStatusColor(project.status)} variant="secondary">
               {getStatusDisplayName(project.status)}
             </Badge>
-            {project.urgency === 'high' && (
+          </div>
+          
+          {/* Priority badge - separate positioning */}
+          {project.urgency === 'high' && (
+            <div className="absolute top-3 right-3">
               <Badge variant="outline" className="bg-red-50 text-red-600 border-red-200">
                 High Priority
               </Badge>
-            )}
-          </div>
+            </div>
+          )}
           
-          {/* Quick actions - moved further right to avoid overlap */}
-          <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* Quick actions - positioned lower to avoid overlap */}
+          <div className="absolute top-12 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <Button
               size="sm"
               variant="secondary"
@@ -82,7 +104,7 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
           </div>
 
           {/* Timeline indicator */}
-          <div className="absolute bottom-2 left-2">
+          <div className="absolute bottom-3 left-3">
             <Badge variant="secondary" className="bg-white/95 backdrop-blur-sm text-gray-700 text-xs">
               <Clock className="w-3 h-3 mr-1" />
               {project.timeline}
@@ -91,7 +113,7 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
         </div>
       )}
 
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="p-5 space-y-4">
         {/* Creator and title */}
         <div className="flex items-start gap-3">
           <Avatar className="w-8 h-8 ring-2 ring-dna-copper/20 flex-shrink-0">
@@ -101,7 +123,7 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-base mb-1 line-clamp-2 group-hover:text-dna-copper transition-colors">
+            <h3 className="font-semibold text-base mb-1 line-clamp-2 group-hover:text-dna-copper transition-colors leading-tight">
               {project.title}
             </h3>
             <p className="text-xs text-gray-600">{project.creator.name}</p>
@@ -113,8 +135,26 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
           {project.description}
         </p>
 
+        {/* Individual Country Tags */}
+        <div className="flex flex-wrap gap-1.5">
+          {project.countries.slice(0, 3).map((country, index) => (
+            <Badge 
+              key={index}
+              variant="outline" 
+              className={`text-xs px-2 py-1 ${getCountryColor(country)}`}
+            >
+              {country}
+            </Badge>
+          ))}
+          {project.countries.length > 3 && (
+            <Badge variant="outline" className="text-xs px-2 py-1 bg-gray-100 text-gray-600 border-gray-200">
+              +{project.countries.length - 3} more
+            </Badge>
+          )}
+        </div>
+
         {/* Stats grid */}
-        <div className="grid grid-cols-3 gap-2 py-2 border-t border-gray-100">
+        <div className="grid grid-cols-3 gap-3 py-3 border-t border-gray-100">
           <div className="text-center">
             <div className="flex items-center justify-center mb-1">
               <Users className="w-3 h-3 text-dna-copper mr-1" />
@@ -138,21 +178,17 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
           </div>
         </div>
 
-        {/* Location and commitment */}
-        <div className="flex items-center justify-between text-xs text-gray-500 border-b border-gray-100 pb-2">
-          <span className="flex items-center gap-1">
-            <MapPin className="w-3 h-3" />
-            {project.countries.slice(0, 2).join(', ')}
-            {project.countries.length > 2 && '...'}
-          </span>
-          <Badge variant="outline" className="text-xs">
+        {/* Time commitment */}
+        <div className="flex items-center justify-center border-b border-gray-100 pb-3">
+          <Badge variant="outline" className="text-xs bg-dna-mint/10 text-dna-forest border-dna-mint">
+            <Clock className="w-3 h-3 mr-1" />
             {project.time_commitment}
           </Badge>
         </div>
 
-        {/* Progress bar for funding */}
+        {/* Animated Progress bar for funding */}
         {project.funding_goal && (
-          <div className="space-y-1">
+          <div className="space-y-2">
             <div className="flex justify-between items-center text-xs">
               <span className="text-gray-600">Funding Progress</span>
               <span className="font-semibold text-dna-forest">
@@ -161,7 +197,7 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
             </div>
             <Progress 
               value={(project.current_funding || 0) / project.funding_goal * 100} 
-              className="h-1.5"
+              className="h-2 bg-gray-100"
             />
             <p className="text-xs text-gray-500 text-center">
               {Math.round((project.current_funding || 0) / project.funding_goal * 100)}% funded
@@ -169,11 +205,11 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
           </div>
         )}
 
-        {/* Action buttons */}
-        <div className="flex gap-2 pt-1">
+        {/* Action buttons - Better spacing */}
+        <div className="flex gap-2 pt-2">
           <Button 
             onClick={() => onJoinProject(project.id)}
-            className="flex-1 bg-dna-copper hover:bg-dna-gold text-white h-8 text-xs"
+            className="flex-1 bg-dna-copper hover:bg-dna-gold text-white h-9 text-sm font-medium"
           >
             <Zap className="w-3 h-3 mr-1" />
             Join Initiative
@@ -181,7 +217,7 @@ const ProjectCardGridView: React.FC<ProjectCardGridViewProps> = ({
           <Button 
             onClick={onViewDetails}
             variant="outline"
-            className="flex-1 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white h-8 text-xs"
+            className="flex-1 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white h-9 text-sm font-medium"
           >
             <ExternalLink className="w-3 h-3 mr-1" />
             Learn More
