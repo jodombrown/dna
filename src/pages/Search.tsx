@@ -62,11 +62,21 @@ const Search = () => {
     setShowRecommendations(true);
   };
 
-  // Data structure for SearchResults component - convert to expected format
+  // Convert types to match SearchContent expectations
   const results = {
-    professionals: professionals,
-    communities: communities,
-    events: events
+    professionals: professionals.map(prof => ({
+      ...prof,
+      skills: prof.skills || []
+    })),
+    communities: communities.map(comm => ({
+      ...comm,
+      category: comm.category || ''
+    })),
+    events: events.map(event => ({
+      ...event,
+      type: event.type || '',
+      location: event.location || ''
+    }))
   };
 
   return (

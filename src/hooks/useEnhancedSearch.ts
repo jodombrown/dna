@@ -9,9 +9,9 @@ interface EnhancedSearchFilters {
   interests: string[];
   profession: string;
   company: string;
-  is_mentor: boolean;
-  is_investor: boolean;
-  looking_for_opportunities: boolean;
+  isMentor: boolean;
+  isInvestor: boolean;
+  lookingForOpportunities: boolean;
 }
 
 export const useEnhancedSearch = () => {
@@ -22,9 +22,9 @@ export const useEnhancedSearch = () => {
     interests: [],
     profession: '',
     company: '',
-    is_mentor: false,
-    is_investor: false,
-    looking_for_opportunities: false
+    isMentor: false,
+    isInvestor: false,
+    lookingForOpportunities: false
   });
   const [loading, setLoading] = useState(false);
 
@@ -53,9 +53,9 @@ export const useEnhancedSearch = () => {
             : false
         );
 
-      const matchesMentor = !filters.is_mentor || professional.is_mentor;
-      const matchesInvestor = !filters.is_investor || professional.is_investor;
-      const matchesOpportunities = !filters.looking_for_opportunities || professional.looking_for_opportunities;
+      const matchesMentor = !filters.isMentor || professional.is_mentor;
+      const matchesInvestor = !filters.isInvestor || professional.is_investor;
+      const matchesOpportunities = !filters.lookingForOpportunities || professional.looking_for_opportunities;
 
       return matchesSearch && matchesLocation && matchesProfession && 
              matchesCompany && matchesSkills && matchesMentor && 
@@ -102,9 +102,9 @@ export const useEnhancedSearch = () => {
       interests: [],
       profession: '',
       company: '',
-      is_mentor: false,
-      is_investor: false,
-      looking_for_opportunities: false
+      isMentor: false,
+      isInvestor: false,
+      lookingForOpportunities: false
     });
   };
 
