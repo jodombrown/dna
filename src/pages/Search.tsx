@@ -8,7 +8,7 @@ import SearchContent from '@/components/search/SearchContent';
 import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
 import { useSearchHandlers } from '@/hooks/useSearchHandlers';
 import { useAuth } from '@/contexts/CleanAuthContext';
-import { SearchFilters } from '@/types/searchTypes';
+import { SearchFilters } from '@/types/search';
 import { demoRecommendations } from '@/data/searchRecommendations';
 
 const Search = () => {
@@ -75,7 +75,8 @@ const Search = () => {
     events: events.map(event => ({
       ...event,
       type: event.type || '',
-      location: event.location || ''
+      location: event.location || '',
+      date_time: event.date_time || new Date().toISOString()
     }))
   };
 
