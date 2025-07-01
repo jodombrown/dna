@@ -47,14 +47,15 @@ const Search = () => {
     // Update the search term and filters - convert between interface types
     setSearchTerm(searchFilters.searchTerm);
     setFilters({
+      searchTerm: searchFilters.searchTerm,
       location: searchFilters.location,
       skills: searchFilters.skills,
       interests: searchFilters.interests || [],
       profession: searchFilters.profession || '',
       company: searchFilters.company || '',
-      is_mentor: searchFilters.isMentor,
-      is_investor: searchFilters.isInvestor,
-      looking_for_opportunities: searchFilters.lookingForOpportunities
+      is_mentor: searchFilters.is_mentor,
+      is_investor: searchFilters.is_investor,
+      looking_for_opportunities: searchFilters.looking_for_opportunities
     });
     
     // Perform the search

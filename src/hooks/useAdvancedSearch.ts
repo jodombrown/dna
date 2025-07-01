@@ -53,13 +53,13 @@ export const useAdvancedSearch = () => {
     
     // Simulate search delay
     const timeoutId = setTimeout(() => {
-      // Convert filters to the format expected by filter functions
+      // Create filter object with only the properties needed by filter functions
       const filterForUtils = {
         location: filters.location,
         skills: filters.skills,
-        isMentor: filters.is_mentor,
-        isInvestor: filters.is_investor,
-        lookingForOpportunities: filters.looking_for_opportunities
+        is_mentor: filters.is_mentor,
+        is_investor: filters.is_investor,
+        looking_for_opportunities: filters.looking_for_opportunities
       };
 
       const filteredProfs = filterProfessionals(allProfessionals, searchTerm, filterForUtils);
@@ -99,13 +99,13 @@ export const useAdvancedSearch = () => {
   };
 
   const performSearch = () => {
-    // Convert filters for hasActiveFilters check
+    // Create filter object for hasActiveFilters check
     const filterForUtils = {
       location: filters.location,
       skills: filters.skills,
-      isMentor: filters.is_mentor,
-      isInvestor: filters.is_investor,
-      lookingForOpportunities: filters.looking_for_opportunities
+      is_mentor: filters.is_mentor,
+      is_investor: filters.is_investor,
+      looking_for_opportunities: filters.looking_for_opportunities
     };
     
     // Trigger re-filter (useEffect will handle the actual filtering)

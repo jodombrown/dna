@@ -2,10 +2,19 @@
 import { Professional, Community, Event } from '@/types/search';
 import { SearchFilters } from '@/types/advancedSearchTypes';
 
+// Create a utility type for filter functions that only need a subset of properties
+interface FilterFunctionParams {
+  location?: string;
+  skills?: string[];
+  is_mentor?: boolean;
+  is_investor?: boolean;
+  looking_for_opportunities?: boolean;
+}
+
 export const filterProfessionals = (
   professionals: Professional[],
   searchTerm: string,
-  filters: SearchFilters
+  filters: FilterFunctionParams
 ): Professional[] => {
   const searchLower = searchTerm.toLowerCase().trim();
   
@@ -23,14 +32,14 @@ export const filterProfessionals = (
       prof.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
       prof.country_of_origin?.toLowerCase().includes(filters.location.toLowerCase());
 
-    const matchesSkills = filters.skills.length === 0 ||
+    const matchesSkills = !filters.skills || filters.skills.length === 0 ||
       filters.skills.some(skill => prof.skills?.some(profSkill => 
         profSkill.toLowerCase().includes(skill.toLowerCase())
       ));
 
-    const matchesMentor = !filters.isMentor || prof.is_mentor;
-    const matchesInvestor = !filters.isInvestor || prof.is_investor;
-    const matchesOpportunities = !filters.lookingForOpportunities || prof.looking_for_opportunities;
+    const matchesMentor = !filters.is_mentor || prof.is_mentor;
+    const matchesInvestor = !filters.is_investor || prof.is_investor;
+    const matchesOpportunities = !filters.looking_for_opportunities || prof.looking_for_opportunities;
 
     return matchesSearch && matchesLocation && matchesSkills && 
            matchesMentor && matchesInvestor && matchesOpportunities;
@@ -54,7 +63,7 @@ export const filterCommunities = (
 export const filterEvents = (
   events: Event[],
   searchTerm: string,
-  filters: SearchFilters
+  filters: FilterFunctionParams
 ): Event[] => {
   const searchLower = searchTerm.toLowerCase().trim();
   
@@ -72,10 +81,10 @@ export const filterEvents = (
   });
 };
 
-export const hasActiveFilters = (filters: SearchFilters): boolean => {
+export const hasActiveFilters = (filters: FilterFunctionParams): boolean => {
   return Boolean(filters.location) || 
-         filters.skills.length > 0 || 
-         filters.isMentor || 
-         filters.isInvestor || 
-         filters.lookingForOpportunities;
+         (filters.skills && filters.skills.length > 0) || 
+         Boolean(filters.is_mentor) || 
+         Boolean(filters.is_investor) || 
+         Boolean(filters.looking_for_opportunities);
 };
