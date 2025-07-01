@@ -17,6 +17,7 @@ export interface FilterOption {
   label: string;
   count?: number;
   icon?: string;
+  flag?: string; // Add flag property to support region flags
   description?: string;
 }
 
@@ -153,7 +154,11 @@ const DynamicFilterPanel: React.FC<DynamicFilterPanelProps> = ({
                   {filteredOptions.map(option => (
                     <SelectItem key={option.value} value={option.value}>
                       <div className="flex items-center justify-between w-full">
-                        <span>{option.icon && `${option.icon} `}{option.label}</span>
+                        <span>
+                          {option.icon && `${option.icon} `}
+                          {option.flag && `${option.flag} `}
+                          {option.label}
+                        </span>
                         {option.count && (
                           <Badge variant="secondary" className="ml-2 text-xs">
                             {option.count}
@@ -183,6 +188,7 @@ const DynamicFilterPanel: React.FC<DynamicFilterPanelProps> = ({
                         onClick={() => handleTagToggle(section.key, option.value)}
                       >
                         {option.icon && `${option.icon} `}
+                        {option.flag && `${option.flag} `}
                         {option.label}
                         {isSelected && <X className="ml-1 w-3 h-3" />}
                         {option.count && !isSelected && (
@@ -217,6 +223,7 @@ const DynamicFilterPanel: React.FC<DynamicFilterPanelProps> = ({
                         className="text-sm font-medium cursor-pointer flex items-center gap-2"
                       >
                         {option.icon && <span>{option.icon}</span>}
+                        {option.flag && <span>{option.flag}</span>}
                         <span>{option.label}</span>
                         {option.count && (
                           <Badge variant="secondary" className="text-xs">
