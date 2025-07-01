@@ -1,11 +1,14 @@
-
-import React from 'react';
+import React, { lazy } from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
-import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import PrototypeBanner from '@/components/PrototypeBanner';
+import { LazySection } from '@/components/ui/lazy-section';
+import { SectionTransition } from '@/components/ui/section-transition';
+
+// Lazy load components that aren't immediately visible
+const PlatformFeatureShowcase = lazy(() => import('@/components/PlatformFeatureShowcase'));
 
 const Index = () => {
   useScrollToTop();
@@ -18,13 +21,21 @@ const Index = () => {
       {/* Prototype Banner */}
       <PrototypeBanner />
 
-      {/* Hero Section with improved layout */}
-      <HeroSection />
+      {/* Hero Section - Keep this eager loaded as it's above the fold */}
+      <SectionTransition animationType="fade">
+        <HeroSection />
+      </SectionTransition>
 
-      {/* Platform Feature Showcase */}
-      <PlatformFeatureShowcase />
+      {/* Platform Feature Showcase - Lazy load this as it's below the fold */}
+      <SectionTransition animationType="slide" delay={200}>
+        <LazySection>
+          <PlatformFeatureShowcase />
+        </LazySection>
+      </SectionTransition>
 
-      <Footer />
+      <SectionTransition animationType="fade" delay={400}>
+        <Footer />
+      </SectionTransition>
     </div>
   );
 };
