@@ -58,12 +58,12 @@ const EnhancedProfessionalCard: React.FC<EnhancedProfessionalCardProps> = ({
           <div className="relative">
             <Avatar className="w-16 h-16 ring-2 ring-white shadow-lg">
               <AvatarImage 
-                src={professional.profile_image || `https://images.unsplash.com/photo-${1500000000000 + Math.abs(professional.id.charCodeAt(0) * 1000)}?w=150&h=150&fit=crop&crop=face`}
+                src={professional.avatar_url || `https://images.unsplash.com/photo-${1500000000000 + Math.abs(professional.id.charCodeAt(0) * 1000)}?w=150&h=150&fit=crop&crop=face`}
                 alt={professional.full_name}
                 onLoad={() => setIsImageLoaded(true)}
               />
               <AvatarFallback className="bg-dna-emerald text-white font-semibold text-lg">
-                {getInitials(professional.full_name)}
+                {getInitials(professional.full_name || 'User')}
               </AvatarFallback>
             </Avatar>
             
@@ -76,23 +76,23 @@ const EnhancedProfessionalCard: React.FC<EnhancedProfessionalCardProps> = ({
               <h3 className="font-semibold text-lg text-gray-900 truncate group-hover:text-dna-emerald transition-colors">
                 {professional.full_name}
               </h3>
-              {professional.is_verified && (
+              {professional.is_mentor && (
                 <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-xs">
                   <Star className="w-3 h-3 mr-1 fill-current" />
-                  Verified
+                  Mentor
                 </Badge>
               )}
             </div>
             
-            {professional.current_position && (
+            {professional.profession && (
               <p className="text-sm text-gray-600 font-medium mt-1">
-                {professional.current_position}
+                {professional.profession}
               </p>
             )}
             
-            {professional.current_company && (
+            {professional.company && (
               <p className="text-sm text-gray-500">
-                {professional.current_company}
+                {professional.company}
               </p>
             )}
 
@@ -118,17 +118,17 @@ const EnhancedProfessionalCard: React.FC<EnhancedProfessionalCardProps> = ({
             </div>
           )}
           
-          {professional.education && professional.education.length > 0 && (
+          {professional.education && (
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <GraduationCap className="w-4 h-4 text-gray-400" />
-              <span className="truncate">{professional.education[0]}</span>
+              <span className="truncate">{professional.education}</span>
             </div>
           )}
           
-          {professional.years_of_experience && (
+          {professional.years_experience && (
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Briefcase className="w-4 h-4 text-gray-400" />
-              <span>{professional.years_of_experience} years experience</span>
+              <span>{professional.years_experience} years experience</span>
             </div>
           )}
         </div>
