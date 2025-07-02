@@ -11,7 +11,7 @@ interface ProjectCardBadgesProps {
 
 const ProjectCardBadges: React.FC<ProjectCardBadgesProps> = ({ status, urgency }) => {
   return (
-    <div className="absolute top-4 left-4 flex gap-2">
+    <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
       <Badge className={getStatusColor(status)}>
         {status}
       </Badge>
