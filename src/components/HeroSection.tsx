@@ -32,13 +32,13 @@ const HeroSection = () => {
             <SectionTransition animationType="slide" delay={100}>
               <div className="space-y-4 sm:space-y-6">
                 <div className="text-center lg:text-left">
-                  <ResponsiveHeading level={1} className="mb-3 sm:mb-4">
+                  <ResponsiveHeading level={1} className="mb-3 sm:mb-4 animate-fade-in">
                     Welcome to the
                     <br />
                     <span className="text-dna-copper">Diaspora Network of Africa</span>
                   </ResponsiveHeading>
                   
-                  <ResponsiveText size="lg" className="mb-4 sm:mb-6">
+                  <ResponsiveText size="lg" className="mb-4 sm:mb-6 animate-fade-in" style={{ animationDelay: '200ms' }}>
                     Connecting Africa's diaspora professionals for transformative global impact through 
                     <span className="font-semibold text-dna-emerald"> capacity building</span>, 
                     <span className="font-semibold text-dna-copper"> venture building</span>, and 
@@ -46,19 +46,19 @@ const HeroSection = () => {
                   </ResponsiveText>
 
                   {/* Mobile-optimized CTA buttons */}
-                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-4 sm:mb-6">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-4 sm:mb-6 animate-fade-in" style={{ animationDelay: '400ms' }}>
                     <TouchFriendlyButton 
-                      size="lg" 
+                      size="default" 
                       variant="primary"
                       onClick={() => navigate('/about')}
                       className="w-full sm:w-auto"
                     >
-                      <Users className="w-5 h-5 mr-2" />
+                      <Users className="w-4 h-4 mr-2" />
                       Join Our Journey
                     </TouchFriendlyButton>
                     <TouchFriendlyButton 
                       variant="outline" 
-                      size="lg"
+                      size="default"
                       onClick={handleScrollToDNAFramework}
                       className="w-full sm:w-auto"
                     >
@@ -73,7 +73,7 @@ const HeroSection = () => {
             {/* Right Column - Introduction with mobile-optimized card */}
             <SectionTransition animationType="scale" delay={300}>
               <div className="space-y-4 sm:space-y-6">
-                <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border-0 overflow-hidden transform transition-all duration-300 hover:shadow-xl">
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border-0 overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:scale-102">
                   <HeroIntroduction />
                 </div>
               </div>
@@ -101,14 +101,16 @@ const HeroSection = () => {
       <SectionTransition animationType="slide" delay={600}>
         <section id="dna-framework" className="py-8 sm:py-12 lg:py-14 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <ResponsiveHeading level={2} className="mb-3 sm:mb-4">
+            <ResponsiveHeading level={2} className="mb-3 sm:mb-4 animate-fade-in">
               Building Together: From Idea to Impact
             </ResponsiveHeading>
-            <ResponsiveText className="mb-4 sm:mb-6 max-w-3xl mx-auto">
+            <ResponsiveText className="mb-4 sm:mb-6 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
               Follow our open development journey. Each phase shows you exactly what we're building, 
               why we're building it, and how you can get involved.
             </ResponsiveText>
-            <PlatformBadges />
+            <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
+              <PlatformBadges />
+            </div>
           </div>
         </section>
       </SectionTransition>
