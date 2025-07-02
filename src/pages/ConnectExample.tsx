@@ -101,34 +101,31 @@ const ConnectExample = () => {
       <PrototypeNotice />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Sticky Search and Tabs Section */}
-        <div className="sticky top-16 z-40 bg-gray-50 pb-4 mb-6">
-          <SearchSection
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            onSearch={performSearch}
-            onClearSearch={clearSearch}
-            loading={loading}
-            filters={filters}
-            onFiltersChange={setFilters}
-            resultCounts={resultCounts}
-          />
+        <SearchSection
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          onSearch={performSearch}
+          onClearSearch={clearSearch}
+          loading={loading}
+          filters={filters}
+          onFiltersChange={setFilters}
+          resultCounts={resultCounts}
+        />
 
-          <ConnectTabs
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            professionals={professionals}
-            communities={communities}
-            events={events}
-            onConnect={handleConnect}
-            onMessage={handleMessage}
-            onJoinCommunity={handleJoinCommunity}
-            onRegisterEvent={handleRegisterEvent}
-            getConnectionStatus={getConnectionStatus}
-            isLoggedIn={!!user}
-            onRefresh={initializeData}
-          />
-        </div>
+        <ConnectTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          professionals={professionals}
+          communities={communities}
+          events={events}
+          onConnect={handleConnect}
+          onMessage={handleMessage}
+          onJoinCommunity={handleJoinCommunity}
+          onRegisterEvent={handleRegisterEvent}
+          getConnectionStatus={getConnectionStatus}
+          isLoggedIn={!!user}
+          onRefresh={initializeData}
+        />
 
         <CallToActionSection onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
       </main>
