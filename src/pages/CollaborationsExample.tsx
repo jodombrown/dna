@@ -1,9 +1,9 @@
 
 import React from 'react';
-import EnhancedCollaborationsPageWrapper from '@/components/collaborations/EnhancedCollaborationsPageWrapper';
+import CollaborationsPageWrapper from '@/components/collaborations/CollaborationsPageWrapper';
 
 const CollaborationsExample = () => {
-  return <EnhancedCollaborationsPageWrapper />;
+  return <CollaborationsPageWrapper />;
 };
 
 export default CollaborationsExample;
