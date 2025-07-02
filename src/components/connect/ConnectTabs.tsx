@@ -86,31 +86,29 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
 
   return (
     <>
-      <div className="sticky top-20 z-10 bg-gray-50 pb-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="professionals">Professionals ({professionals.length})</TabsTrigger>
-            <TabsTrigger value="communities">Communities ({communities.length})</TabsTrigger>
-            <TabsTrigger value="events">Events ({events.length})</TabsTrigger>
-          </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="professionals">Professionals ({professionals.length})</TabsTrigger>
+          <TabsTrigger value="communities">Communities ({communities.length})</TabsTrigger>
+          <TabsTrigger value="events">Events ({events.length})</TabsTrigger>
+        </TabsList>
 
-          <ConnectTabsContent
-            professionals={professionals}
-            communities={communities}
-            events={events}
-            onConnect={onConnect}
-            onMessage={onMessage}
-            onJoinCommunity={onJoinCommunity}
-            onEventClick={openRegistrationSidebar}
-            onRegisterEvent={openRegistrationSidebar}
-            onCreatorClick={openProfessionalDialog}
-            onViewAll={handleViewAll}
-            onRefresh={onRefresh}
-            getConnectionStatus={getConnectionStatus}
-            isLoggedIn={isLoggedIn}
-          />
-        </Tabs>
-      </div>
+        <ConnectTabsContent
+          professionals={professionals}
+          communities={communities}
+          events={events}
+          onConnect={onConnect}
+          onMessage={onMessage}
+          onJoinCommunity={onJoinCommunity}
+          onEventClick={openRegistrationSidebar}
+          onRegisterEvent={openRegistrationSidebar}
+          onCreatorClick={openProfessionalDialog}
+          onViewAll={handleViewAll}
+          onRefresh={onRefresh}
+          getConnectionStatus={getConnectionStatus}
+          isLoggedIn={isLoggedIn}
+        />
+      </Tabs>
 
       <EventRegistrationSidebar
         open={registrationSidebarOpen}
