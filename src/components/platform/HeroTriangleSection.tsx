@@ -17,7 +17,7 @@ const HeroTriangleSection = () => {
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
               Our framework transforms how Africa's diaspora creates change. 
-              Each pillar strengthens the others, multiplying your efforts across the continent.
+              Each pillar strengthens the others, multiplying your impact across the continent.
             </p>
 
             {/* Three Pillars Grid */}
@@ -57,7 +57,7 @@ const HeroTriangleSection = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-dna-emerald mb-4">Contribute</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Step into your role in Africa's future. Invest your skills, capital, or influence in ways that drive tangible progress and leave a legacy that matters.
+                  Step into your role in Africa's future. Invest your skills, capital, or influence in ways that drive tangible change and leave a legacy that matters.
                 </p>
               </div>
             </div>

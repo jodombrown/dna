@@ -1,39 +1,24 @@
 
 import React from 'react';
-import { Target, Zap, Lightbulb } from 'lucide-react';
-import { EmptyState } from '@/components/ui/empty-state';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Target, Zap } from 'lucide-react';
 
-interface ProjectsEmptyStateProps {
-  hasFilters?: boolean;
-  onStartProject?: () => void;
-}
-
-const ProjectsEmptyState: React.FC<ProjectsEmptyStateProps> = ({ 
-  hasFilters = false,
-  onStartProject 
-}) => {
-  if (hasFilters) {
-    return (
-      <EmptyState
-        icon={Target}
-        title="No initiatives match your criteria"
-        description="Try adjusting your filters to discover more collaboration opportunities, or consider starting your own initiative to drive change."
-        actionLabel="Start New Initiative"
-        onAction={onStartProject}
-        size="lg"
-      />
-    );
-  }
-
+const ProjectsEmptyState: React.FC = () => {
   return (
-    <EmptyState
-      icon={Lightbulb}
-      title="Be the first to create an initiative"
-      description="Transform your ideas into impactful projects. Start a collaboration that brings together the diaspora community to solve challenges and create opportunities."
-      actionLabel="Start New Initiative"
-      onAction={onStartProject}
-      size="lg"
-    />
+    <Card className="text-center py-16 bg-gradient-to-br from-gray-50 to-white">
+      <CardContent>
+        <Target className="w-16 h-16 text-gray-300 mx-auto mb-6" />
+        <h3 className="text-xl font-semibold text-gray-900 mb-3">No initiatives match your criteria</h3>
+        <p className="text-gray-500 mb-6 max-w-md mx-auto">
+          Try adjusting your filters to discover more collaboration opportunities, or consider starting your own initiative.
+        </p>
+        <Button className="bg-dna-copper hover:bg-dna-gold text-white">
+          <Zap className="w-4 h-4 mr-2" />
+          Start New Initiative
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 

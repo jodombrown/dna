@@ -15,7 +15,7 @@ export interface Professional {
   linkedin_url?: string;
   website_url?: string;
   avatar_url?: string;
-  skills?: string[];
+  skills?: string[]; // Added skills property
   is_mentor: boolean;
   is_investor: boolean;
   looking_for_opportunities: boolean;
@@ -26,7 +26,7 @@ export interface Professional {
 export interface Community {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   category?: string;
   member_count: number;
   is_featured: boolean;
@@ -38,7 +38,7 @@ export interface Community {
 export interface Event {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   type?: string;
   date_time?: string;
   location?: string;
@@ -47,26 +47,14 @@ export interface Event {
   max_attendees?: number;
   is_featured: boolean;
   image_url?: string;
-  banner_url?: string;
+  banner_url?: string; // banner image!
   registration_url?: string;
   created_at: string;
   updated_at: string;
-  created_by?: string;
+  created_by?: string; // Add creator id reference for linking to profile
   creator_profile?: {
     id: string;
     full_name: string;
     avatar_url?: string;
   }
-}
-
-export interface SearchFilters {
-  searchTerm: string;
-  location: string;
-  skills: string[];
-  interests: string[];
-  profession: string;
-  company: string;
-  is_mentor: boolean;
-  is_investor: boolean;
-  looking_for_opportunities: boolean;
 }

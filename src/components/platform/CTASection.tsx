@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,7 +20,7 @@ const CTASection = () => {
               Join Us in Shaping Africa's Future
             </h2>
             <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-              <strong>Why we're building in the open:</strong> We believe transparency builds trust. 
+              <strong>Why we're building in the open:</strong> We believe openness builds trust. 
               Watch us create the platform, share feedback, and join our community as we grow together.
             </p>
           </div>

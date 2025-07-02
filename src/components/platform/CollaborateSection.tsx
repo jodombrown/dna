@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,8 +21,8 @@ const CollaborateSection = () => {
               </h2>
             </div>
             <p className="text-xl text-gray-600 mb-6">
-              Work together on high-impact initiatives that drive African development. 
-              Pool resources, share expertise, and amplify collective efforts.
+              Work together on meaningful projects that drive African development. 
+              Pool resources, share knowledge, and amplify collective impact.
             </p>
             
             <div className="space-y-3 mb-8">
@@ -45,7 +44,7 @@ const CollaborateSection = () => {
               onClick={() => navigate('/collaborate-example')}
               className="bg-dna-copper hover:bg-dna-gold text-white flex items-center gap-2"
             >
-              Explore Active Initiatives
+              Explore Active Collaborations
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
@@ -56,7 +55,7 @@ const CollaborateSection = () => {
               onClick={() => navigate('/collaborate-example')}
             >
               <div className="bg-dna-copper text-white p-4">
-                <h3 className="font-semibold">Active Initiatives</h3>
+                <h3 className="font-semibold">Active Collaborations</h3>
               </div>
               
               <div className="p-6 space-y-4">
@@ -66,7 +65,7 @@ const CollaborateSection = () => {
                     <Badge className="bg-dna-emerald text-white">Active</Badge>
                   </div>
                   <p className="text-sm text-gray-600 mb-3">
-                    12 contributors • 6 countries • $2.3M pooled
+                    12 collaborators • 6 countries • $2.3M pooled
                   </p>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-dna-emerald rounded-full"></div>
@@ -82,7 +81,7 @@ const CollaborateSection = () => {
                     <Badge variant="outline" className="border-dna-copper text-dna-copper">Planning</Badge>
                   </div>
                   <p className="text-sm text-gray-600 mb-3">
-                    8 contributors • 4 countries • $1.8M committed
+                    8 collaborators • 4 countries • $1.8M committed
                   </p>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-dna-mint rounded-full"></div>

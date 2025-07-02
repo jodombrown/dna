@@ -14,7 +14,7 @@ const phases = [
     status: "Active",
     timeline: "Jun - Sep 2025",
     path: "/phase/market-research",
-    icon: <Search className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <Search className="w-6 h-6" />,
     color: "bg-dna-emerald"
   },
   {
@@ -24,7 +24,7 @@ const phases = [
     status: "Planned",
     timeline: "Oct - Dec 2025",
     path: "/phase/prototyping",
-    icon: <Palette className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <Palette className="w-6 h-6" />,
     color: "bg-dna-forest"
   },
   {
@@ -34,7 +34,7 @@ const phases = [
     status: "Planned",
     timeline: "Jan - Feb 2026",
     path: "/phase/customer-discovery",
-    icon: <Users className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <Users className="w-6 h-6" />,
     color: "bg-dna-copper"
   },
   {
@@ -44,7 +44,7 @@ const phases = [
     status: "Planned",
     timeline: "Mar - Jul 2026",
     path: "/phase/mvp",
-    icon: <Code className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <Code className="w-6 h-6" />,
     color: "bg-dna-gold"
   },
   {
@@ -54,7 +54,7 @@ const phases = [
     status: "Planned",
     timeline: "Aug 2026",
     path: "/phase/beta-validation",
-    icon: <TestTube className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <TestTube className="w-6 h-6" />,
     color: "bg-dna-mint"
   },
   {
@@ -64,7 +64,7 @@ const phases = [
     status: "Planned",
     timeline: "Sep 2026+",
     path: "/phase/go-to-market",
-    icon: <Rocket className="w-5 h-5 md:w-6 md:h-6" />,
+    icon: <Rocket className="w-6 h-6" />,
     color: "bg-dna-emerald"
   }
 ];
@@ -73,45 +73,45 @@ const PhaseNavigation = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-12 md:py-16 bg-gray-50">
+    <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3 md:mb-4">Our Development Journey</h2>
-          <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Development Journey</h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             Follow our transparent, phase-by-phase approach to building DNA. Each phase has clear objectives, 
             timelines, and measurable outcomes to ensure we're building something that truly serves the African diaspora.
           </p>
         </div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {phases.map((phase) => (
             <Card 
               key={phase.phase} 
-              className="hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer border-l-4 border-l-dna-emerald relative z-10"
+              className="hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer border-l-4 border-l-dna-emerald"
               onClick={() => navigate(phase.path)}
             >
-              <CardHeader className="pb-3 md:pb-4">
+              <CardHeader>
                 <div className="flex items-center justify-between mb-2">
-                  <div className={`w-10 h-10 md:w-12 md:h-12 ${phase.color} rounded-xl flex items-center justify-center text-white`}>
+                  <div className={`w-12 h-12 ${phase.color} rounded-xl flex items-center justify-center text-white`}>
                     {phase.icon}
                   </div>
-                  <Badge variant={phase.status === "Active" ? "default" : "secondary"} className="text-xs">
+                  <Badge variant={phase.status === "Active" ? "default" : "secondary"}>
                     {phase.status}
                   </Badge>
                 </div>
-                <CardTitle className="text-base md:text-lg text-gray-900">
+                <CardTitle className="text-lg text-gray-900">
                   Phase {phase.phase}: {phase.title}
                 </CardTitle>
-                <p className="text-xs md:text-sm text-gray-500">{phase.timeline}</p>
+                <p className="text-sm text-gray-500">{phase.timeline}</p>
               </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-gray-600 mb-3 md:mb-4 text-sm md:text-base leading-relaxed">{phase.description}</p>
+              <CardContent>
+                <p className="text-gray-600 mb-4">{phase.description}</p>
                 <Button 
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(phase.path);
                   }}
-                  className="w-full bg-dna-emerald hover:bg-dna-forest text-white text-sm md:text-base"
+                  className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
                 >
                   Learn More
                 </Button>

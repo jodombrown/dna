@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Users, Globe, Target, Network, ArrowRight } from 'lucide-react';
@@ -21,22 +20,22 @@ const ConnectSection = () => {
               </h2>
             </div>
             <p className="text-xl text-gray-600 mb-6">
-              Build purposeful professional relationships across the diaspora. 
-              Discover opportunities, expand your network, and find your community of changemakers.
+              Build meaningful professional relationships across the diaspora. 
+              Discover opportunities, expand your network, and find your tribe.
             </p>
             
             <div className="space-y-3 mb-8">
               <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
                 <Globe className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Access to Global Talent Pool</span>
+                <span className="font-medium">Global Network Access</span>
               </div>
               <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
                 <Target className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Smart Opportunity Discovery</span>
+                <span className="font-medium">Smart Opportunity Matching</span>
               </div>
               <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
                 <Network className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Purpose-Driven Communities</span>
+                <span className="font-medium">Professional Communities</span>
               </div>
             </div>
 

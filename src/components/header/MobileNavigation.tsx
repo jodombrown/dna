@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import MobileSheetMenu from './MobileSheetMenu';
-import { TouchFriendlyButton } from '@/components/ui/mobile-optimized';
 
 const MobileNavigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

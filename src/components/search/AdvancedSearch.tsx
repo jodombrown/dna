@@ -18,12 +18,10 @@ const defaultFilters: SearchFilters = {
   location: '',
   profession: '',
   skills: [],
-  interests: [],
-  company: '',
   experience: '',
-  is_mentor: false,
-  is_investor: false,
-  looking_for_opportunities: false,
+  isMentor: false,
+  isInvestor: false,
+  lookingForOpportunities: false,
   countryOfOrigin: ''
 };
 
@@ -39,14 +37,14 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({ onSearch, onClear, load
     }));
   };
 
-  const handleSelectChange = (key: keyof SearchFilters, value: string) => {
+  const handleCheckboxChange = (name: string, checked: boolean) => {
     setFilters(prevFilters => ({
       ...prevFilters,
-      [key]: value
+      [name]: checked
     }));
   };
 
-  const handleSkillToggle = (skill: string) => {
+  const handleSkillSelect = (skill: string) => {
     if (selectedSkills.includes(skill)) {
       setSelectedSkills(selectedSkills.filter(s => s !== skill));
       setFilters(prevFilters => ({
@@ -62,15 +60,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({ onSearch, onClear, load
     }
   };
 
-  const handleCheckboxChange = (name: string, checked: boolean) => {
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      [name]: checked
-    }));
-  };
-
-  const handleSkillSelect = (skill: string) => {
-    handleSkillToggle(skill);
+  const handleExperienceChange = (value: string) => {
+    setFilters(prevFilters => ({ ...prevFilters, experience: value }));
   };
 
   const handleSearch = () => {
@@ -92,8 +83,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({ onSearch, onClear, load
         <SearchFormFields
           filters={filters}
           onInputChange={handleInputChange}
-          onSelectChange={handleSelectChange}
-          onSkillToggle={handleSkillToggle}
+          onExperienceChange={handleExperienceChange}
         />
         <SkillsSelector
           selectedSkills={selectedSkills}

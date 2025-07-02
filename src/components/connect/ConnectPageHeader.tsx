@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { ResponsiveHeading } from '@/components/ui/responsive-typography';
 import MobileNavigation from '@/components/header/MobileNavigation';
 
 interface ConnectPageHeaderProps {
@@ -10,21 +9,17 @@ interface ConnectPageHeaderProps {
 
 const ConnectPageHeader: React.FC<ConnectPageHeaderProps> = ({ totalCount }) => {
   return (
-    <header className="bg-white shadow-sm border-b sticky top-0 z-50 safe-top">
+    <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 min-h-[64px]">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center gap-3">
             <MobileNavigation />
-            <div className="min-w-0">
-              <ResponsiveHeading level={3} className="text-gray-900 truncate">
-                Professional Network
-              </ResponsiveHeading>
-              <p className="text-xs sm:text-sm text-gray-600 hidden sm:block truncate">
-                Connect with diaspora professionals
-              </p>
+            <div>
+              <h1 className="text-lg sm:text-xl font-bold text-gray-900">Professional Network</h1>
+              <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Connect with diaspora professionals</p>
             </div>
           </div>
-          <Badge className="bg-dna-emerald text-white text-xs sm:text-sm flex-shrink-0 ml-2">
+          <Badge className="bg-dna-emerald text-white text-xs sm:text-sm">
             {totalCount}+ Members
           </Badge>
         </div>

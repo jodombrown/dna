@@ -74,7 +74,7 @@ export const enhancedCollaborationProjects: CollaborationProject[] = [
     funding_goal: 3200000,
     current_funding: 2100000,
     progress: 66,
-    status: "active",
+    status: "scaling",
     urgency: "high",
     time_commitment: "full-time",
     creator: {
@@ -132,7 +132,7 @@ export const enhancedCollaborationProjects: CollaborationProject[] = [
     funding_goal: 1200000,
     current_funding: 750000,
     progress: 63,
-    status: "testing",
+    status: "launching",
     urgency: "low",
     time_commitment: "flexible",
     creator: {

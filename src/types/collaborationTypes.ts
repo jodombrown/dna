@@ -13,7 +13,7 @@ export interface CollaborationProject {
   funding_goal?: number;
   current_funding?: number;
   progress: number;
-  status: 'idea' | 'discovery' | 'scoping' | 'planning' | 'approved' | 'active' | 'testing' | 'complete' | 'maintenance';
+  status: 'active' | 'launching' | 'scaling' | 'completed';
   urgency: 'low' | 'medium' | 'high';
   time_commitment: 'flexible' | 'part-time' | 'full-time';
   creator: {

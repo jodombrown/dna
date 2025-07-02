@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { ResponsiveHeading, ResponsiveText } from '@/components/ui/responsive-typography';
 import PopularEventsSection from '../PopularEventsSection';
 import EventCategoriesSection from '../EventCategoriesSection';
 import FeaturedCalendarsSection from '../FeaturedCalendarsSection';
@@ -23,19 +22,15 @@ const ConnectEventsTab: React.FC<ConnectEventsTabProps> = ({
   onViewAll
 }) => {
   return (
-    <div className="space-y-8 sm:space-y-12 animate-fade-in">
-      {/* Header with mobile-optimized spacing */}
-      <div className="text-center px-4 sm:px-0">
-        <ResponsiveHeading level={2} className="mb-3 sm:mb-4">
-          Discover Events
-        </ResponsiveHeading>
-        <ResponsiveText size="lg" className="max-w-2xl mx-auto">
-          Explore, share, and create events near you, building meaningful connections through 
-          gatherings that matter
-        </ResponsiveText>
+    <div className="space-y-12">
+      {/* Header */}
+      <div className="text-center">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">Discover Events</h2>
+        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          Explore, share, and create events near you, building meaningful connections through gatherings that matter
+        </p>
       </div>
 
-      {/* Popular Events with horizontal scrolling restored */}
       <PopularEventsSection 
         events={events}
         onEventClick={onEventClick}
@@ -44,13 +39,10 @@ const ConnectEventsTab: React.FC<ConnectEventsTabProps> = ({
         onViewAll={onViewAll}
       />
 
-      {/* Event Categories - Luma-inspired design */}
       <EventCategoriesSection />
 
-      {/* Featured Calendars */}
       <FeaturedCalendarsSection />
 
-      {/* Local Events by Region */}
       <LocalEventsSection />
     </div>
   );

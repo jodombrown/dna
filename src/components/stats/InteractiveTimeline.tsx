@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ChevronRight, Calendar, MousePointer2, ArrowLeft, ArrowRight } from 'lucide-react';
@@ -10,8 +11,8 @@ const TimelineItem = ({ year, events, isActive, onClick }: {
   onClick: () => void;
 }) => (
   <div 
-    className={`cursor-pointer p-6 rounded-lg transition-all duration-300 relative group transform hover:scale-102 ${
-      isActive ? 'bg-dna-emerald text-white shadow-lg scale-105' : 'bg-white/50 hover:bg-white/70 hover:shadow-md'
+    className={`cursor-pointer p-6 rounded-lg transition-all duration-300 relative group ${
+      isActive ? 'bg-dna-emerald text-white shadow-lg transform scale-105' : 'bg-white/50 hover:bg-white/70 hover:shadow-md hover:scale-102'
     }`}
     onClick={onClick}
   >
@@ -38,7 +39,7 @@ const TimelineItem = ({ year, events, isActive, onClick }: {
       </div>
       
       {events.map((event, idx) => (
-        <div key={idx} className="text-sm mb-2 flex items-start gap-2 animate-fade-in" style={{ animationDelay: `${idx * 100}ms` }}>
+        <div key={idx} className="text-sm mb-2 flex items-start gap-2">
           <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${
             isActive ? 'bg-white' : 'bg-dna-emerald'
           }`} />
@@ -140,33 +141,27 @@ const InteractiveTimeline = () => {
   const canNavigateNext = currentIndex < timelineData.length - 1;
 
   return (
-    <section className="mb-16 animate-fade-in">
+    <section className="mb-16">
       <div className="text-center mb-8">
-        <h3 className="text-2xl sm:text-3xl font-bold text-dna-forest mb-2">Interactive Timeline</h3>
-        <p className="text-lg text-dna-emerald font-medium mb-4">(2014 – 2024)</p>
-        <p className="text-base sm:text-lg text-gray-600 mb-4">Explore a decade of diaspora growth and impact</p>
+        <h3 className="text-3xl font-bold text-dna-forest mb-4">Interactive Timeline (2014 – 2024)</h3>
+        <p className="text-lg text-gray-600 mb-4">Explore a decade of diaspora growth and impact</p>
       </div>
       
-      <div className="bg-gray-50 rounded-2xl p-6 sm:p-8">
+      <div className="bg-gray-50 rounded-2xl p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {timelineData.map((item, index) => (
-            <div 
+          {timelineData.map((item) => (
+            <TimelineItem
               key={item.year}
-              className="animate-fade-in"
-              style={{ animationDelay: `${index * 150}ms` }}
-            >
-              <TimelineItem
-                year={item.year}
-                events={item.events}
-                isActive={activeTimelineYear === item.year}
-                onClick={() => handleTimelineClick(item.year)}
-              />
-            </div>
+              year={item.year}
+              events={item.events}
+              isActive={activeTimelineYear === item.year}
+              onClick={() => handleTimelineClick(item.year)}
+            />
           ))}
         </div>
         
         {/* Decade's Legacy Summary */}
-        <div className="mt-8 bg-dna-emerald/10 rounded-xl p-6 transform hover:scale-102 transition-transform duration-300">
+        <div className="mt-8 bg-dna-emerald/10 rounded-xl p-6">
           <h4 className="text-xl font-bold text-dna-forest mb-3">The Decade's Legacy</h4>
           <p className="text-gray-700 leading-relaxed">
             This ten-year journey tells the story of human resilience, technological innovation, and the unbreakable bonds of family and community. What began as simple money transfers evolved into a sophisticated ecosystem of financial inclusion, technological advancement, and economic development. The diaspora didn't just send money home—they sent hope, opportunity, and the tools for transformation.

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { Professional, Community, Event } from '@/types/search';
+import { Professional, Community, Event } from './useSearch';
 import { SearchFilters, ResultCounts } from '@/types/advancedSearchTypes';
 import { demoProfessionals, demoCommunities, demoEvents } from '@/data/demoSearchData';
 import { filterProfessionals, filterCommunities, filterEvents, hasActiveFilters } from '@/utils/searchFilters';
@@ -10,15 +10,11 @@ export const useAdvancedSearch = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<SearchFilters>({
-    searchTerm: '',
     location: '',
     skills: [],
-    interests: [],
-    profession: '',
-    company: '',
-    is_mentor: false,
-    is_investor: false,
-    looking_for_opportunities: false
+    isMentor: false,
+    isInvestor: false,
+    lookingForOpportunities: false
   });
   
   const [allProfessionals, setAllProfessionals] = useState<Professional[]>([]);
@@ -53,18 +49,9 @@ export const useAdvancedSearch = () => {
     
     // Simulate search delay
     const timeoutId = setTimeout(() => {
-      // Create filter object with only the properties needed by filter functions
-      const filterForUtils = {
-        location: filters.location,
-        skills: filters.skills,
-        is_mentor: filters.is_mentor,
-        is_investor: filters.is_investor,
-        looking_for_opportunities: filters.looking_for_opportunities
-      };
-
-      const filteredProfs = filterProfessionals(allProfessionals, searchTerm, filterForUtils);
+      const filteredProfs = filterProfessionals(allProfessionals, searchTerm, filters);
       const filteredComms = filterCommunities(allCommunities, searchTerm);
-      const filteredEvs = filterEvents(allEvents, searchTerm, filterForUtils);
+      const filteredEvs = filterEvents(allEvents, searchTerm, filters);
 
       setFilteredProfessionals(filteredProfs);
       setFilteredCommunities(filteredComms);
@@ -72,7 +59,7 @@ export const useAdvancedSearch = () => {
       setLoading(false);
 
       // Show search results toast
-      if (searchTerm || hasActiveFilters(filterForUtils)) {
+      if (searchTerm || hasActiveFilters(filters)) {
         toast({
           title: "Search Results",
           description: `Found ${filteredProfs.length} professionals, ${filteredComms.length} communities, and ${filteredEvs.length} events`,
@@ -86,30 +73,17 @@ export const useAdvancedSearch = () => {
   const clearSearch = () => {
     setSearchTerm('');
     setFilters({
-      searchTerm: '',
       location: '',
       skills: [],
-      interests: [],
-      profession: '',
-      company: '',
-      is_mentor: false,
-      is_investor: false,
-      looking_for_opportunities: false
+      isMentor: false,
+      isInvestor: false,
+      lookingForOpportunities: false
     });
   };
 
   const performSearch = () => {
-    // Create filter object for hasActiveFilters check
-    const filterForUtils = {
-      location: filters.location,
-      skills: filters.skills,
-      is_mentor: filters.is_mentor,
-      is_investor: filters.is_investor,
-      looking_for_opportunities: filters.looking_for_opportunities
-    };
-    
     // Trigger re-filter (useEffect will handle the actual filtering)
-    if (searchTerm || hasActiveFilters(filterForUtils)) {
+    if (searchTerm || hasActiveFilters(filters)) {
       console.log('Performing search with:', { searchTerm, filters });
     }
   };

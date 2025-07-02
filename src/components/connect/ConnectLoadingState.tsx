@@ -1,24 +1,18 @@
 
 import React from 'react';
-import { LoadingState } from '@/components/ui/loading-state';
 
 interface ConnectLoadingStateProps {
   message?: string;
 }
 
 const ConnectLoadingState: React.FC<ConnectLoadingStateProps> = ({ 
-  message = "Loading diaspora network..." 
+  message = "Loading Professional Network..." 
 }) => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center max-w-md">
-        <LoadingState 
-          size="lg"
-          message={message}
-        />
-        <p className="text-gray-500 mt-4 text-sm">
-          Connecting you with professionals, communities, and events worldwide
-        </p>
+      <div className="text-center">
+        <div className="text-xl font-semibold mb-2">{message}</div>
+        <div className="text-gray-600">Connecting you with the diaspora community</div>
       </div>
     </div>
   );

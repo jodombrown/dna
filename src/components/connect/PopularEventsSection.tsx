@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { TouchFriendlyButton } from '@/components/ui/mobile-optimized';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
-import { ResponsiveHeading, ResponsiveText } from '@/components/ui/responsive-typography';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Event } from '@/types/search';
 import ModernEventCard from './ModernEventCard';
 
@@ -21,86 +21,50 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
   onCreatorClick,
   onViewAll
 }) => {
-  const scrollRef = React.useRef<HTMLDivElement>(null);
-
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-    }
-  };
-
   return (
-    <section className="space-y-4 sm:space-y-6 animate-fade-in">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <ResponsiveHeading level={3} className="mb-1 sm:mb-2">
-            Popular Events
-          </ResponsiveHeading>
-          <ResponsiveText size="sm" className="text-gray-600">
-            Trending events in your network
-          </ResponsiveText>
+          <h3 className="text-2xl font-bold text-gray-900">Popular Events</h3>
+          <p className="text-gray-600">Trending events in your network</p>
         </div>
-        <TouchFriendlyButton 
-          variant="outline" 
-          size="sm"
-          className="text-dna-emerald border-dna-emerald hover:bg-dna-emerald hover:text-white transition-all group/button"
+        <Button 
+          variant="ghost" 
+          className="text-dna-emerald hover:text-dna-forest"
           onClick={onViewAll}
         >
-          View All 
-          <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/button:translate-x-1" />
-        </TouchFriendlyButton>
+          View All <ArrowRight className="w-4 h-4 ml-1" />
+        </Button>
       </div>
 
-      {/* Horizontal scrolling container - restored Luma style */}
-      <div className="relative">
-        {/* Navigation buttons */}
-        <TouchFriendlyButton
-          variant="outline"
-          size="sm"
-          onClick={scrollLeft}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 p-0 bg-white/95 backdrop-blur-sm border-gray-200 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all shadow-lg"
+      <div className="relative px-12">
+        <Carousel 
+          className="w-full"
+          opts={{
+            align: "start",
+            loop: false,
+          }}
         >
-          <ChevronLeft className="w-5 h-5" />
-        </TouchFriendlyButton>
-        
-        <TouchFriendlyButton
-          variant="outline"
-          size="sm"
-          onClick={scrollRight}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 p-0 bg-white/95 backdrop-blur-sm border-gray-200 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all shadow-lg"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </TouchFriendlyButton>
-
-        {/* Scrollable events container */}
-        <div 
-          ref={scrollRef}
-          className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-4 px-12 scroll-smooth"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {events.map((event, index) => (
-            <div 
-              key={event.id} 
-              className="flex-shrink-0 w-72 sm:w-80 animate-fade-in"
-              style={{ animationDelay: `${index * 150}ms` }}
-            >
-              <ModernEventCard 
-                event={event} 
-                onEventClick={onEventClick}
-                onRegisterEvent={() => onRegisterEvent(event)}
-                onCreatorClick={onCreatorClick}
-              />
-            </div>
-          ))}
-        </div>
+          <CarouselContent className="-ml-2 md:-ml-4">
+            {events.map((event) => (
+              <CarouselItem key={event.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                <div className="h-full">
+                  <ModernEventCard 
+                    event={event} 
+                    onEventClick={onEventClick}
+                    onRegisterEvent={() => onRegisterEvent(event)}
+                    onCreatorClick={onCreatorClick}
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          
+          <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 h-8 w-8 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+          <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 h-8 w-8 bg-white shadow-lg border-2 hover:bg-dna-emerald hover:text-white hover:border-dna-emerald transition-all duration-200" />
+        </Carousel>
       </div>
-    </section>
+    </div>
   );
 };
 

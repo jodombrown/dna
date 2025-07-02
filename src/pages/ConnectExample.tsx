@@ -1,9 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-import { useEnhancedSearch } from '@/hooks/useEnhancedSearch';
-import { SkipToContent } from '@/components/ui/accessibility-focus';
-import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
 import ConnectLoadingState from '@/components/connect/ConnectLoadingState';
 import ConnectErrorState from '@/components/connect/ConnectErrorState';
 import SearchSection from '@/components/connect/SearchSection';
@@ -19,8 +17,6 @@ import { useToast } from '@/hooks/use-toast';
 const ConnectExample = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  useScrollToTop();
-  
   const { 
     searchTerm, 
     setSearchTerm, 
@@ -33,7 +29,7 @@ const ConnectExample = () => {
     clearSearch,
     performSearch,
     resultCounts 
-  } = useEnhancedSearch();
+  } = useAdvancedSearch();
   
   const [activeTab, setActiveTab] = useState('professionals');
   const [dataError, setDataError] = useState<string | null>(null);
@@ -49,7 +45,7 @@ const ConnectExample = () => {
     if (!user) {
       toast({
         title: "Sign In Required",
-        description: "Please sign in to connect with professionals and unlock networking features",
+        description: "Please sign in to connect with professionals",
       });
       return;
     }
@@ -60,7 +56,7 @@ const ConnectExample = () => {
     if (!user) {
       toast({
         title: "Sign In Required", 
-        description: "Please sign in to send messages and start conversations",
+        description: "Please sign in to send messages",
       });
       return;
     }
@@ -71,7 +67,7 @@ const ConnectExample = () => {
     if (!user) {
       toast({
         title: "Sign In Required",
-        description: "Please sign in to join communities, participate in discussions, and receive updates", 
+        description: "Please sign in to join communities", 
       });
       return;
     }
@@ -82,7 +78,7 @@ const ConnectExample = () => {
     if (!user) {
       toast({
         title: "Sign In Required",
-        description: "Please sign in to register for events and connect with other attendees",
+        description: "Please sign in to register for events",
       });
       return;
     }
@@ -94,18 +90,17 @@ const ConnectExample = () => {
   };
 
   const initializeData = () => {
-    // This is handled automatically by useEnhancedSearch
+    // This is handled automatically by useAdvancedSearch
     console.log('Data initialized automatically');
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SkipToContent />
       <Header />
 
       <PrototypeNotice />
 
-      <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 animate-fade-in">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <SearchSection
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -117,26 +112,22 @@ const ConnectExample = () => {
           resultCounts={resultCounts}
         />
 
-        <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
-          <ConnectTabs
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            professionals={professionals}
-            communities={communities}
-            events={events}
-            onConnect={handleConnect}
-            onMessage={handleMessage}
-            onJoinCommunity={handleJoinCommunity}
-            onRegisterEvent={handleRegisterEvent}
-            getConnectionStatus={getConnectionStatus}
-            isLoggedIn={!!user}
-            onRefresh={initializeData}
-          />
-        </div>
+        <ConnectTabs
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          professionals={professionals}
+          communities={communities}
+          events={events}
+          onConnect={handleConnect}
+          onMessage={handleMessage}
+          onJoinCommunity={handleJoinCommunity}
+          onRegisterEvent={handleRegisterEvent}
+          getConnectionStatus={getConnectionStatus}
+          isLoggedIn={!!user}
+          onRefresh={initializeData}
+        />
 
-        <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
-          <CallToActionSection onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
-        </div>
+        <CallToActionSection onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
       </main>
 
       <Footer />

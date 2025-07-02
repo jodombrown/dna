@@ -1,20 +1,11 @@
 
-import { Professional, Community, Event } from '@/types/search';
+import { Professional, Community, Event } from '@/hooks/useSearch';
 import { SearchFilters } from '@/types/advancedSearchTypes';
-
-// Create a utility type for filter functions that only need a subset of properties
-interface FilterFunctionParams {
-  location?: string;
-  skills?: string[];
-  is_mentor?: boolean;
-  is_investor?: boolean;
-  looking_for_opportunities?: boolean;
-}
 
 export const filterProfessionals = (
   professionals: Professional[],
   searchTerm: string,
-  filters: FilterFunctionParams
+  filters: SearchFilters
 ): Professional[] => {
   const searchLower = searchTerm.toLowerCase().trim();
   
@@ -32,14 +23,14 @@ export const filterProfessionals = (
       prof.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
       prof.country_of_origin?.toLowerCase().includes(filters.location.toLowerCase());
 
-    const matchesSkills = !filters.skills || filters.skills.length === 0 ||
+    const matchesSkills = filters.skills.length === 0 ||
       filters.skills.some(skill => prof.skills?.some(profSkill => 
         profSkill.toLowerCase().includes(skill.toLowerCase())
       ));
 
-    const matchesMentor = !filters.is_mentor || prof.is_mentor;
-    const matchesInvestor = !filters.is_investor || prof.is_investor;
-    const matchesOpportunities = !filters.looking_for_opportunities || prof.looking_for_opportunities;
+    const matchesMentor = !filters.isMentor || prof.is_mentor;
+    const matchesInvestor = !filters.isInvestor || prof.is_investor;
+    const matchesOpportunities = !filters.lookingForOpportunities || prof.looking_for_opportunities;
 
     return matchesSearch && matchesLocation && matchesSkills && 
            matchesMentor && matchesInvestor && matchesOpportunities;
@@ -55,7 +46,7 @@ export const filterCommunities = (
   return communities.filter(comm => {
     return !searchTerm || 
       comm.name.toLowerCase().includes(searchLower) ||
-      comm.description.toLowerCase().includes(searchLower) ||
+      comm.description?.toLowerCase().includes(searchLower) ||
       comm.category?.toLowerCase().includes(searchLower);
   });
 };
@@ -63,14 +54,14 @@ export const filterCommunities = (
 export const filterEvents = (
   events: Event[],
   searchTerm: string,
-  filters: FilterFunctionParams
+  filters: SearchFilters
 ): Event[] => {
   const searchLower = searchTerm.toLowerCase().trim();
   
   return events.filter(event => {
     const matchesSearch = !searchTerm || 
       event.title.toLowerCase().includes(searchLower) ||
-      event.description.toLowerCase().includes(searchLower) ||
+      event.description?.toLowerCase().includes(searchLower) ||
       event.type?.toLowerCase().includes(searchLower) ||
       event.location?.toLowerCase().includes(searchLower);
 
@@ -81,10 +72,10 @@ export const filterEvents = (
   });
 };
 
-export const hasActiveFilters = (filters: FilterFunctionParams): boolean => {
+export const hasActiveFilters = (filters: SearchFilters): boolean => {
   return Boolean(filters.location) || 
-         (filters.skills && filters.skills.length > 0) || 
-         Boolean(filters.is_mentor) || 
-         Boolean(filters.is_investor) || 
-         Boolean(filters.looking_for_opportunities);
+         filters.skills.length > 0 || 
+         filters.isMentor || 
+         filters.isInvestor || 
+         filters.lookingForOpportunities;
 };

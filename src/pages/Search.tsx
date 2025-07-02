@@ -8,8 +8,7 @@ import SearchContent from '@/components/search/SearchContent';
 import { useAdvancedSearch } from '@/hooks/useAdvancedSearch';
 import { useSearchHandlers } from '@/hooks/useSearchHandlers';
 import { useAuth } from '@/contexts/CleanAuthContext';
-import { SearchFilters as AdvancedSearchFilters } from '@/types/advancedSearchTypes';
-import { SearchFilters as SearchTypesFilters } from '@/types/searchTypes';
+import { SearchFilters } from '@/types/searchTypes';
 import { demoRecommendations } from '@/data/searchRecommendations';
 
 const Search = () => {
@@ -41,21 +40,17 @@ const Search = () => {
     }
   }, [searchParams, setSearchTerm]);
 
-  const handleSearch = async (searchFilters: SearchTypesFilters) => {
+  const handleSearch = async (searchFilters: SearchFilters) => {
     setShowRecommendations(false);
     
-    // Update the search term and filters - convert between interface types
+    // Update the search term and filters
     setSearchTerm(searchFilters.searchTerm);
     setFilters({
-      searchTerm: searchFilters.searchTerm,
       location: searchFilters.location,
       skills: searchFilters.skills,
-      interests: searchFilters.interests || [],
-      profession: searchFilters.profession || '',
-      company: searchFilters.company || '',
-      is_mentor: searchFilters.is_mentor,
-      is_investor: searchFilters.is_investor,
-      looking_for_opportunities: searchFilters.looking_for_opportunities
+      isMentor: searchFilters.isMentor,
+      isInvestor: searchFilters.isInvestor,
+      lookingForOpportunities: searchFilters.lookingForOpportunities
     });
     
     // Perform the search
@@ -67,22 +62,11 @@ const Search = () => {
     setShowRecommendations(true);
   };
 
-  // Convert types to match SearchContent expectations
+  // Data structure for SearchResults component
   const results = {
-    professionals: professionals.map(prof => ({
-      ...prof,
-      skills: prof.skills || []
-    })),
-    communities: communities.map(comm => ({
-      ...comm,
-      category: comm.category || ''
-    })),
-    events: events.map(event => ({
-      ...event,
-      type: event.type || '',
-      location: event.location || '',
-      date_time: event.date_time || new Date().toISOString()
-    }))
+    professionals: professionals,
+    communities: communities,
+    events: events
   };
 
   return (

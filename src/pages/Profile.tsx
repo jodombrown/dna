@@ -88,10 +88,7 @@ const Profile = () => {
 
   const handleMessage = () => {
     if (!id) return;
-    toast({
-      title: "Messaging Coming Soon",
-      description: "Direct messaging will be available in our next release",
-    });
+    navigate(`/messages?user=${id}`);
   };
 
   if (loading) {
