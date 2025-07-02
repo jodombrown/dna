@@ -58,7 +58,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
                 <TouchFriendlyButton
                   key={item.name}
                   variant="outline"
-                  size="md"
+                  size="default"
                   onClick={() => handleNavClick(item)}
                   className="justify-start text-left w-full"
                 >
@@ -68,7 +68,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
               
               <TouchFriendlyButton
                 variant="secondary"
-                size="md"
+                size="default"
                 onClick={onSurveyClick}
                 className="justify-start text-left w-full bg-dna-copper/10 text-dna-copper border-dna-copper/20"
               >
@@ -76,8 +76,8 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
               </TouchFriendlyButton>
               
               <TouchFriendlyButton
-                variant="primary"
-                size="md"
+                variant="default"
+                size="default"
                 onClick={onBetaSignup}
                 className="justify-start text-left w-full bg-dna-emerald/10 text-dna-emerald border-dna-emerald/20"
               >
@@ -91,7 +91,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
                     <TouchFriendlyButton
                       key={phase.path}
                       variant="outline"
-                      size="md"
+                      size="default"
                       onClick={() => {
                         navigate(phase.path);
                         onOpenChange(false);

@@ -37,12 +37,14 @@ interface ResponsiveTextProps {
   children: React.ReactNode;
   size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl';
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const ResponsiveText: React.FC<ResponsiveTextProps> = ({
   children,
   size = 'base',
-  className
+  className,
+  style
 }) => {
   const sizeClasses = {
     xs: "text-xs sm:text-sm",
@@ -53,7 +55,7 @@ export const ResponsiveText: React.FC<ResponsiveTextProps> = ({
   };
   
   return (
-    <p className={cn("leading-relaxed text-gray-700", sizeClasses[size], className)}>
+    <p className={cn("leading-relaxed text-gray-700", sizeClasses[size], className)} style={style}>
       {children}
     </p>
   );
