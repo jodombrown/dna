@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Heart, Bookmark, Share2 } from 'lucide-react';
+import { Heart, Bookmark, Share, X } from 'lucide-react';
 
 interface ProjectCardQuickActionsProps {
   projectId: string;
@@ -21,37 +21,31 @@ const ProjectCardQuickActions: React.FC<ProjectCardQuickActionsProps> = ({
   onShareProject
 }) => {
   return (
-    <div className="absolute top-4 left-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-      {onLikeProject && (
-        <Button
-          size="sm"
-          variant="secondary"
-          className="bg-white/90 backdrop-blur-sm"
-          onClick={() => onLikeProject(projectId)}
-        >
-          <Heart className={`w-4 h-4 ${likedProjects.has(projectId) ? 'fill-red-500 text-red-500' : ''}`} />
-        </Button>
-      )}
-      {onBookmarkProject && (
-        <Button
-          size="sm"
-          variant="secondary"
-          className="bg-white/90 backdrop-blur-sm"
-          onClick={() => onBookmarkProject(projectId)}
-        >
-          <Bookmark className={`w-4 h-4 ${bookmarkedProjects.has(projectId) ? 'fill-blue-500 text-blue-500' : ''}`} />
-        </Button>
-      )}
-      {onShareProject && (
-        <Button
-          size="sm"
-          variant="secondary"
-          className="bg-white/90 backdrop-blur-sm"
-          onClick={() => onShareProject(projectId)}
-        >
-          <Share2 className="w-4 h-4" />
-        </Button>
-      )}
+    <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <Button
+        size="sm"
+        variant="secondary"
+        className="h-8 w-8 p-0 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg"
+        onClick={() => onLikeProject?.(projectId)}
+      >
+        <Heart className={`w-4 h-4 ${likedProjects.has(projectId) ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+      </Button>
+      <Button
+        size="sm"
+        variant="secondary"
+        className="h-8 w-8 p-0 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg"
+        onClick={() => onBookmarkProject?.(projectId)}
+      >
+        <Bookmark className={`w-4 h-4 ${bookmarkedProjects.has(projectId) ? 'fill-blue-500 text-blue-500' : 'text-gray-600'}`} />
+      </Button>
+      <Button
+        size="sm"
+        variant="secondary"
+        className="h-8 w-8 p-0 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg"
+        onClick={() => onShareProject?.(projectId)}
+      >
+        <Share className="w-4 h-4 text-gray-600" />
+      </Button>
     </div>
   );
 };
