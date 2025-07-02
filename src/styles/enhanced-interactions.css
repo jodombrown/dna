@@ -1,0 +1,126 @@
+
+/* Enhanced interaction styles for consistent UX */
+
+/* Ensure all interactive elements have proper hover states */
+.interactive-element {
+  @apply transition-all duration-200 ease-out;
+}
+
+.interactive-element:hover {
+  @apply transform hover:scale-105 hover:shadow-lg;
+}
+
+/* Tag hover states */
+.tag-hover {
+  @apply transition-all duration-200 ease-out;
+}
+
+.tag-hover:hover {
+  @apply bg-opacity-80 shadow-md transform hover:scale-105;
+}
+
+/* Badge hover states with DNA colors */
+.badge-dna-emerald:hover {
+  @apply bg-dna-forest text-white shadow-lg;
+}
+
+.badge-dna-copper:hover {
+  @apply bg-dna-gold text-white shadow-lg;
+}
+
+.badge-dna-mint:hover {
+  @apply bg-dna-emerald text-white shadow-lg;
+}
+
+/* Card hover animations */
+.card-hover {
+  @apply transition-all duration-300 ease-out;
+}
+
+.card-hover:hover {
+  @apply shadow-xl transform hover:-translate-y-2;
+}
+
+/* Button hover enhancements */
+.btn-primary-dna {
+  @apply bg-dna-emerald text-white transition-all duration-200;
+}
+
+.btn-primary-dna:hover {
+  @apply bg-dna-forest shadow-lg transform hover:scale-105;
+}
+
+.btn-secondary-dna {
+  @apply bg-dna-copper text-white transition-all duration-200;
+}
+
+.btn-secondary-dna:hover {
+  @apply bg-dna-gold shadow-lg transform hover:scale-105;
+}
+
+.btn-outline-dna {
+  @apply border-2 border-dna-emerald text-dna-emerald bg-transparent transition-all duration-200;
+}
+
+.btn-outline-dna:hover {
+  @apply bg-dna-emerald text-white shadow-lg transform hover:scale-105;
+}
+
+/* Profile image optimization */
+.profile-image {
+  @apply object-cover object-center;
+  aspect-ratio: 1 / 1;
+}
+
+.profile-image-lg {
+  @apply object-cover object-center;
+  aspect-ratio: 4 / 5;
+}
+
+/* Mobile-first responsive utilities */
+@media (max-width: 768px) {
+  .mobile-stack {
+    @apply flex-col space-y-4 space-x-0;
+  }
+  
+  .mobile-full-width {
+    @apply w-full;
+  }
+  
+  .mobile-text-center {
+    @apply text-center;
+  }
+  
+  .mobile-px-4 {
+    @apply px-4;
+  }
+  
+  .mobile-py-2 {
+    @apply py-2;
+  }
+}
+
+/* Focus states for accessibility */
+.focus-dna:focus {
+  @apply ring-2 ring-dna-emerald ring-offset-2 outline-none;
+}
+
+.focus-dna-copper:focus {
+  @apply ring-2 ring-dna-copper ring-offset-2 outline-none;
+}
+
+/* Loading states */
+.loading-shimmer {
+  @apply bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse;
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

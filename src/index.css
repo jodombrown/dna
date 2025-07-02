@@ -1,6 +1,8 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('./styles/enhanced-interactions.css');
 
 @layer base {
   :root {
@@ -35,19 +37,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -97,5 +92,54 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Smooth scrolling for all pages */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Ensure proper focus management */
+  *:focus {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Ensure images are responsive by default */
+  img {
+    @apply max-w-full h-auto;
+  }
+
+  /* Consistent button focus states */
+  button:focus,
+  a:focus {
+    @apply ring-2 ring-offset-2 ring-dna-emerald outline-none;
+  }
+}
+
+/* Mobile-first responsive design utilities */
+@layer utilities {
+  .mobile-container {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+  
+  .mobile-section {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+  
+  .mobile-heading {
+    @apply text-2xl sm:text-3xl lg:text-4xl;
+  }
+  
+  .mobile-subheading {
+    @apply text-lg sm:text-xl lg:text-2xl;
+  }
+  
+  .mobile-body {
+    @apply text-base sm:text-lg;
+  }
+  
+  .mobile-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8;
   }
 }
