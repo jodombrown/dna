@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { TouchFriendlyButton } from '@/components/ui/mobile-optimized';
-import { MapPin, Building, MessageSquare, UserPlus, Star, Award, TrendingUp } from 'lucide-react';
+import { MapPin, Building, MessageSquare, UserPlus, Award, TrendingUp } from 'lucide-react';
 import { Professional } from '@/types/search';
 
 interface EnhancedProfessionalCardProps {
@@ -38,16 +38,6 @@ const EnhancedProfessionalCard: React.FC<EnhancedProfessionalCardProps> = ({
 
   return (
     <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white border-0 shadow-md relative overflow-hidden h-full animate-fade-in">
-      {/* Featured badge */}
-      {professional.is_featured && (
-        <div className="absolute top-3 right-3 z-10">
-          <Badge className="bg-dna-gold hover:bg-dna-copper text-white shadow-md transition-colors">
-            <Star className="w-3 h-3 mr-1" />
-            Featured
-          </Badge>
-        </div>
-      )}
-
       <CardHeader className="pb-3">
         <div className="flex items-start gap-4">
           <Avatar className="w-16 h-16 ring-2 ring-dna-copper/20 flex-shrink-0">
