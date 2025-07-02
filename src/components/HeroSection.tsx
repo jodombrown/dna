@@ -49,7 +49,7 @@ const HeroSection = () => {
                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-4 sm:mb-6 animate-fade-in" style={{ animationDelay: '400ms' }}>
                     <TouchFriendlyButton 
                       size="default" 
-                      variant="primary"
+                      variant="default"
                       onClick={() => navigate('/about')}
                       className="w-full sm:w-auto"
                     >

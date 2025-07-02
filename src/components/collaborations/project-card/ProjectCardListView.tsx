@@ -122,7 +122,7 @@ const ProjectCardListView: React.FC<ProjectCardListViewProps> = ({
                   </TouchFriendlyButton>
                   <TouchFriendlyButton
                     size="sm"
-                    variant="primary"
+                    variant="default"
                     onClick={() => onJoinProject(project.id)}
                     className="bg-dna-copper hover:bg-dna-gold text-white"
                   >
