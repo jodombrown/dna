@@ -35,7 +35,13 @@ export const useContributions = (userId?: string) => {
 
       if (error) throw error;
 
-      setContributions(data || []);
+      // Cast the data to match our Contribution interface
+      const typedContributions = (data || []).map(item => ({
+        ...item,
+        type: item.type as Contribution['type']
+      }));
+
+      setContributions(typedContributions);
     } catch (error) {
       console.error('Error fetching contributions:', error);
       toast({
@@ -71,7 +77,7 @@ export const useContributions = (userId?: string) => {
 
       // Refresh contributions if viewing current user
       if (targetUserId === user.id) {
-        fetchContributions();
+        fetchContribution();
       }
     } catch (error) {
       console.error('Error tracking contribution:', error);
