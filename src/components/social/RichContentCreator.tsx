@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -165,8 +164,8 @@ const RichContentCreator: React.FC = () => {
 
     setLoading(true);
     try {
-      // Try to insert into opportunities table, handle gracefully if it doesn't exist yet
-      const { error } = await supabase
+      // Use type assertion to work around type issues
+      const { error } = await (supabase as any)
         .from('opportunities')
         .insert({
           title: opportunityForm.title.trim(),

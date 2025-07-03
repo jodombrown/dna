@@ -43,10 +43,10 @@ export const useRichContent = () => {
 
       if (initiativesError) throw initiativesError;
 
-      // Fetch opportunities - this might fail if table doesn't exist yet, so we'll handle it gracefully
+      // Fetch opportunities - use type assertion to work around type issues
       let opportunitiesData: any[] = [];
       try {
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from('opportunities')
           .select('*')
           .order('created_at', { ascending: false })
