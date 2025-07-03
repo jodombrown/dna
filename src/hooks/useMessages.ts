@@ -45,7 +45,13 @@ export const useMessages = (conversationId?: string, groupConversationId?: strin
 
       if (error) throw error;
 
-      setMessages(data || []);
+      const typedMessages: Message[] = (data || []).map(msg => ({
+        ...msg,
+        message_type: (msg.message_type as 'text' | 'image' | 'file' | 'system') || 'text',
+        attachments: Array.isArray(msg.attachments) ? msg.attachments : []
+      }));
+
+      setMessages(typedMessages);
       setError(null);
 
       // Mark messages as read

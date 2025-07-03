@@ -67,7 +67,7 @@ export const useGroupConversations = () => {
         .from('group_conversation_members')
         .select(`
           *,
-          profiles:user_id (
+          profiles!group_conversation_members_user_id_fkey (
             full_name,
             avatar_url
           )
@@ -90,8 +90,18 @@ export const useGroupConversations = () => {
       }, {} as Record<string, any>) || {};
 
       // Enhance conversations with members and last messages
-      const enhancedConversations = conversations.map(conv => {
-        const conversationMembers = members?.filter(m => m.group_conversation_id === conv.id) || [];
+      const enhancedConversations: GroupConversation[] = conversations.map(conv => {
+        const conversationMembers: GroupMember[] = members?.filter(m => m.group_conversation_id === conv.id).map(m => ({
+          id: m.id,
+          user_id: m.user_id,
+          role: (m.role as 'admin' | 'member') || 'member',
+          joined_at: m.joined_at,
+          profile: m.profiles ? {
+            full_name: m.profiles.full_name || '',
+            avatar_url: m.profiles.avatar_url || undefined
+          } : undefined
+        })) || [];
+        
         const lastMessage = lastMessagesByConversation[conv.id];
 
         return {

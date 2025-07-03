@@ -37,6 +37,16 @@ export interface ReadReceipt {
   };
 }
 
+export interface ConversationSummary {
+  otherUserId: string;
+  otherUserName: string;
+  lastMessage: {
+    content: string;
+    created_at: string;
+  };
+  unreadCount: number;
+}
+
 export const useEnhancedMessages = (conversationId?: string, groupConversationId?: string) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<EnhancedMessage[]>([]);
@@ -87,9 +97,10 @@ export const useEnhancedMessages = (conversationId?: string, groupConversationId
           return acc;
         }, {} as Record<string, any[]>) || {};
 
-        const enhancedMessages = data.map(msg => ({
+        const enhancedMessages: EnhancedMessage[] = data.map(msg => ({
           ...msg,
-          attachments: msg.attachments || [],
+          message_type: (msg.message_type as 'text' | 'image' | 'file' | 'system') || 'text',
+          attachments: Array.isArray(msg.attachments) ? msg.attachments as FileAttachment[] : [],
           read_receipts: receiptsByMessage[msg.id] || []
         }));
 
