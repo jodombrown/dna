@@ -73,6 +73,9 @@ const Header = () => {
                     <DropdownMenuItem onClick={() => navigate('/connect')}>
                       Connect
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/saved')}>
+                      Saved Content
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/messages')}>
                       Messages
                     </DropdownMenuItem>
