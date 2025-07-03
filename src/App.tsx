@@ -28,6 +28,9 @@ import SocialFeedPage from "./pages/SocialFeedPage";
 import CleanSocialFeedPage from "./pages/CleanSocialFeedPage";
 import Notifications from "./pages/Notifications";
 import Saved from "./pages/Saved";
+import Communities from "./pages/Communities";
+import CommunityDetail from "./pages/CommunityDetail";
+import MyCommunities from "./pages/MyCommunities";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +67,9 @@ function App() {
               <Route path="/clean-social-feed" element={<CleanSocialFeedPage />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/saved" element={<Saved />} />
+              <Route path="/communities" element={<Communities />} />
+              <Route path="/communities/:id" element={<CommunityDetail />} />
+              <Route path="/my-communities" element={<MyCommunities />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
