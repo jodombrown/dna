@@ -1,9 +1,7 @@
 
 export const publicNavItems = [
   { name: 'About Us', path: '/about' },
-  { name: 'Connect', path: '/connect-example' },
-  { name: 'Collaborate', path: '/collaborate-example' },
-  { name: 'Contribute', path: '/contribute-example' },
+  { name: 'Connect', path: '/connect' },
   { name: 'Contact', path: '/contact' },
 ];
 
@@ -18,7 +16,7 @@ export const phases = [
 
 // Example pages for landing page showcase
 export const examplePages = [
-  { name: 'Connect Example', path: '/connect-example' },
+  { name: 'Connect Example', path: '/connect' },
   { name: 'Collaborate Example', path: '/collaborate-example' },
   { name: 'Contribute Example', path: '/contribute-example' },
 ];
