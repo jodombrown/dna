@@ -38,7 +38,8 @@ export const useContributions = (userId?: string) => {
       // Cast the data to match our Contribution interface
       const typedContributions = (data || []).map(item => ({
         ...item,
-        type: item.type as Contribution['type']
+        type: item.type as Contribution['type'],
+        metadata: (item.metadata as Record<string, any>) || {}
       }));
 
       setContributions(typedContributions);
@@ -77,7 +78,7 @@ export const useContributions = (userId?: string) => {
 
       // Refresh contributions if viewing current user
       if (targetUserId === user.id) {
-        fetchContribution();
+        fetchContributions();
       }
     } catch (error) {
       console.error('Error tracking contribution:', error);
