@@ -8,7 +8,7 @@ import RecommendationCard from '@/components/connect/RecommendationCard';
 
 interface RecommendationsSectionProps {
   onConnect: (userId: string) => void;
-  onMessage: (userId: string, userName: string) => void;
+  onMessage: (userId: string) => void;
 }
 
 const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
@@ -72,7 +72,7 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
               key={profile.id}
               profile={profile}
               onConnect={onConnect}
-              onMessage={onMessage}
+              onMessage={(userId) => onMessage(userId)}
               isLoggedIn={!!user}
             />
           ))}

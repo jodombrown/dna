@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
+import AdminDashboard from '@/components/analytics/AdminDashboard';
 
 const AdminAnalyticsDashboard = () => {
   const { isAdmin, loading } = useAdminAuth();
@@ -33,7 +33,7 @@ const AdminAnalyticsDashboard = () => {
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <AnalyticsDashboard />
+        <AdminDashboard />
       </div>
     </div>
   );

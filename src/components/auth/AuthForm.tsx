@@ -60,7 +60,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggleMode, onPasswordReset
             title: "Welcome back!",
             description: "You have been signed in successfully.",
           });
-          // Let FunctionalAuth handle the redirect automatically
+          // Redirect to feed - OnboardingGuard will handle onboarding check
+          navigate('/feed');
         }
       }
     } catch (error: any) {

@@ -1,8 +1,15 @@
-import { useState } from 'react';
-import { FormData, ArrayStates, HelperStates } from './FormDataTypes';
 
-export const useFormState = (profile: any, user: any) => {
-  const [formData, setFormData] = useState<FormData>({
+import { useState, useEffect } from 'react';
+import { FormData, ArrayStates, HelperStates } from '../FormDataTypes';
+
+interface UseProfileFormStateProps {
+  profile: any;
+  user: any;
+}
+
+export const useProfileFormState = ({ profile, user }: UseProfileFormStateProps) => {
+  // Initialize form data
+  const [formData, setFormData] = useState<FormData>(() => ({
     // Basic info
     full_name: profile?.full_name || '',
     headline: profile?.headline || '',
@@ -51,9 +58,10 @@ export const useFormState = (profile: any, user: any) => {
     is_public: profile?.is_public !== false,
     account_visibility: profile?.account_visibility || 'public',
     notifications_enabled: profile?.notifications_enabled !== false,
-  });
+  }));
 
-  const [arrayStates, setArrayStates] = useState<ArrayStates>({
+  // Initialize array data
+  const [arrayStates, setArrayStates] = useState<ArrayStates>(() => ({
     skills: profile?.skills ? (Array.isArray(profile.skills) ? profile.skills : profile.skills.split(',').map((s: string) => s.trim())) : [],
     interests: profile?.interests ? (Array.isArray(profile.interests) ? profile.interests : profile.interests.split(',').map((s: string) => s.trim())) : [],
     impactAreas: profile?.impact_areas ? (Array.isArray(profile.impact_areas) ? profile.impact_areas : []) : [],
@@ -64,9 +72,10 @@ export const useFormState = (profile: any, user: any) => {
     professionalSectors: profile?.professional_sectors ? (Array.isArray(profile.professional_sectors) ? profile.professional_sectors : []) : [],
     diasporaNetworks: profile?.diaspora_networks ? (Array.isArray(profile.diaspora_networks) ? profile.diaspora_networks : []) : [],
     mentorshipAreas: profile?.mentorship_areas ? (Array.isArray(profile.mentorship_areas) ? profile.mentorship_areas : []) : [],
-  });
+  }));
 
-  const [helperStates, setHelperStates] = useState<HelperStates>({
+  // Initialize helper states
+  const [helperStates, setHelperStates] = useState<HelperStates>(() => ({
     newSkill: '',
     newInterest: '',
     newSector: '',
@@ -74,17 +83,17 @@ export const useFormState = (profile: any, user: any) => {
     newMentorshipArea: '',
     avatarUrl: profile?.avatar_url || '',
     bannerUrl: profile?.banner_image_url || '',
-  });
+  }));
 
-  const handleInputChange = (field: string, value: string | boolean | string[] | number) => {
+  const updateFormField = (field: keyof FormData, value: string | boolean | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const updateArrayState = (field: keyof ArrayStates, value: string[]) => {
+  const updateArrayField = (field: keyof ArrayStates, value: string[]) => {
     setArrayStates(prev => ({ ...prev, [field]: value }));
   };
 
-  const updateHelperState = (field: keyof HelperStates, value: string) => {
+  const updateHelperField = (field: keyof HelperStates, value: string) => {
     setHelperStates(prev => ({ ...prev, [field]: value }));
   };
 
@@ -92,8 +101,8 @@ export const useFormState = (profile: any, user: any) => {
     formData,
     arrayStates,
     helperStates,
-    handleInputChange,
-    updateArrayState,
-    updateHelperState,
+    updateFormField,
+    updateArrayField,
+    updateHelperField,
   };
 };

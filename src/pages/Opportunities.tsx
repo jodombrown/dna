@@ -1,125 +1,152 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Calendar, Building, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useJobMatching } from '@/hooks/useJobMatching';
+import JobCard from '@/components/jobs/JobCard';
+import { Search, Briefcase, Users, Target } from 'lucide-react';
 
 const Opportunities = () => {
-  const opportunities = [
-    {
-      id: 1,
-      title: "Software Engineer - Fintech Startup",
-      company: "AfriTech Solutions",
-      location: "Lagos, Nigeria (Remote)",
-      type: "Full-time",
-      description: "Join a growing fintech startup building payment solutions for Africa. Looking for experienced React/Node.js developers.",
-      postedDate: "2 days ago",
-      tags: ["React", "Node.js", "Fintech", "Remote"]
-    },
-    {
-      id: 2,
-      title: "Investment Opportunity - Renewable Energy",
-      company: "Green Africa Fund",
-      location: "Accra, Ghana",
-      type: "Investment",
-      description: "Seeking diaspora investors for solar energy projects across West Africa. Minimum investment $10,000.",
-      postedDate: "1 week ago",
-      tags: ["Investment", "Renewable Energy", "Impact"]
-    },
-    {
-      id: 3,
-      title: "Marketing Director - E-commerce",
-      company: "Marketplace Africa",
-      location: "Nairobi, Kenya",
-      type: "Full-time",
-      description: "Lead marketing strategy for Africa's fastest-growing e-commerce platform. Experience in digital marketing required.",
-      postedDate: "3 days ago",
-      tags: ["Marketing", "E-commerce", "Strategy"]
-    },
-    {
-      id: 4,
-      title: "Mentorship Program - Young Entrepreneurs",
-      company: "Africa Rising Foundation",
-      location: "Multiple locations",
-      type: "Volunteer",
-      description: "Share your expertise with the next generation of African entrepreneurs. Flexible time commitment.",
-      postedDate: "5 days ago",
-      tags: ["Mentorship", "Volunteer", "Entrepreneurship"]
-    }
-  ];
+  const navigate = useNavigate();
+  const { allJobs, matchedJobs, loading, error } = useJobMatching();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedType, setSelectedType] = useState<string>('all');
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'Full-time': return 'bg-dna-copper text-white';
-      case 'Investment': return 'bg-dna-gold text-white';
-      case 'Volunteer': return 'bg-dna-emerald text-white';
-      default: return 'bg-gray-200 text-gray-700';
-    }
-  };
+  const filteredJobs = allJobs.filter(job => {
+    const matchesSearch = 
+      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesType = selectedType === 'all' || job.job_type === selectedType;
+    
+    return matchesSearch && matchesType;
+  });
+
+  const jobTypes = [...new Set(allJobs.map(job => job.job_type))].filter(Boolean);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center justify-center">
+            <div className="text-lg">Loading opportunities...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-dna-forest mb-2">
-            Opportunities
-          </h1>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <Briefcase className="h-8 w-8 text-dna-copper mr-3" />
+              <h1 className="text-3xl font-bold text-dna-forest">
+                Opportunities
+              </h1>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => navigate('/jobs/matched')}
+                className="bg-dna-copper hover:bg-dna-gold text-white"
+              >
+                <Target className="w-4 h-4 mr-2" />
+                View Matched Jobs ({matchedJobs.length})
+              </Button>
+            </div>
+          </div>
           <p className="text-gray-600">
-            Discover career, investment, and volunteer opportunities across Africa
+            Discover career, investment, and volunteer opportunities across the African diaspora
           </p>
         </div>
 
-        <div className="grid gap-6">
-          {opportunities.map((opportunity) => (
-            <Card key={opportunity.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <CardTitle className="text-xl text-dna-forest mb-2">
-                      {opportunity.title}
-                    </CardTitle>
-                    <CardDescription className="flex items-center space-x-4 text-base">
-                      <div className="flex items-center">
-                        <Building className="w-4 h-4 mr-1" />
-                        {opportunity.company}
-                      </div>
-                      <div className="flex items-center">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        {opportunity.location}
-                      </div>
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        {opportunity.postedDate}
-                      </div>
-                    </CardDescription>
-                  </div>
-                  <Badge className={getTypeColor(opportunity.type)}>
-                    {opportunity.type}
+        {/* Search and Filter Section */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search jobs by title, company, location, or skills..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Badge
+                  className={`cursor-pointer ${
+                    selectedType === 'all' 
+                      ? 'bg-dna-copper text-white' 
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                  onClick={() => setSelectedType('all')}
+                >
+                  All ({allJobs.length})
+                </Badge>
+                {jobTypes.map(type => (
+                  <Badge
+                    key={type}
+                    className={`cursor-pointer ${
+                      selectedType === type 
+                        ? 'bg-dna-copper text-white' 
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                    onClick={() => setSelectedType(type)}
+                  >
+                    {type} ({allJobs.filter(job => job.job_type === type).length})
                   </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 mb-4">{opportunity.description}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-wrap gap-2">
-                    {opportunity.tags.map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-dna-forest border-dna-forest">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  <Button className="bg-dna-copper hover:bg-dna-gold text-white">
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Learn More
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Jobs List */}
+        {error ? (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <p className="text-red-600">Error loading opportunities: {error}</p>
+            </CardContent>
+          </Card>
+        ) : filteredJobs.length === 0 ? (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Opportunities Found</h3>
+              <p className="text-gray-600">
+                {searchTerm ? 'Try adjusting your search terms' : 'Check back later for new opportunities'}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-6">
+            {filteredJobs.map((job) => {
+              const isMatched = matchedJobs.some(matched => matched.id === job.id);
+              return (
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  isMatched={isMatched}
+                  showReferButton={true}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

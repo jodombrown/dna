@@ -1,11 +1,11 @@
 
 import { useNavigate } from 'react-router-dom';
-import { useMessages } from '@/hooks/useMessages';
+import { useConversations } from '@/hooks/useConversations';
 import { toast } from 'sonner';
 
 export const useSearchHandlers = (user: any) => {
   const navigate = useNavigate();
-  const { sendMessage } = useMessages();
+  const { createOrGetConversation } = useConversations();
 
   const handleConnect = async (userId: string) => {
     if (!user) {
@@ -22,7 +22,7 @@ export const useSearchHandlers = (user: any) => {
     }
   };
 
-  const handleMessage = async (recipientId: string, recipientName: string) => {
+  const handleMessage = async (recipientId: string) => {
     if (!user) {
       toast.error('Please sign in to message professionals');
       navigate('/auth');
@@ -30,12 +30,14 @@ export const useSearchHandlers = (user: any) => {
     }
 
     try {
-      await sendMessage(recipientId, `Hi ${recipientName}, I'd like to connect and learn more about your work!`);
-      toast.success('Message sent successfully!');
-      navigate('/messages');
+      const conversationId = await createOrGetConversation(recipientId);
+      if (conversationId) {
+        navigate(`/messages/${conversationId}`);
+        toast.success('Conversation started!');
+      }
     } catch (error) {
       console.error('Message error:', error);
-      toast.error('Failed to send message');
+      toast.error('Failed to start conversation');
     }
   };
 

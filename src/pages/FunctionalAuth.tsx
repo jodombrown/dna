@@ -23,9 +23,9 @@ const FunctionalAuth = () => {
     else if (urlMode === 'reset') setMode('reset');
     else if (urlMode === 'update') setMode('update');
     
-    // If user is already authenticated, redirect to feed
+    // If user is already authenticated, redirect to profile
     if (user && !loading) {
-      navigate('/feed');
+      navigate('/profile/my');
     }
   }, [user, loading, searchParams, navigate]);
 
