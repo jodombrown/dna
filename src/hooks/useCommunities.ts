@@ -8,6 +8,13 @@ interface Community {
   memberCount: number;
   category: string;
   isJoined?: boolean;
+  is_member?: boolean;
+  created_by?: string;
+  creator_id?: string;
+  member_count?: number;
+  is_featured?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export const useCommunities = () => {
@@ -20,32 +27,60 @@ export const useCommunities = () => {
       name: 'African Tech Professionals',
       description: 'Connecting African tech professionals worldwide for collaboration and knowledge sharing.',
       memberCount: 1250,
+      member_count: 1250,
       category: 'Technology',
-      isJoined: false
+      isJoined: false,
+      is_member: false,
+      created_by: 'user1',
+      creator_id: 'user1',
+      is_featured: true,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: '2',
       name: 'Women in African Business',
       description: 'Empowering African women entrepreneurs and business leaders.',
       memberCount: 850,
+      member_count: 850,
       category: 'Business',
-      isJoined: false
+      isJoined: false,
+      is_member: false,
+      created_by: 'user2',
+      creator_id: 'user2',
+      is_featured: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: '3',
       name: 'African Healthcare Innovation',
       description: 'Advancing healthcare solutions across the African continent.',
       memberCount: 420,
+      member_count: 420,
       category: 'Healthcare',
-      isJoined: false
+      isJoined: false,
+      is_member: false,
+      created_by: 'user3',
+      creator_id: 'user3',
+      is_featured: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: '4',
       name: 'Sustainable Agriculture Network',
       description: 'Promoting sustainable farming practices and food security in Africa.',
       memberCount: 680,
+      member_count: 680,
       category: 'Agriculture',
-      isJoined: false
+      isJoined: false,
+      is_member: false,
+      created_by: 'user4',
+      creator_id: 'user4',
+      is_featured: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     }
   ];
 
@@ -64,8 +99,15 @@ export const useCommunities = () => {
       name: communityData.name || '',
       description: communityData.description || '',
       memberCount: 1,
+      member_count: 1,
       category: communityData.category || 'General',
-      isJoined: true
+      isJoined: true,
+      is_member: true,
+      created_by: 'current-user',
+      creator_id: 'current-user',
+      is_featured: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
     
     setCommunities(prev => [...prev, newCommunity]);
@@ -76,7 +118,13 @@ export const useCommunities = () => {
     setCommunities(prev =>
       prev.map(community =>
         community.id === communityId
-          ? { ...community, isJoined: true, memberCount: community.memberCount + 1 }
+          ? { 
+              ...community, 
+              isJoined: true, 
+              is_member: true, 
+              memberCount: community.memberCount + 1,
+              member_count: (community.member_count || 0) + 1
+            }
           : community
       )
     );
@@ -86,7 +134,13 @@ export const useCommunities = () => {
     setCommunities(prev =>
       prev.map(community =>
         community.id === communityId
-          ? { ...community, isJoined: false, memberCount: Math.max(0, community.memberCount - 1) }
+          ? { 
+              ...community, 
+              isJoined: false, 
+              is_member: false, 
+              memberCount: Math.max(0, community.memberCount - 1),
+              member_count: Math.max(0, (community.member_count || 0) - 1)
+            }
           : community
       )
     );

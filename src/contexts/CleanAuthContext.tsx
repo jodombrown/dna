@@ -7,11 +7,33 @@ interface User {
   name?: string;
 }
 
+interface Profile {
+  id: string;
+  full_name?: string;
+  avatar_url?: string;
+  bio?: string;
+  location?: string;
+  skills?: string[];
+  interests?: string[];
+  linkedin_url?: string;
+  twitter_url?: string;
+  github_url?: string;
+  website_url?: string;
+  is_mentor?: boolean;
+  is_investor?: boolean;
+  looking_for_opportunities?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
+  profile: Profile | null;
+  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  updatePassword: (password: string) => Promise<{ error: any }>;
 }
 
 const CleanAuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +52,7 @@ interface CleanAuthProviderProps {
 
 export const CleanAuthProvider: React.FC<CleanAuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,18 +66,62 @@ export const CleanAuthProvider: React.FC<CleanAuthProviderProps> = ({ children }
 
   const signIn = async (email: string, password: string) => {
     // Demo sign in
-    setUser({ id: '1', email, name: 'Demo User' });
+    const demoUser = { id: '1', email, name: 'Demo User' };
+    const demoProfile = {
+      id: '1',
+      full_name: 'Demo User',
+      bio: 'Demo user for testing',
+      location: 'Global',
+      skills: ['React', 'TypeScript'],
+      interests: ['Technology', 'Innovation'],
+      is_mentor: false,
+      is_investor: false,
+      looking_for_opportunities: true
+    };
+    
+    setUser(demoUser);
+    setProfile(demoProfile);
+    return { error: null };
+  };
+
+  const signUp = async (email: string, password: string, fullName: string) => {
+    // Demo sign up
+    const demoUser = { id: '1', email, name: fullName };
+    const demoProfile = {
+      id: '1',
+      full_name: fullName,
+      bio: 'New user',
+      location: 'Global',
+      skills: [],
+      interests: [],
+      is_mentor: false,
+      is_investor: false,
+      looking_for_opportunities: true
+    };
+    
+    setUser(demoUser);
+    setProfile(demoProfile);
+    return { error: null };
   };
 
   const signOut = async () => {
     setUser(null);
+    setProfile(null);
+  };
+
+  const updatePassword = async (password: string) => {
+    // Demo password update
+    return { error: null };
   };
 
   const value = {
     user,
     loading,
+    profile,
     signIn,
+    signUp,
     signOut,
+    updatePassword,
   };
 
   return (

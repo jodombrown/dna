@@ -4,11 +4,16 @@ import { useState, useEffect } from 'react';
 interface Professional {
   id: string;
   name: string;
+  full_name: string;
   title: string;
   company: string;
   location: string;
   skills: string[];
   avatar: string;
+  is_mentor: boolean;
+  is_investor: boolean;
+  looking_for_opportunities: boolean;
+  bio?: string;
 }
 
 interface Community {
@@ -16,7 +21,11 @@ interface Community {
   name: string;
   description: string;
   memberCount: number;
+  member_count: number;
   category: string;
+  is_featured: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 interface Event {
@@ -26,12 +35,20 @@ interface Event {
   location: string;
   description: string;
   attendeeCount: number;
+  is_virtual: boolean;
+  attendee_count: number;
+  is_featured: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 interface Filters {
   location: string;
   industry: string;
   skills: string[];
+  isMentor: boolean;
+  isInvestor: boolean;
+  lookingForOpportunities: boolean;
 }
 
 interface ResultCounts {
@@ -45,7 +62,10 @@ export const useAdvancedSearch = () => {
   const [filters, setFilters] = useState<Filters>({
     location: '',
     industry: '',
-    skills: []
+    skills: [],
+    isMentor: false,
+    isInvestor: false,
+    lookingForOpportunities: false
   });
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [communities, setCommunities] = useState<Community[]>([]);
@@ -62,20 +82,30 @@ export const useAdvancedSearch = () => {
     {
       id: '1',
       name: 'Amara Kone',
+      full_name: 'Amara Kone',
       title: 'Software Engineer',
       company: 'Google',
       location: 'San Francisco, CA',
       skills: ['React', 'Node.js', 'Python'],
-      avatar: '/lovable-uploads/02154efb-0abe-4ed4-b41f-265e4a856e8d.png'
+      avatar: '/lovable-uploads/02154efb-0abe-4ed4-b41f-265e4a856e8d.png',
+      is_mentor: true,
+      is_investor: false,
+      looking_for_opportunities: false,
+      bio: 'Experienced software engineer'
     },
     {
       id: '2',
       name: 'Kwame Asante',
+      full_name: 'Kwame Asante',
       title: 'Investment Banker',
       company: 'Goldman Sachs',
       location: 'London, UK',
       skills: ['Finance', 'Investment', 'Analytics'],
-      avatar: '/lovable-uploads/02154efb-0abe-4ed4-b41f-265e4a856e8d.png'
+      avatar: '/lovable-uploads/02154efb-0abe-4ed4-b41f-265e4a856e8d.png',
+      is_mentor: false,
+      is_investor: true,
+      looking_for_opportunities: false,
+      bio: 'Investment banking professional'
     }
   ];
 
@@ -85,14 +115,22 @@ export const useAdvancedSearch = () => {
       name: 'African Tech Professionals',
       description: 'Connecting African tech professionals worldwide',
       memberCount: 1250,
-      category: 'Technology'
+      member_count: 1250,
+      category: 'Technology',
+      is_featured: true,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: '2',
       name: 'Women in African Business',
       description: 'Empowering African women entrepreneurs',
       memberCount: 850,
-      category: 'Business'
+      member_count: 850,
+      category: 'Business',
+      is_featured: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     }
   ];
 
@@ -103,7 +141,12 @@ export const useAdvancedSearch = () => {
       date: '2024-03-15',
       location: 'Virtual',
       description: 'Annual summit for African innovators',
-      attendeeCount: 500
+      attendeeCount: 500,
+      is_virtual: true,
+      attendee_count: 500,
+      is_featured: true,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: '2',
@@ -111,7 +154,12 @@ export const useAdvancedSearch = () => {
       date: '2024-04-20',
       location: 'New York, NY',
       description: 'Investment opportunities in Africa',
-      attendeeCount: 200
+      attendeeCount: 200,
+      is_virtual: false,
+      attendee_count: 200,
+      is_featured: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     }
   ];
 
@@ -162,7 +210,14 @@ export const useAdvancedSearch = () => {
 
   const clearSearch = () => {
     setSearchTerm('');
-    setFilters({ location: '', industry: '', skills: [] });
+    setFilters({ 
+      location: '', 
+      industry: '', 
+      skills: [],
+      isMentor: false,
+      isInvestor: false,
+      lookingForOpportunities: false
+    });
     setProfessionals(mockProfessionals);
     setCommunities(mockCommunities);
     setEvents(mockEvents);
