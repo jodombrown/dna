@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +19,7 @@ import ContributeExample from "./pages/ContributeExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import Events from "./pages/Events";
 import Messages from "./pages/Messages";
+import ConversationPage from "./pages/ConversationPage";
 import Search from "./pages/Search";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
@@ -60,6 +62,7 @@ function App() {
               <Route path="/collaborations-example" element={<CollaborationsExample />} />
               <Route path="/events" element={<Events />} />
               <Route path="/messages" element={<Messages />} />
+              <Route path="/messages/:conversationId" element={<ConversationPage />} />
               <Route path="/search" element={<Search />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />

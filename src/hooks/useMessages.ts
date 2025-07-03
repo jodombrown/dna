@@ -1,86 +1,119 @@
 
 import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/CleanAuthContext';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 export interface Message {
   id: string;
+  conversation_id: string;
   sender_id: string;
-  recipient_id: string;
   content: string;
-  created_at: string;
   is_read: boolean;
-  subject?: string; // Added missing subject property
+  created_at: string;
+  updated_at: string;
+  subject?: string;
 }
 
-export const useMessages = () => {
+export const useMessages = (conversationId?: string) => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const sendMessage = async (recipientId: string, content: string) => {
-    if (!user) throw new Error('User must be authenticated');
-    
-    setLoading(true);
-    setError(null);
-    
+  const fetchMessages = async () => {
+    if (!user || !conversationId) return;
+
     try {
-      // Demo functionality - show placeholder message
-      toast({
-        title: "Feature Coming Soon",
-        description: "Messaging system will be implemented in a future update",
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send message');
-      throw err;
+      setLoading(true);
+
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+
+      setMessages(data || []);
+      setError(null);
+
+      // Mark messages as read
+      await markAllAsRead();
+    } catch (err: any) {
+      console.error('Error fetching messages:', err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const getMessages = async (conversationUserId: string) => {
-    if (!user) return;
-    
-    setLoading(true);
-    setError(null);
-    
+  const sendMessage = async (content: string): Promise<boolean> => {
+    if (!user || !conversationId) return false;
+
     try {
-      // Demo functionality - return empty array
-      setMessages([]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch messages');
-    } finally {
-      setLoading(false);
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          conversation_id: conversationId,
+          sender_id: user.id,
+          content: content.trim()
+        });
+
+      if (error) throw error;
+
+      await fetchMessages(); // Refresh messages
+      return true;
+    } catch (err: any) {
+      console.error('Error sending message:', err);
+      toast.error('Failed to send message');
+      return false;
     }
   };
 
   const markAsRead = async (messageId: string) => {
     if (!user) return;
-    
+
     try {
-      // Demo functionality - just update local state
-      setMessages(prev => prev.map(msg => 
-        msg.id === messageId ? { ...msg, is_read: true } : msg
-      ));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to mark message as read');
+      const { error } = await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('id', messageId)
+        .neq('sender_id', user.id); // Don't mark own messages as read
+
+      if (error) throw error;
+    } catch (err: any) {
+      console.error('Error marking message as read:', err);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    if (!user || !conversationId) return;
+
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('conversation_id', conversationId)
+        .neq('sender_id', user.id)
+        .eq('is_read', false);
+
+      if (error) throw error;
+    } catch (err: any) {
+      console.error('Error marking messages as read:', err);
     }
   };
 
   useEffect(() => {
-    if (user) {
-      // Demo functionality - no actual fetching
-    }
-  }, [user]);
+    fetchMessages();
+  }, [conversationId, user]);
 
   return {
     messages,
     loading,
     error,
     sendMessage,
-    getMessages,
-    markAsRead
+    markAsRead,
+    fetchMessages
   };
 };

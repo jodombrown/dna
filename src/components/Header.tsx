@@ -5,9 +5,10 @@ import Logo from './header/Logo';
 import DesktopNavigation from './header/DesktopNavigation';
 import MobileNavigation from './header/MobileNavigation';
 import NotificationsDropdown from './notifications/NotificationsDropdown';
+import MessagingNotifications from './notifications/MessagingNotifications';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { Button } from '@/components/ui/button';
-import { User } from 'lucide-react';
+import { User, MessageSquare } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,6 +40,15 @@ const Header = () => {
             {user ? (
               <div className="flex items-center space-x-2">
                 <NotificationsDropdown />
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/messages')}
+                  className="relative"
+                >
+                  <MessagingNotifications />
+                </Button>
                 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -83,6 +93,7 @@ const Header = () => {
                       Saved Content
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/messages')}>
+                      <MessageSquare className="w-4 h-4 mr-2" />
                       Messages
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
