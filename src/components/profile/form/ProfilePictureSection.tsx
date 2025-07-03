@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Camera, Upload, Image, Info, Link } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { useImageUpload } from './ImageUploadHandler';
 
 interface ProfilePictureSectionProps {

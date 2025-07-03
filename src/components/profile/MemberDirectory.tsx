@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import ProfileCard from './ProfileCard';
 import RecommendationsSection from './RecommendationsSection';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { useSearchHandlers } from '@/hooks/useSearchHandlers';
 import { toast } from 'sonner';
 import { sanitizeText } from '@/utils/securityValidation';

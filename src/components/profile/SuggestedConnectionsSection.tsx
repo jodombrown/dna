@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Users, UserPlus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';

@@ -25,8 +25,6 @@ import Contact from "./pages/Contact";
 import About from "./pages/About";
 import EnhancedAbout from "./pages/EnhancedAbout";
 import EnhancedContact from "./pages/EnhancedContact";
-import SocialFeed from "./pages/SocialFeed";
-import SocialFeedPage from "./pages/SocialFeedPage";
 import CleanSocialFeedPage from "./pages/CleanSocialFeedPage";
 import Notifications from "./pages/Notifications";
 import Saved from "./pages/Saved";
@@ -72,9 +70,6 @@ function App() {
               <Route path="/enhanced-about" element={<EnhancedAbout />} />
               <Route path="/enhanced-contact" element={<EnhancedContact />} />
               <Route path="/feed" element={<CleanSocialFeedPage />} />
-              <Route path="/social-feed" element={<SocialFeed />} />
-              <Route path="/social-feed-page" element={<SocialFeedPage />} />
-              <Route path="/clean-social-feed" element={<CleanSocialFeedPage />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/saved" element={<Saved />} />
               <Route path="/communities" element={<Communities />} />

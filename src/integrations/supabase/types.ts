@@ -1043,6 +1043,111 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_members: {
+        Row: {
+          id: string
+          joined_at: string
+          organization_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          organization_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          organization_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          contact_email: string
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          rejection_reason: string | null
+          updated_at: string
+          verification_documents: Json | null
+          verification_status: string
+          verified_at: string | null
+          verified_by: string | null
+          website_url: string | null
+        }
+        Insert: {
+          contact_email: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          rejection_reason?: string | null
+          updated_at?: string
+          verification_documents?: Json | null
+          verification_status?: string
+          verified_at?: string | null
+          verified_by?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          contact_email?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          rejection_reason?: string | null
+          updated_at?: string
+          verification_documents?: Json | null
+          verification_status?: string
+          verified_at?: string | null
+          verified_by?: string | null
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       phase_metrics: {
         Row: {
           color: string | null

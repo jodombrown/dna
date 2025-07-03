@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/CleanAuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 type Props = {
