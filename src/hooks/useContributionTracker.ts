@@ -1,6 +1,7 @@
 
 import { useContributions } from './useContributions';
 import { useAuth } from '@/contexts/CleanAuthContext';
+import { ContributionType } from '@/types/contributionTypes';
 
 export const useContributionTracker = () => {
   const { trackContribution } = useContributions();

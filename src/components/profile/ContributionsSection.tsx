@@ -2,7 +2,8 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useContributions, Contribution } from '@/hooks/useContributions';
+import { useContributions } from '@/hooks/useContributions';
+import { Contribution, ContributionType } from '@/types/contributionTypes';
 import { 
   MessageSquare, 
   Lightbulb, 
@@ -25,7 +26,7 @@ const ContributionsSection: React.FC<ContributionsSectionProps> = ({
 }) => {
   const { contributions, loading } = useContributions(userId);
 
-  const getContributionIcon = (type: Contribution['type']) => {
+  const getContributionIcon = (type: ContributionType) => {
     switch (type) {
       case 'post':
         return <MessageSquare className="w-4 h-4" />;
@@ -44,7 +45,7 @@ const ContributionsSection: React.FC<ContributionsSectionProps> = ({
     }
   };
 
-  const getContributionLabel = (type: Contribution['type']) => {
+  const getContributionLabel = (type: ContributionType) => {
     switch (type) {
       case 'post':
         return 'Created Post';
@@ -63,7 +64,7 @@ const ContributionsSection: React.FC<ContributionsSectionProps> = ({
     }
   };
 
-  const getContributionColor = (type: Contribution['type']) => {
+  const getContributionColor = (type: ContributionType) => {
     switch (type) {
       case 'post':
         return 'bg-blue-100 text-blue-800';
@@ -89,7 +90,7 @@ const ContributionsSection: React.FC<ContributionsSectionProps> = ({
     }
     acc[contribution.type].push(contribution);
     return acc;
-  }, {} as Record<string, Contribution[]>);
+  }, {} as Record<ContributionType, Contribution[]>);
 
   if (loading) {
     return (
@@ -143,9 +144,9 @@ const ContributionsSection: React.FC<ContributionsSectionProps> = ({
         {Object.entries(groupedContributions).map(([type, typeContributions]) => (
           <div key={type}>
             <div className="flex items-center gap-2 mb-3">
-              {getContributionIcon(type as Contribution['type'])}
+              {getContributionIcon(type as ContributionType)}
               <h4 className="font-medium text-gray-900">
-                {getContributionLabel(type as Contribution['type'])} ({typeContributions.length})
+                {getContributionLabel(type as ContributionType)} ({typeContributions.length})
               </h4>
             </div>
             

@@ -3,16 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
-
-export interface Contribution {
-  id: string;
-  user_id: string;
-  type: 'post' | 'initiative' | 'event' | 'opportunity' | 'community' | 'newsletter';
-  target_id: string;
-  target_title: string | null;
-  created_at: string;
-  metadata: Record<string, any>;
-}
+import { Contribution, ContributionType } from '@/types/contributionTypes';
 
 export const useContributions = (userId?: string) => {
   const { user } = useAuth();
@@ -38,7 +29,7 @@ export const useContributions = (userId?: string) => {
       // Cast the data to match our Contribution interface
       const typedContributions = (data || []).map(item => ({
         ...item,
-        type: item.type as Contribution['type'],
+        type: item.type as ContributionType,
         metadata: (item.metadata as Record<string, any>) || {}
       }));
 
@@ -56,7 +47,7 @@ export const useContributions = (userId?: string) => {
   };
 
   const trackContribution = async (
-    type: Contribution['type'],
+    type: ContributionType,
     targetId: string,
     targetTitle?: string,
     metadata?: Record<string, any>

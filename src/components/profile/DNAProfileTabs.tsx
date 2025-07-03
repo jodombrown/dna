@@ -1,22 +1,18 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { 
   User, 
   Briefcase, 
   FolderOpen, 
   Calendar, 
-  Users, 
-  Edit,
   Clock
 } from 'lucide-react';
-import LinkedInAboutSection from './LinkedInAboutSection';
-import LinkedInExperienceSection from './LinkedInExperienceSection';
-import LinkedInProjectsSection from './LinkedInProjectsSection';
-import ContributionsSection from './ContributionsSection';
+import AboutTabContent from './tabs/AboutTabContent';
+import ExperienceTabContent from './tabs/ExperienceTabContent';
+import ProjectsTabContent from './tabs/ProjectsTabContent';
+import ContributionsTabContent from './tabs/ContributionsTabContent';
+import ActivityTabContent from './tabs/ActivityTabContent';
 
 interface DNAProfileTabsProps {
   profile: any;
@@ -39,6 +35,11 @@ const DNAProfileTabs: React.FC<DNAProfileTabsProps> = ({
   setActiveTab,
   onEdit
 }) => {
+  const handleAddProject = () => {
+    // TODO: Implement add project functionality
+    console.log('Add project functionality coming soon');
+  };
+
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="grid w-full grid-cols-5">
@@ -66,7 +67,7 @@ const DNAProfileTabs: React.FC<DNAProfileTabsProps> = ({
 
       <div className="mt-6">
         <TabsContent value="about">
-          <LinkedInAboutSection 
+          <AboutTabContent 
             profile={profile} 
             isOwnProfile={isOwnProfile}
             onEdit={onEdit}
@@ -74,7 +75,7 @@ const DNAProfileTabs: React.FC<DNAProfileTabsProps> = ({
         </TabsContent>
 
         <TabsContent value="experience">
-          <LinkedInExperienceSection 
+          <ExperienceTabContent 
             profile={profile} 
             isOwnProfile={isOwnProfile}
             onEdit={onEdit}
@@ -82,95 +83,27 @@ const DNAProfileTabs: React.FC<DNAProfileTabsProps> = ({
         </TabsContent>
 
         <TabsContent value="projects">
-          <LinkedInProjectsSection 
+          <ProjectsTabContent 
             profile={profile} 
             isOwnProfile={isOwnProfile}
             onEdit={onEdit}
+            onAddProject={handleAddProject}
           />
         </TabsContent>
 
         <TabsContent value="contributions">
-          <ContributionsSection 
+          <ContributionsTabContent 
             userId={profile?.id}
             isOwnProfile={isOwnProfile}
           />
         </TabsContent>
 
         <TabsContent value="activity">
-          <div className="space-y-6">
-            {/* Recent Posts */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-dna-emerald" />
-                  Recent Posts ({userPosts.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {userPosts.length > 0 ? (
-                  <div className="space-y-4">
-                    {userPosts.slice(0, 3).map((post: any) => (
-                      <div key={post.id} className="p-4 bg-gray-50 rounded-lg">
-                        <p className="font-medium">{post.content?.substring(0, 100)}...</p>
-                        <p className="text-sm text-gray-500 mt-2">
-                          {new Date(post.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No posts yet</p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Communities */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-dna-copper" />
-                  Communities ({userCommunities.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {userCommunities.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {userCommunities.map((community: any) => (
-                      <Badge key={community.id} variant="secondary">
-                        {community.name}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No communities joined yet</p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Events */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-dna-gold" />
-                  Events ({userEvents.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {userEvents.length > 0 ? (
-                  <div className="space-y-3">
-                    {userEvents.slice(0, 3).map((event: any) => (
-                      <div key={event.id} className="p-3 bg-gray-50 rounded-lg">
-                        <p className="font-medium">{event.title}</p>
-                        <p className="text-sm text-gray-500">{event.date_time}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No events yet</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+          <ActivityTabContent 
+            userPosts={userPosts}
+            userEvents={userEvents}
+            userCommunities={userCommunities}
+          />
         </TabsContent>
       </div>
     </Tabs>
