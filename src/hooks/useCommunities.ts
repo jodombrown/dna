@@ -13,6 +13,10 @@ interface Community {
   creator_id?: string;
   member_count?: number;
   is_featured?: boolean;
+  is_active?: boolean;
+  moderation_status?: string;
+  moderated_at?: string;
+  moderated_by?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -34,6 +38,8 @@ export const useCommunities = () => {
       created_by: 'user1',
       creator_id: 'user1',
       is_featured: true,
+      is_active: true,
+      moderation_status: 'approved',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     },
@@ -49,6 +55,8 @@ export const useCommunities = () => {
       created_by: 'user2',
       creator_id: 'user2',
       is_featured: false,
+      is_active: true,
+      moderation_status: 'approved',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     },
@@ -64,6 +72,8 @@ export const useCommunities = () => {
       created_by: 'user3',
       creator_id: 'user3',
       is_featured: false,
+      is_active: true,
+      moderation_status: 'approved',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     },
@@ -79,6 +89,8 @@ export const useCommunities = () => {
       created_by: 'user4',
       creator_id: 'user4',
       is_featured: false,
+      is_active: true,
+      moderation_status: 'approved',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     }
@@ -106,6 +118,8 @@ export const useCommunities = () => {
       created_by: 'current-user',
       creator_id: 'current-user',
       is_featured: false,
+      is_active: true,
+      moderation_status: 'approved',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };

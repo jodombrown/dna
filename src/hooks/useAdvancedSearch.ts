@@ -14,6 +14,8 @@ interface Professional {
   is_investor: boolean;
   looking_for_opportunities: boolean;
   bio?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface Community {
@@ -24,6 +26,10 @@ interface Community {
   member_count: number;
   category: string;
   is_featured: boolean;
+  is_active: boolean;
+  moderation_status: string;
+  moderated_at?: string;
+  moderated_by?: string;
   created_at: string;
   updated_at: string;
 }
@@ -91,7 +97,9 @@ export const useAdvancedSearch = () => {
       is_mentor: true,
       is_investor: false,
       looking_for_opportunities: false,
-      bio: 'Experienced software engineer'
+      bio: 'Experienced software engineer',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: '2',
@@ -105,7 +113,9 @@ export const useAdvancedSearch = () => {
       is_mentor: false,
       is_investor: true,
       looking_for_opportunities: false,
-      bio: 'Investment banking professional'
+      bio: 'Investment banking professional',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
     }
   ];
 
@@ -118,6 +128,8 @@ export const useAdvancedSearch = () => {
       member_count: 1250,
       category: 'Technology',
       is_featured: true,
+      is_active: true,
+      moderation_status: 'approved',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     },
@@ -129,6 +141,8 @@ export const useAdvancedSearch = () => {
       member_count: 850,
       category: 'Business',
       is_featured: false,
+      is_active: true,
+      moderation_status: 'approved',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     }

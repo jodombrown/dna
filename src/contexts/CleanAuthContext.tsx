@@ -10,9 +10,11 @@ interface User {
 interface Profile {
   id: string;
   full_name?: string;
+  display_name?: string;
   avatar_url?: string;
   bio?: string;
   location?: string;
+  profession?: string;
   skills?: string[];
   interests?: string[];
   linkedin_url?: string;
@@ -22,6 +24,7 @@ interface Profile {
   is_mentor?: boolean;
   is_investor?: boolean;
   looking_for_opportunities?: boolean;
+  onboarding_completed_at?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -70,13 +73,16 @@ export const CleanAuthProvider: React.FC<CleanAuthProviderProps> = ({ children }
     const demoProfile = {
       id: '1',
       full_name: 'Demo User',
+      display_name: 'Demo User',
       bio: 'Demo user for testing',
       location: 'Global',
+      profession: 'Software Developer',
       skills: ['React', 'TypeScript'],
       interests: ['Technology', 'Innovation'],
       is_mentor: false,
       is_investor: false,
-      looking_for_opportunities: true
+      looking_for_opportunities: true,
+      onboarding_completed_at: new Date().toISOString()
     };
     
     setUser(demoUser);
@@ -90,13 +96,16 @@ export const CleanAuthProvider: React.FC<CleanAuthProviderProps> = ({ children }
     const demoProfile = {
       id: '1',
       full_name: fullName,
+      display_name: fullName,
       bio: 'New user',
       location: 'Global',
+      profession: 'Professional',
       skills: [],
       interests: [],
       is_mentor: false,
       is_investor: false,
-      looking_for_opportunities: true
+      looking_for_opportunities: true,
+      onboarding_completed_at: new Date().toISOString()
     };
     
     setUser(demoUser);
