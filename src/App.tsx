@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -34,6 +33,9 @@ import AdminAdvancedSettings from "./pages/AdminAdvancedSettings";
 import AdminDataSeeder from "./pages/AdminDataSeeder";
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
+import OnboardingWizard from "./components/onboarding/OnboardingWizard";
+import OnboardingGuard from "./components/OnboardingGuard";
+import SocialFeed from "./pages/SocialFeed";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,6 +66,14 @@ const App = () => (
             <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/profile/my" element={<MyProfile />} />
             <Route path="/coming-soon" element={<ComingSoon />} />
+
+            {/* Onboarding and Protected Routes */}
+            <Route path="/onboarding" element={<OnboardingWizard />} />
+            <Route path="/feed" element={
+              <OnboardingGuard>
+                <SocialFeed />
+              </OnboardingGuard>
+            } />
 
             {/* Phase Pages */}
             <Route path="/phase/market-research" element={<MarketResearchPhase />} />

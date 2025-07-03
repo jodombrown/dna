@@ -666,14 +666,20 @@ export type Database = {
           bio: string | null
           company: string | null
           created_at: string
+          current_country: string | null
+          display_name: string | null
           email: string | null
           full_name: string | null
           id: string
+          interest_tags: string[] | null
           interests: string[] | null
           is_public: boolean | null
           linkedin_url: string | null
           location: string | null
+          onboarding_completed_at: string | null
           profession: string | null
+          professional_role: string | null
+          profile_picture_url: string | null
           skills: string[] | null
           updated_at: string
           website_url: string | null
@@ -683,14 +689,20 @@ export type Database = {
           bio?: string | null
           company?: string | null
           created_at?: string
+          current_country?: string | null
+          display_name?: string | null
           email?: string | null
           full_name?: string | null
           id: string
+          interest_tags?: string[] | null
           interests?: string[] | null
           is_public?: boolean | null
           linkedin_url?: string | null
           location?: string | null
+          onboarding_completed_at?: string | null
           profession?: string | null
+          professional_role?: string | null
+          profile_picture_url?: string | null
           skills?: string[] | null
           updated_at?: string
           website_url?: string | null
@@ -700,14 +712,20 @@ export type Database = {
           bio?: string | null
           company?: string | null
           created_at?: string
+          current_country?: string | null
+          display_name?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
+          interest_tags?: string[] | null
           interests?: string[] | null
           is_public?: boolean | null
           linkedin_url?: string | null
           location?: string | null
+          onboarding_completed_at?: string | null
           profession?: string | null
+          professional_role?: string | null
+          profile_picture_url?: string | null
           skills?: string[] | null
           updated_at?: string
           website_url?: string | null
