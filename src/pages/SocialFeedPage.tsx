@@ -5,6 +5,7 @@ import SocialFeed from '@/components/social/SocialFeed';
 import ContributionCardsGrid from '@/components/social/ContributionCardsGrid';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { 
   MessageSquare, 
   DollarSign, 
@@ -12,8 +13,10 @@ import {
   Users,
   FileText
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const SocialFeedPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('feed');
 
   return (
@@ -80,8 +83,14 @@ const SocialFeedPage = () => {
               <TabsContent value="newsletters">
                 <div className="text-center py-12 text-gray-500">
                   <FileText className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                  <h3 className="text-lg font-semibold mb-2">Newsletters Coming Soon</h3>
+                  <h3 className="text-lg font-semibold mb-2">Newsletters Available</h3>
                   <p>Create and subscribe to community newsletters.</p>
+                  <Button 
+                    onClick={() => navigate('/newsletters')}
+                    className="mt-4 bg-dna-emerald hover:bg-dna-forest text-white"
+                  >
+                    Go to Newsletters
+                  </Button>
                 </div>
               </TabsContent>
             </Tabs>

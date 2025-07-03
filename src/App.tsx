@@ -36,6 +36,9 @@ import MyCommunities from "./pages/MyCommunities";
 import Opportunities from "./pages/Opportunities";
 import JobsMatched from "./pages/JobsMatched";
 import AdminAnalyticsDashboard from "./pages/AdminAnalyticsDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
+import Newsletters from "./pages/Newsletters";
 
 const queryClient = new QueryClient();
 
@@ -79,7 +82,9 @@ function App() {
               <Route path="/my-communities" element={<MyCommunities />} />
               <Route path="/opportunities" element={<Opportunities />} />
               <Route path="/jobs/matched" element={<JobsMatched />} />
-              <Route path="/admin/analytics" element={<AdminAnalyticsDashboard />} />
+              <Route path="/newsletters" element={<Newsletters />} />
+              <Route path="/admin/dashboard" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
+              <Route path="/admin/analytics" element={<ProtectedAdminRoute><AdminAnalyticsDashboard /></ProtectedAdminRoute>} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
