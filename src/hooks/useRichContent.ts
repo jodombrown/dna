@@ -1,0 +1,144 @@
+
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+export interface RichContentItem {
+  id: string;
+  type: 'event' | 'initiative' | 'opportunity';
+  title: string;
+  created_at: string;
+  created_by?: string;
+  data: any; // The specific data for each content type
+  author?: {
+    full_name: string;
+    avatar_url?: string;
+    professional_role?: string;
+  };
+}
+
+export const useRichContent = () => {
+  const { toast } = useToast();
+  const [richContent, setRichContent] = useState<RichContentItem[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchRichContent = async () => {
+    setLoading(true);
+    try {
+      // Fetch events
+      const { data: events, error: eventsError } = await supabase
+        .from('events')
+        .select(`
+          *,
+          profiles!events_created_by_fkey (
+            full_name,
+            avatar_url,
+            professional_role
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (eventsError) throw eventsError;
+
+      // Fetch initiatives
+      const { data: initiatives, error: initiativesError } = await supabase
+        .from('initiatives')
+        .select(`
+          *,
+          profiles!initiatives_creator_id_fkey (
+            full_name,
+            avatar_url,
+            professional_role
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (initiativesError) throw initiativesError;
+
+      // Fetch opportunities
+      const { data: opportunities, error: opportunitiesError } = await supabase
+        .from('opportunities')
+        .select(`
+          *,
+          profiles!opportunities_created_by_fkey (
+            full_name,
+            avatar_url,
+            professional_role
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (opportunitiesError) throw opportunitiesError;
+
+      // Combine and format all content
+      const allContent: RichContentItem[] = [
+        ...(events || []).map(event => ({
+          id: event.id,
+          type: 'event' as const,
+          title: event.title,
+          created_at: event.created_at,
+          created_by: event.created_by,
+          data: event,
+          author: event.profiles ? {
+            full_name: event.profiles.full_name || 'Unknown User',
+            avatar_url: event.profiles.avatar_url || undefined,
+            professional_role: event.profiles.professional_role || undefined
+          } : undefined
+        })),
+        ...(initiatives || []).map(initiative => ({
+          id: initiative.id,
+          type: 'initiative' as const,
+          title: initiative.title,
+          created_at: initiative.created_at,
+          created_by: initiative.creator_id,
+          data: initiative,
+          author: initiative.profiles ? {
+            full_name: initiative.profiles.full_name || 'Unknown User',
+            avatar_url: initiative.profiles.avatar_url || undefined,
+            professional_role: initiative.profiles.professional_role || undefined
+          } : undefined
+        })),
+        ...(opportunities || []).map(opportunity => ({
+          id: opportunity.id,
+          type: 'opportunity' as const,
+          title: opportunity.title,
+          created_at: opportunity.created_at,
+          created_by: opportunity.created_by,
+          data: opportunity,
+          author: opportunity.profiles ? {
+            full_name: opportunity.profiles.full_name || 'Unknown User',
+            avatar_url: opportunity.profiles.avatar_url || undefined,
+            professional_role: opportunity.profiles.professional_role || undefined
+          } : undefined
+        }))
+      ];
+
+      // Sort all content by creation date
+      allContent.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setRichContent(allContent);
+    } catch (error) {
+      console.error('Error fetching rich content:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load rich content",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRichContent();
+  }, []);
+
+  return {
+    richContent,
+    loading,
+    refreshContent: fetchRichContent
+  };
+};
