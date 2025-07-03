@@ -602,6 +602,101 @@ export type Database = {
         }
         Relationships: []
       }
+      job_posts: {
+        Row: {
+          application_email: string | null
+          application_url: string | null
+          company: string
+          created_at: string
+          description: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          job_type: string | null
+          location: string | null
+          posted_by: string
+          requirements: string | null
+          salary_range: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          application_email?: string | null
+          application_url?: string | null
+          company: string
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          job_type?: string | null
+          location?: string | null
+          posted_by: string
+          requirements?: string | null
+          salary_range?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          application_email?: string | null
+          application_url?: string | null
+          company?: string
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          job_type?: string | null
+          location?: string | null
+          posted_by?: string
+          requirements?: string | null
+          salary_range?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      job_referrals: {
+        Row: {
+          created_at: string
+          id: string
+          job_id: string
+          note: string | null
+          referred_id: string
+          referrer_id: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_id: string
+          note?: string | null
+          referred_id: string
+          referrer_id: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_id?: string
+          note?: string | null
+          referred_id?: string
+          referrer_id?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_referrals_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "job_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       newsletters: {
         Row: {
           category: string | null
