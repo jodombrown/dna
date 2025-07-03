@@ -36,6 +36,12 @@ import JobsMatched from "./pages/JobsMatched";
 import AdminAnalyticsDashboard from "./pages/AdminAnalyticsDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
+import MarketResearchPhase from "./pages/MarketResearchPhase";
+import PrototypingPhase from "./pages/PrototypingPhase";
+import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
+import MvpPhase from "./pages/MvpPhase";
+import BetaValidationPhase from "./pages/BetaValidationPhase";
+import GoToMarketPhase from "./pages/GoToMarketPhase";
 import Newsletters from "./pages/Newsletters";
 
 const queryClient = new QueryClient();
@@ -77,6 +83,12 @@ function App() {
               <Route path="/my-communities" element={<MyCommunities />} />
               <Route path="/opportunities" element={<Opportunities />} />
               <Route path="/jobs/matched" element={<JobsMatched />} />
+              <Route path="/phase/market-research" element={<MarketResearchPhase />} />
+              <Route path="/phase/prototyping" element={<PrototypingPhase />} />
+              <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
+              <Route path="/phase/mvp" element={<MvpPhase />} />
+              <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
+              <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
               <Route path="/newsletters" element={<Newsletters />} />
               <Route path="/admin/dashboard" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
               <Route path="/admin/analytics" element={<ProtectedAdminRoute><AdminAnalyticsDashboard /></ProtectedAdminRoute>} />
