@@ -21,8 +21,8 @@ const MyCommunities = () => {
 
   // Filter communities where user is a member
   const myCommunities = communities.filter(community => community.is_member);
-  const myCreatedCommunities = myCommunities.filter(community => community.creator_id === user?.id);
-  const myJoinedCommunities = myCommunities.filter(community => community.creator_id !== user?.id);
+  const myCreatedCommunities = myCommunities.filter(community => community.created_by === user?.id);
+  const myJoinedCommunities = myCommunities.filter(community => community.created_by !== user?.id);
 
   const handleViewDetails = (communityId: string) => {
     navigate(`/communities/${communityId}`);

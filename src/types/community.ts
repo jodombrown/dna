@@ -3,10 +3,15 @@ export interface Community {
   id: string;
   name: string;
   created_by: string | null;
+  creator_id: string;
   description?: string | null;
+  purpose_goals?: string | null;
   category?: string | null;
+  tags?: string[] | null;
   image_url?: string | null;
+  cover_image_url?: string | null;
   member_count: number | null;
+  is_active: boolean | null;
   is_featured: boolean | null;
   moderation_status: string | null;
   created_at: string;
@@ -34,6 +39,9 @@ export interface CommunityWithMembership extends Community {
 export interface CreateCommunityData {
   name: string;
   description?: string;
+  purpose_goals?: string;
   category?: string;
+  tags?: string[];
   image_url?: string;
+  cover_image_url?: string;
 }

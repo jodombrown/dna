@@ -27,35 +27,37 @@ export const useCommunities = () => {
       if (!user || !communitiesData) {
         const communitiesWithMembership: CommunityWithMembership[] = (communitiesData || []).map(community => ({
           ...community,
+          creator_id: community.created_by || '',
+          is_active: true,
           is_member: false
         }));
         setCommunities(communitiesWithMembership);
         return;
       }
 
-      // Fetch user memberships directly using raw query
+      // Fetch user memberships using a direct query
       const { data: membershipsData, error: membershipsError } = await supabase
-        .from('community_memberships' as any)
-        .select('*')
-        .eq('user_id', user.id);
+        .rpc('get_user_memberships', { user_id: user.id });
 
-      if (membershipsError) {
-        console.error('Error fetching memberships:', membershipsError);
-        // Continue without membership data
+      let memberships: any[] = [];
+      if (!membershipsError && membershipsData) {
+        memberships = Array.isArray(membershipsData) ? membershipsData : [];
       }
 
       // Combine communities with membership info
       const communitiesWithMembership: CommunityWithMembership[] = communitiesData.map(community => {
-        const membership = membershipsData?.find((m: any) => m.community_id === community.id);
+        const membership = memberships.find((m: any) => m.community_id === community.id);
         return {
           ...community,
+          creator_id: community.created_by || '',
+          is_active: true,
           user_membership: membership,
           is_member: !!membership,
           user_role: membership?.role as 'admin' | 'moderator' | 'member' | undefined
         };
       });
 
-      setCommunities(communitiesWithMembership);
+      setCommunities(communitiesWithMembership as CommunityWithMembership[]);
     } catch (error) {
       console.error('Error fetching communities:', error);
       toast({

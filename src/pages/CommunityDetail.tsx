@@ -50,6 +50,8 @@ const CommunityDetail = () => {
 
       const communityWithMembership: CommunityWithMembership = {
         ...communityData,
+        creator_id: communityData.created_by || '',
+        is_active: true,
         user_membership: userMembership,
         is_member: !!userMembership,
         user_role: userMembership?.role as 'admin' | 'moderator' | 'member' | undefined
@@ -198,10 +200,10 @@ const CommunityDetail = () => {
             {/* Community Header */}
             <Card>
               <CardContent className="p-0">
-                {community.image_url && (
+                {community.cover_image_url && (
                   <div className="w-full h-64 overflow-hidden rounded-t-lg">
                     <img
-                      src={community.image_url}
+                      src={community.cover_image_url}
                       alt={community.name}
                       className="w-full h-full object-cover"
                     />
@@ -256,6 +258,26 @@ const CommunityDetail = () => {
                     <div className="mb-6">
                       <h3 className="font-semibold text-gray-900 mb-2">About</h3>
                       <p className="text-gray-700">{community.description}</p>
+                    </div>
+                  )}
+
+                  {community.purpose_goals && (
+                    <div className="mb-6">
+                      <h3 className="font-semibold text-gray-900 mb-2">Purpose & Goals</h3>
+                      <p className="text-gray-700">{community.purpose_goals}</p>
+                    </div>
+                  )}
+
+                  {community.tags && community.tags.length > 0 && (
+                    <div className="mb-6">
+                      <h3 className="font-semibold text-gray-900 mb-2">Tags</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {community.tags.map((tag, index) => (
+                          <Badge key={index} variant="secondary">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
