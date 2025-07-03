@@ -66,7 +66,7 @@ function App() {
               <Route path="/connect" element={<Connect />} />
               <Route path="/connect-example" element={<ConnectExample />} />
               <Route path="/contribute-example" element={<ContributeExample />} />
-              <Route path="/collaborations-example" element={<CollaborationsExample />} />
+              <Route path="/collaborate-example" element={<CollaborationsExample />} />
               <Route path="/events" element={<Events />} />
               <Route path="/messages" element={<Messages />} />
               <Route path="/messages/:conversationId" element={<ConversationPage />} />
