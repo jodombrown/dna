@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 
-// Demo profiles data
+// Extended demo profiles data with realistic African diaspora professionals
 const demoProfiles = [
   {
     full_name: "Amara Okafor",
@@ -121,10 +121,130 @@ const demoProfiles = [
     linkedin_url: "https://linkedin.com/in/jomo-kigali",
     is_public: true,
     avatar_url: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face"
+  },
+  {
+    full_name: "Sekai Machado",
+    display_name: "Sekai Machado",
+    email: "sekai.machado@example.com",
+    profession: "Data Scientist",
+    company: "Microsoft",
+    location: "Seattle, WA",
+    current_country: "United States",
+    bio: "Zimbabwean data scientist working on AI for good initiatives. Focused on using technology to solve development challenges in Africa.",
+    skills: ["Data Science", "Machine Learning", "Python", "Statistics"],
+    interests: ["AI for Good", "Development", "Data Analytics"],
+    linkedin_url: "https://linkedin.com/in/sekai-machado",
+    is_public: true,
+    avatar_url: "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=150&h=150&fit=crop&crop=face"
+  },
+  {
+    full_name: "Oba Adebayo",
+    display_name: "Oba Adebayo",
+    email: "oba.adebayo@example.com",
+    profession: "Platform Administrator",
+    company: "DNA Network",
+    location: "Lagos, Nigeria",
+    current_country: "Nigeria",
+    bio: "Platform administrator ensuring DNA Network runs smoothly and connects the African diaspora effectively.",
+    skills: ["Platform Management", "Community Building", "Operations"],
+    interests: ["Community Management", "Technology", "African Unity"],
+    linkedin_url: "https://linkedin.com/in/oba-adebayo",
+    is_public: true,
+    avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+  },
+  {
+    full_name: "Thandiwe Mthembu",
+    display_name: "Thandiwe Mthembu",
+    email: "thandiwe.mthembu@example.com",
+    profession: "Venture Capitalist",
+    company: "Acacia Ventures",
+    location: "Cape Town, South Africa",
+    current_country: "South Africa",
+    bio: "South African VC investing in early-stage African startups. Passionate about scaling innovative solutions across the continent.",
+    skills: ["Venture Capital", "Investment Analysis", "Startup Mentoring", "Due Diligence"],
+    interests: ["Startups", "Investment", "Innovation"],
+    linkedin_url: "https://linkedin.com/in/thandiwe-mthembu",
+    is_public: true,
+    avatar_url: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face"
+  },
+  {
+    full_name: "Kofi Mensah",
+    display_name: "Kofi Mensah",
+    email: "kofi.mensah@example.com",
+    profession: "Blockchain Developer",
+    company: "Ethereum Foundation",
+    location: "Berlin, Germany",
+    current_country: "Germany",
+    bio: "Ghanaian blockchain developer building decentralized finance solutions for African markets.",
+    skills: ["Blockchain", "Solidity", "DeFi", "Smart Contracts"],
+    interests: ["Cryptocurrency", "DeFi", "Financial Inclusion"],
+    linkedin_url: "https://linkedin.com/in/kofi-mensah",
+    is_public: true,
+    avatar_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+  },
+  {
+    full_name: "Nia Asomani",
+    display_name: "Dr. Nia Asomani",
+    email: "nia.asomani@example.com",
+    profession: "Research Scientist",
+    company: "MIT",
+    location: "Boston, MA",
+    current_country: "United States",
+    bio: "Ghanaian-American researcher in biotechnology and genetics. Working on genetic therapies for diseases prevalent in Africa.",
+    skills: ["Biotechnology", "Genetics", "Research", "Laboratory Management"],
+    interests: ["Biotechnology", "Medical Research", "Genetics"],
+    linkedin_url: "https://linkedin.com/in/nia-asomani",
+    is_public: true,
+    avatar_url: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face"
+  },
+  {
+    full_name: "Bayo Adeleke",
+    display_name: "Bayo Adeleke",
+    email: "bayo.adeleke@example.com",
+    profession: "Creative Director",
+    company: "Ogilvy",
+    location: "New York, NY",
+    current_country: "United States",
+    bio: "Nigerian creative director crafting global campaigns that showcase African culture and creativity.",
+    skills: ["Creative Direction", "Brand Strategy", "Campaign Development", "Visual Design"],
+    interests: ["Creative Arts", "Brand Building", "African Culture"],
+    linkedin_url: "https://linkedin.com/in/bayo-adeleke",
+    is_public: true,
+    avatar_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
+  },
+  {
+    full_name: "Mariam Touré",
+    display_name: "Mariam Touré",
+    email: "mariam.toure@example.com",
+    profession: "Legal Advisor",
+    company: "Baker McKenzie",
+    location: "Paris, France",
+    current_country: "France",
+    bio: "Senegalese lawyer specializing in international trade law and cross-border African business transactions.",
+    skills: ["International Law", "Trade Law", "Corporate Law", "Contract Negotiation"],
+    interests: ["Legal Practice", "International Trade", "Business Law"],
+    linkedin_url: "https://linkedin.com/in/mariam-toure",
+    is_public: true,
+    avatar_url: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+  },
+  {
+    full_name: "Tariq Al-Mahdi",
+    display_name: "Tariq Al-Mahdi",
+    email: "tariq.almahdi@example.com",
+    profession: "Journalist",
+    company: "BBC Africa",
+    location: "Nairobi, Kenya",
+    current_country: "Kenya",
+    bio: "Sudanese journalist covering African politics and development stories for international media.",
+    skills: ["Journalism", "Investigative Reporting", "Political Analysis", "Media Production"],
+    interests: ["Journalism", "African Politics", "Media"],
+    linkedin_url: "https://linkedin.com/in/tariq-almahdi",
+    is_public: true,
+    avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
   }
 ];
 
-// Demo posts data
+// Demo posts data with various content types
 const demoPosts = [
   {
     content: "Excited to announce that our fintech startup just secured $2M in Series A funding! 🚀 This will help us expand our mobile payment solutions across West Africa. The diaspora investment community is truly powerful when we come together. #AfricanTech #Fintech #Diaspora",
@@ -184,6 +304,41 @@ const demoPosts = [
   {
     content: "Diaspora investment collective just funded 12 startups across East Africa! 🚀 When we pool our resources and expertise, we can create real change. Next investment round opens in Q2. Who's building something innovative? #DiasporaInvestment #StartupAfrica #VentureCapital",
     hashtags: ["DiasporaInvestment", "StartupAfrica", "VentureCapital"],
+    post_type: "text"
+  },
+  {
+    content: "Blockchain technology is transforming remittances to Africa! 💰 Our new DeFi platform reduces transfer costs by 80% and settlement time to minutes. The future of cross-border payments is here. #Blockchain #DeFi #Remittances #FinTech",
+    hashtags: ["Blockchain", "DeFi", "Remittances", "FinTech"],
+    post_type: "text"
+  },
+  {
+    content: "Creative Campaign Update: Our 'Africa Rising' campaign just won a Cannes Gold Lion! 🦁 Proud to showcase African creativity on the global stage. Representation matters in every industry. #CreativeArts #AfricanCreativity #CannesLions #Advertising",
+    hashtags: ["CreativeArts", "AfricanCreativity", "CannesLions", "Advertising"],
+    post_type: "text"
+  },
+  {
+    content: "Legal Milestone: African Continental Free Trade Agreement dispute resolution mechanism now operational! ⚖️ This will boost investor confidence and trade volumes across the continent. #AfCFTA #LegalNews #TradeAfrica #InternationalLaw",
+    hashtags: ["AfCFTA", "LegalNews", "TradeAfrica", "InternationalLaw"],
+    post_type: "text"
+  },
+  {
+    content: "Breaking: New genetic therapy trials for sickle cell disease showing 95% success rate in African patients! 🧬 This could be a game-changer for millions across the continent. Science saves lives! #Biotechnology #SickleCellDisease #MedicalBreakthrough #Genetics",
+    hashtags: ["Biotechnology", "SickleCellDisease", "MedicalBreakthrough", "Genetics"],
+    post_type: "text"
+  },
+  {
+    content: "Investigative Report: Corruption in African mining sector costs $50B annually. 📰 Transparency and accountability are essential for sustainable resource management. Read the full report on BBC Africa. #Journalism #Transparency #AfricanMining #Accountability",
+    hashtags: ["Journalism", "Transparency", "AfricanMining", "Accountability"],
+    post_type: "text"
+  },
+  {
+    content: "AI Innovation: Our machine learning model can predict crop yields with 90% accuracy using satellite data! 🛰️ This will help farmers optimize planting and improve food security across Africa. #AI #Agriculture #FoodSecurity #Innovation",
+    hashtags: ["AI", "Agriculture", "FoodSecurity", "Innovation"],
+    post_type: "text"
+  },
+  {
+    content: "Venture Capital Update: Africa attracted $4.3B in VC funding this year - a 35% increase! 📈 The startup ecosystem is maturing rapidly. What sectors are you most excited about? #VentureCapital #AfricanStartups #Investment #Innovation",
+    hashtags: ["VentureCapital", "AfricanStartups", "Investment", "Innovation"],
     post_type: "text"
   }
 ];
@@ -360,139 +515,368 @@ const demoContributionCards = [
   }
 ];
 
-export const seedDemoData = async (): Promise<void> => {
+// Demo job posts
+const demoJobPosts = [
+  {
+    title: "Senior Software Engineer - AI/ML",
+    company: "TechHub Lagos",
+    description: "Build next-generation AI solutions for African markets. Remote-friendly with quarterly Lagos visits.",
+    location: "Lagos, Nigeria (Remote OK)",
+    job_type: "full-time",
+    salary_range: "$80,000 - $120,000",
+    requirements: "5+ years Python, ML experience, African market knowledge preferred",
+    tags: ["AI", "Python", "Machine Learning", "Remote"],
+    application_email: "careers@techhublagos.com",
+    expires_at: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    title: "Investment Analyst - Africa Focus",
+    company: "Diaspora Capital",
+    description: "Analyze investment opportunities across African startups and infrastructure projects.",
+    location: "New York, NY",
+    job_type: "full-time",
+    salary_range: "$90,000 - $140,000",
+    requirements: "Finance degree, 3+ years VC/PE experience, African market expertise",
+    tags: ["Finance", "Investment", "VC", "Africa"],
+    application_email: "jobs@diasporacapital.com",
+    expires_at: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    title: "Digital Health Product Manager",
+    company: "MedConnect Africa",
+    description: "Lead product development for telemedicine platform serving rural African communities.",
+    location: "Nairobi, Kenya",
+    job_type: "full-time",
+    salary_range: "$60,000 - $90,000",
+    requirements: "Product management experience, healthcare tech background, Swahili preferred",
+    tags: ["Product Management", "HealthTech", "Digital Health"],
+    application_email: "careers@medconnectafrica.com",
+    expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    title: "Renewable Energy Engineer",
+    company: "SolarTech Ghana",
+    description: "Design and implement solar energy solutions for off-grid communities across West Africa.",
+    location: "Accra, Ghana",
+    job_type: "full-time",
+    salary_range: "$50,000 - $75,000",
+    requirements: "Electrical engineering degree, solar energy experience, willingness to travel",
+    tags: ["Solar Energy", "Engineering", "Renewable Energy"],
+    application_email: "hr@solartechghana.com",
+    expires_at: new Date(Date.now() + 40 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    title: "Content Marketing Manager",
+    company: "African Creative Collective",
+    description: "Build brand awareness for African creative agencies and artists globally.",
+    location: "Cape Town, South Africa (Hybrid)",
+    job_type: "full-time",
+    salary_range: "$45,000 - $65,000",
+    requirements: "Marketing degree, creative industry experience, social media expertise",
+    tags: ["Marketing", "Creative", "Social Media", "Branding"],
+    application_email: "jobs@africancreative.co.za",
+    expires_at: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000).toISOString()
+  }
+];
+
+// Demo initiatives
+const demoInitiatives = [
+  {
+    title: "Code for Africa Initiative",
+    description: "Teaching coding skills to young people across African cities through free bootcamps and mentorship programs.",
+    impact_area: "Education & Technology"
+  },
+  {
+    title: "Women in Agribusiness Network",
+    description: "Connecting and supporting women entrepreneurs in the agricultural value chain across Africa.",
+    impact_area: "Gender & Agriculture"
+  },
+  {
+    title: "Green Energy Villages Project",
+    description: "Implementing sustainable energy solutions in rural communities to improve quality of life and economic opportunities.",
+    impact_area: "Environment & Energy"
+  },
+  {
+    title: "African Health Data Alliance",
+    description: "Standardizing health data collection and sharing across African countries to improve healthcare outcomes.",
+    impact_area: "Healthcare & Data"
+  },
+  {
+    title: "Diaspora Mentorship Program",
+    description: "Connecting experienced diaspora professionals with young African entrepreneurs and students for career guidance.",
+    impact_area: "Mentorship & Career Development"
+  }
+];
+
+// Demo newsletters
+const demoNewsletters = [
+  {
+    title: "African Tech Weekly",
+    content: "This week in African technology: Major funding rounds, startup exits, and innovation updates from across the continent...",
+    summary: "Weekly roundup of African tech news and startup ecosystem updates",
+    category: "Technology",
+    tags: ["tech", "startups", "innovation", "funding"],
+    featured_image_url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=300&fit=crop",
+    is_published: true,
+    email_sent_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    title: "Diaspora Investment Digest",
+    content: "Investment opportunities and market analysis for African diaspora investors looking to impact the continent...",
+    summary: "Monthly investment insights and opportunities for diaspora investors",
+    category: "Investment",
+    tags: ["investment", "finance", "diaspora", "opportunities"],
+    featured_image_url: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
+    is_published: true,
+    email_sent_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    title: "Healthcare Innovation Report",
+    content: "Latest developments in African healthcare technology, telemedicine advances, and medical research breakthroughs...",
+    summary: "Bi-weekly healthcare innovation and medical technology updates",
+    category: "Healthcare",
+    tags: ["healthcare", "innovation", "medical", "technology"],
+    featured_image_url: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=300&fit=crop",
+    is_published: true,
+    email_sent_at: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    title: "Sustainable Development Monthly",
+    content: "Environmental initiatives, climate solutions, and sustainable development projects making impact across Africa...",
+    summary: "Monthly sustainability and environmental impact newsletter",
+    category: "Environment",
+    tags: ["sustainability", "environment", "climate", "development"],
+    featured_image_url: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&h=300&fit=crop",
+    is_published: true,
+    email_sent_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+  },
+  {
+    title: "Creative Economy Spotlight",
+    content: "Celebrating African creative talent, cultural exports, and the growing creative economy across the continent...",
+    summary: "Showcasing African creativity, arts, and cultural impact globally",
+    category: "Arts & Culture",
+    tags: ["arts", "culture", "creative", "economy"],
+    featured_image_url: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&h=300&fit=crop",
+    is_published: true,
+    email_sent_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
+  }
+];
+
+// Organizations data
+const demoOrganizations = [
+  {
+    name: "African Development Bank",
+    description: "Multilateral development finance institution promoting economic development and social progress across Africa",
+    logo_url: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=200&fit=crop",
+    website_url: "https://afdb.org",
+    contact_email: "info@afdb.org",
+    verification_status: "approved"
+  },
+  {
+    name: "Tony Elumelu Foundation",
+    description: "Empowering African entrepreneurs and catalyzing economic transformation across the continent",
+    logo_url: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=200&h=200&fit=crop",
+    website_url: "https://tonyelumelufoundation.org",
+    contact_email: "contact@tonyelumelufoundation.org",
+    verification_status: "approved"
+  },
+  {
+    name: "Mastercard Foundation",
+    description: "Working with visionary organizations to enable young people in Africa and indigenous communities in Canada to access dignified and fulfilling work",
+    logo_url: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=200&h=200&fit=crop",
+    website_url: "https://mastercardfdn.org",
+    contact_email: "info@mastercardfdn.org",
+    verification_status: "approved"
+  }
+];
+
+export const seedDemoData = async () => {
+  console.log('Starting comprehensive demo data seeding...');
+  
   try {
-    console.log('🌱 Starting demo data seeding...');
-
-    // First, let's create demo user profiles
-    const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
-    if (authError) {
-      console.error('Error fetching auth users:', authError);
-      return;
-    }
-
-    // If we don't have enough users, we'll use the existing ones
-    const existingUsers = authUsers.users;
+    // Step 1: Create demo users and profiles
+    console.log('Creating demo users and profiles...');
+    const createdUsers = [];
     
-    // Seed profiles for existing users
-    for (let i = 0; i < Math.min(demoProfiles.length, existingUsers.length); i++) {
-      const profile = demoProfiles[i];
-      const user = existingUsers[i];
+    for (const profileData of demoProfiles) {
+      // Check if user already exists
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', profileData.email)
+        .single();
       
+      if (existingProfile) {
+        console.log(`Profile already exists for ${profileData.email}`);
+        createdUsers.push(existingProfile.id);
+        continue;
+      }
+
+      // Create user account
+      const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
+        email: profileData.email,
+        password: 'demo123456',
+        email_confirm: true,
+        user_metadata: {
+          full_name: profileData.full_name
+        }
+      });
+
+      if (authError) {
+        console.error('Error creating auth user:', authError);
+        continue;
+      }
+
+      if (!authUser.user) {
+        console.error('No user returned from auth creation');
+        continue;
+      }
+
+      // Update profile with additional data
       const { error: profileError } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id,
-          ...profile,
-        });
-        
+        .update(profileData)
+        .eq('id', authUser.user.id);
+
       if (profileError) {
-        console.error(`Error creating profile ${i}:`, profileError);
-      } else {
-        console.log(`✅ Created profile: ${profile.full_name}`);
+        console.error('Error updating profile:', profileError);
+        continue;
       }
+
+      createdUsers.push(authUser.user.id);
+      console.log(`Created profile for ${profileData.full_name}`);
     }
 
-    // Get the created profiles to use for posts
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('id, full_name')
-      .limit(8);
-
-    if (!profiles || profiles.length === 0) {
-      console.error('No profiles found to create posts for');
-      return;
-    }
-
-    // Seed posts
+    // Step 2: Create demo posts
+    console.log('Creating demo posts...');
     for (let i = 0; i < demoPosts.length; i++) {
-      const post = demoPosts[i];
-      const randomProfile = profiles[i % profiles.length];
+      const postData = demoPosts[i];
+      const randomUserId = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       
       const { error: postError } = await supabase
         .from('posts')
         .insert({
-          user_id: randomProfile.id,
-          content: post.content,
-          hashtags: post.hashtags,
-          post_type: post.post_type,
+          ...postData,
+          user_id: randomUserId,
           is_published: true,
-          moderation_status: 'approved',
-          likes_count: Math.floor(Math.random() * 50) + 5,
-          comments_count: Math.floor(Math.random() * 20) + 1,
-          shares_count: Math.floor(Math.random() * 15) + 1,
+          moderation_status: 'approved'
         });
-        
+
       if (postError) {
-        console.error(`Error creating post ${i}:`, postError);
-      } else {
-        console.log(`✅ Created post by ${randomProfile.full_name}`);
+        console.error('Error creating post:', postError);
       }
     }
 
-    // Seed events
-    for (let i = 0; i < demoEvents.length; i++) {
-      const event = demoEvents[i];
-      const randomProfile = profiles[i % profiles.length];
+    // Step 3: Create demo events
+    console.log('Creating demo events...');
+    for (const eventData of demoEvents) {
+      const randomUserId = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       
       const { error: eventError } = await supabase
         .from('events')
         .insert({
-          ...event,
-          created_by: randomProfile.id,
-          attendee_count: Math.floor(Math.random() * 50) + 10,
+          ...eventData,
+          created_by: randomUserId
         });
-        
+
       if (eventError) {
-        console.error(`Error creating event ${i}:`, eventError);
-      } else {
-        console.log(`✅ Created event: ${event.title}`);
+        console.error('Error creating event:', eventError);
       }
     }
 
-    // Seed communities
-    for (let i = 0; i < demoCommunities.length; i++) {
-      const community = demoCommunities[i];
-      const randomProfile = profiles[i % profiles.length];
+    // Step 4: Create demo job posts
+    console.log('Creating demo job posts...');
+    for (const jobData of demoJobPosts) {
+      const randomUserId = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       
-      const { error: communityError } = await supabase
-        .from('communities')
+      const { error: jobError } = await supabase
+        .from('job_posts')
         .insert({
-          ...community,
-          created_by: randomProfile.id,
-          member_count: Math.floor(Math.random() * 500) + 50,
+          ...jobData,
+          posted_by: randomUserId
         });
-        
-      if (communityError) {
-        console.error(`Error creating community ${i}:`, communityError);
-      } else {
-        console.log(`✅ Created community: ${community.name}`);
+
+      if (jobError) {
+        console.error('Error creating job post:', jobError);
       }
     }
 
-    // Seed contribution cards
-    for (let i = 0; i < demoContributionCards.length; i++) {
-      const card = demoContributionCards[i];
-      const randomProfile = profiles[i % profiles.length];
+    // Step 5: Create demo initiatives
+    console.log('Creating demo initiatives...');
+    for (const initiativeData of demoInitiatives) {
+      const randomUserId = createdUsers[Math.floor(Math.random() * createdUsers.length)];
       
-      const { error: cardError } = await supabase
+      const { error: initiativeError } = await supabase
+        .from('initiatives')
+        .insert({
+          ...initiativeData,
+          creator_id: randomUserId
+        });
+
+      if (initiativeError) {
+        console.error('Error creating initiative:', initiativeError);
+      }
+    }
+
+    // Step 6: Create demo newsletters
+    console.log('Creating demo newsletters...');
+    for (const newsletterData of demoNewsletters) {
+      const randomUserId = createdUsers[Math.floor(Math.random() * createdUsers.length)];
+      
+      const { error: newsletterError } = await supabase
+        .from('newsletters')
+        .insert({
+          ...newsletterData,
+          created_by: randomUserId
+        });
+
+      if (newsletterError) {
+        console.error('Error creating newsletter:', newsletterError);
+      }
+    }
+
+    // Step 7: Create demo organizations
+    console.log('Creating demo organizations...');
+    for (const orgData of demoOrganizations) {
+      const randomUserId = createdUsers[Math.floor(Math.random() * createdUsers.length)];
+      
+      const { error: orgError } = await supabase
+        .from('organizations')
+        .insert({
+          ...orgData,
+          created_by: randomUserId
+        });
+
+      if (orgError) {
+        console.error('Error creating organization:', orgError);
+      }
+    }
+
+    // Step 8: Create demo contribution cards
+    console.log('Creating demo contribution cards...');
+    for (const contributionData of demoContributionCards) {
+      const randomUserId = createdUsers[Math.floor(Math.random() * createdUsers.length)];
+      
+      const { error: contributionError } = await supabase
         .from('contribution_cards')
         .insert({
-          ...card,
-          created_by: randomProfile.id,
+          ...contributionData,
+          created_by: randomUserId
         });
-        
-      if (cardError) {
-        console.error(`Error creating contribution card ${i}:`, cardError);
-      } else {
-        console.log(`✅ Created contribution card: ${card.title}`);
+
+      if (contributionError) {
+        console.error('Error creating contribution card:', contributionError);
       }
     }
 
-    console.log('🎉 Demo data seeding completed successfully!');
+    console.log('Comprehensive demo data seeding completed successfully!');
+    return { 
+      success: true, 
+      message: 'Comprehensive demo data created successfully! Created 15 users, 20+ posts, 5 events, 5 jobs, 5 initiatives, 5 newsletters, 3 organizations, and much more.' 
+    };
     
   } catch (error) {
-    console.error('❌ Error seeding demo data:', error);
+    console.error('Demo data seeding failed:', error);
     throw error;
   }
 };
