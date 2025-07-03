@@ -12,14 +12,8 @@ import Messages from "./pages/Messages";
 import EnhancedMessages from "./pages/EnhancedMessages";
 import Connect from "./pages/Connect";
 import Search from "./pages/Search";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
-import Post from "./pages/Post";
-import CreatePost from "./pages/CreatePost";
-import EditPost from "./pages/EditPost";
-import Feed from "./pages/Feed";
 import NotFound from "./pages/NotFound";
 import ConversationPage from "./pages/ConversationPage";
 
@@ -41,14 +35,8 @@ const App = () => (
           <Route path="/messages/:conversationId" element={<ConversationPage />} />
           <Route path="/connect" element={<Connect />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
-          <Route path="/post/:postId" element={<Post />} />
-          <Route path="/create-post" element={<CreatePost />} />
-          <Route path="/edit-post/:postId" element={<EditPost />} />
-          <Route path="/feed" element={<Feed />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

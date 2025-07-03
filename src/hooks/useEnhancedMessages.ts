@@ -100,7 +100,7 @@ export const useEnhancedMessages = (conversationId?: string, groupConversationId
         const enhancedMessages: EnhancedMessage[] = data.map(msg => ({
           ...msg,
           message_type: (msg.message_type as 'text' | 'image' | 'file' | 'system') || 'text',
-          attachments: Array.isArray(msg.attachments) ? msg.attachments as FileAttachment[] : [],
+          attachments: Array.isArray(msg.attachments) ? (msg.attachments as unknown as FileAttachment[]) : [],
           read_receipts: receiptsByMessage[msg.id] || []
         }));
 

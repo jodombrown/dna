@@ -66,13 +66,20 @@ export const useGroupConversations = () => {
       const { data: members } = await supabase
         .from('group_conversation_members')
         .select(`
-          *,
-          profiles!group_conversation_members_user_id_fkey (
-            full_name,
-            avatar_url
-          )
+          id,
+          user_id,
+          role,
+          joined_at,
+          group_conversation_id
         `)
         .in('group_conversation_id', conversationIds);
+
+      // Fetch profiles separately
+      const userIds = members?.map(m => m.user_id) || [];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', userIds);
 
       // Fetch last messages for each conversation
       const { data: lastMessages } = await supabase
@@ -89,6 +96,12 @@ export const useGroupConversations = () => {
         return acc;
       }, {} as Record<string, any>) || {};
 
+      // Create profiles lookup
+      const profilesLookup = profiles?.reduce((acc, profile) => {
+        acc[profile.id] = profile;
+        return acc;
+      }, {} as Record<string, any>) || {};
+
       // Enhance conversations with members and last messages
       const enhancedConversations: GroupConversation[] = conversations.map(conv => {
         const conversationMembers: GroupMember[] = members?.filter(m => m.group_conversation_id === conv.id).map(m => ({
@@ -96,9 +109,9 @@ export const useGroupConversations = () => {
           user_id: m.user_id,
           role: (m.role as 'admin' | 'member') || 'member',
           joined_at: m.joined_at,
-          profile: m.profiles ? {
-            full_name: m.profiles.full_name || '',
-            avatar_url: m.profiles.avatar_url || undefined
+          profile: profilesLookup[m.user_id] ? {
+            full_name: profilesLookup[m.user_id].full_name || '',
+            avatar_url: profilesLookup[m.user_id].avatar_url || undefined
           } : undefined
         })) || [];
         
