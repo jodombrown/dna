@@ -16,7 +16,10 @@ interface JobReferral {
     title: string;
     company: string;
   };
-  profiles: {
+  referrer_profile?: {
+    full_name: string;
+  };
+  referred_profile?: {
     full_name: string;
   };
 }
@@ -39,8 +42,7 @@ export const useJobReferrals = () => {
         .from('job_referrals')
         .select(`
           *,
-          job_posts!inner(title, company),
-          profiles!job_referrals_referred_id_fkey(full_name)
+          job_posts!inner(title, company)
         `)
         .eq('referrer_id', user.id)
         .order('created_at', { ascending: false });
@@ -52,16 +54,47 @@ export const useJobReferrals = () => {
         .from('job_referrals')
         .select(`
           *,
-          job_posts!inner(title, company),
-          profiles!job_referrals_referrer_id_fkey(full_name)
+          job_posts!inner(title, company)
         `)
         .eq('referred_id', user.id)
         .order('created_at', { ascending: false });
 
       if (receivedError) throw receivedError;
 
-      setReferralsMade(made || []);
-      setReferralsReceived(received || []);
+      // Now fetch profile names separately for the made referrals
+      if (made && made.length > 0) {
+        const referredIds = made.map(r => r.referred_id);
+        const { data: referredProfiles } = await supabase
+          .from('profiles')
+          .select('id, full_name')
+          .in('id', referredIds);
+
+        const madeWithProfiles = made.map(referral => ({
+          ...referral,
+          referred_profile: referredProfiles?.find(p => p.id === referral.referred_id)
+        }));
+        setReferralsMade(madeWithProfiles);
+      } else {
+        setReferralsMade([]);
+      }
+
+      // Fetch profile names separately for the received referrals
+      if (received && received.length > 0) {
+        const referrerIds = received.map(r => r.referrer_id);
+        const { data: referrerProfiles } = await supabase
+          .from('profiles')
+          .select('id, full_name')
+          .in('id', referrerIds);
+
+        const receivedWithProfiles = received.map(referral => ({
+          ...referral,
+          referrer_profile: referrerProfiles?.find(p => p.id === referral.referrer_id)
+        }));
+        setReferralsReceived(receivedWithProfiles);
+      } else {
+        setReferralsReceived([]);
+      }
+
       setError(null);
     } catch (err: any) {
       console.error('Error fetching referrals:', err);
