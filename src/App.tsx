@@ -17,6 +17,7 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import ConversationPage from "./pages/ConversationPage";
 import Newsletters from "./pages/Newsletters";
+import AdminRoleManagement from "./pages/AdminRoleManagement";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/newsletters" element={<Newsletters />} />
+          <Route path="/admin/roles" element={<AdminRoleManagement />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

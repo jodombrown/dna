@@ -1178,6 +1178,7 @@ export type Database = {
           profile_picture_url: string | null
           skills: string[] | null
           updated_at: string
+          user_role: Database["public"]["Enums"]["user_role"] | null
           website_url: string | null
         }
         Insert: {
@@ -1203,6 +1204,7 @@ export type Database = {
           profile_picture_url?: string | null
           skills?: string[] | null
           updated_at?: string
+          user_role?: Database["public"]["Enums"]["user_role"] | null
           website_url?: string | null
         }
         Update: {
@@ -1228,6 +1230,7 @@ export type Database = {
           profile_picture_url?: string | null
           skills?: string[] | null
           updated_at?: string
+          user_role?: Database["public"]["Enums"]["user_role"] | null
           website_url?: string | null
         }
         Relationships: []
@@ -1319,6 +1322,51 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1356,7 +1404,22 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
+      has_user_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: boolean
+      }
       is_admin_user: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
+      is_platform_admin: {
         Args: { _user_id: string }
         Returns: boolean
       }
@@ -1381,6 +1444,7 @@ export type Database = {
         | "rejected"
         | "hidden"
         | "deleted"
+      user_role: "user" | "moderator" | "organization" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1518,6 +1582,7 @@ export const Constants = {
         "hidden",
         "deleted",
       ],
+      user_role: ["user", "moderator", "organization", "admin"],
     },
   },
 } as const
