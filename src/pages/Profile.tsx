@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import EnhancedProfileForm from '@/components/profile/EnhancedProfileForm';
 import DNALinkedInProfile from '@/components/profile/DNALinkedInProfile';
+import PublicProfileView from '@/components/profile/PublicProfileView';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -20,6 +21,13 @@ const Profile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
 
   const isOwnProfile = user?.id === id;
+
+  // Redirect unauthenticated users
+  useEffect(() => {
+    if (!user && !loading) {
+      navigate('/functional-auth');
+    }
+  }, [user, loading, navigate]);
 
   useEffect(() => {
     if (id) {
@@ -73,7 +81,7 @@ const Profile = () => {
     setIsEditing(true);
   };
 
-  const handleFollow = async () => {
+  const handleConnect = async () => {
     if (!user || !id) return;
 
     try {
@@ -82,13 +90,16 @@ const Profile = () => {
         description: "Connection system will be implemented in a future update",
       });
     } catch (error) {
-      console.error('Error updating follow status:', error);
+      console.error('Error updating connection status:', error);
     }
   };
 
   const handleMessage = () => {
     if (!id) return;
-    navigate(`/messages?user=${id}`);
+    toast({
+      title: "Feature Coming Soon",
+      description: "Messaging system will be implemented in a future update",
+    });
   };
 
   if (loading) {
@@ -145,16 +156,29 @@ const Profile = () => {
     );
   }
 
+  // Use different components based on whether it's own profile or public view
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <DNALinkedInProfile
-        profile={profile}
-        isOwnProfile={isOwnProfile}
-        onEdit={handleEdit}
-        onFollow={handleFollow}
-        onMessage={handleMessage}
-      />
+      <div className="py-8">
+        {isOwnProfile ? (
+          <DNALinkedInProfile
+            profile={profile}
+            isOwnProfile={isOwnProfile}
+            onEdit={handleEdit}
+            onFollow={handleConnect}
+            onMessage={handleMessage}
+          />
+        ) : (
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <PublicProfileView
+              profile={profile}
+              onConnect={handleConnect}
+              onMessage={handleMessage}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
