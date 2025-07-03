@@ -3,11 +3,11 @@ export interface Community {
   id: string;
   name: string;
   creator_id: string;
-  description?: string;
-  purpose_goals?: string;
-  category?: string;
-  tags?: string[];
-  cover_image_url?: string;
+  description?: string | null;
+  purpose_goals?: string | null;
+  category?: string | null;
+  tags?: string[] | null;
+  cover_image_url?: string | null;
   member_count: number;
   is_active: boolean;
   created_at: string;

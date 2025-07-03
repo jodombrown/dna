@@ -25,7 +25,7 @@ export const useCommunities = () => {
       if (communitiesError) throw communitiesError;
 
       if (!user) {
-        const communitiesWithMembership = communitiesData?.map(community => ({
+        const communitiesWithMembership: CommunityWithMembership[] = communitiesData?.map(community => ({
           ...community,
           is_member: false
         })) || [];
@@ -33,19 +33,11 @@ export const useCommunities = () => {
         return;
       }
 
-      // Fetch user memberships using a raw query since the table isn't in types yet
+      // Fetch user memberships directly
       const { data: membershipsData, error: membershipsError } = await supabase
-        .rpc('get_user_memberships', { p_user_id: user.id })
-        .then(async (result) => {
-          // Fallback to direct query if RPC doesn't exist
-          if (result.error) {
-            return await supabase
-              .from('community_memberships' as any)
-              .select('*')
-              .eq('user_id', user.id);
-          }
-          return result;
-        });
+        .from('community_memberships' as any)
+        .select('*')
+        .eq('user_id', user.id);
 
       if (membershipsError) {
         console.error('Error fetching memberships:', membershipsError);
@@ -53,7 +45,7 @@ export const useCommunities = () => {
       }
 
       // Combine communities with membership info
-      const communitiesWithMembership = communitiesData?.map(community => {
+      const communitiesWithMembership: CommunityWithMembership[] = communitiesData?.map(community => {
         const membership = membershipsData?.find((m: any) => m.community_id === community.id);
         return {
           ...community,

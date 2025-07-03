@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -49,12 +48,14 @@ const CommunityDetail = () => {
         userMembership = membershipData;
       }
 
-      setCommunity({
+      const communityWithMembership: CommunityWithMembership = {
         ...communityData,
         user_membership: userMembership,
         is_member: !!userMembership,
         user_role: userMembership?.role as 'admin' | 'moderator' | 'member' | undefined
-      });
+      };
+
+      setCommunity(communityWithMembership);
 
       // Fetch community members with profile data
       const { data: membersData, error: membersError } = await supabase
