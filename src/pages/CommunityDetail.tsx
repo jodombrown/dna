@@ -198,10 +198,10 @@ const CommunityDetail = () => {
             {/* Community Header */}
             <Card>
               <CardContent className="p-0">
-                {community.cover_image_url && (
+                {community.image_url && (
                   <div className="w-full h-64 overflow-hidden rounded-t-lg">
                     <img
-                      src={community.cover_image_url}
+                      src={community.image_url}
                       alt={community.name}
                       className="w-full h-full object-cover"
                     />
@@ -244,7 +244,7 @@ const CommunityDetail = () => {
                   <div className="flex items-center gap-6 text-sm text-gray-600 mb-6">
                     <div className="flex items-center gap-1">
                       <Users className="w-4 h-4" />
-                      <span>{community.member_count} members</span>
+                      <span>{community.member_count || 0} members</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
@@ -256,26 +256,6 @@ const CommunityDetail = () => {
                     <div className="mb-6">
                       <h3 className="font-semibold text-gray-900 mb-2">About</h3>
                       <p className="text-gray-700">{community.description}</p>
-                    </div>
-                  )}
-
-                  {community.purpose_goals && (
-                    <div className="mb-6">
-                      <h3 className="font-semibold text-gray-900 mb-2">Purpose & Goals</h3>
-                      <p className="text-gray-700">{community.purpose_goals}</p>
-                    </div>
-                  )}
-
-                  {community.tags && community.tags.length > 0 && (
-                    <div>
-                      <h3 className="font-semibold text-gray-900 mb-2">Tags</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {community.tags.map((tag, index) => (
-                          <Badge key={index} variant="secondary">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
                     </div>
                   )}
                 </div>

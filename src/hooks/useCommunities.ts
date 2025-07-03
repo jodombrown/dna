@@ -17,23 +17,23 @@ export const useCommunities = () => {
       let communitiesQuery = supabase
         .from('communities')
         .select('*')
-        .eq('is_active', true)
+        .eq('moderation_status', 'approved')
         .order('created_at', { ascending: false });
 
       const { data: communitiesData, error: communitiesError } = await communitiesQuery;
       
       if (communitiesError) throw communitiesError;
 
-      if (!user) {
-        const communitiesWithMembership: CommunityWithMembership[] = communitiesData?.map(community => ({
+      if (!user || !communitiesData) {
+        const communitiesWithMembership: CommunityWithMembership[] = (communitiesData || []).map(community => ({
           ...community,
           is_member: false
-        })) || [];
+        }));
         setCommunities(communitiesWithMembership);
         return;
       }
 
-      // Fetch user memberships directly
+      // Fetch user memberships directly using raw query
       const { data: membershipsData, error: membershipsError } = await supabase
         .from('community_memberships' as any)
         .select('*')
@@ -45,7 +45,7 @@ export const useCommunities = () => {
       }
 
       // Combine communities with membership info
-      const communitiesWithMembership: CommunityWithMembership[] = communitiesData?.map(community => {
+      const communitiesWithMembership: CommunityWithMembership[] = communitiesData.map(community => {
         const membership = membershipsData?.find((m: any) => m.community_id === community.id);
         return {
           ...community,
@@ -53,7 +53,7 @@ export const useCommunities = () => {
           is_member: !!membership,
           user_role: membership?.role as 'admin' | 'moderator' | 'member' | undefined
         };
-      }) || [];
+      });
 
       setCommunities(communitiesWithMembership);
     } catch (error) {
@@ -83,7 +83,7 @@ export const useCommunities = () => {
         .from('communities')
         .insert({
           ...communityData,
-          creator_id: user.id
+          created_by: user.id
         })
         .select()
         .single();
