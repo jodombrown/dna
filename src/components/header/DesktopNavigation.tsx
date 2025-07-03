@@ -1,34 +1,97 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { publicNavItems } from './navigationConfig';
+import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu';
+import SurveyDialog from '@/components/survey/SurveyDialog';
+import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
+import { publicNavItems, phases } from './navigationConfig';
 
 const DesktopNavigation = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
+  const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
+
+  // Get current page to hide active nav item
+  const currentPath = location.pathname;
+
+  // Filter out current page from nav items
+  const filteredNavItems = publicNavItems.filter(item => item.path !== currentPath);
+
+  const handleNavClick = (item: { name: string; path: string }) => {
+    navigate(item.path);
+  };
+
   return (
-    <nav className="hidden md:flex items-center space-x-8">
-      {publicNavItems.map((item) => (
-        <Link
-          key={item.name}
-          to={item.path}
-          className="text-gray-700 hover:text-dna-forest font-medium transition-colors"
+    <>
+      <nav className="hidden md:flex items-center space-x-8">
+        {filteredNavItems.map((item) => (
+          <Button
+            key={item.name}
+            variant="ghost"
+            onClick={() => handleNavClick(item)}
+            className="text-dna-forest hover:bg-dna-mint hover:text-dna-forest"
+          >
+            {item.name}
+          </Button>
+        ))}
+        
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="text-dna-forest hover:bg-dna-mint">
+                Phases
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="grid gap-3 p-6 w-[400px]">
+                  {phases.map((phase) => (
+                    <NavigationMenuLink key={phase.path} asChild>
+                      <button
+                        onClick={() => navigate(phase.path)}
+                        className="flex items-center space-x-3 p-3 rounded-md hover:bg-dna-mint text-left w-full"
+                      >
+                        <div className="w-8 h-8 bg-dna-copper text-white rounded-full flex items-center justify-center text-sm font-bold">
+                          {phase.phase}
+                        </div>
+                        <div>
+                          <div className="font-medium text-dna-forest">{phase.name}</div>
+                          <div className="text-sm text-gray-600">Phase {phase.phase} of our development journey</div>
+                        </div>
+                      </button>
+                    </NavigationMenuLink>
+                  ))}
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        <Button
+          onClick={() => setIsSurveyOpen(true)}
+          className="bg-dna-copper hover:bg-dna-gold text-white"
         >
-          {item.name}
-        </Link>
-      ))}
-      <div className="flex items-center space-x-4 ml-8">
-        <Link to="/auth">
-          <Button variant="outline" className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white">
-            Sign In
-          </Button>
-        </Link>
-        <Link to="/auth">
-          <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
-            Join DNA
-          </Button>
-        </Link>
-      </div>
-    </nav>
+          Take Survey
+        </Button>
+      </nav>
+
+      <SurveyDialog 
+        isOpen={isSurveyOpen} 
+        onClose={() => setIsSurveyOpen(false)} 
+      />
+
+      <BetaSignupDialog 
+        isOpen={isBetaSignupOpen} 
+        onClose={() => setIsBetaSignupOpen(false)} 
+      />
+    </>
   );
 };
 

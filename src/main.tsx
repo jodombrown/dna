@@ -1,13 +1,13 @@
 
 import React from "react";
-import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
+import { createRoot } from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
 
-const container = document.getElementById("root");
-if (!container) {
-  throw new Error("Root element not found. Make sure your HTML includes <div id='root'></div>");
+// Debug: Check for the root element and log React version.
+if (!document.getElementById("root")) {
+  console.error("Root element not found. Make sure your HTML includes <div id='root'></div>");
+} else {
+  console.log("React version:", React?.version);
 }
-
-const root = createRoot(container);
-root.render(<App />);
+createRoot(document.getElementById("root")!).render(<App />);

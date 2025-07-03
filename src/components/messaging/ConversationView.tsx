@@ -3,47 +3,44 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/CleanAuthContext';
-import { useMessages } from '@/hooks/useMessages';
 import { ArrowLeft, Send, User } from 'lucide-react';
-import { format } from 'date-fns';
-import type { Conversation } from '@/hooks/useConversations';
+import { toast } from 'sonner';
 
 interface ConversationViewProps {
-  conversation: Conversation;
+  otherUserId: string;
   onBack: () => void;
 }
 
 const ConversationView: React.FC<ConversationViewProps> = ({
-  conversation,
+  otherUserId,
   onBack
 }) => {
   const { user } = useAuth();
-  const { messages, loading, sendMessage } = useMessages(conversation.id);
   const [newMessage, setNewMessage] = useState('');
+  const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    // For now, just set loading to false since we don't have messages table
+    setLoading(false);
+  }, [otherUserId]);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !user) return;
 
     setSending(true);
-    const success = await sendMessage(newMessage);
-    
-    if (success) {
+    try {
+      // TODO: Implement message sending when messages table is created
       setNewMessage('');
+      toast.success('Message functionality will be implemented soon!');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast.error('Failed to send message');
+    } finally {
+      setSending(false);
     }
-    
-    setSending(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -55,9 +52,11 @@ const ConversationView: React.FC<ConversationViewProps> = ({
 
   if (loading) {
     return (
-      <Card className="h-[600px] flex flex-col">
-        <CardContent className="pt-6 flex items-center justify-center h-full">
-          <div className="text-gray-600">Loading conversation...</div>
+      <Card>
+        <CardContent className="pt-6">
+          <div className="text-center py-8">
+            <div className="text-gray-600">Loading conversation...</div>
+          </div>
         </CardContent>
       </Card>
     );
@@ -65,21 +64,14 @@ const ConversationView: React.FC<ConversationViewProps> = ({
 
   return (
     <Card className="h-[600px] flex flex-col">
-      <CardHeader className="pb-4 border-b">
+      <CardHeader className="pb-4">
         <div className="flex items-center gap-3">
           <Button variant="outline" size="sm" onClick={onBack}>
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          
-          <Avatar className="w-8 h-8">
-            <AvatarImage src={conversation.other_user?.avatar_url} />
-            <AvatarFallback>
-              <User className="w-4 h-4" />
-            </AvatarFallback>
-          </Avatar>
-          
-          <CardTitle className="text-lg">
-            {conversation.other_user?.full_name || 'Professional'}
+          <CardTitle className="flex items-center gap-2">
+            <User className="w-5 h-5 text-dna-emerald" />
+            Conversation with Professional
           </CardTitle>
         </div>
       </CardHeader>
@@ -87,37 +79,9 @@ const ConversationView: React.FC<ConversationViewProps> = ({
       <CardContent className="flex-1 flex flex-col p-0">
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No messages yet. Start the conversation!
-            </div>
-          ) : (
-            messages.map((message) => {
-              const isOwn = message.sender_id === user?.id;
-              
-              return (
-                <div
-                  key={message.id}
-                  className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[70%] rounded-lg px-4 py-2 ${
-                      isOwn
-                        ? 'bg-dna-emerald text-white'
-                        : 'bg-gray-100 text-gray-900'
-                    }`}
-                  >
-                    <p className="text-sm">{message.content}</p>
-                    <p className={`text-xs mt-1 ${
-                      isOwn ? 'text-emerald-100' : 'text-gray-500'
-                    }`}>
-                      {format(new Date(message.created_at), 'h:mm a')}
-                    </p>
-                  </div>
-                </div>
-              );
-            })
-          )}
+          <div className="text-center py-8 text-gray-500">
+            Messaging system will be implemented soon. Start the conversation!
+          </div>
           <div ref={messagesEndRef} />
         </div>
 

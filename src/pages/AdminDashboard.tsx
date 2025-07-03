@@ -83,13 +83,6 @@ const AdminDashboard = () => {
       roles: ['super_admin']
     },
     {
-      title: "Role Management",
-      description: "Manage user roles and permissions",
-      icon: Shield,
-      action: () => navigate('/admin/roles'),
-      roles: ['super_admin']
-    },
-    {
       title: "Content Moderation",
       description: "Review flagged content and posts",
       icon: MessageSquare,

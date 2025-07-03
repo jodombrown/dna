@@ -8,7 +8,7 @@ import ProfileCard from './ProfileCard';
 import RecommendationsSection from './RecommendationsSection';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSearchHandlers } from '@/hooks/useSearchHandlers';
+import { useMessages } from '@/hooks/useMessages';
 import { toast } from 'sonner';
 import { sanitizeText } from '@/utils/securityValidation';
 
@@ -19,7 +19,7 @@ const MemberDirectory = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { handleConnect, handleMessage } = useSearchHandlers(user);
+  const { sendMessage } = useMessages();
 
   useEffect(() => {
     fetchProfiles();
@@ -70,6 +70,38 @@ const MemberDirectory = () => {
 
   const handleProfileClick = (profileId: string) => {
     navigate(`/profile/${profileId}`);
+  };
+
+  const handleConnect = async (userId: string) => {
+    if (!user) {
+      toast.error('Please sign in to connect with professionals');
+      navigate('/auth');
+      return;
+    }
+
+    try {
+      toast.success('Feature coming soon - Connection system will be implemented in a future update');
+    } catch (error) {
+      console.error('Connection error:', error);
+      toast.error('Failed to send connection request');
+    }
+  };
+
+  const handleMessage = async (recipientId: string, recipientName: string) => {
+    if (!user) {
+      toast.error('Please sign in to message professionals');
+      navigate('/auth');
+      return;
+    }
+
+    try {
+      await sendMessage(recipientId, `Hi ${recipientName}, I'd like to connect and learn more about your work!`);
+      toast.success('Message sent successfully!');
+      navigate('/messages');
+    } catch (error) {
+      console.error('Message error:', error);
+      toast.error('Failed to send message');
+    }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {

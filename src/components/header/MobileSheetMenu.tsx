@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
-import { publicNavItems } from './navigationConfig';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { publicNavItems, phases } from './navigationConfig';
 
 interface MobileSheetMenuProps {
   isOpen: boolean;
@@ -13,52 +14,96 @@ interface MobileSheetMenuProps {
   onBetaSignup: () => void;
 }
 
-const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
-  isOpen,
-  onOpenChange,
-  onSurveyClick,
-  onBetaSignup
+const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({ 
+  isOpen, 
+  onOpenChange, 
+  onSurveyClick, 
+  onBetaSignup 
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  // Filter out current page from nav items
+  const filteredNavItems = publicNavItems.filter(item => item.path !== currentPath);
+
+  const handleNavClick = (item: { name: string; path: string }) => {
+    navigate(item.path);
+    onOpenChange(false);
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetTrigger asChild className="md:hidden">
-        <Button variant="ghost" size="sm">
-          <Menu className="h-5 w-5" />
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="sm" className="md:hidden">
+          <Menu className="w-5 h-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-        <nav className="flex flex-col space-y-4 mt-8">
-          {publicNavItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className="text-lg font-medium text-gray-700 hover:text-dna-forest transition-colors"
-              onClick={() => onOpenChange(false)}
-            >
-              {item.name}
-            </Link>
-          ))}
-          <div className="flex flex-col space-y-3 mt-8 pt-8 border-t">
-            <Button 
-              onClick={onSurveyClick}
-              className="bg-dna-emerald hover:bg-dna-forest text-white"
-            >
-              Take Survey
-            </Button>
-            <Button 
-              onClick={onBetaSignup}
-              variant="outline" 
-              className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
-            >
-              Join Beta
-            </Button>
-            <Link to="/auth" onClick={() => onOpenChange(false)}>
-              <Button variant="ghost" className="w-full">
-                Sign In
+      <SheetContent side="left" className="w-80 p-0">
+        <div className="flex flex-col h-full">
+          <SheetHeader className="p-6 border-b">
+            <SheetTitle className="flex items-center gap-2">
+              <img 
+                src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                alt="Logo" 
+                className="h-8 w-auto"
+              />
+            </SheetTitle>
+          </SheetHeader>
+          
+          <ScrollArea className="flex-1 px-6">
+            <nav className="flex flex-col space-y-4 py-6">
+              {filteredNavItems.map((item) => (
+                <Button
+                  key={item.name}
+                  variant="ghost"
+                  className="justify-start text-left"
+                  onClick={() => handleNavClick(item)}
+                >
+                  {item.name}
+                </Button>
+              ))}
+              
+              <Button
+                variant="ghost"
+                className="justify-start text-left bg-dna-copper/10 text-dna-copper"
+                onClick={onSurveyClick}
+              >
+                Take Survey
               </Button>
-            </Link>
-          </div>
-        </nav>
+              
+              <Button
+                variant="ghost"
+                className="justify-start text-left bg-dna-emerald/10 text-dna-emerald"
+                onClick={onBetaSignup}
+              >
+                Join Beta Program
+              </Button>
+              
+              <div className="border-t pt-4 mt-4">
+                <p className="text-sm text-gray-600 mb-4">Development Phases</p>
+                <div className="space-y-2">
+                  {phases.map((phase) => (
+                    <Button
+                      key={phase.path}
+                      variant="ghost"
+                      className="justify-start text-left w-full"
+                      onClick={() => {
+                        navigate(phase.path);
+                        onOpenChange(false);
+                      }}
+                    >
+                      <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">
+                        {phase.phase}
+                      </div>
+                      {phase.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </nav>
+          </ScrollArea>
+        </div>
       </SheetContent>
     </Sheet>
   );
