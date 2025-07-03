@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/CleanAuthContext';
@@ -29,24 +28,28 @@ export const useCommunities = () => {
           ...community,
           creator_id: community.created_by || '',
           is_active: true,
-          is_member: false
+          is_member: false,
+          user_membership: undefined,
+          user_role: undefined
         }));
         setCommunities(communitiesWithMembership);
         return;
       }
 
-      // Fetch user memberships using a direct query
+      // Fetch user memberships using a direct query to community_memberships table
       const { data: membershipsData, error: membershipsError } = await supabase
-        .rpc('get_user_memberships', { user_id: user.id });
+        .from('community_memberships')
+        .select('*')
+        .eq('user_id', user.id);
 
-      let memberships: any[] = [];
+      let memberships: CommunityMembership[] = [];
       if (!membershipsError && membershipsData) {
-        memberships = Array.isArray(membershipsData) ? membershipsData : [];
+        memberships = membershipsData as CommunityMembership[];
       }
 
       // Combine communities with membership info
       const communitiesWithMembership: CommunityWithMembership[] = communitiesData.map(community => {
-        const membership = memberships.find((m: any) => m.community_id === community.id);
+        const membership = memberships.find((m: CommunityMembership) => m.community_id === community.id);
         return {
           ...community,
           creator_id: community.created_by || '',
@@ -57,7 +60,7 @@ export const useCommunities = () => {
         };
       });
 
-      setCommunities(communitiesWithMembership as CommunityWithMembership[]);
+      setCommunities(communitiesWithMembership);
     } catch (error) {
       console.error('Error fetching communities:', error);
       toast({
