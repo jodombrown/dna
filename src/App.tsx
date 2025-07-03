@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CleanAuthProvider } from "./contexts/CleanAuthContext";
 import Index from "./pages/Index";
+import UserProfile from "./pages/UserProfile";
+import CleanSocialFeedPage from "./pages/CleanSocialFeedPage";
 import EnhancedAbout from "./pages/EnhancedAbout";
 import EnhancedContact from "./pages/EnhancedContact";
 import ConnectExample from "./pages/ConnectExample";
@@ -37,14 +39,7 @@ import OnboardingWizard from "./components/onboarding/OnboardingWizard";
 import OnboardingGuard from "./components/OnboardingGuard";
 import SocialFeed from "./pages/SocialFeed";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: 1,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -56,6 +51,8 @@ const App = () => (
           <Routes>
             {/* Main Pages */}
             <Route path="/" element={<Index />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/social" element={<CleanSocialFeedPage />} />
             <Route path="/about" element={<EnhancedAbout />} />
             <Route path="/contact" element={<EnhancedContact />} />
             <Route path="/connect-example" element={<ConnectExample />} />
