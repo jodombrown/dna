@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Professional, Community, Event } from './useSearch';
 import { SearchFilters, ResultCounts } from '@/types/advancedSearchTypes';
-import { demoProfessionals, demoCommunities, demoEvents } from '@/data/demoSearchData';
-import { filterProfessionals, filterCommunities, filterEvents, hasActiveFilters } from '@/utils/searchFilters';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useAdvancedSearch = () => {
   const { toast } = useToast();
@@ -17,58 +16,175 @@ export const useAdvancedSearch = () => {
     lookingForOpportunities: false
   });
   
-  const [allProfessionals, setAllProfessionals] = useState<Professional[]>([]);
-  const [allCommunities, setAllCommunities] = useState<Community[]>([]);
-  const [allEvents, setAllEvents] = useState<Event[]>([]);
-  
-  const [filteredProfessionals, setFilteredProfessionals] = useState<Professional[]>([]);
-  const [filteredCommunities, setFilteredCommunities] = useState<Community[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+  const [professionals, setProfessionals] = useState<Professional[]>([]);
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   
   const [loading, setLoading] = useState(false);
-  const [initialized, setInitialized] = useState(false);
 
-  // Initialize data
-  useEffect(() => {
-    if (!initialized) {
-      setAllProfessionals(demoProfessionals);
-      setAllCommunities(demoCommunities);
-      setAllEvents(demoEvents);
-      setFilteredProfessionals(demoProfessionals);
-      setFilteredCommunities(demoCommunities);
-      setFilteredEvents(demoEvents);
-      setInitialized(true);
-    }
-  }, [initialized]);
+  const searchProfessionals = async () => {
+    try {
+      let query = supabase
+        .from('profiles')
+        .select('*')
+        .eq('is_public', true);
 
-  // Apply filters and search
-  useEffect(() => {
-    if (!initialized) return;
-
-    setLoading(true);
-    
-    // Simulate search delay
-    const timeoutId = setTimeout(() => {
-      const filteredProfs = filterProfessionals(allProfessionals, searchTerm, filters);
-      const filteredComms = filterCommunities(allCommunities, searchTerm);
-      const filteredEvs = filterEvents(allEvents, searchTerm, filters);
-
-      setFilteredProfessionals(filteredProfs);
-      setFilteredCommunities(filteredComms);
-      setFilteredEvents(filteredEvs);
-      setLoading(false);
-
-      // Show search results toast
-      if (searchTerm || hasActiveFilters(filters)) {
-        toast({
-          title: "Search Results",
-          description: `Found ${filteredProfs.length} professionals, ${filteredComms.length} communities, and ${filteredEvs.length} events`,
-        });
+      // Apply text search
+      if (searchTerm) {
+        query = query.or(`full_name.ilike.%${searchTerm}%,profession.ilike.%${searchTerm}%,bio.ilike.%${searchTerm}%`);
       }
-    }, 300);
 
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm, filters, initialized, allProfessionals, allCommunities, allEvents, toast]);
+      // Apply location filter
+      if (filters.location) {
+        query = query.or(`location.ilike.%${filters.location}%,current_country.ilike.%${filters.location}%`);
+      }
+
+      const { data, error } = await query.limit(20);
+      if (error) throw error;
+
+      // Transform to Professional format
+      const transformedProfessionals: Professional[] = (data || []).map(profile => ({
+        id: profile.id,
+        full_name: profile.full_name || 'DNA Professional',
+        avatar_url: profile.avatar_url || profile.profile_picture_url,
+        bio: profile.bio,
+        location: profile.location || profile.current_country,
+        profession: profile.profession || profile.professional_role,
+        company: profile.company,
+        is_mentor: false,
+        is_investor: false, 
+        looking_for_opportunities: false,
+        created_at: profile.created_at,
+        updated_at: profile.updated_at,
+        skills: profile.skills || [],
+        country_of_origin: profile.current_country
+      }));
+
+      // Apply skill filters
+      let filteredProfessionals = transformedProfessionals;
+      if (filters.skills.length > 0) {
+        filteredProfessionals = transformedProfessionals.filter(prof =>
+          prof.skills.some(skill => 
+            filters.skills.some(filterSkill => 
+              skill.toLowerCase().includes(filterSkill.toLowerCase())
+            )
+          )
+        );
+      }
+
+      setProfessionals(filteredProfessionals);
+    } catch (error) {
+      console.error('Error searching professionals:', error);
+      setProfessionals([]);
+    }
+  };
+
+  const searchCommunities = async () => {
+    try {
+      let query = supabase
+        .from('communities')
+        .select('*')
+        .eq('moderation_status', 'approved')
+        .eq('is_active', true);
+
+      if (searchTerm) {
+        query = query.or(`name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,category.ilike.%${searchTerm}%`);
+      }
+
+      const { data, error } = await query.limit(20);
+      if (error) throw error;
+
+      const transformedCommunities: Community[] = (data || []).map(community => ({
+        id: community.id,
+        name: community.name,
+        description: community.description || 'No description available',
+        memberCount: community.member_count || 0,
+        member_count: community.member_count || 0,
+        category: community.category || 'General',
+        tags: community.tags || [],
+        image: community.image_url,
+        isJoined: false,
+        is_featured: community.is_featured || false,
+        created_at: community.created_at,
+        updated_at: community.updated_at
+      }));
+
+      setCommunities(transformedCommunities);
+    } catch (error) {
+      console.error('Error searching communities:', error);
+      setCommunities([]);
+    }
+  };
+
+  const searchEvents = async () => {
+    try {
+      let query = supabase
+        .from('events')
+        .select('*')
+        .gte('date_time', new Date().toISOString());
+
+      if (searchTerm) {
+        query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,type.ilike.%${searchTerm}%`);
+      }
+
+      if (filters.location) {
+        query = query.ilike('location', `%${filters.location}%`);
+      }
+
+      const { data, error } = await query.limit(20);
+      if (error) throw error;
+
+      const transformedEvents: Event[] = (data || []).map(event => ({
+        id: event.id,
+        title: event.title,
+        description: event.description || 'No description available',
+        date: event.date_time,
+        date_time: event.date_time,
+        location: event.location || 'Location TBD',
+        attendeeCount: event.attendee_count || 0,
+        attendee_count: event.attendee_count || 0,
+        maxAttendees: event.max_attendees,
+        max_attendees: event.max_attendees,
+        type: event.type || 'event',
+        image: event.image_url || event.banner_url,
+        isRegistered: false,
+        is_virtual: event.is_virtual || false,
+        is_featured: event.is_featured || false,
+        created_at: event.created_at,
+        updated_at: event.updated_at
+      }));
+
+      setEvents(transformedEvents);
+    } catch (error) {
+      console.error('Error searching events:', error);
+      setEvents([]);
+    }
+  };
+
+  const performSearch = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        searchProfessionals(),
+        searchCommunities(),
+        searchEvents()
+      ]);
+      
+      toast({
+        title: "Search Results",
+        description: `Found ${professionals.length} professionals, ${communities.length} communities, and ${events.length} events`,
+      });
+    } catch (error) {
+      console.error('Search error:', error);
+      toast({
+        title: "Search Error",
+        description: "Failed to search. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const clearSearch = () => {
     setSearchTerm('');
@@ -79,30 +195,34 @@ export const useAdvancedSearch = () => {
       isInvestor: false,
       lookingForOpportunities: false
     });
+    setProfessionals([]);
+    setCommunities([]);
+    setEvents([]);
   };
 
-  const performSearch = () => {
-    // Trigger re-filter (useEffect will handle the actual filtering)
-    if (searchTerm || hasActiveFilters(filters)) {
-      console.log('Performing search with:', { searchTerm, filters });
+  // Perform search when searchTerm or filters change
+  useEffect(() => {
+    if (searchTerm || filters.location || filters.skills.length > 0) {
+      const timeoutId = setTimeout(performSearch, 500);
+      return () => clearTimeout(timeoutId);
     }
-  };
+  }, [searchTerm, filters]);
 
   return {
     searchTerm,
     setSearchTerm,
     filters,
     setFilters,
-    professionals: filteredProfessionals,
-    communities: filteredCommunities,
-    events: filteredEvents,
+    professionals,
+    communities,
+    events,
     loading,
     clearSearch,
     performSearch,
     resultCounts: {
-      professionals: filteredProfessionals.length,
-      communities: filteredCommunities.length,
-      events: filteredEvents.length
+      professionals: professionals.length,
+      communities: communities.length,
+      events: events.length
     } as ResultCounts
   };
 };
