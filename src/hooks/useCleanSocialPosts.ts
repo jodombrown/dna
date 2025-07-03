@@ -10,6 +10,7 @@ export interface CleanSocialPost {
   content: string;
   post_type: 'text' | 'article' | 'event_share' | 'community_share' | 'contribution_card' | 'newsletter';
   media_urls?: string[];
+  image_url?: string;
   hashtags?: string[];
   likes_count: number;
   comments_count: number;
@@ -19,6 +20,7 @@ export interface CleanSocialPost {
     full_name: string;
     avatar_url?: string;
     profession?: string;
+    display_name?: string;
   };
 }
 
@@ -37,11 +39,13 @@ export const useCleanSocialPosts = () => {
           *,
           profiles!posts_user_id_fkey (
             full_name,
+            display_name,
             avatar_url,
             profession
           )
         `)
         .eq('is_published', true)
+        .eq('moderation_status', 'approved')
         .order('created_at', { ascending: false })
         .limit(20);
 
@@ -53,6 +57,7 @@ export const useCleanSocialPosts = () => {
         content: post.content,
         post_type: post.post_type as CleanSocialPost['post_type'],
         media_urls: post.media_urls,
+        image_url: post.image_url,
         hashtags: post.hashtags,
         likes_count: post.likes_count || 0,
         comments_count: post.comments_count || 0,
@@ -60,6 +65,7 @@ export const useCleanSocialPosts = () => {
         created_at: post.created_at,
         author: post.profiles ? {
           full_name: post.profiles.full_name || 'Unknown User',
+          display_name: post.profiles.display_name,
           avatar_url: post.profiles.avatar_url || undefined,
           profession: post.profiles.profession || undefined
         } : undefined
@@ -78,22 +84,31 @@ export const useCleanSocialPosts = () => {
     }
   };
 
-  const createPost = async (content: string, postType: string = 'text') => {
+  const createPost = async (
+    content: string, 
+    postType: string = 'text', 
+    imageUrl?: string | null,
+    tags?: string[]
+  ) => {
     if (!user) return;
 
     try {
+      const postData = {
+        user_id: user.id,
+        content,
+        post_type: postType,
+        hashtags: tags || [],
+        ...(imageUrl && { image_url: imageUrl })
+      };
+
       const { data, error } = await supabase
         .from('posts')
-        .insert({
-          user_id: user.id,
-          content,
-          post_type: postType,
-          hashtags: extractHashtags(content)
-        })
+        .insert(postData)
         .select(`
           *,
           profiles!posts_user_id_fkey (
             full_name,
+            display_name,
             avatar_url,
             profession
           )
@@ -108,6 +123,7 @@ export const useCleanSocialPosts = () => {
         content: data.content,
         post_type: data.post_type as CleanSocialPost['post_type'],
         media_urls: data.media_urls,
+        image_url: data.image_url,
         hashtags: data.hashtags,
         likes_count: data.likes_count || 0,
         comments_count: data.comments_count || 0,
@@ -115,6 +131,7 @@ export const useCleanSocialPosts = () => {
         created_at: data.created_at,
         author: data.profiles ? {
           full_name: data.profiles.full_name || 'Unknown User',
+          display_name: data.profiles.display_name,
           avatar_url: data.profiles.avatar_url || undefined,
           profession: data.profiles.profession || undefined
         } : undefined
@@ -136,11 +153,6 @@ export const useCleanSocialPosts = () => {
         variant: "destructive",
       });
     }
-  };
-
-  const extractHashtags = (text: string): string[] => {
-    const hashtagRegex = /#[a-zA-Z0-9_]+/g;
-    return text.match(hashtagRegex) || [];
   };
 
   useEffect(() => {

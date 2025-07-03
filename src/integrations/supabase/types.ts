@@ -592,6 +592,7 @@ export type Database = {
           created_at: string | null
           hashtags: string[] | null
           id: string
+          image_url: string | null
           is_published: boolean | null
           likes_count: number | null
           media_urls: string[] | null
@@ -611,6 +612,7 @@ export type Database = {
           created_at?: string | null
           hashtags?: string[] | null
           id?: string
+          image_url?: string | null
           is_published?: boolean | null
           likes_count?: number | null
           media_urls?: string[] | null
@@ -630,6 +632,7 @@ export type Database = {
           created_at?: string | null
           hashtags?: string[] | null
           id?: string
+          image_url?: string | null
           is_published?: boolean | null
           likes_count?: number | null
           media_urls?: string[] | null

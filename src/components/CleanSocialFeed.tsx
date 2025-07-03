@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Heart, MessageSquare, Share, Hash } from 'lucide-react';
 import { useCleanSocialPosts } from '@/hooks/useCleanSocialPosts';
 import CleanPostCreator from './CleanPostCreator';
@@ -43,7 +44,7 @@ const CleanSocialFeed: React.FC = () => {
       
       <div className="space-y-4">
         {posts.map((post) => (
-          <Card key={post.id}>
+          <Card key={post.id} className="hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className="flex gap-4">
                 <Avatar className="w-12 h-12">
@@ -56,7 +57,7 @@ const CleanSocialFeed: React.FC = () => {
                 <div className="flex-1 space-y-3">
                   <div>
                     <h4 className="font-semibold text-gray-900">
-                      {post.author?.full_name || 'Unknown User'}
+                      {post.author?.display_name || post.author?.full_name || 'Unknown User'}
                     </h4>
                     <div className="flex items-center gap-2 text-sm text-gray-500">
                       {post.author?.profession && (
@@ -73,32 +74,43 @@ const CleanSocialFeed: React.FC = () => {
                     {post.content}
                   </div>
                   
+                  {post.image_url && (
+                    <div className="mt-3">
+                      <img 
+                        src={post.image_url} 
+                        alt="Post content" 
+                        className="max-w-full h-auto rounded-lg border max-h-96 object-cover"
+                      />
+                    </div>
+                  )}
+                  
                   {post.hashtags && post.hashtags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {post.hashtags.map((tag, index) => (
-                        <span
+                        <Badge
                           key={index}
-                          className="inline-flex items-center gap-1 text-sm text-dna-copper hover:text-dna-gold cursor-pointer"
+                          variant="secondary"
+                          className="bg-dna-mint text-dna-forest cursor-pointer hover:bg-dna-emerald hover:text-white text-xs"
                         >
-                          <Hash className="w-3 h-3" />
-                          {tag.replace('#', '')}
-                        </span>
+                          <Hash className="w-3 h-3 mr-1" />
+                          {tag}
+                        </Badge>
                       ))}
                     </div>
                   )}
                   
-                  <div className="flex items-center gap-6 pt-2 border-t">
-                    <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-500">
+                  <div className="flex items-center gap-6 pt-3 border-t">
+                    <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-500 transition-colors">
                       <Heart className="w-4 h-4 mr-1" />
-                      {post.likes_count}
+                      <span className="text-sm">{post.likes_count}</span>
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-gray-500 hover:text-blue-500">
+                    <Button variant="ghost" size="sm" className="text-gray-500 hover:text-blue-500 transition-colors">
                       <MessageSquare className="w-4 h-4 mr-1" />
-                      {post.comments_count}
+                      <span className="text-sm">{post.comments_count}</span>
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-gray-500 hover:text-green-500">
+                    <Button variant="ghost" size="sm" className="text-gray-500 hover:text-green-500 transition-colors">
                       <Share className="w-4 h-4 mr-1" />
-                      {post.shares_count}
+                      <span className="text-sm">{post.shares_count}</span>
                     </Button>
                   </div>
                 </div>
@@ -110,7 +122,8 @@ const CleanSocialFeed: React.FC = () => {
         {posts.length === 0 && (
           <Card>
             <CardContent className="p-12 text-center">
-              <p className="text-gray-500 text-lg">No posts yet. Be the first to share something!</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Welcome to DNA!</h3>
+              <p className="text-gray-500 text-lg">No posts yet. Be the first to share something with the community!</p>
             </CardContent>
           </Card>
         )}
