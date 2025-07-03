@@ -165,6 +165,7 @@ const RichContentCreator: React.FC = () => {
 
     setLoading(true);
     try {
+      // Try to insert into opportunities table, handle gracefully if it doesn't exist yet
       const { error } = await supabase
         .from('opportunities')
         .insert({
@@ -199,7 +200,7 @@ const RichContentCreator: React.FC = () => {
       console.error('Error creating opportunity:', error);
       toast({
         title: "Error",
-        description: "Failed to create opportunity. Please try again.",
+        description: "Failed to create opportunity. The feature may not be fully ready yet.",
         variant: "destructive"
       });
     } finally {

@@ -25,93 +25,104 @@ export const useRichContent = () => {
   const fetchRichContent = async () => {
     setLoading(true);
     try {
-      // Fetch events
-      const { data: events, error: eventsError } = await supabase
+      // Fetch events with manual profile join
+      const { data: eventsData, error: eventsError } = await supabase
         .from('events')
-        .select(`
-          *,
-          profiles!events_created_by_fkey (
-            full_name,
-            avatar_url,
-            professional_role
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(10);
 
       if (eventsError) throw eventsError;
 
-      // Fetch initiatives
-      const { data: initiatives, error: initiativesError } = await supabase
+      // Fetch initiatives with manual profile join
+      const { data: initiativesData, error: initiativesError } = await supabase
         .from('initiatives')
-        .select(`
-          *,
-          profiles!initiatives_creator_id_fkey (
-            full_name,
-            avatar_url,
-            professional_role
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(10);
 
       if (initiativesError) throw initiativesError;
 
-      // Fetch opportunities
-      const { data: opportunities, error: opportunitiesError } = await supabase
-        .from('opportunities')
-        .select(`
-          *,
-          profiles!opportunities_created_by_fkey (
-            full_name,
-            avatar_url,
-            professional_role
-          )
-        `)
-        .order('created_at', { ascending: false })
-        .limit(10);
+      // Fetch opportunities - this might fail if table doesn't exist yet, so we'll handle it gracefully
+      let opportunitiesData: any[] = [];
+      try {
+        const { data, error } = await supabase
+          .from('opportunities')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(10);
+        
+        if (!error && data) {
+          opportunitiesData = data;
+        }
+      } catch (error) {
+        console.log('Opportunities table not ready yet:', error);
+      }
 
-      if (opportunitiesError) throw opportunitiesError;
+      // Get all unique user IDs for profile fetching
+      const allUserIds = [
+        ...(eventsData || []).map(item => item.created_by).filter(Boolean),
+        ...(initiativesData || []).map(item => item.creator_id).filter(Boolean),
+        ...(opportunitiesData || []).map(item => item.created_by).filter(Boolean),
+      ];
+
+      const uniqueUserIds = [...new Set(allUserIds)];
+
+      // Fetch profiles for all users
+      let profilesMap: Record<string, any> = {};
+      if (uniqueUserIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, professional_role')
+          .in('id', uniqueUserIds);
+
+        if (profilesData) {
+          profilesMap = profilesData.reduce((acc, profile) => {
+            acc[profile.id] = profile;
+            return acc;
+          }, {} as Record<string, any>);
+        }
+      }
 
       // Combine and format all content
       const allContent: RichContentItem[] = [
-        ...(events || []).map(event => ({
+        ...(eventsData || []).map(event => ({
           id: event.id,
           type: 'event' as const,
           title: event.title,
           created_at: event.created_at,
           created_by: event.created_by,
           data: event,
-          author: event.profiles ? {
-            full_name: event.profiles.full_name || 'Unknown User',
-            avatar_url: event.profiles.avatar_url || undefined,
-            professional_role: event.profiles.professional_role || undefined
+          author: event.created_by && profilesMap[event.created_by] ? {
+            full_name: profilesMap[event.created_by].full_name || 'Unknown User',
+            avatar_url: profilesMap[event.created_by].avatar_url || undefined,
+            professional_role: profilesMap[event.created_by].professional_role || undefined
           } : undefined
         })),
-        ...(initiatives || []).map(initiative => ({
+        ...(initiativesData || []).map(initiative => ({
           id: initiative.id,
           type: 'initiative' as const,
           title: initiative.title,
           created_at: initiative.created_at,
           created_by: initiative.creator_id,
           data: initiative,
-          author: initiative.profiles ? {
-            full_name: initiative.profiles.full_name || 'Unknown User',
-            avatar_url: initiative.profiles.avatar_url || undefined,
-            professional_role: initiative.profiles.professional_role || undefined
+          author: initiative.creator_id && profilesMap[initiative.creator_id] ? {
+            full_name: profilesMap[initiative.creator_id].full_name || 'Unknown User',
+            avatar_url: profilesMap[initiative.creator_id].avatar_url || undefined,
+            professional_role: profilesMap[initiative.creator_id].professional_role || undefined
           } : undefined
         })),
-        ...(opportunities || []).map(opportunity => ({
+        ...(opportunitiesData || []).map(opportunity => ({
           id: opportunity.id,
           type: 'opportunity' as const,
           title: opportunity.title,
           created_at: opportunity.created_at,
           created_by: opportunity.created_by,
           data: opportunity,
-          author: opportunity.profiles ? {
-            full_name: opportunity.profiles.full_name || 'Unknown User',
-            avatar_url: opportunity.profiles.avatar_url || undefined,
-            professional_role: opportunity.profiles.professional_role || undefined
+          author: opportunity.created_by && profilesMap[opportunity.created_by] ? {
+            full_name: profilesMap[opportunity.created_by].full_name || 'Unknown User',
+            avatar_url: profilesMap[opportunity.created_by].avatar_url || undefined,
+            professional_role: profilesMap[opportunity.created_by].professional_role || undefined
           } : undefined
         }))
       ];
