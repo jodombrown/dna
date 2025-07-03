@@ -69,10 +69,6 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
             <Card>
               <CardContent className="p-4 space-y-3">
                 <div className="flex items-center gap-3 text-sm text-gray-600 hover:text-dna-emerald cursor-pointer">
-                  <Users className="w-4 h-4" />
-                  <span>My Communities</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600 hover:text-dna-emerald cursor-pointer">
                   <Calendar className="w-4 h-4" />
                   <span>Events</span>
                 </div>

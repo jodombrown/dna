@@ -11,7 +11,6 @@ export const publicNavItems = [
 export const mainNavItems = [
   { name: 'Feed', path: '/feed', icon: 'MessageSquare' },
   { name: 'Connect', path: '/connect', icon: 'Users' },
-  { name: 'Communities', path: '/communities', icon: 'Users2' },
   { name: 'Messages', path: '/messages', icon: 'MessageCircle' },
   { name: 'Notifications', path: '/notifications', icon: 'Bell' },
 ];

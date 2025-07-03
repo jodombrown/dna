@@ -88,7 +88,8 @@ export const useCleanSocialPosts = () => {
     content: string, 
     postType: string = 'text', 
     imageUrl?: string | null,
-    tags?: string[]
+    tags?: string[],
+    additionalData?: any
   ) => {
     if (!user) return;
 
@@ -98,7 +99,8 @@ export const useCleanSocialPosts = () => {
         content,
         post_type: postType,
         hashtags: tags || [],
-        ...(imageUrl && { image_url: imageUrl })
+        ...(imageUrl && { image_url: imageUrl }),
+        ...(additionalData || {})
       };
 
       const { data, error } = await supabase

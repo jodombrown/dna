@@ -4,8 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useCleanSocialPosts } from '@/hooks/useCleanSocialPosts';
 import { useRichContent } from '@/hooks/useRichContent';
 import { useAuth } from '@/contexts/CleanAuthContext';
-import CleanPostCreator from '@/components/CleanPostCreator';
-import RichContentCreator from './RichContentCreator';
+import UnifiedContentCreator from './UnifiedContentCreator';
 import FeedContent from './FeedContent';
 
 const EnhancedSocialFeed: React.FC = () => {
@@ -41,11 +40,8 @@ const EnhancedSocialFeed: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Post Creator */}
-      <CleanPostCreator />
-      
-      {/* Rich Content Creator */}
-      <RichContentCreator />
+      {/* Unified Content Creator */}
+      <UnifiedContentCreator />
 
       {/* Combined Feed */}
       <FeedContent content={allContent} loading={loading} />
