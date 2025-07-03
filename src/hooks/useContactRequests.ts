@@ -66,6 +66,8 @@ export const useContactRequests = () => {
 
         const sentWithProfiles = sent.map(req => ({
           ...req,
+          purpose: req.purpose as 'connect' | 'collaborate',
+          status: req.status as 'pending' | 'accepted' | 'declined',
           receiver_profile: receiverProfiles?.find(p => p.id === req.receiver_id)
         }));
         setSentRequests(sentWithProfiles);
@@ -83,6 +85,8 @@ export const useContactRequests = () => {
 
         const receivedWithProfiles = received.map(req => ({
           ...req,
+          purpose: req.purpose as 'connect' | 'collaborate',
+          status: req.status as 'pending' | 'accepted' | 'declined',
           sender_profile: senderProfiles?.find(p => p.id === req.sender_id)
         }));
         setReceivedRequests(receivedWithProfiles);
