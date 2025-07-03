@@ -5,11 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { sanitizeText, isRateLimited } from '@/utils/securityValidation';
-import { getGenericErrorMessage, logSecurityEvent } from '@/utils/errorHandling';
+import { sanitizeInput, logSecurityEvent, SecurityEventSeverity } from '@/utils/securityEnhancements';
+import { getGenericErrorMessage } from '@/utils/errorHandling';
+import { validateProfileUpdateSecurity } from '@/utils/securityMiddleware';
+import { useSecurityRateLimit } from '@/hooks/useSecurityRateLimit';
 import BasicInfoFields from './form/BasicInfoFields';
 import ContactFields from './form/ContactFields';
 import { validateProfileForm } from './form/ValidationUtils';
+import { getFieldMaxLength, shouldRemoveUrls } from './ProfileFormHelpers';
 
 interface ProfileFormProps {
   profile?: any;
@@ -32,7 +35,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [lastSubmit, setLastSubmit] = useState<number>(0);
+  
+  // Rate limiting for profile updates (3 updates per 5 minutes)
+  const { isLimited, timeRemaining, checkLimit, recordAttempt } = useSecurityRateLimit(
+    'profile_update',
+    { maxAttempts: 3, windowMs: 5 * 60 * 1000, penaltyMultiplier: 1.5 }
+  );
   
   const [formData, setFormData] = useState({
     full_name: profile?.full_name || '',
@@ -48,7 +56,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
 
   const handleFieldChange = (field: string, value: string) => {
     // Additional input sanitization on change
-    const sanitizedValue = sanitizeText(value);
+    const sanitizedValue = sanitizeInput(value, { 
+      maxLength: getFieldMaxLength(field),
+      allowHtml: false,
+      removeUrls: shouldRemoveUrls(field)
+    });
     setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
     
     // Clear error when user starts typing
@@ -60,15 +72,13 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Enhanced rate limiting check
-    const now = Date.now();
-    if (isRateLimited(lastSubmit, 2000)) {
+    // Check rate limiting
+    if (checkLimit()) {
       toast({
-        title: "Please wait",
-        description: "Please wait a moment before submitting again.",
+        title: "Too Many Updates",
+        description: `Please wait ${timeRemaining} seconds before updating again.`,
         variant: "destructive",
       });
-      logSecurityEvent('rate_limit_exceeded', user?.id, { action: 'profile_update' });
       return;
     }
 
@@ -78,7 +88,22 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
         description: "You must be logged in to update your profile.",
         variant: "destructive",
       });
-      logSecurityEvent('unauthorized_profile_update', undefined);
+      await logSecurityEvent({
+        type: 'unauthorized_profile_update',
+        severity: SecurityEventSeverity.HIGH
+      });
+      return;
+    }
+
+    // Enhanced security validation
+    const securityValidation = await validateProfileUpdateSecurity(formData, user.id);
+    if (!securityValidation.isValid) {
+      setErrors({ full_name: securityValidation.errors[0] });
+      toast({
+        title: "Security Validation Failed",
+        description: securityValidation.errors[0] || "Please review your profile data.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -93,20 +118,20 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
       return;
     }
 
+    recordAttempt();
     setLoading(true);
-    setLastSubmit(now);
 
     try {
-      // Enhanced sanitization of all text inputs
+      // Use the sanitized data from security validation
       const sanitizedData = {
-        full_name: sanitizeText(formData.full_name),
-        profession: sanitizeText(formData.profession),
-        company: sanitizeText(formData.company),
-        location: sanitizeText(formData.location),
-        bio: sanitizeText(formData.bio),
+        full_name: securityValidation.sanitizedData?.full_name || formData.full_name,
+        profession: securityValidation.sanitizedData?.profession || formData.profession,
+        company: securityValidation.sanitizedData?.company || formData.company,
+        location: securityValidation.sanitizedData?.location || formData.location,
+        bio: securityValidation.sanitizedData?.bio || formData.bio,
         linkedin_url: formData.linkedin_url.trim(),
-        country_of_origin: sanitizeText(formData.country_of_origin),
-        current_country: sanitizeText(formData.current_country),
+        country_of_origin: securityValidation.sanitizedData?.country_of_origin || formData.country_of_origin,
+        current_country: securityValidation.sanitizedData?.current_country || formData.current_country,
         years_in_diaspora: formData.years_in_diaspora ? parseInt(formData.years_in_diaspora) : null,
       };
 
@@ -121,7 +146,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
 
       if (error) {
         console.error('Profile update error:', error);
-        logSecurityEvent('profile_update_failed', user.id, { error: error.message });
+        await logSecurityEvent({
+          type: 'profile_update_failed',
+          severity: SecurityEventSeverity.MEDIUM,
+          userId: user.id,
+          details: { error: error.message }
+        });
         throw new Error(getGenericErrorMessage(error));
       }
 
@@ -130,7 +160,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
         description: "Profile updated successfully!",
       });
 
-      logSecurityEvent('profile_updated_successfully', user.id);
+      await logSecurityEvent({
+        type: 'profile_updated_successfully',
+        severity: SecurityEventSeverity.LOW,
+        userId: user.id
+      });
       if (onSave) onSave();
     } catch (error: any) {
       console.error('Profile update error:', error);
@@ -169,9 +203,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profile, onSave }) => {
           <Button 
             type="submit" 
             className="w-full bg-dna-copper hover:bg-dna-gold text-white"
-            disabled={loading}
+            disabled={loading || isLimited}
           >
-            {loading ? 'Saving...' : 'Save Profile'}
+            {loading ? 'Saving...' : isLimited ? `Wait ${timeRemaining}s` : 'Save Profile'}
           </Button>
         </form>
       </CardContent>

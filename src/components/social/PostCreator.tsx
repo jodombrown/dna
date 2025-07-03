@@ -4,10 +4,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, Hash } from 'lucide-react';
+import { Send, Hash, Shield } from 'lucide-react';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useSecurityRateLimit } from '@/hooks/useSecurityRateLimit';
+import { validatePostSecurity } from '@/utils/securityMiddleware';
+import { sanitizeInput } from '@/utils/securityEnhancements';
 
 interface PostCreatorProps {
   onPostCreated?: (post: any) => void;
@@ -18,6 +21,12 @@ const PostCreator: React.FC<PostCreatorProps> = ({ onPostCreated }) => {
   const { toast } = useToast();
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // Rate limiting for post creation (5 posts per 10 minutes)
+  const { isLimited, timeRemaining, checkLimit, recordAttempt } = useSecurityRateLimit(
+    'post_creation',
+    { maxAttempts: 5, windowMs: 10 * 60 * 1000, penaltyMultiplier: 2 }
+  );
 
   const extractHashtags = (text: string): string[] => {
     const hashtagRegex = /#[a-zA-Z0-9_]+/g;
@@ -27,16 +36,46 @@ const PostCreator: React.FC<PostCreatorProps> = ({ onPostCreated }) => {
   const handleSubmit = async () => {
     if (!user || !content.trim()) return;
 
+    // Check rate limiting
+    if (checkLimit()) {
+      toast({
+        title: "Too Many Posts",
+        description: `Please wait ${timeRemaining} seconds before posting again.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
+      // Security validation
+      const securityValidation = await validatePostSecurity(
+        { content: content.trim() },
+        user.id
+      );
+
+      if (!securityValidation.isValid) {
+        toast({
+          title: "Content Validation Failed",
+          description: securityValidation.errors[0] || "Please review your post content.",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Record rate limit attempt
+      recordAttempt();
+
       const hashtags = extractHashtags(content);
+      const sanitizedContent = sanitizeInput(content.trim(), { maxLength: 5000 });
       
       // For now, we'll store posts in localStorage since there's no posts table
       // In production, this would go to Supabase
       const newPost = {
         id: Date.now().toString(),
         user_id: user.id,
-        content: content.trim(),
+        content: sanitizedContent,
         hashtags,
         created_at: new Date().toISOString(),
         reactions: {
@@ -121,11 +160,16 @@ const PostCreator: React.FC<PostCreatorProps> = ({ onPostCreated }) => {
               
               <Button
                 onClick={handleSubmit}
-                disabled={!content.trim() || loading}
+                disabled={!content.trim() || loading || isLimited}
                 className="bg-dna-copper hover:bg-dna-gold text-white"
               >
                 {loading ? (
                   "Posting..."
+                ) : isLimited ? (
+                  <>
+                    <Shield className="w-4 h-4 mr-2" />
+                    Wait {timeRemaining}s
+                  </>
                 ) : (
                   <>
                     <Send className="w-4 h-4 mr-2" />
