@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,12 +7,43 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { useJobMatching } from '@/hooks/useJobMatching';
 import JobCard from '@/components/jobs/JobCard';
-import { Loader2, Target, Briefcase } from 'lucide-react';
+import JobCreationDialog from '@/components/jobs/JobCreationDialog';
+import { Loader2, Target, Briefcase, Plus } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const JobsMatched = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { matchedJobs, loading, error } = useJobMatching();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [allJobs, setAllJobs] = useState<any[]>([]);
+  const [jobsLoading, setJobsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAllJobs();
+  }, []);
+
+  const fetchAllJobs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('job_posts')
+        .select('*')
+        .eq('is_active', true)
+        .gte('expires_at', new Date().toISOString())
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setAllJobs(data || []);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    } finally {
+      setJobsLoading(false);
+    }
+  };
+
+  const handleJobCreated = () => {
+    fetchAllJobs();
+  };
 
   if (!user) {
     return (
@@ -70,45 +101,79 @@ const JobsMatched = () => {
       <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <Target className="h-8 w-8 text-dna-copper mr-3" />
-            <h1 className="text-3xl font-bold text-dna-forest">
-              Your Matched Jobs
-            </h1>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <Target className="h-8 w-8 text-dna-copper mr-3" />
+              <div>
+                <h1 className="text-3xl font-bold text-dna-forest">Job Opportunities</h1>
+                <p className="text-gray-600">
+                  Discover career opportunities in the diaspora network
+                </p>
+              </div>
+            </div>
+            {user && (
+              <Button
+                onClick={() => setIsCreateDialogOpen(true)}
+                className="bg-dna-emerald hover:bg-dna-forest text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Post Job
+              </Button>
+            )}
           </div>
-          <p className="text-gray-600">
-            Jobs that match your skills, interests, and location preferences
-          </p>
         </div>
 
-        {matchedJobs.length === 0 ? (
+        {/* Show all jobs for now since matching is still being developed */}
+        {jobsLoading ? (
+          <div className="text-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-dna-copper mx-auto mb-4" />
+            <div className="text-gray-600">Loading job opportunities...</div>
+          </div>
+        ) : allJobs.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
               <Briefcase className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Matched Jobs Yet</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Jobs Available</h3>
               <p className="text-gray-600 mb-4">
-                Complete your profile with skills and interests to get better job matches
+                Be the first to post a job opportunity for the diaspora community
               </p>
-              <Button 
-                onClick={() => navigate('/profile/my')}
-                className="bg-dna-copper hover:bg-dna-gold text-white"
-              >
-                Update Profile
-              </Button>
+              <div className="space-x-2">
+                <Button 
+                  onClick={() => navigate('/profile/my')}
+                  variant="outline"
+                >
+                  Update Profile
+                </Button>
+                {user && (
+                  <Button 
+                    onClick={() => setIsCreateDialogOpen(true)}
+                    className="bg-dna-copper hover:bg-dna-gold text-white"
+                  >
+                    Post a Job
+                  </Button>
+                )}
+              </div>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-6">
-            {matchedJobs.map((job) => (
+            {allJobs.map((job) => (
               <JobCard
                 key={job.id}
                 job={job}
-                isMatched={true}
+                isMatched={false}
                 showReferButton={true}
               />
             ))}
           </div>
         )}
+        
+        {/* Job Creation Dialog */}
+        <JobCreationDialog
+          isOpen={isCreateDialogOpen}
+          onClose={() => setIsCreateDialogOpen(false)}
+          onJobCreated={handleJobCreated}
+        />
       </div>
     </div>
   );

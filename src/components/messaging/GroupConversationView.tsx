@@ -85,18 +85,23 @@ const GroupConversationView: React.FC<GroupConversationViewProps> = ({
 
       if (error) throw error;
 
+      if (!data || data.length === 0) {
+        setMessages([]);
+        return;
+      }
+
       // Get sender profiles separately
-      const senderIds = [...new Set((data || []).map(msg => msg.sender_id))];
+      const senderIds = [...new Set(data.map(msg => msg.sender_id))];
       const { data: profiles } = await supabase
         .from('profiles')
         .select('id, full_name, avatar_url')
         .in('id', senderIds);
 
-      const formattedMessages: GroupMessage[] = (data || []).map(msg => ({
+      const formattedMessages: GroupMessage[] = data.map(msg => ({
         id: msg.id,
         sender_id: msg.sender_id,
-        content: msg.content,
-        attachments: Array.isArray(msg.attachments) ? msg.attachments : [],
+        content: msg.content || '',
+        attachments: msg.attachments ? JSON.parse(msg.attachments as string) : [],
         created_at: msg.created_at,
         sender_profile: {
           full_name: profiles?.find(p => p.id === msg.sender_id)?.full_name || 'Unknown User',
@@ -155,13 +160,16 @@ const GroupConversationView: React.FC<GroupConversationViewProps> = ({
 
     setSending(true);
     try {
+      // Create a dummy conversation ID for group messages since it's required
+      const dummyConversationId = '00000000-0000-0000-0000-000000000000';
+      
       const messageData = {
-        conversation_id: conversation.id, // Required field
+        conversation_id: dummyConversationId, // Required but not used for group messages
         group_conversation_id: conversation.id,
         sender_id: user.id,
         content: content.trim(),
         message_type: attachments?.length ? 'attachment' : 'text',
-        ...(attachments?.length && { attachments: JSON.stringify(attachments) })
+        attachments: attachments?.length ? JSON.stringify(attachments) : null
       };
 
       const { error } = await supabase

@@ -1,116 +1,52 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Calendar, Clock, MapPin, Users, Video, Globe } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Video, Globe, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/CleanAuthContext';
+import EventCreationDialog from '@/components/events/EventCreationDialog';
 
 const Events = () => {
+  const { user } = useAuth();
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [isRegisterDialogOpen, setIsRegisterDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const events = [
-    {
-      id: 1,
-      title: "African Tech Summit 2025",
-      description: "The premier technology conference connecting African innovators with global opportunities",
-      type: "conference",
-      format: "hybrid",
-      date: "September 15-17, 2025",
-      time: "9:00 AM - 6:00 PM WAT",
-      location: "Lagos, Nigeria + Virtual",
-      attendees: "2,500+",
-      price: "Free",
-      speakers: ["Dr. Amina Hassan", "James Okoye", "Sarah Mwangi"],
-      topics: ["AI & Innovation", "Fintech", "Sustainable Tech"],
-      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop"
-    },
-    {
-      id: 2,
-      title: "Diaspora Investment Roundtable",
-      description: "Exclusive roundtable discussion on African investment opportunities",
-      type: "roundtable",
-      format: "in-person",
-      date: "October 12, 2025",
-      time: "2:00 PM - 5:00 PM EST",
-      location: "New York, NY",
-      attendees: "50",
-      price: "$150",
-      speakers: ["Michael Adebayo", "Grace Kimani"],
-      topics: ["Investment Strategies", "Market Analysis", "Due Diligence"],
-      image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=400&h=250&fit=crop"
-    },
-    {
-      id: 3,
-      title: "Women in African Business Webinar",
-      description: "Empowering women entrepreneurs across the African continent",
-      type: "webinar",
-      format: "virtual",
-      date: "November 8, 2025",
-      time: "7:00 PM - 8:30 PM GMT",
-      location: "Virtual",
-      attendees: "1,000+",
-      price: "Free",
-      speakers: ["Fatima Al-Rashid", "Kemi Ogundepo"],
-      topics: ["Leadership", "Funding", "Scaling"],
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=250&fit=crop"
-    },
-    {
-      id: 4,
-      title: "Innovation Pitch Night",
-      description: "Showcase your startup to a panel of diaspora investors and mentors",
-      type: "pitch",
-      format: "hybrid",
-      date: "December 5, 2025",
-      time: "6:00 PM - 9:00 PM GMT",
-      location: "London, UK + Virtual",
-      attendees: "200",
-      price: "$75",
-      speakers: ["Panel of Investors"],
-      topics: ["Startup Pitches", "Funding", "Mentorship"],
-      image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=400&h=250&fit=crop"
-    },
-    {
-      id: 5,
-      title: "African Diaspora Cultural Festival",
-      description: "Celebrating African heritage and culture across the diaspora",
-      type: "cultural",
-      format: "in-person",
-      date: "August 20, 2025",
-      time: "10:00 AM - 8:00 PM EST",
-      location: "Washington, DC",
-      attendees: "5,000+",
-      price: "$25",
-      speakers: ["Cultural Leaders", "Artists", "Musicians"],
-      topics: ["Heritage", "Arts", "Music", "Food"],
-      image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=250&fit=crop"
-    },
-    {
-      id: 6,
-      title: "AgriTech Innovation Summit",
-      description: "Revolutionizing African agriculture through technology and innovation",
-      type: "conference",
-      format: "virtual",
-      date: "July 18, 2025",
-      time: "1:00 PM - 6:00 PM EAT",
-      location: "Virtual",
-      attendees: "1,500+",
-      price: "Free",
-      speakers: ["Dr. Kwame Nkrumah", "Grace Mutua", "Ibrahim Sankoh"],
-      topics: ["Smart Farming", "Climate Tech", "Food Security"],
-      image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&h=250&fit=crop"
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .gte('date_time', new Date().toISOString())
+        .order('date_time', { ascending: true });
+
+      if (error) throw error;
+      setEvents(data || []);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      toast.error('Failed to load events');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const filters = [
     { id: 'all', label: 'All Events' },
     { id: 'conference', label: 'Conferences' },
     { id: 'webinar', label: 'Webinars' },
-    { id: 'roundtable', label: 'Roundtables' },
-    { id: 'pitch', label: 'Pitch Events' },
+    { id: 'workshop', label: 'Workshops' },
+    { id: 'networking', label: 'Networking' },
     { id: 'cultural', label: 'Cultural' }
   ];
 
@@ -118,7 +54,7 @@ const Events = () => {
     ? events 
     : events.filter(event => event.type === selectedFilter);
 
-  const handleRegister = (eventId: number) => {
+  const handleRegister = (eventId: string) => {
     console.log('Registering for event:', eventId);
     setIsRegisterDialogOpen(true);
   };
@@ -128,26 +64,18 @@ const Events = () => {
     setIsRegisterDialogOpen(false);
   };
 
-  const getFormatIcon = (format: string) => {
-    switch (format) {
-      case 'virtual':
-        return <Video className="w-4 h-4" />;
-      case 'in-person':
-        return <MapPin className="w-4 h-4" />;
-      default:
-        return <Globe className="w-4 h-4" />;
-    }
+  const handleEventCreated = () => {
+    fetchEvents();
   };
 
-  const getFormatBadge = (format: string) => {
-    switch (format) {
-      case 'virtual':
-        return <Badge className="bg-dna-emerald text-white">Virtual</Badge>;
-      case 'in-person':
-        return <Badge className="bg-dna-copper text-white">In-Person</Badge>;
-      default:
-        return <Badge className="bg-dna-gold text-white">Hybrid</Badge>;
-    }
+  const getFormatIcon = (isVirtual: boolean) => {
+    return isVirtual ? <Video className="w-4 h-4" /> : <MapPin className="w-4 h-4" />;
+  };
+
+  const getFormatBadge = (isVirtual: boolean) => {
+    return isVirtual 
+      ? <Badge className="bg-dna-emerald text-white">Virtual</Badge>
+      : <Badge className="bg-dna-copper text-white">In-Person</Badge>;
   };
 
   return (
@@ -156,9 +84,20 @@ const Events = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Upcoming <span className="text-dna-copper">Events</span>
-          </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h1 className="text-4xl font-bold text-gray-900">
+              Upcoming <span className="text-dna-copper">Events</span>
+            </h1>
+            {user && (
+              <Button
+                onClick={() => setIsCreateDialogOpen(true)}
+                className="bg-dna-emerald hover:bg-dna-forest text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Event
+              </Button>
+            )}
+          </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Connect, learn, and collaborate at events designed to strengthen the African diaspora network
           </p>
@@ -179,86 +118,90 @@ const Events = () => {
         </div>
 
         {/* Events Grid */}
-        <div className="grid md:grid-cols-2 gap-8">
-          {filteredEvents.map((event) => (
-            <Card key={event.id} className="hover:shadow-lg transition-shadow">
-              <div className="relative">
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-48 object-cover rounded-t-lg"
-                />
-                <div className="absolute top-3 left-3">
-                  <Badge className="bg-dna-emerald text-white">
-                    {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-                  </Badge>
+        {loading ? (
+          <div className="text-center py-8">
+            <div className="text-gray-600">Loading events...</div>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-8">
+            {filteredEvents.map((event) => (
+              <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                <div className="relative">
+                  <img
+                    src={event.image_url || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop'}
+                    alt={event.title}
+                    className="w-full h-48 object-cover rounded-t-lg"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <Badge className="bg-dna-emerald text-white">
+                      {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                    </Badge>
+                  </div>
+                  <div className="absolute top-3 right-3">
+                    <Badge variant="secondary" className="bg-white/90">
+                      Free
+                    </Badge>
+                  </div>
                 </div>
-                <div className="absolute top-3 right-3">
-                  <Badge variant="secondary" className="bg-white/90">
-                    {event.price}
-                  </Badge>
-                </div>
+                
+                <CardHeader>
+                  <CardTitle className="text-xl text-gray-900">{event.title}</CardTitle>
+                  <p className="text-gray-600">{event.description}</p>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 gap-3 text-sm">
+                    {event.date_time && (
+                      <div className="flex items-center text-gray-600">
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {new Date(event.date_time).toLocaleDateString()}
+                      </div>
+                    )}
+                    {event.date_time && (
+                      <div className="flex items-center text-gray-600">
+                        <Clock className="w-4 h-4 mr-2" />
+                        {new Date(event.date_time).toLocaleTimeString()}
+                      </div>
+                    )}
+                    {event.location && (
+                      <div className="flex items-center text-gray-600">
+                        {getFormatIcon(event.is_virtual)}
+                        <span className="ml-2">{event.location}</span>
+                        <span className="ml-2">{getFormatBadge(event.is_virtual)}</span>
+                      </div>
+                    )}
+                    {event.max_attendees && (
+                      <div className="flex items-center text-gray-600">
+                        <Users className="w-4 h-4 mr-2" />
+                        Up to {event.max_attendees} attendees
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex gap-3 pt-2">
+                    <Button 
+                      className="flex-1 bg-dna-copper hover:bg-dna-gold"
+                      onClick={() => handleRegister(event.id)}
+                    >
+                      Register Now
+                    </Button>
+                    <Button variant="outline">
+                      Add to Calendar
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {filteredEvents.length === 0 && !loading && (
+              <div className="col-span-2 text-center py-8">
+                <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No events found</h3>
+                <p className="text-gray-600">Try adjusting your filters or check back later for new events.</p>
               </div>
-              
-              <CardHeader>
-                <CardTitle className="text-xl text-gray-900">{event.title}</CardTitle>
-                <p className="text-gray-600">{event.description}</p>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 gap-3 text-sm">
-                  <div className="flex items-center text-gray-600">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {event.date}
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Clock className="w-4 h-4 mr-2" />
-                    {event.time}
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    {getFormatIcon(event.format)}
-                    <span className="ml-2">{event.location}</span>
-                    <span className="ml-2">{getFormatBadge(event.format)}</span>
-                  </div>
-                  <div className="flex items-center text-gray-600">
-                    <Users className="w-4 h-4 mr-2" />
-                    {event.attendees} attendees
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Featured Topics:</h4>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {event.topics.map((topic, index) => (
-                      <Badge key={index} variant="outline">
-                        {topic}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Speakers:</h4>
-                  <p className="text-sm text-gray-600">
-                    {event.speakers.join(', ')}
-                  </p>
-                </div>
-                
-                <div className="flex gap-3 pt-2">
-                  <Button 
-                    className="flex-1 bg-dna-copper hover:bg-dna-gold"
-                    onClick={() => handleRegister(event.id)}
-                  >
-                    Register Now
-                  </Button>
-                  <Button variant="outline">
-                    Add to Calendar
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+            )}
+          </div>
+        )}
 
         {/* Call to Action */}
         <div className="text-center mt-16">
@@ -268,8 +211,12 @@ const Events = () => {
               <p className="text-lg mb-6">
                 Want to organize an event for the DNA community? We provide platform support and promotion.
               </p>
-              <Button size="lg" className="bg-white text-dna-forest hover:bg-gray-100">
-                Propose an Event
+              <Button 
+                size="lg" 
+                className="bg-white text-dna-forest hover:bg-gray-100"
+                onClick={() => setIsCreateDialogOpen(true)}
+              >
+                Create an Event
               </Button>
             </CardContent>
           </Card>
@@ -311,6 +258,13 @@ const Events = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Event Creation Dialog */}
+      <EventCreationDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        onEventCreated={handleEventCreated}
+      />
     </div>
   );
 };
