@@ -13,23 +13,43 @@ import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { demoProfessionals, demoCommunities, demoEvents } from '@/data/demoSearchData';
 
 const ConnectExample = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { 
-    searchTerm, 
-    setSearchTerm, 
-    filters, 
-    setFilters,
-    professionals, 
-    communities, 
-    events, 
-    loading, 
-    clearSearch,
-    performSearch,
-    resultCounts 
+  
+  // Use static demo data for non-authenticated users, dynamic data for authenticated
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    location: '',
+    skills: [],
+    isMentor: false,
+    isInvestor: false,
+    lookingForOpportunities: false
+  });
+  const [loading, setLoading] = useState(false);
+  
+  // For authenticated users, use dynamic search
+  const {
+    professionals: dbProfessionals,
+    communities: dbCommunities,
+    events: dbEvents,
+    performSearch: dbPerformSearch,
+    clearSearch: dbClearSearch,
+    resultCounts: dbResultCounts
   } = useAdvancedSearch();
+  
+  // Use demo data for non-authenticated users, database data for authenticated
+  const professionals = user ? dbProfessionals : demoProfessionals;
+  const communities = user ? dbCommunities : demoCommunities;
+  const events = user ? dbEvents : demoEvents;
+  
+  const resultCounts = user ? dbResultCounts : {
+    professionals: demoProfessionals.length,
+    communities: demoCommunities.length,
+    events: demoEvents.length
+  };
   
   const [activeTab, setActiveTab] = useState('professionals');
   const [dataError, setDataError] = useState<string | null>(null);
@@ -89,8 +109,34 @@ const ConnectExample = () => {
     return 'none'; // Demo status
   };
 
+  const performSearch = () => {
+    if (user) {
+      dbPerformSearch();
+    } else {
+      // For demo users, just show a toast
+      toast({
+        title: "Demo Mode",
+        description: "Sign in to search real data",
+      });
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+    setFilters({
+      location: '',
+      skills: [],
+      isMentor: false,
+      isInvestor: false,
+      lookingForOpportunities: false
+    });
+    if (user) {
+      dbClearSearch();
+    }
+  };
+
   const initializeData = () => {
-    // This is handled automatically by useAdvancedSearch
+    // This is handled automatically by useAdvancedSearch for authenticated users
     console.log('Data initialized automatically');
   };
 
