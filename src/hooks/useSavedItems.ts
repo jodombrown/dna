@@ -30,7 +30,14 @@ export const useSavedItems = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setSavedItems(data || []);
+      
+      // Type cast the data to ensure target_type is properly typed
+      const typedData = data?.map(item => ({
+        ...item,
+        target_type: item.target_type as 'post' | 'event' | 'opportunity'
+      })) || [];
+      
+      setSavedItems(typedData);
     } catch (error) {
       console.error('Error fetching saved items:', error);
     } finally {
