@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import LinkedInStyleProfileHeader from './LinkedInStyleProfileHeader';
 import DNAProfileSidebar from './DNAProfileSidebar';
 import DNAProfileTabs from './DNAProfileTabs';
+import FollowButton from '@/components/FollowButton';
 import { useProfileContent } from '@/hooks/useProfileContent';
+import { useAuth } from '@/contexts/CleanAuthContext';
 
 interface DNALinkedInProfileProps {
   profile: any;
@@ -21,6 +23,7 @@ const DNALinkedInProfile: React.FC<DNALinkedInProfileProps> = ({
   onMessage
 }) => {
   const [activeTab, setActiveTab] = useState('about');
+  const { user } = useAuth();
   const { userPosts, userEvents, userCommunities } = useProfileContent(profile?.id);
 
   return (
@@ -33,6 +36,18 @@ const DNALinkedInProfile: React.FC<DNALinkedInProfileProps> = ({
         onFollow={onFollow}
         onMessage={onMessage}
       />
+
+      {/* Follow Button Section - Show when viewing other user's profile */}
+      {!isOwnProfile && user && profile?.id && (
+        <div className="flex justify-center">
+          <FollowButton 
+            targetType="user" 
+            targetId={profile.id} 
+            size="lg"
+            className="shadow-sm"
+          />
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

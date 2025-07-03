@@ -1,37 +1,29 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useFollowSystem } from '@/hooks/useFollowSystem';
 
 export const useProfileConnectionHandlers = (profile: any, isOwnProfile: boolean) => {
   const { toast } = useToast();
+  const followSystem = useFollowSystem('user', profile?.id || '');
 
   const checkFollowingStatus = async () => {
-    // Connection system has been removed - return false for now
-    return false;
+    // Use the new follow system's status
+    return followSystem.isFollowing;
   };
 
   const handleFollow = async (isFollowing: boolean, setIsFollowing: (value: boolean) => void, setLoading: (value: boolean) => void) => {
-    setLoading(true);
-    try {
-      // Connection system has been removed - show placeholder message
-      toast({
-        title: "Feature Coming Soon",
-        description: "Connection system will be implemented in a future update",
-      });
-    } catch (error: any) {
-      console.error('Error in follow handler:', error);
-      toast({
-        title: "Error",
-        description: "Feature temporarily unavailable",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+    // Use the new follow system's toggle function
+    await followSystem.toggleFollow();
+    
+    // Update the local state to match the follow system
+    setIsFollowing(followSystem.isFollowing);
+    setLoading(false);
   };
 
   return {
     checkFollowingStatus,
     handleFollow,
+    followSystem // Expose the follow system for direct access
   };
 };

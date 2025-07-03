@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Lightbulb, Target } from 'lucide-react';
+import FollowButton from '@/components/FollowButton';
 
 interface InitiativeData {
   id: string;
@@ -21,9 +22,17 @@ const InitiativeCard: React.FC<InitiativeCardProps> = ({ initiative, showInFeed 
   return (
     <Card className={`${showInFeed ? 'border-l-4 border-l-dna-emerald' : ''} hover:shadow-md transition-shadow`}>
       <CardHeader className="pb-3">
-        <div className="flex items-center gap-2 mb-2">
-          <Lightbulb className="w-5 h-5 text-dna-emerald" />
-          <span className="font-semibold text-dna-emerald">Initiative</span>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <Lightbulb className="w-5 h-5 text-dna-emerald" />
+            <span className="font-semibold text-dna-emerald">Initiative</span>
+          </div>
+          <FollowButton 
+            targetType="initiative" 
+            targetId={initiative.id} 
+            size="sm" 
+            variant="outline"
+          />
         </div>
         <h3 className="text-lg font-semibold text-gray-900">{initiative.title}</h3>
       </CardHeader>

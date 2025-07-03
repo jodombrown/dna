@@ -20,6 +20,8 @@ import RichContentCreator from './RichContentCreator';
 import EventCard from './EventCard';
 import InitiativeCard from './InitiativeCard';
 import OpportunityCard from './OpportunityCard';
+import FollowButton from '@/components/FollowButton';
+import TagFollowButton from '@/components/TagFollowButton';
 
 const EnhancedSocialFeed: React.FC = () => {
   const { user } = useAuth();
@@ -43,10 +45,14 @@ const EnhancedSocialFeed: React.FC = () => {
   const renderContent = (content: string) => {
     return content.split(/(\s+)/).map((word, index) => {
       if (word.startsWith('#')) {
+        const tag = word.slice(1); // Remove the # symbol
         return (
-          <Badge key={index} variant="secondary" className="inline-block mx-1 bg-dna-mint text-dna-forest">
-            {word}
-          </Badge>
+          <div key={index} className="inline-flex items-center gap-1">
+            <Badge variant="secondary" className="inline-block bg-dna-mint text-dna-forest">
+              {word}
+            </Badge>
+            <TagFollowButton tag={tag} />
+          </div>
         );
       }
       return word;
@@ -103,10 +109,21 @@ const EnhancedSocialFeed: React.FC = () => {
                             {item.author?.full_name?.charAt(0) || 'U'}
                           </AvatarFallback>
                         </Avatar>
-                        <div>
-                          <p className="font-semibold text-gray-900">
-                            {item.author?.display_name || item.author?.full_name || 'Community Member'}
-                          </p>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold text-gray-900">
+                              {item.author?.display_name || item.author?.full_name || 'Community Member'}
+                            </p>
+                            {item.author?.id && item.author.id !== user.id && (
+                              <FollowButton 
+                                targetType="user" 
+                                targetId={item.author.id} 
+                                size="sm" 
+                                variant="ghost"
+                                showCount={false}
+                              />
+                            )}
+                          </div>
                           <p className="text-sm text-gray-600">
                             {item.author?.profession && `${item.author.profession} • `}
                             {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
@@ -137,13 +154,15 @@ const EnhancedSocialFeed: React.FC = () => {
                     {item.hashtags && item.hashtags.length > 0 && (
                       <div className="flex flex-wrap gap-2 mb-4">
                         {item.hashtags.map((tag, index) => (
-                          <Badge
-                            key={index}
-                            variant="secondary"
-                            className="bg-dna-mint text-dna-forest hover:bg-dna-emerald hover:text-white text-xs"
-                          >
-                            #{tag}
-                          </Badge>
+                          <div key={index} className="flex items-center gap-1">
+                            <Badge
+                              variant="secondary"
+                              className="bg-dna-mint text-dna-forest hover:bg-dna-emerald hover:text-white text-xs"
+                            >
+                              #{tag}
+                            </Badge>
+                            <TagFollowButton tag={tag} />
+                          </div>
                         ))}
                       </div>
                     )}
@@ -180,10 +199,21 @@ const EnhancedSocialFeed: React.FC = () => {
                           {item.author?.full_name?.charAt(0) || 'U'}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <p className="font-semibold text-gray-900">
-                          {item.author?.full_name || 'Community Member'}
-                        </p>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold text-gray-900">
+                            {item.author?.full_name || 'Community Member'}
+                          </p>
+                          {item.author?.id && item.created_by !== user.id && (
+                            <FollowButton 
+                              targetType="user" 
+                              targetId={item.created_by || item.author.id} 
+                              size="sm" 
+                              variant="ghost"
+                              showCount={false}
+                            />
+                          )}
+                        </div>
                         <p className="text-sm text-gray-600">
                           {item.author?.professional_role && `${item.author.professional_role} • `}
                           {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
