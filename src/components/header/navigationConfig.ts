@@ -7,6 +7,15 @@ export const publicNavItems = [
   { name: 'Contact', path: '/contact' },
 ];
 
+// Main navigation for authenticated users (feed-focused like LinkedIn)
+export const mainNavItems = [
+  { name: 'Feed', path: '/feed', icon: 'MessageSquare' },
+  { name: 'Connect', path: '/connect', icon: 'Users' },
+  { name: 'Communities', path: '/communities', icon: 'Users2' },
+  { name: 'Messages', path: '/messages', icon: 'MessageCircle' },
+  { name: 'Notifications', path: '/notifications', icon: 'Bell' },
+];
+
 export const phases = [
   { name: 'Market Research', path: '/phase/market-research', phase: 1, timeline: 'Jun - Sep 2025' },
   { name: 'Prototyping', path: '/phase/prototyping', phase: 2, timeline: 'Oct - Dec 2025' },

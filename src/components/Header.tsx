@@ -8,7 +8,8 @@ import NotificationsDropdown from './notifications/NotificationsDropdown';
 import MessagingNotifications from './notifications/MessagingNotifications';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { Button } from '@/components/ui/button';
-import { User, MessageSquare } from 'lucide-react';
+import { User, MessageSquare, MessageCircle, Home, Users, Users2, Bell } from 'lucide-react';
+import { mainNavItems } from './header/navigationConfig';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,8 +35,35 @@ const Header = () => {
             <Logo />
           </div>
           
+          {user ? (
+            // Authenticated: Show main navigation (feed-focused)
+            <div className="hidden md:flex items-center space-x-6">
+              {mainNavItems.map((item) => {
+                const IconComponent = {
+                  MessageSquare,
+                  Users,
+                  Users2,
+                  MessageCircle,
+                  Bell
+                }[item.icon] || MessageSquare;
+                
+                return (
+                  <Button
+                    key={item.path}
+                    variant="ghost"
+                    onClick={() => navigate(item.path)}
+                    className="flex items-center gap-2 text-gray-600 hover:text-dna-emerald"
+                  >
+                    <IconComponent className="w-4 h-4" />
+                    <span className="text-sm font-medium">{item.name}</span>
+                  </Button>
+                );
+              })}
+            </div>
+          ) : null}
+          
           <div className="flex items-center space-x-4">
-            <DesktopNavigation />
+            {!user && <DesktopNavigation />}
             
             {user ? (
               <div className="flex items-center space-x-2">
@@ -74,27 +102,16 @@ const Header = () => {
                       </p>
                     </div>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
-                      Dashboard
-                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/profile/my')}>
+                      <User className="w-4 h-4 mr-2" />
                       My Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/connect')}>
-                      Connect
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/communities')}>
-                      Communities
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/my-communities')}>
-                      My Communities
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/saved')}>
                       Saved Content
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/messages')}>
-                      <MessageSquare className="w-4 h-4 mr-2" />
-                      Messages
+                    <DropdownMenuItem onClick={() => navigate('/')}>
+                      <Home className="w-4 h-4 mr-2" />
+                      Home (DNA Website)
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut}>
