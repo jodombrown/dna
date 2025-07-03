@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useContributionTracker } from './useContributionTracker';
 import { Community, CommunityMembership, CommunityWithMembership, CreateCommunityData } from '@/types/community';
 
 export const useCommunities = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { trackCommunityJoin } = useContributionTracker();
   const [communities, setCommunities] = useState<CommunityWithMembership[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -110,6 +112,12 @@ export const useCommunities = () => {
           return false;
         }
         throw error;
+      }
+
+      // Find community name for tracking
+      const community = communities.find(c => c.id === communityId);
+      if (community) {
+        trackCommunityJoin(communityId, community.name);
       }
 
       toast({

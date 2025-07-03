@@ -437,6 +437,36 @@ export type Database = {
           },
         ]
       }
+      contributions: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          target_id: string
+          target_title: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id: string
+          target_title?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string
+          target_title?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           attendee_count: number | null
