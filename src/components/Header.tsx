@@ -73,15 +73,6 @@ const Header = () => {
                     <DropdownMenuItem onClick={() => navigate('/connect')}>
                       Connect
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/communities')}>
-                      Communities
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/my-communities')}>
-                      My Communities
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/saved')}>
-                      Saved Content
-                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate('/messages')}>
                       Messages
                     </DropdownMenuItem>

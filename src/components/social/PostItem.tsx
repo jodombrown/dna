@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -13,7 +14,6 @@ import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import FollowButton from '@/components/FollowButton';
 import TagFollowButton from '@/components/TagFollowButton';
-import BookmarkButton from '@/components/BookmarkButton';
 import { CleanSocialPost } from '@/hooks/useCleanSocialPosts';
 
 interface PostItemProps {
@@ -72,12 +72,9 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            <BookmarkButton targetType="post" targetId={post.id} />
-            <Button variant="ghost" size="sm">
-              <MoreHorizontal className="w-4 h-4" />
-            </Button>
-          </div>
+          <Button variant="ghost" size="sm">
+            <MoreHorizontal className="w-4 h-4" />
+          </Button>
         </div>
 
         <div className="mb-4">

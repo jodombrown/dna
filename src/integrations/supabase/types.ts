@@ -179,13 +179,11 @@ export type Database = {
       communities: {
         Row: {
           category: string | null
-          cover_image_url: string | null
           created_at: string
           created_by: string | null
           description: string | null
           id: string
           image_url: string | null
-          is_active: boolean
           is_featured: boolean | null
           member_count: number | null
           moderated_at: string | null
@@ -193,20 +191,16 @@ export type Database = {
           moderation_status: string | null
           moderator_notes: string | null
           name: string
-          purpose_goals: string | null
           rejection_reason: string | null
-          tags: string[] | null
           updated_at: string
         }
         Insert: {
           category?: string | null
-          cover_image_url?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           id?: string
           image_url?: string | null
-          is_active?: boolean
           is_featured?: boolean | null
           member_count?: number | null
           moderated_at?: string | null
@@ -214,20 +208,16 @@ export type Database = {
           moderation_status?: string | null
           moderator_notes?: string | null
           name: string
-          purpose_goals?: string | null
           rejection_reason?: string | null
-          tags?: string[] | null
           updated_at?: string
         }
         Update: {
           category?: string | null
-          cover_image_url?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           id?: string
           image_url?: string | null
-          is_active?: boolean
           is_featured?: boolean | null
           member_count?: number | null
           moderated_at?: string | null
@@ -235,9 +225,7 @@ export type Database = {
           moderation_status?: string | null
           moderator_notes?: string | null
           name?: string
-          purpose_goals?: string | null
           rejection_reason?: string | null
-          tags?: string[] | null
           updated_at?: string
         }
         Relationships: []
@@ -282,38 +270,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "community_flags_community_id_fkey"
-            columns: ["community_id"]
-            isOneToOne: false
-            referencedRelation: "communities"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      community_memberships: {
-        Row: {
-          community_id: string
-          id: string
-          joined_at: string
-          role: string
-          user_id: string
-        }
-        Insert: {
-          community_id: string
-          id?: string
-          joined_at?: string
-          role?: string
-          user_id: string
-        }
-        Update: {
-          community_id?: string
-          id?: string
-          joined_at?: string
-          role?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "community_memberships_community_id_fkey"
             columns: ["community_id"]
             isOneToOne: false
             referencedRelation: "communities"
@@ -866,30 +822,6 @@ export type Database = {
           status?: string | null
           title?: string
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      saved_items: {
-        Row: {
-          created_at: string
-          id: string
-          target_id: string
-          target_type: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          target_id: string
-          target_type: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          target_id?: string
-          target_type?: string
-          user_id?: string
         }
         Relationships: []
       }
