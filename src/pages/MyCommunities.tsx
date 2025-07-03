@@ -10,14 +10,13 @@ import { Plus, Crown, Users } from 'lucide-react';
 import { useCommunities } from '@/hooks/useCommunities';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import CommunityCard from '@/components/community/CommunityCard';
-import CreateCommunityDialog from '@/components/community/CreateCommunityDialog';
-import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 const MyCommunities = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   const { communities, loading, createCommunity, joinCommunity, leaveCommunity } = useCommunities();
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   // Filter communities where user is a member
   const myCommunities = communities.filter(community => community.is_member);
@@ -26,6 +25,13 @@ const MyCommunities = () => {
 
   const handleViewDetails = (communityId: string) => {
     navigate(`/communities/${communityId}`);
+  };
+
+  const handleCreateCommunity = () => {
+    toast({
+      title: "Coming Soon!",
+      description: "Community creation will be available in a future update. Stay tuned!",
+    });
   };
 
   if (!user) {
@@ -63,17 +69,14 @@ const MyCommunities = () => {
               </p>
             </div>
             
-            <CreateCommunityDialog
-              open={createDialogOpen}
-              onOpenChange={setCreateDialogOpen}
-              onCreateCommunity={createCommunity}
-              trigger={
-                <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Community
-                </Button>
-              }
-            />
+            <Button 
+              onClick={handleCreateCommunity}
+              className="bg-gray-400 hover:bg-gray-500 text-white cursor-not-allowed"
+              disabled
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create Community (Coming Soon)
+            </Button>
           </div>
 
           {/* Stats Cards */}
@@ -132,15 +135,16 @@ const MyCommunities = () => {
             <CardContent className="text-center py-12">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No communities yet</h3>
               <p className="text-gray-600 mb-6">
-                Create your first community or explore existing ones to join.
+                Community creation and joining will be available in a future update.
               </p>
               <div className="flex gap-4 justify-center">
                 <Button 
-                  onClick={() => setCreateDialogOpen(true)}
-                  className="bg-dna-emerald hover:bg-dna-forest text-white"
+                  onClick={handleCreateCommunity}
+                  className="bg-gray-400 hover:bg-gray-500 text-white cursor-not-allowed"
+                  disabled
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Community
+                  Create Community (Coming Soon)
                 </Button>
                 <Button 
                   variant="outline"

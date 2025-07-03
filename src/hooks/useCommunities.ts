@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/CleanAuthContext';
@@ -28,7 +27,7 @@ export const useCommunities = () => {
         const communitiesWithMembership: CommunityWithMembership[] = (communitiesData || []).map(community => ({
           ...community,
           creator_id: community.created_by || '',
-          is_active: community.is_active ?? true,
+          is_active: true, // Default value instead of accessing community.is_active
           is_member: false,
           user_membership: undefined,
           user_role: undefined
@@ -54,7 +53,7 @@ export const useCommunities = () => {
         return {
           ...community,
           creator_id: community.created_by || '',
-          is_active: community.is_active ?? true,
+          is_active: true, // Default value instead of accessing community.is_active
           user_membership: membership,
           is_member: !!membership,
           user_role: membership?.role as 'admin' | 'moderator' | 'member' | undefined
@@ -75,43 +74,12 @@ export const useCommunities = () => {
   };
 
   const createCommunity = async (communityData: CreateCommunityData) => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to create a community",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('communities')
-        .insert({
-          ...communityData,
-          created_by: user.id
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      toast({
-        title: "Success!",
-        description: "Community created successfully",
-      });
-
-      fetchCommunities();
-      return data;
-    } catch (error) {
-      console.error('Error creating community:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create community",
-        variant: "destructive",
-      });
-      return false;
-    }
+    // Temporarily disabled - show coming soon message
+    toast({
+      title: "Coming Soon!",
+      description: "Community creation will be available in a future update. Stay tuned!",
+    });
+    return false;
   };
 
   const joinCommunity = async (communityId: string) => {

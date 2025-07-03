@@ -179,11 +179,13 @@ export type Database = {
       communities: {
         Row: {
           category: string | null
+          cover_image_url: string | null
           created_at: string
           created_by: string | null
           description: string | null
           id: string
           image_url: string | null
+          is_active: boolean
           is_featured: boolean | null
           member_count: number | null
           moderated_at: string | null
@@ -191,16 +193,20 @@ export type Database = {
           moderation_status: string | null
           moderator_notes: string | null
           name: string
+          purpose_goals: string | null
           rejection_reason: string | null
+          tags: string[] | null
           updated_at: string
         }
         Insert: {
           category?: string | null
+          cover_image_url?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           id?: string
           image_url?: string | null
+          is_active?: boolean
           is_featured?: boolean | null
           member_count?: number | null
           moderated_at?: string | null
@@ -208,16 +214,20 @@ export type Database = {
           moderation_status?: string | null
           moderator_notes?: string | null
           name: string
+          purpose_goals?: string | null
           rejection_reason?: string | null
+          tags?: string[] | null
           updated_at?: string
         }
         Update: {
           category?: string | null
+          cover_image_url?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
           id?: string
           image_url?: string | null
+          is_active?: boolean
           is_featured?: boolean | null
           member_count?: number | null
           moderated_at?: string | null
@@ -225,7 +235,9 @@ export type Database = {
           moderation_status?: string | null
           moderator_notes?: string | null
           name?: string
+          purpose_goals?: string | null
           rejection_reason?: string | null
+          tags?: string[] | null
           updated_at?: string
         }
         Relationships: []

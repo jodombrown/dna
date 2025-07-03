@@ -11,15 +11,15 @@ import { Search, Plus, Filter } from 'lucide-react';
 import { useCommunities } from '@/hooks/useCommunities';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import CommunityCard from '@/components/community/CommunityCard';
-import CreateCommunityDialog from '@/components/community/CreateCommunityDialog';
+import { useToast } from '@/hooks/use-toast';
 
 const Communities = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   const { communities, loading, createCommunity, joinCommunity, leaveCommunity } = useCommunities();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const filteredCommunities = communities.filter(community => {
     const matchesSearch = !searchTerm || 
@@ -35,6 +35,13 @@ const Communities = () => {
 
   const handleViewDetails = (communityId: string) => {
     navigate(`/communities/${communityId}`);
+  };
+
+  const handleCreateCommunity = () => {
+    toast({
+      title: "Coming Soon!",
+      description: "Community creation will be available in a future update. Stay tuned!",
+    });
   };
 
   return (
@@ -53,17 +60,14 @@ const Communities = () => {
             </div>
             
             {user && (
-              <CreateCommunityDialog
-                open={createDialogOpen}
-                onOpenChange={setCreateDialogOpen}
-                onCreateCommunity={createCommunity}
-                trigger={
-                  <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Community
-                  </Button>
-                }
-              />
+              <Button 
+                onClick={handleCreateCommunity}
+                className="bg-gray-400 hover:bg-gray-500 text-white cursor-not-allowed"
+                disabled
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Community (Coming Soon)
+              </Button>
             )}
           </div>
 
@@ -114,16 +118,17 @@ const Communities = () => {
               <p className="text-gray-600 mb-6">
                 {searchTerm || selectedCategory 
                   ? "Try adjusting your search or filter criteria"
-                  : "Be the first to create a community and start building connections!"
+                  : "Communities will appear here once they're available!"
                 }
               </p>
               {user && !searchTerm && !selectedCategory && (
                 <Button 
-                  onClick={() => setCreateDialogOpen(true)}
-                  className="bg-dna-emerald hover:bg-dna-forest text-white"
+                  onClick={handleCreateCommunity}
+                  className="bg-gray-400 hover:bg-gray-500 text-white cursor-not-allowed"
+                  disabled
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Community
+                  Create Community (Coming Soon)
                 </Button>
               )}
             </CardContent>
