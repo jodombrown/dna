@@ -114,10 +114,10 @@ const EnhancedSocialFeed: React.FC = () => {
                             <p className="font-semibold text-gray-900">
                               {item.author?.display_name || item.author?.full_name || 'Community Member'}
                             </p>
-                            {item.author?.id && item.author.id !== user.id && (
+                            {item.user_id && item.user_id !== user.id && (
                               <FollowButton 
                                 targetType="user" 
-                                targetId={item.author.id} 
+                                targetId={item.user_id} 
                                 size="sm" 
                                 variant="ghost"
                                 showCount={false}
@@ -204,10 +204,10 @@ const EnhancedSocialFeed: React.FC = () => {
                           <p className="font-semibold text-gray-900">
                             {item.author?.full_name || 'Community Member'}
                           </p>
-                          {item.author?.id && item.created_by !== user.id && (
+                          {item.created_by && item.created_by !== user.id && (
                             <FollowButton 
                               targetType="user" 
-                              targetId={item.created_by || item.author.id} 
+                              targetId={item.created_by} 
                               size="sm" 
                               variant="ghost"
                               showCount={false}
