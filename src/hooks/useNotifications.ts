@@ -30,24 +30,36 @@ export const useNotifications = () => {
     
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      // First fetch notifications
+      const { data: notificationsData, error: notificationsError } = await supabase
         .from('notifications')
-        .select(`
-          *,
-          actor:profiles!notifications_actor_id_fkey(
-            full_name,
-            avatar_url,
-            display_name
-          )
-        `)
+        .select('*')
         .eq('recipient_id', user.id)
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (error) throw error;
+      if (notificationsError) throw notificationsError;
 
-      setNotifications(data || []);
-      setUnreadCount((data || []).filter(n => !n.is_read).length);
+      // Then fetch actor profiles separately
+      const actorIds = [...new Set(notificationsData?.map(n => n.actor_id) || [])];
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url, display_name')
+        .in('id', actorIds);
+
+      if (profilesError) throw profilesError;
+
+      // Combine the data
+      const enrichedNotifications = (notificationsData || []).map(notification => ({
+        ...notification,
+        // Type cast the action_type to ensure it matches our interface
+        action_type: notification.action_type as 'like' | 'comment' | 'follow' | 'tag',
+        target_type: notification.target_type as 'post' | 'user',
+        actor: profilesData?.find(p => p.id === notification.actor_id)
+      }));
+
+      setNotifications(enrichedNotifications);
+      setUnreadCount(enrichedNotifications.filter(n => !n.is_read).length);
     } catch (error) {
       console.error('Error fetching notifications:', error);
     } finally {
