@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -31,6 +32,7 @@ import Saved from "./pages/Saved";
 import Communities from "./pages/Communities";
 import CommunityDetail from "./pages/CommunityDetail";
 import MyCommunities from "./pages/MyCommunities";
+import AdminAnalyticsDashboard from "./pages/AdminAnalyticsDashboard";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +72,7 @@ function App() {
               <Route path="/communities" element={<Communities />} />
               <Route path="/communities/:id" element={<CommunityDetail />} />
               <Route path="/my-communities" element={<MyCommunities />} />
+              <Route path="/admin/analytics" element={<AdminAnalyticsDashboard />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
