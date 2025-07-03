@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useProfileFormState } from './hooks/useProfileFormState';
 import { useProfileFormArrays } from './hooks/useProfileFormArrays';
