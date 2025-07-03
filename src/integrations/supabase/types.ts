@@ -914,12 +914,56 @@ export type Database = {
           },
         ]
       }
+      newsletter_deliveries: {
+        Row: {
+          created_at: string
+          id: string
+          newsletter_id: string
+          recipient_id: string
+          sent_at: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          newsletter_id: string
+          recipient_id: string
+          sent_at?: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          newsletter_id?: string
+          recipient_id?: string
+          sent_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_deliveries_newsletter_id_fkey"
+            columns: ["newsletter_id"]
+            isOneToOne: false
+            referencedRelation: "newsletters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "newsletter_deliveries_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       newsletters: {
         Row: {
           category: string | null
           content: string
           created_at: string | null
           created_by: string
+          email_recipient_count: number | null
+          email_sent_at: string | null
           featured_image_url: string | null
           id: string
           is_published: boolean | null
@@ -935,6 +979,8 @@ export type Database = {
           content: string
           created_at?: string | null
           created_by: string
+          email_recipient_count?: number | null
+          email_sent_at?: string | null
           featured_image_url?: string | null
           id?: string
           is_published?: boolean | null
@@ -950,6 +996,8 @@ export type Database = {
           content?: string
           created_at?: string | null
           created_by?: string
+          email_recipient_count?: number | null
+          email_sent_at?: string | null
           featured_image_url?: string | null
           id?: string
           is_published?: boolean | null
@@ -1115,6 +1163,7 @@ export type Database = {
           current_country: string | null
           display_name: string | null
           email: string | null
+          email_notifications: boolean | null
           full_name: string | null
           id: string
           interest_tags: string[] | null
@@ -1122,6 +1171,7 @@ export type Database = {
           is_public: boolean | null
           linkedin_url: string | null
           location: string | null
+          newsletter_emails: boolean | null
           onboarding_completed_at: string | null
           profession: string | null
           professional_role: string | null
@@ -1138,6 +1188,7 @@ export type Database = {
           current_country?: string | null
           display_name?: string | null
           email?: string | null
+          email_notifications?: boolean | null
           full_name?: string | null
           id: string
           interest_tags?: string[] | null
@@ -1145,6 +1196,7 @@ export type Database = {
           is_public?: boolean | null
           linkedin_url?: string | null
           location?: string | null
+          newsletter_emails?: boolean | null
           onboarding_completed_at?: string | null
           profession?: string | null
           professional_role?: string | null
@@ -1161,6 +1213,7 @@ export type Database = {
           current_country?: string | null
           display_name?: string | null
           email?: string | null
+          email_notifications?: boolean | null
           full_name?: string | null
           id?: string
           interest_tags?: string[] | null
@@ -1168,6 +1221,7 @@ export type Database = {
           is_public?: boolean | null
           linkedin_url?: string | null
           location?: string | null
+          newsletter_emails?: boolean | null
           onboarding_completed_at?: string | null
           profession?: string | null
           professional_role?: string | null
@@ -1288,6 +1342,14 @@ export type Database = {
         Returns: {
           user_id: string
           is_public: boolean
+        }[]
+      }
+      get_newsletter_followers: {
+        Args: { newsletter_user_id: string }
+        Returns: {
+          user_id: string
+          email: string
+          full_name: string
         }[]
       }
       get_platform_stats: {
