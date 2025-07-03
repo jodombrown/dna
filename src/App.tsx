@@ -11,6 +11,12 @@ import UserProfile from "./pages/UserProfile";
 import Messages from "./pages/Messages";
 import EnhancedMessages from "./pages/EnhancedMessages";
 import Connect from "./pages/Connect";
+import ConnectExample from "./pages/ConnectExample";
+import CollaborationsExample from "./pages/CollaborationsExample";
+import ContributeExample from "./pages/ContributeExample";
+import Communities from "./pages/Communities";
+import ComingSoon from "./pages/ComingSoon";
+import CleanSocialFeedPage from "./pages/CleanSocialFeedPage";
 import Search from "./pages/Search";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
@@ -43,6 +49,12 @@ const App = () => (
           <Route path="/enhanced-messages" element={<EnhancedMessages />} />
           <Route path="/messages/:conversationId" element={<ConversationPage />} />
           <Route path="/connect" element={<Connect />} />
+          <Route path="/connect-example" element={<ConnectExample />} />
+          <Route path="/collaborate-example" element={<CollaborationsExample />} />
+          <Route path="/contribute-example" element={<ContributeExample />} />
+          <Route path="/communities" element={<Communities />} />
+          <Route path="/coming-soon" element={<ComingSoon />} />
+          <Route path="/clean-social-feed" element={<CleanSocialFeedPage />} />
           <Route path="/search" element={<Search />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
