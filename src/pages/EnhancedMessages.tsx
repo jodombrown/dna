@@ -8,21 +8,28 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useConversations } from '@/hooks/useConversations';
+import { useGroupConversations } from '@/hooks/useGroupConversations';
 import { useContactRequests } from '@/hooks/useContactRequests';
-import ConversationView from '@/components/messaging/ConversationView';
+import EnhancedConversationView from '@/components/messaging/EnhancedConversationView';
+import GroupConversationDialog from '@/components/messaging/GroupConversationDialog';
 import ContactRequestsList from '@/components/messaging/ContactRequestsList';
 import Header from '@/components/Header';
-import { MessageSquare, Users, Inbox, Send, User, ArrowRight } from 'lucide-react';
+import { MessageSquare, Users, Inbox, Send, User, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Conversation } from '@/hooks/useConversations';
+import type { GroupConversation } from '@/hooks/useGroupConversations';
 
-const Messages: React.FC = () => {
+const EnhancedMessages: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { conversations, loading } = useConversations();
+  const { conversations, loading: conversationsLoading } = useConversations();
+  const { groupConversations, loading: groupLoading } = useGroupConversations();
   const { getPendingRequestsCount } = useContactRequests();
+  
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  const [selectedGroupConversation, setSelectedGroupConversation] = useState<GroupConversation | null>(null);
   const [activeTab, setActiveTab] = useState('conversations');
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
 
   const pendingRequestsCount = getPendingRequestsCount();
 
@@ -51,14 +58,18 @@ const Messages: React.FC = () => {
     );
   }
 
-  if (selectedConversation) {
+  if (selectedConversation || selectedGroupConversation) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="max-w-4xl mx-auto p-6">
-          <ConversationView
-            conversation={selectedConversation}
-            onBack={() => setSelectedConversation(null)}
+          <EnhancedConversationView
+            conversation={selectedConversation || undefined}
+            groupConversation={selectedGroupConversation || undefined}
+            onBack={() => {
+              setSelectedConversation(null);
+              setSelectedGroupConversation(null);
+            }}
           />
         </div>
       </div>
@@ -69,30 +80,22 @@ const Messages: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="max-w-4xl mx-auto p-6">
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Messages</h1>
-            <p className="text-gray-600">
-              Connect and communicate with diaspora professionals
-            </p>
-          </div>
-          
-          {/* Enhanced Messages Link */}
-          <Button 
-            onClick={() => navigate('/enhanced-messages')}
-            variant="outline"
-            className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
-          >
-            Try Enhanced Messaging
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Messages</h1>
+          <p className="text-gray-600">
+            Connect and communicate with diaspora professionals
+          </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="conversations" className="flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
-              Conversations
+              Direct
+            </TabsTrigger>
+            <TabsTrigger value="groups" className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Groups
             </TabsTrigger>
             <TabsTrigger value="received" className="flex items-center gap-2">
               <Inbox className="w-4 h-4" />
@@ -114,11 +117,11 @@ const Messages: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5 text-dna-emerald" />
-                  Your Conversations
+                  Direct Conversations
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {loading ? (
+                {conversationsLoading ? (
                   <div className="text-center py-8">
                     <div className="text-gray-600">Loading conversations...</div>
                   </div>
@@ -188,6 +191,100 @@ const Messages: React.FC = () => {
             </Card>
           </TabsContent>
 
+          <TabsContent value="groups" className="mt-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5 text-dna-emerald" />
+                    Group Conversations
+                  </CardTitle>
+                  <Button
+                    onClick={() => setShowCreateGroup(true)}
+                    className="bg-dna-emerald hover:bg-dna-forest text-white"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Group
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {groupLoading ? (
+                  <div className="text-center py-8">
+                    <div className="text-gray-600">Loading group conversations...</div>
+                  </div>
+                ) : groupConversations.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">No group conversations yet</h3>
+                    <p className="text-gray-600 mb-4">
+                      Create your first group to start collaborating with multiple professionals.
+                    </p>
+                    <Button 
+                      onClick={() => setShowCreateGroup(true)}
+                      className="bg-dna-emerald hover:bg-dna-forest text-white"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create Group
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {groupConversations.map((group) => (
+                      <div
+                        key={group.id}
+                        className={`p-4 border rounded-lg cursor-pointer transition-colors hover:bg-gray-50 ${
+                          group.unread_count && group.unread_count > 0 
+                            ? 'bg-dna-emerald/5 border-dna-emerald/20' 
+                            : 'bg-white'
+                        }`}
+                        onClick={() => setSelectedGroupConversation(group)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src={group.avatar_url} />
+                            <AvatarFallback>
+                              <Users className="w-5 h-5" />
+                            </AvatarFallback>
+                          </Avatar>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="font-medium text-gray-900 truncate">
+                                {group.name}
+                              </h4>
+                              <div className="flex items-center gap-2">
+                                {group.unread_count && group.unread_count > 0 && (
+                                  <Badge variant="secondary" className="bg-dna-copper text-white text-xs">
+                                    {group.unread_count}
+                                  </Badge>
+                                )}
+                                <span className="text-sm text-gray-500">
+                                  {group.last_message_at && format(new Date(group.last_message_at), 'MMM d')}
+                                </span>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                              <Users className="w-3 h-3" />
+                              {group.member_count} members
+                            </div>
+                            
+                            {group.last_message && (
+                              <p className="text-gray-600 text-sm line-clamp-2">
+                                {group.last_message.content}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="received" className="mt-6">
             <Card>
               <CardHeader>
@@ -221,9 +318,18 @@ const Messages: React.FC = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        <GroupConversationDialog
+          isOpen={showCreateGroup}
+          onClose={() => setShowCreateGroup(false)}
+          onGroupCreated={(groupId) => {
+            // Optionally navigate to the new group
+            console.log('Group created:', groupId);
+          }}
+        />
       </div>
     </div>
   );
 };
 
-export default Messages;
+export default EnhancedMessages;

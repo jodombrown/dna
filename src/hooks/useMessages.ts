@@ -6,32 +6,42 @@ import { toast } from 'sonner';
 
 export interface Message {
   id: string;
-  conversation_id: string;
+  conversation_id?: string;
+  group_conversation_id?: string;
   sender_id: string;
   content: string;
+  message_type: 'text' | 'image' | 'file' | 'system';
+  attachments: any[];
   is_read: boolean;
   created_at: string;
   updated_at: string;
   subject?: string;
 }
 
-export const useMessages = (conversationId?: string) => {
+export const useMessages = (conversationId?: string, groupConversationId?: string) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchMessages = async () => {
-    if (!user || !conversationId) return;
+    if (!user || (!conversationId && !groupConversationId)) return;
 
     try {
       setLoading(true);
 
-      const { data, error } = await supabase
+      let query = supabase
         .from('messages')
         .select('*')
-        .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
+
+      if (conversationId) {
+        query = query.eq('conversation_id', conversationId);
+      } else if (groupConversationId) {
+        query = query.eq('group_conversation_id', groupConversationId);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
@@ -48,17 +58,25 @@ export const useMessages = (conversationId?: string) => {
     }
   };
 
-  const sendMessage = async (content: string): Promise<boolean> => {
-    if (!user || !conversationId) return false;
+  const sendMessage = async (content: string, attachments: any[] = []): Promise<boolean> => {
+    if (!user || (!conversationId && !groupConversationId)) return false;
 
     try {
+      const messageData: any = {
+        sender_id: user.id,
+        content: content.trim(),
+        attachments: attachments || []
+      };
+
+      if (conversationId) {
+        messageData.conversation_id = conversationId;
+      } else if (groupConversationId) {
+        messageData.group_conversation_id = groupConversationId;
+      }
+
       const { error } = await supabase
         .from('messages')
-        .insert({
-          conversation_id: conversationId,
-          sender_id: user.id,
-          content: content.trim()
-        });
+        .insert(messageData);
 
       if (error) throw error;
 
@@ -88,15 +106,22 @@ export const useMessages = (conversationId?: string) => {
   };
 
   const markAllAsRead = async () => {
-    if (!user || !conversationId) return;
+    if (!user || (!conversationId && !groupConversationId)) return;
 
     try {
-      const { error } = await supabase
+      let query = supabase
         .from('messages')
         .update({ is_read: true })
-        .eq('conversation_id', conversationId)
         .neq('sender_id', user.id)
         .eq('is_read', false);
+
+      if (conversationId) {
+        query = query.eq('conversation_id', conversationId);
+      } else if (groupConversationId) {
+        query = query.eq('group_conversation_id', groupConversationId);
+      }
+
+      const { error } = await query;
 
       if (error) throw error;
     } catch (err: any) {
@@ -106,7 +131,7 @@ export const useMessages = (conversationId?: string) => {
 
   useEffect(() => {
     fetchMessages();
-  }, [conversationId, user]);
+  }, [conversationId, groupConversationId, user]);
 
   return {
     messages,
