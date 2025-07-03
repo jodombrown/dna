@@ -1,212 +1,220 @@
 
-import React, { useState } from 'react';
-import PhaseObjectives from '@/components/phases/PhaseObjectives';
-import PhaseTimeline from '@/components/phases/PhaseTimeline';
-import PhaseMetrics from '@/components/phases/PhaseMetrics';
-import { Search, Users, FileText, Target, TrendingUp, MessageSquare, BookOpen, BarChart3, ArrowRight } from "lucide-react";
+import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
-import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, ArrowLeft, BarChart3, Users, Target, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import PhaseHero from '@/components/phases/PhaseHero';
-
-const objectives = [
-  {
-    icon: <Users className="w-5 h-5" />,
-    title: "Deep Diaspora Needs Analysis",
-    description: "Conduct comprehensive research into diaspora motivations, behaviors, challenges, and unmet needs across different regions, demographics, and professional backgrounds.",
-    status: "In Progress",
-    completion: 85
-  },
-  {
-    icon: <Target className="w-5 h-5" />,
-    title: "DNA Concept Market Validation",
-    description: "Test and validate our core platform concept, value propositions, and potential market fit through structured feedback sessions, surveys, and stakeholder interviews.",
-    status: "Active",
-    completion: 70
-  },
-  {
-    icon: <TrendingUp className="w-5 h-5" />,
-    title: "Market Opportunity Quantification",
-    description: "Quantify the total addressable market and specific market segments using public data sources, proprietary research, competitive analysis, and demographic studies.",
-    status: "Active",
-    completion: 60
-  },
-];
-
-const timeline = [
-  {
-    quarter: "Jun 2025",
-    title: "Research Foundation & Methodology",
-    items: [
-      "AI-powered research synthesis of global diaspora trends and patterns",
-      "Comprehensive competitive landscape mapping and analysis",
-      "Research methodology framework development and validation",
-      "Strategic stakeholder identification and systematic outreach planning"
-    ],
-    status: "active" as const,
-  },
-  {
-    quarter: "Jul-Aug 2025",
-    title: "Data Collection & Stakeholder Engagement",
-    items: [
-      "50+ in-depth stakeholder interviews (auto-scheduled and transcribed)",
-      "Advanced sentiment analysis on community surveys and feedback",
-      "Detailed persona development workshops with community leaders",
-      "User journey mapping sessions across different diaspora segments"
-    ],
-    status: "upcoming" as const,
-  },
-  {
-    quarter: "Sep 2025",
-    title: "Analysis & Strategic Validation",
-    items: [
-      "Comprehensive research report compilation and synthesis",
-      "Market size validation using multiple data sources and methodologies",
-      "Strategic validation memo with actionable insights and recommendations",
-      "Phase 2 planning, resource allocation, and team transition preparation"
-    ],
-    status: "upcoming" as const,
-  }
-];
-
-const fallbackMetrics = [
-  {
-    id: "1",
-    label: "Stakeholder Interviews",
-    value: "32",
-    target: "50",
-    icon: "message-square",
-    color: "bg-dna-emerald"
-  },
-  {
-    id: "2", 
-    label: "Survey Responses",
-    value: "127",
-    target: "200",
-    icon: "users",
-    color: "bg-dna-copper"
-  },
-  {
-    id: "3",
-    label: "Research Hours",
-    value: "240",
-    target: "400",
-    icon: "clock",
-    color: "bg-dna-gold"
-  },
-  {
-    id: "4",
-    label: "Personas Created",
-    value: "3",
-    target: "5",
-    icon: "target",
-    color: "bg-dna-forest"
-  }
-];
 
 const MarketResearchPhase = () => {
-  useScrollToTop();
   const navigate = useNavigate();
-  const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-dna-mint/10 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10">
       <Header />
       
-      <PhaseHero
-        badge="Phase 1 • Market Research"
-        title="Market Research"
-        description="Understanding diaspora needs, motivations, and behaviors to validate DNA's concept and market fit through comprehensive research."
-        nextPhase={{ label: "Next Phase", url: "/phase/prototyping" }}
-        gradient="relative bg-gradient-to-r from-dna-forest/90 via-dna-emerald/90 to-dna-copper/90 bg-[url('https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center before:absolute before:inset-0 before:bg-gradient-to-r before:from-dna-forest/80 before:via-dna-emerald/80 before:to-dna-copper/80 before:z-0"
-      />
+      {/* Hero Section */}
+      <section className="py-20 bg-gradient-to-r from-dna-emerald/90 to-dna-copper/90">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Badge className="bg-white text-dna-emerald mb-6 text-lg px-6 py-2">
+            Phase 1 • Market Research
+          </Badge>
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-8">
+            Market Research Phase
+          </h1>
+          <p className="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed mb-12">
+            Deep market analysis and validation of the African diaspora network opportunity. 
+            Understanding our community, their needs, and building the foundation for DNA Platform.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Button 
+              onClick={() => navigate('/phase/prototyping')}
+              className="bg-white text-dna-emerald hover:bg-gray-100 px-8 py-4 text-lg"
+            >
+              Next Phase: Prototyping
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <Button 
+              onClick={() => navigate('/')}
+              variant="outline"
+              className="border-white text-white hover:bg-white hover:text-dna-emerald px-8 py-4 text-lg"
+            >
+              Back to Home
+            </Button>
+          </div>
+        </div>
+      </section>
 
-      {/* Research Overview */}
-      <section className="py-16 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Research First?</h2>
-            <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Before building DNA, we're investing deeply in understanding the African diaspora's needs, challenges, and aspirations. 
-              This research-first approach ensures we create a platform that truly serves our community, not just what we think they need. 
-              Every feature, every interaction, every decision will be grounded in real insights from real people.
+      {/* Research Focus Areas */}
+      <section className="py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Research Focus Areas</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Comprehensive analysis of the African diaspora landscape and market opportunities
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-4 gap-6">
-            <div className="text-center p-6 bg-dna-mint/10 rounded-xl border border-dna-mint/30">
-              <div className="w-12 h-12 bg-dna-forest rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-6 h-6 text-white" />
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="pt-6">
+                <div className="w-16 h-16 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-dna-emerald" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Community Analysis</h3>
+                <p className="text-gray-600">
+                  Mapping the global African diaspora community, their demographics, and engagement patterns.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="pt-6">
+                <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Target className="w-8 h-8 text-dna-copper" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Needs Assessment</h3>
+                <p className="text-gray-600">
+                  Understanding the challenges and opportunities faced by diaspora professionals.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="pt-6">
+                <div className="w-16 h-16 bg-dna-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BarChart3 className="w-8 h-8 text-dna-gold" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Market Sizing</h3>
+                <p className="text-gray-600">
+                  Quantifying the total addressable market and platform opportunity.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="pt-6">
+                <div className="w-16 h-16 bg-dna-forest/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="w-8 h-8 text-dna-forest" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Competitive Landscape</h3>
+                <p className="text-gray-600">
+                  Analyzing existing solutions and identifying market gaps and opportunities.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Key Findings */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Key Research Findings</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Critical insights that shaped our platform strategy
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12">
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-2xl text-dna-emerald">Market Opportunity</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Global African Diaspora</span>
+                  <span className="font-bold text-dna-emerald">200M+ People</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Combined Economic Power</span>
+                  <span className="font-bold text-dna-emerald">$2.5 Trillion</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Professional Networks</span>
+                  <span className="font-bold text-dna-emerald">Fragmented</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Collaboration Platforms</span>
+                  <span className="font-bold text-dna-emerald">Limited</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-2xl text-dna-copper">Community Insights</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Want to Contribute to Africa</span>
+                  <span className="font-bold text-dna-copper">85%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Lack Clear Pathways</span>
+                  <span className="font-bold text-dna-copper">78%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Seek Professional Networks</span>
+                  <span className="font-bold text-dna-copper">92%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">Ready for Collaboration</span>
+                  <span className="font-bold text-dna-copper">89%</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section className="py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Research Timeline</h2>
+            <p className="text-xl text-gray-600">June - September 2025</p>
+          </div>
+
+          <div className="space-y-8">
+            <div className="flex items-start gap-6">
+              <Badge className="bg-dna-emerald text-white mt-1">Jun 2025</Badge>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Community Mapping & Demographics</h3>
+                <p className="text-gray-600">Comprehensive analysis of global African diaspora distribution and characteristics.</p>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Deep Research</h3>
-              <p className="text-gray-600 text-sm">AI-powered analysis of diaspora trends, behaviors, and market dynamics.</p>
             </div>
-            
-            <div className="text-center p-6 bg-dna-emerald/10 rounded-xl border border-dna-emerald/30">
-              <div className="w-12 h-12 bg-dna-emerald rounded-full flex items-center justify-center mx-auto mb-4">
-                <MessageSquare className="w-6 h-6 text-white" />
+
+            <div className="flex items-start gap-6">
+              <Badge className="bg-dna-copper text-white mt-1">Jul 2025</Badge>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Needs Assessment & Pain Points</h3>
+                <p className="text-gray-600">In-depth surveys and interviews to understand community challenges and aspirations.</p>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Stakeholder Voices</h3>
-              <p className="text-gray-600 text-sm">50+ interviews with diaspora leaders, entrepreneurs, and community builders.</p>
             </div>
-            
-            <div className="text-center p-6 bg-dna-copper/10 rounded-xl border border-dna-copper/30">
-              <div className="w-12 h-12 bg-dna-copper rounded-full flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="w-6 h-6 text-white" />
+
+            <div className="flex items-start gap-6">
+              <Badge className="bg-dna-gold text-white mt-1">Aug 2025</Badge>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Competitive Analysis & Market Gaps</h3>
+                <p className="text-gray-600">Evaluation of existing platforms and identification of unique opportunities.</p>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Data Analysis</h3>
-              <p className="text-gray-600 text-sm">Quantitative validation of market size, opportunities, and growth potential.</p>
             </div>
-            
-            <div className="text-center p-6 bg-dna-gold/10 rounded-xl border border-dna-gold/30">
-              <div className="w-12 h-12 bg-dna-gold rounded-full flex items-center justify-center mx-auto mb-4">
-                <Target className="w-6 h-6 text-white" />
+
+            <div className="flex items-start gap-6">
+              <Badge className="bg-dna-forest text-white mt-1">Sep 2025</Badge>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Strategy Formulation & Validation</h3>
+                <p className="text-gray-600">Synthesis of findings and development of platform strategy framework.</p>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Validation</h3>
-              <p className="text-gray-600 text-sm">Testing our core assumptions and refining our platform concept.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <PhaseObjectives objectives={objectives} color="dna-emerald" />
-      <PhaseTimeline milestones={timeline} color="dna-copper" />
-      <PhaseMetrics phaseSlug="market-research" fallbackMetrics={fallbackMetrics} />
-      
-      {/* Research Community CTA */}
-      <section className="py-16 bg-gradient-to-r from-dna-mint/20 via-dna-emerald/10 to-dna-copper/10">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-mint/30">
-            <Search className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Help Shape DNA Through Research
-            </h2>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              Your voice matters in building a platform that truly serves the African diaspora. Join our research community 
-              to share your experiences, insights, and vision for how we can better strengthen our global network.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={() => setIsBetaSignupOpen(true)}
-                className="bg-dna-emerald text-white px-8 py-3 rounded-full font-semibold hover:bg-dna-forest transition-colors"
-              >
-                Participate in Research
-              </button>
-              <button className="border-2 border-dna-emerald text-dna-emerald px-8 py-3 rounded-full font-semibold hover:bg-dna-emerald/10 transition-colors">
-                View Research Updates
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <BetaSignupDialog 
-        isOpen={isBetaSignupOpen} 
-        onClose={() => setIsBetaSignupOpen(false)} 
-      />
-      
       <Footer />
     </div>
   );

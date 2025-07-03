@@ -1,91 +1,176 @@
 
 import { useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { Professional, Community, Event } from './useSearch';
-import { SearchFilters, ResultCounts } from '@/types/advancedSearchTypes';
-import { demoProfessionals, demoCommunities, demoEvents } from '@/data/demoSearchData';
-import { filterProfessionals, filterCommunities, filterEvents, hasActiveFilters } from '@/utils/searchFilters';
+
+interface Professional {
+  id: string;
+  name: string;
+  title: string;
+  company: string;
+  location: string;
+  skills: string[];
+  avatar: string;
+}
+
+interface Community {
+  id: string;
+  name: string;
+  description: string;
+  memberCount: number;
+  category: string;
+}
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  location: string;
+  description: string;
+  attendeeCount: number;
+}
+
+interface Filters {
+  location: string;
+  industry: string;
+  skills: string[];
+}
+
+interface ResultCounts {
+  professionals: number;
+  communities: number;
+  events: number;
+}
 
 export const useAdvancedSearch = () => {
-  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState<SearchFilters>({
+  const [filters, setFilters] = useState<Filters>({
     location: '',
-    skills: [],
-    isMentor: false,
-    isInvestor: false,
-    lookingForOpportunities: false
+    industry: '',
+    skills: []
   });
-  
-  const [allProfessionals, setAllProfessionals] = useState<Professional[]>([]);
-  const [allCommunities, setAllCommunities] = useState<Community[]>([]);
-  const [allEvents, setAllEvents] = useState<Event[]>([]);
-  
-  const [filteredProfessionals, setFilteredProfessionals] = useState<Professional[]>([]);
-  const [filteredCommunities, setFilteredCommunities] = useState<Community[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
-  
+  const [professionals, setProfessionals] = useState<Professional[]>([]);
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
-  const [initialized, setInitialized] = useState(false);
+  const [resultCounts, setResultCounts] = useState<ResultCounts>({
+    professionals: 0,
+    communities: 0,
+    events: 0
+  });
 
-  // Initialize data
-  useEffect(() => {
-    if (!initialized) {
-      setAllProfessionals(demoProfessionals);
-      setAllCommunities(demoCommunities);
-      setAllEvents(demoEvents);
-      setFilteredProfessionals(demoProfessionals);
-      setFilteredCommunities(demoCommunities);
-      setFilteredEvents(demoEvents);
-      setInitialized(true);
+  // Mock data
+  const mockProfessionals: Professional[] = [
+    {
+      id: '1',
+      name: 'Amara Kone',
+      title: 'Software Engineer',
+      company: 'Google',
+      location: 'San Francisco, CA',
+      skills: ['React', 'Node.js', 'Python'],
+      avatar: '/lovable-uploads/02154efb-0abe-4ed4-b41f-265e4a856e8d.png'
+    },
+    {
+      id: '2',
+      name: 'Kwame Asante',
+      title: 'Investment Banker',
+      company: 'Goldman Sachs',
+      location: 'London, UK',
+      skills: ['Finance', 'Investment', 'Analytics'],
+      avatar: '/lovable-uploads/02154efb-0abe-4ed4-b41f-265e4a856e8d.png'
     }
-  }, [initialized]);
+  ];
 
-  // Apply filters and search
+  const mockCommunities: Community[] = [
+    {
+      id: '1',
+      name: 'African Tech Professionals',
+      description: 'Connecting African tech professionals worldwide',
+      memberCount: 1250,
+      category: 'Technology'
+    },
+    {
+      id: '2',
+      name: 'Women in African Business',
+      description: 'Empowering African women entrepreneurs',
+      memberCount: 850,
+      category: 'Business'
+    }
+  ];
+
+  const mockEvents: Event[] = [
+    {
+      id: '1',
+      title: 'African Innovation Summit',
+      date: '2024-03-15',
+      location: 'Virtual',
+      description: 'Annual summit for African innovators',
+      attendeeCount: 500
+    },
+    {
+      id: '2',
+      title: 'Diaspora Investment Forum',
+      date: '2024-04-20',
+      location: 'New York, NY',
+      description: 'Investment opportunities in Africa',
+      attendeeCount: 200
+    }
+  ];
+
   useEffect(() => {
-    if (!initialized) return;
+    // Initialize with mock data
+    setProfessionals(mockProfessionals);
+    setCommunities(mockCommunities);
+    setEvents(mockEvents);
+    setResultCounts({
+      professionals: mockProfessionals.length,
+      communities: mockCommunities.length,
+      events: mockEvents.length
+    });
+  }, []);
 
+  const performSearch = () => {
     setLoading(true);
-    
     // Simulate search delay
-    const timeoutId = setTimeout(() => {
-      const filteredProfs = filterProfessionals(allProfessionals, searchTerm, filters);
-      const filteredComms = filterCommunities(allCommunities, searchTerm);
-      const filteredEvs = filterEvents(allEvents, searchTerm, filters);
+    setTimeout(() => {
+      // Filter based on search term
+      const filteredProfessionals = mockProfessionals.filter(p =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.company.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      
+      const filteredCommunities = mockCommunities.filter(c =>
+        c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      
+      const filteredEvents = mockEvents.filter(e =>
+        e.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        e.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
-      setFilteredProfessionals(filteredProfs);
-      setFilteredCommunities(filteredComms);
-      setFilteredEvents(filteredEvs);
+      setProfessionals(filteredProfessionals);
+      setCommunities(filteredCommunities);
+      setEvents(filteredEvents);
+      setResultCounts({
+        professionals: filteredProfessionals.length,
+        communities: filteredCommunities.length,
+        events: filteredEvents.length
+      });
       setLoading(false);
-
-      // Show search results toast
-      if (searchTerm || hasActiveFilters(filters)) {
-        toast({
-          title: "Search Results",
-          description: `Found ${filteredProfs.length} professionals, ${filteredComms.length} communities, and ${filteredEvs.length} events`,
-        });
-      }
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm, filters, initialized, allProfessionals, allCommunities, allEvents, toast]);
+    }, 1000);
+  };
 
   const clearSearch = () => {
     setSearchTerm('');
-    setFilters({
-      location: '',
-      skills: [],
-      isMentor: false,
-      isInvestor: false,
-      lookingForOpportunities: false
+    setFilters({ location: '', industry: '', skills: [] });
+    setProfessionals(mockProfessionals);
+    setCommunities(mockCommunities);
+    setEvents(mockEvents);
+    setResultCounts({
+      professionals: mockProfessionals.length,
+      communities: mockCommunities.length,
+      events: mockEvents.length
     });
-  };
-
-  const performSearch = () => {
-    // Trigger re-filter (useEffect will handle the actual filtering)
-    if (searchTerm || hasActiveFilters(filters)) {
-      console.log('Performing search with:', { searchTerm, filters });
-    }
   };
 
   return {
@@ -93,16 +178,12 @@ export const useAdvancedSearch = () => {
     setSearchTerm,
     filters,
     setFilters,
-    professionals: filteredProfessionals,
-    communities: filteredCommunities,
-    events: filteredEvents,
+    professionals,
+    communities,
+    events,
     loading,
-    clearSearch,
+    resultCounts,
     performSearch,
-    resultCounts: {
-      professionals: filteredProfessionals.length,
-      communities: filteredCommunities.length,
-      events: filteredEvents.length
-    } as ResultCounts
+    clearSearch
   };
 };

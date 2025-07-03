@@ -1,183 +1,102 @@
+
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/CleanAuthContext';
-import { useToast } from '@/hooks/use-toast';
-import { useContributionTracker } from './useContributionTracker';
-import { Community, CommunityMembership, CommunityWithMembership, CreateCommunityData } from '@/types/community';
+
+interface Community {
+  id: string;
+  name: string;
+  description: string;
+  memberCount: number;
+  category: string;
+  isJoined?: boolean;
+}
 
 export const useCommunities = () => {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const { trackCommunityJoin } = useContributionTracker();
-  const [communities, setCommunities] = useState<CommunityWithMembership[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const fetchCommunities = async () => {
-    setLoading(true);
-    try {
-      let communitiesQuery = supabase
-        .from('communities')
-        .select('*')
-        .eq('moderation_status', 'approved')
-        .order('created_at', { ascending: false });
-
-      const { data: communitiesData, error: communitiesError } = await communitiesQuery;
-      
-      if (communitiesError) throw communitiesError;
-
-      if (!user || !communitiesData) {
-        const communitiesWithMembership: CommunityWithMembership[] = (communitiesData || []).map(community => ({
-          ...community,
-          creator_id: community.created_by || '',
-          is_active: true, // Default value instead of accessing community.is_active
-          is_member: false,
-          user_membership: undefined,
-          user_role: undefined
-        }));
-        setCommunities(communitiesWithMembership);
-        return;
-      }
-
-      // Fetch user memberships using a direct query to community_memberships table
-      const { data: membershipsData, error: membershipsError } = await supabase
-        .from('community_memberships' as any)
-        .select('*')
-        .eq('user_id', user.id);
-
-      let memberships: CommunityMembership[] = [];
-      if (!membershipsError && membershipsData) {
-        memberships = membershipsData as unknown as CommunityMembership[];
-      }
-
-      // Combine communities with membership info
-      const communitiesWithMembership: CommunityWithMembership[] = communitiesData.map(community => {
-        const membership = memberships.find((m: CommunityMembership) => m.community_id === community.id);
-        return {
-          ...community,
-          creator_id: community.created_by || '',
-          is_active: true, // Default value instead of accessing community.is_active
-          user_membership: membership,
-          is_member: !!membership,
-          user_role: membership?.role as 'admin' | 'moderator' | 'member' | undefined
-        };
-      });
-
-      setCommunities(communitiesWithMembership);
-    } catch (error) {
-      console.error('Error fetching communities:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch communities",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+  const mockCommunities: Community[] = [
+    {
+      id: '1',
+      name: 'African Tech Professionals',
+      description: 'Connecting African tech professionals worldwide for collaboration and knowledge sharing.',
+      memberCount: 1250,
+      category: 'Technology',
+      isJoined: false
+    },
+    {
+      id: '2',
+      name: 'Women in African Business',
+      description: 'Empowering African women entrepreneurs and business leaders.',
+      memberCount: 850,
+      category: 'Business',
+      isJoined: false
+    },
+    {
+      id: '3',
+      name: 'African Healthcare Innovation',
+      description: 'Advancing healthcare solutions across the African continent.',
+      memberCount: 420,
+      category: 'Healthcare',
+      isJoined: false
+    },
+    {
+      id: '4',
+      name: 'Sustainable Agriculture Network',
+      description: 'Promoting sustainable farming practices and food security in Africa.',
+      memberCount: 680,
+      category: 'Agriculture',
+      isJoined: false
     }
-  };
+  ];
 
-  const createCommunity = async (communityData: CreateCommunityData) => {
-    // Temporarily disabled - show coming soon message
-    toast({
-      title: "Coming Soon!",
-      description: "Community creation will be available in a future update. Stay tuned!",
-    });
-    return false;
+  useEffect(() => {
+    // Simulate loading
+    setTimeout(() => {
+      setCommunities(mockCommunities);
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  const createCommunity = async (communityData: Partial<Community>) => {
+    // Simulate community creation
+    const newCommunity: Community = {
+      id: Date.now().toString(),
+      name: communityData.name || '',
+      description: communityData.description || '',
+      memberCount: 1,
+      category: communityData.category || 'General',
+      isJoined: true
+    };
+    
+    setCommunities(prev => [...prev, newCommunity]);
+    return newCommunity;
   };
 
   const joinCommunity = async (communityId: string) => {
-    if (!user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to join communities",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('community_memberships' as any)
-        .insert({
-          user_id: user.id,
-          community_id: communityId,
-          role: 'member'
-        });
-
-      if (error) {
-        if (error.code === '23505') {
-          toast({
-            title: "Already a Member",
-            description: "You're already a member of this community",
-          });
-          return false;
-        }
-        throw error;
-      }
-
-      // Find community name for tracking
-      const community = communities.find(c => c.id === communityId);
-      if (community) {
-        trackCommunityJoin(communityId, community.name);
-      }
-
-      toast({
-        title: "Joined!",
-        description: "You've successfully joined the community",
-      });
-
-      fetchCommunities();
-      return true;
-    } catch (error) {
-      console.error('Error joining community:', error);
-      toast({
-        title: "Error",
-        description: "Failed to join community",
-        variant: "destructive",
-      });
-      return false;
-    }
+    setCommunities(prev =>
+      prev.map(community =>
+        community.id === communityId
+          ? { ...community, isJoined: true, memberCount: community.memberCount + 1 }
+          : community
+      )
+    );
   };
 
   const leaveCommunity = async (communityId: string) => {
-    if (!user) return false;
-
-    try {
-      const { error } = await supabase
-        .from('community_memberships' as any)
-        .delete()
-        .eq('user_id', user.id)
-        .eq('community_id', communityId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Left Community",
-        description: "You've left the community",
-      });
-
-      fetchCommunities();
-      return true;
-    } catch (error) {
-      console.error('Error leaving community:', error);
-      toast({
-        title: "Error",
-        description: "Failed to leave community",
-        variant: "destructive",
-      });
-      return false;
-    }
+    setCommunities(prev =>
+      prev.map(community =>
+        community.id === communityId
+          ? { ...community, isJoined: false, memberCount: Math.max(0, community.memberCount - 1) }
+          : community
+      )
+    );
   };
-
-  useEffect(() => {
-    fetchCommunities();
-  }, [user]);
 
   return {
     communities,
     loading,
     createCommunity,
     joinCommunity,
-    leaveCommunity,
-    refreshCommunities: fetchCommunities
+    leaveCommunity
   };
 };

@@ -1,194 +1,151 @@
 
-import React, { useState } from 'react';
-import PhaseObjectives from '@/components/phases/PhaseObjectives';
-import PhaseTimeline from '@/components/phases/PhaseTimeline';
-import PhaseMetrics from '@/components/phases/PhaseMetrics';
-import { Palette, Users, TestTube, Target, TrendingUp, CheckCircle, Lightbulb, Zap, ArrowRight } from "lucide-react";
+import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
-import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, ArrowLeft, Zap, Lightbulb, Code, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import PhaseHero from '@/components/phases/PhaseHero';
-
-const objectives = [
-  {
-    icon: <Palette className="w-5 h-5" />,
-    title: "User Experience Design & Prototyping",
-    description: "Design intuitive user interfaces and interactive prototypes based on market research insights and user feedback validation. This phase focuses on creating wireframes, mockups, and clickable prototypes that demonstrate the core functionality and user flows of the DNA platform.",
-    status: "Planned",
-    completion: 0
-  },
-  {
-    icon: <Users className="w-5 h-5" />,
-    title: "User Feedback & Usability Testing",
-    description: "Conduct user testing sessions with diaspora community members to gather feedback on the usability, desirability, and overall user experience of our prototypes. Iterate on our designs based on user insights to ensure the platform meets the needs and expectations of our target audience.",
-    status: "Planned",
-    completion: 0
-  },
-  {
-    icon: <TestTube className="w-5 h-5" />,
-    title: "Technical Feasibility & Validation",
-    description: "Assess the technical feasibility of our proposed features and functionalities through rapid prototyping and experimentation. Validate our technology choices, identify potential challenges, and refine our technical approach to ensure we can deliver a scalable and reliable platform.",
-    status: "Planned",
-    completion: 0
-  },
-];
-
-const timeline = [
-  {
-    quarter: "Oct 2025",
-    title: "User Interface Design & Wireframing",
-    items: [
-      "Develop initial user interface designs and wireframes for core platform features",
-      "Create interactive prototypes using Figma or similar design tools",
-      "Conduct internal reviews and gather feedback from stakeholders",
-      "Refine designs based on initial feedback and usability considerations"
-    ],
-    status: "upcoming" as const,
-  },
-  {
-    quarter: "Nov-Dec 2025",
-    title: "Usability Testing & Iteration",
-    items: [
-      "Recruit diaspora community members for user testing sessions",
-      "Conduct remote and in-person usability testing of our prototypes",
-      "Analyze user feedback and identify areas for improvement",
-      "Iterate on our designs based on user insights and testing results"
-    ],
-    status: "upcoming" as const,
-  }
-];
-
-const fallbackMetrics = [
-  {
-    id: "1",
-    label: "Design Iterations",
-    value: "0",
-    target: "20",
-    icon: "palette",
-    color: "bg-dna-emerald"
-  },
-  {
-    id: "2", 
-    label: "User Interviews",
-    value: "0",
-    target: "50",
-    icon: "users",
-    color: "bg-dna-forest"
-  },
-  {
-    id: "3",
-    label: "Usability Score",
-    value: "0",
-    target: "80",
-    icon: "trending-up",
-    color: "bg-dna-copper"
-  },
-  {
-    id: "4",
-    label: "Prototype Tests",
-    value: "0",
-    target: "100",
-    icon: "zap",
-    color: "bg-dna-gold"
-  }
-];
 
 const PrototypingPhase = () => {
-  useScrollToTop();
   const navigate = useNavigate();
-  const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-copper/10">
       <Header />
       
-      <PhaseHero
-        badge="Phase 2 • Prototyping"
-        title="Prototyping"
-        description="Designing and testing user experiences, wireframes, and interactive prototypes based on market research insights and user feedback validation."
-        prevPhase={{ label: "Previous Phase", url: "/phase/market-research" }}
-        nextPhase={{ label: "Next Phase", url: "/phase/customer-discovery" }}
-        gradient="relative bg-gradient-to-r from-dna-emerald/90 via-dna-forest/90 to-dna-copper/90 bg-[url('https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center before:absolute before:inset-0 before:bg-gradient-to-r before:from-dna-emerald/80 before:via-dna-forest/80 before:to-dna-copper/80 before:z-0"
-      />
+      {/* Hero Section */}
+      <section className="py-20 bg-gradient-to-r from-dna-copper/90 to-dna-gold/90">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Badge className="bg-white text-dna-copper mb-6 text-lg px-6 py-2">
+            Phase 2 • Prototyping
+          </Badge>
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-8">
+            Prototyping Phase
+          </h1>
+          <p className="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed mb-12">
+            Transforming research insights into tangible prototypes. Building the first iterations 
+            of DNA Platform features and testing core concepts with real users.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Button 
+              onClick={() => navigate('/phase/market-research')}
+              variant="outline"
+              className="border-white text-white hover:bg-white hover:text-dna-copper px-8 py-4 text-lg"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Previous: Market Research
+            </Button>
+            <Button 
+              onClick={() => navigate('/phase/customer-discovery')}
+              className="bg-white text-dna-copper hover:bg-gray-100 px-8 py-4 text-lg"
+            >
+              Next Phase: Customer Discovery
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </div>
+        </div>
+      </section>
 
-      {/* Phase Overview */}
-      <section className="py-16 bg-white">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">From Concept to Clickable</h2>
-            <p className="text-lg text-gray-600 max-w-5xl mx-auto leading-relaxed">
-              This phase is where ideas take shape. We're translating our market research and user insights into tangible designs, 
-              wireframes, and interactive prototypes. By putting these prototypes in front of real users from the diaspora community, 
-              we're able to validate our assumptions, refine our user experience, and ensure we're building a platform that truly meets their needs.
+      {/* Prototype Focus Areas */}
+      <section className="py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Prototype Development Focus</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Building and testing core platform features through rapid prototyping
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 px-4 lg:px-16">
-            <div className="text-center p-8 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-2xl border border-dna-emerald/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Palette className="w-8 h-8 text-white" />
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="pt-6">
+                <div className="w-16 h-16 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-dna-emerald" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Connect Features</h3>
+                <p className="text-gray-600">
+                  Professional networking and community connection prototypes.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="pt-6">
+                <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Lightbulb className="w-8 h-8 text-dna-copper" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Collaborate Tools</h3>
+                <p className="text-gray-600">
+                  Project collaboration and partnership formation interfaces.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="pt-6">
+                <div className="w-16 h-16 bg-dna-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Zap className="w-8 h-8 text-dna-gold" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Contribute Platform</h3>
+                <p className="text-gray-600">
+                  Investment and contribution opportunity discovery systems.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="pt-6">
+                <div className="w-16 h-16 bg-dna-forest/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Code className="w-8 h-8 text-dna-forest" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Technical Foundation</h3>
+                <p className="text-gray-600">
+                  Core platform architecture and scalability frameworks.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Prototype Timeline */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">Development Timeline</h2>
+            <p className="text-xl text-gray-600">October - December 2025</p>
+          </div>
+
+          <div className="space-y-8">
+            <div className="flex items-start gap-6">
+              <Badge className="bg-dna-copper text-white mt-1">Oct 2025</Badge>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Wireframes & User Flow Design</h3>
+                <p className="text-gray-600">Creating detailed user experience maps and interface wireframes for all three pillars.</p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">UI/UX Design</h3>
-              <p className="text-gray-600 leading-relaxed">Crafting intuitive user interfaces and seamless experiences that make diaspora networking feel effortless and engaging.</p>
             </div>
-            
-            <div className="text-center p-8 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-2xl border border-dna-forest/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-forest to-dna-copper rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-white" />
+
+            <div className="flex items-start gap-6">
+              <Badge className="bg-dna-gold text-white mt-1">Nov 2025</Badge>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Interactive Prototype Development</h3>
+                <p className="text-gray-600">Building clickable prototypes for core Connect, Collaborate, and Contribute features.</p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">User Feedback</h3>
-              <p className="text-gray-600 leading-relaxed">Gathering continuous feedback from diaspora community members to ensure our designs resonate with their needs and preferences.</p>
             </div>
-            
-            <div className="text-center p-8 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-2xl border border-dna-copper/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <TestTube className="w-8 h-8 text-white" />
+
+            <div className="flex items-start gap-6">
+              <Badge className="bg-dna-forest text-white mt-1">Dec 2025</Badge>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">User Testing & Iteration</h3>
+                <p className="text-gray-600">Conducting user testing sessions and refining prototypes based on feedback.</p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Tech Validation</h3>
-              <p className="text-gray-600 leading-relaxed">Validating the technical feasibility of our designs through rapid prototyping and experimentation to ensure a scalable platform.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <PhaseObjectives objectives={objectives} color="dna-emerald" />
-      <PhaseTimeline milestones={timeline} color="dna-forest" />
-      <PhaseMetrics phaseSlug="prototyping" fallbackMetrics={fallbackMetrics} />
-      
-      {/* Design Testing CTA */}
-      <section className="py-16 bg-gradient-to-r from-dna-mint/20 via-dna-emerald/10 to-dna-copper/20">
-        <div className="w-full text-center px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-emerald/30 max-w-5xl mx-auto">
-            <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Help Us Design the Future of DNA
-            </h2>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              Join our design testing community and be among the first to experience and shape the DNA platform. 
-              Your feedback will directly influence our user experience, ensuring we build a platform that truly serves the African diaspora's needs.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={() => setIsBetaSignupOpen(true)}
-                className="bg-dna-emerald text-white px-8 py-3 rounded-full font-semibold hover:bg-dna-forest transition-colors"
-              >
-                Join Design Testing
-              </button>
-              <button className="border-2 border-dna-emerald text-dna-emerald px-8 py-3 rounded-full font-semibold hover:bg-dna-mint hover:text-dna-forest hover:border-dna-forest transition-colors">
-                View Prototype Designs
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <BetaSignupDialog 
-        isOpen={isBetaSignupOpen} 
-        onClose={() => setIsBetaSignupOpen(false)} 
-      />
-      
       <Footer />
     </div>
   );
