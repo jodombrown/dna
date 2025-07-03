@@ -68,6 +68,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/enhanced-about" element={<EnhancedAbout />} />
               <Route path="/enhanced-contact" element={<EnhancedContact />} />
+              <Route path="/feed" element={<CleanSocialFeedPage />} />
               <Route path="/social-feed" element={<SocialFeed />} />
               <Route path="/social-feed-page" element={<SocialFeedPage />} />
               <Route path="/clean-social-feed" element={<CleanSocialFeedPage />} />
