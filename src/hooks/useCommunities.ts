@@ -27,6 +27,8 @@ export const useCommunities = () => {
       if (!user || !communitiesData) {
         const communitiesWithMembership: CommunityWithMembership[] = (communitiesData || []).map(community => ({
           ...community,
+          creator_id: community.created_by || '',
+          is_active: community.is_active ?? true,
           is_member: false,
           user_membership: undefined,
           user_role: undefined
@@ -43,7 +45,7 @@ export const useCommunities = () => {
 
       let memberships: CommunityMembership[] = [];
       if (!membershipsError && membershipsData) {
-        memberships = membershipsData as CommunityMembership[];
+        memberships = membershipsData as unknown as CommunityMembership[];
       }
 
       // Combine communities with membership info
@@ -51,6 +53,8 @@ export const useCommunities = () => {
         const membership = memberships.find((m: CommunityMembership) => m.community_id === community.id);
         return {
           ...community,
+          creator_id: community.created_by || '',
+          is_active: community.is_active ?? true,
           user_membership: membership,
           is_member: !!membership,
           user_role: membership?.role as 'admin' | 'moderator' | 'member' | undefined
