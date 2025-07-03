@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Logo from './header/Logo';
 import DesktopNavigation from './header/DesktopNavigation';
 import MobileNavigation from './header/MobileNavigation';
+import NotificationsDropdown from './notifications/NotificationsDropdown';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { Button } from '@/components/ui/button';
 import { User } from 'lucide-react';
@@ -36,48 +37,52 @@ const Header = () => {
             <DesktopNavigation />
             
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    {profile?.avatar_url ? (
-                      <img 
-                        src={profile.avatar_url} 
-                        alt="Profile" 
-                        className="h-8 w-8 rounded-full object-cover"
-                      />
-                    ) : (
-                      <User className="h-4 w-4" />
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <div className="flex flex-col space-y-1 p-2">
-                    <p className="text-sm font-medium leading-none">
-                      {profile?.full_name || 'DNA Member'}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user.email}
-                    </p>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
-                    Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/profile/my')}>
-                    My Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/connect')}>
-                    Connect
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/messages')}>
-                    Messages
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex items-center space-x-2">
+                <NotificationsDropdown />
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      {profile?.avatar_url ? (
+                        <img 
+                          src={profile.avatar_url} 
+                          alt="Profile" 
+                          className="h-8 w-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="flex flex-col space-y-1 p-2">
+                      <p className="text-sm font-medium leading-none">
+                        {profile?.full_name || 'DNA Member'}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/profile/my')}>
+                      My Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/connect')}>
+                      Connect
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/messages')}>
+                      Messages
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : (
               <Button 
                 onClick={() => navigate('/functional-auth')}

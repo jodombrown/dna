@@ -576,6 +576,39 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          action_type: string
+          actor_id: string
+          created_at: string
+          id: string
+          is_read: boolean
+          recipient_id: string
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          action_type: string
+          actor_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          recipient_id: string
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          action_type?: string
+          actor_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          recipient_id?: string
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
+      }
       phase_metrics: {
         Row: {
           color: string | null
