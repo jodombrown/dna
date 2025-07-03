@@ -43,6 +43,7 @@ import MvpPhase from "./pages/MvpPhase";
 import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
 import Newsletters from "./pages/Newsletters";
+import DemoDataSeederPage from "./pages/DemoDataSeeder";
 
 const queryClient = new QueryClient();
 
@@ -90,6 +91,7 @@ function App() {
               <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
               <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
               <Route path="/newsletters" element={<Newsletters />} />
+              <Route path="/demo-data" element={<DemoDataSeederPage />} />
               <Route path="/admin/dashboard" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
               <Route path="/admin/analytics" element={<ProtectedAdminRoute><AdminAnalyticsDashboard /></ProtectedAdminRoute>} />
             </Routes>
