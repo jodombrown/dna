@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, MessageSquare, Calendar, TrendingUp, Shield, Settings, History, BarChart3 } from 'lucide-react';
+import { Users, MessageSquare, Calendar, TrendingUp, Shield, Settings, History, BarChart3, Database } from 'lucide-react';
 import RealTimeNotifications from '@/components/admin/RealTimeNotifications';
 import AdvancedAnalyticsCharts from '@/components/admin/AdvancedAnalyticsCharts';
+import DataSeeder from '@/components/admin/DataSeeder';
 
 const AdminDashboard = () => {
   const { adminUser, loading, isAdmin } = useAdminAuth();
@@ -191,6 +192,11 @@ const AdminDashboard = () => {
             Analytics Overview
           </h3>
           <AdvancedAnalyticsCharts />
+        </div>
+
+        {/* Demo Data Management */}
+        <div className="mb-8">
+          <DataSeeder />
         </div>
 
         {/* Quick Actions */}
