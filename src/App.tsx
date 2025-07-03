@@ -19,7 +19,14 @@ import ConversationPage from "./pages/ConversationPage";
 import Newsletters from "./pages/Newsletters";
 import AdminRoleManagement from "./pages/AdminRoleManagement";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

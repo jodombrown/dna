@@ -12,18 +12,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation Header */}
       <Header />
-
-      {/* Prototype Banner */}
       <PrototypeBanner />
-
-      {/* Hero Section with improved layout */}
       <HeroSection />
-
-      {/* Platform Feature Showcase */}
       <PlatformFeatureShowcase />
-
       <Footer />
     </div>
   );
