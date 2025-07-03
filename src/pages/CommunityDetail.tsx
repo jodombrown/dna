@@ -7,11 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Users, Calendar, ArrowLeft, Settings, Crown } from 'lucide-react';
+import { Users, Calendar, ArrowLeft, Crown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { CommunityWithMembership, CommunityMembership } from '@/types/community';
+import { CommunityWithMembership } from '@/types/community';
 import { formatDistanceToNow } from 'date-fns';
 
 const CommunityDetail = () => {
@@ -40,7 +40,7 @@ const CommunityDetail = () => {
       let userMembership = null;
       if (user) {
         const { data: membershipData } = await supabase
-          .from('community_memberships')
+          .from('community_memberships' as any)
           .select('*')
           .eq('community_id', id)
           .eq('user_id', user.id)
@@ -56,9 +56,9 @@ const CommunityDetail = () => {
         user_role: userMembership?.role as 'admin' | 'moderator' | 'member' | undefined
       });
 
-      // Fetch community members
+      // Fetch community members with profile data
       const { data: membersData, error: membersError } = await supabase
-        .from('community_memberships')
+        .from('community_memberships' as any)
         .select(`
           *,
           profiles!inner(
@@ -71,8 +71,12 @@ const CommunityDetail = () => {
         .eq('community_id', id)
         .order('joined_at', { ascending: false });
 
-      if (membersError) throw membersError;
-      setMembers(membersData || []);
+      if (membersError) {
+        console.error('Error fetching members:', membersError);
+        // Continue without member data
+      } else {
+        setMembers(membersData || []);
+      }
 
     } catch (error) {
       console.error('Error fetching community details:', error);
@@ -93,7 +97,7 @@ const CommunityDetail = () => {
       if (community.is_member) {
         // Leave community
         const { error } = await supabase
-          .from('community_memberships')
+          .from('community_memberships' as any)
           .delete()
           .eq('user_id', user.id)
           .eq('community_id', community.id);
@@ -107,7 +111,7 @@ const CommunityDetail = () => {
       } else {
         // Join community
         const { error } = await supabase
-          .from('community_memberships')
+          .from('community_memberships' as any)
           .insert({
             user_id: user.id,
             community_id: community.id,

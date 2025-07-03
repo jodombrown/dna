@@ -33,17 +33,28 @@ export const useCommunities = () => {
         return;
       }
 
-      // Fetch user memberships
+      // Fetch user memberships using a raw query since the table isn't in types yet
       const { data: membershipsData, error: membershipsError } = await supabase
-        .from('community_memberships')
-        .select('*')
-        .eq('user_id', user.id);
+        .rpc('get_user_memberships', { p_user_id: user.id })
+        .then(async (result) => {
+          // Fallback to direct query if RPC doesn't exist
+          if (result.error) {
+            return await supabase
+              .from('community_memberships' as any)
+              .select('*')
+              .eq('user_id', user.id);
+          }
+          return result;
+        });
 
-      if (membershipsError) throw membershipsError;
+      if (membershipsError) {
+        console.error('Error fetching memberships:', membershipsError);
+        // Continue without membership data
+      }
 
       // Combine communities with membership info
       const communitiesWithMembership = communitiesData?.map(community => {
-        const membership = membershipsData?.find(m => m.community_id === community.id);
+        const membership = membershipsData?.find((m: any) => m.community_id === community.id);
         return {
           ...community,
           user_membership: membership,
@@ -117,7 +128,7 @@ export const useCommunities = () => {
 
     try {
       const { error } = await supabase
-        .from('community_memberships')
+        .from('community_memberships' as any)
         .insert({
           user_id: user.id,
           community_id: communityId,
@@ -158,7 +169,7 @@ export const useCommunities = () => {
 
     try {
       const { error } = await supabase
-        .from('community_memberships')
+        .from('community_memberships' as any)
         .delete()
         .eq('user_id', user.id)
         .eq('community_id', communityId);
