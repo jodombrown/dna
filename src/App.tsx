@@ -12,6 +12,7 @@ import ConnectExample from "./pages/ConnectExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
 import Auth from "./pages/Auth";
+import FunctionalAuth from "./pages/FunctionalAuth";
 import Profile from "./pages/Profile";
 import MyProfile from "./pages/MyProfile";
 import ComingSoon from "./pages/ComingSoon";
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/collaborate-example" element={<CollaborationsExample />} />
             <Route path="/contribute-example" element={<ContributeExample />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/functional-auth" element={<FunctionalAuth />} />
             <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/profile/my" element={<MyProfile />} />
             <Route path="/coming-soon" element={<ComingSoon />} />

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/CleanAuthContext';
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from 'lucide-react';
 
 interface UpdatePasswordFormProps {
   onComplete: () => void;
@@ -24,19 +24,19 @@ const UpdatePasswordForm: React.FC<UpdatePasswordFormProps> = ({ onComplete }) =
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (password.length < 6) {
+    if (password !== confirmPassword) {
       toast({
-        title: "Password Too Short",
-        description: "Password must be at least 6 characters long.",
+        title: "Password Mismatch",
+        description: "Passwords do not match. Please try again.",
         variant: "destructive",
       });
       return;
     }
 
-    if (password !== confirmPassword) {
+    if (password.length < 6) {
       toast({
-        title: "Passwords Don't Match",
-        description: "Please make sure both password fields match.",
+        title: "Password Too Short",
+        description: "Password must be at least 6 characters long.",
         variant: "destructive",
       });
       return;
@@ -96,16 +96,13 @@ const UpdatePasswordForm: React.FC<UpdatePasswordFormProps> = ({ onComplete }) =
                 placeholder="Enter new password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                minLength={6}
                 required
+                minLength={6}
               />
               <button
                 type="button"
-                tabIndex={0}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                onClick={() => setShowPassword((show) => !show)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-dna-copper focus:outline-none"
-                style={{ background: "none", border: "none" }}
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-dna-copper"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -123,16 +120,13 @@ const UpdatePasswordForm: React.FC<UpdatePasswordFormProps> = ({ onComplete }) =
                 placeholder="Confirm new password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                minLength={6}
                 required
+                minLength={6}
               />
               <button
                 type="button"
-                tabIndex={0}
-                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                onClick={() => setShowConfirmPassword((show) => !show)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-dna-copper focus:outline-none"
-                style={{ background: "none", border: "none" }}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-dna-copper"
               >
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -141,7 +135,7 @@ const UpdatePasswordForm: React.FC<UpdatePasswordFormProps> = ({ onComplete }) =
           
           <Button 
             type="submit" 
-            className="w-full bg-dna-copper hover:bg-dna-gold text-white"
+            className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
             disabled={loading}
           >
             {loading ? 'Updating...' : 'Update Password'}

@@ -80,7 +80,7 @@ const Header = () => {
               </DropdownMenu>
             ) : (
               <Button 
-                onClick={() => navigate('/auth')}
+                onClick={() => navigate('/functional-auth')}
                 className="bg-dna-emerald hover:bg-dna-forest text-white"
               >
                 Sign In
