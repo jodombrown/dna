@@ -17,6 +17,8 @@ interface Community {
   moderation_status?: string;
   moderated_at?: string;
   moderated_by?: string;
+  moderator_notes?: string;
+  rejection_reason?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -40,6 +42,8 @@ export const useCommunities = () => {
       is_featured: true,
       is_active: true,
       moderation_status: 'approved',
+      moderator_notes: null,
+      rejection_reason: null,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     },
@@ -57,6 +61,8 @@ export const useCommunities = () => {
       is_featured: false,
       is_active: true,
       moderation_status: 'approved',
+      moderator_notes: null,
+      rejection_reason: null,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     },
@@ -74,6 +80,8 @@ export const useCommunities = () => {
       is_featured: false,
       is_active: true,
       moderation_status: 'approved',
+      moderator_notes: null,
+      rejection_reason: null,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     },
@@ -91,6 +99,8 @@ export const useCommunities = () => {
       is_featured: false,
       is_active: true,
       moderation_status: 'approved',
+      moderator_notes: null,
+      rejection_reason: null,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     }
@@ -120,6 +130,8 @@ export const useCommunities = () => {
       is_featured: false,
       is_active: true,
       moderation_status: 'approved',
+      moderator_notes: null,
+      rejection_reason: null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };

@@ -44,6 +44,8 @@ interface Event {
   is_virtual: boolean;
   attendee_count: number;
   is_featured: boolean;
+  type: string;
+  date_time: string;
   created_at: string;
   updated_at: string;
 }
@@ -159,6 +161,8 @@ export const useAdvancedSearch = () => {
       is_virtual: true,
       attendee_count: 500,
       is_featured: true,
+      type: 'Conference',
+      date_time: '2024-03-15T09:00:00Z',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     },
@@ -172,6 +176,8 @@ export const useAdvancedSearch = () => {
       is_virtual: false,
       attendee_count: 200,
       is_featured: false,
+      type: 'Forum',
+      date_time: '2024-04-20T10:00:00Z',
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     }
