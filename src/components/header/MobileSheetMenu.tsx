@@ -57,7 +57,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
                 <Button
                   key={item.name}
                   variant="ghost"
-                  className="justify-start text-left hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200"
+                  className="justify-start text-left hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
                   onClick={() => handleNavClick(item)}
                 >
                   {item.name}
@@ -66,7 +66,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
               
               <Button
                 variant="ghost"
-                className="justify-start text-left text-dna-copper hover:bg-dna-copper/20 transition-all duration-200"
+                className="justify-start text-left text-dna-copper hover:bg-dna-copper/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
                 onClick={onSurveyClick}
               >
                 Take Survey
@@ -74,7 +74,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
               
               <Button
                 variant="ghost"
-                className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200"
+                className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
                 onClick={onBetaSignup}
               >
                 Join Beta Program
@@ -87,7 +87,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
                     <Button
                       key={phase.path}
                       variant="ghost"
-                      className="justify-start text-left w-full hover:bg-dna-mint/20 transition-all duration-200"
+                      className="justify-start text-left w-full hover:bg-dna-mint/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
                       onClick={() => {
                         navigate(phase.path);
                         onOpenChange(false);
