@@ -40,7 +40,7 @@ const ConnectSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/connect-example')}
+              onClick={() => navigate('/connect')}
               className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-2"
             >
               Explore Network
@@ -51,7 +51,7 @@ const ConnectSection = () => {
           <div className="relative">
             <div 
               className="bg-gray-900 rounded-3xl p-6 shadow-2xl cursor-pointer hover:shadow-3xl transition-shadow"
-              onClick={() => navigate('/connect-example')}
+              onClick={() => navigate('/connect')}
             >
               <div className="bg-white rounded-2xl overflow-hidden">
                 <div className="bg-dna-emerald text-white p-4 text-center">

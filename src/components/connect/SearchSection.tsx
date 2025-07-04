@@ -182,7 +182,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
                     <SelectValue placeholder="Select location..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Locations</SelectItem>
+                    <SelectItem value="all">All Locations</SelectItem>
                     {LOCATION_OPTIONS.map(location => (
                       <SelectItem key={location} value={location}>
                         {location}

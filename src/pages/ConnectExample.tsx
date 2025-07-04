@@ -52,7 +52,7 @@ const ConnectExample = () => {
         prof.bio?.toLowerCase().includes(filterText);
       
       // Location filter
-      const matchesLocation = !filters.location || 
+      const matchesLocation = !filters.location || filters.location === 'all' || 
         prof.location?.includes(filters.location);
       
       // Skills filter
