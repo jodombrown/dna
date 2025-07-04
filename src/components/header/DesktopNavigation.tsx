@@ -38,7 +38,7 @@ const DesktopNavigation = () => {
             key={item.name}
             variant="ghost"
             onClick={() => handleNavClick(item)}
-            className="text-dna-forest hover:bg-dna-mint hover:text-dna-forest"
+            className="text-dna-forest hover:bg-dna-mint/30 hover:text-dna-forest relative hover:before:absolute hover:before:bottom-0 hover:before:left-1/2 hover:before:-translate-x-1/2 hover:before:w-0 hover:before:h-0.5 hover:before:bg-dna-emerald hover:before:animate-pulse transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2"
           >
             {item.name}
           </Button>
@@ -47,7 +47,7 @@ const DesktopNavigation = () => {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-dna-forest hover:bg-dna-mint">
+              <NavigationMenuTrigger className="text-dna-forest hover:bg-dna-mint/30 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2 transition-all duration-200">
                 Phases
               </NavigationMenuTrigger>
               <NavigationMenuContent>
@@ -56,7 +56,7 @@ const DesktopNavigation = () => {
                     <NavigationMenuLink key={phase.path} asChild>
                       <button
                         onClick={() => navigate(phase.path)}
-                        className="flex items-center space-x-3 p-3 rounded-md hover:bg-dna-mint text-left w-full"
+                        className="flex items-center space-x-3 p-3 rounded-md hover:bg-dna-mint/30 hover:border-l-4 hover:border-dna-copper text-left w-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-copper/50 focus:ring-offset-2"
                       >
                         <div className="w-8 h-8 bg-dna-copper text-white rounded-full flex items-center justify-center text-sm font-bold">
                           {phase.phase}
@@ -76,7 +76,7 @@ const DesktopNavigation = () => {
 
         <Button
           onClick={() => setIsSurveyOpen(true)}
-          className="bg-dna-copper hover:bg-dna-gold text-white"
+          className="bg-dna-copper hover:bg-dna-gold text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-copper/50 focus:ring-offset-2"
         >
           Take Survey
         </Button>
