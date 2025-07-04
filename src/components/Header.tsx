@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Logo from './header/Logo';
 import DesktopNavigation from './header/DesktopNavigation';
 import MobileNavigation from './header/MobileNavigation';
-import NotificationsDropdown from './notifications/NotificationsDropdown';
-import MessagingNotifications from './notifications/MessagingNotifications';
-import { useAuth } from '@/contexts/CleanAuthContext';
+
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { User, MessageSquare, MessageCircle, Home, Users, Users2, Bell } from 'lucide-react';
 import { mainNavItems } from './header/navigationConfig';
@@ -67,7 +66,13 @@ const Header = () => {
             
             {user ? (
               <div className="flex items-center space-x-2">
-                <NotificationsDropdown />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="relative"
+                >
+                  <Bell className="w-4 h-4" />
+                </Button>
                 
                 <Button
                   variant="ghost"
@@ -75,7 +80,7 @@ const Header = () => {
                   onClick={() => navigate('/messages')}
                   className="relative"
                 >
-                  <MessagingNotifications />
+                  <MessageCircle className="w-4 h-4" />
                 </Button>
                 
                 <DropdownMenu>
