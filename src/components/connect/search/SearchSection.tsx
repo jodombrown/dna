@@ -57,7 +57,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
   ].filter(Boolean).length : 0;
 
   return (
-    <div className="mb-8 space-y-4">
+    <div className="mb-4 space-y-3">
       {/* Main Search Bar */}
       <div className="flex gap-4 max-w-4xl mx-auto">
         <SearchInput
