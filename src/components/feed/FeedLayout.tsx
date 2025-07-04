@@ -57,9 +57,9 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                 </div>
                 
                 <div className="mt-4 pt-4 border-t">
-                  <p className="text-xs text-gray-500 mb-2">Grow your network faster</p>
+                  <p className="text-xs text-gray-500 mb-2">Grow your diaspora network</p>
                   <Button variant="outline" size="sm" className="w-full text-xs">
-                    Connect with alumni
+                    Find professionals
                   </Button>
                 </div>
               </CardContent>
