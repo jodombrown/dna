@@ -1,10 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, FileText, Users, Calendar, TrendingUp, MessageCircle, Bell } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { Eye, FileText, Users, Calendar, TrendingUp, MessageCircle, Bell, ExternalLink } from 'lucide-react';
 
 interface FeedLayoutProps {
   children: React.ReactNode;
@@ -12,6 +14,52 @@ interface FeedLayoutProps {
 
 const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
   const { profile } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleNewsClick = (title: string) => {
+    toast({
+      title: "DNA Newsroom",
+      description: `Opening article: ${title}`,
+    });
+    // For now, show a toast. In production, this would navigate to the full article
+  };
+
+  const handleShowMoreNews = () => {
+    navigate('/newsletters');
+  };
+
+  const handleFeaturedEventClick = () => {
+    navigate('/events');
+  };
+
+  const handleFeaturedCommunityClick = () => {
+    navigate('/communities');
+  };
+
+  const handleProfileClick = (name: string) => {
+    toast({
+      title: "Profile",
+      description: `Opening ${name}'s profile...`,
+    });
+    // In production, this would navigate to the actual user profile
+  };
+
+  const handleViewAllMessages = () => {
+    navigate('/messages');
+  };
+
+  const handleFindProfessionals = () => {
+    navigate('/search');
+  };
+
+  const handleQuickLinkClick = (link: string) => {
+    if (link === 'events') {
+      navigate('/events');
+    } else if (link === 'newsletters') {
+      navigate('/newsletters');
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
@@ -59,7 +107,12 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                   
                   <div className="mt-4 pt-4 border-t">
                     <p className="text-xs text-gray-500 mb-2">Grow your diaspora network</p>
-                    <Button variant="outline" size="sm" className="w-full text-xs">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full text-xs"
+                      onClick={handleFindProfessionals}
+                    >
                       Find professionals
                     </Button>
                   </div>
@@ -69,11 +122,17 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
               {/* Quick Links */}
               <Card>
                 <CardContent className="p-4 space-y-3">
-                  <div className="flex items-center gap-3 text-sm text-gray-600 hover:text-dna-emerald cursor-pointer">
+                  <div 
+                    className="flex items-center gap-3 text-sm text-gray-600 hover:text-dna-emerald cursor-pointer"
+                    onClick={() => handleQuickLinkClick('events')}
+                  >
                     <Calendar className="w-4 h-4" />
                     <span>Events</span>
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-gray-600 hover:text-dna-emerald cursor-pointer">
+                  <div 
+                    className="flex items-center gap-3 text-sm text-gray-600 hover:text-dna-emerald cursor-pointer"
+                    onClick={() => handleQuickLinkClick('newsletters')}
+                  >
                     <FileText className="w-4 h-4" />
                     <span>Newsletters</span>
                   </div>
@@ -93,34 +152,51 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
           <div className="col-span-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             <div className="space-y-4">
               
-              {/* DNA News */}
+              {/* DNA Newsroom */}
               <Card className="sticky top-0 z-10 bg-white">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-4">
-                    <h3 className="font-semibold text-sm">DNA Network News</h3>
+                    <h3 className="font-semibold text-sm">DNA Newsroom</h3>
                     <TrendingUp className="w-4 h-4 text-dna-emerald" />
                   </div>
                   
                   <div className="space-y-3">
-                    <div className="text-xs text-gray-600 hover:text-gray-900 cursor-pointer">
+                    <div 
+                      className="text-xs text-gray-600 hover:text-gray-900 cursor-pointer"
+                      onClick={() => handleNewsClick("African tech startups raise $2.3B in Q3")}
+                    >
                       <p className="font-medium">African tech startups raise $2.3B in Q3</p>
                       <p className="text-gray-500">2h ago • 1,245 readers</p>
                     </div>
-                    <div className="text-xs text-gray-600 hover:text-gray-900 cursor-pointer">
+                    <div 
+                      className="text-xs text-gray-600 hover:text-gray-900 cursor-pointer"
+                      onClick={() => handleNewsClick("Diaspora investment fund launches")}
+                    >
                       <p className="font-medium">Diaspora investment fund launches</p>
                       <p className="text-gray-500">4h ago • 892 readers</p>
                     </div>
-                    <div className="text-xs text-gray-600 hover:text-gray-900 cursor-pointer">
+                    <div 
+                      className="text-xs text-gray-600 hover:text-gray-900 cursor-pointer"
+                      onClick={() => handleNewsClick("New trade agreements benefit African markets")}
+                    >
                       <p className="font-medium">New trade agreements benefit African markets</p>
                       <p className="text-gray-500">6h ago • 654 readers</p>
                     </div>
-                    <div className="text-xs text-gray-600 hover:text-gray-900 cursor-pointer">
+                    <div 
+                      className="text-xs text-gray-600 hover:text-gray-900 cursor-pointer"
+                      onClick={() => handleNewsClick("Women in tech leadership rising")}
+                    >
                       <p className="font-medium">Women in tech leadership rising</p>
                       <p className="text-gray-500">1d ago • 1,567 readers</p>
                     </div>
                   </div>
                   
-                  <Button variant="ghost" size="sm" className="w-full mt-4 text-xs">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full mt-4 text-xs"
+                    onClick={handleShowMoreNews}
+                  >
                     Show more
                   </Button>
                 </CardContent>
@@ -139,7 +215,12 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                       <div>
                         <p className="text-xs font-medium">African Tech Summit 2025</p>
                         <p className="text-xs text-gray-500">Register now for early bird pricing</p>
-                        <Button size="sm" variant="outline" className="mt-2 text-xs">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="mt-2 text-xs"
+                          onClick={handleFeaturedEventClick}
+                        >
                           Learn more
                         </Button>
                       </div>
@@ -152,7 +233,12 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                       <div>
                         <p className="text-xs font-medium">New Community: HealthTech Africa</p>
                         <p className="text-xs text-gray-500">Join 250+ healthcare innovators</p>
-                        <Button size="sm" variant="outline" className="mt-2 text-xs">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="mt-2 text-xs"
+                          onClick={handleFeaturedCommunityClick}
+                        >
                           Join now
                         </Button>
                       </div>
@@ -170,7 +256,10 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                   </div>
                   
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                    <div 
+                      className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                      onClick={() => handleProfileClick("Dr. Amara Okafor")}
+                    >
                       <Avatar className="w-8 h-8">
                         <AvatarImage src="https://images.unsplash.com/photo-1494790108755-2616b612b829?w=150" />
                         <AvatarFallback>AO</AvatarFallback>
@@ -182,7 +271,10 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                       <div className="w-2 h-2 bg-dna-emerald rounded-full"></div>
                     </div>
                     
-                    <div className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                    <div 
+                      className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                      onClick={() => handleProfileClick("Prof. Kwame Asante")}
+                    >
                       <Avatar className="w-8 h-8">
                         <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" />
                         <AvatarFallback>KA</AvatarFallback>
@@ -194,7 +286,12 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                     </div>
                   </div>
                   
-                  <Button variant="ghost" size="sm" className="w-full mt-4 text-xs">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full mt-4 text-xs"
+                    onClick={handleViewAllMessages}
+                  >
                     View all messages
                   </Button>
                 </CardContent>
