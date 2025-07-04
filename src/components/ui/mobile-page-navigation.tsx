@@ -44,13 +44,13 @@ const MobilePageNavigation: React.FC<MobilePageNavigationProps> = ({ currentPage
             {
               label: 'Collaborate',
               onClick: () => navigate('/collaborate'),
-              icon: <ArrowLeft className="w-4 h-4" />,
+              icon: <ArrowRight className="w-4 h-4" />,
               variant: 'outline' as const
             },
             {
               label: 'Connect',
               onClick: () => navigate('/connect'),
-              icon: <ArrowLeft className="w-4 h-4" />,
+              icon: <ArrowRight className="w-4 h-4" />,
               variant: 'outline' as const
             }
           ]
