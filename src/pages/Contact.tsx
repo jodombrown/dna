@@ -55,7 +55,7 @@ const Contact = () => {
     {
       icon: <Mail className="w-6 h-6" />,
       title: "Email Us",
-      detail: "hello@diasporanetwork.africa",
+      detail: "aweh@diasporanetwork.africa",
       description: "For general inquiries and support"
     },
     {
