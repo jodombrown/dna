@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Filter, ChevronDown, ChevronUp } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Filter, ChevronDown, ChevronUp, Search, MapPin } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -20,7 +20,14 @@ const SKILL_OPTIONS = [
 const LOCATION_OPTIONS = [
   'London, UK', 'Toronto, Canada', 'Berlin, Germany', 'Paris, France', 
   'Dubai, UAE', 'San Francisco, USA', 'New York, USA', 'Lagos, Nigeria',
-  'Accra, Ghana', 'Cape Town, South Africa', 'Nairobi, Kenya'
+  'Accra, Ghana', 'Cape Town, South Africa', 'Nairobi, Kenya', 'Cairo, Egypt',
+  'Casablanca, Morocco', 'Atlanta, USA', 'Houston, USA', 'Chicago, USA',
+  'Washington DC, USA', 'Boston, USA', 'Los Angeles, USA'
+];
+
+const COUNTRIES = [
+  'United Kingdom', 'Canada', 'Germany', 'France', 'UAE', 'United States',
+  'Nigeria', 'Ghana', 'South Africa', 'Kenya', 'Egypt', 'Morocco'
 ];
 
 interface AdvancedFiltersProps {
@@ -43,6 +50,8 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [skillsOpen, setSkillsOpen] = useState(true);
   const [statusOpen, setStatusOpen] = useState(true);
+  const [locationOpen, setLocationOpen] = useState(true);
+  const [locationSearch, setLocationSearch] = useState('');
 
   const updateFilters = (key: string, value: any) => {
     onFiltersChange({
@@ -79,6 +88,16 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
     setIsOpen(false);
   };
 
+  // Filter locations based on search
+  const filteredLocations = [...LOCATION_OPTIONS, ...COUNTRIES].filter(location =>
+    location.toLowerCase().includes(locationSearch.toLowerCase())
+  );
+
+  const handleLocationSelect = (location: string) => {
+    updateFilters('location', location);
+    setLocationSearch('');
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -105,23 +124,73 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
         <div className="space-y-6">
           {/* Location Filter */}
           <div>
-            <label className="text-sm font-medium mb-3 block text-gray-900">Location</label>
-            <Select 
-              value={filters.location || ''} 
-              onValueChange={(value) => updateFilters('location', value)}
+            <button
+              onClick={() => setLocationOpen(!locationOpen)}
+              className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-dna-emerald transition-colors"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select location..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                {LOCATION_OPTIONS.map(location => (
-                  <SelectItem key={location} value={location}>
-                    {location}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <span className="flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                Location
+              </span>
+              {locationOpen ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </button>
+            {locationOpen && (
+              <div className="space-y-3">
+                {/* Current Selection */}
+                {filters.location && (
+                  <div className="p-2 bg-dna-emerald/10 rounded-lg border">
+                    <span className="text-sm text-dna-emerald font-medium">
+                      Selected: {filters.location}
+                    </span>
+                    <button
+                      onClick={() => updateFilters('location', '')}
+                      className="ml-2 text-xs text-gray-500 hover:text-gray-700 underline"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+                
+                {/* Search Input */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search locations..."
+                    value={locationSearch}
+                    onChange={(e) => setLocationSearch(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+                
+                {/* Location Options */}
+                <div className="max-h-40 overflow-y-auto border rounded-lg bg-gray-50">
+                  <div 
+                    className="p-2 hover:bg-gray-100 cursor-pointer text-sm border-b"
+                    onClick={() => handleLocationSelect('')}
+                  >
+                    All Locations
+                  </div>
+                  {filteredLocations.map((location, index) => (
+                    <div
+                      key={index}
+                      className="p-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0"
+                      onClick={() => handleLocationSelect(location)}
+                    >
+                      {location}
+                    </div>
+                  ))}
+                  {filteredLocations.length === 0 && locationSearch && (
+                    <div className="p-2 text-sm text-gray-500 italic">
+                      No locations found for "{locationSearch}"
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Skills Filter */}
