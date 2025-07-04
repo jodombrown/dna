@@ -143,7 +143,8 @@ const InteractiveTimeline = () => {
   return (
     <section className="mb-16">
       <div className="text-center mb-8">
-        <h3 className="text-3xl font-bold text-dna-forest mb-4">Interactive Timeline (2014 – 2024)</h3>
+        <h3 className="text-3xl font-bold text-dna-forest mb-2">Interactive Timeline</h3>
+        <p className="text-xl font-semibold text-dna-emerald mb-4">(2014 – 2024)</p>
         <p className="text-lg text-gray-600 mb-4">Explore a decade of diaspora growth and impact</p>
       </div>
       
