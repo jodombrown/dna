@@ -129,7 +129,7 @@ const ConnectExample = () => {
       <PrototypeNotice />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="sticky top-32 z-20 bg-gray-50 pb-4 pt-2 border-b border-gray-200">
+        <div className="sticky top-16 z-20 bg-gray-50 pb-4 pt-2 border-b border-gray-200">
           <SearchSection
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
