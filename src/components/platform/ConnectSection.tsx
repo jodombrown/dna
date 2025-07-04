@@ -65,7 +65,16 @@ const ConnectSection = () => {
                       <p className="font-medium">Dr. Amara Okafor</p>
                       <p className="text-sm text-gray-600">FinTech • Lagos → London</p>
                     </div>
-                    <Button size="sm" className="ml-auto">Connect</Button>
+                    <Button 
+                      size="sm" 
+                      className="ml-auto animate-heartbeat bg-dna-emerald hover:bg-dna-forest text-white"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/connect');
+                      }}
+                    >
+                      Connect
+                    </Button>
                   </div>
                   
                   <div className="flex items-center gap-3 p-3 border rounded-lg">
@@ -74,7 +83,16 @@ const ConnectSection = () => {
                       <p className="font-medium">Prof. Kwame Asante</p>
                       <p className="text-sm text-gray-600">AgriTech • Accra → Toronto</p>
                     </div>
-                    <Button size="sm" className="ml-auto">Connect</Button>
+                    <Button 
+                      size="sm" 
+                      className="ml-auto animate-heartbeat-delayed bg-dna-emerald hover:bg-dna-forest text-white"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/connect');
+                      }}
+                    >
+                      Connect
+                    </Button>
                   </div>
                   
                   <div className="text-center py-4">
