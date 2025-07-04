@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, FileText, Users, Calendar, TrendingUp, MessageCircle, Bell, ExternalLink } from 'lucide-react';
+import { Eye, FileText, Users, Calendar, TrendingUp, MessageCircle, Bell, ExternalLink, MapPin, Bookmark, Plus } from 'lucide-react';
 
 interface FeedLayoutProps {
   children: React.ReactNode;
@@ -58,12 +58,12 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Main container with fixed height and proper scroll areas */}
-      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 h-full overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 h-full overflow-hidden">
         <div className="grid grid-cols-12 gap-6 h-full">
           
-          {/* Left Sidebar - Profile & Navigation - Scrollable */}
+          {/* Left Sidebar - Profile & Activity - Scrollable */}
           <div className="col-span-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             <div className="space-y-4">
               {/* Profile Card */}
@@ -88,6 +88,12 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                         {profile.company}
                       </p>
                     )}
+                    {profile?.location && (
+                      <div className="flex items-center gap-1 mt-1">
+                        <MapPin className="w-3 h-3 text-gray-400" />
+                        <p className="text-xs text-gray-400">{profile.location}</p>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="mt-4 pt-4 border-t space-y-2">
@@ -98,6 +104,28 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                     <div className="flex justify-between text-xs">
                       <span className="text-gray-500">Post impressions</span>
                       <span className="text-dna-emerald font-medium">48</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-gray-500">Connections</span>
+                      <span className="text-dna-emerald font-medium">156</span>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t">
+                    <p className="text-xs text-gray-500 mb-2">Contribution Stats</p>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Posts shared</span>
+                        <span className="font-medium">23</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Events attended</span>
+                        <span className="font-medium">8</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-600">Initiatives supported</span>
+                        <span className="font-medium">5</span>
+                      </div>
                     </div>
                   </div>
                   
@@ -112,6 +140,43 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                       Find professionals
                     </Button>
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Saved Content */}
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Bookmark className="w-4 h-4 text-dna-emerald" />
+                    <h3 className="font-semibold text-sm">Saved Content</h3>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="text-xs cursor-pointer hover:bg-gray-50 p-2 rounded">
+                      <p className="font-medium text-gray-900 line-clamp-2">African Tech Summit 2025 - Registration Open</p>
+                      <p className="text-gray-500 mt-1">by TechAfrica • 2h ago</p>
+                      <Badge variant="outline" className="text-xs mt-1">Event</Badge>
+                    </div>
+                    <div className="text-xs cursor-pointer hover:bg-gray-50 p-2 rounded">
+                      <p className="font-medium text-gray-900 line-clamp-2">Investment Opportunities in AgriTech</p>
+                      <p className="text-gray-500 mt-1">by Dr. Kwame Asante • 1d ago</p>
+                      <Badge variant="outline" className="text-xs mt-1">Article</Badge>
+                    </div>
+                    <div className="text-xs cursor-pointer hover:bg-gray-50 p-2 rounded">
+                      <p className="font-medium text-gray-900 line-clamp-2">Healthcare Innovation Fund Launch</p>
+                      <p className="text-gray-500 mt-1">by HealthTech Africa • 3d ago</p>
+                      <Badge variant="outline" className="text-xs mt-1">Opportunity</Badge>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full mt-4 text-xs"
+                    onClick={() => navigate('/saved')}
+                  >
+                    View all saved
+                  </Button>
                 </CardContent>
               </Card>
 
@@ -132,6 +197,34 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                     <FileText className="w-4 h-4" />
                     <span>Newsletters</span>
                   </div>
+                  <div 
+                    className="flex items-center gap-3 text-sm text-gray-600 hover:text-dna-emerald cursor-pointer"
+                    onClick={() => navigate('/communities')}
+                  >
+                    <Users className="w-4 h-4" />
+                    <span>Communities</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Recent Activity */}
+              <Card>
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-sm mb-4">Recent Activity</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 text-xs">
+                      <div className="w-2 h-2 bg-dna-emerald rounded-full"></div>
+                      <span className="text-gray-600">Liked a post by Amara Okafor</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs">
+                      <div className="w-2 h-2 bg-dna-copper rounded-full"></div>
+                      <span className="text-gray-600">Saved an article about AgriTech</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs">
+                      <div className="w-2 h-2 bg-dna-mint rounded-full"></div>
+                      <span className="text-gray-600">Joined Healthcare Innovation group</span>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -144,7 +237,7 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
             </div>
           </div>
 
-          {/* Right Sidebar - News & Activity - Scrollable */}
+          {/* Right Sidebar - News, Events, Networking - Scrollable */}
           <div className="col-span-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             <div className="space-y-4">
               
@@ -195,6 +288,119 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
                   >
                     Show more
                   </Button>
+                </CardContent>
+              </Card>
+
+              {/* Upcoming Events */}
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Calendar className="w-4 h-4 text-dna-emerald" />
+                    <h3 className="font-semibold text-sm">Upcoming Events</h3>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onClick={handleFeaturedEventClick}>
+                      <img 
+                        src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=200&fit=crop" 
+                        alt="African Tech Summit"
+                        className="w-full h-20 object-cover rounded mb-2"
+                      />
+                      <p className="text-xs font-medium line-clamp-2">African Tech Summit 2025</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Calendar className="w-3 h-3 text-gray-400" />
+                        <p className="text-xs text-gray-500">March 15, 2025</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-gray-400" />
+                        <p className="text-xs text-gray-500">Lagos, Nigeria</p>
+                      </div>
+                      <p className="text-xs text-dna-emerald mt-1">250+ attending</p>
+                    </div>
+                    
+                    <div className="border rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onClick={handleFeaturedEventClick}>
+                      <img 
+                        src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=200&fit=crop" 
+                        alt="Diaspora Investment Forum"
+                        className="w-full h-20 object-cover rounded mb-2"
+                      />
+                      <p className="text-xs font-medium line-clamp-2">Diaspora Investment Forum</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Calendar className="w-3 h-3 text-gray-400" />
+                        <p className="text-xs text-gray-500">March 22, 2025</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-gray-400" />
+                        <p className="text-xs text-gray-500">Virtual</p>
+                      </div>
+                      <p className="text-xs text-dna-emerald mt-1">180+ attending</p>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full mt-4 text-xs"
+                    onClick={handleFeaturedEventClick}
+                  >
+                    View all events
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* People to Follow */}
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Users className="w-4 h-4 text-dna-emerald" />
+                    <h3 className="font-semibold text-sm">People to Follow</h3>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage src="https://images.unsplash.com/photo-1494790108755-2616b612b829?w=150" />
+                        <AvatarFallback>AO</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium line-clamp-1">Dr. Amara Okafor</p>
+                        <p className="text-xs text-gray-500 line-clamp-1">AI Research Scientist</p>
+                        <p className="text-xs text-gray-400 line-clamp-1">AgriTech Solutions</p>
+                        <p className="text-xs text-dna-emerald">12 mutual</p>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="mt-2 h-6 text-xs"
+                          onClick={() => handleProfileClick("Dr. Amara Okafor")}
+                        >
+                          <Plus className="w-3 h-3 mr-1" />
+                          Follow
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150" />
+                        <AvatarFallback>KA</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium line-clamp-1">Prof. Kwame Asante</p>
+                        <p className="text-xs text-gray-500 line-clamp-1">Financial Technology</p>
+                        <p className="text-xs text-gray-400 line-clamp-1">University of Ghana</p>
+                        <p className="text-xs text-dna-emerald">8 mutual</p>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="mt-2 h-6 text-xs"
+                          onClick={() => handleProfileClick("Prof. Kwame Asante")}
+                        >
+                          <Plus className="w-3 h-3 mr-1" />
+                          Follow
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
 
