@@ -3,14 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Filter, X } from 'lucide-react';
+import { Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
 } from "@/components/ui/sheet";
 
 const SKILL_OPTIONS = [
@@ -41,6 +40,9 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   activeFilterCount
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [skillsOpen, setSkillsOpen] = useState(true);
+  const [statusOpen, setStatusOpen] = useState(true);
+
   const updateFilters = (key: string, value: any) => {
     onFiltersChange({
       ...filters,
@@ -89,16 +91,9 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[65%] sm:w-[350px] overflow-y-auto">
+      <SheetContent side="right" className="w-[55%] sm:w-[320px] overflow-y-auto">
         <SheetHeader className="mb-6">
-          <div className="flex items-center justify-between">
-            <SheetTitle>Advanced Filters</SheetTitle>
-            <SheetClose asChild>
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                <X className="w-4 h-4" />
-              </Button>
-            </SheetClose>
-          </div>
+          <SheetTitle>Advanced Filters</SheetTitle>
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={clearAllFilters} className="w-fit">
               Clear All Filters
@@ -130,61 +125,85 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
           {/* Skills Filter */}
           <div>
-            <label className="text-sm font-medium mb-3 block text-gray-900">Skills</label>
-            <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto border rounded-lg p-3 bg-gray-50">
-              {SKILL_OPTIONS.map(skill => (
-                <div key={skill} className="flex items-center space-x-3 py-1">
-                  <Checkbox
-                    id={skill}
-                    checked={filters.skills?.includes(skill) || false}
-                    onCheckedChange={() => toggleSkill(skill)}
-                  />
-                  <label 
-                    htmlFor={skill} 
-                    className="text-sm cursor-pointer text-gray-700 flex-1"
-                  >
-                    {skill}
-                  </label>
-                </div>
-              ))}
-            </div>
+            <button
+              onClick={() => setSkillsOpen(!skillsOpen)}
+              className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-dna-emerald transition-colors"
+            >
+              <span>Skills</span>
+              {skillsOpen ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </button>
+            {skillsOpen && (
+              <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto border rounded-lg p-3 bg-gray-50">
+                {SKILL_OPTIONS.map(skill => (
+                  <div key={skill} className="flex items-center space-x-3 py-1">
+                    <Checkbox
+                      id={skill}
+                      checked={filters.skills?.includes(skill) || false}
+                      onCheckedChange={() => toggleSkill(skill)}
+                    />
+                    <label 
+                      htmlFor={skill} 
+                      className="text-sm cursor-pointer text-gray-700 flex-1"
+                    >
+                      {skill}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Professional Filters */}
           <div>
-            <label className="text-sm font-medium mb-3 block text-gray-900">Professional Status</label>
-            <div className="space-y-3 border rounded-lg p-3 bg-gray-50">
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="mentor"
-                  checked={filters.isMentor || false}
-                  onCheckedChange={(checked) => updateFilters('isMentor', checked)}
-                />
-                <label htmlFor="mentor" className="text-sm cursor-pointer text-gray-700">
-                  Available as Mentor
-                </label>
+            <button
+              onClick={() => setStatusOpen(!statusOpen)}
+              className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-dna-emerald transition-colors"
+            >
+              <span>Professional Status</span>
+              {statusOpen ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </button>
+            {statusOpen && (
+              <div className="space-y-3 border rounded-lg p-3 bg-gray-50">
+                <div className="flex items-center space-x-3">
+                  <Checkbox
+                    id="mentor"
+                    checked={filters.isMentor || false}
+                    onCheckedChange={(checked) => updateFilters('isMentor', checked)}
+                  />
+                  <label htmlFor="mentor" className="text-sm cursor-pointer text-gray-700">
+                    Available as Mentor
+                  </label>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Checkbox
+                    id="investor"
+                    checked={filters.isInvestor || false}
+                    onCheckedChange={(checked) => updateFilters('isInvestor', checked)}
+                  />
+                  <label htmlFor="investor" className="text-sm cursor-pointer text-gray-700">
+                    Active Investor
+                  </label>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Checkbox
+                    id="opportunities"
+                    checked={filters.lookingForOpportunities || false}
+                    onCheckedChange={(checked) => updateFilters('lookingForOpportunities', checked)}
+                  />
+                  <label htmlFor="opportunities" className="text-sm cursor-pointer text-gray-700">
+                    Open to Opportunities
+                  </label>
+                </div>
               </div>
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="investor"
-                  checked={filters.isInvestor || false}
-                  onCheckedChange={(checked) => updateFilters('isInvestor', checked)}
-                />
-                <label htmlFor="investor" className="text-sm cursor-pointer text-gray-700">
-                  Active Investor
-                </label>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="opportunities"
-                  checked={filters.lookingForOpportunities || false}
-                  onCheckedChange={(checked) => updateFilters('lookingForOpportunities', checked)}
-                />
-                <label htmlFor="opportunities" className="text-sm cursor-pointer text-gray-700">
-                  Open to Opportunities
-                </label>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
