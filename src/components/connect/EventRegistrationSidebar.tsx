@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Event } from '@/types/search';
 import EventNavigationHeader from './sidebar/EventNavigationHeader';
@@ -38,10 +38,10 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
   hasPreviousEvent = true,
   hasNextEvent = true
 }) => {
-  const [demoExplanationOpen, setDemoExplanationOpen] = React.useState(false);
-  const [contactHostDialogOpen, setContactHostDialogOpen] = React.useState(false);
-  const [reportEventDialogOpen, setReportEventDialogOpen] = React.useState(false);
-  const [viewAllEventsDialogOpen, setViewAllEventsDialogOpen] = React.useState(false);
+  const [demoExplanationOpen, setDemoExplanationOpen] = useState(false);
+  const [contactHostDialogOpen, setContactHostDialogOpen] = useState(false);
+  const [reportEventDialogOpen, setReportEventDialogOpen] = useState(false);
+  const [viewAllEventsDialogOpen, setViewAllEventsDialogOpen] = useState(false);
 
   if (!event) return null;
 

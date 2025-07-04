@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import EventRegistrationSidebar from './EventRegistrationSidebar';
 import ConnectTabsContent from './ConnectTabsContent';
@@ -35,12 +35,12 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
   isLoggedIn,
   onRefresh
 }) => {
-  const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null);
-  const [selectedEventIndex, setSelectedEventIndex] = React.useState(0);
-  const [registrationSidebarOpen, setRegistrationSidebarOpen] = React.useState(false);
-  const [selectedProfessional, setSelectedProfessional] = React.useState<Professional | null>(null);
-  const [professionalDialogOpen, setProfessionalDialogOpen] = React.useState(false);
-  const [demoExplanationOpen, setDemoExplanationOpen] = React.useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [selectedEventIndex, setSelectedEventIndex] = useState(0);
+  const [registrationSidebarOpen, setRegistrationSidebarOpen] = useState(false);
+  const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
+  const [professionalDialogOpen, setProfessionalDialogOpen] = useState(false);
+  const [demoExplanationOpen, setDemoExplanationOpen] = useState(false);
 
   const openRegistrationSidebar = (event: Event) => {
     const eventIndex = events.findIndex(e => e.id === event.id);
