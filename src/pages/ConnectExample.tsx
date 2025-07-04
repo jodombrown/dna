@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
-import ConnectHero from '@/components/connect/ConnectHero';
 import ConnectTabs from '@/components/connect/ConnectTabs';
 import ConnectDialogsManager from '@/components/connect/ConnectDialogsManager';
 import FeedbackPanel from '@/components/FeedbackPanel';
@@ -50,8 +49,7 @@ const ConnectExample = () => {
       <PrototypeNotice />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <ConnectHero />
-        <ConnectTabs 
+        <ConnectTabs
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           professionals={demoProfessionals}
