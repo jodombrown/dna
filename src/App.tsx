@@ -11,8 +11,6 @@ import CollaborationsExample from "./pages/CollaborationsExample";
 import ConnectExample from "./pages/ConnectExample";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
-import EnhancedAbout from "./pages/EnhancedAbout";
-import EnhancedContact from "./pages/EnhancedContact";
 import AdminAnalyticsDashboard from "./pages/AdminAnalyticsDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
@@ -22,7 +20,6 @@ import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
 import MvpPhase from "./pages/MvpPhase";
 import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
-import DemoDataSeederPage from "./pages/DemoDataSeeder";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,13 +34,11 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/contribute-example" element={<ContributeExample />} />
-            <Route path="/collaborate-example" element={<CollaborationsExample />} />
-            <Route path="/connect-example" element={<ConnectExample />} />
+            <Route path="/contribute" element={<ContributeExample />} />
+            <Route path="/collaborate" element={<CollaborationsExample />} />
+            <Route path="/connect" element={<ConnectExample />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
-            <Route path="/enhanced-about" element={<EnhancedAbout />} />
-            <Route path="/enhanced-contact" element={<EnhancedContact />} />
             
               <Route path="/phase/market-research" element={<MarketResearchPhase />} />
               <Route path="/phase/prototyping" element={<PrototypingPhase />} />
@@ -51,7 +46,6 @@ function App() {
               <Route path="/phase/mvp" element={<MvpPhase />} />
               <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
             <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
-            <Route path="/demo-data" element={<DemoDataSeederPage />} />
               <Route path="/admin/dashboard" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
               <Route path="/admin/analytics" element={<ProtectedAdminRoute><AdminAnalyticsDashboard /></ProtectedAdminRoute>} />
               <Route path="*" element={<NotFound />} />
