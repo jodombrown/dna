@@ -230,10 +230,21 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
             </div>
           </div>
 
-          {/* Center Feed - Main Content - Scrollable */}
-          <div className="col-span-6 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-            <div className="space-y-6">
-              {children}
+          {/* Center Feed - Main Content with Sticky Post Creator */}
+          <div className="col-span-6 flex flex-col h-full">
+            {/* Sticky Posting Section */}
+            <div className="sticky top-0 z-20 bg-gray-50 pb-4">
+              {/* This is where UnifiedContentCreator will be rendered */}
+              <div className="bg-white rounded-lg shadow-sm">
+                {/* Content creator placeholder - will be filled by the actual component */}
+              </div>
+            </div>
+            
+            {/* Scrollable Feed Content */}
+            <div className="flex-1 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <div className="space-y-6">
+                {children}
+              </div>
             </div>
           </div>
 

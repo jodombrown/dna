@@ -39,16 +39,12 @@ const EnhancedSocialFeed: React.FC = () => {
   }
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Sticky Content Creator */}
-      <div className="sticky top-0 z-20 bg-gray-50 pb-4">
-        <UnifiedContentCreator />
-      </div>
-
-      {/* Scrollable Feed */}
-      <div className="flex-1 overflow-y-auto">
-        <FeedContent content={allContent} loading={loading} />
-      </div>
+    <div className="space-y-6">
+      {/* Content Creator - This will be rendered in the sticky section by FeedLayout */}
+      <UnifiedContentCreator />
+      
+      {/* Feed Content */}
+      <FeedContent content={allContent} loading={loading} />
     </div>
   );
 };
