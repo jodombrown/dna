@@ -12,6 +12,7 @@ import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
 import { useContributeLogic } from '@/hooks/useContributeLogic';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
 
 const ContributeExample = () => {
   useScrollToTop();
@@ -70,6 +71,8 @@ const ContributeExample = () => {
         onClose={() => setIsFeedbackPanelOpen(false)}
         pageType="contribute"
       />
+      
+      <MobilePageNavigation currentPage="contribute" />
     </div>
   );
 };

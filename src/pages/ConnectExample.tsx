@@ -10,6 +10,7 @@ import CallToActionSection from '@/components/connect/CallToActionSection';
 import SearchSection from '@/components/connect/search/SearchSection';
 import { useConnectFiltering } from '@/hooks/useConnectFiltering';
 import { Tabs } from '@/components/ui/tabs';
+import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
 
 const ConnectExample = () => {
   useScrollToTop();
@@ -113,6 +114,8 @@ const ConnectExample = () => {
         onClose={() => setIsFeedbackPanelOpen(false)}
         pageType="connect"
       />
+      
+      <MobilePageNavigation currentPage="connect" />
     </div>
   );
 };
