@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ContributeExample from "./pages/ContributeExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
+import ConnectExample from "./pages/ConnectExample";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import EnhancedAbout from "./pages/EnhancedAbout";
@@ -38,6 +39,7 @@ function App() {
             <Route path="/auth" element={<Auth />} />
             <Route path="/contribute-example" element={<ContributeExample />} />
             <Route path="/collaborate-example" element={<CollaborationsExample />} />
+            <Route path="/connect-example" element={<ConnectExample />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
             <Route path="/enhanced-about" element={<EnhancedAbout />} />
