@@ -1270,16 +1270,24 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_visibility: string | null
+          available_for: string[] | null
           avatar_url: string | null
+          banner_url: string | null
           bio: string | null
           company: string | null
+          country_of_origin: string | null
           created_at: string
           current_country: string | null
+          diaspora_origin: string | null
           display_name: string | null
           email: string | null
           email_notifications: boolean | null
           full_name: string | null
+          headline: string | null
           id: string
+          impact_areas: string[] | null
+          industry: string | null
           interest_tags: string[] | null
           interests: string[] | null
           is_public: boolean | null
@@ -1294,18 +1302,27 @@ export type Database = {
           updated_at: string
           user_role: Database["public"]["Enums"]["user_role"] | null
           website_url: string | null
+          years_experience: number | null
         }
         Insert: {
+          account_visibility?: string | null
+          available_for?: string[] | null
           avatar_url?: string | null
+          banner_url?: string | null
           bio?: string | null
           company?: string | null
+          country_of_origin?: string | null
           created_at?: string
           current_country?: string | null
+          diaspora_origin?: string | null
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
           full_name?: string | null
+          headline?: string | null
           id: string
+          impact_areas?: string[] | null
+          industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
           is_public?: boolean | null
@@ -1320,18 +1337,27 @@ export type Database = {
           updated_at?: string
           user_role?: Database["public"]["Enums"]["user_role"] | null
           website_url?: string | null
+          years_experience?: number | null
         }
         Update: {
+          account_visibility?: string | null
+          available_for?: string[] | null
           avatar_url?: string | null
+          banner_url?: string | null
           bio?: string | null
           company?: string | null
+          country_of_origin?: string | null
           created_at?: string
           current_country?: string | null
+          diaspora_origin?: string | null
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
           full_name?: string | null
+          headline?: string | null
           id?: string
+          impact_areas?: string[] | null
+          industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
           is_public?: boolean | null
@@ -1346,6 +1372,7 @@ export type Database = {
           updated_at?: string
           user_role?: Database["public"]["Enums"]["user_role"] | null
           website_url?: string | null
+          years_experience?: number | null
         }
         Relationships: []
       }

@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import ProfileCompletionBar from "./ProfileCompletionBar";
-import DNALinkedInProfile from "./DNALinkedInProfile";
+import LinkedInStyleProfile from "./LinkedInStyleProfile";
 
 const ProfileLinkedInView = ({
   user,
@@ -30,7 +30,7 @@ const ProfileLinkedInView = ({
           <ProfileCompletionBar profile={profile} />
         </div>
         
-        <DNALinkedInProfile
+        <LinkedInStyleProfile
           profile={profile}
           isOwnProfile={true}
           onEdit={handleEdit}
