@@ -18,8 +18,9 @@ const SKILL_OPTIONS = [
 ];
 
 const LOCATION_OPTIONS = [
-  'Nigeria', 'Ghana', 'Kenya', 'South Africa', 'Morocco', 'Egypt',
-  'United States', 'United Kingdom', 'Canada', 'France', 'Germany'
+  'London, UK', 'Toronto, Canada', 'Berlin, Germany', 'Paris, France', 
+  'Dubai, UAE', 'San Francisco, USA', 'New York, USA', 'Lagos, Nigeria',
+  'Accra, Ghana', 'Cape Town, South Africa', 'Nairobi, Kenya'
 ];
 
 interface AdvancedFiltersProps {
