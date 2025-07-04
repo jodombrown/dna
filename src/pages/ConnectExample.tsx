@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -13,6 +14,7 @@ import { Professional } from '@/types/search';
 
 const ConnectExample = () => {
   useScrollToTop();
+  const [searchParams] = useSearchParams();
   
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('professionals');
@@ -27,6 +29,14 @@ const ConnectExample = () => {
     isInvestor: false,
     lookingForOpportunities: false
   });
+
+  // Handle search parameter from URL
+  useEffect(() => {
+    const queryParam = searchParams.get('q');
+    if (queryParam) {
+      setSearchTerm(queryParam);
+    }
+  }, [searchParams]);
 
   // Filter and search logic
   const filteredData = useMemo(() => {
@@ -102,7 +112,9 @@ const ConnectExample = () => {
   };
 
   const handleSearch = () => {
-    console.log('Search triggered:', searchTerm);
+    // Search is already handled by the filteredData useMemo
+    // This triggers re-filtering automatically when searchTerm changes
+    console.log('Search triggered:', searchTerm, 'Results:', filteredData);
   };
 
   const handleClearSearch = () => {

@@ -10,9 +10,10 @@ const SearchBar = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+      // Navigate to connect page with search term
+      navigate(`/connect?q=${encodeURIComponent(searchTerm.trim())}`);
     } else {
-      navigate('/search');
+      navigate('/connect');
     }
   };
 
