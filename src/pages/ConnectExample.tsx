@@ -8,7 +8,7 @@ import ConnectDialogsManager from '@/components/connect/ConnectDialogsManager';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import PrototypeNotice from '@/components/connect/PrototypeNotice';
 import CallToActionSection from '@/components/connect/CallToActionSection';
-import SearchSection from '@/components/connect/SearchSection';
+import SearchSection from '@/components/connect/search/SearchSection';
 import { demoProfessionals, demoCommunities, demoEvents } from '@/data/demoSearchData';
 import { Professional } from '@/types/search';
 
