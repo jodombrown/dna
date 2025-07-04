@@ -57,7 +57,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
                 <Button
                   key={item.name}
                   variant="ghost"
-                  className="justify-start text-left hover:bg-dna-mint/20 hover:text-dna-forest hover:border-l-4 hover:border-dna-emerald transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2"
+                  className="justify-start text-left hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200"
                   onClick={() => handleNavClick(item)}
                 >
                   {item.name}
@@ -66,7 +66,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
               
               <Button
                 variant="ghost"
-                className="justify-start text-left text-dna-copper hover:bg-dna-copper/20 hover:border-l-4 hover:border-dna-copper transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-copper/50 focus:ring-offset-2"
+                className="justify-start text-left text-dna-copper hover:bg-dna-copper/20 transition-all duration-200"
                 onClick={onSurveyClick}
               >
                 Take Survey
@@ -74,7 +74,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
               
               <Button
                 variant="ghost"
-                className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 hover:border-l-4 hover:border-dna-emerald transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2"
+                className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200"
                 onClick={onBetaSignup}
               >
                 Join Beta Program
@@ -87,7 +87,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
                     <Button
                       key={phase.path}
                       variant="ghost"
-                      className="justify-start text-left w-full hover:bg-dna-mint/20 hover:border-l-4 hover:border-dna-copper transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-copper/50 focus:ring-offset-2"
+                      className="justify-start text-left w-full hover:bg-dna-mint/20 transition-all duration-200"
                       onClick={() => {
                         navigate(phase.path);
                         onOpenChange(false);
