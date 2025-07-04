@@ -6,15 +6,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import UserDashboard from "./pages/UserDashboard";
 import ContributeExample from "./pages/ContributeExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import EnhancedAbout from "./pages/EnhancedAbout";
 import EnhancedContact from "./pages/EnhancedContact";
-import MockFeedPage from "./pages/MockFeedPage";
-import Opportunities from "./pages/Opportunities";
 import AdminAnalyticsDashboard from "./pages/AdminAnalyticsDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
@@ -38,15 +35,13 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/user-dashboard" element={<UserDashboard />} />
             <Route path="/contribute-example" element={<ContributeExample />} />
             <Route path="/collaborate-example" element={<CollaborationsExample />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
             <Route path="/enhanced-about" element={<EnhancedAbout />} />
             <Route path="/enhanced-contact" element={<EnhancedContact />} />
-            <Route path="/mock-feed" element={<MockFeedPage />} />
-            <Route path="/opportunities" element={<Opportunities />} />
+            
               <Route path="/phase/market-research" element={<MarketResearchPhase />} />
               <Route path="/phase/prototyping" element={<PrototypingPhase />} />
               <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
