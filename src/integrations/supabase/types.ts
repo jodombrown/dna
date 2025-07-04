@@ -9,54 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      admin_users: {
-        Row: {
-          created_at: string | null
-          created_by: string | null
-          id: string
-          is_active: boolean | null
-          permissions: Json | null
-          role: Database["public"]["Enums"]["admin_role"]
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          is_active?: boolean | null
-          permissions?: Json | null
-          role?: Database["public"]["Enums"]["admin_role"]
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          is_active?: boolean | null
-          permissions?: Json | null
-          role?: Database["public"]["Enums"]["admin_role"]
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "admin_users_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "admin_users_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       communities: {
         Row: {
           category: string | null
@@ -128,40 +80,34 @@ export type Database = {
           content_id: string
           content_type: string
           created_at: string
-          flag_type: Database["public"]["Enums"]["flag_type"]
           flagged_by: string | null
           id: string
           moderator_notes: string | null
           reason: string | null
           resolved_at: string | null
           resolved_by: string | null
-          status: Database["public"]["Enums"]["moderation_status"]
         }
         Insert: {
           content_id: string
           content_type: string
           created_at?: string
-          flag_type: Database["public"]["Enums"]["flag_type"]
           flagged_by?: string | null
           id?: string
           moderator_notes?: string | null
           reason?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
-          status?: Database["public"]["Enums"]["moderation_status"]
         }
         Update: {
           content_id?: string
           content_type?: string
           created_at?: string
-          flag_type?: Database["public"]["Enums"]["flag_type"]
           flagged_by?: string | null
           id?: string
           moderator_notes?: string | null
           reason?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
-          status?: Database["public"]["Enums"]["moderation_status"]
         }
         Relationships: [
           {
@@ -445,7 +391,6 @@ export type Database = {
           profile_picture_url: string | null
           skills: string[] | null
           updated_at: string
-          user_role: Database["public"]["Enums"]["user_role"] | null
           website_url: string | null
           years_experience: number | null
         }
@@ -480,7 +425,6 @@ export type Database = {
           profile_picture_url?: string | null
           skills?: string[] | null
           updated_at?: string
-          user_role?: Database["public"]["Enums"]["user_role"] | null
           website_url?: string | null
           years_experience?: number | null
         }
@@ -515,7 +459,6 @@ export type Database = {
           profile_picture_url?: string | null
           skills?: string[] | null
           updated_at?: string
-          user_role?: Database["public"]["Enums"]["user_role"] | null
           website_url?: string | null
           years_experience?: number | null
         }
@@ -568,10 +511,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      get_admin_role: {
-        Args: { _user_id: string }
-        Returns: Database["public"]["Enums"]["admin_role"]
-      }
       get_current_user_profile: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -587,51 +526,9 @@ export type Database = {
           full_name: string
         }[]
       }
-      get_platform_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      get_user_role: {
-        Args: { _user_id: string }
-        Returns: Database["public"]["Enums"]["user_role"]
-      }
-      has_user_role: {
-        Args: {
-          _user_id: string
-          _role: Database["public"]["Enums"]["user_role"]
-        }
-        Returns: boolean
-      }
-      is_admin_user: {
-        Args: { _user_id: string }
-        Returns: boolean
-      }
-      is_platform_admin: {
-        Args: { _user_id: string }
-        Returns: boolean
-      }
     }
     Enums: {
-      admin_role:
-        | "super_admin"
-        | "content_moderator"
-        | "analytics_viewer"
-        | "user_manager"
-        | "event_manager"
-      flag_type:
-        | "inappropriate_content"
-        | "spam"
-        | "harassment"
-        | "misinformation"
-        | "copyright_violation"
-        | "other"
-      moderation_status:
-        | "pending"
-        | "approved"
-        | "rejected"
-        | "hidden"
-        | "deleted"
-      user_role: "user" | "moderator" | "organization" | "admin"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -746,30 +643,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      admin_role: [
-        "super_admin",
-        "content_moderator",
-        "analytics_viewer",
-        "user_manager",
-        "event_manager",
-      ],
-      flag_type: [
-        "inappropriate_content",
-        "spam",
-        "harassment",
-        "misinformation",
-        "copyright_violation",
-        "other",
-      ],
-      moderation_status: [
-        "pending",
-        "approved",
-        "rejected",
-        "hidden",
-        "deleted",
-      ],
-      user_role: ["user", "moderator", "organization", "admin"],
-    },
+    Enums: {},
   },
 } as const
