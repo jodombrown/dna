@@ -40,7 +40,7 @@ const impactPathwaysData = [
     color: "bg-blue-500",
     bgColor: "bg-blue-50",
     whyItMatters:
-      "Lasting impact comes from good decisions. Expertise turns lessons into leverage - helping projects avoid pitfalls and grow their strengths.",
+      "Lasting impact comes from good decisions. Expertise turns lessons into leverage, helping projects avoid pitfalls and grow their strengths.",
   },
   {
     id: 3,
@@ -115,7 +115,7 @@ const impactPathwaysData = [
     color: "bg-indigo-500",
     bgColor: "bg-indigo-50",
     whyItMatters:
-      "Feedback grounds big dreams in reality. Data and stories ensure projects actually meet needs, adapt fast, and share genuine impact - building trust.",
+      "Feedback grounds big dreams in reality. Data and stories ensure projects actually meet needs, adapt fast, and share genuine impact while building trust.",
   },
   {
     id: 8,
@@ -131,7 +131,7 @@ const impactPathwaysData = [
     color: "bg-fuchsia-600",
     bgColor: "bg-fuchsia-50",
     whyItMatters:
-      "It ensures projects are rooted in real experiences - not just theory - and that they resonate with the people they aim to serve.",
+      "It ensures projects are rooted in real experiences, not just theory, and that they resonate with the people they aim to serve.",
   },
   {
     id: 9,

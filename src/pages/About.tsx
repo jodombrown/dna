@@ -178,7 +178,7 @@ const About = () => {
                     His journey began with witnessing firsthand the challenges faced by both diaspora 
                     communities seeking meaningful ways to contribute to Africa's development and 
                     African communities needing access to global expertise and resources. This inspired 
-                    the creation of DNA - a platform designed to bridge these gaps and unlock the 
+                    the creation of DNA, a platform designed to bridge these gaps and unlock the 
                     transformative power of diaspora collaboration.
                   </p>
                 </div>
