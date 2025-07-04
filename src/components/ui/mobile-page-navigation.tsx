@@ -51,7 +51,7 @@ const MobilePageNavigation: React.FC<MobilePageNavigationProps> = ({ currentPage
               label: 'Connect',
               onClick: () => navigate('/connect'),
               icon: <ArrowRight className="w-4 h-4" />,
-              variant: 'outline' as const
+              variant: 'default' as const
             }
           ]
         };
