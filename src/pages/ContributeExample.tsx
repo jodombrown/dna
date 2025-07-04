@@ -56,6 +56,7 @@ const ContributeExample = () => {
         <ContributeCallToAction onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
       </main>
 
+      <MobilePageNavigation currentPage="contribute" />
       <Footer />
       
       <ContributeDialogs
@@ -66,13 +67,12 @@ const ContributeExample = () => {
         selectedPathway={selectedPathway}
       />
       
+      
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
         onClose={() => setIsFeedbackPanelOpen(false)}
         pageType="contribute"
       />
-      
-      <MobilePageNavigation currentPage="contribute" />
     </div>
   );
 };

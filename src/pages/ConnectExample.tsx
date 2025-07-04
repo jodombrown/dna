@@ -106,6 +106,7 @@ const ConnectExample = () => {
         <CallToActionSection onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
       </main>
 
+      <MobilePageNavigation currentPage="connect" />
       <Footer />
       
       
@@ -114,8 +115,6 @@ const ConnectExample = () => {
         onClose={() => setIsFeedbackPanelOpen(false)}
         pageType="connect"
       />
-      
-      <MobilePageNavigation currentPage="connect" />
     </div>
   );
 };

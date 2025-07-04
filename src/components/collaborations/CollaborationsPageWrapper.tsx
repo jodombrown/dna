@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
 import CollaborationsPrototypeNotice from './CollaborationsPrototypeNotice';
 import CollaborationsPageHeaderSection from './CollaborationsPageHeaderSection';
 import CollaborationsStatsSection from './CollaborationsStatsSection';
@@ -111,6 +112,7 @@ const CollaborationsPageWrapper = () => {
         onOpenFeedbackPanel={() => setIsFeedbackPanelOpen(true)}
       />
 
+      <MobilePageNavigation currentPage="collaborate" />
       <Footer />
       
       <FeedbackPanel 

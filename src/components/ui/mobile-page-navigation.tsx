@@ -65,21 +65,23 @@ const MobilePageNavigation: React.FC<MobilePageNavigationProps> = ({ currentPage
   if (buttons.length === 0) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-3 safe-area-pb">
-      <div className="flex gap-3 justify-center max-w-sm mx-auto">
-        {buttons.map((button, index) => (
-          <Button
-            key={index}
-            onClick={button.onClick}
-            variant={button.variant}
-            size="sm"
-            className="flex-1 flex items-center justify-center gap-2 font-medium shadow-sm"
-          >
-            {button.variant === 'outline' && button.icon}
-            <span>{button.label}</span>
-            {button.variant === 'default' && button.icon}
-          </Button>
-        ))}
+    <div className="bg-gradient-to-r from-primary/5 to-accent/5 border-t border-gray-200 px-4 py-6 mt-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex gap-3 justify-center max-w-sm mx-auto">
+          {buttons.map((button, index) => (
+            <Button
+              key={index}
+              onClick={button.onClick}
+              variant={button.variant}
+              size="sm"
+              className="flex-1 flex items-center justify-center gap-2 font-medium shadow-sm"
+            >
+              {button.variant === 'outline' && button.icon}
+              <span>{button.label}</span>
+              {button.variant === 'default' && button.icon}
+            </Button>
+          ))}
+        </div>
       </div>
     </div>
   );
