@@ -41,7 +41,7 @@ const ContributeSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/contribute-example')}
+              onClick={() => navigate('/contribute')}
               className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-2"
             >
               Explore Pathways to Impact
@@ -52,7 +52,7 @@ const ContributeSection = () => {
           <div className="relative">
             <div 
               className="bg-white rounded-3xl shadow-2xl p-8 cursor-pointer hover:shadow-3xl transition-shadow"
-              onClick={() => navigate('/contribute-example')}
+              onClick={() => navigate('/contribute')}
             >
               <h3 className="text-xl font-semibold mb-6 text-center">Your Impact Dashboard</h3>
               
