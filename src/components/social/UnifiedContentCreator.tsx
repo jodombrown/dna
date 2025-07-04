@@ -386,11 +386,38 @@ const UnifiedContentCreator: React.FC = () => {
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                     />
-                    <Input
-                      placeholder="Impact area or focus region"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                    />
+                    <div className="grid grid-cols-2 gap-3">
+                      <select
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <option value="">Select African Region</option>
+                        <option value="west-africa">West Africa</option>
+                        <option value="east-africa">East Africa</option>
+                        <option value="north-africa">North Africa</option>
+                        <option value="central-africa">Central Africa</option>
+                        <option value="southern-africa">Southern Africa</option>
+                        <option value="pan-african">Pan-African</option>
+                      </select>
+                      <select
+                        value={dateTime}
+                        onChange={(e) => setDateTime(e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        <option value="">Select Impact Area</option>
+                        <option value="healthtech">HealthTech</option>
+                        <option value="fintech">FinTech</option>
+                        <option value="agritech">AgriTech</option>
+                        <option value="edtech">EdTech</option>
+                        <option value="cleantech">CleanTech</option>
+                        <option value="infrastructure">Infrastructure</option>
+                        <option value="creative-economy">Creative Economy</option>
+                        <option value="governance">Governance</option>
+                        <option value="trade">Trade & Commerce</option>
+                        <option value="diaspora-engagement">Diaspora Engagement</option>
+                      </select>
+                    </div>
                     <Textarea
                       placeholder="Describe your initiative, goals, and how others can contribute..."
                       value={content}
