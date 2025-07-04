@@ -9,8 +9,12 @@ const SearchBar = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Disabled search functionality
-    console.log('Search disabled');
+    if (searchTerm.trim()) {
+      // Navigate to connect page with search term
+      navigate(`/connect?q=${encodeURIComponent(searchTerm.trim())}`);
+    } else {
+      navigate('/connect');
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
