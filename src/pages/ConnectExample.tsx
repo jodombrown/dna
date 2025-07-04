@@ -55,7 +55,7 @@ const ConnectExample = () => {
       
       // Location filter
       const matchesLocation = !filters.location || filters.location === 'all' || 
-        prof.location?.includes(filters.location);
+        prof.location?.toLowerCase().includes(filters.location.toLowerCase());
       
       // Skills filter
       const matchesSkills = filters.skills.length === 0 ||
