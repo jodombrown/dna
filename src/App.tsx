@@ -26,6 +26,7 @@ import About from "./pages/About";
 import EnhancedAbout from "./pages/EnhancedAbout";
 import EnhancedContact from "./pages/EnhancedContact";
 import CleanSocialFeedPage from "./pages/CleanSocialFeedPage";
+import MockFeedPage from "./pages/MockFeedPage";
 import Notifications from "./pages/Notifications";
 import Saved from "./pages/Saved";
 import Communities from "./pages/Communities";
@@ -77,6 +78,7 @@ function App() {
               <Route path="/enhanced-about" element={<EnhancedAbout />} />
               <Route path="/enhanced-contact" element={<EnhancedContact />} />
               <Route path="/feed" element={<CleanSocialFeedPage />} />
+              <Route path="/mock-feed" element={<MockFeedPage />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/saved" element={<Saved />} />
               <Route path="/communities" element={<Communities />} />
