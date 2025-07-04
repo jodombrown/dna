@@ -105,7 +105,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           <Filter className="w-4 h-4 mr-2" />
           Filters
           {activeFilterCount > 0 && (
-            <Badge className="absolute -top-2 -right-2 bg-dna-emerald text-white text-xs min-w-5 h-5 flex items-center justify-center p-0">
+            <Badge className="absolute -top-2 -right-2 bg-gray-700 text-white text-xs min-w-5 h-5 flex items-center justify-center p-0">
               {activeFilterCount}
             </Badge>
           )}
@@ -126,7 +126,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           <div>
             <button
               onClick={() => setLocationOpen(!locationOpen)}
-              className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-dna-emerald transition-colors"
+              className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-gray-700 transition-colors"
             >
               <span className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
@@ -142,8 +142,8 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
               <div className="space-y-3">
                 {/* Current Selection */}
                 {filters.location && (
-                  <div className="p-2 bg-dna-emerald/10 rounded-lg border">
-                    <span className="text-sm text-dna-emerald font-medium">
+                  <div className="p-2 bg-gray-100 rounded-lg border">
+                    <span className="text-sm text-gray-700 font-medium">
                       Selected: {filters.location}
                     </span>
                     <button
@@ -197,7 +197,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           <div>
             <button
               onClick={() => setSkillsOpen(!skillsOpen)}
-              className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-dna-emerald transition-colors"
+              className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-gray-700 transition-colors"
             >
               <span>Skills</span>
               {skillsOpen ? (
@@ -231,7 +231,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           <div>
             <button
               onClick={() => setStatusOpen(!statusOpen)}
-              className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-dna-emerald transition-colors"
+              className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-gray-700 transition-colors"
             >
               <span>Professional Status</span>
               {statusOpen ? (
@@ -281,7 +281,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
         <div className="mt-8 pt-6 border-t">
           <Button 
             onClick={handleDone} 
-            className="w-full bg-dna-emerald hover:bg-dna-forest text-white h-12 text-base"
+            className="w-full bg-gray-900 hover:bg-gray-800 text-white h-12 text-base"
           >
             Apply Filters
           </Button>
