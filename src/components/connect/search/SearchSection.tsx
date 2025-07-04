@@ -3,7 +3,7 @@ import SearchInput from './SearchInput';
 import AdvancedFilters from './AdvancedFilters';
 import ActiveFilters from './ActiveFilters';
 import SearchResultsSummary from './SearchResultsSummary';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface SearchSectionProps {
   searchTerm: string;
@@ -91,13 +91,13 @@ const SearchSection: React.FC<SearchSectionProps> = ({
 
       {/* Tabs Section */}
       {activeTab && onTabChange && resultCounts && (
-        <Tabs value={activeTab} onValueChange={onTabChange} className="mb-2">
+        <div className="mb-2">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="professionals">Professionals ({resultCounts.professionals})</TabsTrigger>
             <TabsTrigger value="communities">Communities ({resultCounts.communities})</TabsTrigger>
             <TabsTrigger value="events">Events ({resultCounts.events})</TabsTrigger>
           </TabsList>
-        </Tabs>
+        </div>
       )}
 
       {/* Search Results Summary */}

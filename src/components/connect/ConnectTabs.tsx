@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import EventRegistrationSidebar from './EventRegistrationSidebar';
 import ConnectTabsContent from './ConnectTabsContent';
 import ConnectDialogsManager from './ConnectDialogsManager';
@@ -87,23 +87,21 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
   return (
     <>
       <div>
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <ConnectTabsContent
-            professionals={professionals}
-            communities={communities}
-            events={events}
-            onConnect={onConnect}
-            onMessage={onMessage}
-            onJoinCommunity={onJoinCommunity}
-            onEventClick={openRegistrationSidebar}
-            onRegisterEvent={openRegistrationSidebar}
-            onCreatorClick={openProfessionalDialog}
-            onViewAll={handleViewAll}
-            onRefresh={onRefresh}
-            getConnectionStatus={getConnectionStatus}
-            isLoggedIn={isLoggedIn}
-          />
-        </Tabs>
+        <ConnectTabsContent
+          professionals={professionals}
+          communities={communities}
+          events={events}
+          onConnect={onConnect}
+          onMessage={onMessage}
+          onJoinCommunity={onJoinCommunity}
+          onEventClick={openRegistrationSidebar}
+          onRegisterEvent={openRegistrationSidebar}
+          onCreatorClick={openProfessionalDialog}
+          onViewAll={handleViewAll}
+          onRefresh={onRefresh}
+          getConnectionStatus={getConnectionStatus}
+          isLoggedIn={isLoggedIn}
+        />
       </div>
 
       <EventRegistrationSidebar

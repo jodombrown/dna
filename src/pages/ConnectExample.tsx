@@ -1,16 +1,15 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import ConnectTabs from '@/components/connect/ConnectTabs';
-import ConnectDialogsManager from '@/components/connect/ConnectDialogsManager';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import PrototypeNotice from '@/components/connect/PrototypeNotice';
 import CallToActionSection from '@/components/connect/CallToActionSection';
 import SearchSection from '@/components/connect/search/SearchSection';
-import { demoProfessionals, demoCommunities, demoEvents } from '@/data/demoSearchData';
-import { Professional } from '@/types/search';
+import { useConnectFiltering } from '@/hooks/useConnectFiltering';
+import { Tabs } from '@/components/ui/tabs';
 
 const ConnectExample = () => {
   useScrollToTop();
@@ -18,9 +17,6 @@ const ConnectExample = () => {
   
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('professionals');
-  const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
-  const [professionalDialogOpen, setProfessionalDialogOpen] = useState(false);
-  const [demoExplanationOpen, setDemoExplanationOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
   const [filters, setFilters] = useState({
@@ -40,87 +36,28 @@ const ConnectExample = () => {
   }, [searchParams]);
 
 
-  // Filter and search logic
-  const filteredData = useMemo(() => {
-    const filterText = searchTerm.toLowerCase();
-    
-    const filteredProfessionals = demoProfessionals.filter(prof => {
-      // Text search
-      const matchesText = !searchTerm || 
-        prof.full_name.toLowerCase().includes(filterText) ||
-        prof.profession.toLowerCase().includes(filterText) ||
-        prof.company?.toLowerCase().includes(filterText) ||
-        prof.location?.toLowerCase().includes(filterText) ||
-        prof.bio?.toLowerCase().includes(filterText);
-      
-      // Location filter  
-      const matchesLocation = !filters.location || filters.location === 'all' || 
-        prof.location?.toLowerCase() === filters.location.toLowerCase() ||
-        prof.location?.toLowerCase().includes(filters.location.toLowerCase());
-      
-      // Skills filter
-      const matchesSkills = filters.skills.length === 0 ||
-        filters.skills.some(skill => 
-          prof.skills?.some(profSkill => 
-            profSkill.toLowerCase().includes(skill.toLowerCase())
-          )
-        );
-      
-      return matchesText && matchesLocation && matchesSkills;
-    });
+  // Use custom hook for filtering
+  const filteredData = useConnectFiltering(searchTerm, filters);
 
-    const filteredCommunities = demoCommunities.filter(comm => {
-      return !searchTerm || 
-        comm.name.toLowerCase().includes(filterText) ||
-        comm.description.toLowerCase().includes(filterText) ||
-        comm.category.toLowerCase().includes(filterText);
-    });
-
-    const filteredEvents = demoEvents.filter(event => {
-      return !searchTerm || 
-        event.title.toLowerCase().includes(filterText) ||
-        event.description?.toLowerCase().includes(filterText) ||
-        event.location?.toLowerCase().includes(filterText);
-    });
-
-    return {
-      professionals: filteredProfessionals,
-      communities: filteredCommunities,
-      events: filteredEvents
-    };
-  }, [searchTerm, filters]);
-
+  // Simplified handlers - removed console.log statements for efficiency
   const handleConnect = (professionalId: string) => {
-    console.log('Connect with professional:', professionalId);
+    // TODO: Implement actual connection logic
   };
 
   const handleMessage = (recipientId: string, recipientName: string) => {
-    console.log('Message professional:', recipientId, recipientName);
+    // TODO: Implement messaging logic
   };
 
   const handleJoinCommunity = () => {
-    console.log('Join community');
+    // TODO: Implement join community logic
   };
 
   const handleRegisterEvent = () => {
-    console.log('Register for event');
+    // TODO: Implement event registration logic
   };
 
   const getConnectionStatus = (professionalId: string) => {
     return { status: 'not_connected' };
-  };
-
-  const handleRefresh = () => {
-    console.log('Refresh data');
-  };
-
-  const handleSearch = () => {
-    // Search happens automatically via real-time filtering in useMemo
-    console.log('Real-time search active:', searchTerm);
-  };
-
-  const handleClearSearch = () => {
-    setSearchTerm('');
   };
 
   return (
@@ -133,8 +70,8 @@ const ConnectExample = () => {
           <SearchSection
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
-            onSearch={handleSearch}
-            onClearSearch={handleClearSearch}
+            onSearch={() => {}} // Search is automatic via real-time filtering
+            onClearSearch={() => setSearchTerm('')}
             loading={false}
             filters={filters}
             onFiltersChange={setFilters}
@@ -147,34 +84,29 @@ const ConnectExample = () => {
             }}
           />
         </div>
-        <ConnectTabs
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          professionals={filteredData.professionals}
-          communities={filteredData.communities}
-          events={filteredData.events}
-          onConnect={handleConnect}
-          onMessage={handleMessage}
-          onJoinCommunity={handleJoinCommunity}
-          onRegisterEvent={handleRegisterEvent}
-          getConnectionStatus={getConnectionStatus}
-          isLoggedIn={false}
-          onRefresh={handleRefresh}
-        />
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <ConnectTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            professionals={filteredData.professionals}
+            communities={filteredData.communities}
+            events={filteredData.events}
+            onConnect={handleConnect}
+            onMessage={handleMessage}
+            onJoinCommunity={handleJoinCommunity}
+            onRegisterEvent={handleRegisterEvent}
+            getConnectionStatus={getConnectionStatus}
+            isLoggedIn={false}
+            onRefresh={() => {}} // Remove console.log
+          />
+        </Tabs>
+        
         <CallToActionSection onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
       </main>
 
       <Footer />
       
-      <ConnectDialogsManager 
-        professionalDialogOpen={professionalDialogOpen}
-        selectedProfessional={selectedProfessional}
-        onProfessionalDialogChange={setProfessionalDialogOpen}
-        onConnect={handleConnect}
-        onMessage={handleMessage}
-        demoExplanationOpen={demoExplanationOpen}
-        onDemoExplanationChange={setDemoExplanationOpen}
-      />
       
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
