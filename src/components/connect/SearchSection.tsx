@@ -122,8 +122,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
             placeholder="Search professionals, communities, events..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="pl-10 pr-10"
+            className="pl-10 pr-10 h-12 text-base"
           />
           {searchTerm && (
             <button
@@ -134,18 +133,6 @@ const SearchSection: React.FC<SearchSectionProps> = ({
             </button>
           )}
         </div>
-        
-        <Button 
-          onClick={onSearch} 
-          disabled={loading}
-          className="bg-dna-emerald hover:bg-dna-forest"
-        >
-          {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Search className="w-4 h-4" />
-          )}
-        </Button>
 
         {/* Advanced Filters */}
         <Popover>

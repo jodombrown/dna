@@ -114,9 +114,8 @@ const ConnectExample = () => {
   };
 
   const handleSearch = () => {
-    // Search is already handled by the filteredData useMemo
-    // This triggers re-filtering automatically when searchTerm changes
-    console.log('Search triggered:', searchTerm, 'Results:', filteredData);
+    // Search happens automatically via real-time filtering in useMemo
+    console.log('Real-time search active:', searchTerm);
   };
 
   const handleClearSearch = () => {
