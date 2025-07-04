@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -7,6 +7,7 @@ import ConnectDialogsManager from '@/components/connect/ConnectDialogsManager';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import PrototypeNotice from '@/components/connect/PrototypeNotice';
 import CallToActionSection from '@/components/connect/CallToActionSection';
+import SearchSection from '@/components/connect/SearchSection';
 import { demoProfessionals, demoCommunities, demoEvents } from '@/data/demoSearchData';
 import { Professional } from '@/types/search';
 
@@ -18,6 +19,63 @@ const ConnectExample = () => {
   const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
   const [professionalDialogOpen, setProfessionalDialogOpen] = useState(false);
   const [demoExplanationOpen, setDemoExplanationOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    location: '',
+    skills: [],
+    isMentor: false,
+    isInvestor: false,
+    lookingForOpportunities: false
+  });
+
+  // Filter and search logic
+  const filteredData = useMemo(() => {
+    const filterText = searchTerm.toLowerCase();
+    
+    const filteredProfessionals = demoProfessionals.filter(prof => {
+      // Text search
+      const matchesText = !searchTerm || 
+        prof.full_name.toLowerCase().includes(filterText) ||
+        prof.profession.toLowerCase().includes(filterText) ||
+        prof.company?.toLowerCase().includes(filterText) ||
+        prof.location?.toLowerCase().includes(filterText) ||
+        prof.bio?.toLowerCase().includes(filterText);
+      
+      // Location filter
+      const matchesLocation = !filters.location || 
+        prof.location?.includes(filters.location);
+      
+      // Skills filter
+      const matchesSkills = filters.skills.length === 0 ||
+        filters.skills.some(skill => 
+          prof.skills?.some(profSkill => 
+            profSkill.toLowerCase().includes(skill.toLowerCase())
+          )
+        );
+      
+      return matchesText && matchesLocation && matchesSkills;
+    });
+
+    const filteredCommunities = demoCommunities.filter(comm => {
+      return !searchTerm || 
+        comm.name.toLowerCase().includes(filterText) ||
+        comm.description.toLowerCase().includes(filterText) ||
+        comm.category.toLowerCase().includes(filterText);
+    });
+
+    const filteredEvents = demoEvents.filter(event => {
+      return !searchTerm || 
+        event.title.toLowerCase().includes(filterText) ||
+        event.description?.toLowerCase().includes(filterText) ||
+        event.location?.toLowerCase().includes(filterText);
+    });
+
+    return {
+      professionals: filteredProfessionals,
+      communities: filteredCommunities,
+      events: filteredEvents
+    };
+  }, [searchTerm, filters]);
 
   const handleConnect = (professionalId: string) => {
     console.log('Connect with professional:', professionalId);
@@ -43,18 +101,40 @@ const ConnectExample = () => {
     console.log('Refresh data');
   };
 
+  const handleSearch = () => {
+    console.log('Search triggered:', searchTerm);
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <PrototypeNotice />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <SearchSection
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          onSearch={handleSearch}
+          onClearSearch={handleClearSearch}
+          loading={false}
+          filters={filters}
+          onFiltersChange={setFilters}
+          resultCounts={{
+            professionals: filteredData.professionals.length,
+            communities: filteredData.communities.length,
+            events: filteredData.events.length
+          }}
+        />
         <ConnectTabs
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          professionals={demoProfessionals}
-          communities={demoCommunities}
-          events={demoEvents}
+          professionals={filteredData.professionals}
+          communities={filteredData.communities}
+          events={filteredData.events}
           onConnect={handleConnect}
           onMessage={handleMessage}
           onJoinCommunity={handleJoinCommunity}
