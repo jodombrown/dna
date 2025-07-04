@@ -89,7 +89,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[80%] sm:w-[400px] overflow-y-auto">
+      <SheetContent side="right" className="w-[65%] sm:w-[350px] overflow-y-auto">
         <SheetHeader className="mb-6">
           <div className="flex items-center justify-between">
             <SheetTitle>Advanced Filters</SheetTitle>
