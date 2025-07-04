@@ -193,7 +193,7 @@ const About = () => {
                     resources for positive change. By connecting our collective knowledge, passion, and 
                     resources, we can transform challenges into opportunities and unlock Africa's limitless potential."
                   </blockquote>
-                  <cite className="text-dna-copper font-semibold">— Jaûne L. Odombrown</cite>
+                  <cite className="text-dna-copper font-semibold">- Jaûne L. Odombrown</cite>
                 </CardContent>
               </Card>
             </div>

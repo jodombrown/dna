@@ -15,7 +15,7 @@ const CollaborationsPageHeaderSection = () => {
           </h1>
           <p className={`max-w-3xl mx-auto ${isMobile ? 'text-base' : 'text-lg lg:text-xl'} text-gray-100 leading-relaxed`}>
             Join high-impact initiatives across the continent. Whether you're bringing funding, expertise, 
-            networks, or passion—your contribution shapes Africa's tomorrow.
+            networks, or passion - your contribution shapes Africa's tomorrow.
           </p>
           <div className={`flex ${isMobile ? 'flex-col space-y-3' : 'flex-row space-x-4'} justify-center items-center ${isMobile ? 'mt-6' : 'mt-8'}`}>
             <div className="flex items-center space-x-2">

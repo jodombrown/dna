@@ -60,7 +60,7 @@ const InteractiveTimeline = () => {
         <div className="mt-8 bg-dna-emerald/10 rounded-xl p-6">
           <h4 className="text-xl font-bold text-dna-forest mb-3">The Decade's Legacy</h4>
           <p className="text-gray-700 leading-relaxed">
-            This ten-year journey tells the story of human resilience, technological innovation, and the unbreakable bonds of family and community. What began as simple money transfers evolved into a sophisticated ecosystem of financial inclusion, technological advancement, and economic development. The diaspora didn't just send money home—they sent hope, opportunity, and the tools for transformation.
+            This ten-year journey tells the story of human resilience, technological innovation, and the unbreakable bonds of family and community. What began as simple money transfers evolved into a sophisticated ecosystem of financial inclusion, technological advancement, and economic development. The diaspora didn't just send money home - they sent hope, opportunity, and the tools for transformation.
           </p>
         </div>
       </div>

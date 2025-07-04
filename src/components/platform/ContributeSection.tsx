@@ -22,7 +22,7 @@ const ContributeSection = () => {
             </div>
             <p className="text-xl text-gray-600 mb-8">
               Discover pathways to create lasting impact. Whether through investment, expertise, time, 
-              or advocacy—find purposeful ways to advance Africa's progress.
+              or advocacy - find purposeful ways to advance Africa's progress.
             </p>
             
             <div className="space-y-4 mb-8">

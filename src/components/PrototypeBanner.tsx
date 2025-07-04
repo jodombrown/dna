@@ -37,7 +37,7 @@ const PrototypeBanner: React.FC = () => {
             You're using the DNA Platform Prototype!
           </h3>
           <p className="text-xs md:text-sm text-gray-700">
-            This is an early preview of Diaspora Network of Africa—your ideas, feedback, and involvement
+            This is an early preview of Diaspora Network of Africa - your ideas, feedback, and involvement
             will shape the future of our community-powered professional platform.
             <br className="hidden md:block" />
             <span className="font-semibold">Help us build a home for Africa's Diaspora!</span>
