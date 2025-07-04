@@ -125,6 +125,18 @@ const SavedPage = () => {
     }
   }, [savedItems, loading]);
 
+  // Helper function to get item title - moved before useMemo
+  const getItemTitle = (item: any) => {
+    const post = savedPosts.find(p => p.id === item.target_id);
+    const event = savedEvents.find(e => e.id === item.target_id);
+    const opportunity = savedOpportunities.find(o => o.id === item.target_id);
+    
+    if (post) return post.content.substring(0, 60) + '...';
+    if (event) return event.title;
+    if (opportunity) return opportunity.title;
+    return 'Saved Item';
+  };
+
   // Filter and sort saved items
   const filteredItems = useMemo(() => {
     let filtered = [...savedItems];
@@ -189,16 +201,6 @@ const SavedPage = () => {
     return filtered;
   }, [savedItems, searchQuery, dateFilter, sortBy, savedPosts, savedEvents, savedOpportunities]);
 
-  const getItemTitle = (item: any) => {
-    const post = savedPosts.find(p => p.id === item.target_id);
-    const event = savedEvents.find(e => e.id === item.target_id);
-    const opportunity = savedOpportunities.find(o => o.id === item.target_id);
-    
-    if (post) return post.content.substring(0, 60) + '...';
-    if (event) return event.title;
-    if (opportunity) return opportunity.title;
-    return 'Saved Item';
-  };
 
   const enrichedItems = filteredItems.map(item => ({
     ...item,
