@@ -4,7 +4,7 @@ import {
   validateProfessionalField,
   validateBioContent,
   isValidLinkedInUrl
-} from '@/utils/securityValidation';
+} from '@/utils/validation';
 
 interface FormErrors {
   full_name?: string;
