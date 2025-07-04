@@ -67,7 +67,7 @@ const ConnectSection = () => {
                     </div>
                     <Button 
                       size="sm" 
-                      className="ml-auto animate-heartbeat bg-dna-emerald hover:bg-dna-forest text-white"
+                      className="ml-auto animate-heartbeat bg-gray-900 hover:bg-gray-800 text-white"
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate('/connect');
@@ -85,7 +85,7 @@ const ConnectSection = () => {
                     </div>
                     <Button 
                       size="sm" 
-                      className="ml-auto animate-heartbeat-delayed bg-dna-emerald hover:bg-dna-forest text-white"
+                      className="ml-auto animate-heartbeat-delayed bg-gray-900 hover:bg-gray-800 text-white"
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate('/connect');
