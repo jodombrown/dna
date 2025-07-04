@@ -1183,14 +1183,17 @@ export type Database = {
       }
       posts: {
         Row: {
+          banner_url: string | null
           comments_count: number | null
           content: string
           created_at: string | null
+          date_time: string | null
           hashtags: string[] | null
           id: string
           image_url: string | null
           is_published: boolean | null
           likes_count: number | null
+          location: string | null
           media_urls: string[] | null
           moderated_at: string | null
           moderated_by: string | null
@@ -1203,14 +1206,17 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          banner_url?: string | null
           comments_count?: number | null
           content: string
           created_at?: string | null
+          date_time?: string | null
           hashtags?: string[] | null
           id?: string
           image_url?: string | null
           is_published?: boolean | null
           likes_count?: number | null
+          location?: string | null
           media_urls?: string[] | null
           moderated_at?: string | null
           moderated_by?: string | null
@@ -1223,14 +1229,17 @@ export type Database = {
           user_id: string
         }
         Update: {
+          banner_url?: string | null
           comments_count?: number | null
           content?: string
           created_at?: string | null
+          date_time?: string | null
           hashtags?: string[] | null
           id?: string
           image_url?: string | null
           is_published?: boolean | null
           likes_count?: number | null
+          location?: string | null
           media_urls?: string[] | null
           moderated_at?: string | null
           moderated_by?: string | null
