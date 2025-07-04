@@ -1,11 +1,29 @@
 import React, { useState, useRef } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ImagePlus, Send, X, Calendar, Lightbulb, Target, ChevronDown, ChevronUp } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { 
+  ImagePlus, 
+  Send, 
+  X, 
+  Calendar, 
+  Lightbulb, 
+  Target, 
+  ChevronDown, 
+  ChevronUp,
+  MapPin,
+  Clock,
+  Users,
+  ThumbsUp,
+  MessageCircle,
+  Share2,
+  Bookmark
+} from 'lucide-react';
 import { useAuth } from '@/contexts/CleanAuthContext';
 import { useCleanSocialPosts } from '@/hooks/useCleanSocialPosts';
 import { useImageUpload } from '@/hooks/useImageUpload';
@@ -19,6 +37,7 @@ const UnifiedContentCreator: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<ContentType>('post');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   // Form states
   const [content, setContent] = useState('');
@@ -100,128 +119,250 @@ const UnifiedContentCreator: React.FC = () => {
       setTitle('');
       setLocation('');
       setDateTime('');
-      setSelectedImage(null);
-      setImagePreview(null);
-      setSelectedBanner(null);
-      setBannerPreview(null);
+      removeImage('image');
+      removeImage('banner');
       setIsExpanded(false);
-      if (imageInputRef.current) imageInputRef.current.value = '';
-      if (bannerInputRef.current) bannerInputRef.current.value = '';
+      setShowPreview(false);
+    } catch (error) {
+      console.error('Error creating post:', error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const resetForm = () => {
+    setContent('');
+    setTitle('');
+    setLocation('');
+    setDateTime('');
+    removeImage('image');
+    removeImage('banner');
+    setIsExpanded(false);
+    setShowPreview(false);
+  };
+
+  const getTabInfo = (type: ContentType) => {
+    switch (type) {
+      case 'post':
+        return { icon: <Target className="w-4 h-4" />, label: 'Post', color: 'text-blue-600' };
+      case 'event':
+        return { icon: <Calendar className="w-4 h-4" />, label: 'Event', color: 'text-purple-600' };
+      case 'initiative':
+        return { icon: <Lightbulb className="w-4 h-4" />, label: 'Initiative', color: 'text-green-600' };
+      case 'opportunity':
+        return { icon: <Target className="w-4 h-4" />, label: 'Opportunity', color: 'text-orange-600' };
+      default:
+        return { icon: <Target className="w-4 h-4" />, label: 'Post', color: 'text-blue-600' };
+    }
+  };
+
+  // Preview Component - Shows exactly how the post will look
+  const PreviewCard = () => {
+    const tabInfo = getTabInfo(activeTab);
+    const displayTitle = title || (activeTab !== 'post' ? `New ${tabInfo.label}` : '');
+    const displayContent = content || `Share your ${activeTab} with the diaspora community...`;
+
+    return (
+      <Card className="mt-4 border-2 border-dashed border-gray-300">
+        <CardHeader className="text-center py-2">
+          <p className="text-xs text-gray-500 font-medium">PREVIEW - How your {activeTab} will appear</p>
+        </CardHeader>
+        <CardContent className="p-6">
+          {/* Post Header */}
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-start gap-3">
+              <Avatar className="w-12 h-12">
+                <AvatarImage src={profile?.avatar_url || profile?.profile_picture_url} />
+                <AvatarFallback>{profile?.full_name?.charAt(0) || 'U'}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-sm">{profile?.display_name || profile?.full_name || 'Your Name'}</h3>
+                  {activeTab !== 'post' && (
+                    <Badge variant="outline" className={`text-xs flex items-center gap-1 ${tabInfo.color}`}>
+                      {tabInfo.icon}
+                      {tabInfo.label}
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500">{profile?.profession || 'Professional'}</p>
+                <p className="text-xs text-gray-400">Just now</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Banner Image */}
+          {bannerPreview && (
+            <div className="rounded-lg overflow-hidden mb-4">
+              <img 
+                src={bannerPreview} 
+                alt="Banner preview"
+                className="w-full h-32 object-cover"
+              />
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="mb-4">
+            {displayTitle && (
+              <h2 className="text-lg font-semibold mb-2">{displayTitle}</h2>
+            )}
+            <p className="text-sm text-gray-900 leading-relaxed whitespace-pre-wrap">{displayContent}</p>
+            
+            {imagePreview && (
+              <div className="rounded-lg overflow-hidden mt-3">
+                <img 
+                  src={imagePreview} 
+                  alt="Content preview"
+                  className="w-full max-h-64 object-cover"
+                />
+              </div>
+            )}
+
+            {/* Event/Initiative specific fields */}
+            {(activeTab === 'event' || activeTab === 'initiative') && (
+              <div className="mt-3 flex flex-wrap gap-3 text-sm text-gray-600">
+                {location && (
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>{location}</span>
+                  </div>
+                )}
+                {dateTime && (
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>{new Date(dateTime).toLocaleDateString()}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <Separator className="mb-4" />
+
+          {/* Action Buttons Preview */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 text-xs text-gray-600" disabled>
+                <ThumbsUp className="w-4 h-4" />
+                Like
+              </Button>
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 text-xs text-gray-600" disabled>
+                <MessageCircle className="w-4 h-4" />
+                Comment
+              </Button>
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 text-xs text-gray-600" disabled>
+                <Share2 className="w-4 h-4" />
+                Share
+              </Button>
+            </div>
+            <Button variant="ghost" size="sm" className="text-xs text-gray-600" disabled>
+              <Bookmark className="w-4 h-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   if (!user) return null;
 
-  const getTabIcon = (type: ContentType) => {
-    switch (type) {
-      case 'event': return Calendar;
-      case 'initiative': return Lightbulb;
-      case 'opportunity': return Target;
-      default: return Send;
-    }
-  };
-
-  const getTabLabel = (type: ContentType) => {
-    switch (type) {
-      case 'event': return 'Event';
-      case 'initiative': return 'Initiative';
-      case 'opportunity': return 'Opportunity';
-      default: return 'Post';
-    }
-  };
-
-  const getPlaceholder = (type: ContentType) => {
-    switch (type) {
-      case 'event': return 'Share details about your event...';
-      case 'initiative': return 'Describe your initiative and how others can get involved...';
-      case 'opportunity': return 'Share this opportunity with the DNA community...';
-      default: return 'Share your thoughts with the DNA community...';
-    }
-  };
-
-  const canSubmit = (content.trim() || title.trim() || selectedImage || selectedBanner) && !isSubmitting && !uploading;
-
   return (
-    <Card className="mb-6">
+    <Card className="bg-white shadow-sm">
       <CardContent className="p-4">
-        {!isExpanded ? (
-          // Collapsed state
-          <div className="flex items-center gap-4 cursor-pointer" onClick={() => setIsExpanded(true)}>
+        {/* Collapsed State */}
+        {!isExpanded && (
+          <div 
+            className="flex items-center gap-3 cursor-pointer"
+            onClick={() => setIsExpanded(true)}
+          >
             <Avatar className="w-10 h-10">
-              <AvatarImage src={profile?.avatar_url} alt={profile?.full_name} />
-              <AvatarFallback className="bg-dna-mint text-dna-forest">
-                {profile?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
-              </AvatarFallback>
+              <AvatarImage src={profile?.avatar_url || profile?.profile_picture_url} />
+              <AvatarFallback>{profile?.full_name?.charAt(0) || 'U'}</AvatarFallback>
             </Avatar>
-            <div className="flex-1 bg-gray-50 rounded-full px-4 py-3 text-gray-500 hover:bg-gray-100 transition-colors">
-              What would you like to share?
+            <div 
+              className="flex-1 bg-gray-100 rounded-full px-4 py-3 text-gray-500 text-sm cursor-text"
+            >
+              Share something with the diaspora community...
             </div>
-            <ChevronDown className="w-5 h-5 text-gray-400" />
           </div>
-        ) : (
-          // Expanded state
+        )}
+
+        {/* Expanded State */}
+        {isExpanded && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Avatar className="w-10 h-10">
-                  <AvatarImage src={profile?.avatar_url} alt={profile?.full_name} />
-                  <AvatarFallback className="bg-dna-mint text-dna-forest">
-                    {profile?.full_name?.charAt(0) || user.email?.charAt(0) || 'U'}
-                  </AvatarFallback>
+                  <AvatarImage src={profile?.avatar_url || profile?.profile_picture_url} />
+                  <AvatarFallback>{profile?.full_name?.charAt(0) || 'U'}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-medium text-sm">{profile?.full_name || 'DNA Member'}</p>
-                  <p className="text-xs text-gray-500">{profile?.profession || 'Professional'}</p>
+                  <p className="font-medium text-sm">{profile?.display_name || profile?.full_name}</p>
+                  <p className="text-xs text-gray-500">{profile?.profession}</p>
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setIsExpanded(false)}
-                className="p-1"
-              >
-                <ChevronUp className="w-4 h-4" />
-              </Button>
+              
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowPreview(!showPreview)}
+                  className="text-xs"
+                >
+                  {showPreview ? 'Edit' : 'Preview'}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetForm}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
 
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ContentType)}>
-              <TabsList className="grid w-full grid-cols-4">
-                {(['post', 'event', 'initiative', 'opportunity'] as ContentType[]).map((type) => {
-                  const Icon = getTabIcon(type);
-                  return (
-                    <TabsTrigger key={type} value={type} className="flex items-center gap-2">
-                      <Icon className="w-4 h-4" />
-                      <span className="hidden sm:inline">{getTabLabel(type)}</span>
+            {!showPreview ? (
+              <>
+                {/* Content Type Tabs */}
+                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ContentType)}>
+                  <TabsList className="grid w-full grid-cols-4">
+                    <TabsTrigger value="post" className="flex items-center gap-1 text-xs">
+                      <Target className="w-3 h-3" />
+                      Post
                     </TabsTrigger>
-                  );
-                })}
-              </TabsList>
+                    <TabsTrigger value="event" className="flex items-center gap-1 text-xs">
+                      <Calendar className="w-3 h-3" />
+                      Event
+                    </TabsTrigger>
+                    <TabsTrigger value="initiative" className="flex items-center gap-1 text-xs">
+                      <Lightbulb className="w-3 h-3" />
+                      Initiative
+                    </TabsTrigger>
+                    <TabsTrigger value="opportunity" className="flex items-center gap-1 text-xs">
+                      <Target className="w-3 h-3" />
+                      Opportunity
+                    </TabsTrigger>
+                  </TabsList>
 
-              {(['post', 'event', 'initiative', 'opportunity'] as ContentType[]).map((type) => (
-                <TabsContent key={type} value={type} className="space-y-4 mt-4">
-                  {(type === 'event' || type === 'initiative' || type === 'opportunity') && (
+                  <TabsContent value="post" className="space-y-3">
+                    <Textarea
+                      placeholder="What's on your mind? Share your thoughts, insights, or experiences with the diaspora community..."
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      className="min-h-[100px] resize-none"
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="event" className="space-y-3">
                     <Input
-                      placeholder={`${getTabLabel(type)} title...`}
+                      placeholder="Event title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="font-medium"
                     />
-                  )}
-
-                  <Textarea
-                    placeholder={getPlaceholder(type)}
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    className="min-h-[80px] resize-none border-none shadow-none focus-visible:ring-0"
-                    maxLength={500}
-                  />
-
-                  {type === 'event' && (
                     <div className="grid grid-cols-2 gap-3">
                       <Input
-                        placeholder="Event location"
+                        placeholder="Location"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                       />
@@ -231,93 +372,177 @@ const UnifiedContentCreator: React.FC = () => {
                         onChange={(e) => setDateTime(e.target.value)}
                       />
                     </div>
-                  )}
+                    <Textarea
+                      placeholder="Event description, agenda, or details..."
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      className="min-h-[100px] resize-none"
+                    />
+                  </TabsContent>
 
-                  {bannerPreview && (
-                    <div className="relative">
-                      <img 
-                        src={bannerPreview} 
-                        alt="Banner preview" 
-                        className="w-full h-32 object-cover rounded-lg border"
-                      />
-                      <button
-                        onClick={() => removeImage('banner')}
-                        className="absolute top-2 right-2 p-1 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-75"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
+                  <TabsContent value="initiative" className="space-y-3">
+                    <Input
+                      placeholder="Initiative title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                    <Input
+                      placeholder="Impact area or focus region"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                    />
+                    <Textarea
+                      placeholder="Describe your initiative, goals, and how others can contribute..."
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      className="min-h-[100px] resize-none"
+                    />
+                  </TabsContent>
 
-                  {imagePreview && (
-                    <div className="relative inline-block">
-                      <img 
-                        src={imagePreview} 
-                        alt="Image preview" 
-                        className="max-w-full h-auto max-h-48 rounded-lg border"
-                      />
-                      <button
-                        onClick={() => removeImage('image')}
-                        className="absolute top-2 right-2 p-1 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-75"
+                  <TabsContent value="opportunity" className="space-y-3">
+                    <Input
+                      placeholder="Opportunity title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                    <Input
+                      placeholder="Location or region"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                    />
+                    <Textarea
+                      placeholder="Describe the opportunity, requirements, and application process..."
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      className="min-h-[100px] resize-none"
+                    />
+                  </TabsContent>
+                </Tabs>
+
+                {/* Media Upload */}
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => imageInputRef.current?.click()}
+                      disabled={uploading}
+                      className="text-xs"
+                    >
+                      <ImagePlus className="w-4 h-4 mr-1" />
+                      Add Image
+                    </Button>
+                    
+                    {activeTab !== 'post' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => bannerInputRef.current?.click()}
+                        disabled={uploading}
+                        className="text-xs"
                       >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
-                </TabsContent>
-              ))}
-            </Tabs>
-            
+                        <ImagePlus className="w-4 h-4 mr-1" />
+                        Add Banner
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Image Previews */}
+                {imagePreview && (
+                  <div className="relative">
+                    <img src={imagePreview} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeImage('image')}
+                      className="absolute top-2 right-2"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+
+                {bannerPreview && (
+                  <div className="relative">
+                    <img src={bannerPreview} alt="Banner Preview" className="w-full h-32 object-cover rounded-lg" />
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeImage('banner')}
+                      className="absolute top-2 right-2"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+
+                {/* Hidden file inputs */}
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageSelect(e, 'image')}
+                  className="hidden"
+                />
+                <input
+                  ref={bannerInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageSelect(e, 'banner')}
+                  className="hidden"
+                />
+              </>
+            ) : (
+              <PreviewCard />
+            )}
+
+            {/* Action Buttons */}
             <div className="flex items-center justify-between pt-3 border-t">
               <div className="flex items-center gap-2">
-                <input
-                  type="file"
-                  ref={bannerInputRef}
-                  onChange={(e) => handleImageSelect(e, 'banner')}
-                  accept="image/*"
-                  className="hidden"
-                />
-                <input
-                  type="file"
-                  ref={imageInputRef}
-                  onChange={(e) => handleImageSelect(e, 'image')}
-                  accept="image/*"
-                  className="hidden"
-                />
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-gray-500"
-                  onClick={() => bannerInputRef.current?.click()}
-                  disabled={uploading}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowPreview(!showPreview)}
+                  className="text-xs"
                 >
-                  <ImagePlus className="w-4 h-4 mr-1" />
-                  Banner
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-gray-500"
-                  onClick={() => imageInputRef.current?.click()}
-                  disabled={uploading}
-                >
-                  <ImagePlus className="w-4 h-4 mr-1" />
-                  Image
+                  {showPreview ? (
+                    <>
+                      <ChevronUp className="w-4 h-4 mr-1" />
+                      Edit
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="w-4 h-4 mr-1" />
+                      Preview
+                    </>
+                  )}
                 </Button>
               </div>
               
               <div className="flex items-center gap-2">
-                {content.length > 0 && (
-                  <span className="text-xs text-gray-500">
-                    {content.length}/500
-                  </span>
-                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetForm}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
                 <Button
                   onClick={handleSubmit}
-                  disabled={!canSubmit}
+                  disabled={(!content.trim() && !title.trim()) || isSubmitting || uploading}
+                  size="sm"
                   className="bg-dna-emerald hover:bg-dna-forest text-white"
                 >
-                  {isSubmitting ? 'Sharing...' : 'Share'}
+                  {isSubmitting ? (
+                    'Posting...'
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-1" />
+                      Post
+                    </>
+                  )}
                 </Button>
               </div>
             </div>

@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { 
   Heart, 
   MessageCircle,
-  Share,
-  MoreHorizontal
+  Share2,
+  MoreHorizontal,
+  ThumbsUp
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/contexts/CleanAuthContext';
+import { useToast } from '@/hooks/use-toast';
 import FollowButton from '@/components/FollowButton';
 import TagFollowButton from '@/components/TagFollowButton';
 import BookmarkButton from '@/components/BookmarkButton';
@@ -22,6 +25,34 @@ interface PostItemProps {
 
 const PostItem: React.FC<PostItemProps> = ({ post }) => {
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likes_count);
+  const [commentsCount, setCommentsCount] = useState(post.comments_count);
+
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
+    toast({
+      title: isLiked ? "Unliked" : "Liked",
+      description: `You ${isLiked ? 'unliked' : 'liked'} this post`,
+    });
+  };
+
+  const handleComment = () => {
+    toast({
+      title: "Comments",
+      description: "Comment feature coming soon!",
+    });
+  };
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({
+      title: "Shared",
+      description: "Post link copied to clipboard",
+    });
+  };
 
   const renderContent = (content: string) => {
     return content.split(/(\s+)/).map((word, index) => {
@@ -112,19 +143,38 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-4 border-t">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-red-500 transition-colors">
-              <Heart className="w-4 h-4 mr-1" />
-              <span className="text-sm">{post.likes_count}</span>
+        <Separator className="mb-4" />
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleLike}
+              className={`flex items-center gap-2 text-xs transition-colors ${
+                isLiked ? 'text-red-500 bg-red-50' : 'text-gray-600 hover:text-red-500'
+              }`}
+            >
+              {isLiked ? <Heart className="w-4 h-4 fill-current" /> : <ThumbsUp className="w-4 h-4" />}
+              <span>{likesCount}</span>
             </Button>
-            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-blue-500 transition-colors">
-              <MessageCircle className="w-4 h-4 mr-1" />
-              <span className="text-sm">{post.comments_count}</span>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleComment}
+              className="flex items-center gap-2 text-xs text-gray-600 hover:text-blue-500 transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>{commentsCount}</span>
             </Button>
-            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-green-500 transition-colors">
-              <Share className="w-4 h-4 mr-1" />
-              <span className="text-sm">{post.shares_count}</span>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleShare}
+              className="flex items-center gap-2 text-xs text-gray-600 hover:text-green-500 transition-colors"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>{post.shares_count}</span>
             </Button>
           </div>
         </div>

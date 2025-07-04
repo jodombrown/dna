@@ -39,12 +39,16 @@ const EnhancedSocialFeed: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Unified Content Creator */}
-      <UnifiedContentCreator />
+    <div className="h-full flex flex-col">
+      {/* Sticky Content Creator */}
+      <div className="sticky top-0 z-20 bg-gray-50 pb-4">
+        <UnifiedContentCreator />
+      </div>
 
-      {/* Combined Feed */}
-      <FeedContent content={allContent} loading={loading} />
+      {/* Scrollable Feed */}
+      <div className="flex-1 overflow-y-auto">
+        <FeedContent content={allContent} loading={loading} />
+      </div>
     </div>
   );
 };
