@@ -11,9 +11,6 @@ import CollaborationsExample from "./pages/CollaborationsExample";
 import ConnectExample from "./pages/ConnectExample";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
-import AdminAnalyticsDashboard from "./pages/AdminAnalyticsDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
-import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import MarketResearchPhase from "./pages/MarketResearchPhase";
 import PrototypingPhase from "./pages/PrototypingPhase";
 import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
@@ -46,8 +43,6 @@ function App() {
               <Route path="/phase/mvp" element={<MvpPhase />} />
               <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
             <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
-              <Route path="/admin/dashboard" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
-              <Route path="/admin/analytics" element={<ProtectedAdminRoute><AdminAnalyticsDashboard /></ProtectedAdminRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
