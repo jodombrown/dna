@@ -61,7 +61,7 @@ const Contact = () => {
     {
       icon: <Phone className="w-6 h-6" />,
       title: "Schedule a Call",
-      detail: "Book a 30-minute conversation",
+      detail: "",
       description: "Perfect for partnership discussions"
     }
   ];
