@@ -6,7 +6,10 @@ export const useScrollToTop = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Always scroll to top when the pathname changes
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
+    // Only scroll to top for new navigation (not back/forward)
+    // The browser handles scroll restoration for back/forward navigation
+    if (location.state?.preserveScroll !== true) {
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname, location.state]);
 };

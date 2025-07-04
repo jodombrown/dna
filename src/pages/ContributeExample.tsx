@@ -11,8 +11,11 @@ import ContributeDialogs from '@/components/contribute/ContributeDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import Footer from '@/components/Footer';
 import { useContributeLogic } from '@/hooks/useContributeLogic';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const ContributeExample = () => {
+  useScrollToTop();
+  
   const {
     isFeedbackPanelOpen,
     setIsFeedbackPanelOpen,

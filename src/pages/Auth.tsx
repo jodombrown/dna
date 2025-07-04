@@ -4,8 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Users, Handshake, Heart } from 'lucide-react';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const Auth = () => {
+  useScrollToTop();
+  
   const navigate = useNavigate();
   const [showDemo, setShowDemo] = useState(false);
 

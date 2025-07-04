@@ -19,9 +19,12 @@ import {
   MessageSquare,
   Lightbulb,
   Briefcase
-} from 'lucide-react';
+ } from 'lucide-react';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const EnhancedContact = () => {
+  useScrollToTop();
+  
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({

@@ -8,8 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
 import { Users, Target, Heart, Globe, TrendingUp, Star, ArrowRight, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const EnhancedAbout = () => {
+  useScrollToTop();
+  
   const navigate = useNavigate();
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 

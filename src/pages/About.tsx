@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,8 +9,12 @@ import { Button } from '@/components/ui/button';
 import { Users, Globe, Lightbulb, Heart, Target, Zap, Quote } from 'lucide-react';
 import JoinDNADialog from '@/components/auth/JoinDNADialog';
 import SurveyDialog from '@/components/survey/SurveyDialog';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const About = () => {
+  useScrollToTop();
+  const navigate = useNavigate();
+  
   const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
 
@@ -321,7 +326,7 @@ const About = () => {
               Join the Platform
             </Button>
             <Button 
-              onClick={() => window.location.href = '/contact'}
+              onClick={() => navigate('/contact')}
               variant="outline"
               className="border-2 border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white px-10 py-4 text-lg rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
             >

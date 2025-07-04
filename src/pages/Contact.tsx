@@ -8,8 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { MessageCircle, Globe, ChevronDown, ChevronRight } from 'lucide-react';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const Contact = () => {
+  useScrollToTop();
+  
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
