@@ -129,20 +129,22 @@ const ConnectExample = () => {
       <PrototypeNotice />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <SearchSection
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          onSearch={handleSearch}
-          onClearSearch={handleClearSearch}
-          loading={false}
-          filters={filters}
-          onFiltersChange={setFilters}
-          resultCounts={{
-            professionals: filteredData.professionals.length,
-            communities: filteredData.communities.length,
-            events: filteredData.events.length
-          }}
-        />
+        <div className="sticky top-16 z-20 bg-gray-50 pb-4">
+          <SearchSection
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            onSearch={handleSearch}
+            onClearSearch={handleClearSearch}
+            loading={false}
+            filters={filters}
+            onFiltersChange={setFilters}
+            resultCounts={{
+              professionals: filteredData.professionals.length,
+              communities: filteredData.communities.length,
+              events: filteredData.events.length
+            }}
+          />
+        </div>
         <ConnectTabs
           activeTab={activeTab}
           setActiveTab={setActiveTab}
