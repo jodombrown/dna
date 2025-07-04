@@ -138,6 +138,8 @@ const ConnectExample = () => {
             loading={false}
             filters={filters}
             onFiltersChange={setFilters}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
             resultCounts={{
               professionals: filteredData.professionals.length,
               communities: filteredData.communities.length,

@@ -3,6 +3,7 @@ import SearchInput from './SearchInput';
 import AdvancedFilters from './AdvancedFilters';
 import ActiveFilters from './ActiveFilters';
 import SearchResultsSummary from './SearchResultsSummary';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface SearchSectionProps {
   searchTerm: string;
@@ -23,6 +24,8 @@ interface SearchSectionProps {
     communities: number;
     events: number;
   };
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
 const SearchSection: React.FC<SearchSectionProps> = ({
@@ -33,7 +36,9 @@ const SearchSection: React.FC<SearchSectionProps> = ({
   loading,
   filters,
   onFiltersChange,
-  resultCounts
+  resultCounts,
+  activeTab,
+  onTabChange
 }) => {
   const handleClearSearch = () => {
     onSearchChange('');
@@ -57,7 +62,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
   ].filter(Boolean).length : 0;
 
   return (
-    <div className="mb-4 space-y-3">
+    <div className="space-y-3">
       {/* Main Search Bar */}
       <div className="flex gap-4 max-w-4xl mx-auto">
         <SearchInput
@@ -84,8 +89,19 @@ const SearchSection: React.FC<SearchSectionProps> = ({
         />
       )}
 
+      {/* Tabs Section */}
+      {activeTab && onTabChange && resultCounts && (
+        <Tabs value={activeTab} onValueChange={onTabChange} className="mb-2">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="professionals">Professionals ({resultCounts.professionals})</TabsTrigger>
+            <TabsTrigger value="communities">Communities ({resultCounts.communities})</TabsTrigger>
+            <TabsTrigger value="events">Events ({resultCounts.events})</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      )}
+
       {/* Search Results Summary */}
-      {resultCounts && (
+      {resultCounts && !activeTab && (
         <SearchResultsSummary
           searchTerm={searchTerm}
           hasActiveFilters={!!hasActiveFilters}
