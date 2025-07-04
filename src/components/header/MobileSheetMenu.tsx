@@ -36,7 +36,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="sm" className="md:hidden">
-          <Menu className="w-7 h-7" />
+          <Menu className="w-20 h-20" />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-80 p-0">
