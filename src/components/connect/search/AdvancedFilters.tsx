@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Filter } from 'lucide-react';
+import { Filter, X } from 'lucide-react';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 
 const SKILL_OPTIONS = [
   'Technology', 'Finance', 'Healthcare', 'Agriculture', 'Education',
@@ -37,6 +40,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   onFiltersChange,
   activeFilterCount
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const updateFilters = (key: string, value: any) => {
     onFiltersChange({
       ...filters,
@@ -68,10 +72,14 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
     filters.isInvestor || 
     filters.lookingForOpportunities;
 
+  const handleDone = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" className="relative">
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Button variant="outline" className="relative h-12 px-6 text-base">
           <Filter className="w-4 h-4 mr-2" />
           Filters
           {activeFilterCount > 0 && (
@@ -80,21 +88,28 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             </Badge>
           )}
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80 p-4">
-        <div className="space-y-4">
+      </SheetTrigger>
+      <SheetContent side="right" className="w-[80%] sm:w-[400px] overflow-y-auto">
+        <SheetHeader className="mb-6">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium">Advanced Filters</h4>
-            {hasActiveFilters && (
-              <Button variant="ghost" size="sm" onClick={clearAllFilters}>
-                Clear All
+            <SheetTitle>Advanced Filters</SheetTitle>
+            <SheetClose asChild>
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                <X className="w-4 h-4" />
               </Button>
-            )}
+            </SheetClose>
           </div>
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={clearAllFilters} className="w-fit">
+              Clear All Filters
+            </Button>
+          )}
+        </SheetHeader>
 
+        <div className="space-y-6">
           {/* Location Filter */}
           <div>
-            <label className="text-sm font-medium mb-2 block">Location</label>
+            <label className="text-sm font-medium mb-3 block text-gray-900">Location</label>
             <Select 
               value={filters.location || ''} 
               onValueChange={(value) => updateFilters('location', value)}
@@ -115,10 +130,10 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
           {/* Skills Filter */}
           <div>
-            <label className="text-sm font-medium mb-2 block">Skills</label>
-            <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+            <label className="text-sm font-medium mb-3 block text-gray-900">Skills</label>
+            <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto border rounded-lg p-3 bg-gray-50">
               {SKILL_OPTIONS.map(skill => (
-                <div key={skill} className="flex items-center space-x-2">
+                <div key={skill} className="flex items-center space-x-3 py-1">
                   <Checkbox
                     id={skill}
                     checked={filters.skills?.includes(skill) || false}
@@ -126,7 +141,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                   />
                   <label 
                     htmlFor={skill} 
-                    className="text-sm cursor-pointer"
+                    className="text-sm cursor-pointer text-gray-700 flex-1"
                   >
                     {skill}
                   </label>
@@ -137,43 +152,53 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
           {/* Professional Filters */}
           <div>
-            <label className="text-sm font-medium mb-2 block">Professional Status</label>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
+            <label className="text-sm font-medium mb-3 block text-gray-900">Professional Status</label>
+            <div className="space-y-3 border rounded-lg p-3 bg-gray-50">
+              <div className="flex items-center space-x-3">
                 <Checkbox
                   id="mentor"
                   checked={filters.isMentor || false}
                   onCheckedChange={(checked) => updateFilters('isMentor', checked)}
                 />
-                <label htmlFor="mentor" className="text-sm cursor-pointer">
+                <label htmlFor="mentor" className="text-sm cursor-pointer text-gray-700">
                   Available as Mentor
                 </label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <Checkbox
                   id="investor"
                   checked={filters.isInvestor || false}
                   onCheckedChange={(checked) => updateFilters('isInvestor', checked)}
                 />
-                <label htmlFor="investor" className="text-sm cursor-pointer">
+                <label htmlFor="investor" className="text-sm cursor-pointer text-gray-700">
                   Active Investor
                 </label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <Checkbox
                   id="opportunities"
                   checked={filters.lookingForOpportunities || false}
                   onCheckedChange={(checked) => updateFilters('lookingForOpportunities', checked)}
                 />
-                <label htmlFor="opportunities" className="text-sm cursor-pointer">
+                <label htmlFor="opportunities" className="text-sm cursor-pointer text-gray-700">
                   Open to Opportunities
                 </label>
               </div>
             </div>
           </div>
         </div>
-      </PopoverContent>
-    </Popover>
+
+        {/* Done Button */}
+        <div className="mt-8 pt-6 border-t">
+          <Button 
+            onClick={handleDone} 
+            className="w-full bg-dna-emerald hover:bg-dna-forest text-white h-12 text-base"
+          >
+            Apply Filters
+          </Button>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };
 
