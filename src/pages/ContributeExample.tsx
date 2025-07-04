@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Header from '@/components/Header';
 import ContributePrototypeNotice from '@/components/contribute/ContributePrototypeNotice';
 import ContributeOverviewStats from '@/components/contribute/ContributeOverviewStats';
@@ -29,10 +29,6 @@ const ContributeExample = () => {
     impactCategories,
     handleLearnMore
   } = useContributeLogic();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
