@@ -9,7 +9,7 @@ import { Calendar, Clock, MapPin, Users, Video, Globe, Plus } from 'lucide-react
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/CleanAuthContext';
-import EventCreationDialog from '@/components/events/EventCreationDialog';
+import EnhancedEventCreationDialog from '@/components/events/EnhancedEventCreationDialog';
 
 const Events = () => {
   const { user } = useAuth();
@@ -260,7 +260,7 @@ const Events = () => {
       </Dialog>
 
       {/* Event Creation Dialog */}
-      <EventCreationDialog
+      <EnhancedEventCreationDialog
         isOpen={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}
         onEventCreated={handleEventCreated}

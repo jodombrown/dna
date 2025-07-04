@@ -38,11 +38,7 @@ const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
   };
 
   const handleProfileClick = (name: string) => {
-    toast({
-      title: "Profile",
-      description: `Opening ${name}'s profile...`,
-    });
-    // In production, this would navigate to the actual user profile
+    navigate('/search?type=professionals');
   };
 
   const handleViewAllMessages = () => {
