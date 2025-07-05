@@ -10,6 +10,7 @@ interface AuthContextType {
   profile: any | null;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signInWithLinkedIn: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   updatePassword: (password: string) => Promise<{ error: any }>;
 }
@@ -110,6 +111,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
+  const signInWithLinkedIn = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'linkedin_oidc',
+      options: {
+        redirectTo: `${window.location.origin}/app`
+      }
+    });
+    return { error };
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfile(null);
@@ -129,6 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     profile,
     signUp,
     signIn,
+    signInWithLinkedIn,
     signOut,
     updatePassword,
   };
