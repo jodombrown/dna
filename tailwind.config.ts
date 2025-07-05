@@ -122,7 +122,8 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
 				'heartbeat': 'heartbeat 2s ease-in-out infinite',
-				'heartbeat-delayed': 'heartbeat 2s ease-in-out infinite 1s'
+				'heartbeat-delayed': 'heartbeat 2s ease-in-out infinite 1s',
+				'heartbeat-delayed-2': 'heartbeat 2s ease-in-out infinite 2s'
 			}
 		}
 	},
