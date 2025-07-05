@@ -3,9 +3,14 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Target, TrendingUp, Users, HandHeart, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 const ContributeSection = () => {
   const navigate = useNavigate();
+  const { count: totalContributed, countRef } = useAnimatedCounter({ 
+    end: 127, 
+    duration: 3500 
+  });
 
   return (
     <section className="py-20">
@@ -58,7 +63,9 @@ const ContributeSection = () => {
               
               <div className="space-y-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-dna-emerald mb-2">$127K</div>
+                  <div ref={countRef} className="text-3xl font-bold text-dna-emerald mb-2">
+                    ${totalContributed}K
+                  </div>
                   <div className="text-sm text-gray-600">Total Contributed</div>
                 </div>
                 
