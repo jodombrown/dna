@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { TabsContent } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import ProfessionalCard from './ProfessionalCard';
 import CommunityCard from './CommunityCard';
 import EmptyState from './EmptyState';
@@ -43,6 +44,123 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
   getConnectionStatus,
   isLoggedIn
 }) => {
+  // Additional mock communities for demo purposes
+  const additionalCommunities: Community[] = [
+    {
+      id: 'extra1',
+      name: 'Diaspora Investment Circle',
+      description: 'Connecting African diaspora investors with high-impact investment opportunities across Africa.',
+      category: 'Business',
+      member_count: 890,
+      is_featured: true,
+      image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'extra2', 
+      name: 'Women in African Tech',
+      description: 'Empowering African women in technology through mentorship and networking.',
+      category: 'Technology',
+      member_count: 650,
+      is_featured: false,
+      image_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'extra3',
+      name: 'African Healthcare Innovation',
+      description: 'Advancing healthcare solutions and medical innovation across Africa.',
+      category: 'Healthcare',
+      member_count: 420,
+      is_featured: false,
+      image_url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=150&h=150&fit=crop&crop=face',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'extra4',
+      name: 'Sustainable Energy Africa',
+      description: 'Promoting renewable energy and sustainable development across African communities.',
+      category: 'Energy',
+      member_count: 380,
+      is_featured: false,
+      image_url: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=150&h=150&fit=crop&crop=face',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'extra5',
+      name: 'African Creative Industries',
+      description: 'Supporting artists, designers, and creative professionals in the diaspora.',
+      category: 'Creative',
+      member_count: 720,
+      is_featured: false,
+      image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=150&h=150&fit=crop&crop=face',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'extra6',
+      name: 'Financial Inclusion Africa',
+      description: 'Driving financial technology and inclusion initiatives across African markets.',
+      category: 'Finance',
+      member_count: 540,
+      is_featured: false,
+      image_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'extra7',
+      name: 'African Agriculture Tech',
+      description: 'Modernizing agriculture through technology and sustainable farming practices.',
+      category: 'Agriculture',
+      member_count: 310,
+      is_featured: false,
+      image_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=150&h=150&fit=crop&crop=face',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'extra8',
+      name: 'African Youth Development',
+      description: 'Mentoring and supporting the next generation of African leaders.',
+      category: 'Education',
+      member_count: 950,
+      is_featured: false,
+      image_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'  
+    },
+    {
+      id: 'extra9',
+      name: 'Pan-African Legal Network',
+      description: 'Connecting legal professionals working on African development and policy.',
+      category: 'Legal',
+      member_count: 260,
+      is_featured: false,
+      image_url: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?w=150&h=150&fit=crop&crop=face',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'extra10',
+      name: 'African Media & Communications',
+      description: 'Journalists, content creators, and media professionals telling African stories.',
+      category: 'Media',
+      member_count: 480,
+      is_featured: false,
+      image_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    }
+  ];
+
+  const [showAllCommunities, setShowAllCommunities] = useState(false);
+  const allCommunities = [...communities, ...additionalCommunities];
+  const displayedCommunities = showAllCommunities ? allCommunities : communities;
   return (
     <>
       <TabsContent value="professionals">
@@ -68,15 +186,29 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
         {communities.length === 0 ? (
           <EmptyState type="communities" onRefresh={onRefresh} />
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {communities.map((community) => (
-              <CommunityCard 
-                key={community.id} 
-                community={community} 
-                onJoin={onJoinCommunity}
-                isLoggedIn={isLoggedIn}
-              />
-            ))}
+          <div className="space-y-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayedCommunities.map((community) => (
+                <CommunityCard 
+                  key={community.id} 
+                  community={community} 
+                  onJoin={onJoinCommunity}
+                  isLoggedIn={isLoggedIn}
+                />
+              ))}
+            </div>
+            
+            {!showAllCommunities && additionalCommunities.length > 0 && (
+              <div className="text-center">
+                <Button 
+                  variant="outline" 
+                  className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
+                  onClick={() => setShowAllCommunities(true)}
+                >
+                  View More Communities ({additionalCommunities.length} more)
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </TabsContent>
