@@ -158,26 +158,241 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
     }
   ];
 
-  const [showAllCommunities, setShowAllCommunities] = useState(false);
+  // Additional mock professionals for demo purposes
+  const additionalProfessionals: Professional[] = [
+    {
+      id: 'prof11',
+      full_name: 'Dr. Aminata Touré',
+      profession: 'Biomedical Engineer',
+      company: 'UNICEF Health Innovation',
+      location: 'Geneva, Switzerland',
+      country_of_origin: 'Burkina Faso',
+      bio: 'Designing low-cost medical devices and health solutions for underserved communities in Africa.',
+      skills: ['Biomedical Engineering', 'Medical Devices', 'Global Health', 'Innovation'],
+      avatar_url: 'https://images.unsplash.com/photo-1594824226441-0a5b592e07c6?w=400',
+      is_mentor: true,
+      is_investor: false,
+      looking_for_opportunities: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'prof12',
+      full_name: 'Emmanuel Nyong',
+      profession: 'Blockchain Developer',
+      company: 'ConsenSys Africa',
+      location: 'Cape Town, South Africa',
+      country_of_origin: 'Cameroon',
+      bio: 'Building decentralized finance solutions to increase financial access across Africa.',
+      skills: ['Blockchain', 'Smart Contracts', 'DeFi', 'Cryptocurrency'],
+      avatar_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400',
+      is_mentor: false,
+      is_investor: true,
+      looking_for_opportunities: true,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'prof13',
+      full_name: 'Zainab Hassan',
+      profession: 'Social Impact Strategist',
+      company: 'Gates Foundation',
+      location: 'Seattle, USA',
+      country_of_origin: 'Sudan',
+      bio: 'Leading strategic initiatives to address poverty and improve education outcomes in Africa.',
+      skills: ['Social Impact', 'Strategy', 'Education', 'Non-profit Management'],
+      avatar_url: 'https://images.unsplash.com/photo-1573497019236-17f8177b81e8?w=400',
+      is_mentor: true,
+      is_investor: false,
+      looking_for_opportunities: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'prof14',
+      full_name: 'Thabo Mthembu',
+      profession: 'Supply Chain Innovator',
+      company: 'Maersk Africa',
+      location: 'Copenhagen, Denmark',
+      country_of_origin: 'South Africa',
+      bio: 'Revolutionizing logistics and supply chain operations to boost intra-African trade.',
+      skills: ['Supply Chain', 'Logistics', 'Trade Finance', 'Operations'],
+      avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+      is_mentor: true,
+      is_investor: true,
+      looking_for_opportunities: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'prof15',
+      full_name: 'Mariam Keita',
+      profession: 'Fashion Tech Entrepreneur',
+      company: 'African Styles Global',
+      location: 'Milan, Italy',
+      country_of_origin: 'Mali',
+      bio: 'Connecting African fashion designers with global markets through e-commerce platforms.',
+      skills: ['Fashion Technology', 'E-commerce', 'Brand Development', 'Digital Marketing'],
+      avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400',
+      is_mentor: true,
+      is_investor: false,
+      looking_for_opportunities: true,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'prof16',
+      full_name: 'Dr. Joseph Banda',
+      profession: 'Water Resources Engineer',
+      company: 'World Bank Water Global Practice',
+      location: 'Washington DC, USA',
+      country_of_origin: 'Zambia',
+      bio: 'Developing sustainable water infrastructure projects across Sub-Saharan Africa.',
+      skills: ['Water Engineering', 'Infrastructure', 'Project Finance', 'Sustainability'],
+      avatar_url: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=400',
+      is_mentor: false,
+      is_investor: false,
+      looking_for_opportunities: true,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'prof17',
+      full_name: 'Asha Mohammed',
+      profession: 'Digital Rights Advocate',
+      company: 'Mozilla Foundation',
+      location: 'Berlin, Germany',
+      country_of_origin: 'Ethiopia',
+      bio: 'Championing digital privacy and internet freedom across Africa and the Middle East.',
+      skills: ['Digital Rights', 'Policy Advocacy', 'Internet Governance', 'Human Rights'],
+      avatar_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400',
+      is_mentor: true,
+      is_investor: false,
+      looking_for_opportunities: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'prof18',
+      full_name: 'Charles Ochieng',
+      profession: 'Sports Management Executive',
+      company: 'FIFA Development Office',
+      location: 'Zurich, Switzerland',
+      country_of_origin: 'Kenya',
+      bio: 'Promoting football development and infrastructure investment across African nations.',
+      skills: ['Sports Management', 'Event Planning', 'Stakeholder Relations', 'Business Development'],
+      avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
+      is_mentor: true,
+      is_investor: true,
+      looking_for_opportunities: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'prof19',
+      full_name: 'Nkiru Okwu',
+      profession: 'Mental Health Advocate',
+      company: 'WHO Africa Region',
+      location: 'Brazzaville, Congo',
+      country_of_origin: 'Nigeria',
+      bio: 'Leading mental health awareness campaigns and policy development across Africa.',
+      skills: ['Mental Health', 'Public Health', 'Policy Development', 'Community Outreach'],
+      avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=400',
+      is_mentor: true,
+      is_investor: false,
+      looking_for_opportunities: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    },
+    {
+      id: 'prof20',
+      full_name: 'Yusuf Al-Maktoum',
+      profession: 'Green Finance Specialist',
+      company: 'Islamic Development Bank',
+      location: 'Jeddah, Saudi Arabia',
+      country_of_origin: 'Somalia',
+      bio: 'Structuring green bonds and climate finance solutions for sustainable development in Africa.',
+      skills: ['Green Finance', 'Climate Finance', 'Islamic Banking', 'Sustainable Development'],
+      avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400',
+      is_mentor: false,
+      is_investor: true,
+      looking_for_opportunities: true,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    }
+  ];
+
+  const [viewMoreClicks, setViewMoreClicks] = useState({
+    professionals: 0,
+    communities: 0
+  });
+
+  const allProfessionals = [...professionals, ...additionalProfessionals];
   const allCommunities = [...communities, ...additionalCommunities];
-  const displayedCommunities = showAllCommunities ? allCommunities : communities;
+  
+  // Progressive loading - show 5 more each time
+  const getVisibleProfessionals = () => {
+    const baseCount = professionals.length;
+    const additionalCount = Math.min(additionalProfessionals.length, (viewMoreClicks.professionals + 1) * 5);
+    return allProfessionals.slice(0, baseCount + additionalCount);
+  };
+
+  const getVisibleCommunities = () => {
+    const baseCount = communities.length;
+    const additionalCount = Math.min(additionalCommunities.length, (viewMoreClicks.communities + 1) * 5);
+    return allCommunities.slice(0, baseCount + additionalCount);
+  };
+
+  const handleViewMoreProfessionals = () => {
+    setViewMoreClicks(prev => ({
+      ...prev,
+      professionals: prev.professionals + 1
+    }));
+  };
+
+  const handleViewMoreCommunities = () => {
+    setViewMoreClicks(prev => ({
+      ...prev,
+      communities: prev.communities + 1
+    }));
+  };
+
+  const visibleProfessionals = getVisibleProfessionals();
+  const visibleCommunities = getVisibleCommunities();
+  
+  const remainingProfessionals = allProfessionals.length - visibleProfessionals.length;
+  const remainingCommunities = allCommunities.length - visibleCommunities.length;
   return (
     <>
       <TabsContent value="professionals">
         {professionals.length === 0 ? (
           <EmptyState type="professionals" onRefresh={onRefresh} />
         ) : (
-          <div className="grid md:grid-cols-2 gap-6">
-            {professionals.map((professional) => (
-              <ProfessionalCard
-                key={professional.id}
-                professional={professional}
-                onConnect={() => onConnect(professional.id)}
-                onMessage={() => onMessage(professional.id, professional.full_name)}
-                connectionStatus={getConnectionStatus(professional.id)}
-                isLoggedIn={isLoggedIn}
-              />
-            ))}
+          <div className="space-y-8">
+            <div className="grid md:grid-cols-2 gap-6">
+              {visibleProfessionals.map((professional) => (
+                <ProfessionalCard
+                  key={professional.id}
+                  professional={professional}
+                  onConnect={() => onConnect(professional.id)}
+                  onMessage={() => onMessage(professional.id, professional.full_name)}
+                  connectionStatus={getConnectionStatus(professional.id)}
+                  isLoggedIn={isLoggedIn}
+                />
+              ))}
+            </div>
+            
+            {remainingProfessionals > 0 && (
+              <div className="text-center">
+                <Button 
+                  variant="outline" 
+                  className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
+                  onClick={handleViewMoreProfessionals}
+                >
+                  View More Professionals ({Math.min(5, remainingProfessionals)} more)
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </TabsContent>
@@ -188,7 +403,7 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
         ) : (
           <div className="space-y-8">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayedCommunities.map((community) => (
+              {visibleCommunities.map((community) => (
                 <CommunityCard 
                   key={community.id} 
                   community={community} 
@@ -198,14 +413,14 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
               ))}
             </div>
             
-            {!showAllCommunities && additionalCommunities.length > 0 && (
+            {remainingCommunities > 0 && (
               <div className="text-center">
                 <Button 
                   variant="outline" 
                   className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
-                  onClick={() => setShowAllCommunities(true)}
+                  onClick={handleViewMoreCommunities}
                 >
-                  View More Communities ({additionalCommunities.length} more)
+                  View More Communities ({Math.min(5, remainingCommunities)} more)
                 </Button>
               </div>
             )}

@@ -37,8 +37,20 @@ const ConnectExample = () => {
   }, [searchParams]);
 
 
-  // Use custom hook for filtering
   const filteredData = useConnectFiltering(searchTerm, filters);
+
+  // Calculate total counts including additional demo data
+  const getTotalCounts = () => {
+    const baseProfessionals = filteredData.professionals.length;
+    const baseCommunities = filteredData.communities.length;
+    const baseEvents = filteredData.events.length;
+    
+    return {
+      professionals: baseProfessionals + 10, // Add 10 additional professionals
+      communities: baseCommunities + 10,     // Add 10 additional communities  
+      events: baseEvents
+    };
+  };
 
   // Simplified handlers - removed console.log statements for efficiency
   const handleConnect = (professionalId: string) => {
@@ -79,11 +91,7 @@ const ConnectExample = () => {
               onFiltersChange={setFilters}
               activeTab={activeTab}
               onTabChange={setActiveTab}
-              resultCounts={{
-                professionals: filteredData.professionals.length,
-                communities: filteredData.communities.length,
-                events: filteredData.events.length
-              }}
+              resultCounts={getTotalCounts()}
             />
           </div>
           
