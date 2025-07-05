@@ -11,15 +11,15 @@ const LocalEventsSection: React.FC = () => {
         <p className="text-gray-600">See what's happening in major cities and diaspora hubs</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
         {localEvents.map((location) => (
-          <Card key={location.city} className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white border-0 shadow-sm">
-            <CardContent className="p-6 text-center">
-              <div className={`w-14 h-14 ${location.color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                <span className="text-2xl">{location.flag}</span>
+          <Card key={location.city} className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white shadow-md hover:shadow-xl">
+            <CardContent className="p-8 text-center">
+              <div className={`w-16 h-16 ${location.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <span className="text-3xl">{location.flag}</span>
               </div>
-              <h4 className="font-semibold text-gray-900 text-sm mb-1">{location.city}</h4>
-              <p className="text-xs text-gray-500">{location.count} Events</p>
+              <h4 className="font-semibold text-gray-900 text-base mb-2">{location.city}</h4>
+              <p className="text-sm text-gray-500">{location.count} Events</p>
             </CardContent>
           </Card>
         ))}

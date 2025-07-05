@@ -26,12 +26,12 @@ const FeaturedCalendarsSection: React.FC<FeaturedCalendarsSectionProps> = ({ onV
         </Button>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {featuredCalendars.map((calendar) => (
-          <Card key={calendar.id} className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white border-0 shadow-sm h-[200px] flex flex-col">
-            <CardContent className="p-6 flex-1 flex flex-col">
+          <Card key={calendar.id} className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white shadow-md hover:shadow-xl h-[220px] flex flex-col">
+            <CardContent className="p-8 flex-1 flex flex-col">
               <div className="flex items-start gap-4 mb-4 flex-1">
-                <div className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+                <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
                   <img
                     src={calendar.logo}
                     alt={`${calendar.name} logo`}

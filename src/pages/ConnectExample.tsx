@@ -66,9 +66,9 @@ const ConnectExample = () => {
       <Header />
       <PrototypeNotice />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-12 py-6 sm:py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <div className="sticky top-16 z-20 bg-gray-50 pb-2 pt-2 border-b border-gray-200">
+          <div className="sticky top-16 z-20 bg-gray-50 pb-4 pt-2 shadow-sm">
             <SearchSection
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
