@@ -99,9 +99,13 @@
     scroll-behavior: smooth;
   }
 
-  /* Ensure proper focus management */
+  /* Remove black outlines on focus and hover */
   *:focus {
-    outline: 2px solid hsl(var(--ring));
+    outline: none;
+  }
+  
+  *:focus-visible {
+    outline: 2px solid hsl(var(--dna-emerald, 69 71% 59%));
     outline-offset: 2px;
   }
 

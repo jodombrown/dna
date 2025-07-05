@@ -9,7 +9,8 @@ const Logo = () => {
     <div className="flex items-center space-x-4">
       <button 
         onClick={() => navigate('/')}
-        className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+        className="flex items-center space-x-2 hover:opacity-80 transition-opacity focus:outline-none"
+        aria-label="Navigate to home"
       >
         <img 
           src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 

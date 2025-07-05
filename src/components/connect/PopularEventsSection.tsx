@@ -43,6 +43,7 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
           opts={{
             align: "start",
             loop: false,
+            dragFree: true,
           }}
         >
           <CarouselContent className="-ml-2 md:-ml-4">
