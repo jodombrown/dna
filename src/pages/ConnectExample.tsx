@@ -39,15 +39,19 @@ const ConnectExample = () => {
 
   const filteredData = useConnectFiltering(searchTerm, filters);
 
-  // Calculate total counts including additional demo data
+  // Calculate accurate counts based on filtered data plus additional demo data
   const getTotalCounts = () => {
     const baseProfessionals = filteredData.professionals.length;
     const baseCommunities = filteredData.communities.length;
     const baseEvents = filteredData.events.length;
     
+    // Only add extra demo data when there are actual results to show consistency
+    const additionalProfessionals = baseProfessionals > 0 ? 10 : 0;
+    const additionalCommunities = baseCommunities > 0 ? 10 : 0;
+    
     return {
-      professionals: baseProfessionals + 10, // Add 10 additional professionals
-      communities: baseCommunities + 10,     // Add 10 additional communities  
+      professionals: baseProfessionals + additionalProfessionals,
+      communities: baseCommunities + additionalCommunities,
       events: baseEvents
     };
   };
