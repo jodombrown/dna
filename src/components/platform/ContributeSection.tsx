@@ -9,7 +9,7 @@ const ContributeSection = () => {
   const navigate = useNavigate();
   const { count: totalContributed, countRef } = useAnimatedCounter({ 
     end: 127, 
-    duration: 3500 
+    duration: 5000 
   });
 
   return (
