@@ -3,9 +3,13 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Users, Handshake, Heart } from 'lucide-react';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
+import { useBreathingAnimation } from '@/hooks/useBreathingAnimation';
 
 const HeroTriangleSection = () => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const connectRef = useBreathingAnimation();
+  const collaborateRef = useBreathingAnimation();
+  const contributeRef = useBreathingAnimation();
 
   return (
     <>
@@ -23,7 +27,7 @@ const HeroTriangleSection = () => {
             {/* Three Pillars Grid */}
             <div className="grid md:grid-cols-3 gap-8 mb-12">
               {/* Connect Pillar */}
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div ref={connectRef.elementRef} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div className="flex justify-center mb-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center">
                     <Users className="w-8 h-8 text-white" />
@@ -36,7 +40,7 @@ const HeroTriangleSection = () => {
               </div>
 
               {/* Collaborate Pillar */}
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div ref={collaborateRef.elementRef} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div className="flex justify-center mb-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
                     <Handshake className="w-8 h-8 text-white" />
@@ -49,7 +53,7 @@ const HeroTriangleSection = () => {
               </div>
 
               {/* Contribute Pillar */}
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div ref={contributeRef.elementRef} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div className="flex justify-center mb-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-xl flex items-center justify-center">
                     <Heart className="w-8 h-8 text-white" />

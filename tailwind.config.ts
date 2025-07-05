@@ -115,6 +115,17 @@ export default {
 						transform: 'scale(1.05)',
 						opacity: '0.8'
 					}
+				},
+				'breathing-pulse': {
+					'0%': {
+						transform: 'scale(1)',
+					},
+					'50%': {
+						transform: 'scale(1.02)',
+					},
+					'100%': {
+						transform: 'scale(1)',
+					}
 				}
 			},
 			animation: {
@@ -123,7 +134,8 @@ export default {
 				'fade-in': 'fade-in 0.3s ease-out',
 				'heartbeat': 'heartbeat 2s ease-in-out infinite',
 				'heartbeat-delayed': 'heartbeat 2s ease-in-out infinite 1s',
-				'heartbeat-delayed-2': 'heartbeat 2s ease-in-out infinite 2s'
+				'heartbeat-delayed-2': 'heartbeat 2s ease-in-out infinite 2s',
+				'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards'
 			}
 		}
 	},

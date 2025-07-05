@@ -3,9 +3,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Handshake, Briefcase, Network, TrendingUp, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useBreathingAnimation } from '@/hooks/useBreathingAnimation';
 
 const CollaborateSection = () => {
   const navigate = useNavigate();
+  const cardRef = useBreathingAnimation();
 
   return (
     <section className="py-16 bg-gray-50">
@@ -51,6 +53,7 @@ const CollaborateSection = () => {
           
           <div className="md:order-1">
             <div 
+              ref={cardRef.elementRef}
               className="bg-white rounded-3xl shadow-2xl overflow-hidden cursor-pointer hover:shadow-3xl transition-shadow"
               onClick={() => navigate('/collaborate')}
             >

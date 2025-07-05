@@ -2,9 +2,11 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Users, Globe, Target, Network, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useBreathingAnimation } from '@/hooks/useBreathingAnimation';
 
 const ConnectSection = () => {
   const navigate = useNavigate();
+  const cardRef = useBreathingAnimation();
 
   return (
     <section id="connect-section" className="py-16">
@@ -50,6 +52,7 @@ const ConnectSection = () => {
           
           <div className="relative">
             <div 
+              ref={cardRef.elementRef}
               className="bg-gray-900 rounded-3xl p-6 shadow-2xl cursor-pointer hover:shadow-3xl transition-shadow"
               onClick={() => navigate('/connect')}
             >

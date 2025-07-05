@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Target, TrendingUp, Users, HandHeart, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
+import { useBreathingAnimation } from '@/hooks/useBreathingAnimation';
 
 const ContributeSection = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const ContributeSection = () => {
     end: 127, 
     duration: 5000 
   });
+  const cardRef = useBreathingAnimation();
 
   return (
     <section className="py-20">
@@ -56,6 +58,7 @@ const ContributeSection = () => {
           
           <div className="relative">
             <div 
+              ref={cardRef.elementRef}
               className="bg-white rounded-3xl shadow-2xl p-8 cursor-pointer hover:shadow-3xl transition-shadow"
               onClick={() => navigate('/contribute')}
             >
