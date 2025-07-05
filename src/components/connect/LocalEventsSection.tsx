@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import { localEvents } from './eventData';
 
 const LocalEventsSection: React.FC = () => {
@@ -15,6 +16,7 @@ const LocalEventsSection: React.FC = () => {
       <div className="relative px-12">
         <Carousel 
           className="w-full"
+          plugins={[WheelGesturesPlugin()]}
           opts={{
             align: "start",
             loop: false,

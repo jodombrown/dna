@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import { featuredCalendars } from './eventData';
 
 interface FeaturedCalendarsSectionProps {
@@ -30,6 +31,7 @@ const FeaturedCalendarsSection: React.FC<FeaturedCalendarsSectionProps> = ({ onV
       <div className="relative px-12">
         <Carousel 
           className="w-full"
+          plugins={[WheelGesturesPlugin()]}
           opts={{
             align: "start",
             loop: false,
