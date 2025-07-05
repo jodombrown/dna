@@ -10,8 +10,8 @@ interface TimelineItemProps {
 
 const TimelineItem: React.FC<TimelineItemProps> = ({ year, events, isActive, onClick }) => (
   <div 
-    className={`cursor-pointer p-6 rounded-lg transition-all duration-300 relative group shadow-sm ${
-      isActive ? 'bg-dna-emerald text-white shadow-lg transform scale-105' : 'bg-white/50 hover:bg-white/70 hover:shadow-md hover:scale-102'
+    className={`cursor-pointer p-6 rounded-lg transition-all duration-300 relative group shadow-md ${
+      isActive ? 'bg-dna-emerald text-white shadow-lg transform scale-105' : 'bg-white/50 hover:bg-white/70 hover:shadow-lg hover:scale-102'
     }`}
     onClick={onClick}
   >
