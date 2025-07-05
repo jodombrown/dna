@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -16,9 +16,18 @@ import {
   Share2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import PostComposer from './PostComposer';
+import PostCard from './PostCard';
+import FeedFilters from './FeedFilters';
+import { usePosts } from '@/hooks/usePosts';
 
 const AppLayout = () => {
   const { user } = useAuth();
+  const [activeFilter, setActiveFilter] = useState<'all' | 'connect' | 'collaborate' | 'contribute'>('all');
+  
+  // Use the posts hook with filter
+  const pillarFilter = activeFilter === 'all' ? undefined : activeFilter;
+  const { posts, loading, refreshPosts } = usePosts(pillarFilter);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -96,115 +105,58 @@ const AppLayout = () => {
         {/* Center Feed - Main Content */}
         <div className="lg:col-span-6 space-y-4">
           {/* Post Composer */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex space-x-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={user?.user_metadata?.avatar_url} />
-                  <AvatarFallback className="bg-dna-emerald text-white">
-                    {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <Button 
-                    variant="outline" 
-                    className="w-full text-left justify-start text-gray-500 hover:bg-gray-50"
-                  >
-                    What's on your mind about Africa's future?
-                  </Button>
-                  <div className="flex space-x-4 mt-3">
-                    <Badge variant="secondary" className="bg-dna-emerald/10 text-dna-emerald cursor-pointer hover:bg-dna-emerald/20">
-                      <Users className="h-3 w-3 mr-1" />
-                      Connect
-                    </Badge>
-                    <Badge variant="secondary" className="bg-dna-copper/10 text-dna-copper cursor-pointer hover:bg-dna-copper/20">
-                      <Handshake className="h-3 w-3 mr-1" />
-                      Collaborate
-                    </Badge>
-                    <Badge variant="secondary" className="bg-dna-forest/10 text-dna-forest cursor-pointer hover:bg-dna-forest/20">
-                      <Heart className="h-3 w-3 mr-1" />
-                      Contribute
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <PostComposer onPostCreated={refreshPosts} />
 
-          {/* Sample Posts Feed */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex space-x-3 mb-4">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-dna-copper text-white">AK</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <h4 className="font-semibold">Amina Kone</h4>
-                    <Badge variant="secondary" className="bg-dna-copper/10 text-dna-copper">
-                      <Handshake className="h-3 w-3 mr-1" />
-                      Collaborate
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">Tech Entrepreneur • Abidjan, Ivory Coast</p>
-                  <p className="text-gray-800 mb-3">
-                    Excited to announce our new fintech initiative connecting African diaspora with investment opportunities across the continent. Looking for partners in Lagos, Nairobi, and Accra! 🚀
-                  </p>
-                  <div className="flex items-center space-x-4 text-gray-500">
-                    <Button variant="ghost" size="sm" className="hover:text-dna-emerald">
-                      <ThumbsUp className="h-4 w-4 mr-1" />
-                      12
-                    </Button>
-                    <Button variant="ghost" size="sm" className="hover:text-dna-forest">
-                      <MessageSquare className="h-4 w-4 mr-1" />
-                      5
-                    </Button>
-                    <Button variant="ghost" size="sm" className="hover:text-dna-copper">
-                      <Share2 className="h-4 w-4 mr-1" />
-                      Share
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Feed Filters */}
+          <FeedFilters 
+            activeFilter={activeFilter} 
+            onFilterChange={setActiveFilter} 
+          />
 
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex space-x-3 mb-4">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-dna-forest text-white">KM</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <h4 className="font-semibold">Kwame Mensah</h4>
-                    <Badge variant="secondary" className="bg-dna-forest/10 text-dna-forest">
-                      <Heart className="h-3 w-3 mr-1" />
-                      Contribute
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">Social Impact Leader • London, UK</p>
-                  <p className="text-gray-800 mb-3">
-                    Just launched our scholarship program for brilliant African students. Already funded 50 scholarships this year! Every contribution makes a difference. 🎓✨
+          {/* Posts Feed */}
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <Card key={i}>
+                  <CardContent className="pt-6">
+                    <div className="animate-pulse">
+                      <div className="flex space-x-3">
+                        <div className="rounded-full bg-gray-200 h-10 w-10"></div>
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : posts.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6 text-center py-8">
+                <div className="text-gray-500">
+                  <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <h3 className="text-lg font-semibold mb-2">
+                    {activeFilter === 'all' ? 'No posts yet' : `No ${activeFilter} posts yet`}
+                  </h3>
+                  <p className="text-sm">
+                    {activeFilter === 'all' 
+                      ? 'Be the first to share something with the DNA community!' 
+                      : `Be the first to post about ${activeFilter}!`
+                    }
                   </p>
-                  <div className="flex items-center space-x-4 text-gray-500">
-                    <Button variant="ghost" size="sm" className="hover:text-dna-emerald">
-                      <ThumbsUp className="h-4 w-4 mr-1" />
-                      24
-                    </Button>
-                    <Button variant="ghost" size="sm" className="hover:text-dna-forest">
-                      <MessageSquare className="h-4 w-4 mr-1" />
-                      8
-                    </Button>
-                    <Button variant="ghost" size="sm" className="hover:text-dna-copper">
-                      <Share2 className="h-4 w-4 mr-1" />
-                      Share
-                    </Button>
-                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {posts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right Sidebar - Trending & Suggestions */}
