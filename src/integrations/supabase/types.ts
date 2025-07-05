@@ -497,6 +497,57 @@ export type Database = {
         }
         Relationships: []
       }
+      users: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          causes: string[] | null
+          created_at: string | null
+          diaspora_tags: string[] | null
+          email: string | null
+          full_name: string | null
+          id: string
+          languages: string[] | null
+          location: string | null
+          origin_country: string | null
+          role: string
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          causes?: string[] | null
+          created_at?: string | null
+          diaspora_tags?: string[] | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          languages?: string[] | null
+          location?: string | null
+          origin_country?: string | null
+          role: string
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          causes?: string[] | null
+          created_at?: string | null
+          diaspora_tags?: string[] | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          languages?: string[] | null
+          location?: string | null
+          origin_country?: string | null
+          role?: string
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
