@@ -66,6 +66,17 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
               
               <Button
                 variant="ghost"
+                className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                onClick={() => {
+                  navigate('/auth');
+                  onOpenChange(false);
+                }}
+              >
+                Join DNA
+              </Button>
+              
+              <Button
+                variant="ghost"
                 className="justify-start text-left text-dna-copper hover:bg-dna-copper/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
                 onClick={onSurveyClick}
               >

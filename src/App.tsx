@@ -4,8 +4,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
+import AuthPage from "./pages/AuthPage";
+import OnboardingPage from "./pages/OnboardingPage";
+import AppDashboard from "./pages/AppDashboard";
 import ContributeExample from "./pages/ContributeExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ConnectExample from "./pages/ConnectExample";
@@ -24,29 +27,38 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/contribute" element={<ContributeExample />} />
-            <Route path="/collaborate" element={<CollaborationsExample />} />
-            <Route path="/connect" element={<ConnectExample />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<About />} />
-            
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/contribute" element={<ContributeExample />} />
+              <Route path="/collaborate" element={<CollaborationsExample />} />
+              <Route path="/connect" element={<ConnectExample />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
+              
+              {/* Phase Routes */}
               <Route path="/phase/market-research" element={<MarketResearchPhase />} />
               <Route path="/phase/prototyping" element={<PrototypingPhase />} />
               <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
               <Route path="/phase/mvp" element={<MvpPhase />} />
               <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
-            <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
+              <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
+              
+              {/* Authenticated Routes */}
+              <Route path="/app" element={<AppDashboard />} />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
