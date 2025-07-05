@@ -330,17 +330,19 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
   const allProfessionals = [...professionals, ...additionalProfessionals];
   const allCommunities = [...communities, ...additionalCommunities];
   
-  // Progressive loading - show 5 more each time
+  // Show initial limited set, then add 10 more each time
   const getVisibleProfessionals = () => {
-    const baseCount = professionals.length;
-    const additionalCount = Math.min(additionalProfessionals.length, (viewMoreClicks.professionals + 1) * 5);
-    return allProfessionals.slice(0, baseCount + additionalCount);
+    const initialCount = 6; // Show only 6 initially
+    const additionalPerClick = 10; // Add 10 more each time
+    const totalToShow = initialCount + (viewMoreClicks.professionals * additionalPerClick);
+    return allProfessionals.slice(0, totalToShow);
   };
 
   const getVisibleCommunities = () => {
-    const baseCount = communities.length;
-    const additionalCount = Math.min(additionalCommunities.length, (viewMoreClicks.communities + 1) * 5);
-    return allCommunities.slice(0, baseCount + additionalCount);
+    const initialCount = 9; // Show only 9 initially  
+    const additionalPerClick = 10; // Add 10 more each time
+    const totalToShow = initialCount + (viewMoreClicks.communities * additionalPerClick);
+    return allCommunities.slice(0, totalToShow);
   };
 
   const handleViewMoreProfessionals = () => {
@@ -360,8 +362,8 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
   const visibleProfessionals = getVisibleProfessionals();
   const visibleCommunities = getVisibleCommunities();
   
-  const remainingProfessionals = allProfessionals.length - visibleProfessionals.length;
-  const remainingCommunities = allCommunities.length - visibleCommunities.length;
+  const hasMoreProfessionals = visibleProfessionals.length < allProfessionals.length;
+  const hasMoreCommunities = visibleCommunities.length < allCommunities.length;
   return (
     <>
       <TabsContent value="professionals">
@@ -382,14 +384,14 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
               ))}
             </div>
             
-            {remainingProfessionals > 0 && (
+            {hasMoreProfessionals && (
               <div className="text-center">
                 <Button 
                   variant="outline" 
                   className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
                   onClick={handleViewMoreProfessionals}
                 >
-                  View More Professionals ({Math.min(5, remainingProfessionals)} more)
+                  View More Professionals
                 </Button>
               </div>
             )}
@@ -413,14 +415,14 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
               ))}
             </div>
             
-            {remainingCommunities > 0 && (
+            {hasMoreCommunities && (
               <div className="text-center">
                 <Button 
                   variant="outline" 
                   className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
                   onClick={handleViewMoreCommunities}
                 >
-                  View More Communities ({Math.min(5, remainingCommunities)} more)
+                  View More Communities
                 </Button>
               </div>
             )}
