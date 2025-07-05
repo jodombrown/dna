@@ -359,6 +359,50 @@ export type Database = {
         }
         Relationships: []
       }
+      posts: {
+        Row: {
+          author_id: string | null
+          content: string | null
+          created_at: string | null
+          hashtags: string[] | null
+          id: string
+          media_url: string | null
+          pillar: string
+          updated_at: string | null
+          visibility: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          hashtags?: string[] | null
+          id?: string
+          media_url?: string | null
+          pillar: string
+          updated_at?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          hashtags?: string[] | null
+          id?: string
+          media_url?: string | null
+          pillar?: string
+          updated_at?: string | null
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           account_visibility: string | null
