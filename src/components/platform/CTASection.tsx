@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import StayNotifiedPanel from '@/components/StayNotifiedPanel';
-import { MessageCircle, Eye, ArrowRight } from 'lucide-react';
+import { MessageCircle, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useBreathingAnimation } from '@/hooks/useBreathingAnimation';
 
@@ -32,47 +32,38 @@ const CTASection = () => {
           {/* Engagement Options */}
           <div className="grid md:grid-cols-3 gap-6">
             <Card ref={card1Ref.elementRef} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/contact')}>
-              <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageCircle className="w-6 h-6 text-dna-copper" />
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 bg-dna-copper/10 rounded-xl flex items-center justify-center mx-auto mb-6">
+                  <MessageCircle className="w-8 h-8 text-dna-copper" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Share Feedback</h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <h3 className="text-2xl font-bold text-dna-copper mb-4">Share Feedback</h3>
+                <p className="text-gray-600 leading-relaxed">
                   Help us build better by sharing your thoughts and ideas
                 </p>
-                <Button variant="ghost" size="sm" className="text-dna-copper">
-                  Get Involved <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
               </CardContent>
             </Card>
 
             <Card ref={card2Ref.elementRef} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/phase/market-research')}>
-              <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Eye className="w-6 h-6 text-dna-emerald" />
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 bg-dna-emerald/10 rounded-xl flex items-center justify-center mx-auto mb-6">
+                  <Eye className="w-8 h-8 text-dna-emerald" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Track Our Progress</h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <h3 className="text-2xl font-bold text-dna-emerald mb-4">Track Our Progress</h3>
+                <p className="text-gray-600 leading-relaxed">
                   Follow our development journey phase by phase
                 </p>
-                <Button variant="ghost" size="sm" className="text-dna-emerald">
-                  View Phases <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
               </CardContent>
             </Card>
 
             <Card ref={card3Ref.elementRef} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/about')}>
-              <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-dna-forest/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Eye className="w-6 h-6 text-dna-forest" />
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 bg-dna-forest/10 rounded-xl flex items-center justify-center mx-auto mb-6">
+                  <Eye className="w-8 h-8 text-dna-forest" />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Learn About DNA</h3>
-                <p className="text-gray-600 text-sm mb-4">
+                <h3 className="text-2xl font-bold text-dna-forest mb-4">Learn About DNA</h3>
+                <p className="text-gray-600 leading-relaxed">
                   Understand our mission, vision, and approach
                 </p>
-                <Button variant="ghost" size="sm" className="text-dna-forest">
-                  Read More <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
               </CardContent>
             </Card>
           </div>
