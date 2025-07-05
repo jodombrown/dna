@@ -43,7 +43,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Kenya',
     bio: 'Transforming healthcare delivery through digital innovation and telemedicine solutions.',
     skills: ['Healthcare Technology', 'Digital Health', 'Product Management', 'Strategy'],
-    avatar_url: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: false,
@@ -75,7 +75,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Morocco',
     bio: 'Building educational technology platforms to improve access to quality education.',
     skills: ['Education Technology', 'Entrepreneurship', 'Mobile Development', 'UI/UX'],
-    avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400',
     is_mentor: true,
     is_investor: true,
     looking_for_opportunities: false,
@@ -107,7 +107,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Mali',
     bio: 'Directing capital towards sustainable development projects across West Africa.',
     skills: ['Impact Investing', 'Finance', 'Venture Capital', 'ESG'],
-    avatar_url: 'https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400',
     is_mentor: false,
     is_investor: true,
     looking_for_opportunities: true,
@@ -123,7 +123,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Ghana',
     bio: 'Creating compelling visual narratives that celebrate African culture and diaspora stories.',
     skills: ['Creative Direction', 'Branding', 'Film Production', 'Digital Media'],
-    avatar_url: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: true,
@@ -139,7 +139,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Kenya',
     bio: 'Driving financial inclusion through mobile money solutions across East Africa.',
     skills: ['Mobile Banking', 'Financial Inclusion', 'Product Strategy', 'East Africa Markets'],
-    avatar_url: 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: false,
@@ -155,7 +155,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Kenya',
     bio: 'Implementing renewable energy projects to power rural communities in Kenya.',
     skills: ['Solar Power', 'Wind Energy', 'Rural Electrification', 'Project Management'],
-    avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=400',
     is_mentor: false,
     is_investor: true,
     looking_for_opportunities: true,
@@ -172,7 +172,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'South Africa',
     bio: 'Developing sustainable mining technologies and automation solutions for the African mining sector.',
     skills: ['Mining Technology', 'Automation', 'Sustainability', 'Engineering'],
-    avatar_url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: false,
@@ -188,7 +188,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Botswana',
     bio: 'Leading conservation efforts and eco-tourism development in the Okavango Delta region.',
     skills: ['Wildlife Conservation', 'Eco-tourism', 'Environmental Science', 'Community Development'],
-    avatar_url: 'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: true,
@@ -204,7 +204,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Ethiopia',
     bio: 'Developing hydroelectric and solar energy projects across the Horn of Africa.',
     skills: ['Renewable Energy', 'Hydroelectric Power', 'Solar Energy', 'Infrastructure'],
-    avatar_url: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1600180758890-6b94519a8ba6?w=400',
     is_mentor: false,
     is_investor: true,
     looking_for_opportunities: false,
@@ -220,7 +220,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Tunisia',
     bio: 'Building digital marketing ecosystems for North African startups and SMEs.',
     skills: ['Digital Marketing', 'E-commerce', 'Social Media', 'Startup Growth'],
-    avatar_url: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1590086782792-42dd2350140d?w=400',
     is_mentor: true,
     is_investor: true,
     looking_for_opportunities: true,
@@ -236,7 +236,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Burkina Faso',
     bio: 'Expanding financial inclusion and microcredit programs for rural communities in West Africa.',
     skills: ['Microfinance', 'Financial Inclusion', 'Rural Development', 'Community Banking'],
-    avatar_url: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: false,
@@ -252,7 +252,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Rwanda',
     bio: 'Transforming Rwanda into a specialty coffee hub and building direct trade relationships.',
     skills: ['Coffee Production', 'Agricultural Value Chain', 'Export Development', 'Quality Control'],
-    avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400',
     is_mentor: false,
     is_investor: false,
     looking_for_opportunities: true,
@@ -268,7 +268,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Tanzania',
     bio: 'Creating offline-first educational platforms for rural schools across East Africa.',
     skills: ['Educational Technology', 'Mobile Development', 'Offline Solutions', 'Teacher Training'],
-    avatar_url: 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400',
     is_mentor: true,
     is_investor: false,
     looking_for_opportunities: true,
@@ -284,7 +284,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Mali',
     bio: 'Developing sustainable textile production and fair trade partnerships with global fashion brands.',
     skills: ['Textile Manufacturing', 'Sustainable Fashion', 'Fair Trade', 'Cooperative Management'],
-    avatar_url: 'https://images.unsplash.com/photo-1548142813-c348350df52b?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=400',
     is_mentor: false,
     is_investor: false,
     looking_for_opportunities: false,
@@ -300,7 +300,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Algeria',
     bio: 'Building AI-powered solutions for Arabic language processing and North African markets.',
     skills: ['Artificial Intelligence', 'Natural Language Processing', 'Arabic Tech', 'Startup Development'],
-    avatar_url: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
     is_mentor: true,
     is_investor: true,
     looking_for_opportunities: false,
@@ -316,7 +316,7 @@ export const demoProfessionals: Professional[] = [
     country_of_origin: 'Chad',
     bio: 'Sustainable fisheries management and aquaculture development in the Lake Chad region.',
     skills: ['Fisheries Management', 'Aquaculture', 'Sustainable Development', 'Water Resources'],
-    avatar_url: 'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=400',
+    avatar_url: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=400',
     is_mentor: false,
     is_investor: false,
     looking_for_opportunities: true,
@@ -694,7 +694,7 @@ export const demoEvents: Event[] = [
     creator_profile: {
       id: '3',
       full_name: 'Sarah Mwangi',
-      avatar_url: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=80'
+      avatar_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80'
     }
   },
   {
@@ -732,7 +732,7 @@ export const demoEvents: Event[] = [
     creator_profile: {
       id: '5',
       full_name: 'Fatima Al-Rashid',
-      avatar_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80'
+      avatar_url: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=80'
     }
   },
   {
@@ -770,7 +770,7 @@ export const demoEvents: Event[] = [
     creator_profile: {
       id: '7',
       full_name: 'Aisha Kone',
-      avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80'
+      avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80'
     }
   },
   {
@@ -789,7 +789,7 @@ export const demoEvents: Event[] = [
     creator_profile: {
       id: '8',
       full_name: 'Kofi Mensah',
-      avatar_url: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=80'
+      avatar_url: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=80'
     }
   },
   {
