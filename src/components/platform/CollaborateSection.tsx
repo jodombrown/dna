@@ -84,8 +84,8 @@ const CollaborateSection = () => {
                     8 collaborators • 4 countries • $1.8M committed
                   </p>
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-dna-mint rounded-full"></div>
-                    <div className="w-6 h-6 bg-dna-forest rounded-full -ml-2"></div>
+                    <div className="w-6 h-6 bg-dna-mint rounded-full animate-heartbeat cursor-pointer"></div>
+                    <div className="w-6 h-6 bg-dna-forest rounded-full -ml-2 animate-heartbeat-delayed cursor-pointer"></div>
                     <span className="text-xs text-gray-500 ml-2">+6 more</span>
                   </div>
                 </div>
