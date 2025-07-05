@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { ThumbsUp, MessageSquare, Share2, Users, Handshake, Heart } from 'lucide-react';
+import { Share2, Users, Handshake, Heart } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Tables } from '@/integrations/supabase/types';
+import ReactionBar from './ReactionBar';
+import CommentsSection from './CommentsSection';
+import { useReactions } from '@/hooks/useReactions';
+import { useComments } from '@/hooks/useComments';
 
 interface PostCardProps {
   post: Tables<'posts'> & {
@@ -20,6 +24,18 @@ interface PostCardProps {
 }
 
 const PostCard = ({ post }: PostCardProps) => {
+  const [showComments, setShowComments] = useState(false);
+  const { 
+    userReaction, 
+    toggleReaction, 
+    getReactionCounts 
+  } = useReactions(post.id);
+  
+  const { 
+    comments, 
+    loading: commentsLoading,
+    addComment 
+  } = useComments(post.id);
   const pillarConfig = {
     connect: {
       icon: Users,
@@ -92,25 +108,44 @@ const PostCard = ({ post }: PostCardProps) => {
             <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
               <span>{timeAgo}</span>
               <div className="flex space-x-4">
-                <span>0 reactions</span>
-                <span>0 comments</span>
+                <span>{getReactionCounts().reduce((sum, r) => sum + r.count, 0)} reactions</span>
+                <span>{comments.length} comments</span>
               </div>
             </div>
             
-            <div className="flex items-center space-x-4 text-gray-500 border-t pt-3">
-              <Button variant="ghost" size="sm" className="hover:text-dna-emerald">
-                <ThumbsUp className="h-4 w-4 mr-1" />
-                Like
-              </Button>
-              <Button variant="ghost" size="sm" className="hover:text-dna-forest">
-                <MessageSquare className="h-4 w-4 mr-1" />
-                Comment
+            {/* Reactions */}
+            <ReactionBar
+              postId={post.id}
+              userReaction={userReaction}
+              reactionCounts={getReactionCounts()}
+              onReactionClick={toggleReaction}
+            />
+            
+            {/* Comment Toggle & Share */}
+            <div className="flex items-center space-x-4 text-gray-500 mt-3 pt-3 border-t">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowComments(!showComments)}
+                className="hover:text-dna-forest"
+              >
+                💬 <span className="ml-1">Comment</span>
               </Button>
               <Button variant="ghost" size="sm" className="hover:text-dna-copper">
                 <Share2 className="h-4 w-4 mr-1" />
                 Share
               </Button>
             </div>
+            
+            {/* Comments Section */}
+            {showComments && (
+              <CommentsSection
+                postId={post.id}
+                comments={comments}
+                loading={commentsLoading}
+                onAddComment={addComment}
+              />
+            )}
           </div>
         </div>
       </CardContent>
