@@ -120,128 +120,129 @@ const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          {step === 'form' ? (
-            <>
-              <DialogTitle className="text-2xl font-bold text-dna-forest mb-2">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        {step === 'form' ? (
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <DialogTitle className="text-2xl font-bold text-dna-forest">
                 Join 500+ Diaspora Changemakers
               </DialogTitle>
               <p className="text-gray-600 text-sm">
                 Get early access to the DNA platform. Help us shape the future of Africa.
               </p>
-            </>
-          ) : (
-            <div className="text-center py-4">
-              <CheckCircle className="h-16 w-16 text-dna-emerald mx-auto mb-4" />
-              <DialogTitle className="text-2xl font-bold text-dna-forest mb-2">
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name *</Label>
+                  <Input
+                    id="fullName"
+                    value={formData.fullName}
+                    onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country *</Label>
+                  <Input
+                    id="country"
+                    value={formData.country}
+                    onChange={(e) => handleCountrySearch(e.target.value)}
+                    placeholder="Type to search for your country..."
+                    required
+                  />
+                  {formData.country && filteredCountries.length > 0 && (
+                    <div className="max-h-32 overflow-y-auto border rounded-md bg-white shadow-lg z-50">
+                      {filteredCountries.slice(0, 5).map((country) => (
+                        <div
+                          key={country}
+                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, country }));
+                            setFilteredCountries([]);
+                          }}
+                        >
+                          {country}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <Label>Interest Areas (Optional)</Label>
+                  <div className="max-h-48 overflow-y-auto border rounded-lg p-3 bg-gray-50">
+                    <div className="grid grid-cols-1 gap-2">
+                      {interests.map((interest) => (
+                        <div key={interest} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={interest}
+                            checked={formData.selectedInterests.includes(interest)}
+                            onCheckedChange={() => handleInterestToggle(interest)}
+                          />
+                          <Label htmlFor={interest} className="text-sm font-normal cursor-pointer">
+                            {interest}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Input
+                      value={customInterest}
+                      onChange={(e) => setCustomInterest(e.target.value)}
+                      placeholder="Add your own interest..."
+                      className="flex-1"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustomInterest())}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={handleAddCustomInterest}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-dna-emerald hover:bg-dna-forest text-white h-12"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Joining...' : 'Join the Waitlist'}
+              </Button>
+            </form>
+          </div>
+        ) : (
+          <div className="text-center py-6 space-y-4">
+            <CheckCircle className="h-16 w-16 text-dna-emerald mx-auto" />
+            <div className="space-y-2">
+              <DialogTitle className="text-2xl font-bold text-dna-forest">
                 You're In!
               </DialogTitle>
               <p className="text-gray-600">
                 We've sent a confirmation email. You'll be the first to know when we launch.
               </p>
             </div>
-          )}
-        </DialogHeader>
-
-        {step === 'form' ? (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name *</Label>
-              <Input
-                id="fullName"
-                value={formData.fullName}
-                onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                placeholder="Enter your full name"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="country">Country *</Label>
-              <Input
-                id="country"
-                value={formData.country}
-                onChange={(e) => handleCountrySearch(e.target.value)}
-                placeholder="Type to search for your country..."
-                required
-              />
-              {formData.country && filteredCountries.length > 0 && (
-                <div className="max-h-32 overflow-y-auto border rounded-md bg-white">
-                  {filteredCountries.slice(0, 5).map((country) => (
-                    <div
-                      key={country}
-                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                      onClick={() => {
-                        setFormData(prev => ({ ...prev, country }));
-                        setFilteredCountries([]);
-                      }}
-                    >
-                      {country}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label>Interest Areas (Optional)</Label>
-              <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto">
-                {interests.map((interest) => (
-                  <div key={interest} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={interest}
-                      checked={formData.selectedInterests.includes(interest)}
-                      onCheckedChange={() => handleInterestToggle(interest)}
-                    />
-                    <Label htmlFor={interest} className="text-sm font-normal">
-                      {interest}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="flex gap-2 mt-3">
-                <Input
-                  value={customInterest}
-                  onChange={(e) => setCustomInterest(e.target.value)}
-                  placeholder="Add your own interest..."
-                  className="flex-1"
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustomInterest())}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={handleAddCustomInterest}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Joining...' : 'Join the Waitlist'}
-            </Button>
-          </form>
-        ) : (
-          <div className="text-center py-4">
             <Button
               onClick={handleClose}
               className="bg-dna-emerald hover:bg-dna-forest text-white"
