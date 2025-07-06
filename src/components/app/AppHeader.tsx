@@ -23,15 +23,18 @@ import {
   Building,
   HelpCircle,
   Globe,
-  LogOut
+  LogOut,
+  FolderOpen
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import Logo from '@/components/header/Logo';
+import FeedbackModal from '@/components/feedback/FeedbackModal';
 
 const AppHeader = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +50,7 @@ const AppHeader = () => {
   const navItems = [
     { name: 'Home', icon: Home, path: '/app', active: true },
     { name: 'My Network', icon: Users, path: '/app/network' },
+    { name: 'Projects', icon: FolderOpen, path: '/explore/projects' },
     { name: 'Jobs', icon: Briefcase, path: '/app/jobs' },
     { name: 'Messaging', icon: MessageCircle, path: '/app/messages' },
     { name: 'Notifications', icon: Bell, path: '/app/notifications' },
@@ -132,9 +136,9 @@ const AppHeader = () => {
                   My Jobs
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFeedbackOpen(true)}>
                   <HelpCircle className="mr-2 h-4 w-4" />
-                  Help
+                  Give Feedback
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Globe className="mr-2 h-4 w-4" />
@@ -150,6 +154,8 @@ const AppHeader = () => {
           </div>
         </div>
       </div>
+      
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </header>
   );
 };

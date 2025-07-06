@@ -5,19 +5,26 @@ import PostComposer from './PostComposer';
 import PostCard from './PostCard';
 import FeedFilters from './FeedFilters';
 import { usePosts } from '@/hooks/usePosts';
+import { useImpactTracking } from '@/hooks/useImpactTracking';
 
 const FeedSection = () => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'connect' | 'collaborate' | 'contribute'>('all');
   const [activeRegion, setActiveRegion] = useState<string>('all');
+  const { trackImpact } = useImpactTracking();
   
   // Use the posts hook with filter
   const pillarFilter = activeFilter === 'all' ? undefined : activeFilter;
   const { posts, loading, refreshPosts } = usePosts(pillarFilter);
 
+  const handlePostCreated = async (postId: string, pillar: string) => {
+    await trackImpact('post', postId, pillar as any, 'post');
+    refreshPosts();
+  };
+
   return (
     <div className="lg:col-span-6 space-y-4">
       {/* Post Composer */}
-      <PostComposer onPostCreated={refreshPosts} />
+      <PostComposer onPostCreated={handlePostCreated} />
 
       {/* Feed Filters */}
       <FeedFilters 

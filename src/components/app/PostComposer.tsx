@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface PostComposerProps {
-  onPostCreated?: () => void;
+  onPostCreated?: (postId: string, pillar: string) => void;
 }
 
 const PostComposer = ({ onPostCreated }: PostComposerProps) => {
@@ -57,20 +57,22 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
     setIsSubmitting(true);
     
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('posts')
         .insert({
           content: content.trim(),
           pillar: selectedPillar,
           author_id: user.id,
           visibility: 'public'
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
 
       setContent('');
       setSelectedPillar(null);
-      onPostCreated?.();
+      onPostCreated?.(data.id, selectedPillar);
       
       toast({
         title: "Post Created",

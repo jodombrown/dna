@@ -25,6 +25,7 @@ import MvpPhase from "./pages/MvpPhase";
 import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
 import NotFound from "./pages/NotFound";
+import ProjectsExplorePage from "./pages/ProjectsExplorePage";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ function App() {
               
               {/* Authenticated Routes */}
               <Route path="/app" element={<AppDashboard />} />
+              <Route path="/explore/projects" element={<ProjectsExplorePage />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
