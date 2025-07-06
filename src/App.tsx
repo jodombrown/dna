@@ -68,11 +68,16 @@ function App() {
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/profile/:username" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/profile/settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
               <Route path="/community" element={<ProtectedRoute><CommunityPage /></ProtectedRoute>} />
               <Route path="/circles" element={<ProtectedRoute><MyCircles /></ProtectedRoute>} />
+              <Route path="/my-circles" element={<ProtectedRoute><MyCircles /></ProtectedRoute>} />
               
               {/* Search Route */}
               <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+              
+              {/* Admin Routes - Protected */}
+              <Route path="/admin/*" element={<ProtectedRoute><NotFound /></ProtectedRoute>} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
