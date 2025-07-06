@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CheckCircle, Plus } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle, Plus, ChevronDown, ChevronUp, Search, MapPin, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface WaitlistPopupProps {
   isOpen: boolean;
   onClose: () => void;
+  trigger?: React.ReactNode;
 }
 
 const countries = [
@@ -32,7 +40,7 @@ const interests = [
   'Youth Empowerment'
 ];
 
-const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
+const WaitlistPopup = ({ isOpen, onClose, trigger }: WaitlistPopupProps) => {
   const [step, setStep] = useState<'form' | 'confirmation'>('form');
   const [formData, setFormData] = useState({
     fullName: '',
@@ -43,14 +51,23 @@ const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
   const [filteredCountries, setFilteredCountries] = useState(countries);
   const [customInterest, setCustomInterest] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [interestsOpen, setInterestsOpen] = useState(true);
   const { toast } = useToast();
 
   const handleCountrySearch = (value: string) => {
-    setFormData(prev => ({ ...prev, country: value }));
+    setCountrySearch(value);
     const filtered = countries.filter(country => 
       country.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredCountries(filtered);
+  };
+
+  const handleCountrySelect = (country: string) => {
+    setFormData(prev => ({ ...prev, country }));
+    setCountrySearch('');
+    setFilteredCountries([]);
   };
 
   const handleInterestToggle = (interest: string) => {
@@ -70,6 +87,13 @@ const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
       }));
       setCustomInterest('');
     }
+  };
+
+  const removeInterest = (interestToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedInterests: prev.selectedInterests.filter(interest => interest !== interestToRemove)
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,24 +139,27 @@ const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
     setStep('form');
     setFormData({ fullName: '', email: '', country: '', selectedInterests: [] });
     setCustomInterest('');
+    setCountrySearch('');
     onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+    <Sheet open={isOpen} onOpenChange={handleClose}>
+      {trigger && <SheetTrigger asChild>{trigger}</SheetTrigger>}
+      <SheetContent side="right" className="w-[90%] sm:w-[400px] overflow-y-auto">
         {step === 'form' ? (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <DialogTitle className="text-2xl font-bold text-dna-forest">
+          <>
+            <SheetHeader className="mb-6">
+              <SheetTitle className="text-2xl font-bold text-dna-forest">
                 Join 500+ Diaspora Changemakers
-              </DialogTitle>
+              </SheetTitle>
               <p className="text-gray-600 text-sm">
                 Get early access to the DNA platform. Help us shape the future of Africa.
               </p>
-            </div>
+            </SheetHeader>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Basic Info Section */}
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="fullName">Full Name *</Label>
@@ -156,89 +183,173 @@ const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
                     required
                   />
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="country">Country *</Label>
-                  <Input
-                    id="country"
-                    value={formData.country}
-                    onChange={(e) => handleCountrySearch(e.target.value)}
-                    placeholder="Type to search for your country..."
-                    required
-                  />
-                  {formData.country && filteredCountries.length > 0 && (
-                    <div className="max-h-32 overflow-y-auto border rounded-md bg-white shadow-lg z-50">
-                      {filteredCountries.slice(0, 5).map((country) => (
+              {/* Country Selection */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setCountryOpen(!countryOpen)}
+                  className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-gray-700 transition-colors"
+                >
+                  <span className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    Country *
+                  </span>
+                  {countryOpen ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+                {countryOpen && (
+                  <div className="space-y-3">
+                    {/* Current Selection */}
+                    {formData.country && (
+                      <div className="p-2 bg-gray-100 rounded-lg border">
+                        <span className="text-sm text-gray-700 font-medium">
+                          Selected: {formData.country}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, country: '' }))}
+                          className="ml-2 text-xs text-gray-500 hover:text-gray-700 underline"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* Search Input */}
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        placeholder="Search countries..."
+                        value={countrySearch}
+                        onChange={(e) => handleCountrySearch(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    
+                    {/* Country Options */}
+                    <div className="max-h-40 overflow-y-auto border rounded-lg bg-gray-50">
+                      {filteredCountries.slice(0, 8).map((country) => (
                         <div
                           key={country}
-                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0"
-                          onClick={() => {
-                            setFormData(prev => ({ ...prev, country }));
-                            setFilteredCountries([]);
-                          }}
+                          className="p-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0"
+                          onClick={() => handleCountrySelect(country)}
                         >
                           {country}
                         </div>
                       ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  <Label>Interest Areas (Optional)</Label>
-                  <div className="max-h-48 overflow-y-auto border rounded-lg p-3 bg-gray-50">
-                    <div className="grid grid-cols-1 gap-2">
-                      {interests.map((interest) => (
-                        <div key={interest} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={interest}
-                            checked={formData.selectedInterests.includes(interest)}
-                            onCheckedChange={() => handleInterestToggle(interest)}
-                          />
-                          <Label htmlFor={interest} className="text-sm font-normal cursor-pointer">
-                            {interest}
-                          </Label>
+                      {filteredCountries.length === 0 && countrySearch && (
+                        <div className="p-2 text-sm text-gray-500 italic">
+                          No countries found for "{countrySearch}"
                         </div>
-                      ))}
+                      )}
                     </div>
                   </div>
-                  
-                  <div className="flex gap-2">
-                    <Input
-                      value={customInterest}
-                      onChange={(e) => setCustomInterest(e.target.value)}
-                      placeholder="Add your own interest..."
-                      className="flex-1"
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustomInterest())}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={handleAddCustomInterest}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+                )}
               </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-dna-emerald hover:bg-dna-forest text-white h-12"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Joining...' : 'Join the Waitlist'}
-              </Button>
+              {/* Interests Section */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setInterestsOpen(!interestsOpen)}
+                  className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-gray-700 transition-colors"
+                >
+                  <span>Interest Areas (Optional)</span>
+                  {interestsOpen ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+                
+                {/* Selected Interests Tags */}
+                {formData.selectedInterests.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {formData.selectedInterests.map((interest) => (
+                      <Badge 
+                        key={interest} 
+                        variant="secondary" 
+                        className="bg-dna-emerald/10 text-dna-forest border-dna-emerald/20 flex items-center gap-1"
+                      >
+                        {interest}
+                        <button
+                          type="button"
+                          onClick={() => removeInterest(interest)}
+                          className="ml-1 hover:bg-dna-emerald/20 rounded-full p-0.5"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                {interestsOpen && (
+                  <div className="space-y-3">
+                    {/* Interest Options */}
+                    <div className="max-h-48 overflow-y-auto border rounded-lg p-3 bg-gray-50">
+                      <div className="grid grid-cols-1 gap-2">
+                        {interests.map((interest) => (
+                          <div key={interest} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={interest}
+                              checked={formData.selectedInterests.includes(interest)}
+                              onCheckedChange={() => handleInterestToggle(interest)}
+                            />
+                            <Label htmlFor={interest} className="text-sm font-normal cursor-pointer">
+                              {interest}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Custom Interest Input */}
+                    <div className="flex gap-2">
+                      <Input
+                        value={customInterest}
+                        onChange={(e) => setCustomInterest(e.target.value)}
+                        placeholder="Add your own interest..."
+                        className="flex-1"
+                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustomInterest())}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={handleAddCustomInterest}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-6 border-t">
+                <Button
+                  type="submit"
+                  className="w-full bg-dna-emerald hover:bg-dna-forest text-white h-12 text-base"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Joining...' : 'Join the Waitlist'}
+                </Button>
+              </div>
             </form>
-          </div>
+          </>
         ) : (
           <div className="text-center py-6 space-y-4">
             <CheckCircle className="h-16 w-16 text-dna-emerald mx-auto" />
             <div className="space-y-2">
-              <DialogTitle className="text-2xl font-bold text-dna-forest">
+              <SheetTitle className="text-2xl font-bold text-dna-forest">
                 You're In!
-              </DialogTitle>
+              </SheetTitle>
               <p className="text-gray-600">
                 We've sent a confirmation email. You'll be the first to know when we launch.
               </p>
@@ -251,8 +362,8 @@ const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
             </Button>
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };
 
