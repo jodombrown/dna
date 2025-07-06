@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { 
@@ -22,7 +21,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface Message {
@@ -31,14 +29,6 @@ interface Message {
   sender_id: string;
   created_at: string;
   is_read: boolean;
-  conversation_id: string;
-}
-
-interface Conversation {
-  id: string;
-  user_1_id: string;
-  user_2_id: string;
-  last_message_at: string;
 }
 
 interface ConversationViewProps {
@@ -53,99 +43,64 @@ const ConversationView: React.FC<ConversationViewProps> = ({
   showBackButton = false 
 }) => {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [otherUser, setOtherUser] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Mock data for the selected conversation
+  const otherUser = {
+    full_name: conversationId === '1' ? 'Sarah Okoye' : 
+               conversationId === '2' ? 'David Mensah' : 
+               conversationId === '3' ? 'Amina Hassan' : 'Unknown User',
+    avatar_url: '',
+    headline: conversationId === '1' ? 'Tech Entrepreneur' : 
+              conversationId === '2' ? 'Software Engineer' : 
+              conversationId === '3' ? 'Impact Investor' : 'Professional'
+  };
+
+  const messages: Message[] = conversationId ? [
+    {
+      id: '1',
+      content: 'Hi! I saw your post about the African tech initiative. Very interesting!',
+      sender_id: 'other',
+      created_at: new Date(Date.now() - 3600000).toISOString(),
+      is_read: true
+    },
+    {
+      id: '2',
+      content: 'Thank you! I\'m always looking for like-minded people to collaborate with.',
+      sender_id: user?.id || 'me',
+      created_at: new Date(Date.now() - 3300000).toISOString(),
+      is_read: true
+    },
+    {
+      id: '3',
+      content: 'Great! I have some ideas that might align with your vision. Would love to discuss further.',
+      sender_id: 'other',
+      created_at: new Date(Date.now() - 1800000).toISOString(),
+      is_read: true
+    }
+  ] : [];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    if (conversationId && user) {
-      fetchMessages();
-      fetchOtherUser();
-    }
-  }, [conversationId, user]);
-
-  useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const fetchMessages = async () => {
-    if (!conversationId) return;
-
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('messages' as any)
-        .select('*')
-        .eq('conversation_id', conversationId)
-        .order('created_at', { ascending: true });
-      
-      if (error) throw error;
-      setMessages((data as unknown as Message[]) || []);
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchOtherUser = async () => {
-    if (!conversationId || !user) return;
-
-    try {
-      // Get conversation details
-      const { data: convData, error: convError } = await supabase
-        .from('conversations' as any)
-        .select('user_1_id, user_2_id')
-        .eq('id', conversationId)
-        .single();
-
-      if (convError) throw convError;
-
-      const conversation = convData as unknown as Conversation;
-      const otherUserId = conversation.user_1_id === user.id ? conversation.user_2_id : conversation.user_1_id;
-
-      const { data: userData, error: userError } = await supabase
-        .from('profiles')
-        .select('full_name, avatar_url, headline')
-        .eq('id', otherUserId)
-        .single();
-
-      if (userError) throw userError;
-      setOtherUser(userData);
-    } catch (error) {
-      console.error('Error fetching other user:', error);
-    }
-  };
 
   const sendMessage = async () => {
     if (!newMessage.trim() || !conversationId || !user || sending) return;
 
     setSending(true);
-    try {
-      const { error } = await supabase
-        .from('messages' as any)
-        .insert({
-          conversation_id: conversationId,
-          sender_id: user.id,
-          content: newMessage.trim()
-        });
-
-      if (error) throw error;
-
+    
+    // Simulate sending delay
+    setTimeout(() => {
+      console.log('Message sent:', newMessage);
       setNewMessage('');
-      fetchMessages(); // Refresh messages
-    } catch (error) {
-      console.error('Error sending message:', error);
-    } finally {
       setSending(false);
-    }
+    }, 1000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -178,22 +133,18 @@ const ConversationView: React.FC<ConversationViewProps> = ({
               </Button>
             )}
             
-            {otherUser && (
-              <>
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={otherUser.avatar_url} />
-                  <AvatarFallback className="bg-dna-emerald text-white">
-                    {otherUser.full_name?.charAt(0) || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h3 className="font-medium text-dna-forest">{otherUser.full_name}</h3>
-                  {otherUser.headline && (
-                    <p className="text-xs text-gray-500">{otherUser.headline}</p>
-                  )}
-                </div>
-              </>
-            )}
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={otherUser.avatar_url} />
+              <AvatarFallback className="bg-dna-emerald text-white">
+                {otherUser.full_name?.charAt(0) || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h3 className="font-medium text-dna-forest">{otherUser.full_name}</h3>
+              {otherUser.headline && (
+                <p className="text-xs text-gray-500">{otherUser.headline}</p>
+              )}
+            </div>
           </div>
 
           <DropdownMenu>
@@ -227,9 +178,7 @@ const ConversationView: React.FC<ConversationViewProps> = ({
 
       {/* Messages */}
       <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
-        {loading ? (
-          <div className="text-center text-gray-500">Loading messages...</div>
-        ) : messages.length === 0 ? (
+        {messages.length === 0 ? (
           <div className="text-center text-gray-500">
             <p>No messages yet. Start the conversation!</p>
           </div>

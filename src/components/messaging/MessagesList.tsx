@@ -5,14 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search, Star, Briefcase, Mail, Users, MessageCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
 
 interface Conversation {
   id: string;
-  user_1_id: string;
-  user_2_id: string;
-  last_message_at: string;
   other_user: {
     full_name: string;
     avatar_url: string;
@@ -21,15 +16,7 @@ interface Conversation {
     content: string;
     is_read: boolean;
   };
-}
-
-interface Message {
-  id: string;
-  content: string;
-  sender_id: string;
-  created_at: string;
-  is_read: boolean;
-  conversation_id: string;
+  last_message_at: string;
 }
 
 interface MessagesListProps {
@@ -41,11 +28,48 @@ const MessagesList: React.FC<MessagesListProps> = ({
   onConversationSelect, 
   activeConversationId 
 }) => {
-  const { user } = useAuth();
-  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
-  const [loading, setLoading] = useState(true);
+
+  // Mock conversations data
+  const conversations: Conversation[] = [
+    {
+      id: '1',
+      other_user: {
+        full_name: 'Sarah Okoye',
+        avatar_url: ''
+      },
+      latest_message: {
+        content: 'Great idea! Let me know when you want to collaborate on this project.',
+        is_read: false
+      },
+      last_message_at: new Date().toISOString()
+    },
+    {
+      id: '2',
+      other_user: {
+        full_name: 'David Mensah',
+        avatar_url: ''
+      },
+      latest_message: {
+        content: 'Thanks for connecting! Looking forward to working together.',
+        is_read: true
+      },
+      last_message_at: new Date(Date.now() - 3600000).toISOString()
+    },
+    {
+      id: '3',
+      other_user: {
+        full_name: 'Amina Hassan',
+        avatar_url: ''
+      },
+      latest_message: {
+        content: 'The investment opportunity looks promising. Can we schedule a call?',
+        is_read: false
+      },
+      last_message_at: new Date(Date.now() - 7200000).toISOString()
+    }
+  ];
 
   const filters = [
     { id: 'all', label: 'All', icon: MessageCircle },
@@ -55,71 +79,6 @@ const MessagesList: React.FC<MessagesListProps> = ({
     { id: 'unread', label: 'Unread', icon: Mail },
     { id: 'connections', label: 'My Connections', icon: Users }
   ];
-
-  useEffect(() => {
-    if (user) {
-      fetchConversations();
-    }
-  }, [user]);
-
-  const fetchConversations = async () => {
-    if (!user) return;
-
-    try {
-      // Fetch conversations where user is participant
-      const { data: conversationsData, error } = await supabase
-        .from('conversations' as any)
-        .select('*')
-        .or(`user_1_id.eq.${user.id},user_2_id.eq.${user.id}`)
-        .order('last_message_at', { ascending: false });
-
-      if (error) throw error;
-
-      // For each conversation, get the other user's profile and latest message
-      const enrichedConversations = await Promise.all(
-        (conversationsData || []).map(async (conv: any) => {
-          const otherUserId = conv.user_1_id === user.id ? conv.user_2_id : conv.user_1_id;
-          
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('full_name, avatar_url')
-            .eq('id', otherUserId)
-            .single();
-
-          // Get latest message for this conversation
-          const { data: messagesData } = await supabase
-            .from('messages' as any)
-            .select('content, is_read, created_at')
-            .eq('conversation_id', conv.id)
-            .order('created_at', { ascending: false })
-            .limit(1);
-
-          const latestMessage = messagesData?.[0] as any;
-
-          return {
-            id: conv.id,
-            user_1_id: conv.user_1_id,
-            user_2_id: conv.user_2_id,
-            last_message_at: conv.last_message_at,
-            other_user: {
-              full_name: profileData?.full_name || 'Unknown User',
-              avatar_url: profileData?.avatar_url || ''
-            },
-            latest_message: {
-              content: latestMessage?.content || 'No messages yet',
-              is_read: latestMessage?.is_read || true
-            }
-          };
-        })
-      );
-
-      setConversations(enrichedConversations);
-    } catch (error) {
-      console.error('Error fetching conversations:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filteredConversations = conversations.filter(conv => {
     const matchesSearch = conv.other_user.full_name
@@ -170,9 +129,7 @@ const MessagesList: React.FC<MessagesListProps> = ({
       </CardHeader>
 
       <CardContent className="flex-1 overflow-y-auto p-0">
-        {loading ? (
-          <div className="p-4 text-center text-gray-500">Loading conversations...</div>
-        ) : filteredConversations.length === 0 ? (
+        {filteredConversations.length === 0 ? (
           <div className="p-4 text-center text-gray-500">
             {searchQuery ? 'No conversations found' : 'No messages yet'}
           </div>

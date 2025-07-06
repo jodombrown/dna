@@ -54,7 +54,7 @@ const AppHeader = () => {
     { name: 'Contribute', icon: Briefcase, path: '/contribute' },
     { name: 'Projects', icon: FolderOpen, path: '/explore/projects' },
     { name: 'Jobs', icon: Briefcase, path: '/contribute' },
-    { name: 'Messaging', icon: MessageCircle, path: '/app' },
+    { name: 'Messaging', icon: MessageCircle, path: '/messaging' },
     { name: 'Notifications', icon: Bell, path: '/app' },
   ];
 
