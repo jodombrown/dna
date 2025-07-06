@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Plus, ChevronDown, ChevronUp, Search, MapPin, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import LocationSelector from '@/components/LocationSelector';
 import {
   Sheet,
   SheetContent,
@@ -45,29 +46,16 @@ const WaitlistPopup = ({ isOpen, onClose, trigger }: WaitlistPopupProps) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    country: '',
+    location: { country: '', state: '', city: '' },
     selectedInterests: [] as string[]
   });
-  const [filteredCountries, setFilteredCountries] = useState(countries);
   const [customInterest, setCustomInterest] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [countrySearch, setCountrySearch] = useState('');
-  const [countryOpen, setCountryOpen] = useState(false);
   const [interestsOpen, setInterestsOpen] = useState(true);
   const { toast } = useToast();
 
-  const handleCountrySearch = (value: string) => {
-    setCountrySearch(value);
-    const filtered = countries.filter(country => 
-      country.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredCountries(filtered);
-  };
-
-  const handleCountrySelect = (country: string) => {
-    setFormData(prev => ({ ...prev, country }));
-    setCountrySearch('');
-    setFilteredCountries([]);
+  const handleLocationChange = (location: { country: string; state: string; city: string }) => {
+    setFormData(prev => ({ ...prev, location }));
   };
 
   const handleInterestToggle = (interest: string) => {
@@ -98,7 +86,7 @@ const WaitlistPopup = ({ isOpen, onClose, trigger }: WaitlistPopupProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.country) {
+    if (!formData.fullName || !formData.email || !formData.location.country) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields",
@@ -109,12 +97,17 @@ const WaitlistPopup = ({ isOpen, onClose, trigger }: WaitlistPopupProps) => {
 
     setIsSubmitting(true);
     try {
+      // Create location string
+      const locationString = [formData.location.city, formData.location.state, formData.location.country]
+        .filter(Boolean)
+        .join(', ');
+
       const { error } = await supabase
         .from('waitlist_signups')
         .insert({
           full_name: formData.fullName,
           email: formData.email,
-          location: formData.country,
+          location: locationString,
           role: 'individual',
           causes: formData.selectedInterests,
           status: 'pending'
@@ -137,9 +130,8 @@ const WaitlistPopup = ({ isOpen, onClose, trigger }: WaitlistPopupProps) => {
 
   const handleClose = () => {
     setStep('form');
-    setFormData({ fullName: '', email: '', country: '', selectedInterests: [] });
+    setFormData({ fullName: '', email: '', location: { country: '', state: '', city: '' }, selectedInterests: [] });
     setCustomInterest('');
-    setCountrySearch('');
     onClose();
   };
 
@@ -185,72 +177,12 @@ const WaitlistPopup = ({ isOpen, onClose, trigger }: WaitlistPopupProps) => {
                 </div>
               </div>
 
-              {/* Country Selection */}
-              <div>
-                <button
-                  type="button"
-                  onClick={() => setCountryOpen(!countryOpen)}
-                  className="flex items-center justify-between w-full text-sm font-medium mb-3 text-gray-900 hover:text-gray-700 transition-colors"
-                >
-                  <span className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4" />
-                    Country *
-                  </span>
-                  {countryOpen ? (
-                    <ChevronUp className="w-4 h-4" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4" />
-                  )}
-                </button>
-                {countryOpen && (
-                  <div className="space-y-3">
-                    {/* Current Selection */}
-                    {formData.country && (
-                      <div className="p-2 bg-gray-100 rounded-lg border">
-                        <span className="text-sm text-gray-700 font-medium">
-                          Selected: {formData.country}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => setFormData(prev => ({ ...prev, country: '' }))}
-                          className="ml-2 text-xs text-gray-500 hover:text-gray-700 underline"
-                        >
-                          Clear
-                        </button>
-                      </div>
-                    )}
-                    
-                    {/* Search Input */}
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                      <Input
-                        placeholder="Search countries..."
-                        value={countrySearch}
-                        onChange={(e) => handleCountrySearch(e.target.value)}
-                        className="pl-10"
-                      />
-                    </div>
-                    
-                    {/* Country Options */}
-                    <div className="max-h-40 overflow-y-auto border rounded-lg bg-gray-50">
-                      {filteredCountries.slice(0, 8).map((country) => (
-                        <div
-                          key={country}
-                          className="p-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0"
-                          onClick={() => handleCountrySelect(country)}
-                        >
-                          {country}
-                        </div>
-                      ))}
-                      {filteredCountries.length === 0 && countrySearch && (
-                        <div className="p-2 text-sm text-gray-500 italic">
-                          No countries found for "{countrySearch}"
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+              {/* Location Selection */}
+              <LocationSelector
+                value={formData.location}
+                onChange={handleLocationChange}
+                required={true}
+              />
 
               {/* Interests Section */}
               <div>
