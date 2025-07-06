@@ -98,7 +98,7 @@ export default function EventDetailDialog({
           {event.creator_profile && (
             <button
               className="absolute bottom-4 right-4 rounded-full shadow border-2 border-white bg-white/80 hover:bg-dna-emerald/80 flex items-center gap-2 px-3 py-1 z-20"
-              onClick={() => navigate(`/profile/${event.creator_profile.id}`)}
+              onClick={() => navigate('/profile')}
               title={`View profile: ${event.creator_profile.full_name}`}
               aria-label="View event creator profile"
               tabIndex={0}

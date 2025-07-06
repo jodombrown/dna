@@ -148,7 +148,7 @@ const InnovationPathways = () => {
                 </div>
 
                 <Button 
-                  onClick={() => navigate(`/innovation/${pathway.id}`)}
+                  onClick={() => navigate('/collaborate')}
                   className="w-full bg-dna-copper hover:bg-dna-gold text-white"
                 >
                   Learn More

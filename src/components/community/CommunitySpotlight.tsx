@@ -143,7 +143,7 @@ const CommunitySpotlight = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate(`/profile/${currentProfile.id}`)}
+              onClick={() => navigate('/profile')}
               className="w-full"
             >
               View Profile
@@ -185,7 +185,7 @@ const CommunitySpotlight = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => navigate(`/project/${project.id}`)}
+                    onClick={() => navigate('/explore/projects')}
                     className="text-xs h-auto p-1"
                   >
                     View

@@ -147,7 +147,7 @@ const EventCard: React.FC<EventCardProps> = ({
               className="absolute bottom-2 right-2 rounded-full shadow border-2 border-white bg-white/90 hover:bg-dna-emerald/80 transition-all flex items-center gap-2 px-2 py-0.5 z-20"
               onClick={e => {
                 e.stopPropagation();
-                navigate(`/profile/${event.creator_profile.id}`);
+                navigate('/profile');
               }}
               title={`View profile: ${event.creator_profile.full_name}`}
               aria-label="View event creator profile"

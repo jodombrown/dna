@@ -49,11 +49,11 @@ const AppHeader = () => {
 
   const navItems = [
     { name: 'Home', icon: Home, path: '/app', active: true },
-    { name: 'My Network', icon: Users, path: '/app/network' },
+    { name: 'My Network', icon: Users, path: '/connect' },
     { name: 'Projects', icon: FolderOpen, path: '/explore/projects' },
-    { name: 'Jobs', icon: Briefcase, path: '/app/jobs' },
-    { name: 'Messaging', icon: MessageCircle, path: '/app/messages' },
-    { name: 'Notifications', icon: Bell, path: '/app/notifications' },
+    { name: 'Jobs', icon: Briefcase, path: '/contribute' },
+    { name: 'Messaging', icon: MessageCircle, path: '/app' },
+    { name: 'Notifications', icon: Bell, path: '/app' },
   ];
 
   return (
@@ -115,23 +115,23 @@ const AppHeader = () => {
                   {user?.user_metadata?.full_name || user?.email}
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/app/profile')}>
+                <DropdownMenuItem onClick={() => navigate('/profile')}>
                   <User className="mr-2 h-4 w-4" />
                   View Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/app/settings')}>
+                <DropdownMenuItem onClick={() => navigate('/profile/settings')}>
                   <Settings className="mr-2 h-4 w-4" />
                   Settings & Privacy
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/app/posts')}>
+                <DropdownMenuItem onClick={() => navigate('/app')}>
                   <FileText className="mr-2 h-4 w-4" />
                   My Posts & Activity
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/app/communities')}>
+                <DropdownMenuItem onClick={() => navigate('/community')}>
                   <Building className="mr-2 h-4 w-4" />
                   My Communities
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/app/jobs')}>
+                <DropdownMenuItem onClick={() => navigate('/contribute')}>
                   <Briefcase className="mr-2 h-4 w-4" />
                   My Jobs
                 </DropdownMenuItem>
