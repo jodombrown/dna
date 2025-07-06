@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from "@/contexts/AuthContext";
 import ErrorBoundary from "./components/app/ErrorBoundary";
 import Index from "./pages/Index";
@@ -32,6 +33,8 @@ import ProjectsExplorePage from "./pages/ProjectsExplorePage";
 import InvitePage from "./pages/InvitePage";
 import SearchPage from "./pages/SearchPage";
 import NotificationsPage from "./pages/NotificationsPage";
+import HelpPage from "./pages/HelpPage";
+import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/app/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -40,11 +43,12 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
+        <HelmetProvider>
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Index />} />
@@ -55,6 +59,7 @@ function App() {
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
+              <Route path="/help" element={<HelpPage />} />
               <Route path="/invite" element={<InvitePage />} />
               
               {/* Phase Routes */}
@@ -86,14 +91,18 @@ function App() {
               {/* Notifications Route */}
               <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
               
+              {/* Admin Routes */}
+              <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+              
               {/* Admin Routes - Protected */}
               <Route path="/admin/*" element={<ProtectedRoute><NotFound /></ProtectedRoute>} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
             </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
+            </TooltipProvider>
+          </AuthProvider>
+        </HelmetProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
