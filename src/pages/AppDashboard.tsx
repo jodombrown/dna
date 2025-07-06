@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import AppHeader from '@/components/app/AppHeader';
-import AppLayout from '@/components/app/AppLayout';
+import AppSidebar from '@/components/app/AppSidebar';
+import FeedSection from '@/components/app/FeedSection';
+import RightSidebar from '@/components/app/RightSidebar';
 
 const AppDashboard = () => {
   const { user, loading } = useAuth();
@@ -68,8 +70,33 @@ const AppDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <AppHeader />
-      <div className="flex-1 overflow-hidden">
-        <AppLayout />
+      <div className="column-container flex layout-stable">
+        {/* Left Sidebar */}
+        <div className="w-80 flex-shrink-0 hidden lg:block border-r border-gray-200 bg-white">
+          <div className="h-full overflow-y-auto scrollbar-thin">
+            <div className="p-4">
+              <AppSidebar />
+            </div>
+          </div>
+        </div>
+        
+        {/* Main Feed */}
+        <div className="flex-1 min-w-0 border-r border-gray-200 bg-white">
+          <div className="h-full overflow-y-auto scrollbar-thin">
+            <div className="p-4">
+              <FeedSection />
+            </div>
+          </div>
+        </div>
+        
+        {/* Right Sidebar */}
+        <div className="w-80 flex-shrink-0 hidden xl:block bg-white">
+          <div className="h-full overflow-y-auto scrollbar-thin">
+            <div className="p-4">
+              <RightSidebar />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
