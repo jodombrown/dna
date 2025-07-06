@@ -8,6 +8,7 @@ import { usePosts } from '@/hooks/usePosts';
 
 const FeedSection = () => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'connect' | 'collaborate' | 'contribute'>('all');
+  const [activeRegion, setActiveRegion] = useState<string>('all');
   
   // Use the posts hook with filter
   const pillarFilter = activeFilter === 'all' ? undefined : activeFilter;
@@ -21,7 +22,9 @@ const FeedSection = () => {
       {/* Feed Filters */}
       <FeedFilters 
         activeFilter={activeFilter} 
-        onFilterChange={setActiveFilter} 
+        onFilterChange={setActiveFilter}
+        activeRegion={activeRegion}
+        onRegionChange={setActiveRegion}
       />
 
       {/* Posts Feed */}
@@ -51,6 +54,7 @@ const FeedSection = () => {
               <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
               <h3 className="text-lg font-semibold mb-2">
                 {activeFilter === 'all' ? 'No posts yet' : `No ${activeFilter} posts yet`}
+                {activeRegion !== 'all' && ` in ${activeRegion.replace('-', ' ')}`}
               </h3>
               <p className="text-sm">
                 {activeFilter === 'all' 

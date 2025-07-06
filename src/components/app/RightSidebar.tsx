@@ -1,12 +1,107 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, Users, Sparkles, RefreshCw } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useDiscovery } from '@/hooks/useDiscovery';
+import DiscoveryCard from './DiscoveryCard';
+import { useToast } from '@/hooks/use-toast';
 
 const RightSidebar = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const { 
+    suggestedPeople, 
+    suggestedPosts, 
+    trendingHashtags, 
+    loading, 
+    refreshDiscovery 
+  } = useDiscovery(user?.id);
+
+  const handleDiscoveryAction = async (id: string, action: 'follow' | 'view' | 'join') => {
+    // Placeholder for action handlers - would integrate with actual follow/view/join logic
+    const actionLabels = {
+      follow: 'connect with',
+      view: 'view',
+      join: 'join'
+    };
+    
+    toast({
+      title: "Action Noted",
+      description: `Ready to ${actionLabels[action]} this item. Feature coming soon!`,
+    });
+  };
+
   return (
     <div className="lg:col-span-3 space-y-4">
+      {/* Discovery Header */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg flex items-center">
+              <Sparkles className="h-5 w-5 mr-2 text-dna-emerald" />
+              Discover
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={refreshDiscovery}
+              disabled={loading}
+              className="h-8 w-8 p-0"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Suggested People */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center">
+            <Users className="h-5 w-5 mr-2 text-dna-emerald" />
+            People You May Know
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-10 w-10 bg-gray-200 rounded-full"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : suggestedPeople.length > 0 ? (
+            suggestedPeople.map((person) => (
+              <DiscoveryCard
+                key={person.id}
+                type="person"
+                data={{
+                  id: person.id,
+                  title: person.full_name,
+                  subtitle: person.location || 'DNA Community',
+                  description: person.bio,
+                  avatar_url: person.avatar_url,
+                  match_reason: person.match_reason
+                }}
+                onAction={handleDiscoveryAction}
+              />
+            ))
+          ) : (
+            <p className="text-sm text-gray-500 text-center py-4">
+              No suggestions available yet
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Trending Content */}
       <Card>
         <CardHeader>
@@ -16,55 +111,75 @@ const RightSidebar = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="hover:bg-gray-50 p-2 rounded cursor-pointer">
-            <p className="text-sm font-medium">#AfricaTech2024</p>
-            <p className="text-xs text-gray-500">142 posts</p>
-          </div>
-          <div className="hover:bg-gray-50 p-2 rounded cursor-pointer">
-            <p className="text-sm font-medium">#DiasporaInvestment</p>
-            <p className="text-xs text-gray-500">89 posts</p>
-          </div>
-          <div className="hover:bg-gray-50 p-2 rounded cursor-pointer">
-            <p className="text-sm font-medium">#YouthEmpowerment</p>
-            <p className="text-xs text-gray-500">67 posts</p>
-          </div>
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-1"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              ))}
+            </div>
+          ) : trendingHashtags.length > 0 ? (
+            trendingHashtags.map((hashtag) => (
+              <DiscoveryCard
+                key={hashtag.tag}
+                type="hashtag"
+                data={{
+                  id: hashtag.tag,
+                  title: hashtag.tag,
+                  count: hashtag.count,
+                  growth: hashtag.growth
+                }}
+                onAction={handleDiscoveryAction}
+              />
+            ))
+          ) : (
+            <div className="space-y-3">
+              <div className="hover:bg-gray-50 p-2 rounded cursor-pointer">
+                <p className="text-sm font-medium">#AfricaTech2024</p>
+                <p className="text-xs text-gray-500">142 posts</p>
+              </div>
+              <div className="hover:bg-gray-50 p-2 rounded cursor-pointer">
+                <p className="text-sm font-medium">#DiasporaInvestment</p>
+                <p className="text-xs text-gray-500">89 posts</p>
+              </div>
+              <div className="hover:bg-gray-50 p-2 rounded cursor-pointer">
+                <p className="text-sm font-medium">#YouthEmpowerment</p>
+                <p className="text-xs text-gray-500">67 posts</p>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Suggested Connections */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">People You May Know</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-12 w-12">
-              <AvatarFallback className="bg-dna-emerald text-white">EN</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <h4 className="font-semibold text-sm">Esther Nkomo</h4>
-              <p className="text-xs text-gray-500">Healthcare Innovation</p>
-              <Button size="sm" variant="outline" className="mt-1">
-                Connect
-              </Button>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-12 w-12">
-              <AvatarFallback className="bg-dna-copper text-white">OA</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <h4 className="font-semibold text-sm">Omar Ahmed</h4>
-              <p className="text-xs text-gray-500">Sustainable Agriculture</p>
-              <Button size="sm" variant="outline" className="mt-1">
-                Connect
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* High-Engagement Posts */}
+      {suggestedPosts.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Recommended Posts</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {suggestedPosts.map((post) => (
+              <DiscoveryCard
+                key={post.id}
+                type="post"
+                data={{
+                  id: post.id,
+                  title: post.author_name || 'DNA Member',
+                  description: post.content,
+                  pillar: post.pillar,
+                  engagement_score: post.engagement_score,
+                  match_reason: post.match_reason
+                }}
+                onAction={handleDiscoveryAction}
+              />
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Opportunities */}
+      {/* Opportunities Placeholder */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Opportunities</CardTitle>
