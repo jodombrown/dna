@@ -37,6 +37,7 @@ import HelpPage from "./pages/HelpPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboardHome from "./pages/AdminDashboardHome";
+import AdminUserManagement from "./pages/AdminUserManagement";
 import ProtectedRoute from "./components/app/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -96,6 +97,7 @@ function App() {
               {/* Admin Routes - Isolated System */}
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route path="/admin/dashboard" element={<AdminDashboardHome />} />
+              <Route path="/admin/users" element={<AdminUserManagement />} />
               <Route path="/admin" element={<AdminDashboard />} />
               
               <Route path="*" element={<NotFound />} />
