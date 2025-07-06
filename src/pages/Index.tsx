@@ -6,20 +6,12 @@ import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import PrototypeBanner from '@/components/PrototypeBanner';
+import WaitlistSection from '@/components/WaitlistSection';
 import WaitlistPopup from '@/components/WaitlistPopup';
 
 const Index = () => {
   useScrollToTop();
-  const [showWaitlistPopup, setShowWaitlistPopup] = useState(false);
-
-  useEffect(() => {
-    // Show waitlist popup after 2 seconds
-    const timer = setTimeout(() => {
-      setShowWaitlistPopup(true);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
 
   return (
     <div className="min-h-screen bg-white">
@@ -35,12 +27,15 @@ const Index = () => {
       {/* Platform Feature Showcase */}
       <PlatformFeatureShowcase />
 
+      {/* Waitlist Section */}
+      <WaitlistSection onJoinClick={() => setShowWaitlistDialog(true)} />
+
       <Footer />
 
-      {/* Waitlist Popup */}
+      {/* Waitlist Dialog */}
       <WaitlistPopup 
-        isOpen={showWaitlistPopup} 
-        onClose={() => setShowWaitlistPopup(false)} 
+        isOpen={showWaitlistDialog} 
+        onClose={() => setShowWaitlistDialog(false)} 
       />
     </div>
   );
