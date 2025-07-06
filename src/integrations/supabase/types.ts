@@ -364,6 +364,42 @@ export type Database = {
         }
         Relationships: []
       }
+      impact_log: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          pillar: string | null
+          points: number | null
+          target_id: string | null
+          target_type: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          pillar?: string | null
+          points?: number | null
+          target_id?: string | null
+          target_type?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          pillar?: string | null
+          points?: number | null
+          target_id?: string | null
+          target_type?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       initiatives: {
         Row: {
           created_at: string | null
@@ -725,6 +761,42 @@ export type Database = {
           },
         ]
       }
+      user_feedback: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          id: string
+          message: string
+          priority: string | null
+          status: string | null
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          id?: string
+          message: string
+          priority?: string | null
+          status?: string | null
+          type: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string
+          priority?: string | null
+          status?: string | null
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           avatar_url: string | null
@@ -814,9 +886,28 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_impact_summary: {
+        Row: {
+          collaborate_actions: number | null
+          comments_made: number | null
+          connect_actions: number | null
+          connections_made: number | null
+          contribute_actions: number | null
+          last_activity: string | null
+          posts_created: number | null
+          reactions_given: number | null
+          total_actions: number | null
+          total_points: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      calculate_impact_score: {
+        Args: { target_user_id: string }
+        Returns: number
+      }
       check_rate_limit: {
         Args: {
           _ip_address: unknown
