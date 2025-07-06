@@ -61,6 +61,10 @@ function App() {
               {/* Authenticated Routes */}
               <Route path="/app" element={<AppDashboard />} />
               <Route path="/explore/projects" element={<ProjectsExplorePage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/settings" element={<ProfileSettings />} />
+              <Route path="/community" element={<CommunityPage />} />
+              <Route path="/circles" element={<MyCircles />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>

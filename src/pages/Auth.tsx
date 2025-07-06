@@ -68,10 +68,10 @@ const Auth = () => {
                 
                 <Button 
                   variant="outline"
-                  onClick={() => navigate('/clean-social-feed')}
+                  onClick={() => navigate('/app')}
                   className="w-full border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
                 >
-                  View Demo Feed
+                  View App Dashboard
                 </Button>
               </div>
 
