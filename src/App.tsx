@@ -35,6 +35,8 @@ import SearchPage from "./pages/SearchPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import HelpPage from "./pages/HelpPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminLoginPage from "./pages/AdminLoginPage";
+import AdminDashboardHome from "./pages/AdminDashboardHome";
 import ProtectedRoute from "./components/app/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -91,11 +93,10 @@ function App() {
               {/* Notifications Route */}
               <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
               
-              {/* Admin Routes */}
-              <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-              
-              {/* Admin Routes - Protected */}
-              <Route path="/admin/*" element={<ProtectedRoute><NotFound /></ProtectedRoute>} />
+              {/* Admin Routes - Isolated System */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin/dashboard" element={<AdminDashboardHome />} />
+              <Route path="/admin" element={<AdminDashboard />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
