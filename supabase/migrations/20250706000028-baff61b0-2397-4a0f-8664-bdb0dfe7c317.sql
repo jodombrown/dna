@@ -1,0 +1,25 @@
+-- Add the missing foreign key index for communities.moderated_by
+CREATE INDEX IF NOT EXISTS idx_communities_moderated_by ON public.communities(moderated_by);
+
+-- Note: The linter reports many indexes as "unused" but they are actually ESSENTIAL for current app functionality:
+-- 
+-- Posts indexes (used in feed functionality):
+-- - idx_posts_created_at: Used for "ORDER BY created_at DESC" in feed queries
+-- - idx_posts_pillar: Used for filtering posts by Connect/Collaborate/Contribute
+-- - idx_posts_author_id: Used in RLS policies and for fetching user's own posts
+--
+-- Reactions indexes (used in reactions feature):  
+-- - idx_reactions_post_id: Used for fetching all reactions for a specific post
+-- - idx_reactions_user_id: Used for checking if user already reacted to a post
+--
+-- Comments indexes (used in comments feature):
+-- - idx_comments_post_id: Used for fetching all comments for a specific post  
+-- - idx_comments_author_id: Used in RLS policies for user's own comments
+-- - idx_comments_parent_id: Used for threaded reply functionality
+--
+-- These appear as "unused" because:
+-- 1. The app is in development with limited usage
+-- 2. PostgreSQL query statistics haven't accumulated enough data yet
+-- 3. Some queries may use alternative execution paths initially
+--
+-- All these indexes WILL be used as the app scales and are critical for performance.
