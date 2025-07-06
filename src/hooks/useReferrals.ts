@@ -52,6 +52,15 @@ export const useReferrals = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
+      // Get user profile for referrer info
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('display_name, full_name, email')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
       // Generate referral code
       const { data: codeData, error: codeError } = await supabase
         .rpc('generate_referral_code');
@@ -68,10 +77,37 @@ export const useReferrals = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Referral created",
-        description: "Your referral link has been generated!",
-      });
+      // Send invitation email
+      const inviteLink = `${window.location.origin}/invite?ref=${codeData}`;
+      const referrerName = profile.display_name || profile.full_name || 'A DNA community member';
+      
+      try {
+        await supabase.functions.invoke('send-universal-email', {
+          body: {
+            formType: 'referral',
+            userEmail: email,
+            formData: {
+              referrerName,
+              referrerEmail: profile.email,
+              referredEmail: email,
+              referralCode: codeData,
+              inviteLink
+            }
+          }
+        });
+
+        toast({
+          title: "Invitation sent!",
+          description: `Referral link sent to ${email}`,
+        });
+      } catch (emailError) {
+        console.error('Error sending invitation email:', emailError);
+        toast({
+          title: "Referral created",
+          description: "Link generated but email delivery failed. You can copy the link manually.",
+          variant: "destructive",
+        });
+      }
 
       await fetchReferrals();
       return codeData;

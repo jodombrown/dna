@@ -125,6 +125,46 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         `
       };
 
+    case 'referral':
+      return {
+        subject: "New Referral Created - DNA Platform",
+        adminHtml: `
+          <h2>New Referral Created</h2>
+          <p><strong>Referrer:</strong> ${formData.referrerName} (${formData.referrerEmail})</p>
+          <p><strong>Referred Email:</strong> ${formData.referredEmail}</p>
+          <p><strong>Referral Code:</strong> ${formData.referralCode}</p>
+          <p><strong>Invite Link:</strong> <a href="${formData.inviteLink}">${formData.inviteLink}</a></p>
+          <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+        `,
+        userSubject: "You're Invited to Join the DNA Community!",
+        userHtml: `
+          <h1>You're Invited to DNA!</h1>
+          <p>Hi there,</p>
+          <p><strong>${formData.referrerName}</strong> has invited you to join the Diaspora Network of Africa (DNA) - a professional platform connecting the global African diaspora.</p>
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="color: #1a5f3f; margin-top: 0;">What is DNA?</h3>
+            <ul>
+              <li><strong>Connect:</strong> Build meaningful professional relationships across the diaspora</li>
+              <li><strong>Collaborate:</strong> Work together on impactful projects</li>
+              <li><strong>Contribute:</strong> Make a difference across Africa and its communities</li>
+            </ul>
+          </div>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${formData.inviteLink}" style="background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;">Accept Your Invitation</a>
+          </div>
+          <p><strong>Why join DNA?</strong></p>
+          <ul>
+            <li>Early access to our beta platform</li>
+            <li>Connect with diaspora professionals globally</li>
+            <li>Discover and contribute to African impact projects</li>
+            <li>Access exclusive events and opportunities</li>
+          </ul>
+          <p>This invitation is from ${formData.referrerName}, who thought you'd be a great addition to our community.</p>
+          <p>Welcome to the movement!</p>
+          <p>Best regards,<br>The DNA Team</p>
+        `
+      };
+
     case 'waitlist':
       return {
         subject: "New Waitlist Signup - DNA Platform",
