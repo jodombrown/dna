@@ -29,6 +29,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import Logo from '@/components/header/Logo';
 import FeedbackModal from '@/components/feedback/FeedbackModal';
+import NotificationDropdown from '@/components/notifications/NotificationDropdown';
 
 const AppHeader = () => {
   const navigate = useNavigate();
@@ -55,7 +56,6 @@ const AppHeader = () => {
     { name: 'Projects', icon: FolderOpen, path: '/explore/projects' },
     { name: 'Jobs', icon: Briefcase, path: '/contribute' },
     { name: 'Messaging', icon: MessageCircle, path: '/messaging' },
-    { name: 'Notifications', icon: Bell, path: '/app' },
   ];
 
   return (
@@ -99,6 +99,9 @@ const AppHeader = () => {
                 <span className="text-xs mt-1 hidden lg:block">{item.name}</span>
               </Button>
             ))}
+
+            {/* Notifications */}
+            <NotificationDropdown />
 
             {/* Profile Dropdown */}
             <DropdownMenu>

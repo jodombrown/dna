@@ -31,6 +31,7 @@ import NotFound from "./pages/NotFound";
 import ProjectsExplorePage from "./pages/ProjectsExplorePage";
 import InvitePage from "./pages/InvitePage";
 import SearchPage from "./pages/SearchPage";
+import NotificationsPage from "./pages/NotificationsPage";
 import ProtectedRoute from "./components/app/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -81,6 +82,9 @@ function App() {
               
               {/* Search Route */}
               <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+              
+              {/* Notifications Route */}
+              <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
               
               {/* Admin Routes - Protected */}
               <Route path="/admin/*" element={<ProtectedRoute><NotFound /></ProtectedRoute>} />
