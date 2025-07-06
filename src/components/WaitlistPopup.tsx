@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import MobileTouchButton from '@/components/ui/mobile-touch-button';
+import MobileOptimizedCard from '@/components/ui/mobile-optimized-card';
+import MobileResponsiveGrid from '@/components/ui/mobile-responsive-grid';
+import MobileSectionWrapper from '@/components/ui/mobile-section-wrapper';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
