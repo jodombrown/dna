@@ -103,18 +103,18 @@ const AdminUserManagement = () => {
               </div>
 
               {/* Phase Progress Indicator */}
-              <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-blue-900">
-                      ✅ Phase 2 Complete: Data Layer & Basic Table
+                    <p className="text-sm font-medium text-green-900">
+                      ✅ Phase 3 Complete: Real Data Integration
                     </p>
-                    <p className="text-xs text-blue-700 mt-1">
-                      Mock data, pagination, and mobile-responsive table implemented
+                    <p className="text-xs text-green-700 mt-1">
+                      Connected to Supabase profiles table with search and pagination
                     </p>
                   </div>
-                  <div className="text-xs text-blue-600">
-                    Next: Phase 3 - Real Data Integration
+                  <div className="text-xs text-green-600">
+                    Next: Phase 4 - User Actions & Moderation
                   </div>
                 </div>
               </div>
