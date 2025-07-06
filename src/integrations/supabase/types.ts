@@ -394,6 +394,39 @@ export type Database = {
         }
         Relationships: []
       }
+      invites: {
+        Row: {
+          code: string
+          created_at: string | null
+          created_by: string | null
+          email: string
+          expires_at: string | null
+          id: string
+          role: string | null
+          used_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          created_by?: string | null
+          email: string
+          expires_at?: string | null
+          id?: string
+          role?: string | null
+          used_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          created_by?: string | null
+          email?: string
+          expires_at?: string | null
+          id?: string
+          role?: string | null
+          used_at?: string | null
+        }
+        Relationships: []
+      }
       phase_metrics: {
         Row: {
           color: string | null
@@ -740,6 +773,42 @@ export type Database = {
           role?: string
           updated_at?: string | null
           username?: string | null
+        }
+        Relationships: []
+      }
+      waitlist_signups: {
+        Row: {
+          causes: string[] | null
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          location: string | null
+          role: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          causes?: string[] | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          location?: string | null
+          role: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          causes?: string[] | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          location?: string | null
+          role?: string
+          status?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
