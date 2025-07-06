@@ -17,7 +17,9 @@ const FeedSection = () => {
   const { posts, loading, refreshPosts } = usePosts(pillarFilter);
 
   const handlePostCreated = async (postId: string, pillar: string) => {
+    // Track impact if available
     await trackImpact('post', postId, pillar as any, 'post');
+    // Refresh posts to show the new post immediately
     refreshPosts();
   };
 
