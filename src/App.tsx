@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ErrorBoundary from "./components/app/ErrorBoundary";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import OnboardingPage from "./pages/OnboardingPage";
@@ -27,17 +28,20 @@ import GoToMarketPhase from "./pages/GoToMarketPhase";
 import NotFound from "./pages/NotFound";
 import ProjectsExplorePage from "./pages/ProjectsExplorePage";
 import InvitePage from "./pages/InvitePage";
+import SearchPage from "./pages/SearchPage";
+import ProtectedRoute from "./components/app/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Index />} />
@@ -59,19 +63,24 @@ function App() {
               <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
               
               {/* Authenticated Routes */}
-              <Route path="/app" element={<AppDashboard />} />
-              <Route path="/explore/projects" element={<ProjectsExplorePage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/profile/settings" element={<ProfileSettings />} />
-              <Route path="/community" element={<CommunityPage />} />
-              <Route path="/circles" element={<MyCircles />} />
+              <Route path="/app" element={<ProtectedRoute><AppDashboard /></ProtectedRoute>} />
+              <Route path="/explore/projects" element={<ProtectedRoute><ProjectsExplorePage /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="/profile/:username" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="/profile/settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
+              <Route path="/community" element={<ProtectedRoute><CommunityPage /></ProtectedRoute>} />
+              <Route path="/circles" element={<ProtectedRoute><MyCircles /></ProtectedRoute>} />
+              
+              {/* Search Route */}
+              <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

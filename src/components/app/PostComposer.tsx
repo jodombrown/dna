@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { ImagePlus, Users, Handshake, Heart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useImageUpload } from '@/hooks/useImageUpload';
 import MobileOptimizedCard from '@/components/ui/mobile-optimized-card';
 import MobileTouchButton from '@/components/ui/mobile-touch-button';
 
@@ -19,6 +21,8 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
   const [content, setContent] = useState('');
   const [selectedPillar, setSelectedPillar] = useState<'connect' | 'collaborate' | 'contribute' | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mediaUrl, setMediaUrl] = useState<string | null>(null);
+  const { uploadImage, uploading } = useImageUpload();
 
   const pillars = [
     { 
@@ -44,6 +48,16 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
     }
   ];
 
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const url = await uploadImage(file);
+    if (url) {
+      setMediaUrl(url);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!content.trim() || !selectedPillar || !user) {
       toast({
@@ -63,7 +77,8 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
           content: content.trim(),
           pillar: selectedPillar,
           author_id: user.id,
-          visibility: 'public'
+          visibility: 'public',
+          media_url: mediaUrl
         })
         .select('id')
         .single();
@@ -72,6 +87,7 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
 
       setContent('');
       setSelectedPillar(null);
+      setMediaUrl(null);
       onPostCreated?.(data.id, selectedPillar);
       
       toast({
@@ -106,6 +122,22 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
             onChange={(e) => setContent(e.target.value)}
             className="min-h-[80px] sm:min-h-[100px] resize-none border-0 shadow-none focus-visible:ring-0 p-0 text-sm sm:text-base placeholder:text-gray-500"
           />
+          {/* Media Preview */}
+          {mediaUrl && (
+            <div className="relative">
+              <img 
+                src={mediaUrl} 
+                alt="Upload preview" 
+                className="max-h-48 rounded-lg border"
+              />
+              <button
+                onClick={() => setMediaUrl(null)}
+                className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1 hover:bg-black/70"
+              >
+                ×
+              </button>
+            </div>
+          )}
           
           <div className="flex flex-wrap gap-1 sm:gap-2">
             {pillars.map((pillar) => {
@@ -131,18 +163,31 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
           </div>
 
           <div className="flex items-center justify-between pt-3 border-t gap-2">
-            <MobileTouchButton 
-              variant="ghost" 
-              size="sm" 
-              className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm"
-            >
-              <ImagePlus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              Add Media
-            </MobileTouchButton>
+            <div className="flex items-center">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleMediaUpload}
+                className="hidden"
+                id="media-upload"
+              />
+              <label htmlFor="media-upload">
+                <Button 
+                  type="button"
+                  variant="ghost" 
+                  size="sm" 
+                  disabled={uploading}
+                  className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm cursor-pointer p-2"
+                >
+                  <ImagePlus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  {uploading ? 'Uploading...' : 'Add Media'}
+                </Button>
+              </label>
+            </div>
             
             <MobileTouchButton 
               onClick={handleSubmit}
-              disabled={!content.trim() || !selectedPillar || isSubmitting}
+              disabled={!content.trim() || !selectedPillar || isSubmitting || uploading}
               className="bg-dna-emerald hover:bg-dna-emerald/90 text-xs sm:text-sm"
             >
               {isSubmitting ? 'Posting...' : 'Post'}

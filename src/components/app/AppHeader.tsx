@@ -38,8 +38,8 @@ const AppHeader = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement search functionality
-    console.log('Search query:', searchQuery);
+    if (!searchQuery.trim()) return;
+    navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
   };
 
   const handleSignOut = async () => {
