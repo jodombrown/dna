@@ -3,9 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { X, CheckCircle } from 'lucide-react';
+import { CheckCircle, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -20,7 +19,7 @@ const countries = [
   'Canada', 'Germany', 'France', 'Australia', 'Other'
 ];
 
-const causes = [
+const interests = [
   'Education & Skills Development',
   'Healthcare & Wellness',
   'Economic Development',
@@ -39,18 +38,38 @@ const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
     fullName: '',
     email: '',
     country: '',
-    selectedCauses: [] as string[]
+    selectedInterests: [] as string[]
   });
+  const [filteredCountries, setFilteredCountries] = useState(countries);
+  const [customInterest, setCustomInterest] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleCauseToggle = (cause: string) => {
+  const handleCountrySearch = (value: string) => {
+    setFormData(prev => ({ ...prev, country: value }));
+    const filtered = countries.filter(country => 
+      country.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredCountries(filtered);
+  };
+
+  const handleInterestToggle = (interest: string) => {
     setFormData(prev => ({
       ...prev,
-      selectedCauses: prev.selectedCauses.includes(cause)
-        ? prev.selectedCauses.filter(c => c !== cause)
-        : [...prev.selectedCauses, cause]
+      selectedInterests: prev.selectedInterests.includes(interest)
+        ? prev.selectedInterests.filter(i => i !== interest)
+        : [...prev.selectedInterests, interest]
     }));
+  };
+
+  const handleAddCustomInterest = () => {
+    if (customInterest.trim() && !formData.selectedInterests.includes(customInterest.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        selectedInterests: [...prev.selectedInterests, customInterest.trim()]
+      }));
+      setCustomInterest('');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,7 +92,7 @@ const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
           email: formData.email,
           location: formData.country,
           role: 'individual',
-          causes: formData.selectedCauses,
+          causes: formData.selectedInterests,
           status: 'pending'
         });
 
@@ -94,23 +113,15 @@ const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
 
   const handleClose = () => {
     setStep('form');
-    setFormData({ fullName: '', email: '', country: '', selectedCauses: [] });
+    setFormData({ fullName: '', email: '', country: '', selectedInterests: [] });
+    setCustomInterest('');
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader className="relative">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-0 top-0 h-6 w-6"
-            onClick={handleClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-          
+        <DialogHeader>
           {step === 'form' ? (
             <>
               <DialogTitle className="text-2xl font-bold text-dna-forest mb-2">
@@ -160,35 +171,64 @@ const WaitlistPopup = ({ isOpen, onClose }: WaitlistPopupProps) => {
 
             <div className="space-y-2">
               <Label htmlFor="country">Country *</Label>
-              <Select value={formData.country} onValueChange={(value) => setFormData(prev => ({ ...prev, country: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your country" />
-                </SelectTrigger>
-                <SelectContent>
-                  {countries.map((country) => (
-                    <SelectItem key={country} value={country}>
+              <Input
+                id="country"
+                value={formData.country}
+                onChange={(e) => handleCountrySearch(e.target.value)}
+                placeholder="Type to search for your country..."
+                required
+              />
+              {formData.country && filteredCountries.length > 0 && (
+                <div className="max-h-32 overflow-y-auto border rounded-md bg-white">
+                  {filteredCountries.slice(0, 5).map((country) => (
+                    <div
+                      key={country}
+                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                      onClick={() => {
+                        setFormData(prev => ({ ...prev, country }));
+                        setFilteredCountries([]);
+                      }}
+                    >
                       {country}
-                    </SelectItem>
+                    </div>
                   ))}
-                </SelectContent>
-              </Select>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
-              <Label>Cause Interests (Optional)</Label>
+              <Label>Interest Areas (Optional)</Label>
               <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto">
-                {causes.map((cause) => (
-                  <div key={cause} className="flex items-center space-x-2">
+                {interests.map((interest) => (
+                  <div key={interest} className="flex items-center space-x-2">
                     <Checkbox
-                      id={cause}
-                      checked={formData.selectedCauses.includes(cause)}
-                      onCheckedChange={() => handleCauseToggle(cause)}
+                      id={interest}
+                      checked={formData.selectedInterests.includes(interest)}
+                      onCheckedChange={() => handleInterestToggle(interest)}
                     />
-                    <Label htmlFor={cause} className="text-sm font-normal">
-                      {cause}
+                    <Label htmlFor={interest} className="text-sm font-normal">
+                      {interest}
                     </Label>
                   </div>
                 ))}
+              </div>
+              
+              <div className="flex gap-2 mt-3">
+                <Input
+                  value={customInterest}
+                  onChange={(e) => setCustomInterest(e.target.value)}
+                  placeholder="Add your own interest..."
+                  className="flex-1"
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCustomInterest())}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={handleAddCustomInterest}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
             </div>
 
