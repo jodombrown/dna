@@ -141,13 +141,24 @@ const WaitlistPopup = ({ isOpen, onClose, trigger }: WaitlistPopupProps) => {
       }
 
       setStep('confirmation');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting to waitlist:', error);
-      toast({
-        title: "Submission Failed",
-        description: "Please try again or contact support",
-        variant: "destructive"
-      });
+      
+      // Handle duplicate email gracefully
+      if (error?.code === '23505' && error?.message?.includes('waitlist_signups_email_key')) {
+        toast({
+          title: "You're Already On Our Waitlist!",
+          description: "We're excited to have you as part of our community",
+          variant: "default"
+        });
+        setStep('confirmation');
+      } else {
+        toast({
+          title: "Submission Failed",
+          description: "Please try again or contact support",
+          variant: "destructive"
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
