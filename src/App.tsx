@@ -26,6 +26,7 @@ import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
 import NotFound from "./pages/NotFound";
 import ProjectsExplorePage from "./pages/ProjectsExplorePage";
+import InvitePage from "./pages/InvitePage";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ function App() {
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
+              <Route path="/invite" element={<InvitePage />} />
               
               {/* Phase Routes */}
               <Route path="/phase/market-research" element={<MarketResearchPhase />} />

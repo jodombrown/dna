@@ -5,6 +5,8 @@ import { TrendingUp, Users, Sparkles, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDiscovery } from '@/hooks/useDiscovery';
 import DiscoveryCard from './DiscoveryCard';
+import ReferralCard from '@/components/community/ReferralCard';
+import CommunitySpotlight from '@/components/community/CommunitySpotlight';
 import { useToast } from '@/hooks/use-toast';
 
 const RightSidebar = () => {
@@ -34,6 +36,12 @@ const RightSidebar = () => {
 
   return (
     <div className="lg:col-span-3 space-y-4">
+      {/* Community Spotlight */}
+      <CommunitySpotlight />
+
+      {/* Referral Card */}
+      <ReferralCard />
+
       {/* Discovery Header */}
       <Card>
         <CardHeader className="pb-3">

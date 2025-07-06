@@ -463,6 +463,33 @@ export type Database = {
         }
         Relationships: []
       }
+      launch_config: {
+        Row: {
+          current_invites: number | null
+          id: string
+          launch_date: string | null
+          launch_mode: string
+          max_invites: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          current_invites?: number | null
+          id?: string
+          launch_date?: string | null
+          launch_mode?: string
+          max_invites?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          current_invites?: number | null
+          id?: string
+          launch_date?: string | null
+          launch_mode?: string
+          max_invites?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       phase_metrics: {
         Row: {
           color: string | null
@@ -570,6 +597,7 @@ export type Database = {
           profession: string | null
           professional_role: string | null
           profile_picture_url: string | null
+          referrer_id: string | null
           skills: string[] | null
           updated_at: string
           website_url: string | null
@@ -604,6 +632,7 @@ export type Database = {
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
+          referrer_id?: string | null
           skills?: string[] | null
           updated_at?: string
           website_url?: string | null
@@ -638,12 +667,21 @@ export type Database = {
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
+          referrer_id?: string | null
           skills?: string[] | null
           updated_at?: string
           website_url?: string | null
           years_experience?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       projects: {
         Row: {
@@ -716,6 +754,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      referrals: {
+        Row: {
+          converted_at: string | null
+          created_at: string | null
+          id: string
+          referral_code: string
+          referred_email: string
+          referrer_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code: string
+          referred_email: string
+          referrer_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code?: string
+          referred_email?: string
+          referrer_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       user_communities: {
         Row: {
@@ -916,6 +984,10 @@ export type Database = {
           _time_window_minutes?: number
         }
         Returns: boolean
+      }
+      generate_referral_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_current_user_profile: {
         Args: Record<PropertyKey, never>

@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ArrowRight, Users, Globe, Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
-import { Play, Users } from 'lucide-react';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -30,6 +31,11 @@ const HeroSection = () => {
             <div className="space-y-6">
               {/* Main Headline */}
               <div className="text-center lg:text-left">
+                <div className="flex items-center justify-center lg:justify-start mb-4">
+                  <Badge className="bg-dna-gold/20 text-dna-gold border-dna-gold/30 text-sm px-4 py-2">
+                    🚀 DNA Platform Now Live (Beta)
+                  </Badge>
+                </div>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-dna-forest mb-4">
                   Welcome to the
                   <br />
