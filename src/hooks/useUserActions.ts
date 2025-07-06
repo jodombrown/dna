@@ -3,6 +3,10 @@ import { AdminUser } from './useAdminUsers';
 import { useToast } from '@/hooks/use-toast';
 
 interface UseUserActionsResult {
+  profileModal: {
+    open: boolean;
+    user: AdminUser | null;
+  };
   deleteDialog: {
     open: boolean;
     user: AdminUser | null;
@@ -20,10 +24,19 @@ interface UseUserActionsResult {
   confirmStatusChange: () => void;
   cancelDelete: () => void;
   cancelStatusChange: () => void;
+  closeProfile: () => void;
 }
 
 export function useUserActions(): UseUserActionsResult {
   const { toast } = useToast();
+  
+  const [profileModal, setProfileModal] = useState<{
+    open: boolean;
+    user: AdminUser | null;
+  }>({
+    open: false,
+    user: null
+  });
   
   const [deleteDialog, setDeleteDialog] = useState<{
     open: boolean;
@@ -44,18 +57,17 @@ export function useUserActions(): UseUserActionsResult {
   });
 
   const handleViewProfile = (user: AdminUser) => {
-    // TODO: Implement profile modal or navigation in Phase 5
-    toast({
-      title: "View Profile",
-      description: `Profile view for ${user.full_name || user.email} - Coming in Phase 5`,
+    setProfileModal({
+      open: true,
+      user
     });
   };
 
   const handleEditUser = (user: AdminUser) => {
-    // TODO: Implement user editing in Phase 5
+    // TODO: Implement comprehensive user editing form in future release
     toast({
       title: "Edit User",
-      description: `Edit functionality for ${user.full_name || user.email} - Coming in Phase 5`,
+      description: `Edit functionality for ${user.full_name || user.email} - Feature planned for future release`,
     });
   };
 
@@ -91,7 +103,7 @@ export function useUserActions(): UseUserActionsResult {
 
   const confirmDelete = () => {
     if (deleteDialog.user) {
-      // TODO: Implement actual user deletion with Supabase in Phase 5
+      // TODO: Implement actual user deletion with Supabase in future release
       toast({
         title: "User Deleted",
         description: `${deleteDialog.user.full_name || deleteDialog.user.email} has been deleted (mock action)`,
@@ -103,7 +115,7 @@ export function useUserActions(): UseUserActionsResult {
 
   const confirmStatusChange = () => {
     if (statusDialog.user) {
-      // TODO: Implement actual status change with Supabase in Phase 5
+      // TODO: Implement actual status change with Supabase in future release  
       toast({
         title: "Status Changed",
         description: `${statusDialog.user.full_name || statusDialog.user.email} status updated (mock action)`,
@@ -120,7 +132,12 @@ export function useUserActions(): UseUserActionsResult {
     setStatusDialog({ open: false, user: null, action: '' });
   };
 
+  const closeProfile = () => {
+    setProfileModal({ open: false, user: null });
+  };
+
   return {
+    profileModal,
     deleteDialog,
     statusDialog,
     handleViewProfile,
@@ -130,6 +147,7 @@ export function useUserActions(): UseUserActionsResult {
     confirmDelete,
     confirmStatusChange,
     cancelDelete,
-    cancelStatusChange
+    cancelStatusChange,
+    closeProfile
   };
 }

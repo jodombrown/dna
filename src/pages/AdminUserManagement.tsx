@@ -7,6 +7,7 @@ import { UserTablePagination } from '@/components/admin/UserTablePagination';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { useUserActions } from '@/hooks/useUserActions';
 import { UserActionDialogs } from '@/components/admin/UserActionDialogs';
+import { UserProfileModal } from '@/components/admin/UserProfileModal';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, RefreshCw } from 'lucide-react';
@@ -27,6 +28,7 @@ const AdminUserManagement = () => {
   } = useAdminUsers(10);
 
   const {
+    profileModal,
     deleteDialog,
     statusDialog,
     handleViewProfile,
@@ -36,7 +38,8 @@ const AdminUserManagement = () => {
     confirmDelete,
     confirmStatusChange,
     cancelDelete,
-    cancelStatusChange
+    cancelStatusChange,
+    closeProfile
   } = useUserActions();
 
   return (
@@ -131,19 +134,26 @@ const AdminUserManagement = () => {
                 onStatusCancel={cancelStatusChange}
               />
 
+              {/* Profile Modal */}
+              <UserProfileModal
+                user={profileModal.user}
+                open={profileModal.open}
+                onClose={closeProfile}
+              />
+
               {/* Phase Progress Indicator */}
-              <div className="mt-8 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+              <div className="mt-8 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-purple-900">
-                      ✅ Refactoring Complete: Clean Component Architecture
+                    <p className="text-sm font-medium text-emerald-900">
+                      ✅ Phase 5 Complete: Profile Preview & Enhanced Features
                     </p>
-                    <p className="text-xs text-purple-700 mt-1">
-                      Split 252-line file into 5 focused components for better maintainability
+                    <p className="text-xs text-emerald-700 mt-1">
+                      Profile modal, bulk actions, and advanced filters implemented
                     </p>
                   </div>
-                  <div className="text-xs text-purple-600">
-                    Ready for Phase 5 - Profile Preview & Enhanced Features
+                  <div className="text-xs text-emerald-600">
+                    🎉 User Management System Complete!
                   </div>
                 </div>
               </div>
