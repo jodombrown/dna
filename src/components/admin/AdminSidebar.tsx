@@ -7,7 +7,8 @@ import {
   Flag, 
   Calendar, 
   Settings,
-  Lock 
+  Lock,
+  BarChart3
 } from 'lucide-react';
 import {
   Sidebar,
@@ -31,6 +32,11 @@ const navigationItems = [
     title: 'Users',
     url: '/admin/users',
     icon: Users,
+  },
+  {
+    title: 'Analytics',
+    url: '/admin/insights',
+    icon: BarChart3,
   },
   {
     title: 'Communities',
