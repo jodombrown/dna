@@ -49,24 +49,37 @@ export const useReferrals = () => {
 
   const createReferral = async (email: string) => {
     try {
+      console.log('Creating referral for:', email);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
       // Get user profile for referrer info
+      console.log('Fetching user profile...');
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('display_name, full_name, email')
         .eq('id', user.id)
         .single();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Profile error:', profileError);
+        throw profileError;
+      }
+      console.log('Profile data:', profile);
 
-      // Generate referral code
+      // Generate referral code  
+      console.log('Generating referral code...');
       const { data: codeData, error: codeError } = await supabase
         .rpc('generate_referral_code');
 
-      if (codeError) throw codeError;
+      if (codeError) {
+        console.error('Code generation error:', codeError);
+        throw codeError;
+      }
+      console.log('Generated code:', codeData);
 
+      // Insert referral
+      console.log('Inserting referral...');
       const { error } = await supabase
         .from('referrals')
         .insert({
@@ -75,14 +88,23 @@ export const useReferrals = () => {
           referral_code: codeData
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Referral insert error:', error);
+        throw error;
+      }
 
       // Send invitation email
       const inviteLink = `${window.location.origin}/invite?ref=${codeData}`;
       const referrerName = profile.display_name || profile.full_name || 'A DNA community member';
       
+      console.log('Sending invitation email...', {
+        inviteLink,
+        referrerName,
+        email
+      });
+
       try {
-        await supabase.functions.invoke('send-universal-email', {
+        const emailResponse = await supabase.functions.invoke('send-universal-email', {
           body: {
             formType: 'referral',
             userEmail: email,
@@ -95,6 +117,13 @@ export const useReferrals = () => {
             }
           }
         });
+
+        console.log('Email response:', emailResponse);
+
+        if (emailResponse.error) {
+          console.error('Email sending error:', emailResponse.error);
+          throw emailResponse.error;
+        }
 
         toast({
           title: "Invitation sent!",

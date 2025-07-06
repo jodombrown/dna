@@ -22,7 +22,7 @@ const FeedSection = () => {
   };
 
   return (
-    <div className="lg:col-span-6 space-y-4">
+    <div className="max-w-2xl mx-auto space-y-4">
       {/* Post Composer */}
       <PostComposer onPostCreated={handlePostCreated} />
 

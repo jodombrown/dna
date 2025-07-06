@@ -15,7 +15,7 @@ const AppSidebar = () => {
   const { user } = useAuth();
 
   return (
-    <div className="lg:col-span-3 space-y-4">
+    <div className="space-y-4">
       {/* Profile Snapshot */}
       <Card>
         <CardContent className="pt-6">

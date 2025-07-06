@@ -2,17 +2,31 @@ import React from 'react';
 import AppSidebar from './AppSidebar';
 import FeedSection from './FeedSection';
 import RightSidebar from './RightSidebar';
-import MobileSectionWrapper from '@/components/ui/mobile-section-wrapper';
 
 const AppLayout = () => {
   return (
-    <MobileSectionWrapper padding="md" fullWidth>
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-        <AppSidebar />
-        <FeedSection />
-        <RightSidebar />
+    <div className="h-full flex">
+      {/* Left Sidebar */}
+      <div className="w-80 flex-shrink-0 hidden lg:block">
+        <div className="h-full overflow-y-auto p-4">
+          <AppSidebar />
+        </div>
       </div>
-    </MobileSectionWrapper>
+      
+      {/* Main Feed */}
+      <div className="flex-1 min-w-0">
+        <div className="h-full overflow-y-auto p-4">
+          <FeedSection />
+        </div>
+      </div>
+      
+      {/* Right Sidebar */}
+      <div className="w-80 flex-shrink-0 hidden xl:block">
+        <div className="h-full overflow-y-auto p-4">
+          <RightSidebar />
+        </div>
+      </div>
+    </div>
   );
 };
 
