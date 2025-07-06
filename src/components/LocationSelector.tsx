@@ -244,118 +244,146 @@ const LocationSelector: React.FC<LocationSelectorProps> = ({ value, onChange, re
             </div>
           )}
 
-          {/* Country Selection */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Country {required && '*'}</Label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search countries..."
-                value={countrySearch}
-                onChange={(e) => setCountrySearch(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <div className="max-h-40 overflow-y-auto border rounded-lg bg-white shadow-sm z-50">
-              {filteredCountries.slice(0, 10).map((country) => (
-                <div
-                  key={country}
-                  className={`p-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0 ${
-                    value.country === country ? 'bg-dna-emerald/10 text-dna-forest font-medium' : ''
-                  }`}
-                  onClick={() => handleCountrySelect(country)}
-                >
-                  {country}
-                </div>
-              ))}
-              {filteredCountries.length === 0 && countrySearch && (
-                <div className="p-2 text-sm text-gray-500 italic">
-                  No countries found for "{countrySearch}"
+          {/* Unified Location Selection Flow */}
+          <div className="space-y-4">
+            {/* Step 1: Country Selection */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <span className="flex items-center justify-center w-5 h-5 bg-dna-emerald text-white text-xs rounded-full">1</span>
+                Country {required && '*'}
+              </Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search countries..."
+                  value={countrySearch}
+                  onChange={(e) => setCountrySearch(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              {(countrySearch || !value.country) && (
+                <div className="max-h-40 overflow-y-auto border rounded-lg bg-white shadow-sm">
+                  {filteredCountries.slice(0, 10).map((country) => (
+                    <div
+                      key={country}
+                      className={`p-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0 ${
+                        value.country === country ? 'bg-dna-emerald/10 text-dna-forest font-medium' : ''
+                      }`}
+                      onClick={() => handleCountrySelect(country)}
+                    >
+                      {country}
+                    </div>
+                  ))}
+                  {filteredCountries.length === 0 && countrySearch && (
+                    <div className="p-2 text-sm text-gray-500 italic">
+                      No countries found for "{countrySearch}"
+                    </div>
+                  )}
                 </div>
               )}
             </div>
+
+            {/* Step 2: State/Province Selection */}
+            {value.country && (
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <span className="flex items-center justify-center w-5 h-5 bg-dna-emerald text-white text-xs rounded-full">2</span>
+                  State/Province
+                  {filteredStates.length === 0 && (
+                    <span className="text-xs text-gray-500">(Optional - will skip to city)</span>
+                  )}
+                </Label>
+                
+                {filteredStates.length > 0 ? (
+                  <>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        placeholder="Search states/provinces..."
+                        value={stateSearch}
+                        onChange={(e) => setStateSearch(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    {(stateSearch || !value.state) && (
+                      <div className="max-h-40 overflow-y-auto border rounded-lg bg-white shadow-sm">
+                        {filteredStates.slice(0, 10).map((state) => (
+                          <div
+                            key={state}
+                            className={`p-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0 ${
+                              value.state === state ? 'bg-dna-emerald/10 text-dna-forest font-medium' : ''
+                            }`}
+                            onClick={() => handleStateSelect(state)}
+                          >
+                            {state}
+                          </div>
+                        ))}
+                        {filteredStates.length === 0 && stateSearch && (
+                          <div className="p-2 text-sm text-gray-500 italic">
+                            No states/provinces found for "{stateSearch}"
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
+                    No states/provinces available for {value.country}. You can proceed to enter your city directly.
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Step 3: City Selection */}
+            {value.country && (
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <span className="flex items-center justify-center w-5 h-5 bg-dna-emerald text-white text-xs rounded-full">3</span>
+                  City
+                </Label>
+                
+                {value.state && filteredCities.length > 0 ? (
+                  <>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        placeholder="Search cities..."
+                        value={citySearch}
+                        onChange={(e) => setCitySearch(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    {(citySearch || !value.city) && (
+                      <div className="max-h-40 overflow-y-auto border rounded-lg bg-white shadow-sm">
+                        {filteredCities.slice(0, 10).map((city) => (
+                          <div
+                            key={city}
+                            className={`p-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0 ${
+                              value.city === city ? 'bg-dna-emerald/10 text-dna-forest font-medium' : ''
+                            }`}
+                            onClick={() => handleCitySelect(city)}
+                          >
+                            {city}
+                          </div>
+                        ))}
+                        {filteredCities.length === 0 && citySearch && (
+                          <div className="p-2 text-sm text-gray-500 italic">
+                            No cities found for "{citySearch}"
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Input
+                    placeholder="Enter your city..."
+                    value={value.city}
+                    onChange={(e) => onChange({ ...value, city: e.target.value })}
+                  />
+                )}
+              </div>
+            )}
           </div>
-
-          {/* State/Province Selection */}
-          {value.country && filteredStates.length > 0 && (
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">State/Province</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search states/provinces..."
-                  value={stateSearch}
-                  onChange={(e) => setStateSearch(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <div className="max-h-40 overflow-y-auto border rounded-lg bg-white shadow-sm z-40">
-                {filteredStates.slice(0, 10).map((state) => (
-                  <div
-                    key={state}
-                    className={`p-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0 ${
-                      value.state === state ? 'bg-dna-emerald/10 text-dna-forest font-medium' : ''
-                    }`}
-                    onClick={() => handleStateSelect(state)}
-                  >
-                    {state}
-                  </div>
-                ))}
-                {filteredStates.length === 0 && stateSearch && (
-                  <div className="p-2 text-sm text-gray-500 italic">
-                    No states/provinces found for "{stateSearch}"
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* City Selection */}
-          {value.state && filteredCities.length > 0 && (
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">City</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search cities..."
-                  value={citySearch}
-                  onChange={(e) => setCitySearch(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <div className="max-h-40 overflow-y-auto border rounded-lg bg-white shadow-sm z-30">
-                {filteredCities.slice(0, 10).map((city) => (
-                  <div
-                    key={city}
-                    className={`p-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0 ${
-                      value.city === city ? 'bg-dna-emerald/10 text-dna-forest font-medium' : ''
-                    }`}
-                    onClick={() => handleCitySelect(city)}
-                  >
-                    {city}
-                  </div>
-                ))}
-                {filteredCities.length === 0 && citySearch && (
-                  <div className="p-2 text-sm text-gray-500 italic">
-                    No cities found for "{citySearch}"
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Manual City Input for countries without predefined cities */}
-          {value.country && (!STATES_PROVINCES[value.country as keyof typeof STATES_PROVINCES] || 
-            (value.state && !CITIES[value.state as keyof typeof CITIES])) && (
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">City</Label>
-              <Input
-                placeholder="Enter your city..."
-                value={value.city}
-                onChange={(e) => onChange({ ...value, city: e.target.value })}
-              />
-            </div>
-          )}
         </div>
       )}
     </div>
