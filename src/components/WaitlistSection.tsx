@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { Users, ArrowRight } from 'lucide-react';
+import MobileTouchButton from '@/components/ui/mobile-touch-button';
+import MobileSectionWrapper from '@/components/ui/mobile-section-wrapper';
 
 interface WaitlistSectionProps {
   onJoinClick: () => void;
@@ -8,8 +9,12 @@ interface WaitlistSectionProps {
 
 const WaitlistSection = ({ onJoinClick }: WaitlistSectionProps) => {
   return (
-    <section className="py-16 bg-gradient-to-br from-dna-mint/10 via-white to-dna-emerald/5">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <MobileSectionWrapper 
+      padding="lg" 
+      background="gradient"
+      className="bg-gradient-to-br from-dna-mint/10 via-white to-dna-emerald/5"
+    >
+      <div className="max-w-4xl mx-auto text-center">
         
         {/* Profile Photos Cluster */}
         <div className="flex justify-center mb-8">
@@ -45,21 +50,22 @@ const WaitlistSection = ({ onJoinClick }: WaitlistSectionProps) => {
             Be the first to access the DNA platform when we launch. Help us build the future of Africa through meaningful connections and collaborations.
           </p>
 
-          <Button
+          <MobileTouchButton
             onClick={onJoinClick}
             size="lg"
-            className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
+            className="bg-dna-emerald hover:bg-dna-forest text-white rounded-full hover:shadow-lg"
+            touchOptimized={true}
           >
             Join Waitlist
             <ArrowRight className="w-5 h-5 ml-2" />
-          </Button>
+          </MobileTouchButton>
 
           <p className="text-sm text-gray-500 mt-4">
             Early access • No spam • Be part of the movement
           </p>
         </div>
       </div>
-    </section>
+    </MobileSectionWrapper>
   );
 };
 

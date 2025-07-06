@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { ImagePlus, Users, Handshake, Heart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import MobileOptimizedCard from '@/components/ui/mobile-optimized-card';
+import MobileTouchButton from '@/components/ui/mobile-touch-button';
 
 interface PostComposerProps {
   onPostCreated?: (postId: string, pillar: string) => void;
@@ -91,64 +91,66 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
   };
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <div className="flex space-x-3">
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={user?.user_metadata?.avatar_url} />
-            <AvatarFallback className="bg-dna-emerald text-white">
-              {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 space-y-3">
-            <Textarea
-              placeholder="What's on your mind about Africa's future?"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="min-h-[100px] resize-none border-0 shadow-none focus-visible:ring-0 p-0 text-base placeholder:text-gray-500"
-            />
-            
-            <div className="flex flex-wrap gap-2">
-              {pillars.map((pillar) => {
-                const Icon = pillar.icon;
-                const isSelected = selectedPillar === pillar.key;
-                
-                return (
-                  <Badge
-                    key={pillar.key}
-                    variant="secondary"
-                    className={`cursor-pointer transition-colors ${
-                      isSelected 
-                        ? pillar.bgClass + ' ring-2 ring-offset-2 ring-' + pillar.color
-                        : pillar.bgClass
-                    }`}
-                    onClick={() => setSelectedPillar(isSelected ? null : pillar.key)}
-                  >
-                    <Icon className="h-3 w-3 mr-1" />
-                    {pillar.label}
-                  </Badge>
-                );
-              })}
-            </div>
-
-            <div className="flex items-center justify-between pt-3 border-t">
-              <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
-                <ImagePlus className="h-4 w-4 mr-2" />
-                Add Media
-              </Button>
+    <MobileOptimizedCard padding="md" touchOptimized={false}>
+      <div className="flex space-x-3">
+        <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
+          <AvatarImage src={user?.user_metadata?.avatar_url} />
+          <AvatarFallback className="bg-dna-emerald text-white text-sm">
+            {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 space-y-3 min-w-0">
+          <Textarea
+            placeholder="What's on your mind about Africa's future?"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="min-h-[80px] sm:min-h-[100px] resize-none border-0 shadow-none focus-visible:ring-0 p-0 text-sm sm:text-base placeholder:text-gray-500"
+          />
+          
+          <div className="flex flex-wrap gap-1 sm:gap-2">
+            {pillars.map((pillar) => {
+              const Icon = pillar.icon;
+              const isSelected = selectedPillar === pillar.key;
               
-              <Button 
-                onClick={handleSubmit}
-                disabled={!content.trim() || !selectedPillar || isSubmitting}
-                className="bg-dna-emerald hover:bg-dna-emerald/90"
-              >
-                {isSubmitting ? 'Posting...' : 'Post'}
-              </Button>
-            </div>
+              return (
+                <Badge
+                  key={pillar.key}
+                  variant="secondary"
+                  className={`cursor-pointer transition-colors text-xs touch-manipulation ${
+                    isSelected 
+                      ? pillar.bgClass + ' ring-2 ring-offset-2 ring-' + pillar.color
+                      : pillar.bgClass
+                  }`}
+                  onClick={() => setSelectedPillar(isSelected ? null : pillar.key)}
+                >
+                  <Icon className="h-3 w-3 mr-1" />
+                  {pillar.label}
+                </Badge>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center justify-between pt-3 border-t gap-2">
+            <MobileTouchButton 
+              variant="ghost" 
+              size="sm" 
+              className="text-gray-500 hover:text-gray-700 text-xs sm:text-sm"
+            >
+              <ImagePlus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              Add Media
+            </MobileTouchButton>
+            
+            <MobileTouchButton 
+              onClick={handleSubmit}
+              disabled={!content.trim() || !selectedPillar || isSubmitting}
+              className="bg-dna-emerald hover:bg-dna-emerald/90 text-xs sm:text-sm"
+            >
+              {isSubmitting ? 'Posting...' : 'Post'}
+            </MobileTouchButton>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </MobileOptimizedCard>
   );
 };
 

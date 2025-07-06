@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Users, Globe, Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +7,8 @@ import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import PlatformBadges from '@/components/PlatformBadges';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
+import MobileTouchButton from '@/components/ui/mobile-touch-button';
+import MobileSectionWrapper from '@/components/ui/mobile-section-wrapper';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -51,23 +52,25 @@ const HeroSection = () => {
 
                 {/* Primary CTA */}
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-6">
-                  <Button 
+                  <MobileTouchButton 
                     size="lg" 
-                    className="bg-dna-emerald hover:bg-dna-forest text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full min-h-[48px] touch-manipulation"
+                    className="bg-dna-emerald hover:bg-dna-forest text-white rounded-full"
                     onClick={() => navigate('/about')}
+                    fullWidth={true}
                   >
                     <Users className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                     Join Our Journey
-                  </Button>
-                  <Button 
+                  </MobileTouchButton>
+                  <MobileTouchButton 
                     variant="outline" 
                     size="lg"
-                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-full flex items-center justify-center gap-2 min-h-[48px] touch-manipulation"
+                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white rounded-full"
                     onClick={scrollToDNAFramework}
+                    fullWidth={true}
                   >
-                    <Play className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <Play className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     See How It Works
-                  </Button>
+                  </MobileTouchButton>
                 </div>
               </div>
             </div>
@@ -89,11 +92,13 @@ const HeroSection = () => {
       </section>
 
       {/* Statistics Section */}
-      <section className="py-10 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <DiasporaStats />
-        </div>
-      </section>
+      <MobileSectionWrapper 
+        padding="md" 
+        background="gradient"
+        className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10"
+      >
+        <DiasporaStats />
+      </MobileSectionWrapper>
 
       {/* Platform Development Section with optimized spacing */}
       <section id="dna-framework" className="py-14 bg-gray-50">

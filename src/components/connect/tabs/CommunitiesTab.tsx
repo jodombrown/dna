@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Users, MessageSquare, Plus } from 'lucide-react';
+import MobileTouchButton from '@/components/ui/mobile-touch-button';
+import MobileOptimizedCard from '@/components/ui/mobile-optimized-card';
+import MobileResponsiveGrid from '@/components/ui/mobile-responsive-grid';
 
 interface CommunitiesTabProps {
   searchTerm: string;
@@ -137,75 +138,84 @@ const CommunitiesTab: React.FC<CommunitiesTabProps> = ({ searchTerm }) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <p className="text-gray-600">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <p className="text-gray-600 text-sm sm:text-base">
           Showing {communities.length} communities {searchTerm && `matching "${searchTerm}"`}
         </p>
-        <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
+        <MobileTouchButton className="bg-dna-emerald hover:bg-dna-forest text-white">
           <Plus className="w-4 h-4 mr-2" />
           Create Community
-        </Button>
+        </MobileTouchButton>
       </div>
 
-      <div className="grid gap-6">
+      <MobileResponsiveGrid cols={{ mobile: 1, tablet: 1, desktop: 1 }} gap="md">
         {communities.map((community) => (
-          <Card key={community.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex items-start gap-4">
+          <MobileOptimizedCard key={community.id} padding="md" touchOptimized={true}>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 sm:gap-4">
                 <img
                   src={community.image}
                   alt={community.name}
-                  className="w-16 h-16 rounded-lg object-cover"
+                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0"
                 />
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg mb-1">{community.name}</CardTitle>
-                      <Badge variant="outline" className="mb-2">
-                        {community.category}
-                      </Badge>
-                      {community.isFeatured && (
-                        <Badge className="bg-dna-gold text-white ml-2">Featured</Badge>
-                      )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-base sm:text-lg text-gray-900 truncate mb-1">
+                        {community.name}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <Badge variant="outline" className="text-xs">
+                          {community.category}
+                        </Badge>
+                        {community.isFeatured && (
+                          <Badge className="bg-dna-gold text-white text-xs">Featured</Badge>
+                        )}
+                      </div>
                     </div>
-                    <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
+                    <MobileTouchButton 
+                      size="sm"
+                      className="bg-dna-emerald hover:bg-dna-forest text-white whitespace-nowrap"
+                    >
                       Join Community
-                    </Button>
+                    </MobileTouchButton>
                   </div>
                 </div>
               </div>
-            </CardHeader>
-            
-            <CardContent className="space-y-4">
-              <p className="text-gray-700">{community.description}</p>
               
-              <div className="flex items-center justify-between pt-2 border-t">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Users className="w-4 h-4" />
+              <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
+                {community.description}
+              </p>
+              
+              <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
+                  <Users className="w-4 h-4 flex-shrink-0" />
                   <span>{community.memberCount.toLocaleString()} members</span>
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" className="flex items-center gap-1">
-                    <MessageSquare className="w-4 h-4" />
-                    Discussions
-                  </Button>
-                </div>
+                <MobileTouchButton 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  <MessageSquare className="w-4 h-4 mr-1" />
+                  Discussions
+                </MobileTouchButton>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </MobileOptimizedCard>
         ))}
-      </div>
+      </MobileResponsiveGrid>
 
       {!showAll && allCommunities.length > 3 && (
-        <div className="text-center mt-8">
-          <Button 
+        <div className="text-center mt-6 sm:mt-8">
+          <MobileTouchButton 
             variant="outline" 
             className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
             onClick={() => setShowAll(true)}
           >
             View More Communities ({allCommunities.length - 3} more)
-          </Button>
+          </MobileTouchButton>
         </div>
       )}
     </div>
