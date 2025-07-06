@@ -5,6 +5,8 @@ import { AdminTopNav } from '@/components/admin/AdminTopNav';
 import { UserListTable } from '@/components/admin/UserListTable';
 import { UserTablePagination } from '@/components/admin/UserTablePagination';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
+import { useUserActions } from '@/hooks/useUserActions';
+import { UserActionDialogs } from '@/components/admin/UserActionDialogs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, RefreshCw } from 'lucide-react';
@@ -23,6 +25,19 @@ const AdminUserManagement = () => {
     setSearchQuery,
     refreshUsers
   } = useAdminUsers(10);
+
+  const {
+    deleteDialog,
+    statusDialog,
+    handleViewProfile,
+    handleEditUser,
+    handleToggleStatus,
+    handleDeleteUser,
+    confirmDelete,
+    confirmStatusChange,
+    cancelDelete,
+    cancelStatusChange
+  } = useUserActions();
 
   return (
     <AdminAuthWrapper>
@@ -88,6 +103,10 @@ const AdminUserManagement = () => {
                   users={users}
                   loading={loading}
                   error={error}
+                  onViewProfile={handleViewProfile}
+                  onEditUser={handleEditUser}
+                  onToggleStatus={handleToggleStatus}
+                  onDeleteUser={handleDeleteUser}
                 />
                 
                 {!loading && !error && (
@@ -102,19 +121,29 @@ const AdminUserManagement = () => {
                 )}
               </div>
 
+              {/* Action Dialogs */}
+              <UserActionDialogs
+                deleteDialog={deleteDialog}
+                statusDialog={statusDialog}
+                onDeleteConfirm={confirmDelete}
+                onStatusConfirm={confirmStatusChange}
+                onDeleteCancel={cancelDelete}
+                onStatusCancel={cancelStatusChange}
+              />
+
               {/* Phase Progress Indicator */}
-              <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-blue-900">
-                      ✅ Phase 3 Complete: Hybrid Data System
+                    <p className="text-sm font-medium text-green-900">
+                      ✅ Phase 4 Complete: User Actions & Moderation Features
                     </p>
-                    <p className="text-xs text-blue-700 mt-1">
-                      Real Supabase data when available, falls back to mock data for testing
+                    <p className="text-xs text-green-700 mt-1">
+                      Action dropdowns, status management, and confirmation dialogs implemented
                     </p>
                   </div>
-                  <div className="text-xs text-blue-600">
-                    Next: Phase 4 - User Actions & Moderation
+                  <div className="text-xs text-green-600">
+                    Next: Phase 5 - Profile Preview & Enhanced Features
                   </div>
                 </div>
               </div>

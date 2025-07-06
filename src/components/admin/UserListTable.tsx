@@ -10,24 +10,35 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
-  MoreHorizontal, 
   User,
   CheckCircle,
   Clock,
   XCircle
 } from 'lucide-react';
 import { AdminUser } from '@/hooks/useAdminUsers';
+import { UserActionsDropdown } from './UserActionsDropdown';
 
 interface UserListTableProps {
   users: AdminUser[];
   loading: boolean;
   error: string | null;
+  onViewProfile: (user: AdminUser) => void;
+  onEditUser: (user: AdminUser) => void;
+  onToggleStatus: (user: AdminUser) => void;
+  onDeleteUser: (user: AdminUser) => void;
 }
 
-export function UserListTable({ users, loading, error }: UserListTableProps) {
+export function UserListTable({ 
+  users, 
+  loading, 
+  error, 
+  onViewProfile, 
+  onEditUser, 
+  onToggleStatus, 
+  onDeleteUser 
+}: UserListTableProps) {
   const getInitials = (name: string | null) => {
     if (!name) return 'U';
     return name
@@ -173,9 +184,13 @@ export function UserListTable({ users, loading, error }: UserListTableProps) {
                     {user.community_count || 0}
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                    <UserActionsDropdown
+                      user={user}
+                      onViewProfile={onViewProfile}
+                      onEditUser={onEditUser}
+                      onToggleStatus={onToggleStatus}
+                      onDeleteUser={onDeleteUser}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
@@ -206,9 +221,13 @@ export function UserListTable({ users, loading, error }: UserListTableProps) {
                 </div>
                 <div className="flex items-center space-x-2">
                   {getStatusBadge(user.status)}
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
+                  <UserActionsDropdown
+                    user={user}
+                    onViewProfile={onViewProfile}
+                    onEditUser={onEditUser}
+                    onToggleStatus={onToggleStatus}
+                    onDeleteUser={onDeleteUser}
+                  />
                 </div>
               </div>
               
