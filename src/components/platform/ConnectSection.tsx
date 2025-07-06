@@ -11,66 +11,66 @@ const ConnectSection = () => {
   return (
     <section id="connect-section" className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
+          <div className="order-2 md:order-1">
+            <div className="flex items-center gap-3 mb-4 sm:mb-6">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
                 Connect
               </h2>
             </div>
-            <p className="text-xl text-gray-600 mb-6">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-4 sm:mb-6 leading-relaxed">
               Build meaningful professional relationships across the diaspora. 
               Discover opportunities, expand your network, and find your tribe.
             </p>
             
-            <div className="space-y-3 mb-8">
-              <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
-                <Globe className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Global Network Access</span>
+            <div className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
+              <div className="flex items-center gap-3 p-3 sm:p-4 bg-dna-mint/10 rounded-lg">
+                <Globe className="w-4 h-4 sm:w-5 sm:h-5 text-dna-emerald flex-shrink-0" />
+                <span className="font-medium text-sm sm:text-base">Global Network Access</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
-                <Target className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Smart Opportunity Matching</span>
+              <div className="flex items-center gap-3 p-3 sm:p-4 bg-dna-mint/10 rounded-lg">
+                <Target className="w-4 h-4 sm:w-5 sm:h-5 text-dna-emerald flex-shrink-0" />
+                <span className="font-medium text-sm sm:text-base">Smart Opportunity Matching</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
-                <Network className="w-5 h-5 text-dna-emerald" />
-                <span className="font-medium">Professional Communities</span>
+              <div className="flex items-center gap-3 p-3 sm:p-4 bg-dna-mint/10 rounded-lg">
+                <Network className="w-4 h-4 sm:w-5 sm:h-5 text-dna-emerald flex-shrink-0" />
+                <span className="font-medium text-sm sm:text-base">Professional Communities</span>
               </div>
             </div>
 
             <Button 
               onClick={() => navigate('/connect')}
-              className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-2"
+              className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-2 min-h-[48px] px-6 py-3 text-base font-semibold touch-manipulation"
             >
               Explore Network
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
           
-          <div className="relative">
+          <div className="relative order-1 md:order-2">
             <div 
               ref={cardRef.elementRef}
-              className="bg-gray-900 rounded-3xl p-6 shadow-2xl cursor-pointer hover:shadow-3xl transition-shadow"
+              className="bg-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl cursor-pointer hover:shadow-3xl transition-shadow touch-manipulation"
               onClick={() => navigate('/connect')}
             >
-              <div className="bg-white rounded-2xl overflow-hidden">
-                <div className="bg-dna-emerald text-white p-4 text-center">
-                  <h3 className="font-semibold">Your Professional Network</h3>
+              <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden">
+                <div className="bg-dna-emerald text-white p-3 sm:p-4 text-center">
+                  <h3 className="font-semibold text-sm sm:text-base">Your Professional Network</h3>
                 </div>
                 
-                <div className="p-6 space-y-4">
-                  <div className="flex items-center gap-3 p-3 border rounded-lg">
-                    <div className="w-12 h-12 bg-dna-copper rounded-full"></div>
-                    <div>
-                      <p className="font-medium">Dr. Amara Okafor</p>
-                      <p className="text-sm text-gray-600">FinTech • Lagos → London</p>
+                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                  <div className="flex items-center gap-3 p-2 sm:p-3 border rounded-lg">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-copper rounded-full flex-shrink-0"></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm sm:text-base truncate">Dr. Amara Okafor</p>
+                      <p className="text-xs sm:text-sm text-gray-600 truncate">FinTech • Lagos → London</p>
                     </div>
                     <Button 
                       size="sm" 
-                      className="ml-auto animate-heartbeat bg-dna-forest hover:bg-dna-emerald text-white"
+                      className="ml-auto animate-heartbeat bg-dna-forest hover:bg-dna-emerald text-white text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 min-h-[36px] touch-manipulation flex-shrink-0"
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate('/connect');
@@ -80,15 +80,15 @@ const ConnectSection = () => {
                     </Button>
                   </div>
                   
-                  <div className="flex items-center gap-3 p-3 border rounded-lg">
-                    <div className="w-12 h-12 bg-dna-gold rounded-full"></div>
-                    <div>
-                      <p className="font-medium">Prof. Kwame Asante</p>
-                      <p className="text-sm text-gray-600">AgriTech • Accra → Toronto</p>
+                  <div className="flex items-center gap-3 p-2 sm:p-3 border rounded-lg">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-gold rounded-full flex-shrink-0"></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm sm:text-base truncate">Prof. Kwame Asante</p>
+                      <p className="text-xs sm:text-sm text-gray-600 truncate">AgriTech • Accra → Toronto</p>
                     </div>
                     <Button 
                       size="sm" 
-                      className="ml-auto animate-heartbeat-delayed bg-dna-forest hover:bg-dna-emerald text-white"
+                      className="ml-auto animate-heartbeat-delayed bg-dna-forest hover:bg-dna-emerald text-white text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 min-h-[36px] touch-manipulation flex-shrink-0"
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate('/connect');
@@ -98,8 +98,8 @@ const ConnectSection = () => {
                     </Button>
                   </div>
                   
-                  <div className="text-center py-4">
-                    <p className="text-sm text-gray-500">50+ professionals in your network</p>
+                  <div className="text-center py-3 sm:py-4">
+                    <p className="text-xs sm:text-sm text-gray-500">50+ professionals in your network</p>
                     <p className="text-xs text-dna-emerald">New connections available</p>
                   </div>
                 </div>
