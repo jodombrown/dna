@@ -14,6 +14,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ProfileSettings from "./pages/ProfileSettings";
 import CommunityPage from "./pages/CommunityPage";
 import MyCircles from "./pages/MyCircles";
+import MyNetwork from "./pages/MyNetwork";
 import ContributeExample from "./pages/ContributeExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ConnectExample from "./pages/ConnectExample";
@@ -74,6 +75,7 @@ function App() {
               <Route path="/community/:id" element={<ProtectedRoute><CommunityPage /></ProtectedRoute>} />
               <Route path="/circles" element={<ProtectedRoute><MyCircles /></ProtectedRoute>} />
               <Route path="/my-circles" element={<ProtectedRoute><MyCircles /></ProtectedRoute>} />
+              <Route path="/my-network" element={<ProtectedRoute><MyNetwork /></ProtectedRoute>} />
               
               {/* Search Route */}
               <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
