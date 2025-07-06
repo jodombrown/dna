@@ -77,7 +77,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const adminEmailResponse = await resend.emails.send({
-      from: "DNA Platform <aweh@diasporanetwork.africa>",
+      from: "DNA Platform <onboarding@resend.dev>", // Temporary: using verified Resend domain
       to: ["aweh@diasporanetwork.africa"],
       subject: "New Contact Form Submission - DNA Platform",
       html: adminHtml,
@@ -86,7 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Admin email sent successfully:", adminEmailResponse);
 
     const userEmailResponse = await resend.emails.send({
-      from: "DNA Platform <aweh@diasporanetwork.africa>",
+      from: "DNA Platform <onboarding@resend.dev>", // Temporary: using verified Resend domain
       to: [email],
       subject: "We received your message - DNA Platform",
       html: userHtml,

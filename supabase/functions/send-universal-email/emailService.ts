@@ -19,7 +19,7 @@ export class EmailService {
 
   async sendAdminEmail(emailContent: EmailContent) {
     return await this.resend.emails.send({
-      from: this.config.fromEmail,
+      from: "DNA Platform <onboarding@resend.dev>", // Temporary: using verified Resend domain
       to: [this.config.adminEmail],
       subject: emailContent.subject,
       html: emailContent.adminHtml,
@@ -28,7 +28,7 @@ export class EmailService {
 
   async sendUserConfirmationEmail(userEmail: string, emailContent: EmailContent) {
     return await this.resend.emails.send({
-      from: this.config.fromEmail,
+      from: "DNA Platform <onboarding@resend.dev>", // Temporary: using verified Resend domain
       to: [userEmail],
       subject: emailContent.userSubject,
       html: emailContent.userHtml,
