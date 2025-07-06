@@ -31,6 +31,14 @@ interface Message {
   sender_id: string;
   created_at: string;
   is_read: boolean;
+  conversation_id: string;
+}
+
+interface Conversation {
+  id: string;
+  user_1_id: string;
+  user_2_id: string;
+  last_message_at: string;
 }
 
 interface ConversationViewProps {
@@ -72,23 +80,14 @@ const ConversationView: React.FC<ConversationViewProps> = ({
 
     setLoading(true);
     try {
-      const { data, error } = await supabase.rpc('get_conversation_messages', {
-        conversation_id: conversationId
-      });
-
-      if (error) {
-        // Fallback to direct query if RPC doesn't exist
-        const { data: directData, error: directError } = await supabase
-          .from('messages')
-          .select('*')
-          .eq('conversation_id', conversationId)
-          .order('created_at', { ascending: true });
-        
-        if (directError) throw directError;
-        setMessages(directData || []);
-      } else {
-        setMessages(data || []);
-      }
+      const { data, error } = await supabase
+        .from('messages' as any)
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+      
+      if (error) throw error;
+      setMessages((data as unknown as Message[]) || []);
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
@@ -102,14 +101,15 @@ const ConversationView: React.FC<ConversationViewProps> = ({
     try {
       // Get conversation details
       const { data: convData, error: convError } = await supabase
-        .from('conversations')
+        .from('conversations' as any)
         .select('user_1_id, user_2_id')
         .eq('id', conversationId)
         .single();
 
       if (convError) throw convError;
 
-      const otherUserId = convData.user_1_id === user.id ? convData.user_2_id : convData.user_1_id;
+      const conversation = convData as unknown as Conversation;
+      const otherUserId = conversation.user_1_id === user.id ? conversation.user_2_id : conversation.user_1_id;
 
       const { data: userData, error: userError } = await supabase
         .from('profiles')
@@ -130,7 +130,7 @@ const ConversationView: React.FC<ConversationViewProps> = ({
     setSending(true);
     try {
       const { error } = await supabase
-        .from('messages')
+        .from('messages' as any)
         .insert({
           conversation_id: conversationId,
           sender_id: user.id,

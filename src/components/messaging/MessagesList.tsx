@@ -23,6 +23,15 @@ interface Conversation {
   };
 }
 
+interface Message {
+  id: string;
+  content: string;
+  sender_id: string;
+  created_at: string;
+  is_read: boolean;
+  conversation_id: string;
+}
+
 interface MessagesListProps {
   onConversationSelect: (conversationId: string) => void;
   activeConversationId: string | null;
@@ -59,19 +68,16 @@ const MessagesList: React.FC<MessagesListProps> = ({
     try {
       // Fetch conversations where user is participant
       const { data: conversationsData, error } = await supabase
-        .from('conversations')
-        .select(`
-          *,
-          messages(content, is_read, created_at)
-        `)
+        .from('conversations' as any)
+        .select('*')
         .or(`user_1_id.eq.${user.id},user_2_id.eq.${user.id}`)
         .order('last_message_at', { ascending: false });
 
       if (error) throw error;
 
-      // For each conversation, get the other user's profile
+      // For each conversation, get the other user's profile and latest message
       const enrichedConversations = await Promise.all(
-        (conversationsData || []).map(async (conv) => {
+        (conversationsData || []).map(async (conv: any) => {
           const otherUserId = conv.user_1_id === user.id ? conv.user_2_id : conv.user_1_id;
           
           const { data: profileData } = await supabase
@@ -80,7 +86,15 @@ const MessagesList: React.FC<MessagesListProps> = ({
             .eq('id', otherUserId)
             .single();
 
-          const latestMessage = conv.messages?.[0];
+          // Get latest message for this conversation
+          const { data: messagesData } = await supabase
+            .from('messages' as any)
+            .select('content, is_read, created_at')
+            .eq('conversation_id', conv.id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+          const latestMessage = messagesData?.[0] as any;
 
           return {
             id: conv.id,
