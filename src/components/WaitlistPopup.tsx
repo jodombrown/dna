@@ -115,6 +115,31 @@ const WaitlistPopup = ({ isOpen, onClose, trigger }: WaitlistPopupProps) => {
 
       if (error) throw error;
 
+      // Send confirmation email
+      try {
+        const { error: emailError } = await supabase.functions.invoke('send-universal-email', {
+          body: {
+            formType: 'waitlist',
+            formData: {
+              fullName: formData.fullName,
+              email: formData.email,
+              location: locationString,
+              role: 'individual',
+              causes: formData.selectedInterests
+            },
+            userEmail: formData.email
+          }
+        });
+
+        if (emailError) {
+          console.error('Error sending email:', emailError);
+          // Don't throw here - we still want to show success even if email fails
+        }
+      } catch (emailError) {
+        console.error('Error sending confirmation email:', emailError);
+        // Don't block the success flow if email fails
+      }
+
       setStep('confirmation');
     } catch (error) {
       console.error('Error submitting to waitlist:', error);

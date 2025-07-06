@@ -125,6 +125,37 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         `
       };
 
+    case 'waitlist':
+      return {
+        subject: "New Waitlist Signup - DNA Platform",
+        adminHtml: `
+          <h2>New Waitlist Signup</h2>
+          <p><strong>Name:</strong> ${formData.fullName}</p>
+          <p><strong>Email:</strong> ${formData.email}</p>
+          <p><strong>Location:</strong> ${formData.location || 'Not provided'}</p>
+          <p><strong>Role:</strong> ${formData.role || 'Individual'}</p>
+          ${formData.causes && formData.causes.length > 0 ? `<p><strong>Interests:</strong> ${formData.causes.join(', ')}</p>` : ''}
+          <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+        `,
+        userSubject: "Welcome to the DNA Waitlist!",
+        userHtml: `
+          <h1>You're In! Welcome to the DNA Community</h1>
+          <p>Hi ${formData.fullName},</p>
+          <p>Thank you for joining the Diaspora Network of Africa waitlist! We're excited to have you as part of our growing community of changemakers.</p>
+          <p><strong>What happens next:</strong></p>
+          <ul>
+            <li>You'll be among the first to receive early access when we launch</li>
+            <li>We'll keep you updated on our development progress and milestones</li>
+            <li>You may be invited to participate in beta testing opportunities</li>
+            <li>Connect with other diaspora members through exclusive updates</li>
+          </ul>
+          <p><strong>Stay Connected:</strong></p>
+          <p>Follow our journey and connect with fellow community members as we build the future of diaspora networking together.</p>
+          <p>Thank you for being part of the movement to Connect, Collaborate, and Contribute to Africa's advancement!</p>
+          <p>Best regards,<br>The DNA Team</p>
+        `
+      };
+
     default:
       return {
         subject: "New Form Submission - DNA Platform",
