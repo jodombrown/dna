@@ -112,13 +112,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithLinkedIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'linkedin_oidc',
-      options: {
-        redirectTo: `${window.location.origin}/app`
+    try {
+      console.log('Starting LinkedIn OAuth flow...');
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'linkedin_oidc',
+        options: {
+          redirectTo: `${window.location.origin}/app`
+        }
+      });
+      
+      console.log('LinkedIn OAuth response:', { data, error });
+      
+      if (error) {
+        console.error('LinkedIn OAuth error:', error);
       }
-    });
-    return { error };
+      
+      return { error };
+    } catch (err) {
+      console.error('LinkedIn OAuth exception:', err);
+      return { error: err };
+    }
   };
 
   const signOut = async () => {
