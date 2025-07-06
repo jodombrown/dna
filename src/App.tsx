@@ -76,7 +76,6 @@ function App() {
               <Route path="/circles" element={<ProtectedRoute><MyCircles /></ProtectedRoute>} />
               <Route path="/my-circles" element={<ProtectedRoute><MyCircles /></ProtectedRoute>} />
               <Route path="/my-network" element={<ProtectedRoute><MyNetwork /></ProtectedRoute>} />
-              <Route path="/network" element={<ProtectedRoute><MyNetwork /></ProtectedRoute>} />
               
               {/* Search Route */}
               <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
