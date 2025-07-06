@@ -13,12 +13,12 @@ import MobileTouchButton from '@/components/ui/mobile-touch-button';
 
 interface PostCardProps {
   post: Tables<'posts'> & {
-    // Mock author data - in real app this would come from a join
     author?: {
-      full_name?: string;
-      avatar_url?: string;
-      location?: string;
-      profession?: string;
+      full_name: string | null;
+      avatar_url: string | null;
+      location: string | null;
+      profession: string | null;
+      display_name: string | null;
     };
   };
 }
@@ -57,13 +57,16 @@ const PostCard = ({ post }: PostCardProps) => {
   const config = pillarConfig[post.pillar];
   const PillarIcon = config.icon;
   
-  // Mock author data for now - would come from database join in real implementation
+  // Use real author data or fallback values
   const author = post.author || {
     full_name: 'DNA Member',
+    display_name: 'DNA Member',
     avatar_url: null,
-    location: 'Unknown Location',
+    location: 'Location not set',
     profession: 'Professional'
   };
+
+  const displayName = author.display_name || author.full_name || 'DNA Member';
 
   const timeAgo = formatDistanceToNow(new Date(post.created_at!), { addSuffix: true });
 
@@ -73,13 +76,13 @@ const PostCard = ({ post }: PostCardProps) => {
         <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
           <AvatarImage src={author.avatar_url || undefined} />
           <AvatarFallback className="bg-dna-emerald text-white text-sm">
-            {author.full_name?.charAt(0) || 'U'}
+            {displayName.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         
         <div className="flex-1 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
-            <h4 className="font-semibold text-sm sm:text-base truncate">{author.full_name}</h4>
+            <h4 className="font-semibold text-sm sm:text-base truncate">{displayName}</h4>
             <Badge variant="secondary" className={`${config.className} text-xs flex-shrink-0`}>
               <PillarIcon className="h-3 w-3 mr-1" />
               {config.label}
@@ -87,7 +90,7 @@ const PostCard = ({ post }: PostCardProps) => {
           </div>
           
           <p className="text-xs sm:text-sm text-gray-600 mb-2 truncate">
-            {author.profession} • {author.location}
+            {author.profession || 'Professional'} • {author.location || 'Location not set'}
           </p>
           
           <p className="text-gray-800 mb-3 whitespace-pre-wrap text-sm sm:text-base leading-relaxed">

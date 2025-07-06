@@ -59,9 +59,18 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
   };
 
   const handleSubmit = async () => {
-    if (!content.trim() || !selectedPillar || !user) {
+    if (!user) {
       toast({
-        title: "Missing Information",
+        title: "Authentication Required",
+        description: "Please sign in to create posts.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!content.trim() || !selectedPillar) {
+      toast({
+        title: "Missing Information", 
         description: "Please write something and select a pillar.",
         variant: "destructive"
       });
@@ -83,11 +92,17 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw new Error(error.message || 'Failed to create post');
+      }
 
+      // Reset form
       setContent('');
       setSelectedPillar(null);
       setMediaUrl(null);
+      
+      // Callback to refresh feed
       onPostCreated?.(data.id, selectedPillar);
       
       toast({
@@ -96,9 +111,10 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
       });
     } catch (error) {
       console.error('Error creating post:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create post. Please try again.';
       toast({
         title: "Error",
-        description: "Failed to create post. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {

@@ -9,20 +9,35 @@ import CommentBox from './CommentBox';
 type Comment = Tables<'comments'>;
 
 interface CommentItemProps {
-  comment: Comment;
+  comment: Tables<'comments'> & {
+    author?: {
+      full_name: string | null;
+      avatar_url: string | null;
+      display_name: string | null;
+    };
+  };
   onReply: (content: string, parentId: string) => Promise<boolean>;
-  replies?: Comment[];
+  replies?: (Tables<'comments'> & {
+    author?: {
+      full_name: string | null;
+      avatar_url: string | null;
+      display_name: string | null;
+    };
+  })[];
   depth?: number;
 }
 
 const CommentItem = ({ comment, onReply, replies = [], depth = 0 }: CommentItemProps) => {
   const [showReplyBox, setShowReplyBox] = useState(false);
   
-  // Mock author data - in real app this would come from a join with profiles/users table
-  const author = {
+  // Use real author data or fallback values
+  const author = comment.author || {
     full_name: 'DNA Member',
+    display_name: 'DNA Member',
     avatar_url: null
   };
+
+  const displayName = author.display_name || author.full_name || 'DNA Member';
 
   const timeAgo = formatDistanceToNow(new Date(comment.created_at!), { addSuffix: true });
   const isNested = depth > 0;
@@ -42,14 +57,14 @@ const CommentItem = ({ comment, onReply, replies = [], depth = 0 }: CommentItemP
         <Avatar className="h-8 w-8 flex-shrink-0">
           <AvatarImage src={author.avatar_url || undefined} />
           <AvatarFallback className="bg-dna-emerald text-white text-xs">
-            {author.full_name?.charAt(0) || 'U'}
+            {displayName.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         
         <div className="flex-1 min-w-0">
           <div className="bg-gray-50 rounded-lg px-3 py-2">
             <div className="flex items-center space-x-2 mb-1">
-              <span className="font-medium text-sm">{author.full_name}</span>
+              <span className="font-medium text-sm">{displayName}</span>
               <span className="text-xs text-gray-500">{timeAgo}</span>
             </div>
             <p className="text-sm text-gray-800 whitespace-pre-wrap">

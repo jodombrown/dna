@@ -3,7 +3,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Tables } from '@/integrations/supabase/types';
 
-type Comment = Tables<'comments'>;
+type Comment = Tables<'comments'> & {
+  author?: {
+    full_name: string | null;
+    avatar_url: string | null;
+    display_name: string | null;
+  };
+};
 
 export const useComments = (postId: string) => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -14,14 +20,37 @@ export const useComments = (postId: string) => {
   const fetchComments = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data: commentsData, error: commentsError } = await supabase
         .from('comments')
         .select('*')
         .eq('post_id', postId)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
-      setComments(data || []);
+      if (commentsError) throw commentsError;
+
+      // Get unique author IDs
+      const authorIds = [...new Set(commentsData?.map(comment => comment.author_id).filter(Boolean) || [])];
+      
+      // Fetch author profiles
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url, display_name')
+        .in('id', authorIds);
+
+      if (profilesError) {
+        console.warn('Error fetching comment author profiles:', profilesError);
+      }
+
+      // Create a map of profiles by ID
+      const profileMap = new Map(profiles?.map(profile => [profile.id, profile]) || []);
+
+      // Combine comments with author data
+      const commentsWithAuthors = commentsData?.map(comment => ({
+        ...comment,
+        author: comment.author_id ? profileMap.get(comment.author_id) : null
+      })) || [];
+
+      setComments(commentsWithAuthors);
     } catch (error) {
       console.error('Error fetching comments:', error);
       toast({
