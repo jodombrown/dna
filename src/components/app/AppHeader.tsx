@@ -49,7 +49,9 @@ const AppHeader = () => {
 
   const navItems = [
     { name: 'Home', icon: Home, path: '/app', active: true },
-    { name: 'My Network', icon: Users, path: '/connect' },
+    { name: 'Connect', icon: Users, path: '/connect' },
+    { name: 'Collaborate', icon: FolderOpen, path: '/collaborate' },
+    { name: 'Contribute', icon: Briefcase, path: '/contribute' },
     { name: 'Projects', icon: FolderOpen, path: '/explore/projects' },
     { name: 'Jobs', icon: Briefcase, path: '/contribute' },
     { name: 'Messaging', icon: MessageCircle, path: '/app' },
