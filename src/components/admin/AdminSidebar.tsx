@@ -57,6 +57,11 @@ const navigationItems = [
     icon: Calendar,
   },
   {
+    title: 'Growth',
+    url: '/admin/growth',
+    icon: BarChart3,
+  },
+  {
     title: 'Audit Logs',
     url: '/admin/logs',
     icon: FileText,
@@ -65,6 +70,11 @@ const navigationItems = [
     title: 'Notifications',
     url: '/admin/notifications',
     icon: Bell,
+  },
+  {
+    title: 'Integrations',
+    url: '/admin/integrations',
+    icon: Settings,
   },
   {
     title: 'Admin Roles',

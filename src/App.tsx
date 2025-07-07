@@ -105,7 +105,9 @@ function App() {
               <Route path="/admin/users" element={<AdminUserManagement />} />
               <Route path="/admin/insights" element={<AdminInsightsDashboard />} />
               <Route path="/admin/settings" element={<AdminSettingsPage />} />
-              <Route path="/admin/roles" element={<AdminRolesManager />} />
+            <Route path="/admin/roles" element={<AdminRolesManager />} />
+            <Route path="/admin/growth" element={<AdminGrowthDashboard />} />
+            <Route path="/admin/integrations" element={<AdminIntegrationsPanel />} />
               <Route path="/admin/logs" element={<AdminAuditLogs />} />
               <Route path="/admin/notifications" element={<AdminNotificationsPanel />} />
               <Route path="/admin" element={<AdminDashboard />} />

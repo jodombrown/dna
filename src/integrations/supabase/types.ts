@@ -125,6 +125,41 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_analytics: {
+        Row: {
+          campaign_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_analytics_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "growth_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comments: {
         Row: {
           author_id: string | null
@@ -540,6 +575,51 @@ export type Database = {
         }
         Relationships: []
       }
+      growth_campaigns: {
+        Row: {
+          content: Json | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          metrics: Json | null
+          name: string
+          scheduled_at: string | null
+          status: string
+          target_segment: Json | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          metrics?: Json | null
+          name: string
+          scheduled_at?: string | null
+          status?: string
+          target_segment?: Json | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          metrics?: Json | null
+          name?: string
+          scheduled_at?: string | null
+          status?: string
+          target_segment?: Json | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       impact_log: {
         Row: {
           created_at: string | null
@@ -603,6 +683,36 @@ export type Database = {
           impact_area?: string | null
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      integration_tokens: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          service_name: string
+          token_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          service_name: string
+          token_type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          service_name?: string
+          token_type?: string
+          updated_at?: string
         }
         Relationships: []
       }
