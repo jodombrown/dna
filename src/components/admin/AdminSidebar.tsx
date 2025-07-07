@@ -8,7 +8,8 @@ import {
   Calendar, 
   Settings,
   Lock,
-  BarChart3
+  BarChart3,
+  Shield
 } from 'lucide-react';
 import {
   Sidebar,
@@ -52,6 +53,11 @@ const navigationItems = [
     title: 'Events',
     url: '/admin/events',
     icon: Calendar,
+  },
+  {
+    title: 'Admin Roles',
+    url: '/admin/roles',
+    icon: Shield,
   },
   {
     title: 'Settings',
