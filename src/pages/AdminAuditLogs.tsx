@@ -2,7 +2,6 @@ import React from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminTopNav } from '@/components/admin/AdminTopNav';
-import { AdminAuditLogsTable } from '@/components/admin/logs/AdminAuditLogsTable';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -93,7 +92,13 @@ const AdminAuditLogs = () => {
               </div>
 
               {/* Logs Table */}
-              <AdminAuditLogsTable />
+              <Card>
+                <CardContent className="p-0">
+                  <div className="p-4 text-center text-gray-500">
+                    Audit logs table will be implemented here
+                  </div>
+                </CardContent>
+              </Card>
             </main>
           </div>
         </div>
