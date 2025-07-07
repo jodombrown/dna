@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Heart } from 'lucide-react';
+import { Heart, Brain, Zap } from 'lucide-react';
 import PostComposer from './PostComposer';
 import PostCard from './PostCard';
 import FeedFilters from './FeedFilters';
-import { usePosts } from '@/hooks/usePosts';
+import { useAdinFeed } from '@/hooks/useAdinFeed';
 import { useImpactTracking } from '@/hooks/useImpactTracking';
+import AdinFeedIndicator from './AdinFeedIndicator';
+import { Badge } from '@/components/ui/badge';
 
 const FeedSection = () => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'connect' | 'collaborate' | 'contribute'>('all');
   const [activeRegion, setActiveRegion] = useState<string>('all');
+  const [adinEnabled, setAdinEnabled] = useState(true);
   const { trackImpact } = useImpactTracking();
   
-  // Use the posts hook with filter
+  // Use the new ADIN-powered feed hook
   const pillarFilter = activeFilter === 'all' ? undefined : activeFilter;
-  const { posts, loading, refreshPosts } = usePosts(pillarFilter);
+  const { posts, loading, refreshPosts, handlePostInteraction } = useAdinFeed({
+    pillarFilter,
+    enableAdinRanking: adinEnabled
+  });
 
   const handlePostCreated = async (postId: string, pillar: string) => {
     // Track impact if available
@@ -28,7 +34,24 @@ const FeedSection = () => {
       {/* Post Composer */}
       <PostComposer onPostCreated={handlePostCreated} />
 
-      {/* Feed Filters */}
+      {/* ADIN Status & Feed Filters */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-gradient-to-r from-dna-emerald/5 to-dna-copper/5 rounded-lg border">
+        <div className="flex items-center gap-2">
+          <AdinFeedIndicator isActive={adinEnabled} />
+          <span className="text-xs text-gray-600">
+            Intelligent feed powered by African Diaspora Intelligence Network
+          </span>
+        </div>
+        <Badge 
+          variant="outline" 
+          className="cursor-pointer text-xs hover-scale"
+          onClick={() => setAdinEnabled(!adinEnabled)}
+        >
+          {adinEnabled ? <Brain className="h-3 w-3 mr-1" /> : <Zap className="h-3 w-3 mr-1" />}
+          {adinEnabled ? 'Smart Feed' : 'Chronological'}
+        </Badge>
+      </div>
+
       <FeedFilters 
         activeFilter={activeFilter} 
         onFilterChange={setActiveFilter}
@@ -76,8 +99,31 @@ const FeedSection = () => {
         </Card>
       ) : (
         <div className="space-y-4">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+          {posts.map((post, index) => (
+            <div key={post.id} className="relative">
+              {adinEnabled && post.adin_score && post.adin_score > 0.7 && index < 3 && (
+                <div className="absolute -top-1 -left-1 z-10">
+                  <Badge variant="secondary" className="text-xs bg-dna-emerald text-white animate-pulse">
+                    <Brain className="h-3 w-3 mr-1" />
+                    Highly Relevant
+                  </Badge>
+                </div>
+              )}
+              <PostCard 
+                key={post.id} 
+                post={post}
+              />
+              {adinEnabled && post.adin_score && (
+                <div className="text-xs text-gray-400 px-4 pb-2">
+                  <AdinFeedIndicator 
+                    isActive={true} 
+                    score={post.adin_score} 
+                    signals={post.adin_signals}
+                    className="justify-end"
+                  />
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}

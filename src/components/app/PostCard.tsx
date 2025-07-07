@@ -83,10 +83,13 @@ const PostCard = ({ post }: PostCardProps) => {
         <div className="flex-1 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
             <h4 className="font-semibold text-sm sm:text-base truncate">{displayName}</h4>
-            <Badge variant="secondary" className={`${config.className} text-xs flex-shrink-0`}>
-              <PillarIcon className="h-3 w-3 mr-1" />
-              {config.label}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className={`${config.className} text-xs flex-shrink-0`}>
+                <PillarIcon className="h-3 w-3 mr-1" />
+                {config.label}
+              </Badge>
+              <span className="text-xs text-gray-400 italic">ADIN detected</span>
+            </div>
           </div>
           
           <p className="text-xs sm:text-sm text-gray-600 mb-2 truncate">
