@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      adin_connection_signals: {
+        Row: {
+          context: Json | null
+          created_at: string
+          id: string
+          reason: string
+          score: number
+          source_user: string
+          target_user: string
+          timestamp: string
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          reason: string
+          score?: number
+          source_user: string
+          target_user: string
+          timestamp?: string
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          reason?: string
+          score?: number
+          source_user?: string
+          target_user?: string
+          timestamp?: string
+        }
+        Relationships: []
+      }
       admin_logs: {
         Row: {
           action: string
@@ -1184,6 +1217,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_adin_profile: {
+        Row: {
+          created_at: string
+          engagement_pillars: string[] | null
+          id: string
+          industries: string[] | null
+          interests: string[] | null
+          last_active: string | null
+          skills: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          engagement_pillars?: string[] | null
+          id?: string
+          industries?: string[] | null
+          interests?: string[] | null
+          last_active?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          engagement_pillars?: string[] | null
+          id?: string
+          industries?: string[] | null
+          interests?: string[] | null
+          last_active?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_communities: {
         Row: {
           avatar_url: string | null
@@ -1435,6 +1504,10 @@ export type Database = {
       is_admin_user: {
         Args: { _user_id: string }
         Returns: boolean
+      }
+      update_adin_last_active: {
+        Args: { target_user_id: string }
+        Returns: undefined
       }
     }
     Enums: {
