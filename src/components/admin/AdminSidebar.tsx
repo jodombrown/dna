@@ -9,7 +9,9 @@ import {
   Settings,
   Lock,
   BarChart3,
-  Shield
+  Shield,
+  FileText,
+  Bell
 } from 'lucide-react';
 import {
   Sidebar,
@@ -53,6 +55,16 @@ const navigationItems = [
     title: 'Events',
     url: '/admin/events',
     icon: Calendar,
+  },
+  {
+    title: 'Audit Logs',
+    url: '/admin/logs',
+    icon: FileText,
+  },
+  {
+    title: 'Notifications',
+    url: '/admin/notifications',
+    icon: Bell,
   },
   {
     title: 'Admin Roles',

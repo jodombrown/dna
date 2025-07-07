@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_logs: {
+        Row: {
+          action: string
+          admin_id: string | null
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: unknown | null
+          resource_id: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          admin_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      admin_notifications: {
+        Row: {
+          admin_id: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          read_at: string | null
+          related_resource_id: string | null
+          related_resource_type: string | null
+          severity: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          read_at?: string | null
+          related_resource_id?: string | null
+          related_resource_type?: string | null
+          severity?: string | null
+          title: string
+          type: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          read_at?: string | null
+          related_resource_id?: string | null
+          related_resource_type?: string | null
+          severity?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string
@@ -1192,6 +1273,31 @@ export type Database = {
           _time_window_minutes?: number
         }
         Returns: boolean
+      }
+      create_admin_notification: {
+        Args: {
+          p_admin_id: string
+          p_type: string
+          p_title: string
+          p_message: string
+          p_severity?: string
+          p_related_resource_type?: string
+          p_related_resource_id?: string
+        }
+        Returns: string
+      }
+      create_audit_log: {
+        Args: {
+          p_admin_id: string
+          p_action: string
+          p_resource_type: string
+          p_resource_id?: string
+          p_details?: Json
+          p_ip_address?: unknown
+          p_user_agent?: string
+          p_status?: string
+        }
+        Returns: string
       }
       generate_referral_code: {
         Args: Record<PropertyKey, never>

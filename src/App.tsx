@@ -41,6 +41,8 @@ import AdminUserManagement from "./pages/AdminUserManagement";
 import AdminInsightsDashboard from "./pages/AdminInsightsDashboard";
 import AdminSettingsPage from "./pages/AdminSettingsPage";
 import AdminRolesManager from "./pages/AdminRolesManager";
+import AdminAuditLogs from "./pages/AdminAuditLogs";
+import AdminNotificationsPanel from "./pages/AdminNotificationsPanel";
 import ProtectedRoute from "./components/app/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -104,6 +106,8 @@ function App() {
               <Route path="/admin/insights" element={<AdminInsightsDashboard />} />
               <Route path="/admin/settings" element={<AdminSettingsPage />} />
               <Route path="/admin/roles" element={<AdminRolesManager />} />
+              <Route path="/admin/logs" element={<AdminAuditLogs />} />
+              <Route path="/admin/notifications" element={<AdminNotificationsPanel />} />
               <Route path="/admin" element={<AdminDashboard />} />
               
               <Route path="*" element={<NotFound />} />
