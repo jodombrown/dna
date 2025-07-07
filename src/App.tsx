@@ -43,6 +43,8 @@ import AdminSettingsPage from "./pages/AdminSettingsPage";
 import AdminRolesManager from "./pages/AdminRolesManager";
 import AdminAuditLogs from "./pages/AdminAuditLogs";
 import AdminNotificationsPanel from "./pages/AdminNotificationsPanel";
+import AdminGrowthDashboard from "./pages/AdminGrowthDashboard";
+import AdminIntegrationsPanel from "./pages/AdminIntegrationsPanel";
 import ProtectedRoute from "./components/app/ProtectedRoute";
 
 const queryClient = new QueryClient();
