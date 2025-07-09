@@ -1696,6 +1696,10 @@ export type Database = {
         Args: { _user_id: string }
         Returns: boolean
       }
+      make_user_admin: {
+        Args: { user_email: string }
+        Returns: string
+      }
       remove_message_reaction: {
         Args: { p_message_id: string; p_user_id: string; p_reaction: string }
         Returns: undefined
