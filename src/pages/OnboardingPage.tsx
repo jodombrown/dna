@@ -44,7 +44,7 @@ const OnboardingPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
-    email: user?.email || '',
+    email: '',
     location: '',
     username: ''
   });
@@ -346,11 +346,7 @@ const OnboardingPage = () => {
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="Enter your email"
                   required
-                  disabled={!!user?.email}
                 />
-                {user?.email && (
-                  <p className="text-sm text-gray-500">Email is pre-filled from your account</p>
-                )}
               </div>
 
               <div className="space-y-2">
