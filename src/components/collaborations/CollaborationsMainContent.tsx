@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { ArrowUpDown, Grid, List, Users, Plus, Filter } from 'lucide-react';
+import { ArrowUpDown, Users, Plus, Filter } from 'lucide-react';
 import { CollaborationProject, CollaborationFilters } from '@/types/collaborationTypes';
 import { useIsMobile } from '@/hooks/use-mobile';
 import CollaborationFiltersComponent from './CollaborationFilters';
@@ -49,7 +49,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
   onViewDetails,
   onOpenFeedbackPanel
 }) => {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const isMobile = useIsMobile();
 
@@ -122,29 +122,6 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-auto">
-                {!isMobile && (
-                  <>
-                    <Button
-                      variant={viewMode === 'grid' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setViewMode('grid')}
-                      className={viewMode === 'grid' ? 'bg-dna-copper hover:bg-dna-gold' : ''}
-                    >
-                      <Grid className="w-4 h-4" />
-                      <span className="hidden sm:inline ml-2">Grid</span>
-                    </Button>
-                    <Button
-                      variant={viewMode === 'list' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setViewMode('list')}
-                      className={viewMode === 'list' ? 'bg-dna-copper hover:bg-dna-gold' : ''}
-                    >
-                      <List className="w-4 h-4" />
-                      <span className="hidden sm:inline ml-2">List</span>
-                    </Button>
-                  </>
-                )}
-                
                 <Button
                   size="sm"
                   className="bg-dna-emerald hover:bg-dna-copper text-white flex-1 sm:flex-none"
@@ -182,52 +159,23 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
                 </Button>
               </div>
             ) : (
-              <>
-                {/* List View with Vertical Scrolling */}
-                {(isMobile || viewMode === 'list') && (
-                  <ScrollArea className="h-full">
-                    <div className="p-4 sm:p-6 space-y-4">
-                      {projects.map((project) => (
-                        <CompactProjectCard
-                          key={project.id}
-                          project={project}
-                          viewMode="list"
-                          likedProjects={likedProjects}
-                          bookmarkedProjects={bookmarkedProjects}
-                          onJoinProject={onJoinProject}
-                          onLikeProject={onLikeProject}
-                          onBookmarkProject={onBookmarkProject}
-                          onViewDetails={() => onViewDetails(project)}
-                        />
-                      ))}
-                    </div>
-                  </ScrollArea>
-                )}
-
-                {/* Grid View with Horizontal Scrolling */}
-                {!isMobile && viewMode === 'grid' && (
-                  <div className="p-4 sm:p-6 h-full overflow-hidden">
-                    <div className="w-full h-full overflow-x-auto overflow-y-hidden">
-                      <div className="flex gap-6 pb-4 h-full" style={{ width: `${projects.length * 340}px` }}>
-                        {projects.map((project) => (
-                          <div key={project.id} className="flex-shrink-0 w-80">
-                            <CompactProjectCard
-                              project={project}
-                              viewMode="grid"
-                              likedProjects={likedProjects}
-                              bookmarkedProjects={bookmarkedProjects}
-                              onJoinProject={onJoinProject}
-                              onLikeProject={onLikeProject}
-                              onBookmarkProject={onBookmarkProject}
-                              onViewDetails={() => onViewDetails(project)}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
+              <ScrollArea className="h-full">
+                <div className="p-4 sm:p-6 space-y-4">
+                  {projects.map((project) => (
+                    <CompactProjectCard
+                      key={project.id}
+                      project={project}
+                      viewMode="list"
+                      likedProjects={likedProjects}
+                      bookmarkedProjects={bookmarkedProjects}
+                      onJoinProject={onJoinProject}
+                      onLikeProject={onLikeProject}
+                      onBookmarkProject={onBookmarkProject}
+                      onViewDetails={() => onViewDetails(project)}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
             )}
           </div>
         </div>
