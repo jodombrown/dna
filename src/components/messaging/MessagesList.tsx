@@ -1,23 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Search, Star, Briefcase, Mail, Users, MessageCircle } from 'lucide-react';
-
-interface Conversation {
-  id: string;
-  other_user: {
-    full_name: string;
-    avatar_url: string;
-  };
-  latest_message: {
-    content: string;
-    is_read: boolean;
-  };
-  last_message_at: string;
-}
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Search, Star, Briefcase, Mail, Users, MessageCircle, Loader2, Plus } from 'lucide-react';
+import { useConversations } from '@/hooks/useMessaging';
+import { NewConversationModal } from './NewConversationModal';
 
 interface MessagesListProps {
   onConversationSelect: (conversationId: string) => void;
@@ -30,46 +20,7 @@ const MessagesList: React.FC<MessagesListProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
-
-  // Mock conversations data
-  const conversations: Conversation[] = [
-    {
-      id: '1',
-      other_user: {
-        full_name: 'Sarah Okoye',
-        avatar_url: ''
-      },
-      latest_message: {
-        content: 'Great idea! Let me know when you want to collaborate on this project.',
-        is_read: false
-      },
-      last_message_at: new Date().toISOString()
-    },
-    {
-      id: '2',
-      other_user: {
-        full_name: 'David Mensah',
-        avatar_url: ''
-      },
-      latest_message: {
-        content: 'Thanks for connecting! Looking forward to working together.',
-        is_read: true
-      },
-      last_message_at: new Date(Date.now() - 3600000).toISOString()
-    },
-    {
-      id: '3',
-      other_user: {
-        full_name: 'Amina Hassan',
-        avatar_url: ''
-      },
-      latest_message: {
-        content: 'The investment opportunity looks promising. Can we schedule a call?',
-        is_read: false
-      },
-      last_message_at: new Date(Date.now() - 7200000).toISOString()
-    }
-  ];
+  const { conversations, loading, error } = useConversations();
 
   const filters = [
     { id: 'all', label: 'All', icon: MessageCircle },
@@ -86,16 +37,40 @@ const MessagesList: React.FC<MessagesListProps> = ({
       .includes(searchQuery.toLowerCase());
     
     if (activeFilter === 'unread') {
-      return matchesSearch && !conv.latest_message.is_read;
+      return matchesSearch && conv.latest_message && !conv.latest_message.is_read;
     }
     
     return matchesSearch;
   });
 
+  if (error) {
+    return (
+      <div className="h-full flex items-center justify-center p-4">
+        <div className="text-center text-red-600">
+          <p className="font-medium">Error loading conversations</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full flex flex-col">
       <CardHeader className="pb-4">
-        <h2 className="text-xl font-semibold text-dna-forest">Messaging</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-dna-forest">Messaging</h2>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="sm" className="bg-dna-emerald hover:bg-dna-emerald/90">
+                <Plus className="h-4 w-4 mr-1" />
+                New
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <NewConversationModal onConversationCreated={onConversationSelect} />
+            </DialogContent>
+          </Dialog>
+        </div>
         
         {/* Search */}
         <div className="relative">
@@ -129,7 +104,12 @@ const MessagesList: React.FC<MessagesListProps> = ({
       </CardHeader>
 
       <CardContent className="flex-1 overflow-y-auto p-0">
-        {filteredConversations.length === 0 ? (
+        {loading ? (
+          <div className="p-4 text-center">
+            <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-dna-emerald" />
+            <p className="text-sm text-gray-600">Loading conversations...</p>
+          </div>
+        ) : filteredConversations.length === 0 ? (
           <div className="p-4 text-center text-gray-500">
             {searchQuery ? 'No conversations found' : 'No messages yet'}
           </div>
@@ -158,21 +138,21 @@ const MessagesList: React.FC<MessagesListProps> = ({
                       <h3 className="font-medium text-dna-forest truncate">
                         {conversation.other_user.full_name}
                       </h3>
-                      <span className="text-xs text-gray-500">
-                        {new Date(conversation.last_message_at).toLocaleDateString()}
-                      </span>
-                    </div>
+                       <span className="text-xs text-gray-500">
+                         {new Date(conversation.last_message_at).toLocaleDateString()}
+                       </span>
+                     </div>
+                     
+                     <p className="text-sm text-gray-600 truncate mt-1">
+                       {conversation.latest_message?.content || 'No messages yet'}
+                     </p>
                     
-                    <p className="text-sm text-gray-600 truncate mt-1">
-                      {conversation.latest_message.content}
-                    </p>
-                    
-                    <div className="flex items-center justify-between mt-2">
-                      {!conversation.latest_message.is_read && (
-                        <Badge variant="default" className="text-xs bg-dna-emerald">
-                          New
-                        </Badge>
-                      )}
+                     <div className="flex items-center justify-between mt-2">
+                       {conversation.latest_message && !conversation.latest_message.is_read && (
+                         <Badge variant="default" className="text-xs bg-dna-emerald">
+                           New
+                         </Badge>
+                       )}
                     </div>
                   </div>
                 </div>

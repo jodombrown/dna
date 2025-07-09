@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,7 +14,8 @@ import {
   Trash2,
   AlertTriangle,
   Image,
-  File
+  File,
+  Loader2
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -26,22 +27,8 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
-interface Message {
-  id: string;
-  content: string;
-  sender_id: string;
-  created_at: string;
-  is_read: boolean;
-  attachments?: any[];
-}
-
-interface MessageReaction {
-  id: string;
-  message_id: string;
-  user_id: string;
-  reaction: string;
-}
+import { useMessages, useMessageReactions, useTypingIndicator } from '@/hooks/useMessaging';
+import type { MessageReaction } from '@/services/messagingService';
 
 interface FileAttachment {
   name: string;
@@ -64,15 +51,22 @@ const ConversationView: React.FC<ConversationViewProps> = ({
   const { user } = useAuth();
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [reactions, setReactions] = useState<MessageReaction[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
-  const [otherUserTyping, setOtherUserTyping] = useState(false);
   const [attachments, setAttachments] = useState<FileAttachment[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Mock data for the selected conversation
+  // Use custom hooks for real-time data
+  const { messages, loading: messagesLoading, sendMessage } = useMessages(conversationId);
+  const messageIds = messages.map(m => m.id);
+  const { 
+    addReaction, 
+    removeReaction, 
+    hasUserReacted, 
+    getMessageReactions 
+  } = useMessageReactions(messageIds);
+  const { otherUserTyping, setTyping } = useTypingIndicator(conversationId);
+
+  // Get other user info from conversation (mock for now, can be enhanced)
   const otherUser = {
     full_name: conversationId === '1' ? 'Sarah Okoye' : 
                conversationId === '2' ? 'David Mensah' : 
@@ -83,119 +77,7 @@ const ConversationView: React.FC<ConversationViewProps> = ({
               conversationId === '3' ? 'Impact Investor' : 'Professional'
   };
 
-  // Load messages and set up real-time subscription
-  useEffect(() => {
-    if (!conversationId) return;
-
-    const loadMessages = async () => {
-      const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('conversation_id', conversationId)
-        .order('created_at', { ascending: true });
-
-      if (error) {
-        console.error('Error loading messages:', error);
-        return;
-      }
-
-      setMessages(data || []);
-    };
-
-    const loadReactions = async () => {
-      if (messages.length === 0) return;
-      
-      try {
-        const { data, error } = await supabase.rpc('get_message_reactions', {
-          p_message_ids: messages.map(m => m.id)
-        });
-
-        if (!error && data) {
-          setReactions(data as MessageReaction[]);
-        }
-      } catch (error) {
-        console.error('Error loading reactions:', error);
-      }
-    };
-
-    loadMessages();
-    if (messages.length > 0) {
-      loadReactions();
-    }
-
-    // Set up real-time subscriptions
-    const messagesChannel = supabase
-      .channel('messages-channel')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`
-        },
-        (payload) => {
-          setMessages(prev => [...prev, payload.new as Message]);
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`
-        },
-        (payload) => {
-          setMessages(prev => prev.map(msg => 
-            msg.id === payload.new.id ? payload.new as Message : msg
-          ));
-        }
-      )
-      .subscribe();
-
-    // Set up realtime subscription for reactions
-    const reactionsChannel = supabase
-      .channel('message-reactions')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'message_reactions'
-        },
-        () => {
-          // Reload reactions when any change occurs
-          if (messages.length > 0) {
-            loadReactions();
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(messagesChannel);
-      supabase.removeChannel(reactionsChannel);
-    };
-  }, [conversationId, messages.map(m => m.id).join(',')]);
-
-  // Typing indicator logic
-  useEffect(() => {
-    if (!conversationId) return;
-
-    const typingChannel = supabase.channel(`typing-${conversationId}`)
-      .on('presence', { event: 'sync' }, () => {
-        const presenceState = typingChannel.presenceState();
-        const typingUsers = Object.values(presenceState).flat();
-        setOtherUserTyping(typingUsers.some((u: any) => u.user_id !== user?.id && u.typing));
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(typingChannel);
-    };
-  }, [conversationId, user?.id]);
-
+  // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -203,17 +85,6 @@ const ConversationView: React.FC<ConversationViewProps> = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const handleTyping = async (typing: boolean) => {
-    if (!conversationId || !user) return;
-
-    const channel = supabase.channel(`typing-${conversationId}`);
-    await channel.track({
-      user_id: user.id,
-      typing,
-      timestamp: new Date().toISOString()
-    });
-  };
 
   const handleFileUpload = async (files: FileList) => {
     const fileArray = Array.from(files);
@@ -245,8 +116,8 @@ const ConversationView: React.FC<ConversationViewProps> = ({
     }
   };
 
-  const sendMessage = async () => {
-    if ((!newMessage.trim() && attachments.length === 0) || !conversationId || !user || sending) return;
+  const handleSendMessage = async () => {
+    if ((!newMessage.trim() && attachments.length === 0) || !conversationId || sending) return;
 
     setSending(true);
     
@@ -258,24 +129,15 @@ const ConversationView: React.FC<ConversationViewProps> = ({
         size: file.size
       }));
 
-      const { error } = await supabase
-        .from('messages')
-        .insert({
-          conversation_id: conversationId,
-          sender_id: user.id,
-          content: newMessage.trim(),
-          attachments: messageAttachments
-        });
-
-      if (error) {
-        console.error('Error sending message:', error);
+      const success = await sendMessage(newMessage.trim(), messageAttachments);
+      
+      if (success) {
+        setNewMessage('');
+        setAttachments([]);
+        setTyping(false);
+      } else {
         toast.error('Failed to send message');
-        return;
       }
-
-      setNewMessage('');
-      setAttachments([]);
-      handleTyping(false);
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
@@ -284,57 +146,26 @@ const ConversationView: React.FC<ConversationViewProps> = ({
     }
   };
 
-  const addReaction = async (messageId: string, reaction: string) => {
-    if (!user) return;
-
-    try {
-      await supabase.rpc('add_message_reaction', {
-        p_message_id: messageId,
-        p_user_id: user.id,
-        p_reaction: reaction
-      });
-    } catch (error) {
-      console.error('Error adding reaction:', error);
-    }
+  const handleAddReaction = async (messageId: string, reaction: string) => {
+    await addReaction(messageId, reaction);
   };
 
-  const removeReaction = async (messageId: string, reaction: string) => {
-    if (!user) return;
-
-    try {
-      await supabase.rpc('remove_message_reaction', {
-        p_message_id: messageId,
-        p_user_id: user.id,
-        p_reaction: reaction
-      });
-    } catch (error) {
-      console.error('Error removing reaction:', error);
-    }
+  const handleRemoveReaction = async (messageId: string, reaction: string) => {
+    await removeReaction(messageId, reaction);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      handleSendMessage();
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(e.target.value);
-    handleTyping(e.target.value.length > 0);
+    setTyping(e.target.value.length > 0);
   };
 
-  const getMessageReactions = (messageId: string) => {
-    return reactions.filter(r => r.message_id === messageId);
-  };
-
-  const hasUserReacted = (messageId: string, reaction: string) => {
-    return reactions.some(r => 
-      r.message_id === messageId && 
-      r.user_id === user?.id && 
-      r.reaction === reaction
-    );
-  };
 
   if (!conversationId) {
     return (
@@ -404,7 +235,12 @@ const ConversationView: React.FC<ConversationViewProps> = ({
 
       {/* Messages */}
       <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.length === 0 ? (
+        {messagesLoading ? (
+          <div className="text-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-dna-emerald" />
+            <p className="text-sm text-gray-600">Loading messages...</p>
+          </div>
+        ) : messages.length === 0 ? (
           <div className="text-center text-gray-500">
             <p>No messages yet. Start the conversation!</p>
           </div>
@@ -481,9 +317,9 @@ const ConversationView: React.FC<ConversationViewProps> = ({
                               key={emoji}
                               onClick={() => {
                                 if (hasUserReacted(message.id, emoji)) {
-                                  removeReaction(message.id, emoji);
+                                  handleRemoveReaction(message.id, emoji);
                                 } else {
-                                  addReaction(message.id, emoji);
+                                  handleAddReaction(message.id, emoji);
                                 }
                               }}
                               className={`text-xs hover:scale-110 transition-transform ${
@@ -541,11 +377,11 @@ const ConversationView: React.FC<ConversationViewProps> = ({
                   className="text-red-500 hover:text-red-700 ml-1"
                 >
                   ×
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+                 </button>
+               </div>
+             ))}
+           </div>
+         )}
         
         <div className="flex items-end space-x-2">
           <input
@@ -579,7 +415,7 @@ const ConversationView: React.FC<ConversationViewProps> = ({
           </div>
           
           <Button 
-            onClick={sendMessage} 
+            onClick={handleSendMessage} 
             disabled={(!newMessage.trim() && attachments.length === 0) || sending}
             className="bg-dna-emerald hover:bg-dna-emerald/90"
           >
