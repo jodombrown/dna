@@ -854,6 +854,39 @@ export type Database = {
         }
         Relationships: []
       }
+      leaderboard_cache: {
+        Row: {
+          country: string | null
+          id: string
+          leaderboard_type: string
+          rank: number
+          score: number
+          sector: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          country?: string | null
+          id?: string
+          leaderboard_type: string
+          rank: number
+          score: number
+          sector?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          country?: string | null
+          id?: string
+          leaderboard_type?: string
+          rank?: number
+          score?: number
+          sector?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -1310,6 +1343,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_badges: {
+        Row: {
+          badge_name: string
+          badge_type: string
+          description: string | null
+          icon: string | null
+          id: string
+          metadata: Json | null
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          badge_name: string
+          badge_type: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          metadata?: Json | null
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          badge_name?: string
+          badge_type?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          metadata?: Json | null
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_communities: {
         Row: {
           avatar_url: string | null
@@ -1353,6 +1419,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_dna_points: {
+        Row: {
+          collaborate_score: number
+          connect_score: number
+          contribute_score: number
+          created_at: string
+          last_updated: string
+          total_score: number | null
+          user_id: string
+        }
+        Insert: {
+          collaborate_score?: number
+          connect_score?: number
+          contribute_score?: number
+          created_at?: string
+          last_updated?: string
+          total_score?: number | null
+          user_id: string
+        }
+        Update: {
+          collaborate_score?: number
+          connect_score?: number
+          contribute_score?: number
+          created_at?: string
+          last_updated?: string
+          total_score?: number | null
+          user_id?: string
+        }
+        Relationships: []
       }
       user_feedback: {
         Row: {
@@ -1505,6 +1601,10 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: number
       }
+      check_badge_unlocks: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
       check_rate_limit: {
         Args: {
           _ip_address: unknown
@@ -1554,6 +1654,22 @@ export type Database = {
           is_public: boolean
         }[]
       }
+      get_leaderboard: {
+        Args: {
+          board_type?: string
+          country_filter?: string
+          sector_filter?: string
+          limit_count?: number
+        }
+        Returns: {
+          user_id: string
+          full_name: string
+          avatar_url: string
+          score: number
+          rank: number
+          location: string
+        }[]
+      }
       get_message_reactions: {
         Args: { p_message_ids: string[] }
         Returns: {
@@ -1586,6 +1702,10 @@ export type Database = {
       }
       update_adin_last_active: {
         Args: { target_user_id: string }
+        Returns: undefined
+      }
+      update_dna_points: {
+        Args: { target_user_id: string; pillar: string; points?: number }
         Returns: undefined
       }
     }

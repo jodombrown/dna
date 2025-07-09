@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import UserProfileView from '@/components/profile/UserProfileView';
 import PublicProfileView from '@/components/profile/PublicProfileView';
 import ProfileHeroSection from '@/components/profile/ProfileHeroSection';
+import DnaPointsDisplay from '@/components/profile/DnaPointsDisplay';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Globe, MapPin, Users } from 'lucide-react';
@@ -163,6 +164,9 @@ const ProfilePage = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* DNA Points Display */}
+            <DnaPointsDisplay userId={profile.id} />
+
             {/* Identity Tags */}
             {((profile as any).diaspora_tags || (profile as any).causes || (profile as any).interests) && (
               <Card>
