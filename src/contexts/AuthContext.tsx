@@ -31,23 +31,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user profile
+  // Fetch user profile with graceful error handling
   const fetchProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle() instead of single() to avoid crashes
       
-      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+      if (error) {
         console.error('Error fetching profile:', error);
+        // Create a minimal profile if none exists
+        setProfile({ id: userId, email: null, full_name: null });
+        return;
+      }
+      
+      if (!data) {
+        // Profile doesn't exist, create minimal profile state
+        console.log('No profile found for user:', userId);
+        setProfile({ id: userId, email: null, full_name: null });
         return;
       }
       
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
+      // Fallback profile to prevent crashes
+      setProfile({ id: userId, email: null, full_name: null });
     }
   };
 

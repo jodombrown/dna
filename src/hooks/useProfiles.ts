@@ -19,6 +19,12 @@ export const useProfile = (id: string, enabled = true) => {
     queryKey: ['profile', id],
     queryFn: () => profilesService.getProfileById(id),
     enabled: enabled && !!id,
+    retry: (failureCount, error: any) => {
+      // Don't retry if it's just a missing profile
+      if (error?.code === 'PGRST116') return false;
+      return failureCount < 3;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
