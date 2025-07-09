@@ -12,7 +12,9 @@ import {
   Star,
   Archive,
   Trash2,
-  AlertTriangle
+  AlertTriangle,
+  Image,
+  File
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -22,6 +24,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface Message {
   id: string;
@@ -29,6 +33,21 @@ interface Message {
   sender_id: string;
   created_at: string;
   is_read: boolean;
+  attachments?: any[];
+}
+
+interface MessageReaction {
+  id: string;
+  message_id: string;
+  user_id: string;
+  reaction: string;
+}
+
+interface FileAttachment {
+  name: string;
+  url: string;
+  type: string;
+  size: number;
 }
 
 interface ConversationViewProps {
@@ -45,7 +64,13 @@ const ConversationView: React.FC<ConversationViewProps> = ({
   const { user } = useAuth();
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [reactions, setReactions] = useState<MessageReaction[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [otherUserTyping, setOtherUserTyping] = useState(false);
+  const [attachments, setAttachments] = useState<FileAttachment[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Mock data for the selected conversation
   const otherUser = {
@@ -58,29 +83,82 @@ const ConversationView: React.FC<ConversationViewProps> = ({
               conversationId === '3' ? 'Impact Investor' : 'Professional'
   };
 
-  const messages: Message[] = conversationId ? [
-    {
-      id: '1',
-      content: 'Hi! I saw your post about the African tech initiative. Very interesting!',
-      sender_id: 'other',
-      created_at: new Date(Date.now() - 3600000).toISOString(),
-      is_read: true
-    },
-    {
-      id: '2',
-      content: 'Thank you! I\'m always looking for like-minded people to collaborate with.',
-      sender_id: user?.id || 'me',
-      created_at: new Date(Date.now() - 3300000).toISOString(),
-      is_read: true
-    },
-    {
-      id: '3',
-      content: 'Great! I have some ideas that might align with your vision. Would love to discuss further.',
-      sender_id: 'other',
-      created_at: new Date(Date.now() - 1800000).toISOString(),
-      is_read: true
-    }
-  ] : [];
+  // Load messages and set up real-time subscription
+  useEffect(() => {
+    if (!conversationId) return;
+
+    const loadMessages = async () => {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error loading messages:', error);
+        return;
+      }
+
+      setMessages(data || []);
+    };
+
+    loadMessages();
+
+    // Set up real-time subscriptions
+    const messagesChannel = supabase
+      .channel('messages-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`
+        },
+        (payload) => {
+          setMessages(prev => [...prev, payload.new as Message]);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`
+        },
+        (payload) => {
+          setMessages(prev => prev.map(msg => 
+            msg.id === payload.new.id ? payload.new as Message : msg
+          ));
+        }
+      )
+      .subscribe();
+
+    // Note: Reactions realtime disabled temporarily due to type generation lag
+    // Will be re-enabled once types are updated
+
+    return () => {
+      supabase.removeChannel(messagesChannel);
+    };
+  }, [conversationId, messages.map(m => m.id).join(',')]);
+
+  // Typing indicator logic
+  useEffect(() => {
+    if (!conversationId) return;
+
+    const typingChannel = supabase.channel(`typing-${conversationId}`)
+      .on('presence', { event: 'sync' }, () => {
+        const presenceState = typingChannel.presenceState();
+        const typingUsers = Object.values(presenceState).flat();
+        setOtherUserTyping(typingUsers.some((u: any) => u.user_id !== user?.id && u.typing));
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(typingChannel);
+    };
+  }, [conversationId, user?.id]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -90,17 +168,95 @@ const ConversationView: React.FC<ConversationViewProps> = ({
     scrollToBottom();
   }, [messages]);
 
+  const handleTyping = async (typing: boolean) => {
+    if (!conversationId || !user) return;
+
+    const channel = supabase.channel(`typing-${conversationId}`);
+    await channel.track({
+      user_id: user.id,
+      typing,
+      timestamp: new Date().toISOString()
+    });
+  };
+
+  const handleFileUpload = async (files: FileList) => {
+    const fileArray = Array.from(files);
+    
+    for (const file of fileArray) {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `message-attachments/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('user-posts')
+        .upload(filePath, file);
+
+      if (error) {
+        toast.error('Failed to upload file');
+        continue;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('user-posts')
+        .getPublicUrl(filePath);
+
+      setAttachments(prev => [...prev, {
+        name: file.name,
+        url: publicUrl,
+        type: file.type,
+        size: file.size
+      }]);
+    }
+  };
+
   const sendMessage = async () => {
-    if (!newMessage.trim() || !conversationId || !user || sending) return;
+    if ((!newMessage.trim() && attachments.length === 0) || !conversationId || !user || sending) return;
 
     setSending(true);
     
-    // Simulate sending delay
-    setTimeout(() => {
-      console.log('Message sent:', newMessage);
+    try {
+      const messageAttachments = attachments.map(file => ({
+        name: file.name,
+        url: file.url,
+        type: file.type,
+        size: file.size
+      }));
+
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          conversation_id: conversationId,
+          sender_id: user.id,
+          content: newMessage.trim(),
+          attachments: messageAttachments
+        });
+
+      if (error) {
+        console.error('Error sending message:', error);
+        toast.error('Failed to send message');
+        return;
+      }
+
       setNewMessage('');
+      setAttachments([]);
+      handleTyping(false);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast.error('Failed to send message');
+    } finally {
       setSending(false);
-    }, 1000);
+    }
+  };
+
+  // Reactions temporarily disabled - will be re-enabled when types are updated
+  const addReaction = async (messageId: string, reaction: string) => {
+    // TODO: Re-implement when message_reactions table is in types
+    console.log('Reaction feature coming soon');
+  };
+
+  const removeReaction = async (messageId: string, reaction: string) => {
+    // TODO: Re-implement when message_reactions table is in types
+    console.log('Reaction feature coming soon');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -108,6 +264,23 @@ const ConversationView: React.FC<ConversationViewProps> = ({
       e.preventDefault();
       sendMessage();
     }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setNewMessage(e.target.value);
+    handleTyping(e.target.value.length > 0);
+  };
+
+  const getMessageReactions = (messageId: string) => {
+    return reactions.filter(r => r.message_id === messageId);
+  };
+
+  const hasUserReacted = (messageId: string, reaction: string) => {
+    return reactions.some(r => 
+      r.message_id === messageId && 
+      r.user_id === user?.id && 
+      r.reaction === reaction
+    );
   };
 
   if (!conversationId) {
@@ -183,40 +356,130 @@ const ConversationView: React.FC<ConversationViewProps> = ({
             <p>No messages yet. Start the conversation!</p>
           </div>
         ) : (
-          messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.sender_id === user?.id ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                  message.sender_id === user?.id
-                    ? 'bg-dna-emerald text-white'
-                    : 'bg-gray-100 text-gray-900'
-                }`}
-              >
-                <p className="text-sm">{message.content}</p>
-                <p className={`text-xs mt-1 ${
-                  message.sender_id === user?.id ? 'text-emerald-100' : 'text-gray-500'
-                }`}>
-                  {new Date(message.created_at).toLocaleTimeString([], { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                  })}
-                </p>
+          <>
+            {messages.map((message) => {
+              const messageReactions = getMessageReactions(message.id);
+              const reactionGroups = messageReactions.reduce((acc, reaction) => {
+                if (!acc[reaction.reaction]) acc[reaction.reaction] = [];
+                acc[reaction.reaction].push(reaction);
+                return acc;
+              }, {} as Record<string, MessageReaction[]>);
+
+              return (
+                <div key={message.id} className="space-y-2">
+                  <div
+                    className={`flex ${message.sender_id === user?.id ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                        message.sender_id === user?.id
+                          ? 'bg-dna-emerald text-white'
+                          : 'bg-gray-100 text-gray-900'
+                      }`}
+                    >
+                      {message.content && (
+                        <p className="text-sm">{message.content}</p>
+                      )}
+                      
+                      {message.attachments && message.attachments.length > 0 && (
+                        <div className="mt-2 space-y-1">
+                          {message.attachments.map((attachment: any, index: number) => (
+                            <div key={index} className="flex items-center space-x-2 text-sm">
+                              {attachment.type?.startsWith('image/') ? (
+                                <div>
+                                  <Image className="h-4 w-4" />
+                                  <img 
+                                    src={attachment.url} 
+                                    alt={attachment.name}
+                                    className="max-w-full h-auto rounded mt-1"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="flex items-center space-x-1">
+                                  <File className="h-4 w-4" />
+                                  <a 
+                                    href={attachment.url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="underline"
+                                  >
+                                    {attachment.name}
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center justify-between mt-1">
+                        <p className={`text-xs ${
+                          message.sender_id === user?.id ? 'text-emerald-100' : 'text-gray-500'
+                        }`}>
+                          {new Date(message.created_at).toLocaleTimeString([], { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                          })}
+                        </p>
+                        
+                        {/* Reactions temporarily disabled */}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Reaction groups temporarily disabled */}
+                </div>
+              );
+            })}
+            
+            {otherUserTyping && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 text-gray-600 px-3 py-2 rounded-lg text-sm">
+                  <span className="animate-pulse">Typing...</span>
+                </div>
               </div>
-            </div>
-          ))
+            )}
+          </>
         )}
         <div ref={messagesEndRef} />
       </CardContent>
 
       {/* Message Input */}
       <div className="border-t border-gray-200 p-4">
+        {attachments.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {attachments.map((file: any, index) => (
+              <div key={index} className="bg-gray-100 px-2 py-1 rounded text-sm flex items-center space-x-1">
+                <File className="h-3 w-3" />
+                <span>{file.name}</span>
+                <button
+                  onClick={() => setAttachments(prev => prev.filter((_, i) => i !== index))}
+                  className="text-red-500 hover:text-red-700 ml-1"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        
         <div className="flex items-end space-x-2">
-          <Button variant="ghost" size="sm">
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            className="hidden"
+            onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
+          />
+          
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+          >
             <Paperclip className="h-4 w-4" />
           </Button>
+          
           <Button variant="ghost" size="sm">
             <Smile className="h-4 w-4" />
           </Button>
@@ -225,7 +488,7 @@ const ConversationView: React.FC<ConversationViewProps> = ({
             <Textarea
               placeholder="Type your message..."
               value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
+              onChange={handleInputChange}
               onKeyPress={handleKeyPress}
               className="min-h-[40px] max-h-32 resize-none"
             />
@@ -233,7 +496,7 @@ const ConversationView: React.FC<ConversationViewProps> = ({
           
           <Button 
             onClick={sendMessage} 
-            disabled={!newMessage.trim() || sending}
+            disabled={(!newMessage.trim() && attachments.length === 0) || sending}
             className="bg-dna-emerald hover:bg-dna-emerald/90"
           >
             <Send className="h-4 w-4" />
