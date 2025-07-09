@@ -40,6 +40,7 @@ const OnboardingPage = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   
+  const [isCheckingAdminStatus, setIsCheckingAdminStatus] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
@@ -51,6 +52,61 @@ const OnboardingPage = () => {
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
   const [suggestedUsernames, setSuggestedUsernames] = useState<string[]>([]);
   const [locationOpen, setLocationOpen] = useState(false);
+
+  // Check if user is an admin on mount
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user?.email) {
+        setIsCheckingAdminStatus(false);
+        return;
+      }
+
+      // Check if user has diasporanetwork.africa email
+      if (user.email.endsWith('@diasporanetwork.africa')) {
+        try {
+          // Check if user is already in admin_users table
+          const { data: adminUser, error } = await supabase
+            .from('admin_users')
+            .select('role')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          if (error) {
+            console.error('Admin check error:', error);
+            setIsCheckingAdminStatus(false);
+            return;
+          }
+
+          if (adminUser) {
+            // User is already an admin, redirect to admin dashboard
+            toast({
+              title: "Welcome Admin!",
+              description: "Redirecting to admin dashboard...",
+            });
+            navigate('/admin');
+            return;
+          }
+
+          // User has diasporanetwork.africa email but not in admin table yet
+          // The trigger should handle this automatically, but let's wait a moment
+          setTimeout(() => {
+            toast({
+              title: "Admin Access Granted!",
+              description: "Welcome to the DNA admin panel.",
+            });
+            navigate('/admin');
+          }, 1000);
+          return;
+        } catch (error) {
+          console.error('Error checking admin status:', error);
+        }
+      }
+      
+      setIsCheckingAdminStatus(false);
+    };
+
+    checkAdminStatus();
+  }, [user, navigate, toast]);
 
   // Generate username suggestions based on full name
   const generateUsernameSuggestions = (name: string) => {
@@ -236,6 +292,24 @@ const OnboardingPage = () => {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking admin status
+  if (isCheckingAdminStatus) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex items-center justify-center p-4">
+        <div className="w-full max-w-lg">
+          <Card className="shadow-xl">
+            <CardContent className="flex items-center justify-center p-8">
+              <div className="text-center">
+                <Loader2 className="h-8 w-8 animate-spin text-dna-emerald mx-auto mb-4" />
+                <p className="text-gray-600">Setting up your account...</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex items-center justify-center p-4">
