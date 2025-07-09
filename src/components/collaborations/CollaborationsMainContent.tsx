@@ -167,44 +167,69 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
           </div>
 
           {/* Projects Grid/List */}
-          <ScrollArea className="flex-1">
-            <div className="p-4 sm:p-6">
-              {projects.length === 0 ? (
-                <div className="text-center py-12">
-                  <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">No initiatives found</h3>
-                  <p className="text-gray-500 mb-6">Try adjusting your filters or search terms.</p>
-                  <Button 
-                    onClick={clearFilters}
-                    variant="outline"
-                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
-                  >
-                    Clear All Filters
-                  </Button>
-                </div>
-              ) : (
-                <div className={
-                  isMobile || viewMode === 'list'
-                    ? 'space-y-4' 
-                    : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-                }>
-                  {projects.map((project) => (
-                    <CompactProjectCard
-                      key={project.id}
-                      project={project}
-                      viewMode={isMobile ? 'list' : viewMode}
-                      likedProjects={likedProjects}
-                      bookmarkedProjects={bookmarkedProjects}
-                      onJoinProject={onJoinProject}
-                      onLikeProject={onLikeProject}
-                      onBookmarkProject={onBookmarkProject}
-                      onViewDetails={() => onViewDetails(project)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </ScrollArea>
+          <div className="flex-1 overflow-hidden">
+            {projects.length === 0 ? (
+              <div className="text-center py-12 px-4 sm:px-6">
+                <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">No initiatives found</h3>
+                <p className="text-gray-500 mb-6">Try adjusting your filters or search terms.</p>
+                <Button 
+                  onClick={clearFilters}
+                  variant="outline"
+                  className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
+                >
+                  Clear All Filters
+                </Button>
+              </div>
+            ) : (
+              <>
+                {/* List View with Vertical Scrolling */}
+                {(isMobile || viewMode === 'list') && (
+                  <ScrollArea className="h-full">
+                    <div className="p-4 sm:p-6 space-y-4">
+                      {projects.map((project) => (
+                        <CompactProjectCard
+                          key={project.id}
+                          project={project}
+                          viewMode="list"
+                          likedProjects={likedProjects}
+                          bookmarkedProjects={bookmarkedProjects}
+                          onJoinProject={onJoinProject}
+                          onLikeProject={onLikeProject}
+                          onBookmarkProject={onBookmarkProject}
+                          onViewDetails={() => onViewDetails(project)}
+                        />
+                      ))}
+                    </div>
+                  </ScrollArea>
+                )}
+
+                {/* Grid View with Horizontal Scrolling */}
+                {!isMobile && viewMode === 'grid' && (
+                  <div className="p-4 sm:p-6 h-full overflow-hidden">
+                    <div className="w-full h-full overflow-x-auto overflow-y-hidden">
+                      <div className="flex gap-6 pb-4 h-full" style={{ width: `${projects.length * 340}px` }}>
+                        {projects.map((project) => (
+                          <div key={project.id} className="flex-shrink-0 w-80">
+                            <CompactProjectCard
+                              project={project}
+                              viewMode="grid"
+                              likedProjects={likedProjects}
+                              bookmarkedProjects={bookmarkedProjects}
+                              onJoinProject={onJoinProject}
+                              onLikeProject={onLikeProject}
+                              onBookmarkProject={onBookmarkProject}
+                              onViewDetails={() => onViewDetails(project)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
 
