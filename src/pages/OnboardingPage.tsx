@@ -66,6 +66,8 @@ const OnboardingPage = () => {
       suggestions.push(nameParts.join(''));
       // firstname_lastname
       suggestions.push(nameParts.join('_'));
+      // firstname-lastname
+      suggestions.push(nameParts.join('-'));
       // firstinitiallastname
       suggestions.push(nameParts[0][0] + nameParts[nameParts.length - 1]);
     }
@@ -88,7 +90,7 @@ const OnboardingPage = () => {
     }
     
     // Validate username format
-    const isValid = /^[a-z0-9._]+$/.test(username);
+    const isValid = /^[a-z0-9._-]+$/.test(username);
     if (!isValid) {
       setUsernameStatus('idle');
       return;
@@ -152,7 +154,7 @@ const OnboardingPage = () => {
   const handleInputChange = (field: string, value: string) => {
     if (field === 'username') {
       // Ensure username is lowercase and contains only allowed characters
-      value = value.toLowerCase().replace(/[^a-z0-9._]/g, '');
+      value = value.toLowerCase().replace(/[^a-z0-9._-]/g, '');
     }
     
     setFormData(prev => ({
