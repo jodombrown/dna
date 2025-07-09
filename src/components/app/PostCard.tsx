@@ -84,17 +84,24 @@ const PostCard = ({ post }: PostCardProps) => {
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
             <h4 className="font-semibold text-sm sm:text-base truncate">{displayName}</h4>
             <div className="flex items-center gap-2">
-              <Badge variant="secondary" className={`${config.className} text-xs flex-shrink-0`}>
-                <PillarIcon className="h-3 w-3 mr-1" />
-                {config.label}
-              </Badge>
-              <span className="text-xs text-gray-400 italic">ADIN detected</span>
+              <span className="text-xs text-gray-500">{timeAgo}</span>
             </div>
           </div>
           
           <p className="text-xs sm:text-sm text-gray-600 mb-2 truncate">
             {author.profession || 'Professional'} • {author.location || 'Location not set'}
           </p>
+          
+          {/* ADIN Classification Badge */}
+          <div className="mb-3">
+            <Badge 
+              variant="outline" 
+              className="bg-dna-gold/10 text-dna-gold border-dna-gold/20 text-xs rounded-full px-2 py-1"
+            >
+              <PillarIcon className="h-3 w-3 mr-1" />
+              {config.label} Detected
+            </Badge>
+          </div>
           
           <p className="text-gray-800 mb-3 whitespace-pre-wrap text-sm sm:text-base leading-relaxed">
             {post.content}
@@ -111,7 +118,9 @@ const PostCard = ({ post }: PostCardProps) => {
           )}
           
           <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500 mb-3">
-            <span>{timeAgo}</span>
+            <span className="text-xs text-gray-400">
+              AI-classified by ADIN • Confidence: High
+            </span>
             <div className="flex space-x-2 sm:space-x-4">
               <span>{getReactionCounts().reduce((sum, r) => sum + r.count, 0)} reactions</span>
               <span>{comments.length} comments</span>

@@ -111,8 +111,8 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
       onPostCreated?.(data.id, analysis.pillar);
       
       toast({
-        title: "Post Created",
-        description: `Your post has been shared and classified as ${analysis.pillar} content.`,
+        title: "Post Shared",
+        description: `Your post has been shared and automatically classified by ADIN.`,
       });
     } catch (error) {
       console.error('Error creating post:', error);
@@ -223,7 +223,7 @@ const PostComposer = ({ onPostCreated }: PostComposerProps) => {
               disabled={!content.trim() || isSubmitting || uploading}
               className="bg-dna-emerald hover:bg-dna-emerald/90 text-xs sm:text-sm px-6"
             >
-              {isSubmitting ? 'Posting...' : 'Post'}
+              {isSubmitting ? 'Sharing...' : 'Share'}
             </MobileTouchButton>
           </div>
 
