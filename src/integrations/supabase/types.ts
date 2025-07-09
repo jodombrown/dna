@@ -1497,6 +1497,10 @@ export type Database = {
       }
     }
     Functions: {
+      add_message_reaction: {
+        Args: { p_message_id: string; p_user_id: string; p_reaction: string }
+        Returns: undefined
+      }
       calculate_impact_score: {
         Args: { target_user_id: string }
         Returns: number
@@ -1550,6 +1554,16 @@ export type Database = {
           is_public: boolean
         }[]
       }
+      get_message_reactions: {
+        Args: { p_message_ids: string[] }
+        Returns: {
+          id: string
+          message_id: string
+          user_id: string
+          reaction: string
+          created_at: string
+        }[]
+      }
       get_newsletter_followers: {
         Args: { newsletter_user_id: string }
         Returns: {
@@ -1565,6 +1579,10 @@ export type Database = {
       is_admin_user: {
         Args: { _user_id: string }
         Returns: boolean
+      }
+      remove_message_reaction: {
+        Args: { p_message_id: string; p_user_id: string; p_reaction: string }
+        Returns: undefined
       }
       update_adin_last_active: {
         Args: { target_user_id: string }

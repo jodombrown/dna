@@ -102,7 +102,26 @@ const ConversationView: React.FC<ConversationViewProps> = ({
       setMessages(data || []);
     };
 
+    const loadReactions = async () => {
+      if (messages.length === 0) return;
+      
+      try {
+        const { data, error } = await supabase.rpc('get_message_reactions', {
+          p_message_ids: messages.map(m => m.id)
+        });
+
+        if (!error && data) {
+          setReactions(data as MessageReaction[]);
+        }
+      } catch (error) {
+        console.error('Error loading reactions:', error);
+      }
+    };
+
     loadMessages();
+    if (messages.length > 0) {
+      loadReactions();
+    }
 
     // Set up real-time subscriptions
     const messagesChannel = supabase
@@ -135,11 +154,28 @@ const ConversationView: React.FC<ConversationViewProps> = ({
       )
       .subscribe();
 
-    // Note: Reactions realtime disabled temporarily due to type generation lag
-    // Will be re-enabled once types are updated
+    // Set up realtime subscription for reactions
+    const reactionsChannel = supabase
+      .channel('message-reactions')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'message_reactions'
+        },
+        () => {
+          // Reload reactions when any change occurs
+          if (messages.length > 0) {
+            loadReactions();
+          }
+        }
+      )
+      .subscribe();
 
     return () => {
       supabase.removeChannel(messagesChannel);
+      supabase.removeChannel(reactionsChannel);
     };
   }, [conversationId, messages.map(m => m.id).join(',')]);
 
@@ -248,15 +284,32 @@ const ConversationView: React.FC<ConversationViewProps> = ({
     }
   };
 
-  // Reactions temporarily disabled - will be re-enabled when types are updated
   const addReaction = async (messageId: string, reaction: string) => {
-    // TODO: Re-implement when message_reactions table is in types
-    console.log('Reaction feature coming soon');
+    if (!user) return;
+
+    try {
+      await supabase.rpc('add_message_reaction', {
+        p_message_id: messageId,
+        p_user_id: user.id,
+        p_reaction: reaction
+      });
+    } catch (error) {
+      console.error('Error adding reaction:', error);
+    }
   };
 
   const removeReaction = async (messageId: string, reaction: string) => {
-    // TODO: Re-implement when message_reactions table is in types
-    console.log('Reaction feature coming soon');
+    if (!user) return;
+
+    try {
+      await supabase.rpc('remove_message_reaction', {
+        p_message_id: messageId,
+        p_user_id: user.id,
+        p_reaction: reaction
+      });
+    } catch (error) {
+      console.error('Error removing reaction:', error);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -422,12 +475,43 @@ const ConversationView: React.FC<ConversationViewProps> = ({
                           })}
                         </p>
                         
-                        {/* Reactions temporarily disabled */}
+                        <div className="flex space-x-1">
+                          {['👍', '❤️', '😊'].map((emoji) => (
+                            <button
+                              key={emoji}
+                              onClick={() => {
+                                if (hasUserReacted(message.id, emoji)) {
+                                  removeReaction(message.id, emoji);
+                                } else {
+                                  addReaction(message.id, emoji);
+                                }
+                              }}
+                              className={`text-xs hover:scale-110 transition-transform ${
+                                hasUserReacted(message.id, emoji) ? 'bg-yellow-200 rounded-full px-1' : ''
+                              }`}
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Reaction groups temporarily disabled */}
+                  {Object.keys(reactionGroups).length > 0 && (
+                    <div className={`flex space-x-1 ${
+                      message.sender_id === user?.id ? 'justify-end pr-4' : 'justify-start pl-4'
+                    }`}>
+                      {Object.entries(reactionGroups).map(([reaction, users]) => (
+                        <span
+                          key={reaction}
+                          className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full"
+                        >
+                          {reaction} {users.length}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })}
