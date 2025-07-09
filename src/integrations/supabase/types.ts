@@ -47,6 +47,51 @@ export type Database = {
         }
         Relationships: []
       }
+      adin_contributor_requests: {
+        Row: {
+          admin_notes: string | null
+          country_focus: string
+          created_at: string
+          description: string
+          evidence_links: string[] | null
+          id: string
+          impact_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          country_focus: string
+          created_at?: string
+          description: string
+          evidence_links?: string[] | null
+          id?: string
+          impact_type: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          country_focus?: string
+          created_at?: string
+          description?: string
+          evidence_links?: string[] | null
+          id?: string
+          impact_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       admin_logs: {
         Row: {
           action: string
@@ -1219,33 +1264,45 @@ export type Database = {
       }
       user_adin_profile: {
         Row: {
+          contributor_impact_type: string | null
+          contributor_score: number | null
+          contributor_verified_at: string | null
           created_at: string
           engagement_pillars: string[] | null
           id: string
           industries: string[] | null
           interests: string[] | null
+          is_verified_contributor: boolean | null
           last_active: string | null
           skills: string[] | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          contributor_impact_type?: string | null
+          contributor_score?: number | null
+          contributor_verified_at?: string | null
           created_at?: string
           engagement_pillars?: string[] | null
           id?: string
           industries?: string[] | null
           interests?: string[] | null
+          is_verified_contributor?: boolean | null
           last_active?: string | null
           skills?: string[] | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          contributor_impact_type?: string | null
+          contributor_score?: number | null
+          contributor_verified_at?: string | null
           created_at?: string
           engagement_pillars?: string[] | null
           id?: string
           industries?: string[] | null
           interests?: string[] | null
+          is_verified_contributor?: boolean | null
           last_active?: string | null
           skills?: string[] | null
           updated_at?: string
@@ -1500,6 +1557,10 @@ export type Database = {
           email: string
           full_name: string
         }[]
+      }
+      get_user_verification_status: {
+        Args: { target_user_id: string }
+        Returns: Json
       }
       is_admin_user: {
         Args: { _user_id: string }

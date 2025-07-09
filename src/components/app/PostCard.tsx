@@ -6,8 +6,10 @@ import { formatDistanceToNow } from 'date-fns';
 import { Tables } from '@/integrations/supabase/types';
 import ReactionBar from './ReactionBar';
 import CommentsSection from './CommentsSection';
+import VerifiedContributorBadge from './VerifiedContributorBadge';
 import { useReactions } from '@/hooks/useReactions';
 import { useComments } from '@/hooks/useComments';
+import { useVerificationStatus } from '@/hooks/useVerification';
 import MobileOptimizedCard from '@/components/ui/mobile-optimized-card';
 import MobileTouchButton from '@/components/ui/mobile-touch-button';
 
@@ -36,6 +38,9 @@ const PostCard = ({ post }: PostCardProps) => {
     loading: commentsLoading,
     addComment 
   } = useComments(post.id);
+
+  // Get verification status for the post author
+  const { verificationStatus } = useVerificationStatus(post.author_id || undefined);
   const pillarConfig = {
     connect: {
       icon: Users,
@@ -72,6 +77,20 @@ const PostCard = ({ post }: PostCardProps) => {
 
   return (
     <MobileOptimizedCard padding="md" touchOptimized={false}>
+      {/* Verified Contributor Highlight Banner */}
+      {verificationStatus.is_verified && (
+        <div className="mb-3 px-3 py-2 bg-gradient-to-r from-dna-gold/10 to-dna-gold/5 border border-dna-gold/20 rounded-lg">
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="bg-dna-gold/20 text-dna-gold border-dna-gold/40 text-xs">
+              ✨ Verified Insight
+            </Badge>
+            <span className="text-xs text-gray-600">
+              Content from a verified contributor to African progress
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="flex space-x-3">
         <Avatar className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
           <AvatarImage src={author.avatar_url || undefined} />
@@ -82,7 +101,14 @@ const PostCard = ({ post }: PostCardProps) => {
         
         <div className="flex-1 min-w-0">
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
-            <h4 className="font-semibold text-sm sm:text-base truncate">{displayName}</h4>
+            <div className="flex items-center gap-2">
+              <h4 className="font-semibold text-sm sm:text-base truncate">{displayName}</h4>
+              <VerifiedContributorBadge 
+                isVerified={verificationStatus.is_verified}
+                impactType={verificationStatus.impact_type}
+                size="sm"
+              />
+            </div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-gray-500">{timeAgo}</span>
             </div>

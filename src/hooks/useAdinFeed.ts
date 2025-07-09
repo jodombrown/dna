@@ -37,6 +37,22 @@ export const useAdinFeed = (options: FeedOptions = {}) => {
 
     let score = 0.5; // Base score
 
+    // Check if author is verified contributor (boost content from verified users)
+    try {
+      const { data: authorProfile } = await supabase
+        .from('user_adin_profile')
+        .select('is_verified_contributor, contributor_score')
+        .eq('user_id', post.author_id)
+        .single();
+
+      if (authorProfile?.is_verified_contributor) {
+        score += 0.25; // 25% boost for verified contributors
+        score += (authorProfile.contributor_score || 0) * 0.01; // Additional boost based on contributor score
+      }
+    } catch (error) {
+      console.error('Error checking author verification:', error);
+    }
+
     // Interest alignment (0.2 weight)
     if (userContext.interests && post.content) {
       const contentLower = post.content.toLowerCase();

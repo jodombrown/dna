@@ -7,12 +7,17 @@ import {
   Handshake, 
   Heart, 
   MapPin,
-  Plus
+  Plus,
+  Crown
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useVerificationStatus } from '@/hooks/useVerification';
+import VerifiedContributorBadge from './VerifiedContributorBadge';
+import ContributorVerificationModal from './ContributorVerificationModal';
 
 const AppSidebar = () => {
   const { user } = useAuth();
+  const { verificationStatus, loading: verificationLoading } = useVerificationStatus();
 
   return (
     <div className="space-y-4">
@@ -26,14 +31,34 @@ const AppSidebar = () => {
                 {user?.user_metadata?.full_name?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <h3 className="font-semibold text-dna-forest">
-              {user?.user_metadata?.full_name || 'DNA Member'}
-            </h3>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <h3 className="font-semibold text-dna-forest">
+                {user?.user_metadata?.full_name || 'DNA Member'}
+              </h3>
+              <VerifiedContributorBadge 
+                isVerified={verificationStatus.is_verified}
+                impactType={verificationStatus.impact_type}
+                size="sm"
+              />
+            </div>
             <p className="text-sm text-gray-600 mb-3">Welcome to your dashboard</p>
             <div className="flex items-center justify-center text-sm text-gray-500 mb-4">
               <MapPin className="h-4 w-4 mr-1" />
               Location not set
             </div>
+            
+            {/* Verification Action */}
+            {!verificationStatus.is_verified && !verificationLoading && (
+              <div className="mb-3">
+                <ContributorVerificationModal>
+                  <Button variant="outline" size="sm" className="w-full mb-2 text-dna-gold border-dna-gold hover:bg-dna-gold hover:text-white">
+                    <Crown className="h-4 w-4 mr-2" />
+                    Request Verification
+                  </Button>
+                </ContributorVerificationModal>
+              </div>
+            )}
+            
             <Button variant="outline" size="sm" className="w-full">
               Complete Profile
             </Button>
