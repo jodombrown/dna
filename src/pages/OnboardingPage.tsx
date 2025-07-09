@@ -43,6 +43,7 @@ const OnboardingPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     full_name: '',
+    email: user?.email || '',
     location: '',
     username: ''
   });
@@ -191,6 +192,7 @@ const OnboardingPage = () => {
         .insert([{
           id: user.id,
           full_name: formData.full_name,
+          email: formData.email,
           location: formData.location,
           username: formData.username,
           role: 'individual'
@@ -205,6 +207,7 @@ const OnboardingPage = () => {
         .from('profiles')
         .update({
           full_name: formData.full_name,
+          email: formData.email,
           location: formData.location,
           onboarding_completed_at: new Date().toISOString()
         })
@@ -216,10 +219,10 @@ const OnboardingPage = () => {
 
       toast({
         title: "Welcome to DNA!",
-        description: "Your profile has been created successfully."
+        description: "Now let's complete your profile setup."
       });
 
-      navigate('/app');
+      navigate('/profile/setup');
     } catch (error) {
       console.error('Onboarding error:', error);
       toast({
@@ -256,6 +259,22 @@ const OnboardingPage = () => {
                   placeholder="Enter your full name"
                   required
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  disabled={!!user?.email}
+                />
+                {user?.email && (
+                  <p className="text-sm text-gray-500">Email is pre-filled from your account</p>
+                )}
               </div>
 
               <div className="space-y-2">
