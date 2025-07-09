@@ -13,13 +13,15 @@ const FeedSection = () => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'connect' | 'collaborate' | 'contribute'>('all');
   const [activeRegion, setActiveRegion] = useState<string>('all');
   const [adinEnabled, setAdinEnabled] = useState(true);
+  const [advancedFilters, setAdvancedFilters] = useState<any>({});
   const { trackImpact } = useImpactTracking();
   
-  // Use the new ADIN-powered feed hook
+  // Use the new ADIN-powered feed hook with enhanced filtering
   const pillarFilter = activeFilter === 'all' ? undefined : activeFilter;
   const { posts, loading, refreshPosts, handlePostInteraction } = useAdinFeed({
     pillarFilter,
-    enableAdinRanking: adinEnabled
+    enableAdinRanking: adinEnabled,
+    advancedFilters
   });
 
   const handlePostCreated = async (postId: string, pillar: string) => {
@@ -57,6 +59,7 @@ const FeedSection = () => {
         onFilterChange={setActiveFilter}
         activeRegion={activeRegion}
         onRegionChange={setActiveRegion}
+        onAdvancedFiltersChange={setAdvancedFilters}
       />
 
       {/* Posts Feed */}

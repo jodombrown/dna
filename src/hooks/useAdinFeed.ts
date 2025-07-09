@@ -21,6 +21,7 @@ interface FeedOptions {
   pillarFilter?: 'connect' | 'collaborate' | 'contribute';
   enableAdinRanking?: boolean;
   userInterests?: string[];
+  advancedFilters?: any;
 }
 
 export const useAdinFeed = (options: FeedOptions = {}) => {
@@ -29,7 +30,7 @@ export const useAdinFeed = (options: FeedOptions = {}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const { pillarFilter, enableAdinRanking = true } = options;
+  const { pillarFilter, enableAdinRanking = true, advancedFilters } = options;
 
   const calculateAdinScore = async (post: Post, userContext: any): Promise<number> => {
     if (!user || !userContext) return 0.5; // Default score

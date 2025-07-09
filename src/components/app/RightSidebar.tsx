@@ -7,6 +7,7 @@ import { useDiscovery } from '@/hooks/useDiscovery';
 import DiscoveryCard from './DiscoveryCard';
 import ReferralCard from '@/components/community/ReferralCard';
 import CommunitySpotlight from '@/components/community/CommunitySpotlight';
+import AdinSuggestions from './AdinSuggestions';
 import { useToast } from '@/hooks/use-toast';
 
 const RightSidebar = () => {
@@ -36,6 +37,9 @@ const RightSidebar = () => {
 
   return (
     <div className="space-y-4">
+      {/* ADIN-Powered Suggestions */}
+      <AdinSuggestions />
+
       {/* Community Spotlight */}
       <CommunitySpotlight />
 
