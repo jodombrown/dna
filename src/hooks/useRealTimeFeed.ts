@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRealtimeQuery } from './useRealtimeQuery';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export interface Post {
@@ -25,147 +26,89 @@ export interface Post {
 }
 
 export const useRealTimeFeed = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const fetchPosts = async () => {
+  const {
+    data: posts,
+    loading,
+    error,
+    refetch
+  } = useRealtimeQuery<Post>('public-posts-feed', {
+    table: 'posts',
+    select: `
+      *,
+      profiles:author_id (
+        full_name,
+        avatar_url,
+        id
+      )
+    `,
+    filter: 'visibility=eq.public',
+    orderBy: { column: 'created_at', ascending: false },
+    limit: 20,
+    enabled: true
+  });
+
+  // Transform posts to include author data
+  const transformedPosts = posts.map(post => ({
+    ...post,
+    author: (post as any).profiles
+  }));
+
+  const addPost = useCallback((newPost: Post) => {
+    // The realtime query will automatically handle this
+    // This is kept for API compatibility
+  }, []);
+
+  const updatePost = useCallback((postId: string, updates: Partial<Post>) => {
+    // The realtime query will automatically handle this
+    // This is kept for API compatibility
+  }, []);
+
+  const removePost = useCallback((postId: string) => {
+    // The realtime query will automatically handle this
+    // This is kept for API compatibility
+  }, []);
+
+  const createPost = useCallback(async (content: string, pillar: string, mediaUrl?: string, hashtags?: string[]) => {
+    if (!user) {
+      toast.error('You must be logged in to create a post');
+      return null;
+    }
+
     try {
       const { data, error } = await supabase
         .from('posts')
-        .select(`
-          *,
-          profiles:author_id (
-            full_name,
-            avatar_url,
-            id
-          )
-        `)
-        .eq('visibility', 'public')
-        .order('created_at', { ascending: false })
-        .limit(20);
+        .insert({
+          content,
+          pillar,
+          author_id: user.id,
+          media_url: mediaUrl,
+          hashtags,
+          visibility: 'public'
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
-      const postsWithAuthor = data?.map(post => ({
-        ...post,
-        author: post.profiles as any
-      })) || [];
-
-      setPosts(postsWithAuthor);
+      toast.success('Post created successfully!');
+      return data;
     } catch (error) {
-      console.error('Error fetching posts:', error);
-      toast.error('Failed to load posts');
-    } finally {
-      setLoading(false);
+      console.error('Error creating post:', error);
+      toast.error('Failed to create post');
+      return null;
     }
-  };
-
-  useEffect(() => {
-    fetchPosts();
-
-    // Set up real-time subscription
-    const channel = supabase
-      .channel('posts-feed')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'posts',
-          filter: 'visibility=eq.public'
-        },
-        async (payload) => {
-          // Fetch the full post with author info
-          const { data: newPost, error } = await supabase
-            .from('posts')
-            .select(`
-              *,
-              profiles:author_id (
-                full_name,
-                avatar_url,
-                id
-              )
-            `)
-            .eq('id', payload.new.id)
-            .single();
-
-          if (!error && newPost) {
-            const postWithAuthor = {
-              ...newPost,
-              author: newPost.profiles as any
-            };
-            
-            setPosts(current => [postWithAuthor, ...current]);
-            
-            // Show notification for new posts (except from current user)
-            if (newPost.author_id !== user?.id) {
-              toast.success(`New post from ${newPost.profiles?.full_name || 'Someone'}`, {
-                duration: 3000,
-              });
-            }
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'posts'
-        },
-        (payload) => {
-          setPosts(current => 
-            current.map(post => 
-              post.id === payload.new.id 
-                ? { ...post, ...payload.new }
-                : post
-            )
-          );
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'posts'
-        },
-        (payload) => {
-          setPosts(current => 
-            current.filter(post => post.id !== payload.old.id)
-          );
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user?.id]);
-
-  const addPost = (newPost: Post) => {
-    setPosts(current => [newPost, ...current]);
-  };
-
-  const updatePost = (postId: string, updates: Partial<Post>) => {
-    setPosts(current => 
-      current.map(post => 
-        post.id === postId ? { ...post, ...updates } : post
-      )
-    );
-  };
-
-  const removePost = (postId: string) => {
-    setPosts(current => current.filter(post => post.id !== postId));
-  };
+  }, [user]);
 
   return {
-    posts,
+    posts: transformedPosts,
     loading,
-    addPost,
-    updatePost,
-    removePost,
-    refetch: fetchPosts
+    error,
+    addPost, // Deprecated but kept for compatibility
+    updatePost, // Deprecated but kept for compatibility  
+    removePost, // Deprecated but kept for compatibility
+    createPost,
+    refetch
   };
 };

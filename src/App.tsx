@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from "@/contexts/AuthContext";
+import { RealtimeProvider } from "@/contexts/RealtimeContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import "./services/errorLogger"; // Initialize error logging
 import Index from "./pages/Index";
@@ -57,7 +58,8 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <HelmetProvider>
           <AuthProvider>
-            <TooltipProvider>
+            <RealtimeProvider>
+              <TooltipProvider>
               <Toaster />
               <Sonner />
               <BrowserRouter>
@@ -123,6 +125,7 @@ function App() {
             </Routes>
             </BrowserRouter>
             </TooltipProvider>
+            </RealtimeProvider>
           </AuthProvider>
         </HelmetProvider>
       </QueryClientProvider>
