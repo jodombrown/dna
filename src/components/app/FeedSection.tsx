@@ -4,7 +4,7 @@ import { Heart, Brain, Zap } from 'lucide-react';
 import PostComposer from './PostComposer';
 import PostCard from './PostCard';
 import FeedFilters from './FeedFilters';
-import { useAdinFeed } from '@/hooks/useAdinFeed';
+import { useRealTimeFeed } from '@/hooks/useRealTimeFeed';
 import { useImpactTracking } from '@/hooks/useImpactTracking';
 import AdinFeedIndicator from './AdinFeedIndicator';
 import { Badge } from '@/components/ui/badge';
@@ -16,19 +16,14 @@ const FeedSection = () => {
   const [advancedFilters, setAdvancedFilters] = useState<any>({});
   const { trackImpact } = useImpactTracking();
   
-  // Use the new ADIN-powered feed hook with enhanced filtering
-  const pillarFilter = activeFilter === 'all' ? undefined : activeFilter;
-  const { posts, loading, refreshPosts, handlePostInteraction } = useAdinFeed({
-    pillarFilter,
-    enableAdinRanking: adinEnabled,
-    advancedFilters
-  });
+  // Use the new real-time feed hook
+  const { posts, loading, addPost, refetch } = useRealTimeFeed();
 
   const handlePostCreated = async (postId: string, pillar: string) => {
     // Track impact if available
     await trackImpact('post', postId, pillar as any, 'post');
     // Refresh posts to show the new post immediately
-    refreshPosts();
+    refetch();
   };
 
   return (
@@ -114,7 +109,7 @@ const FeedSection = () => {
               )}
               <PostCard 
                 key={post.id} 
-                post={post}
+                post={post as any}
               />
               {adinEnabled && post.adin_score && (
                 <div className="text-xs text-gray-400 px-4 pb-2">

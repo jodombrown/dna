@@ -46,6 +46,7 @@ import AdminAuditLogs from "./pages/AdminAuditLogs";
 import AdminNotificationsPanel from "./pages/AdminNotificationsPanel";
 import AdminGrowthDashboard from "./pages/AdminGrowthDashboard";
 import AdminIntegrationsPanel from "./pages/AdminIntegrationsPanel";
+import LeaderboardPage from "./pages/LeaderboardPage";
 import ProtectedRoute from "./components/app/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -101,6 +102,9 @@ function App() {
               
               {/* Notifications Route */}
               <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+              
+              {/* Leaderboard Route */}
+              <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
               
               {/* Admin Routes - Isolated System */}
               <Route path="/admin/login" element={<AdminLoginPage />} />
