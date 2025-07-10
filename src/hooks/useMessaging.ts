@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   conversationsService, 
@@ -252,11 +252,16 @@ export const useMessageReactions = (messageIds: string[]) => {
 export const useTypingIndicator = (conversationId: string | null) => {
   const { user } = useAuth();
   const [otherUserTyping, setOtherUserTyping] = useState(false);
+  const channelRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!conversationId || !user) return;
+    if (!conversationId || !user) {
+      setOtherUserTyping(false);
+      return;
+    }
 
-    const channel = supabase.channel(`typing-${conversationId}`)
+    const channelName = `typing-${conversationId}`;
+    const channel = supabase.channel(channelName)
       .on('presence', { event: 'sync' }, () => {
         const presenceState = channel.presenceState();
         const typingUsers = Object.values(presenceState).flat();
@@ -264,16 +269,20 @@ export const useTypingIndicator = (conversationId: string | null) => {
       })
       .subscribe();
 
+    channelRef.current = channel;
+
     return () => {
-      supabase.removeChannel(channel);
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
   }, [conversationId, user]);
 
   const setTyping = useCallback(async (typing: boolean) => {
-    if (!conversationId || !user) return;
+    if (!conversationId || !user || !channelRef.current) return;
 
-    const channel = supabase.channel(`typing-${conversationId}`);
-    await channel.track({
+    await channelRef.current.track({
       user_id: user.id,
       typing,
       timestamp: new Date().toISOString()

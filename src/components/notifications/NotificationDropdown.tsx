@@ -36,7 +36,16 @@ const NotificationDropdown = () => {
   useEffect(() => {
     if (user) {
       fetchNotifications();
-      subscribeToNotifications();
+      
+      // Store the subscription channel for cleanup
+      const channel = subscribeToNotifications();
+      
+      // Return cleanup function
+      return () => {
+        if (channel) {
+          supabase.removeChannel(channel);
+        }
+      };
     }
   }, [user]);
 
@@ -97,9 +106,7 @@ const NotificationDropdown = () => {
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return channel;
   };
 
   const markAsRead = async (notificationId: string) => {
