@@ -10,7 +10,7 @@ const ConnectErrorState: React.FC<ConnectErrorStateProps> = ({ error, onRetry })
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center max-w-md">
-        <div className="text-xl font-semibold mb-2 text-dna-crimson">Failed to Load Network</div>
+        <div className="text-xl font-semibold mb-2 text-destructive">Failed to Load Network</div>
         <div className="text-muted-foreground mb-4">{error}</div>
         <button 
           onClick={onRetry}

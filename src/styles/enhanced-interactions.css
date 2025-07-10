@@ -25,10 +25,10 @@
 }
 
 .badge-dna-copper:hover {
-  @apply bg-dna-gold text-white shadow-lg;
+  @apply bg-dna-emerald text-white shadow-lg;
 }
 
-.badge-dna-mint:hover {
+.badge-dna-light-green:hover {
   @apply bg-dna-emerald text-white shadow-lg;
 }
 
@@ -55,7 +55,7 @@
 }
 
 .btn-secondary-dna:hover {
-  @apply bg-dna-gold shadow-lg transform hover:scale-105;
+  @apply bg-dna-emerald shadow-lg transform hover:scale-105;
 }
 
 .btn-outline-dna {

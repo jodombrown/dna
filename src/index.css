@@ -15,7 +15,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 153 71% 59%; /* DNA emerald as primary */
+    --primary: 160 41% 18%; /* DNA forest green from logo */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
@@ -27,23 +27,21 @@
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: 0 100% 40%; /* DNA crimson */
+    --destructive: 0 74% 50%; /* Adjusted red */
     --destructive-foreground: 0 0% 100%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 153 71% 59%; /* DNA emerald */
+    --ring: 160 41% 18%; /* DNA forest green for focus states */
 
     --radius: 0.5rem;
 
-    /* DNA Brand Colors */
+    /* DNA Brand Colors - Matching Logo Exactly */
     --dna-white: 0 0% 100%;
-    --dna-forest: 161 38% 18%; /* #183c2e */
-    --dna-emerald: 153 71% 59%; /* #459c71 */
-    --dna-mint: 173 46% 73%; /* #abddd6 */
-    --dna-copper: 26 59% 58%; /* #d88d4e */
-    --dna-gold: 50 81% 52%; /* #e6bc2e */
-    --dna-crimson: 0 100% 40%; /* #cc0000 */
+    --dna-forest: 160 41% 18%; /* Dark green from logo #183c2e */
+    --dna-emerald: 146 45% 39%; /* Medium green from logo */
+    --dna-copper: 24 65% 56%; /* Orange/copper from logo */
+    --dna-light-green: 146 45% 65%; /* Lighter green variant */
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -65,7 +63,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 153 71% 59%; /* DNA emerald as primary */
+    --primary: 160 41% 18%; /* DNA forest green as primary */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -77,21 +75,19 @@
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 100% 40%; /* DNA crimson */
+    --destructive: 0 74% 50%; /* Adjusted red */
     --destructive-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 153 71% 59%; /* DNA emerald */
+    --ring: 160 41% 18%; /* DNA forest green */
 
     /* DNA Brand Colors (same in dark mode) */
     --dna-white: 0 0% 100%;
-    --dna-forest: 161 38% 18%; /* #183c2e */
-    --dna-emerald: 153 71% 59%; /* #459c71 */
-    --dna-mint: 173 46% 73%; /* #abddd6 */
-    --dna-copper: 26 59% 58%; /* #d88d4e */
-    --dna-gold: 50 81% 52%; /* #e6bc2e */
-    --dna-crimson: 0 100% 40%; /* #cc0000 */
+    --dna-forest: 160 41% 18%; /* Dark green from logo #183c2e */
+    --dna-emerald: 146 45% 39%; /* Medium green from logo */
+    --dna-copper: 24 65% 56%; /* Orange/copper from logo */
+    --dna-light-green: 146 45% 65%; /* Lighter green variant */
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -124,7 +120,7 @@
   }
   
   *:focus-visible {
-    outline: 2px solid hsl(var(--dna-emerald, 69 71% 59%));
+    outline: 2px solid hsl(var(--dna-emerald));
     outline-offset: 2px;
   }
 
@@ -136,7 +132,7 @@
   /* Consistent button focus states */
   button:focus,
   a:focus {
-    @apply ring-2 ring-offset-2 ring-dna-emerald outline-none;
+    @apply ring-2 ring-offset-2 ring-primary outline-none;
   }
 }
 
