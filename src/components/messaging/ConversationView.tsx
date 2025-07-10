@@ -27,7 +27,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useMessages, useMessageReactions, useTypingIndicator } from '@/hooks/useMessaging';
+import { useMessages, useMessageReactions, useTypingIndicator } from '@/hooks/useRealtimeMessaging';
 import type { MessageReaction } from '@/services/messagingService';
 
 interface FileAttachment {
@@ -338,14 +338,14 @@ const ConversationView: React.FC<ConversationViewProps> = ({
                     <div className={`flex space-x-1 ${
                       message.sender_id === user?.id ? 'justify-end pr-4' : 'justify-start pl-4'
                     }`}>
-                      {Object.entries(reactionGroups).map(([reaction, users]) => (
-                        <span
-                          key={reaction}
-                          className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full"
-                        >
-                          {reaction} {users.length}
-                        </span>
-                      ))}
+                       {Object.entries(reactionGroups).map(([reaction, users]) => (
+                         <span
+                           key={reaction}
+                           className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full"
+                         >
+                           {reaction} {(users as MessageReaction[]).length}
+                         </span>
+                       ))}
                     </div>
                   )}
                 </div>

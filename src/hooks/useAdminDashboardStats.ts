@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealtimeQuery } from '@/hooks/useRealtimeQuery';
 
 interface DashboardStats {
   totalUsers: number;
@@ -13,40 +14,81 @@ interface DashboardStats {
 }
 
 export function useAdminDashboardStats() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalUsers: 0,
-    newSignupsToday: 0,
+  const [additionalStats, setAdditionalStats] = useState({
     activeUsersThisWeek: 0,
-    postsToday: 0,
-    flaggedContent: 0,
-    totalCommunities: 0,
-    totalEvents: 0,
-    loading: true,
+    loading: true
   });
 
+  // Use real-time queries for key metrics
+  const { data: profiles, loading: profilesLoading } = useRealtimeQuery('admin-profiles', {
+    table: 'profiles',
+    select: 'id, created_at',
+    enabled: true
+  });
+
+  const { data: posts, loading: postsLoading } = useRealtimeQuery('admin-posts', {
+    table: 'posts',
+    select: 'id, created_at, author_id',
+    enabled: true
+  });
+
+  const { data: flaggedContent, loading: flaggedLoading } = useRealtimeQuery('admin-flags', {
+    table: 'content_flags',
+    select: 'id',
+    filter: 'resolved_at=is.null',
+    enabled: true
+  });
+
+  const { data: communities, loading: communitiesLoading } = useRealtimeQuery('admin-communities', {
+    table: 'communities',
+    select: 'id',
+    filter: 'is_active=eq.true',
+    enabled: true
+  });
+
+  const { data: events, loading: eventsLoading } = useRealtimeQuery('admin-events', {
+    table: 'events',
+    select: 'id',
+    enabled: true
+  });
+
+  // Calculate derived stats
+  const stats = useMemo(() => {
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const weekStart = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    // Calculate stats from real-time data
+    const totalUsers = profiles.length;
+    const newSignupsToday = profiles.filter(p => 
+      new Date(p.created_at) >= todayStart
+    ).length;
+    
+    const postsToday = posts.filter(p => 
+      new Date(p.created_at) >= todayStart
+    ).length;
+
+    const loading = profilesLoading || postsLoading || flaggedLoading || 
+                   communitiesLoading || eventsLoading || additionalStats.loading;
+
+    return {
+      totalUsers,
+      newSignupsToday,
+      activeUsersThisWeek: additionalStats.activeUsersThisWeek,
+      postsToday,
+      flaggedContent: flaggedContent.length,
+      totalCommunities: communities.length,
+      totalEvents: events.length,
+      loading
+    };
+  }, [profiles, posts, flaggedContent, communities, events, additionalStats, 
+      profilesLoading, postsLoading, flaggedLoading, communitiesLoading, eventsLoading]);
+
+  // Calculate active users (requires separate query)
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchActiveUsers = async () => {
       try {
-        const today = new Date();
-        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        const weekStart = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-        // Fetch total users
-        const { count: totalUsers } = await supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true });
-
-        // Fetch new signups today
-        const { count: newSignupsToday } = await supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true })
-          .gte('created_at', todayStart.toISOString());
-
-        // Fetch active users this week (users who created posts or comments)
-        const { data: activePosts } = await supabase
-          .from('posts')
-          .select('author_id')
-          .gte('created_at', weekStart.toISOString());
+        const weekStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
         const { data: activeComments } = await supabase
           .from('comments')
@@ -54,81 +96,24 @@ export function useAdminDashboardStats() {
           .gte('created_at', weekStart.toISOString());
 
         const activeUserIds = new Set([
-          ...(activePosts?.map(p => p.author_id) || []),
+          ...posts.filter(p => new Date(p.created_at) >= weekStart).map(p => p.author_id),
           ...(activeComments?.map(c => c.author_id) || [])
         ]);
 
-        // Fetch posts today
-        const { count: postsToday } = await supabase
-          .from('posts')
-          .select('*', { count: 'exact', head: true })
-          .gte('created_at', todayStart.toISOString());
-
-        // Fetch flagged content
-        const { count: flaggedContent } = await supabase
-          .from('content_flags')
-          .select('*', { count: 'exact', head: true })
-          .is('resolved_at', null);
-
-        // Fetch total communities
-        const { count: totalCommunities } = await supabase
-          .from('communities')
-          .select('*', { count: 'exact', head: true })
-          .eq('is_active', true);
-
-        // Fetch total events
-        const { count: totalEvents } = await supabase
-          .from('events')
-          .select('*', { count: 'exact', head: true });
-
-        setStats({
-          totalUsers: totalUsers || 0,
-          newSignupsToday: newSignupsToday || 0,
+        setAdditionalStats({
           activeUsersThisWeek: activeUserIds.size,
-          postsToday: postsToday || 0,
-          flaggedContent: flaggedContent || 0,
-          totalCommunities: totalCommunities || 0,
-          totalEvents: totalEvents || 0,
-          loading: false,
+          loading: false
         });
       } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
-        setStats(prev => ({ ...prev, loading: false }));
+        console.error('Error fetching active users:', error);
+        setAdditionalStats(prev => ({ ...prev, loading: false }));
       }
     };
 
-    fetchStats();
-
-    // Set up real-time updates for key metrics
-    const channel = supabase
-      .channel('admin-dashboard-updates')
-      .on('postgres_changes', { 
-        event: 'INSERT', 
-        schema: 'public', 
-        table: 'profiles' 
-      }, () => {
-        fetchStats();
-      })
-      .on('postgres_changes', { 
-        event: 'INSERT', 
-        schema: 'public', 
-        table: 'posts' 
-      }, () => {
-        fetchStats();
-      })
-      .on('postgres_changes', { 
-        event: 'INSERT', 
-        schema: 'public', 
-        table: 'content_flags' 
-      }, () => {
-        fetchStats();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+    if (posts.length > 0) {
+      fetchActiveUsers();
+    }
+  }, [posts]);
 
   return stats;
 }

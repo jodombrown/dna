@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Search, Star, Briefcase, Mail, Users, MessageCircle, Loader2, Plus } from 'lucide-react';
-import { useConversations } from '@/hooks/useMessaging';
+import { useConversations } from '@/hooks/useRealtimeMessaging';
 import { NewConversationModal } from './NewConversationModal';
 
 interface MessagesListProps {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -9,9 +9,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { Bell, AlertCircle, Info, AlertTriangle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { useRealtimeQuery } from '@/hooks/useRealtimeQuery';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdminNotification {
   id: string;
@@ -23,57 +24,24 @@ interface AdminNotification {
 }
 
 export function NotificationBellIcon() {
-  const [notifications, setNotifications] = useState<AdminNotification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user) {
-      fetchNotifications();
-      
-      // Set up real-time subscription for new notifications
-      const subscription = supabase
-        .channel('admin_notifications')
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'admin_notifications',
-            filter: `admin_id=eq.${user.id}`
-          },
-          () => {
-            fetchNotifications();
-          }
-        )
-        .subscribe();
+  const {
+    data: notifications,
+    loading
+  } = useRealtimeQuery<AdminNotification>('admin-notifications', {
+    table: 'admin_notifications',
+    select: 'id, title, message, severity, is_read, created_at',
+    filter: user ? `admin_id=eq.${user.id}` : undefined,
+    orderBy: { column: 'created_at', ascending: false },
+    limit: 5,
+    enabled: !!user
+  });
 
-      return () => {
-        supabase.removeChannel(subscription);
-      };
-    }
-  }, [user]);
-
-  const fetchNotifications = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('admin_notifications')
-        .select('id, title, message, severity, is_read, created_at')
-        .eq('admin_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      if (error) throw error;
-      
-      setNotifications(data || []);
-      setUnreadCount(data?.filter(n => !n.is_read).length || 0);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    }
-  };
+  const unreadCount = useMemo(() => {
+    return notifications.filter(n => !n.is_read).length;
+  }, [notifications]);
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
@@ -94,8 +62,6 @@ export function NotificationBellIcon() {
         })
         .eq('id', notificationId)
         .eq('admin_id', user?.id);
-
-      fetchNotifications();
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
