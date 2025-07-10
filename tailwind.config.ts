@@ -63,13 +63,15 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// DNA Brand Colors - Matching Logo Exactly
+				// DNA Brand Colors
 				dna: {
-					white: 'hsl(var(--dna-white))',
-					forest: 'hsl(var(--dna-forest))',
-					emerald: 'hsl(var(--dna-emerald))',
-					copper: 'hsl(var(--dna-copper))',
-					'light-green': 'hsl(var(--dna-light-green))'
+					white: '#ffffff',
+					forest: '#183c2e',
+					copper: '#d88d4e',
+					emerald: '#459c71',
+					mint: '#abddd6',
+					crimson: '#cc0000',
+					gold: '#e6bc2e'
 				}
 			},
 			borderRadius: {

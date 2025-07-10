@@ -200,7 +200,7 @@ const ProfileSettings = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex items-center justify-center h-64">
@@ -213,14 +213,14 @@ const ProfileSettings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-8 flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Profile Settings</h1>
-            <p className="text-muted-foreground mt-2">Manage your public profile information</p>
+            <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
+            <p className="text-gray-600 mt-2">Manage your public profile information</p>
           </div>
           <Button
             variant="outline"
@@ -270,21 +270,21 @@ const ProfileSettings = () => {
                     <h3 className="font-semibold text-lg">
                       {watchedValues.display_name || watchedValues.full_name || 'Your Name'}
                     </h3>
-                     {watchedValues.headline && (
-                       <p className="text-sm text-muted-foreground">{watchedValues.headline}</p>
-                     )}
-                     {watchedValues.location && (
-                       <p className="text-xs text-muted-foreground flex items-center justify-center gap-1 mt-1">
-                         <MapPin className="h-3 w-3" />
-                         {watchedValues.location}
-                       </p>
-                     )}
+                    {watchedValues.headline && (
+                      <p className="text-sm text-gray-600">{watchedValues.headline}</p>
+                    )}
+                    {watchedValues.location && (
+                      <p className="text-xs text-gray-500 flex items-center justify-center gap-1 mt-1">
+                        <MapPin className="h-3 w-3" />
+                        {watchedValues.location}
+                      </p>
+                    )}
                   </div>
 
-                   {/* Bio */}
-                   {watchedValues.bio && (
-                     <p className="text-sm text-foreground text-left">{watchedValues.bio}</p>
-                   )}
+                  {/* Bio */}
+                  {watchedValues.bio && (
+                    <p className="text-sm text-gray-700 text-left">{watchedValues.bio}</p>
+                  )}
 
                   {/* Skills Preview */}
                   {watchedValues.skills && watchedValues.skills.length > 0 && (
@@ -342,9 +342,9 @@ const ProfileSettings = () => {
                       {...form.register('banner_url')}
                       placeholder="https://example.com/banner.jpg"
                     />
-                     {form.formState.errors.banner_url && (
-                       <p className="text-sm text-dna-crimson">{form.formState.errors.banner_url.message}</p>
-                     )}
+                    {form.formState.errors.banner_url && (
+                      <p className="text-sm text-red-600">{form.formState.errors.banner_url.message}</p>
+                    )}
                   </div>
 
                   {/* Avatar Upload */}
@@ -375,9 +375,9 @@ const ProfileSettings = () => {
                         {...form.register('full_name')}
                         placeholder="Your full name"
                       />
-                       {form.formState.errors.full_name && (
-                         <p className="text-sm text-dna-crimson">{form.formState.errors.full_name.message}</p>
-                       )}
+                      {form.formState.errors.full_name && (
+                        <p className="text-sm text-red-600">{form.formState.errors.full_name.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -406,9 +406,9 @@ const ProfileSettings = () => {
                       rows={4}
                       maxLength={500}
                     />
-                     <p className="text-sm text-muted-foreground mt-1">
-                       {watchedValues.bio?.length || 0}/500 characters
-                     </p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {watchedValues.bio?.length || 0}/500 characters
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

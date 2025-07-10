@@ -15,8 +15,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 160 41% 18%; /* DNA forest green from logo */
-    --primary-foreground: 0 0% 100%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -27,21 +27,14 @@
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: 0 74% 50%; /* Adjusted red */
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 160 41% 18%; /* DNA forest green for focus states */
+    --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
-
-    /* DNA Brand Colors - Matching Logo Exactly */
-    --dna-white: 0 0% 100%;
-    --dna-forest: 160 41% 18%; /* Dark green from logo #183c2e */
-    --dna-emerald: 146 45% 39%; /* Medium green from logo */
-    --dna-copper: 24 65% 56%; /* Orange/copper from logo */
-    --dna-light-green: 146 45% 65%; /* Lighter green variant */
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -63,8 +56,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 160 41% 18%; /* DNA forest green as primary */
-    --primary-foreground: 0 0% 100%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -75,20 +68,12 @@
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 74% 50%; /* Adjusted red */
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 160 41% 18%; /* DNA forest green */
-
-    /* DNA Brand Colors (same in dark mode) */
-    --dna-white: 0 0% 100%;
-    --dna-forest: 160 41% 18%; /* Dark green from logo #183c2e */
-    --dna-emerald: 146 45% 39%; /* Medium green from logo */
-    --dna-copper: 24 65% 56%; /* Orange/copper from logo */
-    --dna-light-green: 146 45% 65%; /* Lighter green variant */
-
+    --ring: 212.7 26.8% 83.9%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -120,7 +105,7 @@
   }
   
   *:focus-visible {
-    outline: 2px solid hsl(var(--dna-emerald));
+    outline: 2px solid hsl(var(--dna-emerald, 69 71% 59%));
     outline-offset: 2px;
   }
 
@@ -132,7 +117,7 @@
   /* Consistent button focus states */
   button:focus,
   a:focus {
-    @apply ring-2 ring-offset-2 ring-primary outline-none;
+    @apply ring-2 ring-offset-2 ring-dna-emerald outline-none;
   }
 }
 
