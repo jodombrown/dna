@@ -19,6 +19,7 @@ import {
   createCommunityEvent,
   requestToJoinCommunity 
 } from '@/services/communityService';
+import JoinRequestManager from '@/components/community/JoinRequestManager';
 
 const CommunityPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -351,6 +352,14 @@ const CommunityPage = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Join Request Manager - Only for admins */}
+            {community?.is_member && (community.user_role === 'admin' || community.creator_id === community.user_membership?.user_id) && (
+              <JoinRequestManager 
+                communityId={id!} 
+                isAdmin={true}
+              />
+            )}
+            
             {/* Tags */}
             {community.tags && community.tags.length > 0 && (
               <Card>
