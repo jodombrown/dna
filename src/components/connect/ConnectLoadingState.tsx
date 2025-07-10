@@ -9,10 +9,10 @@ const ConnectLoadingState: React.FC<ConnectLoadingStateProps> = ({
   message = "Loading Professional Network..." 
 }) => {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center">
-        <div className="text-xl font-semibold mb-2">{message}</div>
-        <div className="text-gray-600">Connecting you with the diaspora community</div>
+        <div className="text-xl font-semibold mb-2 text-foreground">{message}</div>
+        <div className="text-muted-foreground">Connecting you with the diaspora community</div>
       </div>
     </div>
   );

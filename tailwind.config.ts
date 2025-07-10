@@ -65,13 +65,13 @@ export default {
 				},
 				// DNA Brand Colors
 				dna: {
-					white: '#ffffff',
-					forest: '#183c2e',
-					copper: '#d88d4e',
-					emerald: '#459c71',
-					mint: '#abddd6',
-					crimson: '#cc0000',
-					gold: '#e6bc2e'
+					white: 'hsl(var(--dna-white))',
+					forest: 'hsl(var(--dna-forest))',
+					copper: 'hsl(var(--dna-copper))',
+					emerald: 'hsl(var(--dna-emerald))',
+					mint: 'hsl(var(--dna-mint))',
+					crimson: 'hsl(var(--dna-crimson))',
+					gold: 'hsl(var(--dna-gold))'
 				}
 			},
 			borderRadius: {
