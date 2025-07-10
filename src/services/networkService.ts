@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { errorLogger } from './errorLogger';
 
 export interface NetworkConnection {
   id: string;
@@ -36,7 +37,7 @@ export const networkService = {
       .eq('status', 'accepted');
 
     if (error) {
-      console.error('Error fetching connections:', error);
+      errorLogger.logNetworkError(error, 'getConnections');
       return [];
     }
 
@@ -55,7 +56,7 @@ export const networkService = {
       .in('id', userIds);
 
     if (profilesError) {
-      console.error('Error fetching profiles:', profilesError);
+      errorLogger.logNetworkError(profilesError, 'getConnections:profiles');
       return [];
     }
 
@@ -92,7 +93,7 @@ export const networkService = {
       .eq('status', 'pending');
 
     if (error) {
-      console.error('Error fetching pending requests:', error);
+      errorLogger.logNetworkError(error, 'getPendingRequests');
       return [];
     }
 
@@ -111,7 +112,7 @@ export const networkService = {
       .in('id', userIds);
 
     if (profilesError) {
-      console.error('Error fetching profiles:', profilesError);
+      errorLogger.logNetworkError(profilesError, 'getPendingRequests:profiles');
       return [];
     }
 
@@ -150,7 +151,7 @@ export const networkService = {
       .eq('is_active', true);
 
     if (error) {
-      console.error('Error fetching communities:', error);
+      errorLogger.logNetworkError(error, 'getCommunities');
       return [];
     }
 
