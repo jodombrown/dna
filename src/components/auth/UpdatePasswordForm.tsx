@@ -8,6 +8,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const UpdatePasswordForm: React.FC = () => {
   const [password, setPassword] = useState('');
@@ -20,11 +21,11 @@ const UpdatePasswordForm: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Check if we have the required recovery parameters
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
+    // Check if we have the required parameters for custom password reset
+    const token = searchParams.get('token');
+    const email = searchParams.get('email');
     
-    if (!accessToken || !refreshToken) {
+    if (!token || !email) {
       toast({
         title: "Invalid Reset Link",
         description: "This password reset link is invalid or has expired.",
@@ -67,7 +68,26 @@ const UpdatePasswordForm: React.FC = () => {
     setLoading(true);
 
     try {
-      const { error } = await updatePassword(password);
+      const email = searchParams.get('email');
+      const token = searchParams.get('token');
+      
+      if (!email || !token) {
+        toast({
+          title: "Invalid Reset Link",
+          description: "This password reset link is invalid or has expired.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Update password directly using admin function
+      const { error } = await supabase.functions.invoke('update-user-password', {
+        body: {
+          email: email,
+          token: token,
+          newPassword: password
+        }
+      });
 
       if (error) {
         console.error('Password update error:', error);

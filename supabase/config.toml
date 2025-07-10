@@ -59,3 +59,9 @@ enable_confirmations = false
 
 [functions.collect-email]
 verify_jwt = false
+
+[functions.send-password-reset]
+verify_jwt = false
+
+[functions.update-user-password]
+verify_jwt = false
