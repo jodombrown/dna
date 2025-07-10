@@ -62,7 +62,7 @@ const AuthPage = () => {
       } else {
         toast({
           title: isLogin ? "Welcome back!" : "Account created!",
-          description: isLogin ? "Successfully signed in." : "Please check your email to verify your account.",
+          description: isLogin ? "Successfully signed in." : "Account created successfully! You can now sign in.",
         });
         
         if (isLogin) {

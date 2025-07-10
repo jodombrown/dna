@@ -99,7 +99,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+    // Use the actual production domain or current origin
+    const isProduction = window.location.hostname.includes('diasporanetwork.africa');
+    const redirectUrl = isProduction 
+      ? 'https://diasporanetwork.africa/app' 
+      : `${window.location.origin}/app`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -125,10 +129,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithLinkedIn = async () => {
     try {
       console.log('Starting LinkedIn OAuth flow...');
+      // Use the actual production domain or current origin
+      const isProduction = window.location.hostname.includes('diasporanetwork.africa');
+      const redirectUrl = isProduction 
+        ? 'https://diasporanetwork.africa/app' 
+        : `${window.location.origin}/app`;
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'linkedin_oidc',
         options: {
-          redirectTo: `${window.location.origin}/app`
+          redirectTo: redirectUrl
         }
       });
       
