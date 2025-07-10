@@ -59,10 +59,10 @@ const ContributeSection = () => {
           <div className="relative order-1 md:order-2">
             <div 
               ref={cardRef.elementRef}
-              className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-8 cursor-pointer hover:shadow-3xl transition-shadow touch-manipulation"
+              className="bg-white rounded-2xl shadow-2xl hover:shadow-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02] p-6 touch-manipulation min-h-[420px]"
               onClick={() => navigate('/contribute')}
             >
-              <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-center">Your Impact Dashboard</h3>
+              <h3 className="text-xl font-semibold mb-6 text-center">Your Impact Dashboard</h3>
               
               <div className="space-y-4 sm:space-y-6">
                 <div className="text-center">
