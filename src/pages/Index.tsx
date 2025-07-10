@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import SEOHead from '@/components/SEOHead';
 import HeroSection from '@/components/HeroSection';
+import HeroTriangleSection from '@/components/platform/HeroTriangleSection';
 import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -32,6 +33,9 @@ const Index = () => {
 
       {/* Hero Section with improved layout */}
       <HeroSection />
+
+      {/* DNA Framework - Three Pillars Section */}
+      <HeroTriangleSection />
 
       {/* Platform Feature Showcase */}
       <PlatformFeatureShowcase />
