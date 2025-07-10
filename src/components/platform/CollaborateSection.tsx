@@ -35,16 +35,16 @@ const CollaborateSection = () => {
                     <p className="text-sm text-gray-600 mb-3">12 collaborators • 6 countries • $2.3M pooled</p>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center -space-x-2">
-                        <Avatar className="w-6 h-6 border-2 border-white">
-                          <AvatarFallback className="bg-dna-emerald text-white text-xs">SA</AvatarFallback>
+                        <Avatar className="w-8 h-8 border-2 border-white">
+                          <AvatarFallback className="bg-dna-emerald text-white text-xs"></AvatarFallback>
                         </Avatar>
-                        <Avatar className="w-6 h-6 border-2 border-white">
-                          <AvatarFallback className="bg-dna-copper text-white text-xs">KM</AvatarFallback>
+                        <Avatar className="w-8 h-8 border-2 border-white">
+                          <AvatarFallback className="bg-dna-copper text-white text-xs"></AvatarFallback>
                         </Avatar>
-                        <Avatar className="w-6 h-6 border-2 border-white">
-                          <AvatarFallback className="bg-dna-gold text-white text-xs">AO</AvatarFallback>
+                        <Avatar className="w-8 h-8 border-2 border-white">
+                          <AvatarFallback className="bg-dna-gold text-white text-xs"></AvatarFallback>
                         </Avatar>
-                        <div className="w-6 h-6 bg-gray-100 rounded-full border-2 border-white flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full border-2 border-white flex items-center justify-center">
                           <span className="text-xs text-gray-600">+9</span>
                         </div>
                       </div>
@@ -60,13 +60,13 @@ const CollaborateSection = () => {
                     <p className="text-sm text-gray-600 mb-3">8 collaborators • 4 countries • $1.8M committed</p>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center -space-x-2">
-                        <Avatar className="w-6 h-6 border-2 border-white">
-                          <AvatarFallback className="bg-dna-mint text-dna-forest text-xs">DK</AvatarFallback>
+                        <Avatar className="w-8 h-8 border-2 border-white">
+                          <AvatarFallback className="bg-dna-mint text-dna-forest text-xs"></AvatarFallback>
                         </Avatar>
-                        <Avatar className="w-6 h-6 border-2 border-white">
-                          <AvatarFallback className="bg-dna-forest text-white text-xs">LN</AvatarFallback>
+                        <Avatar className="w-8 h-8 border-2 border-white">
+                          <AvatarFallback className="bg-dna-forest text-white text-xs"></AvatarFallback>
                         </Avatar>
-                        <div className="w-6 h-6 bg-gray-100 rounded-full border-2 border-white flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full border-2 border-white flex items-center justify-center">
                           <span className="text-xs text-gray-600">+6</span>
                         </div>
                       </div>
