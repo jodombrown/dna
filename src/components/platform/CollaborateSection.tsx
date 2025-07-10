@@ -1,6 +1,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Handshake, Briefcase, Zap, Lightbulb, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useBreathingAnimation } from '@/hooks/useBreathingAnimation';
@@ -24,27 +25,56 @@ const CollaborateSection = () => {
                   <h3 className="font-semibold text-sm sm:text-base">Active Collaborations</h3>
                 </div>
                 
-                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4 text-left">
-                  <div className="border-l-4 border-dna-emerald p-2 sm:p-3 bg-dna-mint/10 rounded">
-                    <h4 className="font-semibold text-sm sm:text-base text-dna-forest">Digital Health Platform</h4>
-                    <p className="text-xs sm:text-sm text-gray-600 mb-2">12 contributors • Lagos, Nairobi, London</p>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-xs text-green-600">Active Development</span>
+                <div className="p-4 sm:p-6 space-y-4 text-left">
+                  {/* Solar Education Initiative - Enhanced Card */}
+                  <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                    <div className="flex items-start justify-between mb-3">
+                      <h4 className="font-semibold text-base text-gray-900">Solar Education Initiative</h4>
+                      <Badge className="bg-dna-emerald text-white text-xs">Active</Badge>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">12 collaborators • 6 countries • $2.3M pooled</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center -space-x-2">
+                        <Avatar className="w-6 h-6 border-2 border-white">
+                          <AvatarFallback className="bg-dna-emerald text-white text-xs">SA</AvatarFallback>
+                        </Avatar>
+                        <Avatar className="w-6 h-6 border-2 border-white">
+                          <AvatarFallback className="bg-dna-copper text-white text-xs">KM</AvatarFallback>
+                        </Avatar>
+                        <Avatar className="w-6 h-6 border-2 border-white">
+                          <AvatarFallback className="bg-dna-gold text-white text-xs">AO</AvatarFallback>
+                        </Avatar>
+                        <div className="w-6 h-6 bg-gray-100 rounded-full border-2 border-white flex items-center justify-center">
+                          <span className="text-xs text-gray-600">+9</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* HealthTech Platform - Enhanced Card */}
+                  <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                    <div className="flex items-start justify-between mb-3">
+                      <h4 className="font-semibold text-base text-gray-900">HealthTech Platform</h4>
+                      <Badge variant="outline" className="border-dna-copper text-dna-copper text-xs">Planning</Badge>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">8 collaborators • 4 countries • $1.8M committed</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center -space-x-2">
+                        <Avatar className="w-6 h-6 border-2 border-white">
+                          <AvatarFallback className="bg-dna-mint text-dna-forest text-xs">DK</AvatarFallback>
+                        </Avatar>
+                        <Avatar className="w-6 h-6 border-2 border-white">
+                          <AvatarFallback className="bg-dna-forest text-white text-xs">LN</AvatarFallback>
+                        </Avatar>
+                        <div className="w-6 h-6 bg-gray-100 rounded-full border-2 border-white flex items-center justify-center">
+                          <span className="text-xs text-gray-600">+6</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   
-                  <div className="border-l-4 border-dna-gold p-2 sm:p-3 bg-dna-copper/10 rounded">
-                    <h4 className="font-semibold text-sm sm:text-base text-dna-copper">AgriTech Initiative</h4>
-                    <p className="text-xs sm:text-sm text-gray-600 mb-2">8 contributors • Accra, Kampala</p>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-xs text-blue-600">Seeking Talent</span>
-                    </div>
-                  </div>
-                  
-                  <div className="text-center py-2 sm:py-3">
-                    <p className="text-xs sm:text-sm text-gray-500">25+ active initiatives</p>
+                  <div className="text-center py-3 border-t border-gray-100">
+                    <p className="text-sm font-medium text-gray-900">47+ active initiatives</p>
                     <p className="text-xs text-dna-copper">New opportunities weekly</p>
                   </div>
                 </div>
