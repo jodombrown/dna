@@ -1,18 +1,75 @@
 
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
-import { Users, MessageSquare, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Users, MessageSquare, Plus, Clock, CheckCircle } from 'lucide-react';
 import MobileTouchButton from '@/components/ui/mobile-touch-button';
 import MobileOptimizedCard from '@/components/ui/mobile-optimized-card';
 import MobileResponsiveGrid from '@/components/ui/mobile-responsive-grid';
+import { searchCommunities, requestToJoinCommunity } from '@/services/communityService';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface CommunitiesTabProps {
   searchTerm: string;
 }
 
 const CommunitiesTab: React.FC<CommunitiesTabProps> = ({ searchTerm }) => {
-  // Mock data for communities with diverse African representation
-  const allCommunities = [
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  // Fetch communities from the database
+  const { data: allCommunities = [], isLoading, refetch } = useQuery({
+    queryKey: ['communities', searchTerm],
+    queryFn: () => searchCommunities(searchTerm),
+    enabled: true
+  });
+
+  const handleJoinCommunity = async (communityId: string, isAlreadyMember: boolean, membershipStatus?: string) => {
+    if (isAlreadyMember) {
+      navigate(`/community/${communityId}`);
+      return;
+    }
+
+    if (membershipStatus === 'pending') {
+      toast({
+        title: "Request Pending",
+        description: "Your join request is still pending approval.",
+      });
+      return;
+    }
+
+    try {
+      await requestToJoinCommunity(communityId);
+      toast({
+        title: "Join Request Sent",
+        description: "Your request to join this community has been sent for approval.",
+      });
+      refetch();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send join request. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getJoinButtonText = (community: any) => {
+    if (community.is_member) return "View Community";
+    if (community.user_membership?.status === 'pending') return "Request Pending";
+    return "Request to Join";
+  };
+
+  const getJoinButtonIcon = (community: any) => {
+    if (community.is_member) return MessageSquare;
+    if (community.user_membership?.status === 'pending') return Clock;
+    return Plus;
+  };
+
+  // Fallback mock data if no real communities exist
+  const mockCommunities = [
     {
       id: '1',
       name: 'African Tech Leaders',
@@ -134,7 +191,18 @@ const CommunitiesTab: React.FC<CommunitiesTabProps> = ({ searchTerm }) => {
   ];
 
   const [showAll, setShowAll] = React.useState(false);
-  const communities = showAll ? allCommunities : allCommunities.slice(0, 3);
+  const displayCommunities = allCommunities.length > 0 ? allCommunities : mockCommunities;
+  const communities = showAll ? displayCommunities : displayCommunities.slice(0, 3);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-dna-emerald"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -161,23 +229,42 @@ const CommunitiesTab: React.FC<CommunitiesTabProps> = ({ searchTerm }) => {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-base sm:text-lg text-gray-900 truncate mb-1">
+                       <h3 className="font-semibold text-base sm:text-lg text-gray-900 truncate mb-1">
                         {community.name}
                       </h3>
                       <div className="flex flex-wrap items-center gap-2 mb-2">
                         <Badge variant="outline" className="text-xs">
                           {community.category}
                         </Badge>
-                        {community.isFeatured && (
-                          <Badge className="bg-dna-gold text-white text-xs">Featured</Badge>
+                        {(community.is_featured || community.isFeatured) && (
+                          <Badge className="bg-dna-copper text-white text-xs">Featured</Badge>
+                        )}
+                        {community.is_member && (
+                          <Badge className="bg-dna-emerald text-white text-xs">
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            Member
+                          </Badge>
                         )}
                       </div>
                     </div>
                     <MobileTouchButton 
                       size="sm"
-                      className="bg-dna-emerald hover:bg-dna-forest text-white whitespace-nowrap"
+                      className={`whitespace-nowrap ${
+                        community.is_member 
+                          ? "bg-dna-forest hover:bg-dna-emerald text-white" 
+                          : community.user_membership?.status === 'pending'
+                          ? "bg-gray-400 cursor-not-allowed text-white"
+                          : "bg-dna-emerald hover:bg-dna-forest text-white"
+                      }`}
+                      onClick={() => handleJoinCommunity(
+                        community.id, 
+                        community.is_member,
+                        community.user_membership?.status
+                      )}
+                      disabled={community.user_membership?.status === 'pending'}
                     >
-                      Join Community
+                      {React.createElement(getJoinButtonIcon(community), { className: "w-4 h-4 mr-1" })}
+                      {getJoinButtonText(community)}
                     </MobileTouchButton>
                   </div>
                 </div>
@@ -190,7 +277,7 @@ const CommunitiesTab: React.FC<CommunitiesTabProps> = ({ searchTerm }) => {
               <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                 <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
                   <Users className="w-4 h-4 flex-shrink-0" />
-                  <span>{community.memberCount.toLocaleString()} members</span>
+                  <span>{(community.member_count || community.memberCount || 0).toLocaleString()} members</span>
                 </div>
                 
                 <MobileTouchButton 
@@ -207,14 +294,14 @@ const CommunitiesTab: React.FC<CommunitiesTabProps> = ({ searchTerm }) => {
         ))}
       </MobileResponsiveGrid>
 
-      {!showAll && allCommunities.length > 3 && (
+      {!showAll && displayCommunities.length > 3 && (
         <div className="text-center mt-6 sm:mt-8">
           <MobileTouchButton 
             variant="outline" 
             className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
             onClick={() => setShowAll(true)}
           >
-            View More Communities ({allCommunities.length - 3} more)
+            View More Communities ({displayCommunities.length - 3} more)
           </MobileTouchButton>
         </div>
       )}
