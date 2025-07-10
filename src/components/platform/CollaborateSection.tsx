@@ -17,63 +17,63 @@ const CollaborateSection = () => {
           <div className="relative">
             <div 
               ref={cardRef.elementRef}
-              className="w-full bg-gray-900 hover:bg-gray-800 p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-2xl cursor-pointer transition-all duration-300 hover:shadow-3xl touch-manipulation min-h-[300px] sm:min-h-[400px]"
+              className="w-full bg-white p-6 rounded-2xl shadow-2xl hover:shadow-3xl cursor-pointer transition-all duration-300 hover:scale-[1.02] touch-manipulation min-h-[420px]"
               onClick={() => navigate('/collaborate')}
             >
-              <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden w-full h-full">
-                <div className="bg-dna-copper text-white p-3 sm:p-4 text-center">
-                  <h3 className="font-semibold text-sm sm:text-base">Active Collaborations</h3>
+              <div className="w-full h-full">
+                <div className="bg-dna-copper text-white p-4 text-center rounded-t-xl -m-6 mb-6">
+                  <h3 className="font-semibold text-base">Active Collaborations</h3>
                 </div>
                 
-                <div className="p-4 sm:p-6 space-y-4 text-left">
+                <div className="space-y-4 text-left">
                   {/* Solar Education Initiative - Enhanced Card */}
-                  <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                  <div className="bg-white rounded-xl p-5 shadow-lg hover:shadow-xl transition-shadow duration-300 min-h-[120px] flex flex-col justify-between">
                     <div className="flex items-start justify-between mb-3">
                       <h4 className="font-semibold text-base text-gray-900">Solar Education Initiative</h4>
-                      <Badge className="bg-dna-emerald text-white text-xs">Active</Badge>
+                      <Badge className="bg-dna-emerald text-white text-xs px-3 py-1">Active</Badge>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">12 collaborators • 6 countries • $2.3M pooled</p>
+                    <p className="text-sm text-gray-600 mb-4">12 collaborators • 6 countries • $2.3M pooled</p>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center -space-x-2">
-                        <Avatar className="w-8 h-8 border-2 border-white">
+                        <Avatar className="w-8 h-8 border-2 border-white shadow-sm">
                           <AvatarFallback className="bg-dna-emerald text-white text-xs"></AvatarFallback>
                         </Avatar>
-                        <Avatar className="w-8 h-8 border-2 border-white">
+                        <Avatar className="w-8 h-8 border-2 border-white shadow-sm">
                           <AvatarFallback className="bg-dna-copper text-white text-xs"></AvatarFallback>
                         </Avatar>
-                        <Avatar className="w-8 h-8 border-2 border-white">
+                        <Avatar className="w-8 h-8 border-2 border-white shadow-sm">
                           <AvatarFallback className="bg-dna-gold text-white text-xs"></AvatarFallback>
                         </Avatar>
-                        <div className="w-8 h-8 bg-gray-100 rounded-full border-2 border-white flex items-center justify-center">
-                          <span className="text-xs text-gray-600">+9</span>
+                        <div className="w-8 h-8 bg-gray-100 rounded-full border-2 border-white shadow-sm flex items-center justify-center">
+                          <span className="text-xs font-medium text-gray-600">+9</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* HealthTech Platform - Enhanced Card */}
-                  <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                  <div className="bg-white rounded-xl p-5 shadow-lg hover:shadow-xl transition-shadow duration-300 min-h-[120px] flex flex-col justify-between">
                     <div className="flex items-start justify-between mb-3">
                       <h4 className="font-semibold text-base text-gray-900">HealthTech Platform</h4>
-                      <Badge variant="outline" className="border-dna-copper text-dna-copper text-xs">Planning</Badge>
+                      <Badge variant="outline" className="border-dna-copper text-dna-copper text-xs px-3 py-1">Planning</Badge>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">8 collaborators • 4 countries • $1.8M committed</p>
+                    <p className="text-sm text-gray-600 mb-4">8 collaborators • 4 countries • $1.8M committed</p>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center -space-x-2">
-                        <Avatar className="w-8 h-8 border-2 border-white">
+                        <Avatar className="w-8 h-8 border-2 border-white shadow-sm">
                           <AvatarFallback className="bg-dna-mint text-dna-forest text-xs"></AvatarFallback>
                         </Avatar>
-                        <Avatar className="w-8 h-8 border-2 border-white">
+                        <Avatar className="w-8 h-8 border-2 border-white shadow-sm">
                           <AvatarFallback className="bg-dna-forest text-white text-xs"></AvatarFallback>
                         </Avatar>
-                        <div className="w-8 h-8 bg-gray-100 rounded-full border-2 border-white flex items-center justify-center">
-                          <span className="text-xs text-gray-600">+6</span>
+                        <div className="w-8 h-8 bg-gray-100 rounded-full border-2 border-white shadow-sm flex items-center justify-center">
+                          <span className="text-xs font-medium text-gray-600">+6</span>
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="text-center py-3 border-t border-gray-100">
+                  <div className="text-center py-4 border-t border-gray-100 mt-6">
                     <p className="text-sm font-medium text-gray-900">47+ active initiatives</p>
                     <p className="text-xs text-dna-copper">New opportunities weekly</p>
                   </div>
