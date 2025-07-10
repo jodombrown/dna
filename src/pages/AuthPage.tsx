@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,6 +9,8 @@ import { ArrowLeft, Users, Handshake, Heart, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useToast } from '@/hooks/use-toast';
+import PasswordResetForm from '@/components/auth/PasswordResetForm';
+import UpdatePasswordForm from '@/components/auth/UpdatePasswordForm';
 
 const AuthPage = () => {
   useScrollToTop();
@@ -15,8 +18,10 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const { signIn, signUp, signInWithLinkedIn } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   
   const [isLogin, setIsLogin] = useState(true);
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -24,6 +29,17 @@ const AuthPage = () => {
     password: '',
     fullName: ''
   });
+
+  // Check if this is a password reset flow
+  const mode = searchParams.get('mode');
+  const isPasswordReset = mode === 'reset';
+
+  useEffect(() => {
+    if (isPasswordReset) {
+      // We're in password reset mode, component will handle the flow
+      return;
+    }
+  }, [isPasswordReset]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -101,6 +117,28 @@ const AuthPage = () => {
       setIsLoading(false);
     }
   };
+
+  // If this is a password reset flow, show the update password form
+  if (isPasswordReset) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <UpdatePasswordForm />
+        </div>
+      </div>
+    );
+  }
+
+  // If showing password reset form
+  if (showPasswordReset) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <PasswordResetForm onBackToAuth={() => setShowPasswordReset(false)} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex items-center justify-center p-4">
@@ -200,6 +238,18 @@ const AuthPage = () => {
                   </Button>
                 </div>
               </div>
+
+              {isLogin && (
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordReset(true)}
+                    className="text-sm text-dna-emerald hover:text-dna-forest hover:underline"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              )}
 
               <Button
                 type="submit"
