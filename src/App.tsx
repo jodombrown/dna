@@ -50,6 +50,7 @@ import AdminGrowthDashboard from "./pages/AdminGrowthDashboard";
 import AdminIntegrationsPanel from "./pages/AdminIntegrationsPanel";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import ProtectedRoute from "./components/app/ProtectedRoute";
+import PublicRoute from "./components/app/PublicRoute";
 
 const queryClient = new QueryClient();
 
@@ -65,25 +66,25 @@ function App() {
               <Sonner />
               <BrowserRouter>
             <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Index />} />
+              {/* Public Routes - LEGACY/MARKETING ONLY - Redirect authenticated users to dashboard */}
+              <Route path="/" element={<PublicRoute><Index /></PublicRoute>} />
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/onboarding" element={<OnboardingPage />} />
-              <Route path="/contribute" element={<ContributeExample />} />
-              <Route path="/collaborate" element={<CollaborationsExample />} />
-              <Route path="/connect" element={<ConnectExample />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/about" element={<About />} />
+              <Route path="/contribute" element={<PublicRoute><ContributeExample /></PublicRoute>} />
+              <Route path="/collaborate" element={<PublicRoute><CollaborationsExample /></PublicRoute>} />
+              <Route path="/connect" element={<PublicRoute><ConnectExample /></PublicRoute>} />
+              <Route path="/contact" element={<PublicRoute><Contact /></PublicRoute>} />
+              <Route path="/about" element={<PublicRoute><About /></PublicRoute>} />
               <Route path="/help" element={<HelpPage />} />
               <Route path="/invite" element={<InvitePage />} />
               
-              {/* Phase Routes */}
-              <Route path="/phase/market-research" element={<MarketResearchPhase />} />
-              <Route path="/phase/prototyping" element={<PrototypingPhase />} />
-              <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
-              <Route path="/phase/mvp" element={<MvpPhase />} />
-              <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
-              <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
+              {/* Phase Routes - LEGACY/MARKETING ONLY - Redirect authenticated users to dashboard */}
+              <Route path="/phase/market-research" element={<PublicRoute><MarketResearchPhase /></PublicRoute>} />
+              <Route path="/phase/prototyping" element={<PublicRoute><PrototypingPhase /></PublicRoute>} />
+              <Route path="/phase/customer-discovery" element={<PublicRoute><CustomerDiscoveryPhase /></PublicRoute>} />
+              <Route path="/phase/mvp" element={<PublicRoute><MvpPhase /></PublicRoute>} />
+              <Route path="/phase/beta-validation" element={<PublicRoute><BetaValidationPhase /></PublicRoute>} />
+              <Route path="/phase/go-to-market" element={<PublicRoute><GoToMarketPhase /></PublicRoute>} />
               
               {/* Authenticated Routes */}
               <Route path="/app" element={<ProtectedRoute><AppPageErrorBoundary><AppDashboard /></AppPageErrorBoundary></ProtectedRoute>} />
