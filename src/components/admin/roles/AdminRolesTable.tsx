@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealtimeQuery } from '@/hooks/useRealtimeQuery';
 import { Search, Loader2, Edit, UserX } from 'lucide-react';
 import {
   AlertDialog,
@@ -46,60 +47,39 @@ interface AdminUser {
 }
 
 export function AdminRolesTable() {
-  const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchAdminUsers();
-  }, []);
+  // Use real-time queries for admin users and profiles
+  const { data: adminData, loading: adminLoading, refetch } = useRealtimeQuery('admin-roles-admin-users', {
+    table: 'admin_users',
+    select: '*',
+    orderBy: { column: 'created_at', ascending: false },
+    enabled: true
+  });
 
-  const fetchAdminUsers = async () => {
-    try {
-      // Fetch admin users and profiles separately then join
-      const { data: adminData, error: adminError } = await supabase
-        .from('admin_users')
-        .select('*')
-        .order('created_at', { ascending: false });
+  const userIds = useMemo(() => 
+    adminData.map(admin => admin.user_id), 
+    [adminData]
+  );
 
-      if (adminError) throw adminError;
+  const { data: profilesData, loading: profilesLoading } = useRealtimeQuery('admin-roles-profiles', {
+    table: 'profiles',
+    select: 'id, full_name, email',
+    filter: userIds.length > 0 ? `id=in.(${userIds.join(',')})` : undefined,
+    enabled: userIds.length > 0
+  });
 
-      if (!adminData || adminData.length === 0) {
-        setAdminUsers([]);
-        return;
-      }
+  // Combine admin data with profiles
+  const adminUsers = useMemo(() => {
+    return adminData.map(admin => ({
+      ...admin,
+      profiles: profilesData.find(profile => profile.id === admin.user_id)
+    }));
+  }, [adminData, profilesData]);
 
-      // Get all user IDs
-      const userIds = adminData.map(admin => admin.user_id);
-
-      // Fetch corresponding profiles
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, full_name, email')
-        .in('id', userIds);
-
-      if (profilesError) throw profilesError;
-
-      // Combine data
-      const combinedData = adminData.map(admin => ({
-        ...admin,
-        profiles: profilesData?.find(profile => profile.id === admin.user_id)
-      }));
-
-      setAdminUsers(combinedData);
-    } catch (error) {
-      console.error('Error fetching admin users:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load admin users.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loading = adminLoading || profilesLoading;
 
   const updateAdminRole = async (userId: string, newRole: 'admin' | 'superadmin' | 'moderator') => {
     try {
@@ -113,11 +93,7 @@ export function AdminRolesTable() {
 
       if (error) throw error;
 
-      setAdminUsers(prev => prev.map(admin => 
-        admin.user_id === userId 
-          ? { ...admin, role: newRole }
-          : admin
-      ));
+      await refetch();
 
       toast({
         title: "Role Updated",
@@ -145,11 +121,7 @@ export function AdminRolesTable() {
 
       if (error) throw error;
 
-      setAdminUsers(prev => prev.map(admin => 
-        admin.user_id === userId 
-          ? { ...admin, is_active: !isActive }
-          : admin
-      ));
+      await refetch();
 
       toast({
         title: isActive ? "Admin Suspended" : "Admin Activated",

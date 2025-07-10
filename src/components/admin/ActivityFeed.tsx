@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import React, { useMemo } from 'react';
+import { useRealtimeQuery } from '@/hooks/useRealtimeQuery';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -29,107 +29,107 @@ interface ActivityItem {
 }
 
 export function ActivityFeed() {
-  const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Use real-time queries for activity data
+  const { data: profiles, loading: profilesLoading } = useRealtimeQuery('activity-profiles', {
+    table: 'profiles',
+    select: 'id, full_name, email, avatar_url, created_at',
+    orderBy: { column: 'created_at', ascending: false },
+    limit: 5,
+    enabled: true
+  });
 
-  useEffect(() => {
-    const fetchRecentActivity = async () => {
-      try {
-        // Fetch recent user signups
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, full_name, email, avatar_url, created_at')
-          .order('created_at', { ascending: false })
-          .limit(5);
+  const { data: posts, loading: postsLoading } = useRealtimeQuery('activity-posts', {
+    table: 'posts',
+    select: 'id, content, created_at, author_id',
+    orderBy: { column: 'created_at', ascending: false },
+    limit: 5,
+    enabled: true
+  });
 
-        // Fetch recent posts
-        const { data: posts } = await supabase
-          .from('posts')
-          .select(`
-            id, 
-            content, 
-            created_at,
-            profiles:author_id (full_name, email, avatar_url)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(5);
+  const { data: communities, loading: communitiesLoading } = useRealtimeQuery('activity-communities', {
+    table: 'communities',
+    select: 'id, name, created_at, created_by',
+    orderBy: { column: 'created_at', ascending: false },
+    limit: 3,
+    enabled: true
+  });
 
-        // Fetch recent communities
-        const { data: communities } = await supabase
-          .from('communities')
-          .select(`
-            id, 
-            name, 
-            created_at,
-            profiles:created_by (full_name, email, avatar_url)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(3);
+  // Get additional profile data for posts and communities
+  const userIds = useMemo(() => {
+    const ids = new Set<string>();
+    posts.forEach(post => post.author_id && ids.add(post.author_id));
+    communities.forEach(community => community.created_by && ids.add(community.created_by));
+    return Array.from(ids);
+  }, [posts, communities]);
 
-        // Combine and format activities
-        const allActivities: ActivityItem[] = [];
+  const { data: additionalProfiles } = useRealtimeQuery('activity-additional-profiles', {
+    table: 'profiles',
+    select: 'id, full_name, email, avatar_url',
+    filter: userIds.length > 0 ? `id=in.(${userIds.join(',')})` : undefined,
+    enabled: userIds.length > 0
+  });
 
-        // Add user signups
-        profiles?.forEach(profile => {
-          allActivities.push({
-            id: `signup-${profile.id}`,
-            type: 'user_signup',
-            title: 'New User Registration',
-            description: `${profile.full_name || 'New user'} joined the platform`,
-            timestamp: profile.created_at,
-            user: {
-              name: profile.full_name || 'Anonymous',
-              avatar: profile.avatar_url,
-              email: profile.email || ''
-            }
-          });
-        });
+  // Combine and format activities in real-time
+  const activities = useMemo(() => {
+    const allActivities: ActivityItem[] = [];
 
-        // Add posts
-        posts?.forEach(post => {
-          allActivities.push({
-            id: `post-${post.id}`,
-            type: 'new_post',
-            title: 'New Post Created',
-            description: post.content?.slice(0, 100) + (post.content && post.content.length > 100 ? '...' : '') || 'New post published',
-            timestamp: post.created_at,
-            user: {
-              name: (post.profiles as any)?.full_name || 'Anonymous',
-              avatar: (post.profiles as any)?.avatar_url,
-              email: (post.profiles as any)?.email || ''
-            }
-          });
-        });
+    // Add user signups
+    profiles.forEach(profile => {
+      allActivities.push({
+        id: `signup-${profile.id}`,
+        type: 'user_signup',
+        title: 'New User Registration',
+        description: `${profile.full_name || 'New user'} joined the platform`,
+        timestamp: profile.created_at,
+        user: {
+          name: profile.full_name || 'Anonymous',
+          avatar: profile.avatar_url,
+          email: profile.email || ''
+        }
+      });
+    });
 
-        // Add communities
-        communities?.forEach(community => {
-          allActivities.push({
-            id: `community-${community.id}`,
-            type: 'community_request',
-            title: 'New Community Created',
-            description: `Community "${community.name}" was created`,
-            timestamp: community.created_at,
-            user: {
-              name: (community.profiles as any)?.full_name || 'Anonymous',
-              avatar: (community.profiles as any)?.avatar_url,
-              email: (community.profiles as any)?.email || ''
-            }
-          });
-        });
+    // Add posts
+    posts.forEach(post => {
+      const author = additionalProfiles.find(p => p.id === post.author_id);
+      allActivities.push({
+        id: `post-${post.id}`,
+        type: 'new_post',
+        title: 'New Post Created',
+        description: post.content?.slice(0, 100) + (post.content && post.content.length > 100 ? '...' : '') || 'New post published',
+        timestamp: post.created_at,
+        user: {
+          name: author?.full_name || 'Anonymous',
+          avatar: author?.avatar_url,
+          email: author?.email || ''
+        }
+      });
+    });
 
-        // Sort by timestamp
-        allActivities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-        
-        setActivities(allActivities.slice(0, 10));
-      } catch (error) {
-        console.error('Error fetching activity:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Add communities
+    communities.forEach(community => {
+      const creator = additionalProfiles.find(p => p.id === community.created_by);
+      allActivities.push({
+        id: `community-${community.id}`,
+        type: 'community_request',
+        title: 'New Community Created',
+        description: `Community "${community.name}" was created`,
+        timestamp: community.created_at,
+        user: {
+          name: creator?.full_name || 'Anonymous',
+          avatar: creator?.avatar_url,
+          email: creator?.email || ''
+        }
+      });
+    });
 
-    fetchRecentActivity();
-  }, []);
+    // Sort by timestamp and limit to 10
+    return allActivities
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 10);
+  }, [profiles, posts, communities, additionalProfiles]);
+
+  const loading = profilesLoading || postsLoading || communitiesLoading;
 
   const getActivityIcon = (type: ActivityItem['type']) => {
     switch (type) {

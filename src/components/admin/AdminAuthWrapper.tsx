@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRealtimeQuery } from '@/hooks/useRealtimeQuery';
 import { Spinner } from '@/components/ui/spinner';
 
 interface AdminAuthWrapperProps {
@@ -13,51 +13,41 @@ const AdminAuthWrapper: React.FC<AdminAuthWrapperProps> = ({
   children, 
   requiredRole = 'admin' 
 }) => {
-  const [loading, setLoading] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Use real-time query for admin access
+  const { data: adminUsers, loading, error } = useRealtimeQuery('admin-auth-check', {
+    table: 'admin_users',
+    select: 'role, is_active',
+    filter: user ? `user_id=eq.${user.id}` : undefined,
+    enabled: !!user
+  });
+
+  const isAuthorized = useMemo(() => {
+    if (!user || loading || error || adminUsers.length === 0) {
+      return false;
+    }
+
+    const adminUser = adminUsers[0];
+    if (!adminUser.is_active) {
+      return false;
+    }
+
+    return checkRoleAccess(adminUser.role, requiredRole);
+  }, [user, adminUsers, loading, error, requiredRole]);
+
   useEffect(() => {
-    const checkAdminAccess = async () => {
-      if (!user) {
-        navigate('/admin/login');
-        return;
-      }
+    if (!user) {
+      navigate('/admin/login');
+      return;
+    }
 
-      try {
-        const { data, error } = await supabase
-          .from('admin_users')
-          .select('role')
-          .eq('user_id', user.id)
-          .eq('is_active', true)
-          .maybeSingle();
-
-        if (error || !data) {
-          console.error('Admin access check failed:', error);
-          navigate('/admin/login');
-          return;
-        }
-
-        // Check role hierarchy
-        const hasAccess = checkRoleAccess(data.role, requiredRole);
-        
-        if (hasAccess) {
-          setIsAuthorized(true);
-        } else {
-          navigate('/admin/login');
-        }
-      } catch (err) {
-        console.error('Error checking admin access:', err);
-        navigate('/admin/login');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAdminAccess();
-  }, [user, navigate, requiredRole, location.pathname]);
+    if (!loading && (!isAuthorized || error)) {
+      navigate('/admin/login');
+    }
+  }, [user, loading, isAuthorized, error, navigate]);
 
   const checkRoleAccess = (userRole: string, requiredRole: string): boolean => {
     const roleHierarchy = {

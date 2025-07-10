@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRealtimeQuery } from '@/hooks/useRealtimeQuery';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -25,45 +26,36 @@ interface AdminInfo {
 }
 
 export function AdminTopNav() {
-  const [adminInfo, setAdminInfo] = useState<AdminInfo | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [darkMode, setDarkMode] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchAdminInfo = async () => {
-      if (!user) return;
+  // Use real-time queries for admin info
+  const { data: adminData } = useRealtimeQuery('admin-topnav-admin', {
+    table: 'admin_users',
+    select: 'role',
+    filter: user ? `user_id=eq.${user.id},is_active=eq.true` : undefined,
+    enabled: !!user
+  });
 
-      try {
-        const { data: adminData, error: adminError } = await supabase
-          .from('admin_users')
-          .select('role')
-          .eq('user_id', user.id)
-          .eq('is_active', true)
-          .single();
+  const { data: profileData } = useRealtimeQuery('admin-topnav-profile', {
+    table: 'profiles',
+    select: 'full_name, email, avatar_url',
+    filter: user ? `id=eq.${user.id}` : undefined,
+    enabled: !!user
+  });
 
-        if (adminError) return;
+  const adminInfo = useMemo(() => {
+    if (!user || adminData.length === 0 || profileData.length === 0) return null;
 
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('full_name, email, avatar_url')
-          .eq('id', user.id)
-          .single();
-
-        setAdminInfo({
-          role: adminData.role,
-          email: profileData?.email || user.email || '',
-          name: profileData?.full_name || 'Administrator',
-          avatar: profileData?.avatar_url || undefined,
-        });
-      } catch (err) {
-        console.error('Error fetching admin info:', err);
-      }
+    return {
+      role: adminData[0].role,
+      email: profileData[0]?.email || user.email || '',
+      name: profileData[0]?.full_name || 'Administrator',
+      avatar: profileData[0]?.avatar_url || undefined,
     };
-
-    fetchAdminInfo();
-  }, [user]);
+  }, [user, adminData, profileData]);
 
   const handleSignOut = async () => {
     try {

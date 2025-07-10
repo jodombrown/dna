@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useRealtimeQuery } from '@/hooks/useRealtimeQuery';
 import { Loader2, Check, Trash2, AlertCircle, Info, AlertTriangle, Bell } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -22,40 +23,17 @@ interface AdminNotification {
 }
 
 export function NotificationsList() {
-  const [notifications, setNotifications] = useState<AdminNotification[]>([]);
-  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (user) {
-      fetchNotifications();
-    }
-  }, [user]);
-
-  const fetchNotifications = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('admin_notifications')
-        .select('*')
-        .eq('admin_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setNotifications(data || []);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load notifications.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Use real-time query for admin notifications
+  const { data: notifications, loading, refetch } = useRealtimeQuery<AdminNotification>('admin-notifications-list', {
+    table: 'admin_notifications',
+    select: '*',
+    filter: user ? `admin_id=eq.${user.id}` : undefined,
+    orderBy: { column: 'created_at', ascending: false },
+    enabled: !!user
+  });
 
   const markAsRead = async (notificationId: string) => {
     try {
@@ -70,11 +48,7 @@ export function NotificationsList() {
 
       if (error) throw error;
 
-      setNotifications(prev => prev.map(notification => 
-        notification.id === notificationId 
-          ? { ...notification, is_read: true, read_at: new Date().toISOString() }
-          : notification
-      ));
+      await refetch();
     } catch (error) {
       console.error('Error marking notification as read:', error);
       toast({
@@ -95,7 +69,7 @@ export function NotificationsList() {
 
       if (error) throw error;
 
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
+      await refetch();
       toast({
         title: "Notification Deleted",
         description: "Notification has been deleted successfully.",
