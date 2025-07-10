@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Users, Sparkles, RefreshCw } from 'lucide-react';
@@ -8,11 +8,18 @@ import DiscoveryCard from './DiscoveryCard';
 import ReferralCard from '@/components/community/ReferralCard';
 import CommunitySpotlight from '@/components/community/CommunitySpotlight';
 import AdinSuggestions from './AdinSuggestions';
+import ContextualSuggestions from './ContextualSuggestions';
 import { useToast } from '@/hooks/use-toast';
 
 const RightSidebar = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [currentPostContext, setCurrentPostContext] = useState<{
+    pillar?: string;
+    hashtags?: string[];
+    authorId?: string;
+  } | undefined>();
+  
   const { 
     suggestedPeople, 
     suggestedPosts, 
@@ -20,6 +27,18 @@ const RightSidebar = () => {
     loading, 
     refreshDiscovery 
   } = useDiscovery(user?.id);
+
+  // This would typically be connected to post viewing events from the center feed
+  // For now, we'll simulate context awareness
+  React.useEffect(() => {
+    // Listen for post context changes (would be implemented via context/state management)
+    const handlePostFocus = (event: CustomEvent) => {
+      setCurrentPostContext(event.detail);
+    };
+
+    window.addEventListener('postFocus', handlePostFocus as EventListener);
+    return () => window.removeEventListener('postFocus', handlePostFocus as EventListener);
+  }, []);
 
   const handleDiscoveryAction = async (id: string, action: 'follow' | 'view' | 'join') => {
     // Placeholder for action handlers - would integrate with actual follow/view/join logic
@@ -37,6 +56,11 @@ const RightSidebar = () => {
 
   return (
     <div className="space-y-4">
+      {/* Context-Aware Suggestions - Priority section */}
+      {currentPostContext && (
+        <ContextualSuggestions currentPostContext={currentPostContext} />
+      )}
+
       {/* ADIN-Powered Suggestions */}
       <AdinSuggestions />
 
@@ -67,7 +91,7 @@ const RightSidebar = () => {
         </CardHeader>
       </Card>
 
-      {/* Suggested People */}
+      {/* Suggested People - Enhanced with quick actions */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
@@ -91,30 +115,45 @@ const RightSidebar = () => {
               ))}
             </div>
           ) : suggestedPeople.length > 0 ? (
-            suggestedPeople.map((person) => (
-              <DiscoveryCard
-                key={person.id}
-                type="person"
-                data={{
-                  id: person.id,
-                  title: person.full_name,
-                  subtitle: person.location || 'DNA Community',
-                  description: person.bio,
-                  avatar_url: person.avatar_url,
-                  match_reason: person.match_reason
-                }}
-                onAction={handleDiscoveryAction}
-              />
+            suggestedPeople.slice(0, 3).map((person) => (
+              <div key={person.id} className="p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+                <DiscoveryCard
+                  type="person"
+                  data={{
+                    id: person.id,
+                    title: person.full_name,
+                    subtitle: person.location || 'DNA Community',
+                    description: person.bio,
+                    avatar_url: person.avatar_url,
+                    match_reason: person.match_reason
+                  }}
+                  onAction={handleDiscoveryAction}
+                />
+                <div className="flex gap-1 mt-2">
+                  <Button size="sm" variant="outline" className="h-6 px-2 text-xs">
+                    Connect
+                  </Button>
+                  <Button size="sm" variant="outline" className="h-6 px-2 text-xs">
+                    Message
+                  </Button>
+                </div>
+              </div>
             ))
           ) : (
             <p className="text-sm text-gray-500 text-center py-4">
               No suggestions available yet
             </p>
           )}
+          
+          {suggestedPeople.length > 3 && (
+            <Button variant="ghost" size="sm" className="w-full text-xs">
+              View All ({suggestedPeople.length - 3} more)
+            </Button>
+          )}
         </CardContent>
       </Card>
 
-      {/* Trending Content */}
+      {/* Trending Content - Streamlined */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center">
@@ -122,32 +161,25 @@ const RightSidebar = () => {
             Trending Now
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-2">
           {loading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
+            <div className="space-y-2">
+              {[1, 2].map((i) => (
                 <div key={i} className="animate-pulse">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-1"></div>
+                  <div className="h-3 bg-gray-200 rounded w-3/4 mb-1"></div>
                   <div className="h-3 bg-gray-200 rounded w-1/2"></div>
                 </div>
               ))}
             </div>
           ) : trendingHashtags.length > 0 ? (
-            trendingHashtags.map((hashtag) => (
-              <DiscoveryCard
-                key={hashtag.tag}
-                type="hashtag"
-                data={{
-                  id: hashtag.tag,
-                  title: hashtag.tag,
-                  count: hashtag.count,
-                  growth: hashtag.growth
-                }}
-                onAction={handleDiscoveryAction}
-              />
+            trendingHashtags.slice(0, 3).map((hashtag) => (
+              <div key={hashtag.tag} className="hover:bg-gray-50 p-2 rounded cursor-pointer">
+                <p className="text-sm font-medium">{hashtag.tag}</p>
+                <p className="text-xs text-gray-500">{hashtag.count} posts</p>
+              </div>
             ))
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="hover:bg-gray-50 p-2 rounded cursor-pointer">
                 <p className="text-sm font-medium">#AfricaTech2024</p>
                 <p className="text-xs text-gray-500">142 posts</p>
@@ -155,10 +187,6 @@ const RightSidebar = () => {
               <div className="hover:bg-gray-50 p-2 rounded cursor-pointer">
                 <p className="text-sm font-medium">#DiasporaInvestment</p>
                 <p className="text-xs text-gray-500">89 posts</p>
-              </div>
-              <div className="hover:bg-gray-50 p-2 rounded cursor-pointer">
-                <p className="text-sm font-medium">#YouthEmpowerment</p>
-                <p className="text-xs text-gray-500">67 posts</p>
               </div>
             </div>
           )}
