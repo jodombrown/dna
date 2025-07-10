@@ -47,6 +47,8 @@ export const networkService = {
       request.sender_id === userId ? request.receiver_id : request.sender_id
     );
 
+    if (userIds.length === 0) return [];
+
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
       .select('id, full_name, professional_role, location, avatar_url, industry')
@@ -101,6 +103,8 @@ export const networkService = {
       request.sender_id === userId ? request.receiver_id : request.sender_id
     );
 
+    if (userIds.length === 0) return [];
+
     const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
       .select('id, full_name, professional_role, location, avatar_url, industry')
@@ -129,133 +133,52 @@ export const networkService = {
     });
   },
 
-  // Fetch user's followers
-  async getFollowers(userId: string): Promise<NetworkConnection[]> {
-    const { data, error } = await supabase
-      .from('user_connections')
-      .select(`
-        id,
-        created_at,
-        follower:follower_id(
-          id,
-          profiles(
-            full_name,
-            professional_role,
-            location,
-            avatar_url,
-            industry
-          )
-        )
-      `)
-      .eq('following_id', userId);
-
-    if (error) {
-      console.error('Error fetching followers:', error);
-      return [];
-    }
-
-    return data?.map(connection => {
-      const profile = connection.follower?.profiles;
-      
-      return {
-        id: connection.follower?.id || '',
-        name: profile?.full_name || 'Unknown User',
-        role: profile?.professional_role || 'Professional',
-        location: profile?.location || 'Location not set',
-        avatar: profile?.avatar_url || null,
-        pillar: 'Connect',
-        mutualConnections: 0,
-        status: 'connected' as const
-      };
-    }) || [];
-  },
-
-  // Fetch users that the current user is following
-  async getFollowing(userId: string): Promise<NetworkConnection[]> {
-    const { data, error } = await supabase
-      .from('user_connections')
-      .select(`
-        id,
-        created_at,
-        following:following_id(
-          id,
-          profiles(
-            full_name,
-            professional_role,
-            location,
-            avatar_url,
-            industry
-          )
-        )
-      `)
-      .eq('follower_id', userId);
-
-    if (error) {
-      console.error('Error fetching following:', error);
-      return [];
-    }
-
-    return data?.map(connection => {
-      const profile = connection.following?.profiles;
-      
-      return {
-        id: connection.following?.id || '',
-        name: profile?.full_name || 'Unknown User',
-        role: profile?.professional_role || 'Professional',
-        location: profile?.location || 'Location not set',
-        avatar: profile?.avatar_url || null,
-        pillar: 'Connect',
-        mutualConnections: 0,
-        status: 'connected' as const
-      };
-    }) || [];
-  },
-
-  // Fetch user's communities
+  // Fetch user's communities (using existing communities table)
   async getCommunities(userId: string): Promise<NetworkCommunity[]> {
+    // For now, return communities the user created since we don't have membership table in types yet
     const { data, error } = await supabase
-      .from('community_memberships')
+      .from('communities')
       .select(`
         id,
-        joined_at,
-        community:community_id(
-          id,
-          name,
-          description,
-          category,
-          member_count
-        )
+        name,
+        description,
+        category,
+        member_count,
+        created_at
       `)
-      .eq('user_id', userId);
+      .eq('created_by', userId)
+      .eq('is_active', true);
 
     if (error) {
       console.error('Error fetching communities:', error);
       return [];
     }
 
-    return data?.map(membership => ({
-      id: membership.community?.id || '',
-      name: membership.community?.name || 'Unknown Community',
-      members: membership.community?.member_count || 0,
-      description: membership.community?.description || '',
-      category: membership.community?.category || 'General',
-      joinedAt: membership.joined_at
+    return data?.map(community => ({
+      id: community.id,
+      name: community.name,
+      members: community.member_count || 0,
+      description: community.description || '',
+      category: community.category || 'General',
+      joinedAt: community.created_at
     })) || [];
   },
 
   // Get network counts
   async getNetworkCounts(userId: string) {
-    const [connections, pending, followers, following, communities] = await Promise.all([
+    const [connections, pending, communities] = await Promise.all([
       this.getConnections(userId),
       this.getPendingRequests(userId),
-      this.getFollowers(userId),
-      this.getFollowing(userId),
       this.getCommunities(userId)
     ]);
 
+    // Count both sent and received pending requests
+    const sentPending = pending.filter(p => p.status === 'pending').length;
+    const receivedPending = pending.filter(p => p.status === 'received').length;
+
     return {
       connections: connections.length,
-      followers: followers.length + following.length,
+      followers: sentPending + receivedPending, // Using pending requests as followers for now
       communities: communities.length,
       events: 0, // TODO: Implement events
       initiatives: 0, // TODO: Implement initiatives

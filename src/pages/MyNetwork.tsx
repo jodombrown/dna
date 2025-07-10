@@ -19,67 +19,21 @@ import {
 } from 'lucide-react';
 import AppHeader from '@/components/app/AppHeader';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { useNetwork } from '@/hooks/useNetwork';
 
 const MyNetwork = () => {
   useScrollToTop();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('connections');
+  const { loading, connections, communities, counts, getDataForTab } = useNetwork();
 
   const sidebarItems = [
-    { id: 'connections', label: 'Connections', icon: Users, count: 247 },
-    { id: 'followers', label: 'Followers & Following', icon: UserPlus, count: 89 },
-    { id: 'communities', label: 'Communities', icon: Building, count: 12 },
-    { id: 'events', label: 'Events', icon: Calendar, count: 8 },
-    { id: 'initiatives', label: 'Initiatives', icon: Target, count: 5 },
-    { id: 'newsletters', label: 'Newsletters', icon: Mail, count: 3 }
-  ];
-
-  // Mock data for demonstration
-  const mockConnections = [
-    {
-      id: 1,
-      name: 'Sarah Okoye',
-      role: 'Tech Entrepreneur',
-      location: 'Lagos, Nigeria',
-      avatar: null,
-      pillar: 'Connect',
-      mutualConnections: 12
-    },
-    {
-      id: 2,
-      name: 'David Mensah',
-      role: 'Software Engineer',
-      location: 'Accra, Ghana',
-      avatar: null,
-      pillar: 'Collaborate',
-      mutualConnections: 8
-    },
-    {
-      id: 3,
-      name: 'Amina Hassan',
-      role: 'Impact Investor',
-      location: 'Nairobi, Kenya',
-      avatar: null,
-      pillar: 'Contribute',
-      mutualConnections: 15
-    }
-  ];
-
-  const mockCommunities = [
-    {
-      id: 1,
-      name: 'African Tech Leaders',
-      members: 1247,
-      description: 'Building the future of technology across Africa',
-      category: 'Technology'
-    },
-    {
-      id: 2,
-      name: 'Diaspora Entrepreneurs',
-      members: 892,
-      description: 'Supporting African entrepreneurs globally',
-      category: 'Business'
-    }
+    { id: 'connections', label: 'Connections', icon: Users, count: counts.connections },
+    { id: 'followers', label: 'Followers & Following', icon: UserPlus, count: counts.followers },
+    { id: 'communities', label: 'Communities', icon: Building, count: counts.communities },
+    { id: 'events', label: 'Events', icon: Calendar, count: counts.events },
+    { id: 'initiatives', label: 'Initiatives', icon: Target, count: counts.initiatives },
+    { id: 'newsletters', label: 'Newsletters', icon: Mail, count: counts.newsletters }
   ];
 
   const renderEmptyState = (title: string, description: string, icon: React.ReactNode) => (
@@ -96,86 +50,108 @@ const MyNetwork = () => {
     </div>
   );
 
-  const renderConnections = () => (
-    <div className="space-y-4">
-      {mockConnections.length === 0 ? (
-        renderEmptyState(
-          'No connections yet',
-          'Start connecting with professionals in the DNA network',
-          <Users className="h-12 w-12 mx-auto" />
-        )
-      ) : (
-        mockConnections.map((connection) => (
-          <Card key={connection.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="pt-6">
-              <div className="flex items-start space-x-4">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={connection.avatar} />
-                  <AvatarFallback className="bg-dna-emerald text-white">
-                    {connection.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-semibold text-dna-forest">{connection.name}</h3>
-                      <p className="text-sm text-gray-600">{connection.role}</p>
-                      <p className="text-sm text-gray-500">{connection.location}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {connection.mutualConnections} mutual connections
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="outline" className="border-dna-emerald text-dna-emerald">
-                        {connection.pillar}
-                      </Badge>
-                      <Button size="sm" variant="outline">
-                        <MessageCircle className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))
-      )}
-    </div>
-  );
+  const renderConnections = () => {
+    if (loading) {
+      return <div className="text-center py-8">Loading connections...</div>;
+    }
 
-  const renderCommunities = () => (
-    <div className="space-y-4">
-      {mockCommunities.length === 0 ? (
-        renderEmptyState(
-          'No communities joined',
-          'Join communities to connect with like-minded professionals',
-          <Building className="h-12 w-12 mx-auto" />
-        )
-      ) : (
-        mockCommunities.map((community) => (
-          <Card key={community.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="pt-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-dna-forest mb-1">{community.name}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{community.description}</p>
-                  <div className="flex items-center space-x-4 text-xs text-gray-500">
-                    <span>{community.members.toLocaleString()} members</span>
-                    <Badge variant="secondary" className="text-xs">
-                      {community.category}
-                    </Badge>
+    return (
+      <div className="space-y-4">
+        {connections.length === 0 ? (
+          renderEmptyState(
+            'No connections yet',
+            'Start connecting with professionals in the DNA network',
+            <Users className="h-12 w-12 mx-auto" />
+          )
+        ) : (
+          connections.map((connection) => (
+            <Card key={connection.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex items-start space-x-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={connection.avatar} />
+                    <AvatarFallback className="bg-dna-emerald text-white">
+                      {connection.name.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-semibold text-dna-forest">{connection.name}</h3>
+                        <p className="text-sm text-gray-600">{connection.role}</p>
+                        <p className="text-sm text-gray-500">{connection.location}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {connection.mutualConnections} mutual connections
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="outline" className="border-dna-emerald text-dna-emerald">
+                          {connection.pillar}
+                        </Badge>
+                        {connection.status === 'pending' && (
+                          <Badge variant="secondary" className="text-xs">
+                            Pending
+                          </Badge>
+                        )}
+                        {connection.status === 'received' && (
+                          <Badge variant="secondary" className="text-xs bg-dna-gold/10 text-dna-gold">
+                            Received
+                          </Badge>
+                        )}
+                        <Button size="sm" variant="outline">
+                          <MessageCircle className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <Button size="sm" variant="outline">
-                  View
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))
-      )}
-    </div>
-  );
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+    );
+  };
+
+  const renderCommunities = () => {
+    if (loading) {
+      return <div className="text-center py-8">Loading communities...</div>;
+    }
+
+    return (
+      <div className="space-y-4">
+        {communities.length === 0 ? (
+          renderEmptyState(
+            'No communities joined',
+            'Join communities to connect with like-minded professionals',
+            <Building className="h-12 w-12 mx-auto" />
+          )
+        ) : (
+          communities.map((community) => (
+            <Card key={community.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-dna-forest mb-1">{community.name}</h3>
+                    <p className="text-sm text-gray-600 mb-2">{community.description}</p>
+                    <div className="flex items-center space-x-4 text-xs text-gray-500">
+                      <span>{community.members.toLocaleString()} members</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {community.category}
+                      </Badge>
+                    </div>
+                  </div>
+                  <Button size="sm" variant="outline">
+                    View
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+    );
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
