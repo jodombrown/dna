@@ -15,9 +15,8 @@ import {
   PieChart
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
 import AppHeader from '@/components/app/AppHeader';
-import { useNavigate } from 'react-router-dom';
+import AdminAuthWrapper from '@/components/admin/AdminAuthWrapper';
 
 interface Metrics {
   totalUsers: number;
@@ -45,8 +44,6 @@ interface TopCommunity {
 }
 
 const AdminDashboard = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const [metrics, setMetrics] = useState<Metrics>({
     totalUsers: 0,
     activeToday: 0,
@@ -58,39 +55,10 @@ const AdminDashboard = () => {
   const [topUsers, setTopUsers] = useState<TopUser[]>([]);
   const [topCommunities, setTopCommunities] = useState<TopCommunity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      checkAdminAccess();
-    }
-  }, [user]);
-
-  const checkAdminAccess = async () => {
-    if (!user) return;
-
-    try {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('id', user.id)
-        .single();
-
-      const isAdminUser = profile?.email === 'admin@diasporanetwork.africa' || 
-                         profile?.email?.endsWith('@diasporanetwork.africa');
-
-      if (!isAdminUser) {
-        navigate('/app');
-        return;
-      }
-
-      setIsAdmin(true);
-      fetchMetrics();
-    } catch (error) {
-      console.error('Error checking admin access:', error);
-      navigate('/app');
-    }
-  };
+    fetchMetrics();
+  }, []);
 
   const fetchMetrics = async () => {
     try {
@@ -167,185 +135,183 @@ const AdminDashboard = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  if (!isAdmin) {
-    return <div className="p-8 text-center">Checking access...</div>;
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AppHeader />
-      
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-dna-forest mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Monitor platform activity and user engagement</p>
-        </div>
-
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <Card key={i} className="animate-pulse">
-                <CardContent className="p-6">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                  <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-                </CardContent>
-              </Card>
-            ))}
+    <AdminAuthWrapper requiredRole="admin">
+      <div className="min-h-screen bg-gray-50">
+        <AppHeader />
+        
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-dna-forest mb-2">Admin Dashboard</h1>
+            <p className="text-gray-600">Monitor platform activity and user engagement</p>
           </div>
-        ) : (
-          <>
-            {/* Metrics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Total Users</p>
-                      <p className="text-2xl font-bold text-dna-forest">{metrics.totalUsers}</p>
-                    </div>
-                    <Users className="h-8 w-8 text-dna-emerald" />
-                  </div>
-                </CardContent>
-              </Card>
 
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Active Today</p>
-                      <p className="text-2xl font-bold text-dna-forest">{metrics.activeToday}</p>
-                    </div>
-                    <Activity className="h-8 w-8 text-dna-copper" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Waitlist Signups</p>
-                      <p className="text-2xl font-bold text-dna-forest">{metrics.waitlistSignups}</p>
-                    </div>
-                    <Mail className="h-8 w-8 text-dna-gold" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Posts Today</p>
-                      <p className="text-2xl font-bold text-dna-forest">{metrics.postsToday}</p>
-                    </div>
-                    <MessageSquare className="h-8 w-8 text-dna-emerald" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Active Communities</p>
-                      <p className="text-2xl font-bold text-dna-forest">{metrics.communitiesActive}</p>
-                    </div>
-                    <Users className="h-8 w-8 text-dna-copper" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Messages Exchanged</p>
-                      <p className="text-2xl font-bold text-dna-forest">{metrics.messagesExchanged}</p>
-                    </div>
-                    <MessageSquare className="h-8 w-8 text-dna-gold" />
-                  </div>
-                </CardContent>
-              </Card>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <Card key={i} className="animate-pulse">
+                  <CardContent className="p-6">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                    <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-
-            {/* Detailed Analytics */}
-            <Tabs defaultValue="users" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="users">Top Users</TabsTrigger>
-                <TabsTrigger value="communities">Top Communities</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="users" className="mt-6">
+          ) : (
+            <>
+              {/* Metrics Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center text-dna-forest">
-                      <TrendingUp className="h-5 w-5 mr-2" />
-                      Most Active Users
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {topUsers.map((user, index) => (
-                        <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <Badge variant="outline" className="w-8 h-8 rounded-full flex items-center justify-center">
-                              {index + 1}
-                            </Badge>
-                            <div>
-                              <p className="font-medium text-dna-forest">{user.full_name || 'Anonymous'}</p>
-                              <p className="text-sm text-gray-500">{user.email}</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-medium">{user.post_count} posts</p>
-                            <p className="text-xs text-gray-500">Joined {formatDate(user.last_active)}</p>
-                          </div>
-                        </div>
-                      ))}
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Total Users</p>
+                        <p className="text-2xl font-bold text-dna-forest">{metrics.totalUsers}</p>
+                      </div>
+                      <Users className="h-8 w-8 text-dna-emerald" />
                     </div>
                   </CardContent>
                 </Card>
-              </TabsContent>
 
-              <TabsContent value="communities" className="mt-6">
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center text-dna-forest">
-                      <Users className="h-5 w-5 mr-2" />
-                      Top Communities
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {topCommunities.map((community, index) => (
-                        <div key={community.id} className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <Badge variant="outline" className="w-8 h-8 rounded-full flex items-center justify-center">
-                              {index + 1}
-                            </Badge>
-                            <div>
-                              <p className="font-medium text-dna-forest">{community.name}</p>
-                              <Badge variant="secondary" className="text-xs">
-                                {community.category}
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Active Today</p>
+                        <p className="text-2xl font-bold text-dna-forest">{metrics.activeToday}</p>
+                      </div>
+                      <Activity className="h-8 w-8 text-dna-copper" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Waitlist Signups</p>
+                        <p className="text-2xl font-bold text-dna-forest">{metrics.waitlistSignups}</p>
+                      </div>
+                      <Mail className="h-8 w-8 text-dna-gold" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Posts Today</p>
+                        <p className="text-2xl font-bold text-dna-forest">{metrics.postsToday}</p>
+                      </div>
+                      <MessageSquare className="h-8 w-8 text-dna-emerald" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Active Communities</p>
+                        <p className="text-2xl font-bold text-dna-forest">{metrics.communitiesActive}</p>
+                      </div>
+                      <Users className="h-8 w-8 text-dna-copper" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Messages Exchanged</p>
+                        <p className="text-2xl font-bold text-dna-forest">{metrics.messagesExchanged}</p>
+                      </div>
+                      <MessageSquare className="h-8 w-8 text-dna-gold" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Detailed Analytics */}
+              <Tabs defaultValue="users" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="users">Top Users</TabsTrigger>
+                  <TabsTrigger value="communities">Top Communities</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="users" className="mt-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center text-dna-forest">
+                        <TrendingUp className="h-5 w-5 mr-2" />
+                        Most Active Users
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {topUsers.map((user, index) => (
+                          <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <Badge variant="outline" className="w-8 h-8 rounded-full flex items-center justify-center">
+                                {index + 1}
                               </Badge>
+                              <div>
+                                <p className="font-medium text-dna-forest">{user.full_name || 'Anonymous'}</p>
+                                <p className="text-sm text-gray-500">{user.email}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm font-medium">{user.post_count} posts</p>
+                              <p className="text-xs text-gray-500">Joined {formatDate(user.last_active)}</p>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-sm font-medium">{community.member_count || 0} members</p>
-                            <p className="text-xs text-gray-500">Created {formatDate(community.created_at)}</p>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="communities" className="mt-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center text-dna-forest">
+                        <Users className="h-5 w-5 mr-2" />
+                        Top Communities
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {topCommunities.map((community, index) => (
+                          <div key={community.id} className="flex items-center justify-between p-3 border rounded-lg">
+                            <div className="flex items-center space-x-3">
+                              <Badge variant="outline" className="w-8 h-8 rounded-full flex items-center justify-center">
+                                {index + 1}
+                              </Badge>
+                              <div>
+                                <p className="font-medium text-dna-forest">{community.name}</p>
+                                <Badge variant="secondary" className="text-xs">
+                                  {community.category}
+                                </Badge>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm font-medium">{community.member_count || 0} members</p>
+                              <p className="text-xs text-gray-500">Created {formatDate(community.created_at)}</p>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </>
-        )}
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </AdminAuthWrapper>
   );
 };
 
