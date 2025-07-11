@@ -25,6 +25,19 @@ const AdminAuthWrapper: React.FC<AdminAuthWrapperProps> = ({
     enabled: !!user
   });
 
+  const checkRoleAccess = (userRole: string, requiredRole: string): boolean => {
+    const roleHierarchy = {
+      'moderator': 1,
+      'admin': 2,
+      'superadmin': 3
+    };
+
+    const userLevel = roleHierarchy[userRole as keyof typeof roleHierarchy] || 0;
+    const requiredLevel = roleHierarchy[requiredRole as keyof typeof roleHierarchy] || 0;
+
+    return userLevel >= requiredLevel;
+  };
+
   const isAuthorized = useMemo(() => {
     if (!user || loading || error || adminUsers.length === 0) {
       return false;
@@ -48,19 +61,6 @@ const AdminAuthWrapper: React.FC<AdminAuthWrapperProps> = ({
       navigate('/admin/login');
     }
   }, [user, loading, isAuthorized, error, navigate]);
-
-  const checkRoleAccess = (userRole: string, requiredRole: string): boolean => {
-    const roleHierarchy = {
-      'moderator': 1,
-      'admin': 2,
-      'superadmin': 3
-    };
-
-    const userLevel = roleHierarchy[userRole as keyof typeof roleHierarchy] || 0;
-    const requiredLevel = roleHierarchy[requiredRole as keyof typeof roleHierarchy] || 0;
-
-    return userLevel >= requiredLevel;
-  };
 
   if (loading) {
     return (
