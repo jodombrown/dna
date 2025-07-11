@@ -89,16 +89,13 @@ const AppDashboard = () => {
 
   // Smart sidebar defaults for mobile
   React.useEffect(() => {
+    const { setLeftSidebar, setRightSidebar } = useLayoutStore.getState();
     if (isMobile) {
-      useLayoutStore.setState({ 
-        leftSidebarOpen: false, 
-        rightSidebarOpen: false 
-      });
+      setLeftSidebar(false);
+      setRightSidebar(false);
     } else {
-      useLayoutStore.setState({ 
-        leftSidebarOpen: true, 
-        rightSidebarOpen: true 
-      });
+      setLeftSidebar(true);
+      setRightSidebar(true);
     }
   }, [isMobile]);
 
