@@ -9,6 +9,11 @@ import AppSidebar from '@/components/app/AppSidebar';
 import FeedSection from '@/components/app/FeedSection';
 import RightSidebar from '@/components/app/RightSidebar';
 import { useLayoutStore } from '@/stores/layoutStore';
+import MobileBottomNav from '@/components/app/MobileBottomNav';
+import MobileGestureHandler from '@/components/app/MobileGestureHandler';
+import MobileStickyComposer from '@/components/app/MobileStickyComposer';
+import MobileSidebarBadges from '@/components/app/MobileSidebarBadges';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const AppDashboard = () => {
   const { user, loading } = useAuth();
@@ -70,45 +75,76 @@ const AppDashboard = () => {
     return null; // Will redirect
   }
 
-  const { leftSidebarOpen, rightSidebarOpen, toggleLeftSidebar, toggleRightSidebar } = useLayoutStore();
+  const { 
+    leftSidebarOpen, 
+    rightSidebarOpen, 
+    activePillar,
+    mobileComposerOpen,
+    toggleLeftSidebar, 
+    toggleRightSidebar,
+    setActivePillar,
+    toggleMobileComposer 
+  } = useLayoutStore();
+  const isMobile = useIsMobile();
+
+  // Smart sidebar defaults for mobile
+  React.useEffect(() => {
+    if (isMobile) {
+      useLayoutStore.setState({ 
+        leftSidebarOpen: false, 
+        rightSidebarOpen: false 
+      });
+    } else {
+      useLayoutStore.setState({ 
+        leftSidebarOpen: true, 
+        rightSidebarOpen: true 
+      });
+    }
+  }, [isMobile]);
+
+  const handlePillarSwipe = (direction: 'left' | 'right') => {
+    const pillars = ['all', 'connect', 'collaborate', 'contribute'] as const;
+    const currentIndex = pillars.indexOf(activePillar);
+    
+    if (direction === 'left' && currentIndex < pillars.length - 1) {
+      setActivePillar(pillars[currentIndex + 1]);
+    } else if (direction === 'right' && currentIndex > 0) {
+      setActivePillar(pillars[currentIndex - 1]);
+    }
+  };
+
+  const handlePostCreated = (postId: string, pillar: string) => {
+    // Refresh or handle post creation
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <AppHeader />
       
-      {/* Mobile Toggle Controls */}
-      <div className="lg:hidden flex justify-between items-center p-4 bg-white border-b border-gray-200">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={toggleLeftSidebar}
-          className="flex items-center gap-2"
-        >
-          <PanelLeft className="h-4 w-4" />
-          Menu
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={toggleRightSidebar}
-          className="flex items-center gap-2"
-        >
-          <PanelRight className="h-4 w-4" />
-          Discover
-        </Button>
-      </div>
+      {/* Mobile Sidebar Badges */}
+      <MobileSidebarBadges
+        leftSidebarOpen={leftSidebarOpen}
+        rightSidebarOpen={rightSidebarOpen}
+        onLeftToggle={toggleLeftSidebar}
+        onRightToggle={toggleRightSidebar}
+        notifications={{
+          messages: 3,
+          connections: 2,
+          activities: 1
+        }}
+      />
 
-      <div className="flex-1 flex min-h-0">
+      <div className="flex-1 flex min-h-0 pb-16 md:pb-0">
         {/* Left Sidebar */}
         <div className={`
           ${leftSidebarOpen ? 'block' : 'hidden'} 
-          ${leftSidebarOpen && 'lg:block'} 
+          lg:block
           w-80 flex-shrink-0 border-r border-gray-200 bg-white
           lg:relative absolute lg:translate-x-0 inset-y-0 left-0 z-50
           transition-transform duration-300 ease-in-out
         `}>
           <div className="h-full overflow-y-auto scrollbar-thin">
-            <div className="p-4">
+            <div className="p-3 lg:p-4">
               <AppSidebar />
             </div>
           </div>
@@ -121,25 +157,35 @@ const AppDashboard = () => {
           )}
         </div>
         
-        {/* Main Feed */}
-        <div className="flex-1 min-w-0 bg-white">
+        {/* Main Feed with Gesture Support */}
+        <MobileGestureHandler
+          onSwipeLeft={() => handlePillarSwipe('left')}
+          onSwipeRight={() => handlePillarSwipe('right')}
+          className="flex-1 min-w-0 bg-white"
+        >
           <div className="h-full overflow-y-auto scrollbar-thin">
-            <div className="p-4">
-              <FeedSection />
+            <div className="p-3 lg:p-4">
+              {/* Hide composer on mobile - replaced with FAB */}
+              <div className="hidden md:block">
+                <FeedSection />
+              </div>
+              <div className="md:hidden">
+                <FeedSection />
+              </div>
             </div>
           </div>
-        </div>
+        </MobileGestureHandler>
         
         {/* Right Sidebar */}
         <div className={`
           ${rightSidebarOpen ? 'block' : 'hidden'} 
-          ${rightSidebarOpen && 'xl:block'} 
+          xl:block
           w-80 flex-shrink-0 bg-white border-l border-gray-200
           xl:relative absolute xl:translate-x-0 inset-y-0 right-0 z-50
           transition-transform duration-300 ease-in-out
         `}>
           <div className="h-full overflow-y-auto scrollbar-thin">
-            <div className="p-4">
+            <div className="p-3 lg:p-4">
               <RightSidebar />
             </div>
           </div>
@@ -152,6 +198,25 @@ const AppDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav
+        activePillar={activePillar}
+        onPillarChange={setActivePillar}
+        onComposerToggle={toggleMobileComposer}
+        pendingCounts={{
+          connect: 5,
+          collaborate: 2,
+          contribute: 3
+        }}
+      />
+
+      {/* Mobile Sticky Composer */}
+      <MobileStickyComposer
+        isOpen={mobileComposerOpen}
+        onToggle={toggleMobileComposer}
+        onPostCreated={handlePostCreated}
+      />
     </div>
   );
 };

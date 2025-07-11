@@ -8,13 +8,14 @@ import { useRealTimeFeed } from '@/hooks/useRealTimeFeed';
 import { useImpactTracking } from '@/hooks/useImpactTracking';
 import AdinFeedIndicator from './AdinFeedIndicator';
 import { Badge } from '@/components/ui/badge';
+import { useLayoutStore } from '@/stores/layoutStore';
 
 const FeedSection = () => {
-  const [activeFilter, setActiveFilter] = useState<'all' | 'connect' | 'collaborate' | 'contribute'>('all');
   const [activeRegion, setActiveRegion] = useState<string>('all');
   const [adinEnabled, setAdinEnabled] = useState(true);
   const [advancedFilters, setAdvancedFilters] = useState<any>({});
   const { trackImpact } = useImpactTracking();
+  const { activePillar } = useLayoutStore();
   
   // Use the new real-time feed hook
   const { posts, loading, addPost, refetch } = useRealTimeFeed();
@@ -26,10 +27,17 @@ const FeedSection = () => {
     refetch();
   };
 
+  // Filter posts based on active pillar
+  const filteredPosts = activePillar === 'all' 
+    ? posts 
+    : posts.filter(post => post.pillar === activePillar);
+
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      {/* Post Composer */}
-      <PostComposer onPostCreated={handlePostCreated} />
+      {/* Post Composer - Hidden on mobile */}
+      <div className="hidden md:block">
+        <PostComposer onPostCreated={handlePostCreated} />
+      </div>
 
       {/* ADIN Status & Feed Filters */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-gradient-to-r from-dna-emerald/5 to-dna-copper/5 rounded-lg border">
@@ -50,8 +58,8 @@ const FeedSection = () => {
       </div>
 
       <FeedFilters 
-        activeFilter={activeFilter} 
-        onFilterChange={setActiveFilter}
+        activeFilter={activePillar} 
+        onFilterChange={() => {}} // Controlled by bottom nav now
         activeRegion={activeRegion}
         onRegionChange={setActiveRegion}
         onAdvancedFiltersChange={setAdvancedFilters}
@@ -83,21 +91,21 @@ const FeedSection = () => {
             <div className="text-gray-500">
               <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
               <h3 className="text-lg font-semibold mb-2">
-                {activeFilter === 'all' ? 'No posts yet' : `No ${activeFilter} posts yet`}
+                {activePillar === 'all' ? 'No posts yet' : `No ${activePillar} posts yet`}
                 {activeRegion !== 'all' && ` in ${activeRegion.replace('-', ' ')}`}
               </h3>
               <p className="text-sm">
-                {activeFilter === 'all' 
+                {activePillar === 'all' 
                   ? 'Be the first to share something with the DNA community!' 
-                  : `Be the first to post about ${activeFilter}!`
+                  : `Be the first to post about ${activePillar}!`
                 }
               </p>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {posts.map((post, index) => (
+        <div className="space-y-3 md:space-y-4">
+          {filteredPosts.map((post, index) => (
             <div key={post.id} className="relative">
               {adinEnabled && post.adin_score && post.adin_score > 0.7 && index < 3 && (
                 <div className="absolute -top-1 -left-1 z-10">
