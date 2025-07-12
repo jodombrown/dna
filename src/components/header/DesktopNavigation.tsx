@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -17,6 +18,7 @@ import { publicNavItems, phases } from './navigationConfig';
 const DesktopNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
@@ -74,12 +76,21 @@ const DesktopNavigation = () => {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <Button
-          onClick={() => navigate('/auth')}
-          className="bg-dna-emerald hover:bg-dna-forest text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2 mr-2"
-        >
-          Join DNA
-        </Button>
+        {user ? (
+          <Button
+            onClick={() => navigate('/app')}
+            className="bg-dna-emerald hover:bg-dna-forest text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2 mr-2"
+          >
+            Go to App
+          </Button>
+        ) : (
+          <Button
+            onClick={() => navigate('/auth')}
+            className="bg-dna-emerald hover:bg-dna-forest text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2 mr-2"
+          >
+            Join DNA
+          </Button>
+        )}
         
         <Button
           onClick={() => setIsSurveyOpen(true)}
