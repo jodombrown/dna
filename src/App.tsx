@@ -121,7 +121,7 @@ function App() {
               <Route path="/admin/integrations" element={<AdminPageErrorBoundary><AdminIntegrationsPanel /></AdminPageErrorBoundary>} />
               <Route path="/admin/logs" element={<AdminPageErrorBoundary><AdminAuditLogs /></AdminPageErrorBoundary>} />
               <Route path="/admin/notifications" element={<AdminPageErrorBoundary><AdminNotificationsPanel /></AdminPageErrorBoundary>} />
-              <Route path="/admin" element={<AdminPageErrorBoundary><AdminDashboard /></AdminPageErrorBoundary>} />
+              <Route path="/admin" element={<AdminPageErrorBoundary><AdminDashboardHome /></AdminPageErrorBoundary>} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
