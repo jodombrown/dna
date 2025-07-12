@@ -49,28 +49,51 @@ export const useRealtimeQuery = <T = any>(
       let query = supabase.from(table as any).select(select);
 
       if (filter) {
-        // Parse and apply filters
-        const filterParts = filter.split(',').map(f => f.trim());
-        filterParts.forEach(filterPart => {
-          const [column, operator, value] = filterPart.split(/[=.]+/);
-          if (operator === 'eq') {
-            query = query.eq(column, value);
-          } else if (operator === 'neq') {
-            query = query.neq(column, value);
-          } else if (operator === 'gt') {
-            query = query.gt(column, value);
-          } else if (operator === 'gte') {
-            query = query.gte(column, value);
-          } else if (operator === 'lt') {
-            query = query.lt(column, value);
-          } else if (operator === 'lte') {
-            query = query.lte(column, value);
-          } else if (operator === 'like') {
-            query = query.like(column, value);
-          } else if (operator === 'ilike') {
-            query = query.ilike(column, value);
-          }
-        });
+        // Parse and apply filters more robustly
+        try {
+          const filterParts = filter.split(',').map(f => f.trim()).filter(f => f.length > 0);
+          filterParts.forEach(filterPart => {
+            // Handle different filter formats more carefully
+            if (filterPart.includes('=eq.')) {
+              const [column, value] = filterPart.split('=eq.');
+              if (column && value !== undefined) {
+                query = query.eq(column, value);
+              }
+            } else if (filterPart.includes('=neq.')) {
+              const [column, value] = filterPart.split('=neq.');
+              if (column && value !== undefined) {
+                query = query.neq(column, value);
+              }
+            } else if (filterPart.includes('=is.null')) {
+              const column = filterPart.replace('=is.null', '');
+              if (column) {
+                query = query.is(column, null);
+              }
+            } else if (filterPart.includes('=gt.')) {
+              const [column, value] = filterPart.split('=gt.');
+              if (column && value !== undefined) {
+                query = query.gt(column, value);
+              }
+            } else if (filterPart.includes('=gte.')) {
+              const [column, value] = filterPart.split('=gte.');
+              if (column && value !== undefined) {
+                query = query.gte(column, value);
+              }
+            } else if (filterPart.includes('=lt.')) {
+              const [column, value] = filterPart.split('=lt.');
+              if (column && value !== undefined) {
+                query = query.lt(column, value);
+              }
+            } else if (filterPart.includes('=lte.')) {
+              const [column, value] = filterPart.split('=lte.');
+              if (column && value !== undefined) {
+                query = query.lte(column, value);
+              }
+            }
+          });
+        } catch (filterError) {
+          console.error(`Error parsing filter "${filter}":`, filterError);
+        }
       }
 
       if (orderBy) {

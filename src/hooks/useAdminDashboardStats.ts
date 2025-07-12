@@ -32,7 +32,7 @@ export function useAdminDashboardStats() {
     enabled: true
   });
 
-  const { data: flaggedContent, loading: flaggedLoading } = useRealtimeQuery('admin-flags', {
+  const { data: flaggedContent, loading: flaggedLoading, error: flaggedError } = useRealtimeQuery('admin-flags', {
     table: 'content_flags',
     select: 'id',
     filter: 'resolved_at=is.null',
@@ -52,21 +52,21 @@ export function useAdminDashboardStats() {
     enabled: true
   });
 
-  // Calculate derived stats
+  // Calculate derived stats with error handling
   const stats = useMemo(() => {
     const today = new Date();
     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const weekStart = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    // Calculate stats from real-time data
-    const totalUsers = profiles.length;
-    const newSignupsToday = profiles.filter(p => 
-      new Date(p.created_at) >= todayStart
-    ).length;
+    // Calculate stats from real-time data with fallbacks
+    const totalUsers = Array.isArray(profiles) ? profiles.length : 0;
+    const newSignupsToday = Array.isArray(profiles) ? profiles.filter(p => 
+      p.created_at && new Date(p.created_at) >= todayStart
+    ).length : 0;
     
-    const postsToday = posts.filter(p => 
-      new Date(p.created_at) >= todayStart
-    ).length;
+    const postsToday = Array.isArray(posts) ? posts.filter(p => 
+      p.created_at && new Date(p.created_at) >= todayStart
+    ).length : 0;
 
     const loading = profilesLoading || postsLoading || flaggedLoading || 
                    communitiesLoading || eventsLoading || additionalStats.loading;
@@ -76,9 +76,9 @@ export function useAdminDashboardStats() {
       newSignupsToday,
       activeUsersThisWeek: additionalStats.activeUsersThisWeek,
       postsToday,
-      flaggedContent: flaggedContent.length,
-      totalCommunities: communities.length,
-      totalEvents: events.length,
+      flaggedContent: Array.isArray(flaggedContent) ? flaggedContent.length : 0,
+      totalCommunities: Array.isArray(communities) ? communities.length : 0,
+      totalEvents: Array.isArray(events) ? events.length : 0,
       loading
     };
   }, [profiles, posts, flaggedContent, communities, events, additionalStats, 
@@ -110,8 +110,11 @@ export function useAdminDashboardStats() {
       }
     };
 
-    if (posts.length > 0) {
+    if (Array.isArray(posts) && posts.length >= 0) {
       fetchActiveUsers();
+    } else {
+      // Set default values if posts fail to load
+      setAdditionalStats(prev => ({ ...prev, loading: false }));
     }
   }, [posts]);
 
