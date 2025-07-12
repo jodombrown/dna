@@ -55,9 +55,8 @@ const AppHeader = () => {
 
   const navItems = [
     { name: 'Home', icon: Home, path: '/app' },
-    { name: 'Connect', icon: Users, path: '/connect' },
-    { name: 'Collaborate', icon: FolderOpen, path: '/collaborate' },
-    { name: 'Contribute', icon: Briefcase, path: '/contribute' },
+    { name: 'Network', icon: Users, path: '/my-network' },
+    { name: 'Communities', icon: Building, path: '/community' },
     { name: 'Projects', icon: FolderOpen, path: '/explore/projects' },
     { name: 'Messaging', icon: MessageCircle, path: '/messaging' },
   ];
@@ -197,9 +196,9 @@ const AppHeader = () => {
                   <Building className="mr-2 h-4 w-4" />
                   My Communities
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/contribute')}>
+                <DropdownMenuItem onClick={() => navigate('/leaderboard')}>
                   <Briefcase className="mr-2 h-4 w-4" />
-                  My Jobs
+                  Leaderboard
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setFeedbackOpen(true)}>

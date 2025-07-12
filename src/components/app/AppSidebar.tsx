@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -21,6 +22,7 @@ import RecentActivitySummary from './RecentActivitySummary';
 
 const AppSidebar = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { verificationStatus, loading: verificationLoading } = useVerificationStatus();
   const { summary } = useUserActivity();
 
@@ -66,7 +68,12 @@ const AppSidebar = () => {
               </div>
             )}
             
-            <Button variant="outline" size="sm" className="w-full">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full"
+              onClick={() => navigate('/profile/settings')}
+            >
               Complete Profile
             </Button>
           </div>
@@ -79,10 +86,14 @@ const AppSidebar = () => {
           <CardTitle className="text-lg">DNA Pillars</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Button variant="ghost" className="w-full justify-between text-dna-emerald hover:bg-dna-emerald/10">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-between text-dna-emerald hover:bg-dna-emerald/10"
+            onClick={() => navigate('/my-network')}
+          >
             <div className="flex items-center">
               <Users className="h-4 w-4 mr-3" />
-              Connect
+              My Network
             </div>
             {summary.pendingRequests > 0 && (
               <Badge variant="secondary" className="bg-dna-emerald text-white text-xs">
@@ -90,19 +101,27 @@ const AppSidebar = () => {
               </Badge>
             )}
           </Button>
-          <Button variant="ghost" className="w-full justify-between text-dna-copper hover:bg-dna-copper/10">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-between text-dna-copper hover:bg-dna-copper/10"
+            onClick={() => navigate('/explore/projects')}
+          >
             <div className="flex items-center">
               <Handshake className="h-4 w-4 mr-3" />
-              Collaborate
+              Projects
             </div>
             {summary.collaborateProgress > 0 && (
               <div className="w-2 h-2 bg-dna-copper rounded-full"></div>
             )}
           </Button>
-          <Button variant="ghost" className="w-full justify-between text-dna-forest hover:bg-dna-forest/10">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-between text-dna-forest hover:bg-dna-forest/10"
+            onClick={() => navigate('/leaderboard')}
+          >
             <div className="flex items-center">
               <Heart className="h-4 w-4 mr-3" />
-              Contribute
+              Leaderboard
             </div>
             {summary.contributeProgress > 0 && (
               <div className="w-2 h-2 bg-dna-forest rounded-full"></div>
@@ -125,7 +144,12 @@ const AppSidebar = () => {
           <p className="text-sm text-gray-500 text-center py-4">
             Join communities to connect with like-minded professionals
           </p>
-          <Button variant="outline" size="sm" className="w-full">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full"
+            onClick={() => navigate('/community')}
+          >
             Browse Communities
           </Button>
         </CardContent>

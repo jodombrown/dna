@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import MobileSheetMenu from './MobileSheetMenu';
 
 const MobileNavigation = () => {
+  const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);

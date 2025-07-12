@@ -5,6 +5,7 @@ import { Menu } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useAuth } from '@/contexts/AuthContext';
 import { publicNavItems, phases } from './navigationConfig';
 
 interface MobileSheetMenuProps {
@@ -22,6 +23,7 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const currentPath = location.pathname;
 
   // Filter out current page from nav items
@@ -64,16 +66,29 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
                 </Button>
               ))}
               
-              <Button
-                variant="ghost"
-                className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                onClick={() => {
-                  navigate('/auth');
-                  onOpenChange(false);
-                }}
-              >
-                Join DNA
-              </Button>
+              {user ? (
+                <Button
+                  variant="ghost"
+                  className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                  onClick={() => {
+                    navigate('/app');
+                    onOpenChange(false);
+                  }}
+                >
+                  Go to App
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                  onClick={() => {
+                    navigate('/auth');
+                    onOpenChange(false);
+                  }}
+                >
+                  Join DNA
+                </Button>
+              )}
               
               <Button
                 variant="ghost"
