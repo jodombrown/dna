@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AdminAuthWrapper } from '@/components/admin/AdminAuthWrapper';
+import AdminAuthWrapper from '@/components/admin/AdminAuthWrapper';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
