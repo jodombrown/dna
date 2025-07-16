@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -48,6 +47,9 @@ import AdminAuditLogs from "./pages/AdminAuditLogs";
 import AdminNotificationsPanel from "./pages/AdminNotificationsPanel";
 import AdminGrowthDashboard from "./pages/AdminGrowthDashboard";
 import AdminIntegrationsPanel from "./pages/AdminIntegrationsPanel";
+import AdminCommunitiesPage from "./pages/AdminCommunitiesPage";
+import AdminModerationPage from "./pages/AdminModerationPage";
+import AdminEventsPage from "./pages/AdminEventsPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import ProtectedRoute from "./components/app/ProtectedRoute";
 
@@ -120,6 +122,9 @@ function App() {
               <Route path="/admin/integrations" element={<AdminPageErrorBoundary><AdminIntegrationsPanel /></AdminPageErrorBoundary>} />
               <Route path="/admin/logs" element={<AdminPageErrorBoundary><AdminAuditLogs /></AdminPageErrorBoundary>} />
               <Route path="/admin/notifications" element={<AdminPageErrorBoundary><AdminNotificationsPanel /></AdminPageErrorBoundary>} />
+              <Route path="/admin/communities" element={<AdminPageErrorBoundary><AdminCommunitiesPage /></AdminPageErrorBoundary>} />
+              <Route path="/admin/moderation" element={<AdminPageErrorBoundary><AdminModerationPage /></AdminPageErrorBoundary>} />
+              <Route path="/admin/events" element={<AdminPageErrorBoundary><AdminEventsPage /></AdminPageErrorBoundary>} />
               <Route path="/admin" element={<AdminPageErrorBoundary><AdminDashboard /></AdminPageErrorBoundary>} />
               
               <Route path="*" element={<NotFound />} />
