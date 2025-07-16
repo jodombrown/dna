@@ -49,51 +49,28 @@ export const useRealtimeQuery = <T = any>(
       let query = supabase.from(table as any).select(select);
 
       if (filter) {
-        // Parse and apply filters more robustly
-        try {
-          const filterParts = filter.split(',').map(f => f.trim()).filter(f => f.length > 0);
-          filterParts.forEach(filterPart => {
-            // Handle different filter formats more carefully
-            if (filterPart.includes('=eq.')) {
-              const [column, value] = filterPart.split('=eq.');
-              if (column && value !== undefined) {
-                query = query.eq(column, value);
-              }
-            } else if (filterPart.includes('=neq.')) {
-              const [column, value] = filterPart.split('=neq.');
-              if (column && value !== undefined) {
-                query = query.neq(column, value);
-              }
-            } else if (filterPart.includes('=is.null')) {
-              const column = filterPart.replace('=is.null', '');
-              if (column) {
-                query = query.is(column, null);
-              }
-            } else if (filterPart.includes('=gt.')) {
-              const [column, value] = filterPart.split('=gt.');
-              if (column && value !== undefined) {
-                query = query.gt(column, value);
-              }
-            } else if (filterPart.includes('=gte.')) {
-              const [column, value] = filterPart.split('=gte.');
-              if (column && value !== undefined) {
-                query = query.gte(column, value);
-              }
-            } else if (filterPart.includes('=lt.')) {
-              const [column, value] = filterPart.split('=lt.');
-              if (column && value !== undefined) {
-                query = query.lt(column, value);
-              }
-            } else if (filterPart.includes('=lte.')) {
-              const [column, value] = filterPart.split('=lte.');
-              if (column && value !== undefined) {
-                query = query.lte(column, value);
-              }
-            }
-          });
-        } catch (filterError) {
-          console.error(`Error parsing filter "${filter}":`, filterError);
-        }
+        // Parse and apply filters
+        const filterParts = filter.split(',').map(f => f.trim());
+        filterParts.forEach(filterPart => {
+          const [column, operator, value] = filterPart.split(/[=.]+/);
+          if (operator === 'eq') {
+            query = query.eq(column, value);
+          } else if (operator === 'neq') {
+            query = query.neq(column, value);
+          } else if (operator === 'gt') {
+            query = query.gt(column, value);
+          } else if (operator === 'gte') {
+            query = query.gte(column, value);
+          } else if (operator === 'lt') {
+            query = query.lt(column, value);
+          } else if (operator === 'lte') {
+            query = query.lte(column, value);
+          } else if (operator === 'like') {
+            query = query.like(column, value);
+          } else if (operator === 'ilike') {
+            query = query.ilike(column, value);
+          }
+        });
       }
 
       if (orderBy) {
@@ -121,79 +98,59 @@ export const useRealtimeQuery = <T = any>(
     if (!enabled || subscriptionRef.current) return;
 
     const channelName = `realtime-query-${queryKey}`;
-    
-    try {
-      const channel = getOrCreateChannel(channelName);
+    const channel = getOrCreateChannel(channelName);
 
-      // Check if already subscribed to prevent multiple subscriptions
-      const existingSubscription = (channel as any)._subscriptions?.find(
-        (sub: any) => sub.type === 'postgres_changes'
-      );
-      
-      if (existingSubscription) {
-        console.log(`Channel ${channelName} already has subscription, skipping`);
-        subscriptionRef.current = true;
-        return;
-      }
-
-      // Subscribe to all changes for this table
-      channel
-        .on(
-          'postgres_changes' as any,
-          {
-            event: '*',
-            schema: 'public',
-            table,
-            ...(filter && { filter })
-          },
-          (payload) => {
-            console.log(`Realtime update for ${table}:`, payload);
-            
-            if (payload.eventType === 'INSERT') {
-              const newRecord = payload.new as T;
-              setData(current => {
-                // Check if record already exists to prevent duplicates
-                if (current.some((item: any) => item.id === (newRecord as any).id)) {
-                  return current;
-                }
-                
-                // Add new record based on sort order
-                if (orderBy?.ascending === false) {
-                  return [newRecord, ...current];
-                } else {
-                  return [...current, newRecord];
-                }
-              });
-            } else if (payload.eventType === 'UPDATE') {
-              const updatedRecord = payload.new as T;
-              setData(current =>
-                current.map(item =>
-                  (item as any).id === (updatedRecord as any).id ? updatedRecord : item
-                )
-              );
-            } else if (payload.eventType === 'DELETE') {
-              const deletedRecord = payload.old as T;
-              setData(current =>
-                current.filter(item => (item as any).id !== (deletedRecord as any).id)
-              );
-            }
+    // Subscribe to all changes for this table
+    channel
+      .on(
+        'postgres_changes' as any,
+        {
+          event: '*',
+          schema: 'public',
+          table,
+          ...(filter && { filter })
+        },
+        (payload) => {
+          console.log(`Realtime update for ${table}:`, payload);
+          
+          if (payload.eventType === 'INSERT') {
+            const newRecord = payload.new as T;
+            setData(current => {
+              // Check if record already exists to prevent duplicates
+              if (current.some((item: any) => item.id === (newRecord as any).id)) {
+                return current;
+              }
+              
+              // Add new record based on sort order
+              if (orderBy?.ascending === false) {
+                return [newRecord, ...current];
+              } else {
+                return [...current, newRecord];
+              }
+            });
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedRecord = payload.new as T;
+            setData(current =>
+              current.map(item =>
+                (item as any).id === (updatedRecord as any).id ? updatedRecord : item
+              )
+            );
+          } else if (payload.eventType === 'DELETE') {
+            const deletedRecord = payload.old as T;
+            setData(current =>
+              current.filter(item => (item as any).id !== (deletedRecord as any).id)
+            );
           }
-        )
-        .subscribe((status) => {
-          console.log(`Subscription status for ${channelName}:`, status);
-        });
+        }
+      )
+      .subscribe();
 
-      subscriptionRef.current = true;
+    subscriptionRef.current = true;
 
-      return () => {
-        console.log(`Cleaning up subscription for ${channelName}`);
-        removeChannel(channelName);
-        subscriptionRef.current = false;
-      };
-    } catch (error) {
-      console.error(`Error setting up subscription for ${channelName}:`, error);
-      return () => {};
-    }
+    return () => {
+      removeChannel(channelName);
+      subscriptionRef.current = false;
+    };
   }, [enabled, queryKey, table, filter, orderBy, getOrCreateChannel, removeChannel]);
 
   // Initial fetch and setup realtime

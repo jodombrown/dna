@@ -1,159 +1,97 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('./styles/enhanced-interactions.css');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* DNA Brand Colors (HSL format) */
-:root {
-  /* Primary DNA Colors */
-  --dna-white: 0 0% 100%;
-  --dna-mint: 138 35% 95%;
-  --dna-emerald: 138 76% 29%;
-  --dna-forest: 138 100% 12%;
-  --dna-copper: 24 85% 60%;
-  --dna-gold: 38 75% 54%;
-  --dna-charcoal: 200 6% 10%;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-  /* Background and Surface Colors */
-  --background: var(--dna-white);
-  --foreground: var(--dna-charcoal);
-  --card: var(--dna-white);
-  --card-foreground: var(--dna-charcoal);
-  --popover: var(--dna-white);
-  --popover-foreground: var(--dna-charcoal);
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
-  /* Primary Brand Colors */
-  --primary: var(--dna-emerald);
-  --primary-foreground: var(--dna-white);
-  --primary-glow: 138 76% 45%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-  /* Secondary and Accent Colors */
-  --secondary: var(--dna-mint);
-  --secondary-foreground: var(--dna-forest);
-  --accent: var(--dna-mint);
-  --accent-foreground: var(--dna-forest);
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
-  /* Muted Colors */
-  --muted: 210 40% 96%;
-  --muted-foreground: 215.4 16.3% 46.9%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-  /* Border and Input Colors */
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: var(--dna-emerald);
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-  /* Status Colors */
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: var(--dna-white);
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-  /* Chart Colors */
-  --chart-1: var(--dna-emerald);
-  --chart-2: var(--dna-copper);
-  --chart-3: var(--dna-gold);
-  --chart-4: var(--dna-forest);
-  --chart-5: var(--dna-mint);
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, hsl(var(--dna-emerald)), hsl(var(--primary-glow)));
-  --gradient-secondary: linear-gradient(135deg, hsl(var(--dna-copper)), hsl(var(--dna-gold)));
-  --gradient-subtle: linear-gradient(180deg, hsl(var(--dna-mint)), hsl(var(--dna-white)));
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
 
-  /* Shadows */
-  --shadow-elegant: 0 10px 30px -10px hsl(var(--dna-emerald) / 0.15);
-  --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.2);
-  --shadow-card: 0 4px 6px -1px hsl(var(--dna-charcoal) / 0.1);
+    --radius: 0.5rem;
 
-  /* Animations */
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
 
-  /* Sidebar Variables */
-  --sidebar-background: var(--dna-white);
-  --sidebar-foreground: var(--dna-charcoal);
-  --sidebar-primary: var(--dna-emerald);
-  --sidebar-primary-foreground: var(--dna-white);
-  --sidebar-accent: var(--dna-mint);
-  --sidebar-accent-foreground: var(--dna-forest);
-  --sidebar-border: 214.3 31.8% 91.4%;
-  --sidebar-ring: var(--dna-emerald);
-}
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-/* Dark mode adjustments */
-.dark {
-  --background: var(--dna-charcoal);
-  --foreground: var(--dna-white);
-  --card: 200 6% 12%;
-  --card-foreground: var(--dna-white);
-  --popover: 200 6% 12%;
-  --popover-foreground: var(--dna-white);
-  --primary: var(--dna-emerald);
-  --primary-foreground: var(--dna-white);
-  --secondary: 200 6% 15%;
-  --secondary-foreground: var(--dna-white);
-  --muted: 200 6% 15%;
-  --muted-foreground: 215.4 16.3% 65%;
-  --accent: 200 6% 15%;
-  --accent-foreground: var(--dna-white);
-  --border: 200 6% 20%;
-  --input: 200 6% 20%;
-  --ring: var(--dna-emerald);
-  --sidebar-background: 200 6% 12%;
-  --sidebar-foreground: var(--dna-white);
-  --sidebar-primary: var(--dna-emerald);
-  --sidebar-primary-foreground: var(--dna-white);
-  --sidebar-accent: 200 6% 15%;
-  --sidebar-accent-foreground: var(--dna-white);
-  --sidebar-border: 200 6% 20%;
-  --sidebar-ring: var(--dna-emerald);
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-  
+
   body {
-    @apply bg-background text-foreground font-sans;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-
-  /* Improved Mobile Typography */
-  @media (max-width: 768px) {
-    body {
-      @apply text-sm leading-relaxed;
-    }
-    
-    h1 {
-      @apply text-xl font-bold;
-    }
-    
-    h2 {
-      @apply text-lg font-semibold;
-    }
-    
-    h3 {
-      @apply text-base font-medium;
-    }
-    
-    .card {
-      @apply text-sm;
-    }
-    
-    .button {
-      @apply text-sm px-3 py-2;
-    }
-  }
-
-  /* Enhanced Mobile Touch Targets */
-  @media (max-width: 768px) {
-    button, .button, [role="button"] {
-      @apply min-h-[44px] min-w-[44px];
-    }
-    
-    input, textarea, select {
-      @apply text-base; /* Prevents zoom on iOS */
-    }
+    @apply bg-background text-foreground;
   }
 
   /* Smooth scrolling for all pages */
@@ -167,7 +105,7 @@
   }
   
   *:focus-visible {
-    outline: 2px solid hsl(var(--dna-emerald));
+    outline: 2px solid hsl(var(--dna-emerald, 69 71% 59%));
     outline-offset: 2px;
   }
 
@@ -183,103 +121,8 @@
   }
 }
 
-@layer components {
-  /* Animation Classes */
-  .animate-slide-in-bottom {
-    animation: slideInBottom 0.3s ease-out;
-  }
-  
-  @keyframes slideInBottom {
-    from {
-      transform: translateY(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  /* Mobile-Optimized Spacing */
-  .mobile-padding {
-    @apply p-3 md:p-6;
-  }
-  
-  .mobile-margin {
-    @apply m-3 md:m-6;
-  }
-  
-  .mobile-gap {
-    @apply gap-3 md:gap-6;
-  }
-
-  /* Enhanced Interactive Elements */
-  .hover-scale {
-    @apply transition-transform duration-200 hover:scale-105 active:scale-95;
-  }
-  
-  .touch-target {
-    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
-  }
-
-  /* Custom Scrollbar */
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--dna-emerald) / 0.3) transparent;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--dna-emerald) / 0.3);
-    border-radius: 3px;
-  }
-}
-
+/* Mobile-first responsive design utilities */
 @layer utilities {
-  /* DNA Brand Color Utilities */
-  .text-dna-emerald { color: hsl(var(--dna-emerald)); }
-  .text-dna-forest { color: hsl(var(--dna-forest)); }
-  .text-dna-copper { color: hsl(var(--dna-copper)); }
-  .text-dna-gold { color: hsl(var(--dna-gold)); }
-  .text-dna-mint { color: hsl(var(--dna-mint)); }
-  .text-dna-white { color: hsl(var(--dna-white)); }
-  .text-dna-charcoal { color: hsl(var(--dna-charcoal)); }
-  
-  .bg-dna-emerald { background-color: hsl(var(--dna-emerald)); }
-  .bg-dna-forest { background-color: hsl(var(--dna-forest)); }
-  .bg-dna-copper { background-color: hsl(var(--dna-copper)); }
-  .bg-dna-gold { background-color: hsl(var(--dna-gold)); }
-  .bg-dna-mint { background-color: hsl(var(--dna-mint)); }
-  .bg-dna-white { background-color: hsl(var(--dna-white)); }
-  .bg-dna-charcoal { background-color: hsl(var(--dna-charcoal)); }
-  
-  .border-dna-emerald { border-color: hsl(var(--dna-emerald)); }
-  .border-dna-forest { border-color: hsl(var(--dna-forest)); }
-  .border-dna-copper { border-color: hsl(var(--dna-copper)); }
-  .border-dna-gold { border-color: hsl(var(--dna-gold)); }
-  .border-dna-mint { border-color: hsl(var(--dna-mint)); }
-
-  /* Responsive Typography */
-  .text-responsive-xs { @apply text-xs md:text-sm; }
-  .text-responsive-sm { @apply text-sm md:text-base; }
-  .text-responsive-base { @apply text-base md:text-lg; }
-  .text-responsive-lg { @apply text-lg md:text-xl; }
-  .text-responsive-xl { @apply text-xl md:text-2xl; }
-  
-  /* Mobile-First Spacing */
-  .space-mobile { @apply space-y-3 md:space-y-6; }
-  .gap-mobile { @apply gap-3 md:gap-6; }
-  .p-mobile { @apply p-3 md:p-6; }
-  .m-mobile { @apply m-3 md:m-6; }
-
-  /* Mobile-first responsive design utilities */
   .mobile-container {
     @apply px-4 sm:px-6 lg:px-8;
   }
@@ -303,6 +146,29 @@
   .mobile-grid {
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8;
   }
+}
+
+/* Custom scrollbar styles */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203 213 225) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgb(203 213 225);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(148 163 184);
 }
 
 /* Column layout fixes */

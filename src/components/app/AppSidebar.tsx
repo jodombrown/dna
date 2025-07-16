@@ -1,9 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { 
   Users, 
   Handshake, 
@@ -14,22 +12,15 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useVerificationStatus } from '@/hooks/useVerification';
-import { useUserActivity } from '@/hooks/useUserActivity';
 import VerifiedContributorBadge from './VerifiedContributorBadge';
 import ContributorVerificationModal from './ContributorVerificationModal';
-import QuickActions from './QuickActions';
-import RecentActivitySummary from './RecentActivitySummary';
 
 const AppSidebar = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const { verificationStatus, loading: verificationLoading } = useVerificationStatus();
-  const { summary } = useUserActivity();
 
   return (
     <div className="space-y-4">
-      {/* Quick Actions - New Section */}
-      <QuickActions />
       {/* Profile Snapshot */}
       <Card>
         <CardContent className="pt-6">
@@ -68,12 +59,7 @@ const AppSidebar = () => {
               </div>
             )}
             
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full"
-              onClick={() => navigate('/profile/settings')}
-            >
+            <Button variant="outline" size="sm" className="w-full">
               Complete Profile
             </Button>
           </div>
@@ -86,46 +72,17 @@ const AppSidebar = () => {
           <CardTitle className="text-lg">DNA Pillars</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Button 
-            variant="ghost" 
-            className="w-full justify-between text-dna-emerald hover:bg-dna-emerald/10"
-            onClick={() => navigate('/my-network')}
-          >
-            <div className="flex items-center">
-              <Users className="h-4 w-4 mr-3" />
-              My Network
-            </div>
-            {summary.pendingRequests > 0 && (
-              <Badge variant="secondary" className="bg-dna-emerald text-white text-xs">
-                {summary.pendingRequests}
-              </Badge>
-            )}
+          <Button variant="ghost" className="w-full justify-start text-dna-emerald hover:bg-dna-emerald/10">
+            <Users className="h-4 w-4 mr-3" />
+            Connect
           </Button>
-          <Button 
-            variant="ghost" 
-            className="w-full justify-between text-dna-copper hover:bg-dna-copper/10"
-            onClick={() => navigate('/explore/projects')}
-          >
-            <div className="flex items-center">
-              <Handshake className="h-4 w-4 mr-3" />
-              Projects
-            </div>
-            {summary.collaborateProgress > 0 && (
-              <div className="w-2 h-2 bg-dna-copper rounded-full"></div>
-            )}
+          <Button variant="ghost" className="w-full justify-start text-dna-copper hover:bg-dna-copper/10">
+            <Handshake className="h-4 w-4 mr-3" />
+            Collaborate
           </Button>
-          <Button 
-            variant="ghost" 
-            className="w-full justify-between text-dna-forest hover:bg-dna-forest/10"
-            onClick={() => navigate('/leaderboard')}
-          >
-            <div className="flex items-center">
-              <Heart className="h-4 w-4 mr-3" />
-              Leaderboard
-            </div>
-            {summary.contributeProgress > 0 && (
-              <div className="w-2 h-2 bg-dna-forest rounded-full"></div>
-            )}
+          <Button variant="ghost" className="w-full justify-start text-dna-forest hover:bg-dna-forest/10">
+            <Heart className="h-4 w-4 mr-3" />
+            Contribute
           </Button>
         </CardContent>
       </Card>
@@ -144,19 +101,11 @@ const AppSidebar = () => {
           <p className="text-sm text-gray-500 text-center py-4">
             Join communities to connect with like-minded professionals
           </p>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full"
-            onClick={() => navigate('/community')}
-          >
+          <Button variant="outline" size="sm" className="w-full">
             Browse Communities
           </Button>
         </CardContent>
       </Card>
-
-      {/* Recent Activity Summary - New Section */}
-      <RecentActivitySummary />
     </div>
   );
 };

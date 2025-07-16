@@ -40,8 +40,9 @@ const AppMobileMenu: React.FC<AppMobileMenuProps> = ({
 
   const navItems = [
     { name: 'Home', icon: Home, path: '/app' },
-    { name: 'My Network', icon: Users, path: '/my-network' },
-    { name: 'Communities', icon: Building, path: '/community' },
+    { name: 'Connect', icon: Users, path: '/connect' },
+    { name: 'Collaborate', icon: FolderOpen, path: '/collaborate' },
+    { name: 'Contribute', icon: Briefcase, path: '/contribute' },
     { name: 'Projects', icon: FolderOpen, path: '/explore/projects' },
     { name: 'Messaging', icon: MessageCircle, path: '/messaging' },
   ];
@@ -50,8 +51,8 @@ const AppMobileMenu: React.FC<AppMobileMenuProps> = ({
     { name: 'View Profile', icon: User, path: '/profile' },
     { name: 'Settings & Privacy', icon: Settings, path: '/profile/settings' },
     { name: 'My Posts & Activity', icon: FileText, path: '/app' },
-    { name: 'Search', icon: Bell, path: '/search' },
-    { name: 'Leaderboard', icon: Briefcase, path: '/leaderboard' },
+    { name: 'My Communities', icon: Building, path: '/community' },
+    { name: 'My Jobs', icon: Briefcase, path: '/contribute' },
   ];
 
   const handleNavClick = (path: string) => {
