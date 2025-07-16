@@ -80,4 +80,6 @@ const AdminAuthWrapper: React.FC<AdminAuthWrapperProps> = ({
   return <>{children}</>;
 };
 
+// Export the component as default and named export
+export { AdminAuthWrapper };
 export default AdminAuthWrapper;
