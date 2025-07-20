@@ -15,9 +15,6 @@ const AppDashboard = () => {
   const navigate = useNavigate();
   const [userExists, setUserExists] = useState<boolean | null>(null);
   const [checkingUser, setCheckingUser] = useState(true);
-  
-  // MUST call hooks before any early returns to avoid hook order violations
-  const { leftSidebarOpen, rightSidebarOpen, toggleLeftSidebar, toggleRightSidebar } = useLayoutStore();
 
   useEffect(() => {
     if (loading) return;
@@ -53,10 +50,10 @@ const AppDashboard = () => {
   }, [user, loading, navigate]);
 
   useEffect(() => {
-    if (!checkingUser && userExists === false && user) {
+    if (!checkingUser && userExists === false) {
       navigate('/onboarding');
     }
-  }, [checkingUser, userExists, navigate, user]);
+  }, [checkingUser, userExists, navigate]);
 
   if (loading || checkingUser) {
     return (
@@ -73,6 +70,8 @@ const AppDashboard = () => {
   if (!user || userExists === false) {
     return null; // Will redirect
   }
+
+  const { leftSidebarOpen, rightSidebarOpen, toggleLeftSidebar, toggleRightSidebar } = useLayoutStore();
 
   return (
     <div className="min-h-screen bg-dna-mint/20 flex flex-col">

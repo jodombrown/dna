@@ -43,7 +43,7 @@ export const AppPageErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ 
       fallbackTitle="App Error"
       fallbackMessage="The application encountered an error. Your data is safe, please try refreshing the page."
       showBackButton={true}
-      onBack={() => window.location.href = '/'}
+      onBack={() => window.location.href = '/app'}
     >
       {children}
     </PageErrorBoundary>
