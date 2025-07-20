@@ -5,7 +5,8 @@ import { Menu } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { publicNavItems, phases } from './navigationConfig';
+import { publicNavItems, appNavItems } from './navigationConfig';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MobileSheetMenuProps {
   isOpen: boolean;
@@ -22,10 +23,12 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const currentPath = location.pathname;
 
-  // Filter out current page from nav items
-  const filteredNavItems = publicNavItems.filter(item => item.path !== currentPath);
+  // Use app nav for authenticated users, public nav for guests
+  const navItems = user ? appNavItems : publicNavItems;
+  const filteredNavItems = navItems.filter(item => item.path !== currentPath);
 
   const handleNavClick = (item: { name: string; path: string }) => {
     navigate(item.path);
@@ -64,54 +67,62 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
                 </Button>
               ))}
               
-              <Button
-                variant="ghost"
-                className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                onClick={() => {
-                  navigate('/auth');
-                  onOpenChange(false);
-                }}
-              >
-                Join DNA
-              </Button>
+              {!user && (
+                <>
+                  <Button
+                    variant="ghost"
+                    className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                    onClick={() => {
+                      navigate('/auth');
+                      onOpenChange(false);
+                    }}
+                  >
+                    Join DNA
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    className="justify-start text-left text-dna-copper hover:bg-dna-copper/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                    onClick={onSurveyClick}
+                  >
+                    Take Survey
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                    onClick={onBetaSignup}
+                  >
+                    Join Beta Program
+                  </Button>
+                </>
+              )}
               
-              <Button
-                variant="ghost"
-                className="justify-start text-left text-dna-copper hover:bg-dna-copper/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                onClick={onSurveyClick}
-              >
-                Take Survey
-              </Button>
-              
-              <Button
-                variant="ghost"
-                className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                onClick={onBetaSignup}
-              >
-                Join Beta Program
-              </Button>
-              
-              <div className="border-t pt-4 mt-4">
-                <p className="text-sm text-gray-600 mb-4">Development Phases</p>
-                <div className="space-y-2">
-                  {phases.map((phase) => (
-                    <Button
-                      key={phase.path}
-                      variant="ghost"
-                      className="justify-start text-left w-full hover:bg-dna-mint/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                      onClick={() => {
-                        navigate(phase.path);
-                        onOpenChange(false);
-                      }}
-                    >
-                      <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">
-                        {phase.phase}
-                      </div>
-                      {phase.name}
-                    </Button>
-                  ))}
-                </div>
-              </div>
+              {user && (
+                <>
+                  <Button
+                    variant="ghost"
+                    className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                    onClick={() => {
+                      navigate('/profile');
+                      onOpenChange(false);
+                    }}
+                  >
+                    My Profile
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    className="justify-start text-left text-dna-copper hover:bg-dna-copper/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                    onClick={() => {
+                      navigate('/messaging');
+                      onOpenChange(false);
+                    }}
+                  >
+                    Messages
+                  </Button>
+                </>
+              )}
             </nav>
           </ScrollArea>
         </div>

@@ -1,9 +1,6 @@
 
 export const publicNavItems = [
   { name: 'About Us', path: '/about' },
-  { name: 'Connect', path: '/connect' },
-  { name: 'Collaborate', path: '/collaborate' },
-  { name: 'Contribute', path: '/contribute' },
   { name: 'Contact', path: '/contact' },
 ];
 
@@ -24,9 +21,9 @@ export const phases = [
   { name: 'Go-to-Market', path: '/phase/go-to-market', phase: 6, timeline: 'Sep 2026+' },
 ];
 
-// Example pages for landing page showcase
-export const examplePages = [
-  { name: 'Connect', path: '/connect' },
-  { name: 'Collaborate', path: '/collaborate' },
-  { name: 'Contribute', path: '/contribute' },
+// App navigation for authenticated users - redirect to actual app features
+export const appNavItems = [
+  { name: 'Connect', path: '/app' },
+  { name: 'Collaborate', path: '/explore/projects' },
+  { name: 'Contribute', path: '/explore/projects' },
 ];

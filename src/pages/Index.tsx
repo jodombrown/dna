@@ -10,10 +10,30 @@ import PrototypeBanner from '@/components/PrototypeBanner';
 import WaitlistSection from '@/components/WaitlistSection';
 import WaitlistPopup from '@/components/WaitlistPopup';
 import CommunitySpotlight from '@/components/community/CommunitySpotlight';
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const Index = () => {
   useScrollToTop();
   const [showWaitlistDialog, setShowWaitlistDialog] = useState(false);
+  const { user, loading } = useAuth();
+
+  // Redirect authenticated users to app dashboard
+  if (!loading && user) {
+    return <Navigate to="/app" replace />;
+  }
+
+  // Show loading for auth check
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-3 border-dna-emerald mx-auto mb-4"></div>
+          <p className="text-dna-forest font-medium">Loading DNA Network...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">

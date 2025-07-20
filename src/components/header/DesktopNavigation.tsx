@@ -12,19 +12,22 @@ import {
 } from '@/components/ui/navigation-menu';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
-import { publicNavItems, phases } from './navigationConfig';
+import { publicNavItems, appNavItems } from './navigationConfig';
+import { useAuth } from '@/contexts/AuthContext';
 
 const DesktopNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   // Get current page to hide active nav item
   const currentPath = location.pathname;
 
-  // Filter out current page from nav items
-  const filteredNavItems = publicNavItems.filter(item => item.path !== currentPath);
+  // Use app nav for authenticated users, public nav for guests
+  const navItems = user ? appNavItems : publicNavItems;
+  const filteredNavItems = navItems.filter(item => item.path !== currentPath);
 
   const handleNavClick = (item: { name: string; path: string }) => {
     navigate(item.path);
@@ -44,49 +47,41 @@ const DesktopNavigation = () => {
           </Button>
         ))}
         
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-dna-forest hover:bg-dna-mint/30 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2 transition-all duration-200">
-                Phases
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-6 w-[400px]">
-                  {phases.map((phase) => (
-                    <NavigationMenuLink key={phase.path} asChild>
-                      <button
-                        onClick={() => navigate(phase.path)}
-                        className="flex items-center space-x-3 p-3 rounded-md hover:bg-dna-mint/30 hover:border-l-4 hover:border-dna-copper text-left w-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-copper/50 focus:ring-offset-2"
-                      >
-                        <div className="w-8 h-8 bg-dna-copper text-white rounded-full flex items-center justify-center text-sm font-bold">
-                          {phase.phase}
-                        </div>
-                        <div>
-                          <div className="font-medium text-dna-forest">{phase.name}</div>
-                          <div className="text-sm text-gray-600">Phase {phase.phase} of our development journey</div>
-                        </div>
-                      </button>
-                    </NavigationMenuLink>
-                  ))}
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
+        {!user && (
+          <>
+            <Button
+              onClick={() => navigate('/auth')}
+              className="bg-dna-emerald hover:bg-dna-forest text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2 mr-2"
+            >
+              Join DNA
+            </Button>
+            
+            <Button
+              onClick={() => setIsSurveyOpen(true)}
+              className="bg-dna-copper hover:bg-dna-gold text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-copper/50 focus:ring-offset-2"
+            >
+              Take Survey
+            </Button>
+          </>
+        )}
 
-        <Button
-          onClick={() => navigate('/auth')}
-          className="bg-dna-emerald hover:bg-dna-forest text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2 mr-2"
-        >
-          Join DNA
-        </Button>
-        
-        <Button
-          onClick={() => setIsSurveyOpen(true)}
-          className="bg-dna-copper hover:bg-dna-gold text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-copper/50 focus:ring-offset-2"
-        >
-          Take Survey
-        </Button>
+        {user && (
+          <>
+            <Button
+              onClick={() => navigate('/app')}
+              className="bg-dna-emerald hover:bg-dna-forest text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald/50 focus:ring-offset-2 mr-2"
+            >
+              Dashboard
+            </Button>
+            
+            <Button
+              onClick={() => navigate('/profile')}
+              className="bg-dna-copper hover:bg-dna-gold text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-copper/50 focus:ring-offset-2"
+            >
+              Profile
+            </Button>
+          </>
+        )}
       </nav>
 
       <SurveyDialog 
