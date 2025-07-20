@@ -240,7 +240,7 @@ export type Database = {
       }
       comments: {
         Row: {
-          author_id: string | null
+          author_id: string
           content: string
           created_at: string | null
           id: string
@@ -249,7 +249,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          author_id?: string | null
+          author_id: string
           content: string
           created_at?: string | null
           id?: string
@@ -258,7 +258,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          author_id?: string | null
+          author_id?: string
           content?: string
           created_at?: string | null
           id?: string
@@ -295,7 +295,7 @@ export type Database = {
           category: string | null
           cover_image_url: string | null
           created_at: string
-          created_by: string | null
+          created_by: string
           description: string | null
           id: string
           image_url: string | null
@@ -316,7 +316,7 @@ export type Database = {
           category?: string | null
           cover_image_url?: string | null
           created_at?: string
-          created_by?: string | null
+          created_by?: string
           description?: string | null
           id?: string
           image_url?: string | null
@@ -337,7 +337,7 @@ export type Database = {
           category?: string | null
           cover_image_url?: string | null
           created_at?: string
-          created_by?: string | null
+          created_by?: string
           description?: string | null
           id?: string
           image_url?: string | null
@@ -805,7 +805,7 @@ export type Database = {
           attendee_count: number | null
           banner_url: string | null
           created_at: string
-          created_by: string | null
+          created_by: string
           date_time: string | null
           description: string | null
           id: string
@@ -823,7 +823,7 @@ export type Database = {
           attendee_count?: number | null
           banner_url?: string | null
           created_at?: string
-          created_by?: string | null
+          created_by?: string
           date_time?: string | null
           description?: string | null
           id?: string
@@ -841,7 +841,7 @@ export type Database = {
           attendee_count?: number | null
           banner_url?: string | null
           created_at?: string
-          created_by?: string | null
+          created_by?: string
           date_time?: string | null
           description?: string | null
           id?: string
@@ -973,7 +973,7 @@ export type Database = {
       initiatives: {
         Row: {
           created_at: string | null
-          creator_id: string | null
+          creator_id: string
           description: string | null
           id: string
           impact_area: string | null
@@ -982,7 +982,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          creator_id?: string | null
+          creator_id: string
           description?: string | null
           id?: string
           impact_area?: string | null
@@ -991,7 +991,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          creator_id?: string | null
+          creator_id?: string
           description?: string | null
           id?: string
           impact_area?: string | null
@@ -1295,7 +1295,7 @@ export type Database = {
       }
       posts: {
         Row: {
-          author_id: string | null
+          author_id: string
           content: string | null
           created_at: string | null
           hashtags: string[] | null
@@ -1306,7 +1306,7 @@ export type Database = {
           visibility: string | null
         }
         Insert: {
-          author_id?: string | null
+          author_id: string
           content?: string | null
           created_at?: string | null
           hashtags?: string[] | null
@@ -1317,7 +1317,7 @@ export type Database = {
           visibility?: string | null
         }
         Update: {
-          author_id?: string | null
+          author_id?: string
           content?: string | null
           created_at?: string | null
           hashtags?: string[] | null
