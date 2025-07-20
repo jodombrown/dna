@@ -58,109 +58,89 @@ import ProtectedRoute from "./components/app/ProtectedRoute";
 const queryClient = new QueryClient();
 
 function App() {
-  try {
-    console.log('App starting...');
-    return (
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <HelmetProvider>
-            <AuthProvider>
-              <RealtimeProvider>
-                <TooltipProvider>
-                  <Toaster />
-                  <Sonner />
-                  <BrowserRouter>
-                    <Routes>
-                      {/* Public Routes */}
-                      <Route path="/" element={<Index />} />
-                      <Route path="/auth" element={<AuthPage />} />
-                      <Route path="/onboarding" element={<OnboardingPage />} />
-                      <Route path="/contribute" element={<ContributeExample />} />
-                      <Route path="/collaborate" element={<CollaborationsExample />} />
-                      <Route path="/connect" element={<ConnectExample />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/phases" element={<Phases />} />
-                      <Route path="/help" element={<HelpPage />} />
-                      <Route path="/invite" element={<InvitePage />} />
-                      
-                      {/* Phase Routes */}
-                      <Route path="/phase/market-research" element={<MarketResearchPhase />} />
-                      <Route path="/phase/prototyping" element={<PrototypingPhase />} />
-                      <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
-                      <Route path="/phase/mvp" element={<MvpPhase />} />
-                      <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
-                      <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
-                      
-                      {/* Authenticated Routes */}
-                      <Route path="/app" element={<ProtectedRoute><AppDashboard /></ProtectedRoute>} />
-                      <Route path="/explore/projects" element={<ProtectedRoute><ProjectsExplorePage /></ProtectedRoute>} />
-                      <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-                      <Route path="/profile/:username" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-                      <Route path="/profile/settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
-                      <Route path="/settings" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
-                      <Route path="/settings/profile" element={<ProtectedRoute><ProfileSettings /></ProtectedRoute>} />
-                      <Route path="/community" element={<ProtectedRoute><CommunityPage /></ProtectedRoute>} />
-                      <Route path="/community/:id" element={<ProtectedRoute><CommunityPage /></ProtectedRoute>} />
-                      <Route path="/circles" element={<ProtectedRoute><MyCircles /></ProtectedRoute>} />
-                      <Route path="/my-circles" element={<ProtectedRoute><MyCircles /></ProtectedRoute>} />
-                      <Route path="/my-network" element={<ProtectedRoute><MyNetwork /></ProtectedRoute>} />
-                      <Route path="/messaging" element={<ProtectedRoute><MessagingPage /></ProtectedRoute>} />
-                      
-                      {/* Search Route */}
-                      <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
-                      
-                      {/* Notifications Route */}
-                      <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
-                      
-                      {/* Leaderboard Route */}
-                      <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
-                      
-                      {/* Admin Routes - Isolated System */}
-                      <Route path="/admin/login" element={<AdminLoginPage />} />
-                      <Route path="/admin/dashboard" element={<AdminPageErrorBoundary><AdminDashboardHome /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/users" element={<AdminPageErrorBoundary><AdminUserManagement /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/posts" element={<AdminPageErrorBoundary><AdminPostManagement /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/insights" element={<AdminPageErrorBoundary><AdminInsightsDashboard /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/settings" element={<AdminPageErrorBoundary><AdminSettingsPage /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/roles" element={<AdminPageErrorBoundary><AdminRolesManager /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/growth" element={<AdminPageErrorBoundary><AdminGrowthDashboard /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/integrations" element={<AdminPageErrorBoundary><AdminIntegrationsPanel /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/logs" element={<AdminPageErrorBoundary><AdminAuditLogs /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/notifications" element={<AdminPageErrorBoundary><AdminNotificationsPanel /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/communities" element={<AdminPageErrorBoundary><AdminCommunitiesPage /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/moderation" element={<AdminPageErrorBoundary><AdminModerationPage /></AdminPageErrorBoundary>} />
-                      <Route path="/admin/events" element={<AdminPageErrorBoundary><AdminEventsPage /></AdminPageErrorBoundary>} />
-                      <Route path="/admin" element={<AdminPageErrorBoundary><AdminDashboard /></AdminPageErrorBoundary>} />
-                      
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </BrowserRouter>
-                </TooltipProvider>
-              </RealtimeProvider>
-            </AuthProvider>
-          </HelmetProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
-    );
-  } catch (error) {
-    console.error('App initialization error:', error);
-    // Return a basic fallback UI instead of crashing
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Application Error</h1>
-          <p className="text-gray-600 mb-4">There was an error loading the application.</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Reload Page
-          </button>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <HelmetProvider>
+          <AuthProvider>
+            <RealtimeProvider>
+              <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/contribute" element={<ContributeExample />} />
+              <Route path="/collaborate" element={<CollaborationsExample />} />
+              <Route path="/connect" element={<ConnectExample />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/phases" element={<Phases />} />
+              <Route path="/help" element={<HelpPage />} />
+              <Route path="/invite" element={<InvitePage />} />
+              
+              {/* Phase Routes */}
+              <Route path="/phase/market-research" element={<MarketResearchPhase />} />
+              <Route path="/phase/prototyping" element={<PrototypingPhase />} />
+              <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
+              <Route path="/phase/mvp" element={<MvpPhase />} />
+              <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
+              <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
+              
+              {/* Authenticated Routes */}
+              <Route path="/app" element={<ProtectedRoute><AppPageErrorBoundary><AppDashboard /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/explore/projects" element={<ProtectedRoute><AppPageErrorBoundary><ProjectsExplorePage /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><AppPageErrorBoundary><ProfilePage /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/profile/:username" element={<ProtectedRoute><AppPageErrorBoundary><ProfilePage /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/profile/settings" element={<ProtectedRoute><AppPageErrorBoundary><ProfileSettings /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><AppPageErrorBoundary><ProfileSettings /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/settings/profile" element={<ProtectedRoute><AppPageErrorBoundary><ProfileSettings /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/community" element={<ProtectedRoute><AppPageErrorBoundary><CommunityPage /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/community/:id" element={<ProtectedRoute><AppPageErrorBoundary><CommunityPage /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/circles" element={<ProtectedRoute><AppPageErrorBoundary><MyCircles /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/my-circles" element={<ProtectedRoute><AppPageErrorBoundary><MyCircles /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/my-network" element={<ProtectedRoute><AppPageErrorBoundary><MyNetwork /></AppPageErrorBoundary></ProtectedRoute>} />
+              <Route path="/messaging" element={<ProtectedRoute><AppPageErrorBoundary><MessagingPage /></AppPageErrorBoundary></ProtectedRoute>} />
+              
+              {/* Search Route */}
+              <Route path="/search" element={<ProtectedRoute><AppPageErrorBoundary><SearchPage /></AppPageErrorBoundary></ProtectedRoute>} />
+              
+              {/* Notifications Route */}
+              <Route path="/notifications" element={<ProtectedRoute><AppPageErrorBoundary><NotificationsPage /></AppPageErrorBoundary></ProtectedRoute>} />
+              
+              {/* Leaderboard Route */}
+              <Route path="/leaderboard" element={<ProtectedRoute><AppPageErrorBoundary><LeaderboardPage /></AppPageErrorBoundary></ProtectedRoute>} />
+              
+              {/* Admin Routes - Isolated System */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin/dashboard" element={<AdminPageErrorBoundary><AdminDashboardHome /></AdminPageErrorBoundary>} />
+              <Route path="/admin/users" element={<AdminPageErrorBoundary><AdminUserManagement /></AdminPageErrorBoundary>} />
+              <Route path="/admin/posts" element={<AdminPageErrorBoundary><AdminPostManagement /></AdminPageErrorBoundary>} />
+              <Route path="/admin/insights" element={<AdminPageErrorBoundary><AdminInsightsDashboard /></AdminPageErrorBoundary>} />
+              <Route path="/admin/settings" element={<AdminPageErrorBoundary><AdminSettingsPage /></AdminPageErrorBoundary>} />
+              <Route path="/admin/roles" element={<AdminPageErrorBoundary><AdminRolesManager /></AdminPageErrorBoundary>} />
+              <Route path="/admin/growth" element={<AdminPageErrorBoundary><AdminGrowthDashboard /></AdminPageErrorBoundary>} />
+              <Route path="/admin/integrations" element={<AdminPageErrorBoundary><AdminIntegrationsPanel /></AdminPageErrorBoundary>} />
+              <Route path="/admin/logs" element={<AdminPageErrorBoundary><AdminAuditLogs /></AdminPageErrorBoundary>} />
+              <Route path="/admin/notifications" element={<AdminPageErrorBoundary><AdminNotificationsPanel /></AdminPageErrorBoundary>} />
+              <Route path="/admin/communities" element={<AdminPageErrorBoundary><AdminCommunitiesPage /></AdminPageErrorBoundary>} />
+              <Route path="/admin/moderation" element={<AdminPageErrorBoundary><AdminModerationPage /></AdminPageErrorBoundary>} />
+              <Route path="/admin/events" element={<AdminPageErrorBoundary><AdminEventsPage /></AdminPageErrorBoundary>} />
+              <Route path="/admin" element={<AdminPageErrorBoundary><AdminDashboard /></AdminPageErrorBoundary>} />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            </BrowserRouter>
+            </TooltipProvider>
+            </RealtimeProvider>
+          </AuthProvider>
+        </HelmetProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  );
 }
 
 export default App;
