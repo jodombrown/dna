@@ -47,23 +47,23 @@ const DesktopNavigation = () => {
                       Phases
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <div className="w-80 p-4 bg-white">
-                        <div className="grid gap-3">
-                          <div className="text-sm font-medium text-gray-900 mb-2">
-                            Development Timeline
-                          </div>
+                      <div className="w-96 p-6 bg-white border shadow-lg z-50">
+                        <div className="grid gap-4">
                           {phases.map((phase) => (
                             <NavigationMenuLink key={phase.path} asChild>
                               <button
                                 onClick={() => navigate(phase.path)}
-                                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-dna-mint/20 hover:text-dna-forest focus:bg-dna-mint/20 focus:text-dna-forest text-left w-full"
+                                className="flex items-start space-x-4 p-3 rounded-lg hover:bg-dna-mint/20 transition-colors text-left w-full group"
                               >
-                                <div className="flex items-center justify-between">
-                                  <div className="text-sm font-medium leading-none">
-                                    Phase {phase.phase}: {phase.name}
+                                <div className="flex-shrink-0 w-8 h-8 bg-dna-copper text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                                  {phase.phase}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-base font-semibold text-gray-900 group-hover:text-dna-forest">
+                                    {phase.name}
                                   </div>
-                                  <div className="text-xs text-gray-500">
-                                    {phase.timeline}
+                                  <div className="text-sm text-gray-600 mt-1">
+                                    Phase {phase.phase} of our development journey
                                   </div>
                                 </div>
                               </button>
