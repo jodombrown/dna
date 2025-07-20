@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AdminUser } from './useAdminUsers';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UseUserActionsResult {
   profileModal: {
@@ -104,20 +105,13 @@ export function useUserActions(): UseUserActionsResult {
   const confirmDelete = async () => {
     if (deleteDialog.user) {
       try {
-        // Call the delete user edge function
-        const response = await fetch(`https://ybhssuehmfnxrzneobok.supabase.co/functions/v1/delete-user`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliaHNzdWVobWZueHJ6bmVvYm9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTI0NzMsImV4cCI6MjA2NDU4ODQ3M30.Uur_V4TYm4yCYtDQAa4diIpdsKoKb5Bkuo0cWNZAY-Y'}`
-          },
-          body: JSON.stringify({ userId: deleteDialog.user.id })
+        // Call the delete user edge function using Supabase client
+        const { data, error } = await supabase.functions.invoke('delete-user', {
+          body: { userId: deleteDialog.user.id }
         });
 
-        const result = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(result.error || 'Failed to delete user');
+        if (error) {
+          throw new Error(error.message || 'Failed to delete user');
         }
 
         toast({
