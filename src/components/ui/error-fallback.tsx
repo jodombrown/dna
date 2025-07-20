@@ -35,7 +35,7 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
   };
 
   const handleGoHome = () => {
-    window.location.href = '/app';
+    window.location.href = '/';
   };
 
   const handleGoBack = () => {
@@ -109,7 +109,7 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({
                 className="w-full"
               >
                 <Home className="h-4 w-4 mr-2" />
-                Go to Dashboard
+                Go Home
               </Button>
             )}
           </div>

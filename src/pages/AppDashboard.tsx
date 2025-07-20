@@ -50,10 +50,10 @@ const AppDashboard = () => {
   }, [user, loading, navigate]);
 
   useEffect(() => {
-    if (!checkingUser && userExists === false) {
+    if (!checkingUser && userExists === false && user) {
       navigate('/onboarding');
     }
-  }, [checkingUser, userExists, navigate]);
+  }, [checkingUser, userExists, navigate, user]);
 
   if (loading || checkingUser) {
     return (
