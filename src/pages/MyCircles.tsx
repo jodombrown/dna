@@ -1,25 +1,32 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Users, Building, Heart, MessageCircle, UserPlus } from 'lucide-react';
+import { Users, Building, Heart, MessageCircle, UserPlus, Plus } from 'lucide-react';
+import { searchCommunities } from '@/services/communityService';
+import { useNavigate } from 'react-router-dom';
+import CommunityCreationDialog from '@/components/community/CommunityCreationDialog';
 
 const MyCircles = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  // Mock data - would be fetched from follows/connections tables
+  // Fetch user's communities
+  const { data: userCommunities = [], isLoading: communitiesLoading } = useQuery({
+    queryKey: ['userCommunities'],
+    queryFn: () => searchCommunities(''),
+    select: (data) => data.filter(community => community.is_member)
+  });
+
+  // Mock data for people and causes - would be fetched from actual tables
   const followedPeople = [
     { id: '1', name: 'Sarah Johnson', role: 'Tech Entrepreneur', avatar: '', location: 'Lagos, Nigeria' },
     { id: '2', name: 'Michael Chen', role: 'Investment Analyst', avatar: '', location: 'Toronto, Canada' }
-  ];
-
-  const followedCommunities = [
-    { id: '1', name: 'African Tech Leaders', description: 'Building the future of technology in Africa', members: 2547, image: '' },
-    { id: '2', name: 'Diaspora Investors', description: 'Investing back home', members: 1832, image: '' }
   ];
 
   const myCauses = [
@@ -71,35 +78,79 @@ const MyCircles = () => {
             </CardContent>
           </Card>
 
-          {/* Communities I Follow */}
+          {/* My Communities */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5 text-dna-copper" />
-                Communities I Follow
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Building className="h-5 w-5 text-dna-copper" />
+                  My Communities
+                </CardTitle>
+                <CommunityCreationDialog 
+                  trigger={
+                    <Button size="sm" variant="outline">
+                      <Plus className="h-4 w-4 mr-1" />
+                      Create
+                    </Button>
+                  }
+                />
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {followedCommunities.map((community) => (
-                <div key={community.id} className="p-3 rounded-lg hover:bg-gray-50">
-                  <div className="flex items-start space-x-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={community.image} />
-                      <AvatarFallback className="bg-dna-copper text-white">
-                        {community.name.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900">{community.name}</p>
-                      <p className="text-sm text-gray-600 mb-2">{community.description}</p>
-                      <p className="text-xs text-gray-500">{community.members} members</p>
-                    </div>
-                  </div>
+              {communitiesLoading ? (
+                <div className="text-center py-4">
+                  <p className="text-gray-500 text-sm">Loading your communities...</p>
                 </div>
-              ))}
-              <Button variant="outline" className="w-full">
-                Discover Communities
-              </Button>
+              ) : userCommunities.length === 0 ? (
+                <div className="text-center py-8">
+                  <Building className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 font-medium mb-2">No communities yet</p>
+                  <p className="text-sm text-gray-400 mb-4">Join communities to connect with like-minded professionals</p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate('/connect?tab=communities')}
+                    className="text-dna-emerald border-dna-emerald hover:bg-dna-emerald hover:text-white"
+                  >
+                    Discover Communities
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  {userCommunities.map((community) => (
+                    <div 
+                      key={community.id} 
+                      className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer"
+                      onClick={() => navigate(`/community/${community.id}`)}
+                    >
+                      <div className="flex items-start space-x-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={community.image_url} />
+                          <AvatarFallback className="bg-dna-copper text-white">
+                            {community.name.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900">{community.name}</p>
+                          <p className="text-sm text-gray-600 mb-2 line-clamp-1">{community.description}</p>
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs text-gray-500">{community.member_count || 0} members</p>
+                            <Badge variant="secondary" className="text-xs">
+                              {community.user_role || 'member'}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => navigate('/connect?tab=communities')}
+                  >
+                    Discover More Communities
+                  </Button>
+                </>
+              )}
             </CardContent>
           </Card>
 
