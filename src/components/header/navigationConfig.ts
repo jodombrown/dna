@@ -1,7 +1,11 @@
 
 export const publicNavItems = [
   { name: 'About Us', path: '/about' },
+  { name: 'Connect', path: '/connect' },
+  { name: 'Collaborate', path: '/collaborate' },
+  { name: 'Contribute', path: '/contribute' },
   { name: 'Contact', path: '/contact' },
+  { name: 'Phases', path: '/phases' },
 ];
 
 // Main navigation for authenticated users (feed-focused like LinkedIn)
