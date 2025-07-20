@@ -33,6 +33,13 @@ const Footer = () => {
                 <Heart className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
                 <span className="story-link">Contribute</span>
               </Link>
+              <Link 
+                to="/phases" 
+                className="group flex items-center text-gray-400 hover:text-dna-emerald transition-colors duration-200"
+              >
+                <Info className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                <span className="story-link">Phases</span>
+              </Link>
             </nav>
           </div>
 
