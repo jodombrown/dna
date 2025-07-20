@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,39 +17,56 @@ import { useProfileContent } from '@/hooks/useProfileContent';
 const ProfilePage = () => {
   const { username } = useParams<{ username: string }>();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  // Fetch user profile by username
+  // Fetch user profile by username or user ID
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['profile', username],
     queryFn: async () => {
-      if (!username) throw new Error('Username required');
-      
-      // First check users table
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('username', username)
-        .single();
-
-      if (userError && userError.code !== 'PGRST116') {
-        throw userError;
-      }
-
-      // Fallback to profiles table if no user found
-      if (!userData) {
-        const { data: profileData, error: profileError } = await supabase
+      if (!username) {
+        // If no username provided, show current user's profile
+        if (!user?.id) throw new Error('Not authenticated');
+        
+        const { data, error } = await supabase
           .from('profiles')
           .select('*')
-          .eq('full_name', username.replace('-', ' '))
+          .eq('id', user.id)
           .single();
         
-        if (profileError) throw profileError;
-        return profileData;
+        if (error) throw error;
+        return data;
       }
-
-      return userData;
+      
+      // Try to find profile by username (formatted as full_name)
+      const formattedName = username.replace(/-/g, ' ');
+      
+      // First try exact match with full_name
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .ilike('full_name', formattedName)
+        .eq('is_public', true)
+        .single();
+      
+      if (profileData) return profileData;
+      
+      // If not found by name, try by ID (if username looks like UUID)
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (uuidRegex.test(username)) {
+        const { data: idData, error: idError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', username)
+          .eq('is_public', true)
+          .single();
+        
+        if (idData) return idData;
+      }
+      
+      // If nothing found, throw error
+      throw new Error('Profile not found');
     },
-    enabled: !!username
+    enabled: !!username || !!user?.id
   });
 
   const { userPosts, userEvents, userCommunities } = useProfileContent(profile?.id);
@@ -58,7 +75,7 @@ const ProfilePage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-dna-mint/20">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex items-center justify-center h-64">
@@ -72,7 +89,7 @@ const ProfilePage = () => {
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-dna-mint/20">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Card>
@@ -88,11 +105,11 @@ const ProfilePage = () => {
   }
 
   const handleEdit = () => {
-    window.location.href = '/settings/profile';
+    navigate('/profile/settings');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-dna-mint/20">
       <Header />
       
       <div className="max-w-6xl mx-auto px-4 py-8">

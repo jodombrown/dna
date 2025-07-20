@@ -18,6 +18,7 @@ import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
+import ImageUpload from '@/components/profile/ImageUpload';
 import { 
   Loader2, 
   Save, 
@@ -32,7 +33,8 @@ import {
   EyeOff,
   Globe,
   Building,
-  Award
+  Award,
+  ArrowLeft
 } from 'lucide-react';
 import { 
   profileSchema, 
@@ -42,9 +44,11 @@ import {
   getCountryOptions,
   getVisibilityOptions 
 } from '@/schemas/profileSchema';
+import { useNavigate } from 'react-router-dom';
 
 const ProfileSettings = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { handleError } = useErrorHandler();
   const queryClient = useQueryClient();
@@ -218,18 +222,38 @@ const ProfileSettings = () => {
       
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-8 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
-            <p className="text-gray-600 mt-2">Manage your public profile information</p>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/app')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Dashboard
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
+              <p className="text-gray-600 mt-2">Manage your public profile information</p>
+            </div>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => setPreviewMode(!previewMode)}
-            className="flex items-center gap-2"
-          >
-            {previewMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            {previewMode ? 'Edit Mode' : 'Preview Mode'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setPreviewMode(!previewMode)}
+              className="flex items-center gap-2"
+            >
+              {previewMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {previewMode ? 'Edit Mode' : 'Preview Mode'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate(`/profile/${user?.user_metadata?.full_name?.replace(' ', '-') || user?.id}`)}
+              className="flex items-center gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              View Public Profile
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -337,34 +361,39 @@ const ProfileSettings = () => {
                 <CardContent className="space-y-4">
                   {/* Banner Upload */}
                   <div>
-                    <Label htmlFor="banner_url">Banner Image URL</Label>
-                    <Input
-                      {...form.register('banner_url')}
-                      placeholder="https://example.com/banner.jpg"
+                    <Label className="text-base font-medium">Banner Image</Label>
+                    <p className="text-sm text-gray-500 mb-3">Upload a banner image for your profile</p>
+                    <ImageUpload
+                      type="banner"
+                      currentImageUrl={watchedValues.banner_url}
+                      onImageChange={(url) => form.setValue('banner_url', url)}
+                      className="mb-4"
                     />
-                    {form.formState.errors.banner_url && (
-                      <p className="text-sm text-red-600">{form.formState.errors.banner_url.message}</p>
-                    )}
                   </div>
 
                   {/* Avatar Upload */}
-                  <div className="flex items-center space-x-4">
-                    <Avatar className="w-20 h-20">
-                      <AvatarImage src={watchedValues.avatar_url || watchedValues.profile_picture_url} />
-                      <AvatarFallback className="bg-dna-emerald text-white text-xl">
-                        {watchedValues.full_name?.charAt(0) || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 space-y-2">
-                      <Label>Profile Picture URL</Label>
-                      <Input
-                        {...form.register('avatar_url')}
-                        placeholder="https://example.com/avatar.jpg"
+                  <div>
+                    <Label className="text-base font-medium">Profile Picture</Label>
+                    <p className="text-sm text-gray-500 mb-3">Upload your profile picture</p>
+                    <div className="flex items-center space-x-6">
+                      <ImageUpload
+                        type="avatar"
+                        size="lg"
+                        currentImageUrl={watchedValues.avatar_url || watchedValues.profile_picture_url}
+                        onImageChange={(url) => {
+                          form.setValue('avatar_url', url);
+                          form.setValue('profile_picture_url', url);
+                        }}
                       />
-                      <Input
-                        {...form.register('profile_picture_url')}
-                        placeholder="Alternative profile picture URL"
-                      />
+                      <div className="flex-1 space-y-2">
+                        <p className="text-sm text-gray-600">
+                          Click on your profile picture to upload a new image.
+                          Supported formats: JPEG, PNG, WebP, GIF (Max 5MB)
+                        </p>
+                        <div className="text-xs text-gray-500">
+                          Current URL: {watchedValues.avatar_url || watchedValues.profile_picture_url || 'None'}
+                        </div>
+                      </div>
                     </div>
                   </div>
 
