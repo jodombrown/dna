@@ -247,7 +247,7 @@ const ProfileSettings = () => {
             </Button>
             <Button
               variant="outline"
-              onClick={() => navigate(`/profile/${user?.user_metadata?.full_name?.replace(' ', '-') || user?.id}`)}
+              onClick={() => navigate(`/profile/${profile?.username || profile?.id}`)}
               className="flex items-center gap-2"
             >
               <Eye className="h-4 w-4" />

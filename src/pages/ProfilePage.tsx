@@ -37,18 +37,26 @@ const ProfilePage = () => {
         return data;
       }
       
-      // Try to find profile by username (formatted as full_name)
-      const formattedName = username.replace(/-/g, ' ');
+      // Try to find profile by username first
+      const { data: usernameData, error: usernameError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('username', username)
+        .eq('is_public', true)
+        .single();
       
-      // First try exact match with full_name
-      const { data: profileData, error: profileError } = await supabase
+      if (usernameData) return usernameData;
+      
+      // If not found by username, try by formatted full_name
+      const formattedName = username.replace(/-/g, ' ');
+      const { data: nameData, error: nameError } = await supabase
         .from('profiles')
         .select('*')
         .ilike('full_name', formattedName)
         .eq('is_public', true)
         .single();
       
-      if (profileData) return profileData;
+      if (nameData) return nameData;
       
       // If not found by name, try by ID (if username looks like UUID)
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -64,7 +72,7 @@ const ProfilePage = () => {
       }
       
       // If nothing found, throw error
-      throw new Error('Profile not found');
+      throw new Error('Profile not found or not public');
     },
     enabled: !!username || !!user?.id
   });

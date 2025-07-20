@@ -1370,6 +1370,7 @@ export type Database = {
           referrer_id: string | null
           skills: string[] | null
           updated_at: string
+          username: string | null
           website_url: string | null
           years_experience: number | null
         }
@@ -1405,6 +1406,7 @@ export type Database = {
           referrer_id?: string | null
           skills?: string[] | null
           updated_at?: string
+          username?: string | null
           website_url?: string | null
           years_experience?: number | null
         }
@@ -1440,6 +1442,7 @@ export type Database = {
           referrer_id?: string | null
           skills?: string[] | null
           updated_at?: string
+          username?: string | null
           website_url?: string | null
           years_experience?: number | null
         }
@@ -1922,6 +1925,10 @@ export type Database = {
       }
       generate_referral_code: {
         Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_username_from_name: {
+        Args: { full_name: string }
         Returns: string
       }
       get_admin_role: {

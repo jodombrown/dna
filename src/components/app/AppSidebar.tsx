@@ -154,14 +154,22 @@ const AppSidebar = () => {
               </div>
             )}
             
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full"
-              onClick={() => navigate('/profile/settings')}
-            >
-              Complete Profile
-            </Button>
+            <div className="grid grid-cols-2 gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate(`/profile/${profile?.username || profile?.id}`)}
+              >
+                View Profile
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/profile/settings')}
+              >
+                Settings
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
