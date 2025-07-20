@@ -42,10 +42,18 @@ const ProtectedRoute = ({
     }
     
     if (!requireAuth && user) {
+      // Check if user needs onboarding first
+      if (!session) {
+        navigate('/app', { replace: true });
+        return;
+      }
+      
+      // If user is authenticated but hasn't completed onboarding, redirect to onboarding
+      // This will be handled by the individual authenticated components
       navigate('/app', { replace: true });
       return;
     }
-  }, [user, loading, navigate, requireAuth, redirectTo, authTimeout]);
+  }, [user, session, loading, navigate, requireAuth, redirectTo, authTimeout]);
 
   // Handle auth timeout
   if (authTimeout) {

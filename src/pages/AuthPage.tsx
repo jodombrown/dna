@@ -11,6 +11,7 @@ import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useToast } from '@/hooks/use-toast';
 import PasswordResetForm from '@/components/auth/PasswordResetForm';
 import UpdatePasswordForm from '@/components/auth/UpdatePasswordForm';
+import AuthTestPanel from '@/components/auth/AuthTestPanel';
 
 const AuthPage = () => {
   useScrollToTop();
@@ -295,6 +296,13 @@ const AuthPage = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Development Testing Panel */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-8">
+            <AuthTestPanel />
+          </div>
+        )}
       </div>
     </div>
   );

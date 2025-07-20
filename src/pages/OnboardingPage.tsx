@@ -156,7 +156,7 @@ const OnboardingPage = () => {
     
     try {
       const { data, error } = await supabase
-        .from('users')
+        .from('profiles')
         .select('username')
         .eq('username', username)
         .maybeSingle();
@@ -175,7 +175,7 @@ const OnboardingPage = () => {
         
         for (const suggestion of suggestions) {
           const { data: existingUser } = await supabase
-            .from('users')
+            .from('profiles')
             .select('username')
             .eq('username', suggestion)
             .maybeSingle();
@@ -244,29 +244,14 @@ const OnboardingPage = () => {
     setIsLoading(true);
 
     try {
-      // Insert into users table
-      const { error: userError } = await supabase
-        .from('users')
-        .insert([{
-          id: user.id,
-          full_name: formData.full_name,
-          email: formData.email,
-          location: formData.location,
-          username: formData.username,
-          role: 'individual'
-        }]);
-
-      if (userError) {
-        throw userError;
-      }
-
-      // Update profiles table
+      // Update profiles table with onboarding info
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
           full_name: formData.full_name,
           email: formData.email,
           location: formData.location,
+          username: formData.username,
           onboarding_completed_at: new Date().toISOString()
         })
         .eq('id', user.id);
@@ -277,10 +262,10 @@ const OnboardingPage = () => {
 
       toast({
         title: "Welcome to DNA!",
-        description: "Now let's complete your profile setup."
+        description: "Your profile has been created successfully."
       });
 
-      navigate('/profile/setup');
+      navigate('/app');
     } catch (error) {
       console.error('Onboarding error:', error);
       toast({
