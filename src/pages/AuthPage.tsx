@@ -54,8 +54,10 @@ const AuthPage = () => {
     setIsLoading(true);
 
     try {
+      console.log('Form submit started:', { isLogin, email: formData.email });
       let result;
       if (isLogin) {
+        console.log('Attempting sign in...');
         result = await signIn(formData.email, formData.password);
       } else {
         if (!formData.fullName.trim()) {
@@ -67,26 +69,33 @@ const AuthPage = () => {
           setIsLoading(false);
           return;
         }
+        console.log('Attempting sign up...');
         result = await signUp(formData.email, formData.password, formData.fullName);
       }
 
+      console.log('Auth result:', result);
+
       if (result.error) {
+        console.error('Auth error:', result.error);
         toast({
           title: isLogin ? "Sign in failed" : "Sign up failed",
           description: result.error.message,
           variant: "destructive"
         });
       } else {
+        console.log('Auth success, showing toast and navigating...');
         toast({
           title: isLogin ? "Welcome back!" : "Account created!",
           description: isLogin ? "Successfully signed in." : "Account created successfully! You can now sign in.",
         });
         
         if (isLogin) {
+          console.log('Navigating to /app...');
           navigate('/app');
         }
       }
     } catch (error) {
+      console.error('Unexpected error in handleSubmit:', error);
       toast({
         title: "Something went wrong",
         description: "Please try again later.",
