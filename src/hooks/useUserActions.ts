@@ -105,13 +105,24 @@ export function useUserActions(): UseUserActionsResult {
   const confirmDelete = async () => {
     if (deleteDialog.user) {
       try {
+        console.log('Attempting to delete user:', deleteDialog.user.id);
+        
         // Call the delete user edge function using Supabase client
         const { data, error } = await supabase.functions.invoke('delete-user', {
           body: { userId: deleteDialog.user.id }
         });
 
+        console.log('Edge function response:', { data, error });
+
         if (error) {
+          console.error('Edge function error:', error);
           throw new Error(error.message || 'Failed to delete user');
+        }
+
+        // Check if the response indicates success
+        if (data && data.error) {
+          console.error('Edge function returned error:', data.error);
+          throw new Error(data.error);
         }
 
         toast({
