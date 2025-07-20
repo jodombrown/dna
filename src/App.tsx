@@ -40,6 +40,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboardHome from "./pages/AdminDashboardHome";
 import AdminUserManagement from "./pages/AdminUserManagement";
+import AdminPostManagement from "./pages/AdminPostManagement";
 import AdminInsightsDashboard from "./pages/AdminInsightsDashboard";
 import AdminSettingsPage from "./pages/AdminSettingsPage";
 import AdminRolesManager from "./pages/AdminRolesManager";
@@ -115,6 +116,7 @@ function App() {
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route path="/admin/dashboard" element={<AdminPageErrorBoundary><AdminDashboardHome /></AdminPageErrorBoundary>} />
               <Route path="/admin/users" element={<AdminPageErrorBoundary><AdminUserManagement /></AdminPageErrorBoundary>} />
+              <Route path="/admin/posts" element={<AdminPageErrorBoundary><AdminPostManagement /></AdminPageErrorBoundary>} />
               <Route path="/admin/insights" element={<AdminPageErrorBoundary><AdminInsightsDashboard /></AdminPageErrorBoundary>} />
               <Route path="/admin/settings" element={<AdminPageErrorBoundary><AdminSettingsPage /></AdminPageErrorBoundary>} />
               <Route path="/admin/roles" element={<AdminPageErrorBoundary><AdminRolesManager /></AdminPageErrorBoundary>} />

@@ -20,6 +20,7 @@ interface UserListTableProps {
   onViewProfile: (user: AdminUser) => void;
   onEditUser: (user: AdminUser) => void;
   onToggleStatus: (user: AdminUser) => void;
+  onVerifyUser?: (user: AdminUser) => void;
   onDeleteUser: (user: AdminUser) => void;
 }
 
@@ -30,6 +31,7 @@ export function UserListTable({
   onViewProfile, 
   onEditUser, 
   onToggleStatus, 
+  onVerifyUser,
   onDeleteUser 
 }: UserListTableProps) {
   if (loading) {
@@ -73,6 +75,7 @@ export function UserListTable({
                   onViewProfile={onViewProfile}
                   onEditUser={onEditUser}
                   onToggleStatus={onToggleStatus}
+                  onVerifyUser={onVerifyUser}
                   onDeleteUser={onDeleteUser}
                 />
               ))}
@@ -89,6 +92,7 @@ export function UserListTable({
               onViewProfile={onViewProfile}
               onEditUser={onEditUser}
               onToggleStatus={onToggleStatus}
+              onVerifyUser={onVerifyUser}
               onDeleteUser={onDeleteUser}
             />
           ))}

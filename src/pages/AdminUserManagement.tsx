@@ -8,6 +8,7 @@ import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { useUserActions } from '@/hooks/useUserActions';
 import { UserActionDialogs } from '@/components/admin/UserActionDialogs';
 import { UserProfileModal } from '@/components/admin/UserProfileModal';
+import { VerifyUserDialog } from '@/components/admin/VerifyUserDialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, RefreshCw } from 'lucide-react';
@@ -31,14 +32,18 @@ const AdminUserManagement = () => {
     profileModal,
     deleteDialog,
     statusDialog,
+    verifyDialog,
     handleViewProfile,
     handleEditUser,
     handleToggleStatus,
+    handleVerifyUser,
     handleDeleteUser,
     confirmDelete,
     confirmStatusChange,
+    confirmVerify,
     cancelDelete,
     cancelStatusChange,
+    cancelVerify,
     closeProfile
   } = useUserActions();
 
@@ -109,6 +114,7 @@ const AdminUserManagement = () => {
                   onViewProfile={handleViewProfile}
                   onEditUser={handleEditUser}
                   onToggleStatus={handleToggleStatus}
+                  onVerifyUser={handleVerifyUser}
                   onDeleteUser={handleDeleteUser}
                 />
                 
@@ -132,6 +138,14 @@ const AdminUserManagement = () => {
                 onStatusConfirm={confirmStatusChange}
                 onDeleteCancel={cancelDelete}
                 onStatusCancel={cancelStatusChange}
+              />
+
+              {/* Verify User Dialog */}
+              <VerifyUserDialog
+                open={verifyDialog.open}
+                user={verifyDialog.user}
+                onConfirm={confirmVerify}
+                onCancel={cancelVerify}
               />
 
               {/* Profile Modal */}

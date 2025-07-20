@@ -23,6 +23,7 @@ interface UserActionsDropdownProps {
   onViewProfile: (user: AdminUser) => void;
   onEditUser: (user: AdminUser) => void;
   onToggleStatus: (user: AdminUser) => void;
+  onVerifyUser?: (user: AdminUser) => void;
   onDeleteUser: (user: AdminUser) => void;
 }
 
@@ -31,6 +32,7 @@ export function UserActionsDropdown({
   onViewProfile,
   onEditUser,
   onToggleStatus,
+  onVerifyUser,
   onDeleteUser
 }: UserActionsDropdownProps) {
   const getStatusAction = () => {
@@ -82,6 +84,16 @@ export function UserActionsDropdown({
           <statusAction.icon className="mr-2 h-4 w-4" />
           {statusAction.label}
         </DropdownMenuItem>
+        
+        {onVerifyUser && (
+          <DropdownMenuItem 
+            onClick={() => onVerifyUser(user)}
+            className="cursor-pointer hover:bg-emerald-50 text-emerald-600"
+          >
+            <Shield className="mr-2 h-4 w-4" />
+            Verify as Contributor
+          </DropdownMenuItem>
+        )}
         
         <DropdownMenuSeparator />
         

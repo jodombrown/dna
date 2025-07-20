@@ -11,6 +11,7 @@ interface UserTableRowProps {
   onViewProfile: (user: AdminUser) => void;
   onEditUser: (user: AdminUser) => void;
   onToggleStatus: (user: AdminUser) => void;
+  onVerifyUser?: (user: AdminUser) => void;
   onDeleteUser: (user: AdminUser) => void;
 }
 
@@ -19,6 +20,7 @@ export function UserTableRow({
   onViewProfile,
   onEditUser,
   onToggleStatus,
+  onVerifyUser,
   onDeleteUser
 }: UserTableRowProps) {
   const getInitials = (name: string | null) => {
@@ -76,6 +78,7 @@ export function UserTableRow({
           onViewProfile={onViewProfile}
           onEditUser={onEditUser}
           onToggleStatus={onToggleStatus}
+          onVerifyUser={onVerifyUser}
           onDeleteUser={onDeleteUser}
         />
       </TableCell>

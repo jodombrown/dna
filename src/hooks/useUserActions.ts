@@ -17,14 +17,21 @@ interface UseUserActionsResult {
     user: AdminUser | null;
     action: string;
   };
+  verifyDialog: {
+    open: boolean;
+    user: AdminUser | null;
+  };
   handleViewProfile: (user: AdminUser) => void;
   handleEditUser: (user: AdminUser) => void;
   handleToggleStatus: (user: AdminUser) => void;
+  handleVerifyUser: (user: AdminUser) => void;
   handleDeleteUser: (user: AdminUser) => void;
   confirmDelete: () => void;
   confirmStatusChange: () => void;
+  confirmVerify: () => void;
   cancelDelete: () => void;
   cancelStatusChange: () => void;
+  cancelVerify: () => void;
   closeProfile: () => void;
 }
 
@@ -55,6 +62,14 @@ export function useUserActions(): UseUserActionsResult {
     open: false,
     user: null,
     action: ''
+  });
+
+  const [verifyDialog, setVerifyDialog] = useState<{
+    open: boolean;
+    user: AdminUser | null;
+  }>({
+    open: false,
+    user: null
   });
 
   const handleViewProfile = (user: AdminUser) => {
@@ -92,6 +107,13 @@ export function useUserActions(): UseUserActionsResult {
       open: true,
       user,
       action
+    });
+  };
+
+  const handleVerifyUser = (user: AdminUser) => {
+    setVerifyDialog({
+      open: true,
+      user
     });
   };
 
@@ -147,11 +169,46 @@ export function useUserActions(): UseUserActionsResult {
 
   const confirmStatusChange = async () => {
     if (statusDialog.user) {
-      // For now, just show a toast since profiles table doesn't have status column
-      toast({
-        title: "Status Change",
-        description: `${statusDialog.action} for ${statusDialog.user.full_name || statusDialog.user.email} - Status management will be implemented in future updates`,
-      });
+      try {
+        const user = statusDialog.user;
+        let updateData: any = {};
+        
+        switch (statusDialog.action) {
+          case 'Suspend User':
+            // Add to a banned_users table or mark as suspended
+            updateData = { status: 'suspended' };
+            break;
+          case 'Activate User':
+            updateData = { status: 'active' };
+            break;
+          case 'Approve User':
+            updateData = { status: 'active' };
+            break;
+        }
+        
+        // Update profile with status (assuming we add this field)
+        const { error } = await supabase
+          .from('profiles')
+          .update(updateData)
+          .eq('id', user.id);
+          
+        if (error) throw error;
+        
+        toast({
+          title: "Status Updated",
+          description: `${statusDialog.action} completed for ${user.full_name || user.email}`,
+        });
+        
+        // Refresh the page to show updated data
+        window.location.reload();
+      } catch (error) {
+        console.error('Status change error:', error);
+        toast({
+          title: "Status Change Failed",
+          description: error instanceof Error ? error.message : "Failed to update user status",
+          variant: "destructive"
+        });
+      }
     }
     setStatusDialog({ open: false, user: null, action: '' });
   };
@@ -164,6 +221,47 @@ export function useUserActions(): UseUserActionsResult {
     setStatusDialog({ open: false, user: null, action: '' });
   };
 
+  const confirmVerify = async () => {
+    if (verifyDialog.user) {
+      try {
+        const user = verifyDialog.user;
+        
+        // Create or update ADIN contributor profile
+        const { error } = await supabase
+          .from('user_adin_profile')
+          .upsert({
+            user_id: user.id,
+            is_verified_contributor: true,
+            contributor_verified_at: new Date().toISOString(),
+            contributor_impact_type: 'verified',
+            contributor_score: 10,
+            updated_at: new Date().toISOString()
+          });
+          
+        if (error) throw error;
+        
+        toast({
+          title: "User Verified",
+          description: `${user.full_name || user.email} has been verified as a contributor`,
+        });
+        
+        window.location.reload();
+      } catch (error) {
+        console.error('Verify user error:', error);
+        toast({
+          title: "Verification Failed",
+          description: error instanceof Error ? error.message : "Failed to verify user",
+          variant: "destructive"
+        });
+      }
+    }
+    setVerifyDialog({ open: false, user: null });
+  };
+
+  const cancelVerify = () => {
+    setVerifyDialog({ open: false, user: null });
+  };
+
   const closeProfile = () => {
     setProfileModal({ open: false, user: null });
   };
@@ -172,14 +270,18 @@ export function useUserActions(): UseUserActionsResult {
     profileModal,
     deleteDialog,
     statusDialog,
+    verifyDialog,
     handleViewProfile,
     handleEditUser,
     handleToggleStatus,
+    handleVerifyUser,
     handleDeleteUser,
     confirmDelete,
     confirmStatusChange,
+    confirmVerify,
     cancelDelete,
     cancelStatusChange,
+    cancelVerify,
     closeProfile
   };
 }

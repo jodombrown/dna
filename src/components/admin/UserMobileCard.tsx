@@ -11,6 +11,7 @@ interface UserMobileCardProps {
   onViewProfile: (user: AdminUser) => void;
   onEditUser: (user: AdminUser) => void;
   onToggleStatus: (user: AdminUser) => void;
+  onVerifyUser?: (user: AdminUser) => void;
   onDeleteUser: (user: AdminUser) => void;
 }
 
@@ -19,6 +20,7 @@ export function UserMobileCard({
   onViewProfile,
   onEditUser,
   onToggleStatus,
+  onVerifyUser,
   onDeleteUser
 }: UserMobileCardProps) {
   const getInitials = (name: string | null) => {
@@ -61,6 +63,7 @@ export function UserMobileCard({
             onViewProfile={onViewProfile}
             onEditUser={onEditUser}
             onToggleStatus={onToggleStatus}
+            onVerifyUser={onVerifyUser}
             onDeleteUser={onDeleteUser}
           />
         </div>
