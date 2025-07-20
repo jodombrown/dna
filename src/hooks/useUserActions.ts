@@ -145,12 +145,12 @@ export function useUserActions(): UseUserActionsResult {
     setDeleteDialog({ open: false, user: null });
   };
 
-  const confirmStatusChange = () => {
+  const confirmStatusChange = async () => {
     if (statusDialog.user) {
-      // TODO: Implement actual status change with Supabase in future release  
+      // For now, just show a toast since profiles table doesn't have status column
       toast({
-        title: "Status Changed",
-        description: `${statusDialog.user.full_name || statusDialog.user.email} status updated (mock action)`,
+        title: "Status Change",
+        description: `${statusDialog.action} for ${statusDialog.user.full_name || statusDialog.user.email} - Status management will be implemented in future updates`,
       });
     }
     setStatusDialog({ open: false, user: null, action: '' });

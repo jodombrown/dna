@@ -1,31 +1,64 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.9";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+};
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabaseClient = createClient(
+    // Initialize Supabase client with service role key for admin operations
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Get the current user from the request
+    const authHeader = req.headers.get('Authorization')!;
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Verify the requesting user is an admin
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.error('Authentication error:', authError);
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
-      }
-    )
+      );
+    }
 
-    const { userId } = await req.json()
+    // Check if user is admin
+    const { data: adminUser } = await supabaseAdmin
+      .from('admin_users')
+      .select('role, is_active')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .single();
 
+    if (!adminUser) {
+      console.error('User is not admin:', user.id);
+      return new Response(
+        JSON.stringify({ error: 'Insufficient permissions' }),
+        { 
+          status: 403, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    // Parse request body
+    const { userId } = await req.json();
+    
     if (!userId) {
       return new Response(
         JSON.stringify({ error: 'User ID is required' }),
@@ -33,110 +66,74 @@ serve(async (req) => {
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
-      )
+      );
     }
 
-    console.log('Attempting to delete user:', userId)
+    console.log(`Admin ${user.email} attempting to delete user ${userId}`);
 
-    // First, delete related records that reference the user in correct order
-    // Delete from impact_log (this was causing the foreign key constraint error)
-    const { error: impactError } = await supabaseClient
-      .from('impact_log')
-      .delete()
-      .eq('user_id', userId)
-
-    if (impactError) {
-      console.error('Error deleting impact_log records:', impactError)
-    }
-
-    // Delete from other tables that might reference the user
-    const tablesToClean = [
-      'contributions',
-      'contact_requests', 
-      'notifications',
-      'user_dna_points',
-      'user_adin_profile',
-      'user_badges',
-      'posts',
-      'comments',
-      'community_memberships',
-      'community_posts',
-      'community_events',
-      'messages',
-      'conversations'
-    ]
-
-    for (const table of tablesToClean) {
-      try {
-        const { error: tableError } = await supabaseClient
-          .from(table)
-          .delete()
-          .eq('user_id', userId)
-        
-        if (tableError) {
-          console.log(`Could not delete from ${table}:`, tableError)
-        }
-      } catch (error) {
-        console.log(`Non-critical: Could not delete from ${table}:`, error)
-      }
-    }
-
-    // Delete admin_users record if it exists (different handling since it might not exist)
-    try {
-      const { error: adminError } = await supabaseClient
-        .from('admin_users')
-        .delete()
-        .eq('user_id', userId)
-      
-      if (adminError) {
-        console.log('Could not delete from admin_users:', adminError)
-      }
-    } catch (error) {
-      console.log('Non-critical: Could not delete from admin_users:', error)
-    }
-
-    // Delete from profiles table
-    const { error: profileError } = await supabaseClient
+    // Prevent deletion of protected super admin
+    const { data: targetUserProfile } = await supabaseAdmin
       .from('profiles')
-      .delete()
+      .select('email')
       .eq('id', userId)
+      .single();
 
-    if (profileError) {
-      console.error('Error deleting profile:', profileError)
+    if (targetUserProfile?.email === 'aweh@diasporanetwork.africa') {
+      return new Response(
+        JSON.stringify({ error: 'Cannot delete protected super admin' }),
+        { 
+          status: 403, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
 
-    // Finally, delete the user from auth.users using the admin API
-    const { data, error: authError } = await supabaseClient.auth.admin.deleteUser(userId)
-
-    if (authError) {
-      console.error('Error deleting user from auth:', authError)
+    // Delete user using admin client - this will cascade delete related records due to foreign key constraints
+    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
+    
+    if (deleteError) {
+      console.error('Failed to delete user:', deleteError);
       return new Response(
-        JSON.stringify({ error: authError.message }),
+        JSON.stringify({ error: deleteError.message }),
         { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
-      )
+      );
     }
 
-    console.log('User deleted successfully:', userId)
+    // Log the admin action
+    await supabaseAdmin
+      .from('admin_logs')
+      .insert({
+        admin_id: user.id,
+        action: 'DELETE_USER',
+        resource_type: 'user',
+        resource_id: userId,
+        details: { 
+          target_user_email: targetUserProfile?.email,
+          deleted_by: user.email 
+        }
+      });
+
+    console.log(`User ${userId} successfully deleted by admin ${user.email}`);
 
     return new Response(
-      JSON.stringify({ message: 'User deleted successfully', data }),
+      JSON.stringify({ success: true, message: 'User deleted successfully' }),
       { 
         status: 200, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
-    )
+    );
 
   } catch (error) {
-    console.error('Delete user error:', error)
+    console.error('Delete user function error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'Internal server error' }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
-    )
+    );
   }
-})
+});
