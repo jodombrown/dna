@@ -30,6 +30,7 @@ import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
 import MvpPhase from "./pages/MvpPhase";
 import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
+import Phases from "./pages/Phases";
 import NotFound from "./pages/NotFound";
 import ProjectsExplorePage from "./pages/ProjectsExplorePage";
 import InvitePage from "./pages/InvitePage";
@@ -77,6 +78,7 @@ function App() {
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
+              <Route path="/phases" element={<Phases />} />
               <Route path="/help" element={<HelpPage />} />
               <Route path="/invite" element={<InvitePage />} />
               
