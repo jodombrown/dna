@@ -38,7 +38,7 @@ serve(async (req) => {
 
     console.log('Attempting to delete user:', userId)
 
-    // First, delete related records that reference the user
+    // First, delete related records that reference the user in correct order
     // Delete from impact_log (this was causing the foreign key constraint error)
     const { error: impactError } = await supabaseClient
       .from('impact_log')
@@ -52,12 +52,11 @@ serve(async (req) => {
     // Delete from other tables that might reference the user
     const tablesToClean = [
       'contributions',
-      'contact_requests',
+      'contact_requests', 
       'notifications',
       'user_dna_points',
       'user_adin_profile',
       'user_badges',
-      'admin_users',
       'posts',
       'comments',
       'community_memberships',
@@ -69,13 +68,31 @@ serve(async (req) => {
 
     for (const table of tablesToClean) {
       try {
-        await supabaseClient
+        const { error: tableError } = await supabaseClient
           .from(table)
           .delete()
           .eq('user_id', userId)
+        
+        if (tableError) {
+          console.log(`Could not delete from ${table}:`, tableError)
+        }
       } catch (error) {
         console.log(`Non-critical: Could not delete from ${table}:`, error)
       }
+    }
+
+    // Delete admin_users record if it exists (different handling since it might not exist)
+    try {
+      const { error: adminError } = await supabaseClient
+        .from('admin_users')
+        .delete()
+        .eq('user_id', userId)
+      
+      if (adminError) {
+        console.log('Could not delete from admin_users:', adminError)
+      }
+    } catch (error) {
+      console.log('Non-critical: Could not delete from admin_users:', error)
     }
 
     // Delete from profiles table
