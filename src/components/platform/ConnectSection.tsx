@@ -22,7 +22,7 @@ const ConnectSection = () => {
               </h2>
             </div>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-4 sm:mb-6 leading-relaxed">
-              Build meaningful professional relationships across the diaspora. 
+              Build authentic professional relationships across the diaspora. 
               Discover opportunities, expand your network, and find your tribe.
             </p>
             

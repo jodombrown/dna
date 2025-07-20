@@ -43,11 +43,11 @@ const WaitlistSection = ({ onJoinClick }: WaitlistSectionProps) => {
         {/* Main Content */}
         <div className="space-y-6">
           <h2 className="text-3xl md:text-4xl font-bold text-dna-forest">
-            Join 500+ Diaspora Changemakers
+            Join 2,500+ Diaspora Changemakers
           </h2>
           
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Be the first to access the DNA platform when we launch. Help us build the future of Africa through meaningful connections and collaborations.
+            Be the first to access the DNA platform when we launch. Help us build the future of Africa through powerful connections and collaborations.
           </p>
 
           <MobileTouchButton

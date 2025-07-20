@@ -93,7 +93,7 @@ const CollaborateSection = () => {
             </div>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-4 sm:mb-6 leading-relaxed">
               Turn ideas into action through strategic partnerships. 
-              Co-create solutions that address Africa's biggest challenges.
+              Co-create solutions that address Africa's greatest challenges.
             </p>
             
             <div className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">

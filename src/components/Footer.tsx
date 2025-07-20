@@ -4,14 +4,14 @@ import { Linkedin, Instagram, HelpCircle, Mail, Info, Users, Briefcase, Heart } 
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-12">
+    <footer className="bg-gray-900 text-white py-6 md:py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-6">
           
           {/* DNA Platform */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Platform</h3>
-            <nav className="space-y-2">
+          <div className="space-y-2 md:space-y-3">
+            <h3 className="text-sm md:text-base font-semibold text-white mb-2 md:mb-3">Platform</h3>
+            <nav className="space-y-1 md:space-y-2">
               <Link 
                 to="/connect" 
                 className="group flex items-center text-gray-400 hover:text-dna-emerald transition-colors duration-200"
@@ -33,20 +33,13 @@ const Footer = () => {
                 <Heart className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
                 <span className="story-link">Contribute</span>
               </Link>
-              <Link 
-                to="/messaging" 
-                className="group flex items-center text-gray-400 hover:text-dna-emerald transition-colors duration-200"
-              >
-                <Mail className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                <span className="story-link">Messaging</span>
-              </Link>
             </nav>
           </div>
 
           {/* Resources */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Resources</h3>
-            <nav className="space-y-2">
+          <div className="space-y-2 md:space-y-3">
+            <h3 className="text-sm md:text-base font-semibold text-white mb-2 md:mb-3">Resources</h3>
+            <nav className="space-y-1 md:space-y-2">
               <Link 
                 to="/help" 
                 className="group flex items-center text-gray-400 hover:text-dna-copper transition-colors duration-200"
@@ -69,19 +62,19 @@ const Footer = () => {
                 <span className="story-link">Contact Us</span>
               </Link>
               <a 
-                href="mailto:hello@diasporanetwork.africa"
+                href="mailto:aweh@diasporanetwork.africa"
                 className="group flex items-center text-gray-400 hover:text-dna-copper transition-colors duration-200"
               >
                 <Mail className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                <span className="story-link">hello@diasporanetwork.africa</span>
+                <span className="story-link">aweh@diasporanetwork.africa</span>
               </a>
             </nav>
           </div>
 
           {/* Community */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Community</h3>
-            <nav className="space-y-2">
+          <div className="space-y-2 md:space-y-3">
+            <h3 className="text-sm md:text-base font-semibold text-white mb-2 md:mb-3">Community</h3>
+            <nav className="space-y-1 md:space-y-2">
               <a
                 href="https://www.linkedin.com/company/diasporanetworkafrica"
                 target="_blank"
@@ -117,50 +110,25 @@ const Footer = () => {
           </div>
 
           {/* Mission */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Our Mission</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              Empowering the global African diaspora to Connect, Collaborate, and Contribute toward Africa's sustainable development and prosperity.
+          <div className="col-span-2 md:col-span-1 space-y-2 md:space-y-3">
+            <h3 className="text-sm md:text-base font-semibold text-white mb-2 md:mb-3">Our Mission</h3>
+            <p className="text-gray-400 text-xs md:text-sm leading-relaxed">
+              Empowering the global African diaspora to Connect, Collaborate, and Contribute toward Africa's sustainable development.
             </p>
-            <div className="pt-2">
-              <Link 
-                to="/" 
-                className="inline-block text-dna-emerald hover:text-dna-copper transition-colors duration-200 font-medium"
-              >
-                <span className="story-link">Join the Movement →</span>
-              </Link>
-            </div>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-800 pt-8">
-          <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
-            
-            {/* Copyright & Legal */}
-            <div className="text-center lg:text-left">
-              <p className="text-gray-400 text-sm mb-2">
+        <div className="border-t border-gray-800 pt-4 md:pt-6">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+            <div className="text-center md:text-left">
+              <p className="text-gray-400 text-xs md:text-sm">
                 © 2025 DNA - Diaspora Network of Africa. All rights reserved.
               </p>
-              <div className="flex flex-wrap justify-center lg:justify-start gap-4 text-xs">
-                <a href="/privacy" className="text-gray-500 hover:text-gray-300 transition-colors story-link">
-                  Privacy Policy
-                </a>
-                <a href="/terms" className="text-gray-500 hover:text-gray-300 transition-colors story-link">
-                  Terms of Service
-                </a>
-                <Link to="/admin" className="text-gray-500 hover:text-gray-300 transition-colors story-link">
-                  System Status
-                </Link>
-              </div>
             </div>
-
-            {/* Platform Status */}
-            <div className="flex items-center space-x-2 text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-gray-400">Platform Online</span>
-              </div>
+            <div className="flex items-center space-x-2 text-xs md:text-sm">
+              <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-gray-400">Platform Online</span>
             </div>
           </div>
         </div>

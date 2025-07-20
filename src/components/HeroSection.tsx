@@ -44,7 +44,7 @@ const HeroSection = () => {
                 </h1>
                 
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 mb-6 leading-relaxed">
-                  Connecting Africa's diaspora professionals for transformative global impact through 
+                  Connecting Africa's diaspora professionals for sustainable global impact through 
                   <span className="font-semibold text-dna-emerald"> capacity building</span>, 
                   <span className="font-semibold text-dna-copper"> venture building</span>, and 
                   <span className="font-semibold text-dna-forest"> ecosystem building</span>.
