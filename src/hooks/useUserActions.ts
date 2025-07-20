@@ -101,14 +101,41 @@ export function useUserActions(): UseUserActionsResult {
     });
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deleteDialog.user) {
-      // TODO: Implement actual user deletion with Supabase in future release
-      toast({
-        title: "User Deleted",
-        description: `${deleteDialog.user.full_name || deleteDialog.user.email} has been deleted (mock action)`,
-        variant: "destructive"
-      });
+      try {
+        // Call the delete user edge function
+        const response = await fetch(`https://ybhssuehmfnxrzneobok.supabase.co/functions/v1/delete-user`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliaHNzdWVobWZueHJ6bmVvYm9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTI0NzMsImV4cCI6MjA2NDU4ODQ3M30.Uur_V4TYm4yCYtDQAa4diIpdsKoKb5Bkuo0cWNZAY-Y'}`
+          },
+          body: JSON.stringify({ userId: deleteDialog.user.id })
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to delete user');
+        }
+
+        toast({
+          title: "User Deleted",
+          description: `${deleteDialog.user.full_name || deleteDialog.user.email} has been deleted successfully`,
+          variant: "destructive"
+        });
+        
+        // Refresh the users list after successful deletion
+        window.location.reload();
+      } catch (error) {
+        console.error('Delete user error:', error);
+        toast({
+          title: "Delete Failed",
+          description: error instanceof Error ? error.message : "Failed to delete user",
+          variant: "destructive"
+        });
+      }
     }
     setDeleteDialog({ open: false, user: null });
   };
