@@ -22,6 +22,7 @@ import { CollaborationProject } from '@/types/collaborationTypes';
 import { formatFunding, getStatusColor, getUrgencyColor } from './projectUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
+import CollaboratorAvatars from './CollaboratorAvatars';
 
 interface CompactProjectCardProps {
   project: CollaborationProject;
@@ -106,10 +107,17 @@ const CompactProjectCard: React.FC<CompactProjectCardProps> = ({
                       <Clock className="w-3 h-3" />
                       {project.time_commitment}
                     </span>
-                    <span className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                       <Users className="w-3 h-3" />
-                      {project.collaborators} contributors
-                    </span>
+                      <span>{project.collaborators} contributors</span>
+                      {project.collaborator_avatars && (
+                        <CollaboratorAvatars
+                          collaborators={project.collaborator_avatars}
+                          totalCollaborators={project.collaborators}
+                          maxVisible={3}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
 

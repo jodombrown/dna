@@ -24,6 +24,11 @@ export const enhancedCollaborationProjects: CollaborationProject[] = [
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80",
       title: "Fintech Entrepreneur"
     },
+    collaborator_avatars: [
+      { color: "#16a34a" }, // green
+      { color: "#ea580c" }, // orange
+      { color: "#eab308" }, // yellow
+    ],
     tags: ["Blockchain", "Mobile Payments", "Financial Inclusion", "Rural Banking"],
     timeline: "24 months",
     next_milestone: "Launch in 3 new countries",
@@ -53,6 +58,11 @@ export const enhancedCollaborationProjects: CollaborationProject[] = [
       avatar: "https://images.unsplash.com/photo-1494790108755-2616b332e234?w=80",
       title: "Clean Energy Engineer"
     },
+    collaborator_avatars: [
+      { color: "#22c55e" }, // green
+      { color: "#f97316" }, // orange  
+      { color: "#a855f7" }, // purple
+    ],
     tags: ["Solar Power", "Rural Electrification", "Sustainable Development", "Energy Access"],
     timeline: "36 months",
     next_milestone: "Project completed - Maintenance phase",
@@ -82,6 +92,11 @@ export const enhancedCollaborationProjects: CollaborationProject[] = [
       avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80",
       title: "AgriTech Innovator"
     },
+    collaborator_avatars: [
+      { color: "#10b981" }, // emerald
+      { color: "#f59e0b" }, // amber
+      { color: "#ef4444" }, // red
+    ],
     tags: ["Supply Chain", "Agriculture", "Blockchain", "Food Security"],
     timeline: "18 months",
     next_milestone: "Deploy in 100 farming cooperatives",

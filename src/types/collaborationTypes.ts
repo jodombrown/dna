@@ -21,6 +21,10 @@ export interface CollaborationProject {
     avatar?: string;
     title?: string;
   };
+  collaborator_avatars?: {
+    avatar?: string;
+    color: string;
+  }[];
   tags: string[];
   timeline: string;
   next_milestone?: string;
