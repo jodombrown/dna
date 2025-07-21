@@ -60,7 +60,7 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
   const creatorImage = event.creator_profile?.avatar_url;
 
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden bg-white border-0 shadow-sm hover:shadow-2xl hover:-translate-y-1 w-full max-w-sm"
+    <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden bg-white border-0 shadow-sm hover:shadow-2xl hover:-translate-y-1 w-full h-full flex flex-col"
           onClick={() => onEventClick(event)}>
       <div className="relative">
         <img
@@ -115,12 +115,12 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
         )}
       </div>
       
-      <CardContent className="pt-8 pb-4 px-4">
-        <div className="space-y-3">
+      <CardContent className="pt-8 pb-4 px-4 flex-1 flex flex-col">
+        <div className="flex-1 space-y-3">
           {/* Title and Type */}
           <div className="space-y-2">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-bold text-base text-gray-900 line-clamp-2 group-hover:text-dna-emerald transition-colors flex-1">
+              <h3 className="font-bold text-base text-gray-900 truncate group-hover:text-dna-emerald transition-colors flex-1">
                 {event.title}
               </h3>
               <Badge variant="outline" className="font-medium text-xs shrink-0">
@@ -135,8 +135,8 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
           {/* Event Details */}
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 text-xs text-gray-500">
-              <Calendar className="w-3.5 h-3.5" />
-              <span>{event.date_time ? new Date(event.date_time).toLocaleDateString('en-US', { 
+              <Calendar className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{event.date_time ? new Date(event.date_time).toLocaleDateString('en-US', { 
                 weekday: 'short', 
                 month: 'short', 
                 day: 'numeric',
@@ -145,26 +145,26 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
               }) : 'TBD'}</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-gray-500">
-              <MapPin className="w-3.5 h-3.5" />
+              <MapPin className="w-3.5 h-3.5 shrink-0" />
               <span className="truncate">{event.location}</span>
             </div>
             <div className="flex items-center gap-2 text-xs text-gray-500">
-              <Users className="w-3.5 h-3.5" />
+              <Users className="w-3.5 h-3.5 shrink-0" />
               <span>{event.attendee_count ?? 0} attending</span>
             </div>
           </div>
-
-          {/* Register Button */}
-          <Button 
-            className="w-full bg-dna-emerald hover:bg-dna-forest text-white font-medium py-2 rounded-lg transition-all text-sm mt-3"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRegisterEvent();
-            }}
-          >
-            Register for Event
-          </Button>
         </div>
+
+        {/* Register Button - Always at bottom */}
+        <Button 
+          className="w-full bg-dna-emerald hover:bg-dna-forest text-white font-medium py-2 rounded-lg transition-all text-sm mt-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRegisterEvent();
+          }}
+        >
+          Register for Event
+        </Button>
       </CardContent>
     </Card>
   );

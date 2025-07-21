@@ -48,10 +48,10 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
             dragFree: true,
           }}
         >
-          <CarouselContent className="-ml-2 md:-ml-4">
+          <CarouselContent className="-ml-4">
             {events.map((event) => (
-              <CarouselItem key={event.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                <div className="h-full">
+              <CarouselItem key={event.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5">
+                <div className="h-[420px]">
                   <ModernEventCard 
                     event={event} 
                     onEventClick={onEventClick}
