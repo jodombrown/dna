@@ -160,7 +160,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
                   </Button>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin' }}>
                   {projects.map((project) => (
                     <CompactProjectCard
                       key={project.id}
