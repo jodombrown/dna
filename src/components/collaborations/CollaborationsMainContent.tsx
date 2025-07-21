@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { ArrowUpDown, Grid, List, Users, Plus, Filter } from 'lucide-react';
+import { ArrowUpDown, Users, Plus, Filter } from 'lucide-react';
 import { CollaborationProject, CollaborationFilters } from '@/types/collaborationTypes';
 import { useIsMobile } from '@/hooks/use-mobile';
 import CollaborationFiltersComponent from './CollaborationFilters';
@@ -49,7 +49,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
   onViewDetails,
   onOpenFeedbackPanel
 }) => {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const viewMode = 'list';
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const isMobile = useIsMobile();
 
@@ -122,29 +122,6 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-auto">
-                {!isMobile && (
-                  <>
-                    <Button
-                      variant={viewMode === 'grid' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setViewMode('grid')}
-                      className={viewMode === 'grid' ? 'bg-dna-copper hover:bg-dna-gold' : ''}
-                    >
-                      <Grid className="w-4 h-4" />
-                      <span className="hidden sm:inline ml-2">Grid</span>
-                    </Button>
-                    <Button
-                      variant={viewMode === 'list' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setViewMode('list')}
-                      className={viewMode === 'list' ? 'bg-dna-copper hover:bg-dna-gold' : ''}
-                    >
-                      <List className="w-4 h-4" />
-                      <span className="hidden sm:inline ml-2">List</span>
-                    </Button>
-                  </>
-                )}
-                
                 <Button
                   size="sm"
                   className="bg-dna-emerald hover:bg-dna-copper text-white flex-1 sm:flex-none"
@@ -183,11 +160,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
                   </Button>
                 </div>
               ) : (
-                <div className={
-                  isMobile || viewMode === 'list'
-                    ? 'space-y-4' 
-                    : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-                }>
+                <div className="space-y-4">
                   {projects.map((project) => (
                     <CompactProjectCard
                       key={project.id}
