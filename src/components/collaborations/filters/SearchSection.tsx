@@ -9,7 +9,7 @@ interface SearchSectionProps {
   onFiltersChange: (filters: Partial<CollaborationFilters>) => void;
 }
 
-const SearchSection: React.FC<SearchSectionProps> = React.memo(({
+const SearchSection: React.FC<SearchSectionProps> = ({
   searchQuery,
   onFiltersChange
 }) => {
@@ -55,8 +55,6 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(({
       </div>
     </div>
   );
-});
-
-SearchSection.displayName = 'SearchSection';
+};
 
 export default SearchSection;
