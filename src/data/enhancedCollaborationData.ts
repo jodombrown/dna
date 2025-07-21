@@ -239,7 +239,7 @@ export const enhancedCollaborationProjects: CollaborationProject[] = [
     id: "9",
     title: "Sustainable Tourism Development Hub", 
     description: "Community-driven sustainable tourism platform showcasing authentic Ethiopian experiences while ensuring economic benefits reach local communities.",
-    impact_area: "social-impact",
+    impact_area: "infrastructure",
     region: "east-africa",
     countries: ["Ethiopia"],
     contribution_types: ["marketing", "business-expertise", "network"],
@@ -411,14 +411,14 @@ export const enhancedCollaborationProjects: CollaborationProject[] = [
     created_at: "2024-02-15T00:00:00Z"
   },
   {
-    id: "15",
-    title: "E-Learning Platform for Vocational Skills",
-    description: "Comprehensive online education platform providing technical and vocational training to youth in Botswana.",
-    impact_area: "edtech",
+    id: "15", 
+    title: "Digital Governance Transparency Platform",
+    description: "Blockchain-based platform enhancing government transparency and citizen engagement in democratic processes across Botswana.",
+    impact_area: "governance",
     region: "southern-africa",
     countries: ["Botswana"],
-    contribution_types: ["technical-skills", "mentorship", "network"],
-    skills_needed: ["Educational Technology", "Curriculum Design", "Video Production", "Career Counseling"],
+    contribution_types: ["technical-skills", "research", "operations"],
+    skills_needed: ["Blockchain Development", "Public Policy", "Civic Tech", "Transparency Tools"],
     team_size: 13,
     collaborators: 10,
     funding_goal: 900000,
@@ -430,12 +430,12 @@ export const enhancedCollaborationProjects: CollaborationProject[] = [
     creator: {
       name: "Thabo Mokwena",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80",
-      title: "EdTech Entrepreneur"
+      title: "Governance Tech Expert"
     },
-    tags: ["Vocational Training", "E-Learning", "Youth Development", "Skills Building"],
+    tags: ["Digital Governance", "Transparency", "Civic Engagement", "Democracy"],
     timeline: "16 months",
-    next_milestone: "Launch 20 new courses",
-    recent_update: "1,200 students enrolled, 78% course completion rate achieved",
+    next_milestone: "Deploy in 5 government departments",
+    recent_update: "3 pilot programs launched, 95% citizen satisfaction in transparency reports",
     image_url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&h=300&fit=crop",
     created_at: "2024-01-28T00:00:00Z"
   },
