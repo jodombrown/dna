@@ -126,6 +126,24 @@ export default {
 					'100%': {
 						transform: 'scale(1)',
 					}
+				},
+				'breathing-pulse-staggered': {
+					'0%': {
+						transform: 'scale(1)',
+						boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)'
+					},
+					'25%': {
+						transform: 'scale(1.08)',
+						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+					},
+					'50%': {
+						transform: 'scale(1)',
+						boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)'
+					},
+					'100%': {
+						transform: 'scale(1)',
+						boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)'
+					}
 				}
 			},
 			animation: {
@@ -135,7 +153,8 @@ export default {
 				'heartbeat': 'heartbeat 2s ease-in-out infinite',
 				'heartbeat-delayed': 'heartbeat 2s ease-in-out infinite 1s',
 				'heartbeat-delayed-2': 'heartbeat 2s ease-in-out infinite 2s',
-				'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards'
+				'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
+				'breathing-pulse-staggered': 'breathing-pulse-staggered 3s ease-in-out infinite'
 			}
 		}
 	},
