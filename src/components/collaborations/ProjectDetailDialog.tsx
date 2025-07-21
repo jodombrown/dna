@@ -33,6 +33,7 @@ import {
 import { CollaborationProject } from '@/types/collaborationTypes';
 import { formatDistanceToNow } from 'date-fns';
 import { getUrgencyColor, getStatusColor, formatFunding } from './projectUtils';
+import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 interface ProjectDetailDialogProps {
   project: CollaborationProject | null;
@@ -58,6 +59,22 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
   bookmarkedProjects
 }) => {
   if (!project) return null;
+
+  // Animation for funding progress
+  const currentFunding = project.current_funding || 0;
+  const fundingGoal = project.funding_goal || 0;
+  const progressPercentage = fundingGoal > 0 ? (currentFunding / fundingGoal) * 100 : 0;
+  
+  const { count: animatedCurrentFunding, countRef: fundingRef } = useAnimatedCounter({ 
+    end: currentFunding, 
+    duration: 2000 
+  });
+  
+  const { count: animatedProgress } = useAnimatedCounter({ 
+    end: progressPercentage, 
+    duration: 2000,
+    decimals: 1 
+  });
 
   const handleShare = () => {
     if (navigator.share) {
@@ -206,7 +223,7 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
 
               {/* Funding Progress */}
               {project.funding_goal && (
-                <div>
+                <div ref={fundingRef}>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <DollarSign className="w-5 h-5 text-dna-copper" />
                     Funding Progress
@@ -215,15 +232,15 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
                     <div className="flex justify-between items-center text-sm mb-2">
                       <span className="text-gray-600">Current Funding</span>
                       <span className="font-semibold text-dna-forest">
-                        {formatFunding(project.current_funding || 0)} / {formatFunding(project.funding_goal)}
+                        {formatFunding(animatedCurrentFunding)} / {formatFunding(project.funding_goal)}
                       </span>
                     </div>
                     <Progress 
-                      value={(project.current_funding || 0) / project.funding_goal * 100} 
+                      value={animatedProgress} 
                       className="h-3"
                     />
                     <p className="text-xs text-gray-500 mt-2">
-                      {Math.round((project.current_funding || 0) / project.funding_goal * 100)}% funded
+                      {Math.round(animatedProgress)}% funded
                     </p>
                   </div>
                 </div>
