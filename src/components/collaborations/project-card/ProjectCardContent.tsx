@@ -7,25 +7,41 @@ import { Calendar } from 'lucide-react';
 import { CollaborationProject } from '@/types/collaborationTypes';
 import { formatDistanceToNow } from 'date-fns';
 import { formatFunding } from '../projectUtils';
+import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 interface ProjectCardContentProps {
   project: CollaborationProject;
 }
 
 const ProjectCardContent: React.FC<ProjectCardContentProps> = ({ project }) => {
+  const currentFunding = project.current_funding || 0;
+  const fundingGoal = project.funding_goal || 0;
+  const progressPercentage = fundingGoal > 0 ? (currentFunding / fundingGoal) * 100 : 0;
+  
+  const { count: animatedCurrentFunding, countRef: fundingRef } = useAnimatedCounter({ 
+    end: currentFunding, 
+    duration: 2000 
+  });
+  
+  const { count: animatedProgress } = useAnimatedCounter({ 
+    end: progressPercentage, 
+    duration: 2000,
+    decimals: 1 
+  });
+
   return (
     <CardContent className="space-y-4">
       {/* Progress and Funding */}
       {project.funding_goal && (
-        <div className="space-y-2">
+        <div className="space-y-2" ref={fundingRef}>
           <div className="flex justify-between items-center text-sm">
             <span className="text-gray-600">Funding Progress</span>
             <span className="font-semibold text-dna-forest">
-              {formatFunding(project.current_funding || 0)} / {formatFunding(project.funding_goal)}
+              {formatFunding(animatedCurrentFunding)} / {formatFunding(project.funding_goal)}
             </span>
           </div>
           <Progress 
-            value={(project.current_funding || 0) / project.funding_goal * 100} 
+            value={animatedProgress} 
             className="h-2"
           />
         </div>
