@@ -18,8 +18,7 @@ export const regions = [
   { value: 'east-africa', label: 'East Africa', flag: '🇰🇪', description: 'Kenya, Tanzania, Uganda, Ethiopia, etc.' },
   { value: 'north-africa', label: 'North Africa', flag: '🇪🇬', description: 'Egypt, Morocco, Tunisia, Algeria, etc.' },
   { value: 'central-africa', label: 'Central Africa', flag: '🇨🇲', description: 'Cameroon, DRC, Chad, CAR, etc.' },
-  { value: 'southern-africa', label: 'Southern Africa', flag: '🇿🇦', description: 'South Africa, Zimbabwe, Botswana, etc.' },
-  { value: 'pan-african', label: 'Pan-African', flag: '🌍', description: 'Multi-regional or continent-wide initiatives' }
+  { value: 'southern-africa', label: 'Southern Africa', flag: '🇿🇦', description: 'South Africa, Zimbabwe, Botswana, etc.' }
 ];
 
 export const contributionTypes = [

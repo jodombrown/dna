@@ -54,8 +54,7 @@ export type AfricanRegion =
   | 'east-africa' 
   | 'north-africa' 
   | 'central-africa' 
-  | 'southern-africa' 
-  | 'pan-african';
+  | 'southern-africa';
 
 export interface CollaborationFilters {
   impact_area: ImpactArea[];
