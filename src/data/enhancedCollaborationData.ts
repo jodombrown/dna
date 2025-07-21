@@ -1,5 +1,6 @@
 
 import { CollaborationProject, CollaborationStats } from '@/types/collaborationTypes';
+import { extendedCollaborationProjects } from './extendedCollaborationData';
 
 export const enhancedCollaborationProjects: CollaborationProject[] = [
   {
@@ -320,13 +321,169 @@ export const enhancedCollaborationProjects: CollaborationProject[] = [
     recent_update: "$2.8M invested across 25 businesses, 78% investment success rate maintained",
     image_url: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&h=300&fit=crop",
     created_at: "2024-01-18T00:00:00Z"
-  }
+  },
+  // Additional 42 initiatives to cover more African countries
+  {
+    id: "12",
+    title: "Digital Agriculture Extension Services",
+    description: "AI-powered agricultural advisory platform connecting farmers with expert advice and market information across Algeria.",
+    impact_area: "agritech", 
+    region: "north-africa",
+    countries: ["Algeria"],
+    contribution_types: ["technical-skills", "business-expertise", "mentorship"],
+    skills_needed: ["AI Development", "Agricultural Science", "Mobile App Development", "Market Research"],
+    team_size: 7,
+    collaborators: 5,
+    funding_goal: 650000,
+    current_funding: 195000,
+    progress: 30,
+    status: "launching",
+    urgency: "medium",
+    time_commitment: "flexible",
+    creator: {
+      name: "Yasmin Boumediene",
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80",
+      title: "AgTech Specialist"
+    },
+    tags: ["Agriculture", "AI Advisory", "Market Access", "Rural Development"],
+    timeline: "14 months",
+    next_milestone: "Onboard 500 farmers",
+    recent_update: "Beta testing with 200 farmers, 85% improvement in crop yields reported",
+    image_url: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=500&h=300&fit=crop",
+    created_at: "2024-02-08T00:00:00Z"
+  },
+  {
+    id: "13",
+    title: "Renewable Energy Microfinance",
+    description: "Community-based solar energy financing program enabling rural communities in Angola to access clean energy solutions.",
+    impact_area: "cleantech",
+    region: "southern-africa", 
+    countries: ["Angola"],
+    contribution_types: ["funding", "operations", "network"],
+    skills_needed: ["Microfinance", "Solar Installation", "Community Organizing", "Impact Assessment"],
+    team_size: 11,
+    collaborators: 9,
+    funding_goal: 1400000,
+    current_funding: 420000,
+    progress: 30,
+    status: "active",
+    urgency: "high",
+    time_commitment: "part-time",
+    creator: {
+      name: "Carlos Mbemba",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80",
+      title: "Clean Energy Advocate"
+    },
+    tags: ["Solar Energy", "Microfinance", "Rural Access", "Community Development"],
+    timeline: "24 months",
+    next_milestone: "Install solar systems in 100 homes",
+    recent_update: "50 households now have solar power, 90% loan repayment rate achieved",
+    image_url: "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=500&h=300&fit=crop",
+    created_at: "2024-01-22T00:00:00Z"
+  },
+  {
+    id: "14",
+    title: "Digital Health Records System",
+    description: "Blockchain-based health records platform improving healthcare delivery and patient outcomes across Benin.",
+    impact_area: "healthtech",
+    region: "west-africa",
+    countries: ["Benin"],
+    contribution_types: ["technical-skills", "funding", "mentorship"],
+    skills_needed: ["Blockchain Development", "Healthcare IT", "Data Privacy", "System Integration"],
+    team_size: 6,
+    collaborators: 4,
+    funding_goal: 850000,
+    current_funding: 170000,
+    progress: 20,
+    status: "launching",
+    urgency: "medium",
+    time_commitment: "part-time",
+    creator: {
+      name: "Dr. Adjoa Mensah",
+      avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=80",
+      title: "HealthTech Innovator"
+    },
+    tags: ["Health Records", "Blockchain", "Data Security", "Healthcare Access"],
+    timeline: "18 months",
+    next_milestone: "Deploy in 5 regional hospitals",
+    recent_update: "System tested in 2 clinics, 100% data integrity maintained",
+    image_url: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&h=300&fit=crop",
+    created_at: "2024-02-15T00:00:00Z"
+  },
+  {
+    id: "15",
+    title: "E-Learning Platform for Vocational Skills",
+    description: "Comprehensive online education platform providing technical and vocational training to youth in Botswana.",
+    impact_area: "edtech",
+    region: "southern-africa",
+    countries: ["Botswana"],
+    contribution_types: ["technical-skills", "mentorship", "network"],
+    skills_needed: ["Educational Technology", "Curriculum Design", "Video Production", "Career Counseling"],
+    team_size: 13,
+    collaborators: 10,
+    funding_goal: 900000,
+    current_funding: 450000,
+    progress: 50,
+    status: "active",
+    urgency: "low",
+    time_commitment: "flexible",
+    creator: {
+      name: "Thabo Mokwena",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80",
+      title: "EdTech Entrepreneur"
+    },
+    tags: ["Vocational Training", "E-Learning", "Youth Development", "Skills Building"],
+    timeline: "16 months",
+    next_milestone: "Launch 20 new courses",
+    recent_update: "1,200 students enrolled, 78% course completion rate achieved",
+    image_url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&h=300&fit=crop",
+    created_at: "2024-01-28T00:00:00Z"
+  },
+  {
+    id: "16",
+    title: "Women's Cooperative Digital Platform",
+    description: "Technology platform empowering women's cooperatives in Burkina Faso to access markets and financial services digitally.",
+    impact_area: "fintech",
+    region: "west-africa",
+    countries: ["Burkina Faso"],
+    contribution_types: ["technical-skills", "business-expertise", "marketing"],
+    skills_needed: ["Mobile Development", "Financial Technology", "UI/UX Design", "Cooperative Management"],
+    team_size: 8,
+    collaborators: 6,
+    funding_goal: 550000,
+    current_funding: 220000,
+    progress: 40,
+    status: "active",
+    urgency: "medium",
+    time_commitment: "part-time",
+    creator: {
+      name: "Aminata Traoré",
+      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80",
+      title: "Women's Economic Empowerment Advocate"
+    },
+    tags: ["Women's Cooperatives", "Digital Markets", "Financial Inclusion", "Gender Equality"],
+    timeline: "12 months",
+    next_milestone: "Connect 50 cooperatives to platform",
+    recent_update: "25 cooperatives onboarded, $75K in transactions processed",
+    image_url: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=500&h=300&fit=crop",
+    created_at: "2024-02-03T00:00:00Z"
+  },
+  ...extendedCollaborationProjects
 ];
 
-export const collaborationStats: CollaborationStats = {
-  total_projects: 47,
-  active_collaborators: 156,
-  countries_involved: 28,
-  total_funding: "$12.8M",
-  impact_stories: 23
+// Dynamic stats calculation function
+export const calculateStats = (projects: CollaborationProject[]): CollaborationStats => {
+  const totalCollaborators = projects.reduce((sum, project) => sum + project.collaborators, 0);
+  const uniqueCountries = new Set(projects.flatMap(project => project.countries));
+  const totalFunding = projects.reduce((sum, project) => sum + (project.current_funding || 0), 0);
+  
+  return {
+    total_projects: projects.length,
+    active_collaborators: totalCollaborators,
+    countries_involved: uniqueCountries.size,
+    total_funding: `$${(totalFunding / 1000000).toFixed(1)}M`,
+    impact_stories: Math.floor(projects.length * 0.6) // Assuming 60% have impact stories
+  };
 };
+
+export const collaborationStats: CollaborationStats = calculateStats(enhancedCollaborationProjects);

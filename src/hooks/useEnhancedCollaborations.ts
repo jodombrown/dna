@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { CollaborationProject, CollaborationFilters, CollaborationStats } from '@/types/collaborationTypes';
-import { enhancedCollaborationProjects, collaborationStats } from '@/data/enhancedCollaborationData';
+import { enhancedCollaborationProjects, calculateStats } from '@/data/enhancedCollaborationData';
 import { useToast } from '@/hooks/use-toast';
 
 const initialFilters: CollaborationFilters = {
@@ -109,6 +109,11 @@ export const useEnhancedCollaborations = () => {
     return filtered;
   }, [allProjects, filters, sortBy]);
 
+  // Calculate dynamic stats based on filtered projects
+  const dynamicStats = useMemo(() => {
+    return calculateStats(filteredProjects);
+  }, [filteredProjects]);
+
   const updateFilters = (newFilters: Partial<CollaborationFilters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
@@ -144,6 +149,6 @@ export const useEnhancedCollaborations = () => {
     sortBy,
     setSortBy,
     loading,
-    stats: collaborationStats
+    stats: dynamicStats
   };
 };
