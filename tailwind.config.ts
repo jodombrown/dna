@@ -130,19 +130,15 @@ export default {
 				'breathing-pulse-staggered': {
 					'0%': {
 						transform: 'scale(1)',
-						boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)'
-					},
-					'25%': {
-						transform: 'scale(1.08)',
-						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+						boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
 					},
 					'50%': {
-						transform: 'scale(1)',
-						boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)'
+						transform: 'scale(1.15)',
+						boxShadow: '0 6px 20px rgba(0, 0, 0, 0.35)'
 					},
 					'100%': {
 						transform: 'scale(1)',
-						boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)'
+						boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
 					}
 				}
 			},
@@ -154,7 +150,7 @@ export default {
 				'heartbeat-delayed': 'heartbeat 2s ease-in-out infinite 1s',
 				'heartbeat-delayed-2': 'heartbeat 2s ease-in-out infinite 2s',
 				'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
-				'breathing-pulse-staggered': 'breathing-pulse-staggered 3s ease-in-out infinite'
+				'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite'
 			}
 		}
 	},

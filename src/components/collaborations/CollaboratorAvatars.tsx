@@ -26,11 +26,12 @@ const CollaboratorAvatars: React.FC<CollaboratorAvatarsProps> = ({
       {visibleCollaborators.map((collaborator, index) => (
         <div
           key={index}
-          className="w-6 h-6 rounded-full border-2 border-white shadow-md"
+          className="w-6 h-6 rounded-full border-2 border-white"
           style={{ 
             backgroundColor: collaborator.color,
-            animation: `breathing-pulse-staggered 3s ease-in-out infinite`,
-            animationDelay: `${index * 0.5}s`
+            animation: `breathing-pulse-staggered 2s ease-in-out infinite`,
+            animationDelay: `${index * 0.6}s`,
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
           }}
         >
           {collaborator.avatar && (
