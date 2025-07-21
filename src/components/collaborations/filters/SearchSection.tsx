@@ -19,7 +19,7 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(({
     setLocalSearchQuery(searchQuery);
   }, [searchQuery]);
 
-  const debouncedUpdate = useCallback(() => {
+  useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (localSearchQuery !== searchQuery) {
         onFiltersChange({ search_query: localSearchQuery });
@@ -28,11 +28,6 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(({
 
     return () => clearTimeout(timeoutId);
   }, [localSearchQuery, searchQuery, onFiltersChange]);
-
-  useEffect(() => {
-    const cleanup = debouncedUpdate();
-    return cleanup;
-  }, [debouncedUpdate]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalSearchQuery(e.target.value);
