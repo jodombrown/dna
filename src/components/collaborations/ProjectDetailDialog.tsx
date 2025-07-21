@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -28,7 +28,8 @@ import {
   MapPin,
   User,
   Mail,
-  ExternalLink
+  ExternalLink,
+  X
 } from 'lucide-react';
 import { CollaborationProject } from '@/types/collaborationTypes';
 import { formatDistanceToNow } from 'date-fns';
@@ -58,6 +59,8 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
   likedProjects,
   bookmarkedProjects
 }) => {
+  const [imageError, setImageError] = useState(false);
+  
   if (!project) return null;
 
   // Animation for funding progress
@@ -91,14 +94,23 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] p-0">
+        {/* Custom close button positioned outside the tab area */}
+        <button
+          onClick={onClose}
+          className="absolute -top-3 -right-3 z-50 w-8 h-8 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+          aria-label="Close dialog"
+        >
+          <X className="w-4 h-4 text-gray-600" />
+        </button>
         <ScrollArea className="max-h-[90vh]">
           {/* Hero Image */}
           <div className="relative h-64 bg-gradient-to-br from-dna-copper/20 to-dna-emerald/20">
-            {project.image_url ? (
+            {project.image_url && !imageError ? (
               <img 
                 src={project.image_url} 
                 alt={project.title}
                 className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
