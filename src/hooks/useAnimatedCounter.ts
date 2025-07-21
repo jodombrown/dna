@@ -5,13 +5,23 @@ interface UseAnimatedCounterProps {
   end: number;
   duration?: number;
   decimals?: number;
+  resetKey?: string; // Add resetKey to trigger animation restart
 }
 
-export const useAnimatedCounter = ({ end, duration = 2000, decimals = 0 }: UseAnimatedCounterProps) => {
+export const useAnimatedCounter = ({ end, duration = 2000, decimals = 0, resetKey }: UseAnimatedCounterProps) => {
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const countRef = useRef<HTMLDivElement>(null);
   const hasAnimated = useRef(false);
+
+  // Reset animation when resetKey changes
+  useEffect(() => {
+    if (resetKey) {
+      hasAnimated.current = false;
+      setIsVisible(false);
+      setCount(0);
+    }
+  }, [resetKey]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -29,7 +39,7 @@ export const useAnimatedCounter = ({ end, duration = 2000, decimals = 0 }: UseAn
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [resetKey]); // Add resetKey as dependency
 
   useEffect(() => {
     if (!isVisible) return;

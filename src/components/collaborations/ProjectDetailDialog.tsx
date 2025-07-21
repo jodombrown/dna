@@ -70,13 +70,15 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
   
   const { count: animatedCurrentFunding, countRef: fundingRef } = useAnimatedCounter({ 
     end: currentFunding, 
-    duration: 2000 
+    duration: 2000,
+    resetKey: `${project.id}-funding-${isOpen}` // Reset animation when project or dialog state changes
   });
   
   const { count: animatedProgress } = useAnimatedCounter({ 
     end: progressPercentage, 
     duration: 2000,
-    decimals: 1 
+    decimals: 1,
+    resetKey: `${project.id}-progress-${isOpen}` // Reset animation when project or dialog state changes
   });
 
   const handleShare = () => {
