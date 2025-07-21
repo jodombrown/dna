@@ -160,7 +160,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
                   </Button>
                 </div>
               ) : (
-                <div className="flex gap-6 overflow-x-auto pb-4" style={{ scrollbarWidth: 'thin' }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin' }}>
                   {projects.map((project) => (
                     <CompactProjectCard
                       key={project.id}
