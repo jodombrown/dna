@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
@@ -14,6 +14,21 @@ const SearchSection: React.FC<SearchSectionProps> = ({
   searchQuery,
   onFiltersChange
 }) => {
+  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+
+  useEffect(() => {
+    setLocalSearchQuery(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (localSearchQuery !== searchQuery) {
+        onFiltersChange({ search_query: localSearchQuery });
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [localSearchQuery, searchQuery, onFiltersChange]);
   return (
     <div className="space-y-3 mb-6">
       <div className="bg-gray-50 px-3 py-2 rounded-lg border">
@@ -28,8 +43,8 @@ const SearchSection: React.FC<SearchSectionProps> = ({
           <Input
             id="search"
             placeholder="Search by title, description, or skills..."
-            value={searchQuery}
-            onChange={(e) => onFiltersChange({ search_query: e.target.value })}
+            value={localSearchQuery}
+            onChange={(e) => setLocalSearchQuery(e.target.value)}
             className="pl-10 border-gray-200 focus:border-dna-copper focus:ring-dna-copper"
           />
         </div>
