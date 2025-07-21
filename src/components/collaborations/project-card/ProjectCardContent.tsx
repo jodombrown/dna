@@ -26,7 +26,7 @@ const ProjectCardContent: React.FC<ProjectCardContentProps> = ({ project }) => {
   const { count: animatedProgress } = useAnimatedCounter({ 
     end: progressPercentage, 
     duration: 2000,
-    decimals: 1 
+    decimals: 0 
   });
 
   return (

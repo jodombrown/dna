@@ -59,7 +59,7 @@ const CompactProjectCard: React.FC<CompactProjectCardProps> = ({
   const { count: animatedProgress } = useAnimatedCounter({ 
     end: progressPercentage, 
     duration: 2000,
-    decimals: 1 
+    decimals: 0 
   });
 
   // Force list view on mobile for better experience
