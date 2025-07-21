@@ -27,6 +27,7 @@ interface CollaborationsMainContentProps {
   onJoinProject: (projectId: string) => void;
   onLikeProject: (projectId: string) => void;
   onBookmarkProject: (projectId: string) => void;
+  onContactTeam: (projectId: string) => void;
   onViewDetails: (project: CollaborationProject) => void;
   onOpenFeedbackPanel: () => void;
 }
@@ -46,6 +47,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
   onJoinProject,
   onLikeProject,
   onBookmarkProject,
+  onContactTeam,
   onViewDetails,
   onOpenFeedbackPanel
 }) => {
@@ -188,6 +190,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
         onJoinProject={onJoinProject}
         onLikeProject={onLikeProject}
         onBookmarkProject={onBookmarkProject}
+        onContactTeam={onContactTeam}
         likedProjects={likedProjects}
         bookmarkedProjects={bookmarkedProjects}
       />

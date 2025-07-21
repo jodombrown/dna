@@ -41,6 +41,7 @@ interface ProjectDetailDialogProps {
   onJoinProject: (projectId: string) => void;
   onLikeProject: (projectId: string) => void;
   onBookmarkProject: (projectId: string) => void;
+  onContactTeam: (projectId: string) => void;
   likedProjects: Set<string>;
   bookmarkedProjects: Set<string>;
 }
@@ -52,6 +53,7 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
   onJoinProject,
   onLikeProject,
   onBookmarkProject,
+  onContactTeam,
   likedProjects,
   bookmarkedProjects
 }) => {
@@ -337,6 +339,7 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
                   </Button>
                   <Button 
                     variant="outline"
+                    onClick={() => onContactTeam(project.id)}
                     className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
                   >
                     <Mail className="w-5 h-5 mr-2" />

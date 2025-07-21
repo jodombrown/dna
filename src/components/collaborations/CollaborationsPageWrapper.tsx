@@ -80,6 +80,15 @@ const CollaborationsPageWrapper = () => {
     setBookmarkedProjects(newBookmarked);
   };
 
+  const handleContactTeam = (projectId: string) => {
+    const project = projects.find(p => p.id === projectId);
+    toast({
+      title: "Team Contact Request Sent! 📧",
+      description: `We've notified the "${project?.title}" team about your interest. They'll reach out within 48 hours to discuss collaboration opportunities and next steps.`,
+      duration: 6000,
+    });
+  };
+
   const handleViewDetails = (project: CollaborationProject) => {
     setSelectedProject(project);
   };
@@ -108,6 +117,7 @@ const CollaborationsPageWrapper = () => {
         onJoinProject={handleJoinProject}
         onLikeProject={handleLikeProject}
         onBookmarkProject={handleBookmarkProject}
+        onContactTeam={handleContactTeam}
         onViewDetails={handleViewDetails}
         onOpenFeedbackPanel={() => setIsFeedbackPanelOpen(true)}
       />
