@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { ArrowUpDown, Users, Plus, Filter } from 'lucide-react';
+import { ArrowUpDown, Grid, List, Users, Plus, Filter } from 'lucide-react';
 import { CollaborationProject, CollaborationFilters } from '@/types/collaborationTypes';
 import { useIsMobile } from '@/hooks/use-mobile';
 import CollaborationFiltersComponent from './CollaborationFilters';
@@ -49,7 +49,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
   onViewDetails,
   onOpenFeedbackPanel
 }) => {
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const isMobile = useIsMobile();
 
@@ -122,6 +122,29 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-auto">
+                {!isMobile && (
+                  <>
+                    <Button
+                      variant={viewMode === 'grid' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setViewMode('grid')}
+                      className={viewMode === 'grid' ? 'bg-dna-copper hover:bg-dna-gold' : ''}
+                    >
+                      <Grid className="w-4 h-4" />
+                      <span className="hidden sm:inline ml-2">Grid</span>
+                    </Button>
+                    <Button
+                      variant={viewMode === 'list' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setViewMode('list')}
+                      className={viewMode === 'list' ? 'bg-dna-copper hover:bg-dna-gold' : ''}
+                    >
+                      <List className="w-4 h-4" />
+                      <span className="hidden sm:inline ml-2">List</span>
+                    </Button>
+                  </>
+                )}
+                
                 <Button
                   size="sm"
                   className="bg-dna-emerald hover:bg-dna-copper text-white flex-1 sm:flex-none"
@@ -144,28 +167,32 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
           </div>
 
           {/* Projects Grid/List */}
-          <div className="flex-1 overflow-hidden">
-            {projects.length === 0 ? (
-              <div className="text-center py-12 px-4 sm:px-6">
-                <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">No initiatives found</h3>
-                <p className="text-gray-500 mb-6">Try adjusting your filters or search terms.</p>
-                <Button 
-                  onClick={clearFilters}
-                  variant="outline"
-                  className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
-                >
-                  Clear All Filters
-                </Button>
-              </div>
-            ) : (
-              <ScrollArea className="h-full">
-                <div className="p-4 sm:p-6 space-y-4">
+          <ScrollArea className="flex-1">
+            <div className="p-4 sm:p-6">
+              {projects.length === 0 ? (
+                <div className="text-center py-12">
+                  <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-700 mb-2">No initiatives found</h3>
+                  <p className="text-gray-500 mb-6">Try adjusting your filters or search terms.</p>
+                  <Button 
+                    onClick={clearFilters}
+                    variant="outline"
+                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
+                  >
+                    Clear All Filters
+                  </Button>
+                </div>
+              ) : (
+                <div className={
+                  isMobile || viewMode === 'list'
+                    ? 'space-y-4' 
+                    : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                }>
                   {projects.map((project) => (
                     <CompactProjectCard
                       key={project.id}
                       project={project}
-                      viewMode="list"
+                      viewMode={isMobile ? 'list' : viewMode}
                       likedProjects={likedProjects}
                       bookmarkedProjects={bookmarkedProjects}
                       onJoinProject={onJoinProject}
@@ -175,9 +202,9 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
                     />
                   ))}
                 </div>
-              </ScrollArea>
-            )}
-          </div>
+              )}
+            </div>
+          </ScrollArea>
         </div>
       </div>
 

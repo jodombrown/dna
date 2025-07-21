@@ -10,7 +10,6 @@ interface AuthContextType {
   profile: any | null;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signInWithLinkedIn: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   updatePassword: (password: string) => Promise<{ error: any }>;
 }
@@ -31,105 +30,64 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user profile with graceful error handling
+  // Fetch user profile
   const fetchProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .maybeSingle();
+        .single();
       
-      if (error) {
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
         console.error('Error fetching profile:', error);
-        setProfile({ id: userId, email: null, full_name: null });
-        return;
-      }
-      
-      if (!data) {
-        console.log('No profile found for user:', userId);
-        setProfile({ id: userId, email: null, full_name: null });
         return;
       }
       
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
-      setProfile({ id: userId, email: null, full_name: null });
     }
   };
 
   useEffect(() => {
-    let isMounted = true;
-
-    // Set up auth state listener - CRITICAL: Keep callback synchronous
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (!isMounted) return;
-        
+      async (event, session) => {
         console.log('Auth state changed:', event, session);
-        
-        // Only synchronous state updates here
         setSession(session);
         setUser(session?.user ?? null);
-        setLoading(false);
         
-        // Defer async operations using setTimeout to prevent deadlocks
         if (session?.user) {
+          // Fetch profile after a short delay to allow database trigger to complete
           setTimeout(() => {
-            if (isMounted) {
-              fetchProfile(session.user.id);
-            }
+            fetchProfile(session.user.id);
           }, 100);
         } else {
           setProfile(null);
         }
+        
+        setLoading(false);
       }
     );
 
     // Get initial session
-    const initializeAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (!isMounted) return;
-        
-        if (error) {
-          console.error('Error getting session:', error);
-          setLoading(false);
-          return;
-        }
-        
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        }
-        
-        setLoading(false);
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-        if (isMounted) {
-          setLoading(false);
-        }
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        fetchProfile(session.user.id);
       }
-    };
+      
+      setLoading(false);
+    });
 
-    initializeAuth();
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    // Use the actual production domain or current origin  
-    const isProduction = window.location.hostname.includes('diasporanetwork.africa');
-    const redirectUrl = isProduction 
-      ? 'https://diasporanetwork.africa/onboarding' 
-      : `${window.location.origin}/onboarding`;
+    const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -152,35 +110,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signInWithLinkedIn = async () => {
-    try {
-      console.log('Starting LinkedIn OAuth flow...');
-      // Use the actual production domain or current origin
-      const isProduction = window.location.hostname.includes('diasporanetwork.africa');
-      const redirectUrl = isProduction 
-        ? 'https://diasporanetwork.africa/onboarding' 
-        : `${window.location.origin}/onboarding`;
-      
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'linkedin_oidc',
-        options: {
-          redirectTo: redirectUrl
-        }
-      });
-      
-      console.log('LinkedIn OAuth response:', { data, error });
-      
-      if (error) {
-        console.error('LinkedIn OAuth error:', error);
-      }
-      
-      return { error };
-    } catch (err) {
-      console.error('LinkedIn OAuth exception:', err);
-      return { error: err };
-    }
-  };
-
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfile(null);
@@ -200,7 +129,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     profile,
     signUp,
     signIn,
-    signInWithLinkedIn,
     signOut,
     updatePassword,
   };

@@ -5,7 +5,6 @@ export const publicNavItems = [
   { name: 'Collaborate', path: '/collaborate' },
   { name: 'Contribute', path: '/contribute' },
   { name: 'Contact', path: '/contact' },
-  { name: 'Phases', path: '/phases' },
 ];
 
 // Main navigation for authenticated users (feed-focused like LinkedIn)
@@ -25,9 +24,9 @@ export const phases = [
   { name: 'Go-to-Market', path: '/phase/go-to-market', phase: 6, timeline: 'Sep 2026+' },
 ];
 
-// App navigation for authenticated users - redirect to actual app features
-export const appNavItems = [
-  { name: 'Connect', path: '/app' },
-  { name: 'Collaborate', path: '/explore/projects' },
-  { name: 'Contribute', path: '/explore/projects' },
+// Example pages for landing page showcase
+export const examplePages = [
+  { name: 'Connect', path: '/connect' },
+  { name: 'Collaborate', path: '/collaborate' },
+  { name: 'Contribute', path: '/contribute' },
 ];

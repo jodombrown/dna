@@ -27,11 +27,7 @@ export interface CommunityMembership {
   user_id: string;
   community_id: string;
   role: 'admin' | 'moderator' | 'member';
-  status: 'pending' | 'approved' | 'rejected';
   joined_at: string;
-  requested_at?: string;
-  approved_at?: string;
-  approved_by?: string;
 }
 
 export interface CommunityWithMembership extends Community {

@@ -215,7 +215,7 @@ const ProjectPathways = () => {
                   <Button 
                     className="flex-1 bg-dna-copper hover:bg-dna-gold text-white"
                     size="sm"
-                    onClick={() => navigate('/contribute')}
+                    onClick={() => navigate(`/innovation/${project.id}`)}
                   >
                     <DollarSign className="w-4 h-4 mr-1" />
                     Contribute
@@ -224,7 +224,7 @@ const ProjectPathways = () => {
                     size="sm" 
                     variant="outline"
                     className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
-                    onClick={() => navigate('/collaborate')}
+                    onClick={() => navigate(`/innovation/${project.id}`)}
                   >
                     Learn More
                   </Button>

@@ -33,16 +33,10 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToAuth }) =
     setLoading(true);
 
     try {
-      // Generate a secure token for password reset
-      const resetToken = crypto.randomUUID();
-      const resetUrl = `${window.location.origin}/auth?mode=reset&token=${resetToken}&email=${encodeURIComponent(email.trim().toLowerCase())}`;
+      const redirectUrl = `${window.location.origin}/auth?mode=reset`;
       
-      // Call our custom edge function instead of Supabase's built-in method
-      const { error } = await supabase.functions.invoke('send-password-reset', {
-        body: {
-          email: email.trim().toLowerCase(),
-          resetUrl: resetUrl
-        }
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
+        redirectTo: redirectUrl,
       });
 
       if (error) {

@@ -38,17 +38,15 @@ export const profilesService = {
     return data;
   },
 
-  // Get profile by ID with safe error handling
+  // Get profile by ID
   async getProfileById(id: string) {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', id)
-      .maybeSingle(); // Use maybeSingle() to prevent crashes when profile doesn't exist
+      .single();
     
     if (error) throw error;
-    
-    // Return null if no profile found instead of throwing error
     return data;
   },
 
@@ -59,7 +57,7 @@ export const profilesService = {
       .update(updates)
       .eq('id', id)
       .select()
-      .maybeSingle(); // Use maybeSingle() for safer updates
+      .single();
     
     if (error) throw error;
     return data;
