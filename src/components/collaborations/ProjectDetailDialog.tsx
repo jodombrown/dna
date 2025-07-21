@@ -59,9 +59,9 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
   likedProjects,
   bookmarkedProjects
 }) => {
-  const [imageError, setImageError] = useState(false);
-  
   if (!project) return null;
+  
+  const [imageError, setImageError] = useState(false);
 
   // Animation for funding progress
   const currentFunding = project.current_funding || 0;
