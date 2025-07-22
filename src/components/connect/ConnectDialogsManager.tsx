@@ -116,7 +116,7 @@ const ConnectDialogsManager: React.FC<ConnectDialogsManagerProps> = ({
                 <h4 className="font-semibold text-gray-900">In our MVP, you'll have:</h4>
                 <ul className="text-sm text-gray-600 space-y-1 mt-1">
                   <li>• Real user profiles with verified credentials</li>
-                  <li>• Advanced matching algorithms</li>
+                  <li>• DNA intelligent matching</li>
                   <li>• Live event registration and management</li>
                   <li>• Direct messaging and video calls</li>
                   <li>• Impact tracking and collaboration tools</li>

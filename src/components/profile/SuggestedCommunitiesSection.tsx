@@ -41,7 +41,7 @@ const SuggestedCommunitiesSection: React.FC<SuggestedCommunitiesSectionProps> = 
   if (!communities.length)
     return (
       <div className="text-sm text-gray-500 py-4">
-        No personalized communities yet. Fill out your profile for better suggestions.
+        No personalized communities yet. Fill out your profile for DNA recommendations.
       </div>
     );
 

@@ -33,7 +33,7 @@ const ConnectHero = () => {
             </Badge>
             <Badge className="bg-white/20 text-white border-white/30 text-sm px-4 py-2">
               <Target className="w-4 h-4 mr-2" />
-              Smart Matching
+              DNA Connection
             </Badge>
           </div>
           
@@ -44,7 +44,7 @@ const ConnectHero = () => {
               connection capabilities we're developing to unite African diaspora professionals globally.
             </p>
             <div className="grid md:grid-cols-3 gap-4 text-xs text-white/70">
-              <div>• Smart professional matching</div>
+              <div>• DNA professional matching</div>
               <div>• Global community access</div>
               <div>• Purpose-driven networking</div>
             </div>

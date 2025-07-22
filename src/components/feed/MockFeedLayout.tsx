@@ -195,7 +195,7 @@ const MockFeedLayout: React.FC<MockFeedLayoutProps> = ({ children }) => {
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-4">
                   <Users className="w-4 h-4 text-dna-emerald" />
-                  <h3 className="font-semibold text-sm">People to Follow</h3>
+                  <h3 className="font-semibold text-sm">DNA Recommends</h3>
                 </div>
                 
                 <div className="space-y-3">

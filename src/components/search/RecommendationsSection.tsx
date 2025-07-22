@@ -33,7 +33,7 @@ const RecommendationsSection: React.FC<RecommendationsSectionProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Lightbulb className="w-5 h-5 text-dna-emerald" />
-          Recommended for You
+          DNA Recommends
         </CardTitle>
       </CardHeader>
       <CardContent>

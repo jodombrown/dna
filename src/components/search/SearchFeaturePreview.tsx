@@ -9,10 +9,10 @@ const SearchFeaturePreview: React.FC = () => {
       <div className="bg-dna-emerald/10 p-4 rounded-lg">
         <h3 className="font-semibold text-dna-forest mb-2 flex items-center gap-2">
           <Users className="w-4 h-4" />
-          Smart Professional Matching
+          DNA Professional Matching
         </h3>
         <p className="text-sm text-gray-600 mb-3">
-          Our AI-powered search will find professionals based on:
+          DNA intelligently finds professionals based on:
         </p>
         <div className="flex flex-wrap gap-2">
           <Badge variant="outline">Industry Expertise</Badge>
