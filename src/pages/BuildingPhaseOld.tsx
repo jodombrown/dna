@@ -82,7 +82,7 @@ const BuildingPhase = () => {
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-dna-emerald" />
-                      DNA matching intelligence
+                      Advanced matching algorithms
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4 text-dna-emerald" />
@@ -198,8 +198,8 @@ const BuildingPhase = () => {
                       <CheckCircle className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <p className="font-medium">DNA Matching Engine</p>
-                      <p className="text-sm text-gray-600">Intelligent professional and project connections</p>
+                      <p className="font-medium">Advanced Matching Engine</p>
+                      <p className="text-sm text-gray-600">AI-powered professional and project matching</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
