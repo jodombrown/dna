@@ -7,11 +7,240 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instanciate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "12.2.3 (519615d)"
+  }
   public: {
     Tables: {
+      adin_connection_signals: {
+        Row: {
+          context: Json | null
+          created_at: string
+          id: string
+          reason: string
+          score: number
+          source_user: string
+          target_user: string
+          timestamp: string
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          reason: string
+          score?: number
+          source_user: string
+          target_user: string
+          timestamp?: string
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          reason?: string
+          score?: number
+          source_user?: string
+          target_user?: string
+          timestamp?: string
+        }
+        Relationships: []
+      }
+      adin_contributor_requests: {
+        Row: {
+          admin_notes: string | null
+          country_focus: string
+          created_at: string
+          description: string
+          evidence_links: string[] | null
+          id: string
+          impact_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          country_focus: string
+          created_at?: string
+          description: string
+          evidence_links?: string[] | null
+          id?: string
+          impact_type: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          country_focus?: string
+          created_at?: string
+          description?: string
+          evidence_links?: string[] | null
+          id?: string
+          impact_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_logs: {
+        Row: {
+          action: string
+          admin_id: string | null
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: unknown | null
+          resource_id: string | null
+          resource_type: string
+          status: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          admin_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type: string
+          status?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          resource_id?: string | null
+          resource_type?: string
+          status?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      admin_notifications: {
+        Row: {
+          admin_id: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          read_at: string | null
+          related_resource_id: string | null
+          related_resource_type: string | null
+          severity: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          read_at?: string | null
+          related_resource_id?: string | null
+          related_resource_type?: string | null
+          severity?: string | null
+          title: string
+          type: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          read_at?: string | null
+          related_resource_id?: string | null
+          related_resource_type?: string | null
+          severity?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      admin_users: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          role: Database["public"]["Enums"]["admin_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          role?: Database["public"]["Enums"]["admin_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          role?: Database["public"]["Enums"]["admin_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      campaign_analytics: {
+        Row: {
+          campaign_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_analytics_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "growth_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comments: {
         Row: {
-          author_id: string | null
+          author_id: string
           content: string
           created_at: string | null
           id: string
@@ -20,7 +249,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          author_id?: string | null
+          author_id: string
           content: string
           created_at?: string | null
           id?: string
@@ -29,7 +258,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          author_id?: string | null
+          author_id?: string
           content?: string
           created_at?: string | null
           id?: string
@@ -66,7 +295,7 @@ export type Database = {
           category: string | null
           cover_image_url: string | null
           created_at: string
-          created_by: string | null
+          created_by: string
           description: string | null
           id: string
           image_url: string | null
@@ -87,7 +316,7 @@ export type Database = {
           category?: string | null
           cover_image_url?: string | null
           created_at?: string
-          created_by?: string | null
+          created_by?: string
           description?: string | null
           id?: string
           image_url?: string | null
@@ -108,7 +337,7 @@ export type Database = {
           category?: string | null
           cover_image_url?: string | null
           created_at?: string
-          created_by?: string | null
+          created_by?: string
           description?: string | null
           id?: string
           image_url?: string | null
@@ -123,6 +352,241 @@ export type Database = {
           purpose_goals?: string | null
           rejection_reason?: string | null
           tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_event_attendees: {
+        Row: {
+          event_id: string
+          id: string
+          registered_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          registered_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          registered_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "community_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_events: {
+        Row: {
+          community_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string | null
+          event_date: string
+          id: string
+          image_url: string | null
+          is_virtual: boolean | null
+          location: string | null
+          max_attendees: number | null
+          registration_required: boolean | null
+          registration_url: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          community_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_date?: string | null
+          event_date: string
+          id?: string
+          image_url?: string | null
+          is_virtual?: boolean | null
+          location?: string | null
+          max_attendees?: number | null
+          registration_required?: boolean | null
+          registration_url?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          community_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string | null
+          event_date?: string
+          id?: string
+          image_url?: string | null
+          is_virtual?: boolean | null
+          location?: string | null
+          max_attendees?: number | null
+          registration_required?: boolean | null
+          registration_url?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_events_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_memberships: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          community_id: string
+          id: string
+          joined_at: string
+          requested_at: string | null
+          role: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          community_id: string
+          id?: string
+          joined_at?: string
+          requested_at?: string | null
+          role?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          community_id?: string
+          id?: string
+          joined_at?: string
+          requested_at?: string | null
+          role?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_memberships_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_posts: {
+        Row: {
+          author_id: string
+          community_id: string
+          content: string
+          created_at: string
+          event_date: string | null
+          event_location: string | null
+          id: string
+          is_pinned: boolean | null
+          media_url: string | null
+          post_type: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          community_id: string
+          content: string
+          created_at?: string
+          event_date?: string | null
+          event_location?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          media_url?: string | null
+          post_type?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          community_id?: string
+          content?: string
+          created_at?: string
+          event_date?: string | null
+          event_location?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          media_url?: string | null
+          post_type?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_posts_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contact_requests: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          purpose: string
+          receiver_id: string
+          sender_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          purpose: string
+          receiver_id: string
+          sender_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          purpose?: string
+          receiver_id?: string
+          sender_id?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []
@@ -267,12 +731,81 @@ export type Database = {
         }
         Relationships: []
       }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string | null
+          updated_at: string
+          user_1_id: string
+          user_2_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          updated_at?: string
+          user_1_id: string
+          user_2_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          updated_at?: string
+          user_1_id?: string
+          user_2_id?: string
+        }
+        Relationships: []
+      }
+      error_logs: {
+        Row: {
+          component_stack: string | null
+          created_at: string
+          error_message: string
+          error_stack: string | null
+          error_type: string
+          id: string
+          metadata: Json | null
+          severity: string
+          url: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          component_stack?: string | null
+          created_at?: string
+          error_message: string
+          error_stack?: string | null
+          error_type: string
+          id?: string
+          metadata?: Json | null
+          severity?: string
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          component_stack?: string | null
+          created_at?: string
+          error_message?: string
+          error_stack?: string | null
+          error_type?: string
+          id?: string
+          metadata?: Json | null
+          severity?: string
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           attendee_count: number | null
           banner_url: string | null
           created_at: string
-          created_by: string | null
+          created_by: string
           date_time: string | null
           description: string | null
           id: string
@@ -290,7 +823,7 @@ export type Database = {
           attendee_count?: number | null
           banner_url?: string | null
           created_at?: string
-          created_by?: string | null
+          created_by?: string
           date_time?: string | null
           description?: string | null
           id?: string
@@ -308,7 +841,7 @@ export type Database = {
           attendee_count?: number | null
           banner_url?: string | null
           created_at?: string
-          created_by?: string | null
+          created_by?: string
           date_time?: string | null
           description?: string | null
           id?: string
@@ -322,7 +855,15 @@ export type Database = {
           type?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       form_submissions: {
         Row: {
@@ -348,10 +889,91 @@ export type Database = {
         }
         Relationships: []
       }
+      growth_campaigns: {
+        Row: {
+          content: Json | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          metrics: Json | null
+          name: string
+          scheduled_at: string | null
+          status: string
+          target_segment: Json | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          metrics?: Json | null
+          name: string
+          scheduled_at?: string | null
+          status?: string
+          target_segment?: Json | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          metrics?: Json | null
+          name?: string
+          scheduled_at?: string | null
+          status?: string
+          target_segment?: Json | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      impact_log: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          pillar: string | null
+          points: number | null
+          target_id: string | null
+          target_type: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          pillar?: string | null
+          points?: number | null
+          target_id?: string | null
+          target_type?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          pillar?: string | null
+          points?: number | null
+          target_id?: string | null
+          target_type?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       initiatives: {
         Row: {
           created_at: string | null
-          creator_id: string | null
+          creator_id: string
           description: string | null
           id: string
           impact_area: string | null
@@ -360,7 +982,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          creator_id?: string | null
+          creator_id: string
           description?: string | null
           id?: string
           impact_area?: string | null
@@ -369,12 +991,239 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          creator_id?: string | null
+          creator_id?: string
           description?: string | null
           id?: string
           impact_area?: string | null
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      integration_tokens: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          service_name: string
+          token_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          service_name: string
+          token_type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          service_name?: string
+          token_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      invites: {
+        Row: {
+          code: string
+          created_at: string | null
+          created_by: string | null
+          email: string
+          expires_at: string | null
+          id: string
+          role: string | null
+          used_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          created_by?: string | null
+          email: string
+          expires_at?: string | null
+          id?: string
+          role?: string | null
+          used_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          created_by?: string | null
+          email?: string
+          expires_at?: string | null
+          id?: string
+          role?: string | null
+          used_at?: string | null
+        }
+        Relationships: []
+      }
+      launch_config: {
+        Row: {
+          current_invites: number | null
+          id: string
+          launch_date: string | null
+          launch_mode: string
+          max_invites: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          current_invites?: number | null
+          id?: string
+          launch_date?: string | null
+          launch_mode?: string
+          max_invites?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          current_invites?: number | null
+          id?: string
+          launch_date?: string | null
+          launch_mode?: string
+          max_invites?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      leaderboard_cache: {
+        Row: {
+          country: string | null
+          id: string
+          leaderboard_type: string
+          rank: number
+          score: number
+          sector: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          country?: string | null
+          id?: string
+          leaderboard_type: string
+          rank: number
+          score: number
+          sector?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          country?: string | null
+          id?: string
+          leaderboard_type?: string
+          rank?: number
+          score?: number
+          sector?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      message_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          message_id: string
+          reaction: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_id: string
+          reaction: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_id?: string
+          reaction?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message_type: string | null
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message_type?: string | null
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message_type?: string | null
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          is_read: boolean | null
+          related_entity_id: string | null
+          related_entity_type: string | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          title: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -411,9 +1260,42 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_settings: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          setting_key: string
+          setting_value: Json
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key: string
+          setting_value?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
-          author_id: string | null
+          author_id: string
           content: string | null
           created_at: string | null
           hashtags: string[] | null
@@ -424,7 +1306,7 @@ export type Database = {
           visibility: string | null
         }
         Insert: {
-          author_id?: string | null
+          author_id: string
           content?: string | null
           created_at?: string | null
           hashtags?: string[] | null
@@ -435,7 +1317,7 @@ export type Database = {
           visibility?: string | null
         }
         Update: {
-          author_id?: string | null
+          author_id?: string
           content?: string | null
           created_at?: string | null
           hashtags?: string[] | null
@@ -485,8 +1367,10 @@ export type Database = {
           profession: string | null
           professional_role: string | null
           profile_picture_url: string | null
+          referrer_id: string | null
           skills: string[] | null
           updated_at: string
+          username: string | null
           website_url: string | null
           years_experience: number | null
         }
@@ -519,8 +1403,10 @@ export type Database = {
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
+          referrer_id?: string | null
           skills?: string[] | null
           updated_at?: string
+          username?: string | null
           website_url?: string | null
           years_experience?: number | null
         }
@@ -553,12 +1439,22 @@ export type Database = {
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
+          referrer_id?: string | null
           skills?: string[] | null
           updated_at?: string
+          username?: string | null
           website_url?: string | null
           years_experience?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       projects: {
         Row: {
@@ -632,6 +1528,117 @@ export type Database = {
           },
         ]
       }
+      referrals: {
+        Row: {
+          converted_at: string | null
+          created_at: string | null
+          id: string
+          referral_code: string
+          referred_email: string
+          referrer_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code: string
+          referred_email: string
+          referrer_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code?: string
+          referred_email?: string
+          referrer_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_adin_profile: {
+        Row: {
+          contributor_impact_type: string | null
+          contributor_score: number | null
+          contributor_verified_at: string | null
+          created_at: string
+          engagement_pillars: string[] | null
+          id: string
+          industries: string[] | null
+          interests: string[] | null
+          is_verified_contributor: boolean | null
+          last_active: string | null
+          skills: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contributor_impact_type?: string | null
+          contributor_score?: number | null
+          contributor_verified_at?: string | null
+          created_at?: string
+          engagement_pillars?: string[] | null
+          id?: string
+          industries?: string[] | null
+          interests?: string[] | null
+          is_verified_contributor?: boolean | null
+          last_active?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contributor_impact_type?: string | null
+          contributor_score?: number | null
+          contributor_verified_at?: string | null
+          created_at?: string
+          engagement_pillars?: string[] | null
+          id?: string
+          industries?: string[] | null
+          interests?: string[] | null
+          is_verified_contributor?: boolean | null
+          last_active?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_badges: {
+        Row: {
+          badge_name: string
+          badge_type: string
+          description: string | null
+          icon: string | null
+          id: string
+          metadata: Json | null
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          badge_name: string
+          badge_type: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          metadata?: Json | null
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          badge_name?: string
+          badge_type?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          metadata?: Json | null
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_communities: {
         Row: {
           avatar_url: string | null
@@ -675,6 +1682,93 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_connections: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      user_dna_points: {
+        Row: {
+          collaborate_score: number
+          connect_score: number
+          contribute_score: number
+          created_at: string
+          last_updated: string
+          total_score: number | null
+          user_id: string
+        }
+        Insert: {
+          collaborate_score?: number
+          connect_score?: number
+          contribute_score?: number
+          created_at?: string
+          last_updated?: string
+          total_score?: number | null
+          user_id: string
+        }
+        Update: {
+          collaborate_score?: number
+          connect_score?: number
+          contribute_score?: number
+          created_at?: string
+          last_updated?: string
+          total_score?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_feedback: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          id: string
+          message: string
+          priority: string | null
+          status: string | null
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          id?: string
+          message: string
+          priority?: string | null
+          status?: string | null
+          type: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string
+          priority?: string | null
+          status?: string | null
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       users: {
         Row: {
@@ -727,11 +1821,74 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist_signups: {
+        Row: {
+          causes: string[] | null
+          created_at: string | null
+          email: string
+          full_name: string
+          id: string
+          location: string | null
+          role: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          causes?: string[] | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          location?: string | null
+          role: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          causes?: string[] | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          location?: string | null
+          role?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      user_impact_summary: {
+        Row: {
+          collaborate_actions: number | null
+          comments_made: number | null
+          connect_actions: number | null
+          connections_made: number | null
+          contribute_actions: number | null
+          last_activity: string | null
+          posts_created: number | null
+          reactions_given: number | null
+          total_actions: number | null
+          total_points: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      add_message_reaction: {
+        Args: { p_message_id: string; p_user_id: string; p_reaction: string }
+        Returns: undefined
+      }
+      calculate_impact_score: {
+        Args: { target_user_id: string }
+        Returns: number
+      }
+      check_badge_unlocks: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
       check_rate_limit: {
         Args: {
           _ip_address: unknown
@@ -741,11 +1898,74 @@ export type Database = {
         }
         Returns: boolean
       }
+      create_admin_notification: {
+        Args: {
+          p_admin_id: string
+          p_type: string
+          p_title: string
+          p_message: string
+          p_severity?: string
+          p_related_resource_type?: string
+          p_related_resource_id?: string
+        }
+        Returns: string
+      }
+      create_audit_log: {
+        Args: {
+          p_admin_id: string
+          p_action: string
+          p_resource_type: string
+          p_resource_id?: string
+          p_details?: Json
+          p_ip_address?: unknown
+          p_user_agent?: string
+          p_status?: string
+        }
+        Returns: string
+      }
+      generate_referral_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_username_from_name: {
+        Args: { full_name: string }
+        Returns: string
+      }
+      get_admin_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["admin_role"]
+      }
       get_current_user_profile: {
         Args: Record<PropertyKey, never>
         Returns: {
           user_id: string
           is_public: boolean
+        }[]
+      }
+      get_leaderboard: {
+        Args: {
+          board_type?: string
+          country_filter?: string
+          sector_filter?: string
+          limit_count?: number
+        }
+        Returns: {
+          user_id: string
+          full_name: string
+          avatar_url: string
+          score: number
+          rank: number
+          location: string
+        }[]
+      }
+      get_message_reactions: {
+        Args: { p_message_ids: string[] }
+        Returns: {
+          id: string
+          message_id: string
+          user_id: string
+          reaction: string
+          created_at: string
         }[]
       }
       get_newsletter_followers: {
@@ -756,9 +1976,33 @@ export type Database = {
           full_name: string
         }[]
       }
+      get_user_verification_status: {
+        Args: { target_user_id: string }
+        Returns: Json
+      }
+      is_admin_user: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
+      make_user_admin: {
+        Args: { user_email: string }
+        Returns: string
+      }
+      remove_message_reaction: {
+        Args: { p_message_id: string; p_user_id: string; p_reaction: string }
+        Returns: undefined
+      }
+      update_adin_last_active: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
+      update_dna_points: {
+        Args: { target_user_id: string; pillar: string; points?: number }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      admin_role: "admin" | "superadmin" | "moderator"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -766,21 +2010,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -798,14 +2046,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -821,14 +2071,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -844,14 +2096,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -859,20 +2113,24 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      admin_role: ["admin", "superadmin", "moderator"],
+    },
   },
 } as const
