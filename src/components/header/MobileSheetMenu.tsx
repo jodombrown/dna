@@ -10,14 +10,12 @@ import { publicNavItems, phases } from './navigationConfig';
 interface MobileSheetMenuProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSurveyClick: () => void;
   onBetaSignup: () => void;
 }
 
 const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({ 
   isOpen, 
   onOpenChange, 
-  onSurveyClick, 
   onBetaSignup 
 }) => {
   const navigate = useNavigate();
@@ -65,19 +63,10 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
               ))}
               
               <Button
-                variant="ghost"
-                className="justify-start text-left text-dna-copper hover:bg-dna-copper/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                onClick={onSurveyClick}
-              >
-                Take Survey
-              </Button>
-              
-              <Button
-                variant="ghost"
-                className="justify-start text-left text-dna-emerald hover:bg-dna-emerald/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                className="justify-start text-left bg-dna-copper text-white hover:bg-dna-copper/90 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
                 onClick={onBetaSignup}
               >
-                Join Beta Program
+                Join Beta
               </Button>
               
               <div className="border-t pt-4 mt-4">

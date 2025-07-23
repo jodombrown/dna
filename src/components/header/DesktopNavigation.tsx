@@ -10,14 +10,12 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
-import SurveyDialog from '@/components/survey/SurveyDialog';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems, phases } from './navigationConfig';
 
 const DesktopNavigation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   // Get current page to hide active nav item
@@ -75,17 +73,12 @@ const DesktopNavigation = () => {
         </NavigationMenu>
 
         <Button
-          onClick={() => setIsSurveyOpen(true)}
+          onClick={() => setIsBetaSignupOpen(true)}
           className="bg-dna-copper hover:bg-dna-gold text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-copper/50 focus:ring-offset-2"
         >
-          Take Survey
+          Join Beta
         </Button>
       </nav>
-
-      <SurveyDialog 
-        isOpen={isSurveyOpen} 
-        onClose={() => setIsSurveyOpen(false)} 
-      />
 
       <BetaSignupDialog 
         isOpen={isBetaSignupOpen} 
