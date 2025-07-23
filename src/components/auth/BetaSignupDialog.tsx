@@ -8,7 +8,9 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, Rocket, Target } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { Users, Rocket, Target, Eye, EyeOff } from 'lucide-react';
 
 interface BetaSignupDialogProps {
   isOpen: boolean;
@@ -19,14 +21,18 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    password: '',
     company: '',
     role: '',
     betaPhase: '',
     experience: '',
     motivation: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   const betaPhases = [
     {
@@ -58,10 +64,19 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.email || !formData.betaPhase) {
+    if (!formData.name || !formData.email || !formData.password || !formData.betaPhase) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields.",
+        description: "Please fill in all required fields including password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast({
+        title: "Password Too Short",
+        description: "Password must be at least 6 characters long.",
         variant: "destructive",
       });
       return;
@@ -70,7 +85,8 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('send-universal-email', {
+      // First, submit the beta application
+      const { data: emailData, error: emailError } = await supabase.functions.invoke('send-universal-email', {
         body: {
           formType: 'beta-signup',
           formData: {
@@ -81,16 +97,33 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
         }
       });
 
-      if (error) throw error;
+      if (emailError) throw emailError;
+
+      // Then, create the user account
+      const { error: signUpError } = await signUp(formData.email, formData.password, formData.name);
+
+      if (signUpError) {
+        if (signUpError.message.includes('already registered')) {
+          toast({
+            title: "Account Already Exists",
+            description: "An account with this email already exists. Please sign in instead.",
+            variant: "destructive",
+          });
+        } else {
+          throw signUpError;
+        }
+        return;
+      }
 
       toast({
-        title: "Beta Application Submitted!",
-        description: "We'll review your application and get back to you within 48 hours.",
+        title: "Welcome to DNA Beta!",
+        description: "Your beta application has been submitted and your account is being created. Check your email to verify your account.",
       });
       
       setFormData({
         name: '',
         email: '',
+        password: '',
         company: '',
         role: '',
         betaPhase: '',
@@ -99,11 +132,17 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
       });
       
       onClose();
+      
+      // Navigate to the app after a brief delay to allow auth state to update
+      setTimeout(() => {
+        navigate('/app');
+      }, 1000);
+      
     } catch (error: any) {
       console.error('Beta signup error:', error);
       toast({
         title: "Submission Failed",
-        description: "Please try again later or contact us directly.",
+        description: error.message || "Please try again later or contact us directly.",
         variant: "destructive",
       });
     } finally {
@@ -125,8 +164,9 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Personal Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h3 className="text-lg font-semibold">Create Your Beta Account</h3>
+            <p className="text-sm text-gray-600">Fill out your information to join the beta program and create your DNA account.</p>
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <Label htmlFor="name">Full Name *</Label>
                 <Input
@@ -149,6 +189,29 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
                 />
               </div>
               <div>
+                <Label htmlFor="password">Password *</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    placeholder="Create a secure password"
+                    required
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
                 <Label htmlFor="company">Company/Organization</Label>
                 <Input
                   id="company"
@@ -166,6 +229,7 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
                   placeholder="e.g., Software Engineer, Entrepreneur"
                 />
               </div>
+            </div>
             </div>
           </div>
 
@@ -241,7 +305,7 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
               className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Beta Application'}
+              {isSubmitting ? 'Creating Account...' : 'Join Beta & Create Account'}
             </Button>
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
