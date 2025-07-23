@@ -203,6 +203,47 @@ export type Database = {
         }
         Relationships: []
       }
+      beta_feedback: {
+        Row: {
+          created_at: string | null
+          feature_name: string
+          feedback_text: string | null
+          feedback_type: string
+          id: string
+          metadata: Json | null
+          rating: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          feature_name: string
+          feedback_text?: string | null
+          feedback_type: string
+          id?: string
+          metadata?: Json | null
+          rating?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          feature_name?: string
+          feedback_text?: string | null
+          feedback_type?: string
+          id?: string
+          metadata?: Json | null
+          rating?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beta_feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_analytics: {
         Row: {
           campaign_id: string | null
@@ -1343,6 +1384,12 @@ export type Database = {
           available_for: string[] | null
           avatar_url: string | null
           banner_url: string | null
+          beta_expires_at: string | null
+          beta_features_tested: string[] | null
+          beta_feedback_count: number | null
+          beta_phase: string | null
+          beta_signup_data: Json | null
+          beta_status: string | null
           bio: string | null
           company: string | null
           country_of_origin: string | null
@@ -1359,6 +1406,7 @@ export type Database = {
           industry: string | null
           interest_tags: string[] | null
           interests: string[] | null
+          is_beta_tester: boolean | null
           is_public: boolean | null
           linkedin_url: string | null
           location: string | null
@@ -1379,6 +1427,12 @@ export type Database = {
           available_for?: string[] | null
           avatar_url?: string | null
           banner_url?: string | null
+          beta_expires_at?: string | null
+          beta_features_tested?: string[] | null
+          beta_feedback_count?: number | null
+          beta_phase?: string | null
+          beta_signup_data?: Json | null
+          beta_status?: string | null
           bio?: string | null
           company?: string | null
           country_of_origin?: string | null
@@ -1395,6 +1449,7 @@ export type Database = {
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
+          is_beta_tester?: boolean | null
           is_public?: boolean | null
           linkedin_url?: string | null
           location?: string | null
@@ -1415,6 +1470,12 @@ export type Database = {
           available_for?: string[] | null
           avatar_url?: string | null
           banner_url?: string | null
+          beta_expires_at?: string | null
+          beta_features_tested?: string[] | null
+          beta_feedback_count?: number | null
+          beta_phase?: string | null
+          beta_signup_data?: Json | null
+          beta_status?: string | null
           bio?: string | null
           company?: string | null
           country_of_origin?: string | null
@@ -1431,6 +1492,7 @@ export type Database = {
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
+          is_beta_tester?: boolean | null
           is_public?: boolean | null
           linkedin_url?: string | null
           location?: string | null

@@ -97,8 +97,8 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
 
       if (emailError) throw emailError;
 
-      // Then, create the user account using Supabase directly
-      const redirectUrl = `${window.location.origin}/`;
+      // Then, create the user account using Supabase directly with beta data
+      const redirectUrl = `${window.location.origin}/app`;
       
       const { error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
@@ -107,6 +107,15 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
           emailRedirectTo: redirectUrl,
           data: {
             full_name: formData.name,
+            company: formData.company,
+            role: formData.role,
+            experience: formData.experience,
+            motivation: formData.motivation,
+            is_beta_tester: 'true',
+            beta_phase: formData.betaPhase,
+            // All the beta signup data for seamless profile creation
+            beta_interest: formData.betaPhase,
+            signup_source: 'beta_program'
           }
         }
       });
