@@ -8,7 +8,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Users, Rocket, Target, Eye, EyeOff } from 'lucide-react';
 
@@ -31,7 +30,6 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const { signUp } = useAuth();
   const navigate = useNavigate();
 
   const betaPhases = [
@@ -99,8 +97,19 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
 
       if (emailError) throw emailError;
 
-      // Then, create the user account
-      const { error: signUpError } = await signUp(formData.email, formData.password, formData.name);
+      // Then, create the user account using Supabase directly
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { error: signUpError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: formData.name,
+          }
+        }
+      });
 
       if (signUpError) {
         if (signUpError.message.includes('already registered')) {
