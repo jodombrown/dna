@@ -18,6 +18,7 @@ import MvpPhase from "./pages/MvpPhase";
 import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
 import NotFound from "./pages/NotFound";
+import BetaSignupComplete from "./pages/BetaSignupComplete";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ function App() {
               <Route path="/phase/mvp" element={<MvpPhase />} />
               <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
             <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
+            <Route path="/beta-signup-complete" element={<BetaSignupComplete />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

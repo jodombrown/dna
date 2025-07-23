@@ -203,6 +203,63 @@ export type Database = {
         }
         Relationships: []
       }
+      beta_applications: {
+        Row: {
+          admin_notes: string | null
+          beta_phase: string
+          company: string | null
+          created_at: string | null
+          email: string
+          experience: string | null
+          id: string
+          magic_link_expires_at: string | null
+          magic_link_token: string | null
+          motivation: string | null
+          name: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          role: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          beta_phase: string
+          company?: string | null
+          created_at?: string | null
+          email: string
+          experience?: string | null
+          id?: string
+          magic_link_expires_at?: string | null
+          magic_link_token?: string | null
+          motivation?: string | null
+          name: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          role?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          beta_phase?: string
+          company?: string | null
+          created_at?: string | null
+          email?: string
+          experience?: string | null
+          id?: string
+          magic_link_expires_at?: string | null
+          magic_link_token?: string | null
+          motivation?: string | null
+          name?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          role?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       beta_feedback: {
         Row: {
           created_at: string | null
@@ -1943,6 +2000,13 @@ export type Database = {
         Args: { p_message_id: string; p_user_id: string; p_reaction: string }
         Returns: undefined
       }
+      approve_beta_application: {
+        Args: { application_id: string; admin_id: string }
+        Returns: {
+          magic_link_token: string
+          expires_at: string
+        }[]
+      }
       calculate_impact_score: {
         Args: { target_user_id: string }
         Returns: number
@@ -1983,6 +2047,10 @@ export type Database = {
           p_user_agent?: string
           p_status?: string
         }
+        Returns: string
+      }
+      generate_magic_link_token: {
+        Args: Record<PropertyKey, never>
         Returns: string
       }
       generate_referral_code: {
