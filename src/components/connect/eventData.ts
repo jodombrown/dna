@@ -229,22 +229,134 @@ export const additionalEvents: Event[] = [
 ];
 
 export const eventCategories = [
-  { id: 'tech', name: 'Technology', icon: '💻', count: '145 Events', color: 'bg-blue-500' },
-  { id: 'business', name: 'Business & Finance', icon: '💼', count: '89 Events', color: 'bg-green-500' },
-  { id: 'culture', name: 'Arts & Culture', icon: '🎨', count: '67 Events', color: 'bg-purple-500' },
-  { id: 'health', name: 'Health & Wellness', icon: '🏥', count: '45 Events', color: 'bg-red-500' },
-  { id: 'education', name: 'Education', icon: '📚', count: '78 Events', color: 'bg-yellow-500' },
-  { id: 'climate', name: 'Climate & Environment', icon: '🌍', count: '34 Events', color: 'bg-emerald-500' },
-  { id: 'agriculture', name: 'Agriculture & Food', icon: '🌾', count: '52 Events', color: 'bg-orange-500' },
-  { id: 'finance', name: 'Fintech & Banking', icon: '💳', count: '73 Events', color: 'bg-indigo-500' },
-  { id: 'energy', name: 'Energy & Mining', icon: '⚡', count: '41 Events', color: 'bg-amber-500' },
-  { id: 'media', name: 'Media & Entertainment', icon: '🎭', count: '58 Events', color: 'bg-pink-500' },
-  { id: 'transport', name: 'Transport & Logistics', icon: '🚛', count: '36 Events', color: 'bg-cyan-500' },
-  { id: 'tourism', name: 'Tourism & Hospitality', icon: '✈️', count: '42 Events', color: 'bg-rose-500' },
-  { id: 'governance', name: 'Governance & Policy', icon: '🏛️', count: '29 Events', color: 'bg-violet-500' },
-  { id: 'innovation', name: 'Innovation & R&D', icon: '🔬', count: '63 Events', color: 'bg-teal-500' },
-  { id: 'sports', name: 'Sports & Recreation', icon: '⚽', count: '47 Events', color: 'bg-lime-500' },
-  { id: 'social', name: 'Social Impact', icon: '🤝', count: '81 Events', color: 'bg-sky-500' }
+  { 
+    id: 'tech', 
+    name: 'Technology', 
+    icon: '💻', 
+    count: '145 Events', 
+    color: 'bg-blue-500',
+    description: 'Tech conferences, startup events, AI summits, coding bootcamps, and digital innovation workshops'
+  },
+  { 
+    id: 'business', 
+    name: 'Business & Finance', 
+    icon: '💼', 
+    count: '89 Events', 
+    color: 'bg-green-500',
+    description: 'Investment forums, entrepreneurship workshops, trade missions, and business networking events'
+  },
+  { 
+    id: 'culture', 
+    name: 'Arts & Culture', 
+    icon: '🎨', 
+    count: '67 Events', 
+    color: 'bg-purple-500',
+    description: 'Art exhibitions, cultural festivals, music concerts, film screenings, and creative showcases'
+  },
+  { 
+    id: 'health', 
+    name: 'Health & Wellness', 
+    icon: '🏥', 
+    count: '45 Events', 
+    color: 'bg-red-500',
+    description: 'Medical conferences, wellness workshops, mental health seminars, and healthcare innovation forums'
+  },
+  { 
+    id: 'education', 
+    name: 'Education', 
+    icon: '📚', 
+    count: '78 Events', 
+    color: 'bg-yellow-500',
+    description: 'Academic conferences, skill development workshops, scholarship info sessions, and educational seminars'
+  },
+  { 
+    id: 'climate', 
+    name: 'Climate & Environment', 
+    icon: '🌍', 
+    count: '34 Events', 
+    color: 'bg-emerald-500',
+    description: 'Climate action summits, sustainability workshops, green energy forums, and environmental conservation events'
+  },
+  { 
+    id: 'agriculture', 
+    name: 'Agriculture & Food', 
+    icon: '🌾', 
+    count: '52 Events', 
+    color: 'bg-orange-500',
+    description: 'Agricultural innovation, farming technology, food security conferences, and sustainable agriculture events'
+  },
+  { 
+    id: 'finance', 
+    name: 'Fintech & Banking', 
+    icon: '💳', 
+    count: '73 Events', 
+    color: 'bg-indigo-500',
+    description: 'Fintech conferences, digital banking forums, blockchain events, and financial technology workshops'
+  },
+  { 
+    id: 'energy', 
+    name: 'Energy & Mining', 
+    icon: '⚡', 
+    count: '41 Events', 
+    color: 'bg-amber-500',
+    description: 'Renewable energy summits, mining technology conferences, and sustainable energy forums'
+  },
+  { 
+    id: 'media', 
+    name: 'Media & Entertainment', 
+    icon: '🎭', 
+    count: '58 Events', 
+    color: 'bg-pink-500',
+    description: 'Film festivals, media conferences, entertainment industry events, and creative content workshops'
+  },
+  { 
+    id: 'transport', 
+    name: 'Transport & Logistics', 
+    icon: '🚛', 
+    count: '36 Events', 
+    color: 'bg-cyan-500',
+    description: 'Transportation innovation, logistics conferences, mobility solutions, and supply chain events'
+  },
+  { 
+    id: 'tourism', 
+    name: 'Tourism & Hospitality', 
+    icon: '✈️', 
+    count: '42 Events', 
+    color: 'bg-rose-500',
+    description: 'Tourism industry conferences, hospitality events, travel innovation summits, and cultural tourism forums'
+  },
+  { 
+    id: 'governance', 
+    name: 'Governance & Policy', 
+    icon: '🏛️', 
+    count: '29 Events', 
+    color: 'bg-violet-500',
+    description: 'Policy conferences, governance forums, public sector events, and civic engagement workshops'
+  },
+  { 
+    id: 'innovation', 
+    name: 'Innovation & R&D', 
+    icon: '🔬', 
+    count: '63 Events', 
+    color: 'bg-teal-500',
+    description: 'Research conferences, innovation labs, R&D showcases, and scientific discovery events'
+  },
+  { 
+    id: 'sports', 
+    name: 'Sports & Recreation', 
+    icon: '⚽', 
+    count: '47 Events', 
+    color: 'bg-lime-500',
+    description: 'Sports conferences, recreational events, fitness workshops, and athletic development programs'
+  },
+  { 
+    id: 'social', 
+    name: 'Social Impact', 
+    icon: '🤝', 
+    count: '81 Events', 
+    color: 'bg-sky-500',
+    description: 'Social impact forums, community development events, philanthropy conferences, and nonprofit workshops'
+  }
 ];
 
 export const featuredCalendars = [
