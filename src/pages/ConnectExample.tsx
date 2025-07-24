@@ -14,7 +14,7 @@ import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import WaitlistPopup from '@/components/waitlist/WaitlistPopup';
 import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
 import { mockProfessionals } from '@/components/connect/tabs/ProfessionalsMockData';
-import { demoCommunities, demoEvents } from '@/data/demoSearchData';
+import { demoCommunities, demoEvents, demoProfessionals } from '@/data/demoSearchData';
 
 const ConnectExample = () => {
   useScrollToTop();
@@ -47,8 +47,11 @@ const ConnectExample = () => {
 
   // Calculate accurate counts based on actual mock data
   const getTotalCounts = () => {
+    // Count professionals from filtered data (demoProfessionals) + additionalProfessionals in ConnectTabsContent (60 more)
+    const totalProfessionals = demoProfessionals.length + 60; // 60 additionalProfessionals in ConnectTabsContent (prof11-prof70)
+    
     return {
-      professionals: mockProfessionals.length,
+      professionals: totalProfessionals,
       communities: demoCommunities.length,
       events: demoEvents.length
     };
