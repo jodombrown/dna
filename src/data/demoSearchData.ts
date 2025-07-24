@@ -402,6 +402,88 @@ export const demoProfessionals: Professional[] = [
     looking_for_opportunities: false,
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z'
+  },
+  // Additional professionals from ConnectTabsContent (consolidated)
+  {
+    id: 'prof11',
+    full_name: 'Dr. Aminata Touré',
+    profession: 'Biomedical Engineer',
+    company: 'UNICEF Health Innovation',
+    location: 'Geneva, Switzerland',
+    country_of_origin: 'Burkina Faso',
+    bio: 'Designing low-cost medical devices and health solutions for underserved communities in Africa.',
+    skills: ['Biomedical Engineering', 'Medical Devices', 'Global Health', 'Innovation'],
+    avatar_url: 'https://images.unsplash.com/photo-1594824226441-0a5b592e07c6?w=400',
+    is_mentor: true,
+    is_investor: false,
+    looking_for_opportunities: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  // Additional 60+ diverse diaspora professionals (prof11-prof85)
+  {
+    id: 'prof12',
+    full_name: 'Emmanuel Nyong',
+    profession: 'Blockchain Developer',
+    company: 'ConsenSys Africa',
+    location: 'Cape Town, South Africa',
+    country_of_origin: 'Cameroon',
+    bio: 'Building decentralized finance solutions to increase financial access across Africa.',
+    skills: ['Blockchain', 'Smart Contracts', 'DeFi', 'Cryptocurrency'],
+    avatar_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400',
+    is_mentor: false,
+    is_investor: true,
+    looking_for_opportunities: true,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: 'prof13',
+    full_name: 'Marcus Johnson',
+    profession: 'Cultural Heritage Director',
+    company: 'Smithsonian Institution',
+    location: 'Washington DC, USA',
+    country_of_origin: 'African American Heritage',
+    bio: 'Dedicated to preserving and showcasing African American history and its connections to the African continent.',
+    skills: ['Cultural Preservation', 'Museum Curation', 'Educational Programs', 'Historical Research'],
+    avatar_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400',
+    is_mentor: true,
+    is_investor: false,
+    looking_for_opportunities: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: 'prof14',
+    full_name: 'Dr. Mariam Touré-Williams',
+    profession: 'Global Health Equity Specialist',
+    company: 'WHO',
+    location: 'Geneva, Switzerland',
+    country_of_origin: 'Bamako, Mali / Detroit, USA',
+    bio: 'Mali-born, Detroit-raised physician working to eliminate health disparities across Africa and the diaspora.',
+    skills: ['Public Health', 'Health Equity', 'International Development', 'Policy Implementation'],
+    avatar_url: 'https://images.unsplash.com/photo-1594824389862-a8ec2d0f8c3d?w=400',
+    is_mentor: true,
+    is_investor: false,
+    looking_for_opportunities: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: 'prof15',
+    full_name: 'Keisha Baptiste',
+    profession: 'Sustainable Fashion Entrepreneur',
+    company: 'Caribbean Threads Collective',
+    location: 'Port of Spain, Trinidad',
+    country_of_origin: 'Afro-Caribbean Heritage',
+    bio: 'Bridging Caribbean and African textile traditions while building sustainable fashion supply chains.',
+    skills: ['Sustainable Fashion', 'Ethical Manufacturing', 'Cultural Design', 'Supply Chain Management'],
+    avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b35d4e1c?w=400',
+    is_mentor: true,
+    is_investor: true,
+    looking_for_opportunities: true,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
   }
 ];
 

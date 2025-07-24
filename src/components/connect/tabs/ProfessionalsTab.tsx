@@ -2,7 +2,7 @@
 import React from 'react';
 import ProfessionalsFilters from './ProfessionalsFilters';
 import ProfessionalListItem from './ProfessionalListItem';
-import { mockProfessionals } from './ProfessionalsMockData';
+import { demoProfessionals } from '@/data/demoSearchData';
 
 interface ProfessionalsTabProps {
   searchTerm: string;
@@ -13,11 +13,11 @@ const ProfessionalsTab: React.FC<ProfessionalsTabProps> = ({ searchTerm }) => {
     <div className="space-y-6">
       <ProfessionalsFilters 
         searchTerm={searchTerm}
-        professionalsCount={mockProfessionals.length}
+        professionalsCount={demoProfessionals.length}
       />
 
       <div className="grid gap-6">
-        {mockProfessionals.map((professional) => (
+        {demoProfessionals.map((professional) => (
           <ProfessionalListItem 
             key={professional.id} 
             professional={professional} 
