@@ -718,6 +718,107 @@ export const demoCommunities: Community[] = [
     is_featured: true,
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z'
+  },
+  // Additional 10 communities for expanded coverage
+  {
+    id: '24',
+    name: 'Zambian Copper Innovation Hub',
+    description: 'Revolutionizing copper mining and processing technologies in Zambia\'s Copperbelt region.',
+    category: 'Mining',
+    member_count: 195,
+    is_featured: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '25',
+    name: 'Mozambique Energy Collective',
+    description: 'Developing renewable energy solutions and natural gas infrastructure for Southern Africa.',
+    category: 'Energy',
+    member_count: 275,
+    is_featured: true,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '26',
+    name: 'Madagascar Conservation Network',
+    description: 'Protecting Madagascar\'s unique biodiversity through community-based conservation initiatives.',
+    category: 'Conservation',
+    member_count: 180,
+    is_featured: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '27',
+    name: 'Senegalese Innovation Ecosystem',
+    description: 'Fostering entrepreneurship and technological innovation across Senegal and West Africa.',
+    category: 'Innovation',
+    member_count: 320,
+    is_featured: true,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '28',
+    name: 'Namibian Tourism Development',
+    description: 'Promoting sustainable tourism and cultural heritage preservation in Namibia.',
+    category: 'Tourism',
+    member_count: 145,
+    is_featured: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '29',
+    name: 'Angolan Digital Transformation',
+    description: 'Accelerating digital adoption and tech innovation across Angola\'s emerging economy.',
+    category: 'Technology',
+    member_count: 230,
+    is_featured: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '30',
+    name: 'Gambian SME Support Network',
+    description: 'Empowering small and medium enterprises through financing and mentorship programs.',
+    category: 'Business',
+    member_count: 160,
+    is_featured: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '31',
+    name: 'Congolese Health Innovation',
+    description: 'Improving healthcare delivery through telemedicine and digital health solutions in DRC.',
+    category: 'Healthcare',
+    member_count: 210,
+    is_featured: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '32',
+    name: 'Cape Verdean Ocean Tech',
+    description: 'Harnessing ocean resources for sustainable development and blue economy initiatives.',
+    category: 'Marine',
+    member_count: 125,
+    is_featured: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: '33',
+    name: 'Lesotho Highland Development',
+    description: 'Mountain agriculture and highland development initiatives for rural communities.',
+    category: 'Agriculture',
+    member_count: 105,
+    is_featured: false,
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z'
   }
 ];
 
