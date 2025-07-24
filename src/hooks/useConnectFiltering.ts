@@ -39,6 +39,7 @@ export const useConnectFiltering = (searchTerm: string, filters: FilterState) =>
         prof.profession.toLowerCase().includes(filterText) ||
         prof.company?.toLowerCase().includes(filterText) ||
         prof.location?.toLowerCase().includes(filterText) ||
+        prof.country_of_origin?.toLowerCase().includes(filterText) ||
         prof.bio?.toLowerCase().includes(filterText);
       
       // Location filter  
