@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { demoProfessionals, demoCommunities, demoEvents } from '@/data/demoSearchData';
+import { mockProfessionals } from '@/components/connect/tabs/ProfessionalsMockData';
+import { demoCommunities, demoEvents } from '@/data/demoSearchData';
 
 interface FilterState {
   location: string;
@@ -13,7 +14,25 @@ export const useConnectFiltering = (searchTerm: string, filters: FilterState) =>
   return useMemo(() => {
     const filterText = searchTerm.toLowerCase();
     
-    const filteredProfessionals = demoProfessionals.filter(prof => {
+    // Convert mockProfessionals to the expected format for filtering
+    const convertedProfessionals = mockProfessionals.map(prof => ({
+      id: prof.id,
+      full_name: prof.name,
+      profession: prof.title,
+      company: prof.company,
+      location: prof.location,
+      country_of_origin: prof.origin,
+      bio: prof.bio,
+      skills: prof.skills,
+      avatar_url: prof.avatar,
+      is_mentor: false, // Can be extended later
+      is_investor: false, // Can be extended later
+      looking_for_opportunities: false, // Can be extended later
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z'
+    }));
+    
+    const filteredProfessionals = convertedProfessionals.filter(prof => {
       // Text search
       const matchesText = !searchTerm || 
         prof.full_name.toLowerCase().includes(filterText) ||
