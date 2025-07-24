@@ -6,16 +6,18 @@ import { useScrollToTop } from '@/hooks/useScrollToTop';
 import ConnectTabs from '@/components/connect/ConnectTabs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import PrototypeNotice from '@/components/connect/PrototypeNotice';
-import CallToActionSection from '@/components/connect/CallToActionSection';
 import SearchSection from '@/components/connect/search/SearchSection';
 import { useConnectFiltering } from '@/hooks/useConnectFiltering';
 import { Tabs } from '@/components/ui/tabs';
 import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
+import WaitlistPopup from '@/components/waitlist/WaitlistPopup';
+import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
 
 const ConnectExample = () => {
   useScrollToTop();
   const [searchParams] = useSearchParams();
+  const { showWaitlistPopup, closeWaitlistPopup } = useWaitlistPopup();
   
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
@@ -117,8 +119,6 @@ const ConnectExample = () => {
           />
         </Tabs>
         
-        <CallToActionSection onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
-        
         {/* Page-specific Survey CTA */}
         <div className="mt-12 bg-gradient-to-r from-dna-emerald/10 via-dna-copper/10 to-dna-gold/10 rounded-xl p-8 text-center border border-dna-emerald/20">
           <h3 className="text-2xl font-bold text-dna-forest mb-4">
@@ -151,6 +151,11 @@ const ConnectExample = () => {
         isOpen={isSurveyOpen}
         onClose={() => setIsSurveyOpen(false)}
         pageType="connect"
+      />
+      
+      <WaitlistPopup 
+        isOpen={showWaitlistPopup}
+        onClose={closeWaitlistPopup}
       />
     </div>
   );
