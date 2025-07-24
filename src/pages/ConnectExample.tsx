@@ -45,12 +45,12 @@ const ConnectExample = () => {
 
   const filteredData = useConnectFiltering(searchTerm, filters);
 
-  // Calculate accurate counts based on actual mock data
-  const getTotalCounts = () => {
+  // Calculate filtered counts based on search results
+  const getFilteredCounts = () => {
     return {
-      professionals: mockProfessionals.length,
-      communities: demoCommunities.length,
-      events: demoEvents.length
+      professionals: filteredData.professionals.length,
+      communities: filteredData.communities.length,
+      events: filteredData.events.length
     };
   };
 
@@ -93,7 +93,7 @@ const ConnectExample = () => {
               onFiltersChange={setFilters}
               activeTab={activeTab}
               onTabChange={setActiveTab}
-              resultCounts={getTotalCounts()}
+              resultCounts={getFilteredCounts()}
             />
           </div>
           
