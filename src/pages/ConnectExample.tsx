@@ -13,6 +13,8 @@ import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import WaitlistPopup from '@/components/waitlist/WaitlistPopup';
 import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
+import { mockProfessionals } from '@/components/connect/tabs/ProfessionalsMockData';
+import { demoCommunities, demoEvents } from '@/data/demoSearchData';
 
 const ConnectExample = () => {
   useScrollToTop();
@@ -43,20 +45,12 @@ const ConnectExample = () => {
 
   const filteredData = useConnectFiltering(searchTerm, filters);
 
-  // Calculate accurate counts based on filtered data plus additional demo data
+  // Calculate accurate counts based on actual mock data
   const getTotalCounts = () => {
-    const baseProfessionals = filteredData.professionals.length;
-    const baseCommunities = filteredData.communities.length;
-    const baseEvents = filteredData.events.length;
-    
-    // Only add extra demo data when there are actual results to show consistency
-    const additionalProfessionals = baseProfessionals > 0 ? 10 : 0;
-    const additionalCommunities = baseCommunities > 0 ? 10 : 0;
-    
     return {
-      professionals: baseProfessionals + additionalProfessionals,
-      communities: baseCommunities + additionalCommunities,
-      events: baseEvents
+      professionals: mockProfessionals.length,
+      communities: demoCommunities.length,
+      events: demoEvents.length
     };
   };
 
