@@ -3,7 +3,8 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users, Plus, ArrowRight, ChevronRight } from 'lucide-react';
+import { Calendar, MapPin, Users, Plus, ArrowRight, ChevronRight, Bell } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 interface EventsTabProps {
@@ -93,12 +94,54 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
 
   // Categories for browsing
   const eventCategories = [
-    { id: 'tech', name: 'Technology', icon: '💻', count: '145 Events', color: 'bg-blue-500' },
-    { id: 'business', name: 'Business & Finance', icon: '💼', count: '89 Events', color: 'bg-green-500' },
-    { id: 'culture', name: 'Arts & Culture', icon: '🎨', count: '67 Events', color: 'bg-purple-500' },
-    { id: 'health', name: 'Health & Wellness', icon: '🏥', count: '45 Events', color: 'bg-red-500' },
-    { id: 'education', name: 'Education', icon: '📚', count: '78 Events', color: 'bg-yellow-500' },
-    { id: 'climate', name: 'Climate & Environment', icon: '🌍', count: '34 Events', color: 'bg-emerald-500' }
+    { 
+      id: 'tech', 
+      name: 'Technology', 
+      icon: '💻', 
+      count: '145 Events', 
+      color: 'bg-blue-500',
+      description: 'Tech conferences, startup events, AI summits, coding bootcamps, and digital innovation workshops'
+    },
+    { 
+      id: 'business', 
+      name: 'Business & Finance', 
+      icon: '💼', 
+      count: '89 Events', 
+      color: 'bg-green-500',
+      description: 'Investment forums, entrepreneurship workshops, trade missions, and business networking events'
+    },
+    { 
+      id: 'culture', 
+      name: 'Arts & Culture', 
+      icon: '🎨', 
+      count: '67 Events', 
+      color: 'bg-purple-500',
+      description: 'Art exhibitions, cultural festivals, music concerts, film screenings, and creative showcases'
+    },
+    { 
+      id: 'health', 
+      name: 'Health & Wellness', 
+      icon: '🏥', 
+      count: '45 Events', 
+      color: 'bg-red-500',
+      description: 'Medical conferences, wellness workshops, mental health seminars, and healthcare innovation forums'
+    },
+    { 
+      id: 'education', 
+      name: 'Education', 
+      icon: '📚', 
+      count: '78 Events', 
+      color: 'bg-yellow-500',
+      description: 'Academic conferences, skill development workshops, scholarships info sessions, and educational seminars'
+    },
+    { 
+      id: 'climate', 
+      name: 'Climate & Environment', 
+      icon: '🌍', 
+      count: '34 Events', 
+      color: 'bg-emerald-500',
+      description: 'Climate action summits, sustainability workshops, green energy forums, and environmental conservation events'
+    }
   ];
 
   // Local/Regional Events
@@ -131,7 +174,9 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-semibold text-gray-900">Popular Events</h3>
+            <h3 className="text-xl font-semibold text-gray-900">
+              Popular Events ({popularEvents.length})
+            </h3>
             <p className="text-sm text-gray-600">Trending events in your network</p>
           </div>
           <Button variant="ghost" className="text-dna-emerald hover:text-dna-forest">
@@ -222,17 +267,26 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {eventCategories.map((category) => (
-            <Card key={category.id} className="hover:shadow-md transition-shadow cursor-pointer group">
-              <CardContent className="p-4 text-center">
-                <div className={`w-12 h-12 ${category.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
-                  <span className="text-2xl">{category.icon}</span>
-                </div>
-                <h4 className="font-medium text-gray-900 text-sm">{category.name}</h4>
-                <p className="text-xs text-gray-500 mt-1">{category.count}</p>
-              </CardContent>
-            </Card>
-          ))}
+          <TooltipProvider>
+            {eventCategories.map((category) => (
+              <Tooltip key={category.id}>
+                <TooltipTrigger asChild>
+                  <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+                    <CardContent className="p-4 text-center">
+                      <div className={`w-12 h-12 ${category.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
+                        <span className="text-2xl">{category.icon}</span>
+                      </div>
+                      <h4 className="font-medium text-gray-900 text-sm">{category.name}</h4>
+                      <p className="text-xs text-gray-500 mt-1">{category.count}</p>
+                    </CardContent>
+                  </Card>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs p-3">
+                  <p className="text-sm">{category.description}</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </TooltipProvider>
         </div>
       </div>
 
@@ -249,30 +303,53 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {featuredCalendars.map((calendar) => (
-            <Card key={calendar.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform">
-                    <img
-                      src={calendar.logo}
-                      alt={`${calendar.name} logo`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-gray-900 truncate">{calendar.name}</h4>
-                    <p className="text-sm text-gray-600 line-clamp-2 mt-1">{calendar.description}</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                      <span>{calendar.eventCount} events</span>
-                      <span>{calendar.followers} followers</span>
+          <TooltipProvider>
+            {featuredCalendars.map((calendar) => (
+              <Card key={calendar.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform">
+                      <img
+                        src={calendar.logo}
+                        alt={`${calendar.name} logo`}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-gray-900 truncate">{calendar.name}</h4>
+                      <p className="text-sm text-gray-600 line-clamp-2 mt-1">{calendar.description}</p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                        <span>{calendar.eventCount} events</span>
+                        <span>{calendar.followers} followers</span>
+                      </div>
+                      <div className="mt-3">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="text-xs h-7 px-2 hover:bg-dna-emerald hover:text-white transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // Demo functionality
+                              }}
+                            >
+                              <Bell className="w-3 h-3 mr-1" />
+                              Subscribe
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="text-sm">Get notified about new events from this calendar</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-dna-emerald transition-colors" />
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-dna-emerald transition-colors" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))}
+          </TooltipProvider>
         </div>
       </div>
 
@@ -284,17 +361,26 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {localEvents.map((location) => (
-            <Card key={location.city} className="hover:shadow-md transition-shadow cursor-pointer group">
-              <CardContent className="p-4 text-center">
-                <div className={`w-12 h-12 ${location.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
-                  <span className="text-2xl">{location.flag}</span>
-                </div>
-                <h4 className="font-medium text-gray-900 text-sm">{location.city}</h4>
-                <p className="text-xs text-gray-500 mt-1">{location.count} Events</p>
-              </CardContent>
-            </Card>
-          ))}
+          <TooltipProvider>
+            {localEvents.map((location) => (
+              <Tooltip key={location.city}>
+                <TooltipTrigger asChild>
+                  <Card className="hover:shadow-md transition-shadow cursor-pointer group">
+                    <CardContent className="p-4 text-center">
+                      <div className={`w-12 h-12 ${location.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
+                        <span className="text-2xl">{location.flag}</span>
+                      </div>
+                      <h4 className="font-medium text-gray-900 text-sm">{location.city}</h4>
+                      <p className="text-xs text-gray-500 mt-1">{location.count} Events</p>
+                    </CardContent>
+                  </Card>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-sm">Explore networking events, conferences, and community gatherings in {location.city}</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </TooltipProvider>
         </div>
       </div>
     </div>
