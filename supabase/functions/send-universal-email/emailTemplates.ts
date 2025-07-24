@@ -221,24 +221,6 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         `
       };
 
-    default:
-      return {
-        subject: "New Form Submission - DNA Platform",
-        adminHtml: `
-          <h2>New Form Submission</h2>
-          <p><strong>Form Type:</strong> ${formType}</p>
-          <p><strong>Data:</strong></p>
-          <pre>${JSON.stringify(formData, null, 2)}</pre>
-          <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
-        `,
-        userSubject: "Thank you for your submission!",
-        userHtml: `
-          <h1>Thank you for your submission!</h1>
-          <p>We've received your information and will be in touch soon.</p>
-          <p>Best regards,<br>The DNA Team</p>
-        `
-      };
-
     case 'connect_survey':
       return {
         subject: "New Connect Survey Response - DNA Platform",
