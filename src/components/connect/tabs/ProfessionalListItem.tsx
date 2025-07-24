@@ -5,10 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, MessageSquare, UserPlus, MoreHorizontal, Share, ThumbsUp } from 'lucide-react';
-import { Professional } from '@/hooks/useSearch';
+import { MockProfessional } from './ProfessionalsMockData';
 
 interface ProfessionalListItemProps {
-  professional: Professional;
+  professional: MockProfessional;
 }
 
 const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professional }) => {
@@ -43,23 +43,25 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
         <div className="flex items-start gap-4">
           <div className="relative">
             <Avatar className="w-16 h-16">
-              <AvatarImage src={professional.avatar_url} alt={professional.full_name} />
+              <AvatarImage src={professional.avatar} alt={professional.name} />
               <AvatarFallback className="bg-gradient-to-br from-dna-copper to-dna-emerald text-white">
-                {professional.full_name.split(' ').map(n => n[0]).join('')}
+                {professional.name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+            {professional.isOnline && (
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+            )}
           </div>
           
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between">
               <div>
-                <CardTitle className="text-lg mb-1">{professional.full_name}</CardTitle>
-                <p className="text-dna-copper font-medium">{professional.profession}</p>
+                <CardTitle className="text-lg mb-1">{professional.name}</CardTitle>
+                <p className="text-dna-copper font-medium">{professional.title}</p>
                 <p className="text-gray-600 text-sm">{professional.company}</p>
               </div>
               <div className="flex items-center gap-2">
-                {getConnectionButton(null, professional.full_name)}
+                {getConnectionButton(professional.connectionStatus, professional.name)}
                 <Button variant="ghost" size="sm">
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
@@ -72,7 +74,13 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
                 <span>{professional.location}</span>
               </div>
               <span>•</span>
-              <span>Originally from {professional.country_of_origin}</span>
+              <span>Originally from {professional.origin}</span>
+              {professional.mutualConnections > 0 && (
+                <>
+                  <span>•</span>
+                  <span className="text-dna-emerald">{professional.mutualConnections} mutual connections</span>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -92,27 +100,15 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
           </div>
         </div>
         
-        <div className="flex items-center gap-4 text-sm">
-          {professional.is_mentor && (
-            <Badge variant="outline" className="text-dna-emerald border-dna-emerald">
-              Mentor
-            </Badge>
-          )}
-          {professional.is_investor && (
-            <Badge variant="outline" className="text-dna-copper border-dna-copper">
-              Investor
-            </Badge>
-          )}
-          {professional.looking_for_opportunities && (
-            <Badge variant="outline" className="text-dna-gold border-dna-gold">
-              Open to Opportunities
-            </Badge>
-          )}
+        <div className="bg-gray-50 rounded-lg p-3">
+          <div className="text-sm text-gray-600">Recent Activity:</div>
+          <div className="text-sm font-medium">{professional.recentActivity}</div>
         </div>
         
         <div className="flex items-center justify-between pt-2 border-t">
-          <div className="text-sm text-gray-600">
-            <span>Professional Network Member</span>
+          <div className="flex gap-6 text-sm text-gray-600">
+            <span>{professional.followers.toLocaleString()} followers</span>
+            <span>{professional.connections.toLocaleString()} connections</span>
           </div>
           
           <div className="flex items-center gap-2">

@@ -13,7 +13,8 @@ import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import WaitlistPopup from '@/components/waitlist/WaitlistPopup';
 import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
-import { demoCommunities, demoEvents, demoProfessionals } from '@/data/demoSearchData';
+import { mockProfessionals } from '@/components/connect/tabs/ProfessionalsMockData';
+import { demoCommunities, demoEvents } from '@/data/demoSearchData';
 
 const ConnectExample = () => {
   useScrollToTop();
@@ -47,7 +48,7 @@ const ConnectExample = () => {
   // Calculate accurate counts based on actual mock data
   const getTotalCounts = () => {
     return {
-      professionals: demoProfessionals.length, // Now from single consolidated source
+      professionals: mockProfessionals.length,
       communities: demoCommunities.length,
       events: demoEvents.length
     };

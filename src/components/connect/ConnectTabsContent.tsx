@@ -163,7 +163,7 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
     communities: 0
   });
 
-  const allProfessionals = professionals; // Now professionals come from single source
+  const allProfessionals = professionals;
   const allCommunities = [...communities, ...additionalCommunities];
   
   // Show initial limited set, then add 10 more each time
