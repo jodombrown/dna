@@ -238,5 +238,165 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
           <p>Best regards,<br>The DNA Team</p>
         `
       };
+
+    case 'connect_survey':
+      return {
+        subject: "New Connect Survey Response - DNA Platform",
+        adminHtml: `
+          <h2>New Connect Survey Response Received</h2>
+          <p><strong>Page Type:</strong> Connect (Networking)</p>
+          <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+          <h3>Respondent Information:</h3>
+          <p><strong>Name:</strong> ${formData.first_name}</p>
+          <p><strong>Email:</strong> ${formData.email || 'Not provided'}</p>
+          <h3>Connect Survey Responses:</h3>
+          <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+            <p><strong>Current Experience:</strong><br>${formData.current_experience}</p>
+            <p><strong>Usage Frequency:</strong> ${formData.usage_frequency}</p>
+            <p><strong>Desired Features:</strong><br>${formData.desired_features.join(', ')}</p>
+            <p><strong>Interaction Preferences:</strong><br>${formData.interaction_preferences}</p>
+            <p><strong>Missing Elements:</strong><br>${formData.missing_elements}</p>
+            <p><strong>Improvement Suggestions:</strong><br>${formData.improvement_suggestions}</p>
+            <p><strong>Additional Comments:</strong><br>${formData.additional_comments}</p>
+          </div>
+        `,
+        userSubject: "Thank you for your Connect feedback!",
+        userHtml: `
+          <h1>Thank you for sharing your networking insights!</h1>
+          <p>Hi ${formData.first_name},</p>
+          <p>Your feedback about connecting with the African diaspora community is invaluable to us. We're using insights like yours to shape our networking features.</p>
+          <p><strong>Your input will help us build better:</strong></p>
+          <ul>
+            <li>Professional networking tools</li>
+            <li>Mentorship matching systems</li>
+            <li>Community discovery features</li>
+            <li>Connection and messaging capabilities</li>
+          </ul>
+          <p>We'll keep you updated as we develop these features and invite you to be among the first to try them!</p>
+          <p>Best regards,<br>The DNA Team</p>
+        `
+      };
+
+    case 'collaborate_survey':
+      return {
+        subject: "New Collaborate Survey Response - DNA Platform",
+        adminHtml: `
+          <h2>New Collaborate Survey Response Received</h2>
+          <p><strong>Page Type:</strong> Collaborate (Project Collaboration)</p>
+          <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+          <h3>Respondent Information:</h3>
+          <p><strong>Name:</strong> ${formData.first_name}</p>
+          <p><strong>Email:</strong> ${formData.email || 'Not provided'}</p>
+          <h3>Collaborate Survey Responses:</h3>
+          <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+            <p><strong>Current Experience:</strong><br>${formData.current_experience}</p>
+            <p><strong>Usage Frequency:</strong> ${formData.usage_frequency}</p>
+            <p><strong>Desired Features:</strong><br>${formData.desired_features.join(', ')}</p>
+            <p><strong>Interaction Preferences:</strong><br>${formData.interaction_preferences}</p>
+            <p><strong>Missing Elements:</strong><br>${formData.missing_elements}</p>
+            <p><strong>Improvement Suggestions:</strong><br>${formData.improvement_suggestions}</p>
+            <p><strong>Additional Comments:</strong><br>${formData.additional_comments}</p>
+          </div>
+        `,
+        userSubject: "Thank you for your Collaboration feedback!",
+        userHtml: `
+          <h1>Thank you for sharing your collaboration insights!</h1>
+          <p>Hi ${formData.first_name},</p>
+          <p>Your feedback about collaborative projects for African development is exactly what we need to build the perfect platform for diaspora collaboration.</p>
+          <p><strong>Your input will help us create better:</strong></p>
+          <ul>
+            <li>Project matching and discovery systems</li>
+            <li>Team formation and collaboration tools</li>
+            <li>Progress tracking and project management</li>
+            <li>Resource sharing capabilities</li>
+          </ul>
+          <p>We're excited to build these features with your insights in mind and can't wait to have you try them!</p>
+          <p>Best regards,<br>The DNA Team</p>
+        `
+      };
+
+    case 'contribute_survey':
+      return {
+        subject: "New Contribute Survey Response - DNA Platform",
+        adminHtml: `
+          <h2>New Contribute Survey Response Received</h2>
+          <p><strong>Page Type:</strong> Contribute (Impact & Giving)</p>
+          <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+          <h3>Respondent Information:</h3>
+          <p><strong>Name:</strong> ${formData.first_name}</p>
+          <p><strong>Email:</strong> ${formData.email || 'Not provided'}</p>
+          <h3>Contribute Survey Responses:</h3>
+          <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+            <p><strong>Current Experience:</strong><br>${formData.current_experience}</p>
+            <p><strong>Usage Frequency:</strong> ${formData.usage_frequency}</p>
+            <p><strong>Desired Features:</strong><br>${formData.desired_features.join(', ')}</p>
+            <p><strong>Interaction Preferences:</strong><br>${formData.interaction_preferences}</p>
+            <p><strong>Missing Elements:</strong><br>${formData.missing_elements}</p>
+            <p><strong>Improvement Suggestions:</strong><br>${formData.improvement_suggestions}</p>
+            <p><strong>Additional Comments:</strong><br>${formData.additional_comments}</p>
+          </div>
+        `,
+        userSubject: "Thank you for your Contribution feedback!",
+        userHtml: `
+          <h1>Thank you for sharing your contribution insights!</h1>
+          <p>Hi ${formData.first_name},</p>
+          <p>Your feedback about contributing to African development initiatives is crucial for building an effective impact platform.</p>
+          <p><strong>Your input will help us develop better:</strong></p>
+          <ul>
+            <li>Impact tracking and measurement tools</li>
+            <li>Contribution and funding mechanisms</li>
+            <li>Volunteer opportunity matching</li>
+            <li>Project impact visualization</li>
+          </ul>
+          <p>We're committed to creating tools that make meaningful contribution accessible and rewarding!</p>
+          <p>Best regards,<br>The DNA Team</p>
+        `
+      };
+
+    case 'waitlist_signup':
+      return {
+        subject: "New Waitlist Signup - DNA Platform",
+        adminHtml: `
+          <h2>New Waitlist Signup</h2>
+          <p><strong>Name:</strong> ${formData.full_name}</p>
+          <p><strong>Email:</strong> ${formData.email}</p>
+          <p><strong>Location:</strong> ${formData.location || 'Not provided'}</p>
+          <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+        `,
+        userSubject: "Welcome to the DNA Waitlist! 🎉",
+        userHtml: `
+          <h1>Welcome to the DNA Community!</h1>
+          <p>Hi ${formData.full_name},</p>
+          <p>Thank you for joining the Diaspora Network of Africa waitlist! You're now part of a growing movement to connect, collaborate, and contribute to Africa's development.</p>
+          
+          <div style="background: linear-gradient(135deg, #059669, #D97706); color: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3 style="margin: 0 0 10px 0;">What happens next?</h3>
+            <ul style="margin: 0; padding-left: 20px;">
+              <li>You'll be among the first to get platform access</li>
+              <li>Receive updates on our development progress</li>
+              <li>Get invited to exclusive community events</li>
+              <li>Help shape the platform through beta testing</li>
+            </ul>
+          </div>
+          
+          <p>We're currently in the prototype phase and working hard to build the platform that the African diaspora deserves. Your early support means everything to us!</p>
+          
+          <p><strong>Stay connected with us:</strong></p>
+          <ul>
+            <li>Follow our progress on social media</li>
+            <li>Share DNA with other diaspora members</li>
+            <li>Join our community discussions when they launch</li>
+          </ul>
+          
+          <p>Together, we're building more than a platform - we're building a home for Africa's global family.</p>
+          
+          <p>Asante sana (Thank you very much),<br>
+          <strong>The DNA Team</strong><br>
+          <em>Diaspora Network of Africa</em></p>
+        `
+      };
+    
+    default:
+      throw new Error(`Unknown form type: ${formType}`);
   }
 };

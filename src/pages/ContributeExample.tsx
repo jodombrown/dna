@@ -9,6 +9,7 @@ import PathwaysToImpact from '@/components/contribute/PathwaysToImpact';
 import ContributeCallToAction from '@/components/contribute/ContributeCallToAction';
 import ContributeDialogs from '@/components/contribute/ContributeDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
+import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import Footer from '@/components/Footer';
 import { useContributeLogic } from '@/hooks/useContributeLogic';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -30,6 +31,8 @@ const ContributeExample = () => {
     impactCategories,
     handleLearnMore
   } = useContributeLogic();
+
+  const [isSurveyOpen, setIsSurveyOpen] = React.useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -54,6 +57,23 @@ const ContributeExample = () => {
         />
 
         <ContributeCallToAction onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
+        
+        {/* Page-specific Survey CTA */}
+        <div className="mt-12 bg-gradient-to-r from-dna-emerald/10 via-dna-copper/10 to-dna-gold/10 rounded-xl p-8 text-center border border-dna-emerald/20">
+          <h3 className="text-2xl font-bold text-dna-forest mb-4">
+            Help Us Perfect Contribution Tools
+          </h3>
+          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Share your thoughts on impact tracking, funding mechanisms, and volunteer opportunities. 
+            Your insights will help us create the most effective platform for African development.
+          </p>
+          <button
+            onClick={() => setIsSurveyOpen(true)}
+            className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+          >
+            Share Your Contribution Experience
+          </button>
+        </div>
       </main>
 
       <MobilePageNavigation currentPage="contribute" />
@@ -71,6 +91,12 @@ const ContributeExample = () => {
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
         onClose={() => setIsFeedbackPanelOpen(false)}
+        pageType="contribute"
+      />
+      
+      <PageSpecificSurvey
+        isOpen={isSurveyOpen}
+        onClose={() => setIsSurveyOpen(false)}
         pageType="contribute"
       />
     </div>

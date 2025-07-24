@@ -11,12 +11,14 @@ import SearchSection from '@/components/connect/search/SearchSection';
 import { useConnectFiltering } from '@/hooks/useConnectFiltering';
 import { Tabs } from '@/components/ui/tabs';
 import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
+import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 
 const ConnectExample = () => {
   useScrollToTop();
   const [searchParams] = useSearchParams();
   
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('professionals');
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -116,6 +118,23 @@ const ConnectExample = () => {
         </Tabs>
         
         <CallToActionSection onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
+        
+        {/* Page-specific Survey CTA */}
+        <div className="mt-12 bg-gradient-to-r from-dna-emerald/10 via-dna-copper/10 to-dna-gold/10 rounded-xl p-8 text-center border border-dna-emerald/20">
+          <h3 className="text-2xl font-bold text-dna-forest mb-4">
+            Help Us Build Better Networking
+          </h3>
+          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Share your thoughts on how you connect with the diaspora community. 
+            Your feedback will directly shape our networking features and user experience.
+          </p>
+          <button
+            onClick={() => setIsSurveyOpen(true)}
+            className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+          >
+            Share Your Connect Experience
+          </button>
+        </div>
       </main>
 
       <MobilePageNavigation currentPage="connect" />
@@ -125,6 +144,12 @@ const ConnectExample = () => {
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
         onClose={() => setIsFeedbackPanelOpen(false)}
+        pageType="connect"
+      />
+      
+      <PageSpecificSurvey
+        isOpen={isSurveyOpen}
+        onClose={() => setIsSurveyOpen(false)}
         pageType="connect"
       />
     </div>
