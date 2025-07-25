@@ -28,7 +28,7 @@ const AnimatedStatsSection = () => {
       <div className="absolute inset-0 bg-black/40"></div>
       <div className="relative z-10 px-8 py-16 text-center text-white">
         <h2 className="text-5xl md:text-6xl font-bold mb-12 leading-tight">
-          The African Diaspora: A $100 B+ Engine for Change
+          The African Diaspora: A $100B+ Engine for Change
         </h2>
         
         {/* Three Statistics Cards */}
@@ -36,8 +36,8 @@ const AnimatedStatsSection = () => {
           <AnimatedStat
             value={200}
             suffix="M+"
-            label="People of African Descent"
-            description="Living outside Africa, projected to comprise 25% of global population"
+            label="Global Diaspora Population"
+            description="People of African descent living outside the continent — projected to reach 25% of the global population."
             bgGradient="bg-gradient-to-br from-dna-emerald/80 to-dna-forest/80"
           />
           
@@ -45,7 +45,7 @@ const AnimatedStatsSection = () => {
             value={100}
             suffix="B+"
             label="Annual Remittances (2024)"
-            description="Fueling economic growth across African nations"
+            description="Fueling infrastructure, entrepreneurship, and livelihoods across African nations."
             bgGradient="bg-gradient-to-br from-dna-copper/80 to-dna-gold/80"
           />
           
@@ -53,7 +53,7 @@ const AnimatedStatsSection = () => {
             value={60}
             suffix="%"
             label="Highly Educated"
-            description="Advanced degrees and specialized skills driving innovation"
+            description="Armed with advanced degrees and global experience — ready to drive innovation and policy change."
             bgGradient="bg-gradient-to-br from-dna-mint/80 to-dna-emerald/80"
           />
         </div>
