@@ -5,7 +5,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import SheetCloseButton from '@/components/ui/sheet-close-button';
 import { DollarSign, Target, CheckCircle } from 'lucide-react';
 
 interface ContributionPathway {
@@ -78,8 +77,7 @@ const ContributeDialogs: React.FC<ContributeDialogsProps> = ({
 
       {/* Learn More Sheet */}
       <Sheet open={isLearnMoreOpen} onOpenChange={setIsLearnMoreOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto relative">
-          <SheetCloseButton onClose={() => setIsLearnMoreOpen(false)} />
+        <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
           {selectedPathway && (
             <>
               <SheetHeader className="mb-6">
