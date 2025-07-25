@@ -96,14 +96,7 @@ const ProjectDetailDialog: React.FC<ProjectDetailDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] p-0">
-        {/* Custom close button positioned outside the tab area */}
-        <button
-          onClick={onClose}
-          className="absolute -top-3 -right-3 z-50 w-8 h-8 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
-          aria-label="Close dialog"
-        >
-          <X className="w-4 h-4 text-gray-600" />
-        </button>
+        {/* DialogContent already has the styled close button */}
         <ScrollArea className="max-h-[90vh]">
           {/* Hero Image */}
           <div className="relative h-64 bg-gradient-to-br from-dna-copper/20 to-dna-emerald/20">
