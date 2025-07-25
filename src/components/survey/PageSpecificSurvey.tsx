@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
+import SheetCloseButton from '@/components/ui/sheet-close-button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -149,7 +150,8 @@ const PageSpecificSurvey: React.FC<PageSpecificSurveyProps> = ({ isOpen, onClose
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto relative">
+        <SheetCloseButton onClose={onClose} />
         <SheetHeader>
           <SheetTitle className="text-2xl font-bold text-dna-forest">
             {content.title}

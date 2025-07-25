@@ -11,6 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import SheetCloseButton from '@/components/ui/sheet-close-button';
 
 const SKILL_OPTIONS = [
   'Technology', 'Finance', 'Healthcare', 'Agriculture', 'Education',
@@ -111,7 +112,8 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[55%] sm:w-[320px] overflow-y-auto">
+      <SheetContent side="right" className="w-[55%] sm:w-[320px] overflow-y-auto relative">
+        <SheetCloseButton onClose={() => setIsOpen(false)} />
         <SheetHeader className="mb-6">
           <SheetTitle>Advanced Filters</SheetTitle>
           {hasActiveFilters && (

@@ -3,6 +3,7 @@ import React from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import SheetCloseButton from '@/components/ui/sheet-close-button';
 import { Filter, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import SearchFeaturePreview from './SearchFeaturePreview';
@@ -18,7 +19,8 @@ const AdvancedSearchDialog: React.FC<AdvancedSearchDialogProps> = ({ isOpen, onC
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-full sm:w-[500px] sm:max-w-[500px] p-0">
+      <SheetContent side="right" className="w-full sm:w-[500px] sm:max-w-[500px] p-0 relative">
+        <SheetCloseButton onClose={onClose} />
         <div className="flex flex-col h-full">
           <SheetHeader className="px-6 py-4 border-b">
             <SheetTitle className="flex items-center gap-2">

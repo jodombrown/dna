@@ -5,6 +5,7 @@ import { Menu } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import SheetCloseButton from '@/components/ui/sheet-close-button';
 import { publicNavItems, phases } from './navigationConfig';
 
 interface MobileSheetMenuProps {
@@ -37,7 +38,8 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
           <Menu className="w-8 h-8" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-80 p-0">
+      <SheetContent side="left" className="w-80 p-0 relative">
+        <SheetCloseButton onClose={() => onOpenChange(false)} />
         <div className="flex flex-col h-full">
           <SheetHeader className="p-6 border-b">
             <SheetTitle className="flex items-center gap-2">

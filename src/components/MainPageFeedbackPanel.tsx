@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import SheetCloseButton from '@/components/ui/sheet-close-button';
 import { MessageSquare, Star, Lightbulb, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -119,7 +120,8 @@ Feedback Type: ${formData.feedbackType || 'General'}
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+      <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto relative">
+        <SheetCloseButton onClose={onClose} />
         <SheetHeader className="mb-6">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-dna-emerald/10 rounded-lg">
