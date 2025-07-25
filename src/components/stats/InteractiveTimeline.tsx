@@ -60,10 +60,13 @@ const InteractiveTimeline = () => {
         <div className="mt-8 bg-dna-emerald/10 rounded-xl p-6">
           <h4 className="text-xl font-bold text-dna-forest mb-3">The Decade's Legacy</h4>
           <p className="text-gray-700 leading-relaxed mb-4">
-            This ten-year journey tells the story of human resilience, technological innovation, and the unbreakable bonds of family and community. What began as simple money transfers evolved into a sophisticated ecosystem of financial inclusion, technological advancement, and economic development. The diaspora didn't just send money home, they sent hope, opportunity, and the tools for transformation.
+            Over the course of ten years, a simple act that began with sending money home became something greater. It evolved into a movement of resilience, innovation, and unity. The diaspora didn't just send funds; they sent hope, opportunity, and the tools for transformation.
+          </p>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            Now, the future lies beyond remittances. It's through strategic partnerships, shared knowledge, and coordinated investment that Africa's untapped potential will be unlocked.
           </p>
           <p className="text-gray-700 leading-relaxed">
-            The future lies beyond remittances—in strategic partnerships, knowledge exchange, and coordinated investment that unlocks Africa's untapped potential. When 200 million highly educated diaspora minds unite with local innovators, when capital flows with purpose rather than sentiment, when global networks amplify local solutions, we create an unstoppable force for transformation. At DNA, we're building this engine of change: a platform that transforms individual contributions into collective power, scattered expertise into focused impact, and diaspora potential into Africa's accelerated progress.
+            At DNA, we're building the platform to power that future, transforming individual contributions into collective strength, scattered expertise into focused impact, and diaspora potential into Africa's accelerated, united, and unstoppable progress.
           </p>
         </div>
       </div>
