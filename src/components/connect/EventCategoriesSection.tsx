@@ -5,8 +5,16 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import { eventCategories } from './eventData';
+import { toast } from 'sonner';
 
 const EventCategoriesSection: React.FC = () => {
+  const handleCategoryClick = (category: any) => {
+    toast.info(`${category.name} Events`, {
+      description: category.description,
+      duration: 4000,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -30,7 +38,10 @@ const EventCategoriesSection: React.FC = () => {
                 <CarouselItem key={category.id} className="pl-2 md:pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white shadow-md hover:shadow-xl h-full">
+                       <Card 
+                         className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white shadow-md hover:shadow-xl h-full"
+                         onClick={() => handleCategoryClick(category)}
+                       >
                         <CardContent className="p-8 text-center">
                           <div className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
                             <span className="text-3xl">{category.icon}</span>
