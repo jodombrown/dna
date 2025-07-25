@@ -31,11 +31,16 @@ const HeroSection = () => {
               {/* Main Headline */}
               <div className="text-center lg:text-left">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-dna-forest mb-4">
-                  Welcome to the Diaspora Network of Africa
+                  Welcome to the
+                  <br />
+                  <span className="text-dna-copper">Diaspora Network of Africa</span>
                 </h1>
                 
                 <p className="text-xl md:text-2xl text-gray-700 mb-6 leading-relaxed">
-                  We're connecting Africa's global talent to drive real change. Through capacity building, venture creation, and ecosystem collaboration, the diaspora becomes a force for sustainable impact.
+                  Connecting Africa's diaspora professionals for transformative global impact through 
+                  <span className="font-semibold text-dna-emerald"> capacity building</span>, 
+                  <span className="font-semibold text-dna-copper"> venture building</span>, and 
+                  <span className="font-semibold text-dna-forest"> ecosystem building</span>.
                 </p>
 
                 {/* Primary CTA */}
@@ -43,7 +48,7 @@ const HeroSection = () => {
                   <Button 
                     size="lg" 
                     className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full"
-                    onClick={() => navigate('/join')}
+                    onClick={() => navigate('/about')}
                   >
                     <Users className="w-5 h-5 mr-2" />
                     Join Our Journey
@@ -52,7 +57,7 @@ const HeroSection = () => {
                     variant="outline" 
                     size="lg"
                     className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full flex items-center gap-2"
-                    onClick={() => navigate('/how-it-works')}
+                    onClick={scrollToDNAFramework}
                   >
                     <Play className="w-4 h-4" />
                     See How It Works
