@@ -59,8 +59,11 @@ const InteractiveTimeline = () => {
         {/* Decade's Legacy Summary */}
         <div className="mt-8 bg-dna-emerald/10 rounded-xl p-6">
           <h4 className="text-xl font-bold text-dna-forest mb-3">The Decade's Legacy</h4>
-          <p className="text-gray-700 leading-relaxed">
+          <p className="text-gray-700 leading-relaxed mb-4">
             This ten-year journey tells the story of human resilience, technological innovation, and the unbreakable bonds of family and community. What began as simple money transfers evolved into a sophisticated ecosystem of financial inclusion, technological advancement, and economic development. The diaspora didn't just send money home, they sent hope, opportunity, and the tools for transformation.
+          </p>
+          <p className="text-gray-700 leading-relaxed">
+            The future lies beyond remittances—in strategic partnerships, knowledge exchange, and coordinated investment that unlocks Africa's untapped potential. When 200 million highly educated diaspora minds unite with local innovators, when capital flows with purpose rather than sentiment, when global networks amplify local solutions, we create an unstoppable force for transformation. At DNA, we're building this engine of change: a platform that transforms individual contributions into collective power, scattered expertise into focused impact, and diaspora potential into Africa's accelerated progress.
           </p>
         </div>
       </div>
