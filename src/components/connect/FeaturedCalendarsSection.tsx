@@ -7,12 +7,20 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import { featuredCalendars } from './eventData';
+import { toast } from '@/hooks/use-toast';
 
 interface FeaturedCalendarsSectionProps {
   onViewAll?: () => void;
 }
 
 const FeaturedCalendarsSection: React.FC<FeaturedCalendarsSectionProps> = ({ onViewAll }) => {
+  const handleSubscribe = (calendar: any) => {
+    toast({
+      title: "Successfully Subscribed!",
+      description: `You'll now receive notifications for new events from ${calendar.name}. Check your email for confirmation and subscription preferences.`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -66,10 +74,10 @@ const FeaturedCalendarsSection: React.FC<FeaturedCalendarsSectionProps> = ({ onV
                         <TooltipTrigger asChild>
                           <Button 
                             className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg mt-auto"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Demo functionality
-                            }}
+                             onClick={(e) => {
+                               e.stopPropagation();
+                               handleSubscribe(calendar);
+                             }}
                           >
                             Subscribe
                           </Button>
