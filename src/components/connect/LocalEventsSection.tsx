@@ -52,10 +52,10 @@ const LocalEventsSection: React.FC = () => {
                                </div>
                              </div>
                              
-                             {/* City Name with Icon */}
-                             <div className="flex items-center gap-1">
-                               <MapPin className="w-4 h-4 text-gray-500" />
+                             {/* City and Country Names */}
+                             <div className="text-center space-y-1">
                                <h4 className="font-semibold text-gray-900 text-sm">{location.city}</h4>
+                               <p className="text-xs text-gray-600">{location.country}</p>
                              </div>
                              
                              {/* Event Count with Icon */}
@@ -67,9 +67,9 @@ const LocalEventsSection: React.FC = () => {
                          </CardContent>
                       </Card>
                     </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="text-sm">Explore networking events, conferences, and community gatherings in {location.city}</p>
-                    </TooltipContent>
+                     <TooltipContent>
+                       <p className="text-sm">Explore networking events, conferences, and community gatherings in {location.city}, {location.country}</p>
+                     </TooltipContent>
                   </Tooltip>
                 </CarouselItem>
               ))}
