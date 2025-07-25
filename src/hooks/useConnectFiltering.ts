@@ -59,17 +59,44 @@ export const useConnectFiltering = (searchTerm: string, filters: FilterState) =>
     });
 
     const filteredCommunities = demoCommunities.filter(comm => {
-      return !searchTerm || 
+      // Text search
+      const matchesText = !searchTerm || 
         comm.name.toLowerCase().includes(filterText) ||
         comm.description.toLowerCase().includes(filterText) ||
         comm.category.toLowerCase().includes(filterText);
+      
+      // Category filter (using skills filter for community categories)
+      const matchesCategory = filters.skills.length === 0 ||
+        filters.skills.some(skill => 
+          comm.category.toLowerCase().includes(skill.toLowerCase()) ||
+          comm.name.toLowerCase().includes(skill.toLowerCase()) ||
+          comm.description.toLowerCase().includes(skill.toLowerCase())
+        );
+      
+      return matchesText && matchesCategory;
     });
 
     const filteredEvents = demoEvents.filter(event => {
-      return !searchTerm || 
+      // Text search
+      const matchesText = !searchTerm || 
         event.title.toLowerCase().includes(filterText) ||
         event.description?.toLowerCase().includes(filterText) ||
-        event.location?.toLowerCase().includes(filterText);
+        event.location?.toLowerCase().includes(filterText) ||
+        event.type?.toLowerCase().includes(filterText);
+      
+      // Location filter
+      const matchesLocation = !filters.location || filters.location === 'all' || 
+        event.location?.toLowerCase().includes(filters.location.toLowerCase());
+      
+      // Type/Skills filter (using skills filter for event types and categories)
+      const matchesType = filters.skills.length === 0 ||
+        filters.skills.some(skill => 
+          event.type?.toLowerCase().includes(skill.toLowerCase()) ||
+          event.title.toLowerCase().includes(skill.toLowerCase()) ||
+          event.description?.toLowerCase().includes(skill.toLowerCase())
+        );
+      
+      return matchesText && matchesLocation && matchesType;
     });
 
     return {
