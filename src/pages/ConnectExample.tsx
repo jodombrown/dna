@@ -11,15 +11,13 @@ import { useConnectFiltering } from '@/hooks/useConnectFiltering';
 import { Tabs } from '@/components/ui/tabs';
 import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
-import WaitlistPopup from '@/components/waitlist/WaitlistPopup';
-import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
 import { mockProfessionals } from '@/components/connect/tabs/ProfessionalsMockData';
 import { demoCommunities, demoEvents } from '@/data/demoSearchData';
 
 const ConnectExample = () => {
   useScrollToTop();
   const [searchParams] = useSearchParams();
-  const { showWaitlistPopup, closeWaitlistPopup } = useWaitlistPopup();
+  
   
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
@@ -147,10 +145,6 @@ const ConnectExample = () => {
         pageType="connect"
       />
       
-      <WaitlistPopup 
-        isOpen={showWaitlistPopup}
-        onClose={closeWaitlistPopup}
-      />
     </div>
   );
 };
