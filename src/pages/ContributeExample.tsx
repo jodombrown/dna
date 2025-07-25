@@ -6,7 +6,7 @@ import ContributeOverviewStats from '@/components/contribute/ContributeOverviewS
 import ImpactDashboard from '@/components/contribute/ImpactDashboard';
 import ContributionBreakdown from '@/components/contribute/ContributionBreakdown';
 import PathwaysToImpact from '@/components/contribute/PathwaysToImpact';
-import ContributeCallToAction from '@/components/contribute/ContributeCallToAction';
+
 import ContributeDialogs from '@/components/contribute/ContributeDialogs';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
@@ -55,8 +55,6 @@ const ContributeExample = () => {
           onContribute={() => setIsContributeDialogOpen(true)}
           onLearnMore={handleLearnMore}
         />
-
-        <ContributeCallToAction onFeedbackClick={() => setIsFeedbackPanelOpen(true)} />
         
         {/* Page-specific Survey CTA */}
         <div className="mt-12 bg-gradient-to-r from-dna-emerald/10 via-dna-copper/10 to-dna-gold/10 rounded-xl p-8 text-center border border-dna-emerald/20">
