@@ -16,8 +16,8 @@ interface FeaturedCalendarsSectionProps {
 const FeaturedCalendarsSection: React.FC<FeaturedCalendarsSectionProps> = ({ onViewAll }) => {
   const handleSubscribe = (calendar: any) => {
     toast({
-      title: "Successfully Subscribed!",
-      description: `You'll now receive notifications for new events from ${calendar.name}. Check your email for confirmation and subscription preferences.`,
+      title: "Subscription Process Preview",
+      description: `In the full platform, you would receive a confirmation email and be subscribed to ${calendar.name}'s calendar. You'd get notifications for their upcoming events and could manage preferences in your account settings.`,
     });
   };
 
