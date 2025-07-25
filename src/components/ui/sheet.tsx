@@ -63,11 +63,19 @@ const SheetContent = React.forwardRef<
       {...props}
     >
       {children}
-      <SheetPrimitive.Close className="absolute -right-4 -top-4 rounded-full bg-white border-2 border-gray-200 w-8 h-8 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 z-[1001] shadow-sm group">
+    </SheetPrimitive.Content>
+    
+    {/* Close button positioned outside but within sheet */}
+    <SheetPrimitive.Close className="fixed z-[1002] pointer-events-none" style={{
+      right: side === "right" ? "8px" : "auto",
+      left: side === "left" ? "8px" : "auto", 
+      top: "8px"
+    }}>
+      <button className="rounded-full bg-white border-2 border-gray-200 w-8 h-8 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-sm group pointer-events-auto">
         <X className="h-4 w-4 text-gray-600 group-hover:text-white transition-colors duration-200" />
         <span className="sr-only">Close</span>
-      </SheetPrimitive.Close>
-    </SheetPrimitive.Content>
+      </button>
+    </SheetPrimitive.Close>
   </SheetPortal>
 ))
 SheetContent.displayName = SheetPrimitive.Content.displayName

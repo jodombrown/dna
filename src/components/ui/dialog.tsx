@@ -42,11 +42,17 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute -right-4 -top-4 rounded-full bg-white border-2 border-gray-200 w-8 h-8 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 z-10 shadow-sm group">
-        <X className="h-4 w-4 text-gray-600 group-hover:text-white transition-colors duration-200" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
     </DialogPrimitive.Content>
+    
+    {/* Close button positioned outside but within dialog */}
+    <DialogPrimitive.Close className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-[10000] pointer-events-none">
+      <div className="relative w-full max-w-lg">
+        <button className="absolute -right-2 -top-2 rounded-full bg-white border-2 border-gray-200 w-8 h-8 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-sm group pointer-events-auto">
+          <X className="h-4 w-4 text-gray-600 group-hover:text-white transition-colors duration-200" />
+          <span className="sr-only">Close</span>
+        </button>
+      </div>
+    </DialogPrimitive.Close>
   </DialogPortal>
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
