@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
+import { MapPin, Calendar } from 'lucide-react';
 import { localEvents } from './eventData';
 import { toast } from '@/hooks/use-toast';
 
@@ -42,13 +43,28 @@ const LocalEventsSection: React.FC = () => {
                          className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white shadow-md hover:shadow-xl h-full"
                          onClick={() => handleCityClick(location)}
                        >
-                        <CardContent className="p-8 text-center">
-                          <div className={`w-16 h-16 ${location.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                            <span className="text-3xl">{location.flag}</span>
-                          </div>
-                          <h4 className="font-semibold text-gray-900 text-base mb-2">{location.city}</h4>
-                          <p className="text-sm text-gray-500">{location.count} Events</p>
-                        </CardContent>
+                         <CardContent className="p-6 text-center">
+                           <div className="flex flex-col items-center space-y-4">
+                             {/* Flag and Country Visual */}
+                             <div className="relative">
+                               <div className="w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                                 <span className="text-2xl">{location.flag}</span>
+                               </div>
+                             </div>
+                             
+                             {/* City Name with Icon */}
+                             <div className="flex items-center gap-1">
+                               <MapPin className="w-4 h-4 text-gray-500" />
+                               <h4 className="font-semibold text-gray-900 text-sm">{location.city}</h4>
+                             </div>
+                             
+                             {/* Event Count with Icon */}
+                             <div className="flex items-center gap-1 px-3 py-1 bg-gray-50 rounded-full">
+                               <Calendar className="w-3 h-3 text-dna-emerald" />
+                               <p className="text-xs font-medium text-gray-700">{location.count} Events</p>
+                             </div>
+                           </div>
+                         </CardContent>
                       </Card>
                     </TooltipTrigger>
                     <TooltipContent>
