@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail, MapPin, Users, X } from 'lucide-react';
+import { Mail, Users } from 'lucide-react';
+import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 
 interface WaitlistPopupProps {
   isOpen: boolean;
@@ -126,18 +127,15 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
             />
           </div>
 
-          <div>
-            <Label htmlFor="location" className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-dna-emerald" />
-              Location
-            </Label>
-            <Input
-              id="location"
-              value={formData.location}
-              onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-              placeholder="City, Country (optional)"
-            />
-          </div>
+          <ComprehensiveLocationInput
+            id="location"
+            label="Location"
+            value={formData.location}
+            onChange={(value) => setFormData(prev => ({ ...prev, location: value }))}
+            placeholder="City, State/Province, Country (optional)"
+            required={false}
+            icon={true}
+          />
 
           <div className="bg-dna-emerald/5 p-4 rounded-lg border border-dna-emerald/20">
             <h4 className="font-semibold text-dna-forest mb-2">What you'll get:</h4>
