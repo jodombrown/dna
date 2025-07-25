@@ -3,7 +3,6 @@ import React from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Bell } from 'lucide-react';
-import SheetCloseButton from '@/components/ui/sheet-close-button';
 import NotificationBenefits from './StayNotifiedPanel/NotificationBenefits';
 import NotificationForm from './StayNotifiedPanel/NotificationForm';
 
@@ -15,8 +14,7 @@ interface StayNotifiedPanelProps {
 const StayNotifiedPanel: React.FC<StayNotifiedPanelProps> = ({ isOpen, onClose }) => {
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="w-full sm:max-w-lg p-0 relative">
-        <SheetCloseButton onClose={onClose} />
+      <SheetContent side="right" className="w-full sm:max-w-lg p-0">
         <div className="flex flex-col h-full">
           <SheetHeader className="px-6 py-4 border-b">
             <SheetTitle className="text-2xl font-bold text-dna-forest flex items-center gap-2">
