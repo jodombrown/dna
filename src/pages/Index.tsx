@@ -2,7 +2,8 @@
 import React from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
-import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
+import CallToActionSection from '@/components/CallToActionSection';
+import DNAFrameworkSection from '@/components/DNAFrameworkSection';
 import BuildingTogetherSection from '@/components/BuildingTogetherSection';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -22,11 +23,14 @@ const Index = () => {
       {/* Prototype Banner */}
       <PrototypeBanner />
 
-      {/* Hero Section with improved layout */}
+      {/* Hero Section */}
       <HeroSection />
 
-      {/* Platform Feature Showcase */}
-      <PlatformFeatureShowcase />
+      {/* Call to Action Section */}
+      <CallToActionSection />
+
+      {/* DNA Framework Section */}
+      <DNAFrameworkSection />
 
       {/* Building Together Section */}
       <BuildingTogetherSection />
