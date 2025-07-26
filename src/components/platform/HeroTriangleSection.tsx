@@ -2,10 +2,12 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Users, Handshake, Heart, ArrowDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
 
 const HeroTriangleSection = () => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const navigate = useNavigate();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -16,15 +18,14 @@ const HeroTriangleSection = () => {
 
   return (
     <>
-      <section className="py-16 bg-gray-50">
+      <section id="dnaFramework" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
-              The DNA Framework
-            </h1>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              How DNA Works
+            </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
-              Our framework transforms how Africa's diaspora creates change. 
-              Each pillar strengthens the others, multiplying your impact across the continent.
+              Built on three powerful actions — Connect, Collaborate, and Contribute — DNA is designed to unlock your potential and maximize our collective impact.
             </p>
 
             {/* Three Pillars Navigation */}
@@ -41,11 +42,17 @@ const HeroTriangleSection = () => {
                 </div>
                 <h3 className="text-xl font-bold text-dna-forest mb-3">Connect</h3>
                 <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                  Forge powerful bonds across the global African diaspora.
+                  Build meaningful relationships across the global African diaspora and access a network aligned with your skills, interests, and values.
                 </p>
-                <div className="flex items-center justify-center text-dna-emerald group-hover:text-dna-forest transition-colors">
-                  <span className="text-sm font-medium mr-2">Learn More</span>
-                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+                <div className="flex items-center justify-center">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
+                    onClick={() => navigate('/connect')}
+                  >
+                    Explore Network
+                  </Button>
                 </div>
               </button>
 
@@ -61,11 +68,17 @@ const HeroTriangleSection = () => {
                 </div>
                 <h3 className="text-xl font-bold text-dna-copper mb-3">Collaborate</h3>
                 <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                  Transform shared vision into action through partnerships.
+                  Join forces with experts, communities, and builders on mission-aligned initiatives making real impact on the ground.
                 </p>
-                <div className="flex items-center justify-center text-dna-copper group-hover:text-dna-gold transition-colors">
-                  <span className="text-sm font-medium mr-2">Learn More</span>
-                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+                <div className="flex items-center justify-center">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
+                    onClick={() => navigate('/collaborate')}
+                  >
+                    View Initiatives
+                  </Button>
                 </div>
               </button>
 
@@ -81,11 +94,17 @@ const HeroTriangleSection = () => {
                 </div>
                 <h3 className="text-xl font-bold text-dna-emerald mb-3">Contribute</h3>
                 <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                  Step into your role in Africa's future with tangible impact.
+                  Whether it's your time, capital, or knowledge — track your impact and contribute meaningfully to Africa's future.
                 </p>
-                <div className="flex items-center justify-center text-dna-emerald group-hover:text-dna-mint transition-colors">
-                  <span className="text-sm font-medium mr-2">Learn More</span>
-                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+                <div className="flex items-center justify-center">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
+                    onClick={() => navigate('/contribute')}
+                  >
+                    Pathways to Impact
+                  </Button>
                 </div>
               </button>
             </div>
