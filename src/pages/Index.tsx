@@ -3,7 +3,7 @@ import React from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
-
+import BuildingTogetherSection from '@/components/BuildingTogetherSection';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import PrototypeBanner from '@/components/PrototypeBanner';
@@ -28,6 +28,8 @@ const Index = () => {
       {/* Platform Feature Showcase */}
       <PlatformFeatureShowcase />
 
+      {/* Building Together Section */}
+      <BuildingTogetherSection />
 
       <Footer />
       
