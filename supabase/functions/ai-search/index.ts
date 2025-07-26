@@ -110,7 +110,18 @@ async function analyzeSearchIntent(query: string): Promise<SearchIntent> {
   });
 
   const data = await response.json();
-  const aiResponse = data.choices[0].message.content;
+  const aiResponse = data.choices?.[0]?.message?.content;
+  
+  if (!aiResponse) {
+    console.error('No AI response received:', data);
+    // Fallback intent
+    return {
+      query: query,
+      filters: { types: ['profile', 'community', 'event', 'post'] },
+      expandedTerms: [query],
+      suggestions: [`Find ${query} professionals`, `${query} communities`, `${query} events`]
+    };
+  }
   
   try {
     return JSON.parse(aiResponse);

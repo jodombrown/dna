@@ -11,6 +11,36 @@ export interface SearchResult {
   metadata?: any;
 }
 
+export interface GlobalSearchResult {
+  query: string;
+  searchType: string;
+  results: Array<{
+    title: string;
+    description: string;
+    url?: string;
+    source: string;
+    relevanceScore: number;
+    type?: string;
+  }>;
+  suggestions: string[];
+  totalResults: number;
+}
+
+// Global web search using Perplexity AI
+export const globalSearch = async (query: string, searchType: string = 'web'): Promise<GlobalSearchResult> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('global-search', {
+      body: { query, searchType }
+    });
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Global search failed:', error);
+    throw new Error('Failed to perform global search');
+  }
+};
+
 export interface AISearchResult {
   intent: {
     query: string;
