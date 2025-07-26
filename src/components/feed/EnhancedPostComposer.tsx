@@ -30,8 +30,10 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
   const { toast } = useToast();
 
   const handleMediaUpload = async (file: File): Promise<string | null> => {
+    if (!user) return null;
+    
     const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}.${fileExt}`;
+    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
     const bucket = postType === 'image' ? 'profile-images' : 'user-posts';
 
     const { data, error } = await supabase.storage
