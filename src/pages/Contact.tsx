@@ -61,10 +61,11 @@ const Contact = () => {
       description: "For general inquiries and support"
     },
     {
-      icon: <Phone className="w-6 h-6" />,
-      title: "Schedule a Call",
-      detail: "",
-      description: "Perfect for partnership discussions"
+      icon: <Sparkles className="w-6 h-6" />,
+      title: "Join the DNA Community",
+      detail: "Be the first to connect",
+      description: "Get early access to our platform and exclusive community events",
+      component: 'waitlist'
     }
   ];
 
@@ -148,7 +149,7 @@ const Contact = () => {
             {contactMethods.map((method, index) => (
               <Card 
                 key={index} 
-                className={`border-0 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 ${method.onClick ? 'cursor-pointer' : ''}`}
+                className={`border-0 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 ${method.onClick || method.component ? 'cursor-pointer' : ''}`}
                 onClick={method.onClick}
               >
                 <CardContent className="p-6 text-center">
@@ -165,6 +166,16 @@ const Contact = () => {
                     >
                       Join Our Community
                     </Button>
+                  )}
+                  {method.component === 'waitlist' && (
+                    <WaitlistSlideIn>
+                      <Button 
+                        className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white mt-4 w-full"
+                      >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Join Waitlist
+                      </Button>
+                    </WaitlistSlideIn>
                   )}
                 </CardContent>
               </Card>

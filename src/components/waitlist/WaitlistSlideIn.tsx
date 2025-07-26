@@ -44,7 +44,7 @@ const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
           full_name: formData.full_name,
           email: formData.email,
           location: formData.location || null,
-          role: 'waitlist_member',
+          role: 'individual',
           status: 'pending'
         });
 
