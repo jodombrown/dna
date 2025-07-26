@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import LocationAutocomplete from '@/components/ui/location-autocomplete';
 import PrivacyPolicyModal from '@/components/legal/PrivacyPolicyModal';
 import TermsOfServiceModal from '@/components/legal/TermsOfServiceModal';
 
@@ -161,20 +162,14 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
               />
             </div>
 
-            <div>
-              <Label htmlFor="location" className={`${isMobile ? 'text-sm' : ''}`}>
-                Location (City, Country)
-              </Label>
-              <Input
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                placeholder="e.g., Los Angeles, USA"
-                required
-                className={isMobile ? 'text-sm' : ''}
-              />
-            </div>
+            <LocationAutocomplete
+              id="location"
+              value={formData.location}
+              onChange={(value) => setFormData(prev => ({ ...prev, location: value }))}
+              placeholder="Start typing your city..."
+              required
+              className={isMobile ? 'text-sm' : ''}
+            />
 
             <div className={`flex ${isMobile ? 'flex-col space-y-2' : 'space-x-3'} ${isMobile ? 'pt-3' : 'pt-4'}`}>
               <Button 
