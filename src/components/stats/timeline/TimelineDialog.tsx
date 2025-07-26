@@ -25,29 +25,20 @@ const TimelineDialog: React.FC<TimelineDialogProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      {/* Desktop only: Isolated floating close button */}
+      {/* Isolated floating close button - completely separate from dialog content */}
       {isOpen && (
-        <div className="hidden sm:block fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-[10001] pointer-events-none w-full max-w-[700px]">
+        <div className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-[10001] pointer-events-none w-full max-w-lg sm:max-w-[700px]">
           <button
             onClick={() => onOpenChange(false)}
-            className="absolute -top-6 -right-6 w-12 h-12 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-xl pointer-events-auto z-50"
+            className="absolute -top-48 right-4 sm:-top-6 sm:-right-6 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-xl pointer-events-auto z-50"
             aria-label="Close dialog"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
       )}
       
-      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto relative">
-        {/* Mobile only: Embedded close button */}
-        <button
-          onClick={() => onOpenChange(false)}
-          className="sm:hidden absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-dna-emerald hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 z-50 flex items-center justify-center"
-          aria-label="Close dialog"
-        >
-          <X className="w-4 h-4" />
-        </button>
-        
+      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">        
         <DialogHeader>
           <div className="text-center">
             <DialogTitle className="text-2xl font-bold text-dna-forest">
