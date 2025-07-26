@@ -78,7 +78,7 @@ const Onboarding = () => {
                formData.diaspora_origin !== 'section-diaspora' && formData.diaspora_origin !== 'section-other' && 
                formData.gender;
       case 1: // Professional
-        return formData.current_role && formData.company && formData.industry;
+        return formData.current_role && formData.industry;
       case 2: // Goals
         return formData.bio && formData.goals.length > 0;
       case 3: // Contribution
