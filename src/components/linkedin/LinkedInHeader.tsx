@@ -44,8 +44,12 @@ const LinkedInHeader = () => {
         <div className="flex items-center justify-between h-14">
           {/* Left section - Logo and Search */}
           <div className="flex items-center space-x-4">
-            <NavLink to="/app" className="text-dna-forest font-bold text-xl">
-              DNA
+            <NavLink to="/app" className="flex items-center hover:opacity-80 transition-opacity">
+              <img 
+                src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
+                alt="DNA Logo" 
+                className="h-8 w-auto"
+              />
             </NavLink>
             
             <div className="relative">
