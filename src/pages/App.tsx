@@ -1,9 +1,17 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Routes, Route } from 'react-router-dom';
 import Header from '@/components/Header';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/AppSidebar';
+import Dashboard from './app/Dashboard';
+import Search from './app/Search';
+import Connect from './app/Connect';
+import Messages from './app/Messages';
+import Events from './app/Events';
+import Communities from './app/Communities';
+import Profile from './app/Profile';
+import Settings from './app/Settings';
 
 const App = () => {
   const { user, profile, loading } = useAuth();
@@ -52,41 +60,16 @@ const App = () => {
 
           {/* Main Content */}
           <main className="flex-1 pt-14">
-            <div className="max-w-7xl mx-auto px-4 py-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left Sidebar */}
-                <div className="lg:col-span-1">
-                  <div className="bg-white rounded-lg p-6 shadow-sm">
-                    <h3 className="font-semibold text-dna-forest mb-4">
-                      Welcome, {profile?.display_name || profile?.full_name || user.user_metadata?.full_name || 'DNA Member'}!
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      This is your DNA dashboard where you can connect, collaborate, and contribute to the diaspora community.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Main Feed */}
-                <div className="lg:col-span-1">
-                  <div className="bg-white rounded-lg p-6 shadow-sm">
-                    <h3 className="font-semibold text-dna-forest mb-4">Community Feed</h3>
-                    <p className="text-gray-600 text-sm">
-                      Your personalized feed will appear here once more content is available.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Right Sidebar */}
-                <div className="lg:col-span-1">
-                  <div className="bg-white rounded-lg p-6 shadow-sm">
-                    <h3 className="font-semibold text-dna-forest mb-4">Discover</h3>
-                    <p className="text-gray-600 text-sm">
-                      Trending topics, suggested connections, and opportunities will appear here.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Routes>
+              <Route index element={<Dashboard />} />
+              <Route path="search" element={<Search />} />
+              <Route path="connect" element={<Connect />} />
+              <Route path="messages" element={<Messages />} />
+              <Route path="events" element={<Events />} />
+              <Route path="communities" element={<Communities />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<Settings />} />
+            </Routes>
           </main>
         </div>
       </SidebarProvider>
