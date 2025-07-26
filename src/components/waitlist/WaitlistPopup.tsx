@@ -92,10 +92,10 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 group"
+          className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gray-100 hover:bg-dna-emerald/10 transition-colors duration-200 group"
           aria-label="Close"
         >
-          <X className="h-4 w-4 text-gray-500 group-hover:text-gray-700 transition-colors duration-200" />
+          <X className="h-4 w-4 text-gray-500 group-hover:text-dna-emerald transition-colors duration-200" />
         </button>
 
         <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg"></div>

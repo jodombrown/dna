@@ -43,9 +43,9 @@ export const useWaitlistPopup = () => {
         windowWidth: window.innerWidth
       });
 
-      // Trigger at 70% for desktop, 90% for mobile
+      // Trigger at 60% for desktop, 90% for mobile
       const isMobile = window.innerWidth < 768;
-      const triggerPoint = isMobile ? 90 : 70;
+      const triggerPoint = isMobile ? 90 : 60;
 
       if (scrollPercentage >= triggerPoint) {
         console.log('🎯 Triggering waitlist popup!');
