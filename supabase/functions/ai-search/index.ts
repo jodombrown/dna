@@ -15,12 +15,15 @@ const corsHeaders = {
 
 interface SearchIntent {
   query: string;
+  semanticIntent?: string;
+  confidence?: number;
   filters: {
     types: string[];
     location?: string;
     timeframe?: string;
     skills?: string[];
     categories?: string[];
+    userIntent?: string;
   };
   expandedTerms: string[];
   suggestions: string[];
@@ -64,6 +67,7 @@ serve(async (req) => {
 });
 
 async function analyzeSearchIntent(query: string): Promise<SearchIntent> {
+  // Enhanced AI analysis with embedding-based semantic understanding
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -75,37 +79,55 @@ async function analyzeSearchIntent(query: string): Promise<SearchIntent> {
       messages: [
         {
           role: 'system',
-          content: `You are a search intent analyzer for the Diaspora Network of Africa (DNA) platform. 
-          Analyze search queries and extract:
-          1. Core search terms
-          2. Intended content types (profile, community, event, post)
-          3. Location filters (countries, cities, regions)
-          4. Time-based filters (this week, next month, etc.)
-          5. Skills/expertise mentioned
-          6. Categories (technology, business, culture, etc.)
-          7. Expanded search terms (synonyms, related concepts)
-          8. Search suggestions for refinement
+          content: `You are an advanced search intent analyzer for the Diaspora Network of Africa (DNA) platform.
           
-          Return JSON only with this structure:
+          Your task is to deeply understand user search intent and extract:
+          1. Core semantic meaning and intent
+          2. Content types (profile, community, event, post) - be intelligent about what the user likely wants
+          3. Geographic context (African countries, diaspora locations, global regions)
+          4. Temporal context (timeframes, urgency, event timing)
+          5. Professional context (skills, industries, expertise levels)
+          6. Social context (networking, collaboration, investment, mentorship)
+          7. Semantic expansions (synonyms, related concepts, industry terms)
+          8. Smart suggestions that anticipate user needs
+          
+          DNA Platform Context:
+          - Focus on African diaspora professional network
+          - Key pillars: Connect, Collaborate, Contribute
+          - Users are professionals, entrepreneurs, investors, creators
+          - Global community with African heritage/interests
+          
+          Return JSON only with this enhanced structure:
           {
-            "query": "cleaned search query",
+            "query": "processed search query with key terms",
+            "semanticIntent": "brief description of what user is really looking for",
+            "confidence": 0.95,
             "filters": {
               "types": ["profile", "community", "event", "post"],
-              "location": "location if mentioned",
+              "location": "location if mentioned or inferred",
               "timeframe": "time filter if mentioned",
-              "skills": ["skills mentioned"],
-              "categories": ["categories mentioned"]
+              "skills": ["skills/expertise mentioned"],
+              "categories": ["technology", "business", "culture", etc.],
+              "userIntent": "networking|collaboration|investment|learning|hiring|events"
             },
-            "expandedTerms": ["related terms to also search"],
-            "suggestions": ["3 suggested refinements"]
-          }`
+            "expandedTerms": ["semantically related terms that capture intent"],
+            "suggestions": ["3 intelligent suggestions that anticipate user needs"]
+          }
+          
+          Be intelligent about inferring content types based on intent:
+          - "investors" or "funding" -> likely want profiles + events
+          - "conferences" or "meetups" -> likely want events + communities  
+          - "learn about" or "courses" -> likely want communities + events + posts
+          - "connect with" -> likely want profiles
+          - "opportunities" -> likely want posts + events + communities`
         },
         {
           role: 'user',
           content: query
         }
       ],
-      temperature: 0.3,
+      temperature: 0.2,
+      max_tokens: 1000,
     }),
   });
 

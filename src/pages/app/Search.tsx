@@ -66,8 +66,8 @@ const Search = () => {
         setAiResults(null);
         
         toast({
-          title: "Global search completed",
-          description: `Found ${globalSearchResults.totalResults} results from the web`,
+          title: "AI-Enhanced Global Search completed",
+          description: `Found ${globalSearchResults.totalResults} results (${globalSearchResults.sources?.database || 0} DNA + ${globalSearchResults.sources?.web || 0} web)`,
         });
       } else if (isAiMode) {
         // DNA AI search for natural language queries
@@ -319,7 +319,40 @@ const Search = () => {
           </Card>
         )}
 
-        {/* AI Suggestions */}
+      {/* AI Understanding Display */}
+      {aiResults && aiResults.intent.semanticIntent && (
+        <Card className="mb-4 border-dna-emerald/20 bg-gradient-to-r from-dna-emerald/5 to-dna-forest/5">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 bg-dna-emerald/20 rounded-full flex items-center justify-center">
+                  <Brain className="w-4 h-4 text-dna-emerald" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-medium text-dna-emerald">AI Understanding:</span>
+                  {aiResults.intent.confidence && (
+                    <Badge variant="outline" className="text-xs border-dna-emerald/30">
+                      {Math.round(aiResults.intent.confidence * 100)}% confidence
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-sm text-gray-700">{aiResults.intent.semanticIntent}</p>
+                {aiResults.intent.filters.userIntent && (
+                  <div className="mt-2">
+                    <Badge variant="secondary" className="text-xs bg-dna-forest/10 text-dna-forest">
+                      Intent: {aiResults.intent.filters.userIntent}
+                    </Badge>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* AI Suggestions */}
       {aiResults && aiResults.suggestions.length > 0 && (
         <Card className="mb-4 border-dna-emerald/20 bg-dna-emerald/5">
           <CardHeader>

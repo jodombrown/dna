@@ -24,6 +24,10 @@ export interface GlobalSearchResult {
   }>;
   suggestions: string[];
   totalResults: number;
+  sources?: {
+    database: number;
+    web: number;
+  };
 }
 
 // Global web search using Perplexity AI
@@ -44,12 +48,15 @@ export const globalSearch = async (query: string, searchType: string = 'web'): P
 export interface AISearchResult {
   intent: {
     query: string;
+    semanticIntent?: string;
+    confidence?: number;
     filters: {
       types: string[];
       location?: string;
       timeframe?: string;
       skills?: string[];
       categories?: string[];
+      userIntent?: string;
     };
     expandedTerms: string[];
     suggestions: string[];
