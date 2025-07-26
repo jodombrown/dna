@@ -1,7 +1,7 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, X } from 'lucide-react';
 import { TimelineDataItem } from './timelineData';
 
 interface TimelineDialogProps {
@@ -25,8 +25,12 @@ const TimelineDialog: React.FC<TimelineDialogProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
-        {/* Default close button will be positioned correctly by the dialog component */}
+      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto pt-12">
+        {/* Custom close button positioned outside content area */}
+        <DialogClose className="absolute -top-2 -right-2 z-50 rounded-full bg-white border-2 border-gray-200 w-8 h-8 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-md">
+          <X className="w-4 h-4" />
+        </DialogClose>
+        
         <DialogHeader>
           <div className="text-center">
             <DialogTitle className="text-2xl font-bold text-dna-forest">
