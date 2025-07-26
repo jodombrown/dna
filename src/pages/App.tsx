@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Routes, Route } from 'react-router-dom';
-import Header from '@/components/Header';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import AppSidebar from '@/components/AppSidebar';
+import LinkedInHeader from '@/components/linkedin/LinkedInHeader';
 import Dashboard from './app/Dashboard';
 import Search from './app/Search';
 import Connect from './app/Connect';
@@ -45,34 +43,22 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full">
-          {/* Fixed Header */}
-          <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
-            <div className="h-14 flex items-center px-4">
-              <SidebarTrigger className="mr-4" />
-              <Header />
-            </div>
-          </div>
+      {/* LinkedIn-style Header */}
+      <LinkedInHeader />
 
-          {/* Sidebar */}
-          <AppSidebar />
-
-          {/* Main Content */}
-          <main className="flex-1 pt-14">
-            <Routes>
-              <Route index element={<Dashboard />} />
-              <Route path="search" element={<Search />} />
-              <Route path="connect" element={<Connect />} />
-              <Route path="messages" element={<Messages />} />
-              <Route path="events" element={<Events />} />
-              <Route path="communities" element={<Communities />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="settings" element={<Settings />} />
-            </Routes>
-          </main>
-        </div>
-      </SidebarProvider>
+      {/* Main Content */}
+      <main className="pt-14">
+        <Routes>
+          <Route index element={<Dashboard />} />
+          <Route path="search" element={<Search />} />
+          <Route path="connect" element={<Connect />} />
+          <Route path="messages" element={<Messages />} />
+          <Route path="events" element={<Events />} />
+          <Route path="communities" element={<Communities />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
+        </Routes>
+      </main>
     </div>
   );
 };
