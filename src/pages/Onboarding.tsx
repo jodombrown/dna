@@ -39,7 +39,7 @@ const Onboarding = () => {
     company: '',
     industry: '',
     skills: [],
-    experience_level: '',
+    years_experience: 0,
     
     // Goals & Bio
     headline: '',
@@ -62,7 +62,7 @@ const Onboarding = () => {
 
   // If profile already exists and is complete, redirect to app
   useEffect(() => {
-    if (profile && profile.onboarding_completed) {
+    if (profile && profile.onboarding_completed_at) {
       navigate('/app');
     }
   }, [profile, navigate]);
@@ -115,17 +115,13 @@ const Onboarding = () => {
         display_name: formData.display_name,
         headline: formData.headline,
         bio: formData.bio,
-        personal_goals: formData.personal_goals,
         diaspora_origin: formData.diaspora_origin,
-        gender: formData.gender,
-        current_role: formData.current_role,
+        professional_role: formData.current_role,
+        company: formData.company,
         industry: formData.industry,
         skills: formData.skills,
-        experience_level: formData.experience_level,
-        contribution_types: formData.contribution_types,
-        availability: formData.availability,
-        preferred_contribution_type: formData.preferred_contribution_type,
-        onboarding_completed: true,
+        years_experience: formData.years_experience,
+        onboarding_completed_at: new Date().toISOString(),
         is_public: true,
         updated_at: new Date().toISOString()
       };
