@@ -50,7 +50,7 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
           full_name: formData.fullName,
           email: formData.email,
           location: formData.location,
-          role: 'waitlist_member',
+          role: 'individual',
           status: 'pending'
         }]);
 
