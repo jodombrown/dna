@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import TimelineItem from './timeline/TimelineItem';
 import TimelineDialog from './timeline/TimelineDialog';
 import { timelineData } from './timeline/timelineData';
@@ -7,6 +7,23 @@ import { timelineData } from './timeline/timelineData';
 const InteractiveTimeline = () => {
   const [activeTimelineYear, setActiveTimelineYear] = useState('');
   const [isTimelineDialogOpen, setIsTimelineDialogOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to active card when year changes
+  useEffect(() => {
+    if (activeTimelineYear && scrollContainerRef.current) {
+      const activeIndex = timelineData.findIndex(item => item.year === activeTimelineYear);
+      if (activeIndex !== -1) {
+        const cardWidth = 320 + 24; // w-80 (320px) + gap-6 (24px)
+        const scrollPosition = activeIndex * cardWidth;
+        
+        scrollContainerRef.current.scrollTo({
+          left: scrollPosition,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [activeTimelineYear]);
 
   const handleTimelineClick = (year: string) => {
     setActiveTimelineYear(year);
@@ -59,7 +76,7 @@ const InteractiveTimeline = () => {
         
         {/* Desktop: Horizontal scrollable timeline */}
         <div className="hidden lg:block">
-          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+          <div ref={scrollContainerRef} className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
             {timelineData.map((item) => (
               <div key={item.year} className="flex-shrink-0 w-80">
                 <TimelineItem
