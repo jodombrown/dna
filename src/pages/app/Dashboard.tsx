@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import LinkedInLayout from '@/components/linkedin/LinkedInLayout';
 import ProfileCard from '@/components/linkedin/ProfileCard';
+import PostComposer from '@/components/linkedin/PostComposer';
 import { PillarMainContent } from '@/components/linkedin/PillarMainContent';
 import CommunityFeed from '@/components/community/CommunityFeed';
 import { ConnectSidebar, ContributeSidebar, DiscoverySidebar } from '@/components/linkedin/ThreePillarSidebars';
@@ -8,20 +9,25 @@ import { CollaborateSidebar } from '@/components/linkedin/CollaborateSidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Dashboard = () => {
-  const [activePillar, setActivePillar] = useState('connect');
+  const [activePillar, setActivePillar] = useState('feed');
 
   // Dynamic left sidebar based on active pillar
   const leftSidebar = (
     <div className="space-y-4">
       <ProfileCard />
       
-      {/* Three Pillars Navigation */}
+      {/* Four Pillars Navigation */}
       <Tabs value={activePillar} onValueChange={setActivePillar} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="feed" className="text-xs">Feed</TabsTrigger>
           <TabsTrigger value="connect" className="text-xs">Connect</TabsTrigger>
           <TabsTrigger value="collaborate" className="text-xs">Collaborate</TabsTrigger>
           <TabsTrigger value="contribute" className="text-xs">Contribute</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="feed" className="mt-4">
+          <ConnectSidebar />
+        </TabsContent>
         
         <TabsContent value="connect" className="mt-4">
           <ConnectSidebar />
@@ -40,7 +46,14 @@ const Dashboard = () => {
 
   const mainContent = (
     <div className="space-y-4">
-      <PillarMainContent activePillar={activePillar} />
+      {activePillar === 'feed' ? (
+        <>
+          <PostComposer />
+          <CommunityFeed />
+        </>
+      ) : (
+        <PillarMainContent activePillar={activePillar} />
+      )}
     </div>
   );
 
