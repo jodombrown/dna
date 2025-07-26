@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { useDashboard } from '@/contexts/DashboardContext';
 import { 
   Home, 
   Users, 
@@ -25,12 +26,14 @@ import {
 const LinkedInHeader = () => {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { setActiveView, activeView } = useDashboard();
 
   const navigationItems = [
-    { title: 'Home', url: '/app', icon: Home },
-    { title: 'My Network', url: '/app/connect', icon: Users },
-    { title: 'Messaging', url: '/app/messages', icon: MessageSquare },
-    { title: 'Notifications', url: '/app/notifications', icon: Bell },
+    { title: 'Home', view: 'dashboard', icon: Home },
+    { title: 'My Network', view: 'network', icon: Users },
+    { title: 'Messaging', view: 'messaging', icon: MessageSquare },
+    { title: 'Notifications', view: 'notifications', icon: Bell },
   ];
 
   const handleSignOut = () => {
@@ -56,30 +59,46 @@ const LinkedInHeader = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search"
-                className="pl-10 w-64 bg-gray-50 border-0 h-9 text-sm"
-                onClick={() => navigate('/app/search')}
+                className="pl-10 w-64 bg-gray-50 border-0 h-9 text-sm cursor-pointer"
+                onClick={() => {
+                  if (location.pathname === '/app') {
+                    setActiveView('search');
+                  } else {
+                    navigate('/app');
+                    setTimeout(() => setActiveView('search'), 100);
+                  }
+                }}
+                readOnly
               />
             </div>
           </div>
 
           {/* Center section - Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {navigationItems.map((item) => (
-              <NavLink
-                key={item.title}
-                to={item.url}
-                className={({ isActive }) =>
-                  `flex flex-col items-center px-3 py-2 text-xs font-medium transition-colors ${
+            {navigationItems.map((item) => {
+              const isActive = location.pathname === '/app' && activeView === item.view;
+              return (
+                <button
+                  key={item.title}
+                  onClick={() => {
+                    if (location.pathname === '/app') {
+                      setActiveView(item.view as any);
+                    } else {
+                      navigate('/app');
+                      setTimeout(() => setActiveView(item.view as any), 100);
+                    }
+                  }}
+                  className={`flex flex-col items-center px-3 py-2 text-xs font-medium transition-colors ${
                     isActive
                       ? 'text-dna-forest border-b-2 border-dna-forest'
                       : 'text-gray-600 hover:text-dna-forest'
-                  }`
-                }
-              >
-                <item.icon className="w-5 h-5 mb-1" />
-                <span>{item.title}</span>
-              </NavLink>
-            ))}
+                  }`}
+                >
+                  <item.icon className="w-5 h-5 mb-1" />
+                  <span>{item.title}</span>
+                </button>
+              );
+            })}
           </nav>
 
           {/* Right section - Profile and Menu */}
