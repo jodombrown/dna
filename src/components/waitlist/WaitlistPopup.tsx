@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { supabase } from '@/integrations/supabase/client';
 import LocationAutocomplete from '@/components/ui/location-autocomplete';
 import PrivacyPolicyModal from '@/components/legal/PrivacyPolicyModal';
 import TermsOfServiceModal from '@/components/legal/TermsOfServiceModal';
@@ -42,17 +43,36 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
     setIsSubmitting(true);
 
     try {
-      // Submit to API endpoint
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      // Submit directly to Supabase with correct field mapping
+      const { error } = await supabase
+        .from('waitlist_signups')
+        .insert([{
+          full_name: formData.fullName,
+          email: formData.email,
+          location: formData.location,
+          role: 'waitlist_member',
+          status: 'pending'
+        }]);
 
-      if (!response.ok) {
-        throw new Error('Failed to join waitlist');
+      if (error) {
+        throw error;
+      }
+
+      // Send notification email (optional - won't fail if it doesn't work)
+      try {
+        await supabase.functions.invoke('send-universal-email', {
+          body: {
+            to: [formData.email],
+            template: 'waitlist_confirmation',
+            data: {
+              full_name: formData.fullName,
+              location: formData.location
+            }
+          }
+        });
+      } catch (emailError) {
+        console.warn('Email notification failed:', emailError);
+        // Don't fail the whole process if email fails
       }
 
       toast({
