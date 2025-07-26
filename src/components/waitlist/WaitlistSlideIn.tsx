@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import React, { useState } from 'react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail, Users } from 'lucide-react';
+import { Mail, Users, Sparkles } from 'lucide-react';
 import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 
-interface WaitlistPopupProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface WaitlistSlideInProps {
+  children: React.ReactNode;
 }
 
-const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
+const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
     location: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,10 +64,10 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
         description: "You'll be the first to know when DNA launches. Check your email for confirmation.",
       });
 
-      // Store that user has joined waitlist to avoid showing popup again
+      // Store that user has joined waitlist
       localStorage.setItem('dna_waitlist_joined', 'true');
       
-      onClose();
+      setIsOpen(false);
       setFormData({ full_name: '', email: '', location: '' });
     } catch (error: any) {
       console.error('Waitlist signup error:', error);
@@ -82,53 +82,58 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg w-full mx-4 animate-[float_3s_ease-in-out_infinite] transform-gpu">
-        <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg animate-pulse"></div>
-        <DialogHeader className="text-center space-y-3 relative z-10">
-          <div className="mx-auto w-14 h-14 bg-gradient-to-br from-dna-emerald to-dna-copper rounded-full flex items-center justify-center animate-bounce shadow-lg">
-            <Users className="h-7 w-7 text-white" />
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        {children}
+      </SheetTrigger>
+      <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto">
+        <SheetHeader className="text-center space-y-4 mb-6">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-dna-emerald to-dna-copper rounded-full flex items-center justify-center animate-pulse">
+            <Sparkles className="h-8 w-8 text-white" />
           </div>
-          <DialogTitle className="text-xl font-bold text-dna-forest">
+          <SheetTitle className="text-2xl font-bold text-dna-forest">
             Join the DNA Waitlist
-          </DialogTitle>
+          </SheetTitle>
           <p className="text-gray-600 text-sm leading-relaxed">
-            Be the first to connect with the global African diaspora community.
+            Be the first to connect with the global African diaspora. Get early access 
+            to our platform and help shape the future of diaspora collaboration.
           </p>
-        </DialogHeader>
+        </SheetHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label htmlFor="full_name" className="flex items-center gap-2">
+            <Label htmlFor="slide_full_name" className="flex items-center gap-2 mb-2">
               <Users className="h-4 w-4 text-dna-emerald" />
               Full Name *
             </Label>
             <Input
-              id="full_name"
+              id="slide_full_name"
               value={formData.full_name}
               onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
               placeholder="Your full name"
               required
+              className="w-full"
             />
           </div>
 
           <div>
-            <Label htmlFor="email" className="flex items-center gap-2">
+            <Label htmlFor="slide_email" className="flex items-center gap-2 mb-2">
               <Mail className="h-4 w-4 text-dna-emerald" />
               Email Address *
             </Label>
             <Input
-              id="email"
+              id="slide_email"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
               placeholder="your.email@example.com"
               required
+              className="w-full"
             />
           </div>
 
           <ComprehensiveLocationInput
-            id="location"
+            id="slide_location"
             label="Location"
             value={formData.location}
             onChange={(value) => setFormData(prev => ({ ...prev, location: value }))}
@@ -137,41 +142,46 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
             icon={true}
           />
 
-          <div className="bg-dna-emerald/5 p-4 rounded-lg border border-dna-emerald/20">
-            <h4 className="font-semibold text-dna-forest mb-2">What you'll get:</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Early access to the DNA platform</li>
-              <li>• Updates on platform development</li>
-              <li>• Exclusive community events</li>
-              <li>• Shape the future of diaspora networking</li>
+          <div className="bg-gradient-to-br from-dna-emerald/10 to-dna-copper/10 p-4 rounded-lg border border-dna-emerald/20">
+            <h4 className="font-semibold text-dna-forest mb-3 flex items-center gap-2">
+              <Sparkles className="h-4 w-4" />
+              What you'll get:
+            </h4>
+            <ul className="text-sm text-gray-600 space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 bg-dna-emerald rounded-full mt-2 flex-shrink-0"></span>
+                Early access to the DNA platform
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 bg-dna-emerald rounded-full mt-2 flex-shrink-0"></span>
+                Updates on platform development
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 bg-dna-emerald rounded-full mt-2 flex-shrink-0"></span>
+                Exclusive community events
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 bg-dna-emerald rounded-full mt-2 flex-shrink-0"></span>
+                Shape the future of diaspora networking
+              </li>
             </ul>
           </div>
 
-          <div className="flex space-x-3 pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={onClose}
-              className="flex-1"
-            >
-              Maybe Later
-            </Button>
-            <Button 
-              type="submit" 
-              className="flex-1 bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Joining...' : 'Join Waitlist'}
-            </Button>
-          </div>
+          <Button 
+            type="submit" 
+            className="w-full bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white py-3 text-lg font-semibold"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Joining...' : 'Join Waitlist'}
+          </Button>
         </form>
 
-        <p className="text-xs text-gray-500 text-center mt-4">
+        <p className="text-xs text-gray-500 text-center mt-6">
           We respect your privacy. Your information will only be used to notify you about DNA platform updates.
         </p>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };
 
-export default WaitlistPopup;
+export default WaitlistSlideIn;

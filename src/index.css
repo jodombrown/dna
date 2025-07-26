@@ -121,6 +121,12 @@
   }
 }
 
+/* Custom animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
 /* Mobile-first responsive design utilities */
 @layer utilities {
   .mobile-container {
@@ -145,5 +151,9 @@
   
   .mobile-grid {
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8;
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
   }
 }

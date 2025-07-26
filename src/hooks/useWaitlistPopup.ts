@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export const useWaitlistPopup = () => {
   const [showWaitlistPopup, setShowWaitlistPopup] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
+    // Only show on home page
+    if (location.pathname !== '/') {
+      return;
+    }
+
     // Check if user has already joined waitlist or dismissed popup
     const hasJoinedWaitlist = localStorage.getItem('dna_waitlist_joined');
     const hasDismissedPopup = localStorage.getItem('dna_waitlist_dismissed');
@@ -36,14 +43,26 @@ export const useWaitlistPopup = () => {
       }
     }
 
-    // Show popup after 3 seconds delay
-    const timer = setTimeout(() => {
-      setShowWaitlistPopup(true);
-      localStorage.setItem('dna_waitlist_last_shown', Date.now().toString());
-    }, 3000);
+    // Scroll-based trigger
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset;
+      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercentage = (scrollTop / documentHeight) * 100;
+      
+      // Check if mobile
+      const isMobile = window.innerWidth < 768;
+      const triggerPercentage = isMobile ? 100 : 80;
+      
+      if (scrollPercentage >= triggerPercentage) {
+        setShowWaitlistPopup(true);
+        localStorage.setItem('dna_waitlist_last_shown', Date.now().toString());
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
 
-    return () => clearTimeout(timer);
-  }, []);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [location.pathname]);
 
   const closeWaitlistPopup = () => {
     setShowWaitlistPopup(false);
