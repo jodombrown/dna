@@ -1472,6 +1472,7 @@ export type Database = {
           profession: string | null
           professional_role: string | null
           profile_picture_url: string | null
+          recent_searches: string[] | null
           referrer_id: string | null
           skills: string[] | null
           updated_at: string
@@ -1515,6 +1516,7 @@ export type Database = {
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
+          recent_searches?: string[] | null
           referrer_id?: string | null
           skills?: string[] | null
           updated_at?: string
@@ -1558,6 +1560,7 @@ export type Database = {
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
+          recent_searches?: string[] | null
           referrer_id?: string | null
           skills?: string[] | null
           updated_at?: string
@@ -1674,6 +1677,69 @@ export type Database = {
           referred_email?: string
           referrer_id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      saved_searches: {
+        Row: {
+          created_at: string
+          filters: Json | null
+          id: string
+          name: string | null
+          query: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json | null
+          id?: string
+          name?: string | null
+          query: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json | null
+          id?: string
+          name?: string | null
+          query?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      search_analytics: {
+        Row: {
+          clicked_results: Json | null
+          created_at: string
+          filters_used: Json | null
+          id: string
+          query: string
+          result_count: number | null
+          search_duration_ms: number | null
+          user_id: string | null
+        }
+        Insert: {
+          clicked_results?: Json | null
+          created_at?: string
+          filters_used?: Json | null
+          id?: string
+          query: string
+          result_count?: number | null
+          search_duration_ms?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          clicked_results?: Json | null
+          created_at?: string
+          filters_used?: Json | null
+          id?: string
+          query?: string
+          result_count?: number | null
+          search_duration_ms?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }
