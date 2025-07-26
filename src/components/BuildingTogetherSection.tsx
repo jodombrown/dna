@@ -66,33 +66,7 @@ const BuildingTogetherSection = () => {
   return (
     <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-dna-mint/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Phase Development Section */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-dna-forest mb-6">
-            Building Together: From Idea to Impact
-          </h2>
-          <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-            Follow our open development journey. Each phase shows you exactly what we're building, 
-            why we're building it, and how you can get involved.
-          </p>
-          <PlatformBadges />
-        </div>
-
-        {/* Transition Content with Phase Icons */}
         <div className="text-center mb-12">
-          <div className="flex justify-center items-center gap-6 mb-8">
-            {phases.map((phase) => {
-              const IconComponent = phase.icon;
-              return (
-                <div 
-                  key={phase.number}
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer ${phase.bgColor} ${phase.hoverBg} group`}
-                >
-                  <IconComponent className={`w-6 h-6 transition-colors ${phase.textColor} ${phase.hoverText}`} />
-                </div>
-              );
-            })}
-          </div>
           <h3 className="text-3xl md:text-4xl font-bold text-dna-forest mb-4">
             Join Us in Shaping Africa's Future
           </h3>
