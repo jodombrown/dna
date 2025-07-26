@@ -89,10 +89,10 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
         isMobile 
           ? "w-[92vw] max-w-[360px] h-[85vh] max-h-[600px] mx-2 my-4 p-4 overflow-y-auto" 
           : "max-w-lg w-full mx-4"
-      } animate-[float_3s_ease-in-out_infinite] transform-gpu`}>
+      }`}>
         <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg"></div>
         <DialogHeader className="text-center space-y-3 relative z-10">
-          <div className={`mx-auto ${isMobile ? 'w-12 h-12' : 'w-14 h-14'} bg-gradient-to-br from-dna-emerald to-dna-copper rounded-full flex items-center justify-center animate-bounce shadow-lg`}>
+          <div className={`mx-auto ${isMobile ? 'w-12 h-12' : 'w-14 h-14'} bg-gradient-to-br from-dna-emerald to-dna-copper rounded-full flex items-center justify-center shadow-lg`}>
             <Users className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} text-white`} />
           </div>
           <DialogTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-dna-forest`}>
