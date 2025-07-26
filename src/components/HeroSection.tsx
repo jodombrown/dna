@@ -22,26 +22,33 @@ const HeroSection = () => {
   return (
     <>
       {/* Hero Section with Background Image */}
-      <section className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-dna-forest via-gray-900 to-dna-emerald">
-        {/* Background Image Overlay */}
-        <div className="absolute inset-0 bg-black/50"></div>
+      <section className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-dna-emerald/10">
         
         {/* Hero Content */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-            Unite. Build. Transform.
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-dna-forest">
+            Welcome to the
+          </h1>
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 text-dna-copper">
+            Diaspora Network of Africa
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-4xl mx-auto leading-relaxed">
-            DNA is where Africa's global Diaspora comes together to connect, collaborate, and contribute to projects, communities, and investments that drive Africa's progress.
+          <p className="text-xl md:text-2xl text-dna-forest mb-8 max-w-4xl mx-auto leading-relaxed">
+            Connecting Africa's diaspora professionals for transformative global impact through{' '}
+            <span className="text-dna-emerald font-semibold">capacity building</span>,{' '}
+            <span className="text-dna-copper font-semibold">venture building</span>, and{' '}
+            <span className="font-semibold">ecosystem building</span>.
           </p>
+
+          {/* Founder Introduction */}
+          <HeroIntroduction />
 
           {/* Primary CTA */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button 
               variant="outline" 
               size="lg"
-              className="border-white text-white hover:bg-white hover:text-dna-forest px-8 py-4 text-lg font-semibold rounded-full flex items-center gap-2"
+              className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full flex items-center gap-2"
               onClick={scrollToDNAFramework}
             >
               <Play className="w-4 h-4" />
@@ -49,11 +56,11 @@ const HeroSection = () => {
             </Button>
             <Button 
               size="lg" 
-              className="bg-dna-emerald hover:bg-dna-mint text-white px-8 py-4 text-lg font-semibold rounded-full"
+              className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full"
               onClick={() => setIsFeedbackOpen(true)}
             >
               <Users className="w-5 h-5 mr-2" />
-              Sign Up to Join the Movement
+              Join Our Journey
             </Button>
           </div>
         </div>
