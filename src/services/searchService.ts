@@ -11,6 +11,28 @@ export interface SearchResult {
   metadata?: any;
 }
 
+export interface AISearchResult {
+  intent: {
+    query: string;
+    filters: {
+      types: string[];
+      location?: string;
+      timeframe?: string;
+      skills?: string[];
+      categories?: string[];
+    };
+    expandedTerms: string[];
+    suggestions: string[];
+  };
+  results: {
+    profiles: SearchResult[];
+    communities: SearchResult[];
+    events: SearchResult[];
+    posts: SearchResult[];
+  };
+  suggestions: string[];
+}
+
 export interface SearchFilters {
   types: string[];
   location?: string;
@@ -19,6 +41,37 @@ export interface SearchFilters {
     end: string;
   };
 }
+
+// AI-powered semantic search
+export const aiSearch = async (query: string, userId?: string): Promise<AISearchResult> => {
+  try {
+    const { data, error } = await supabase.functions.invoke('ai-search', {
+      body: { query, userId }
+    });
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('AI search failed:', error);
+    // Fallback to regular search
+    const results = await searchContent(query);
+    return {
+      intent: {
+        query,
+        filters: { types: ['profile', 'community', 'event', 'post'] },
+        expandedTerms: [query],
+        suggestions: [`Find ${query} professionals`, `${query} communities`, `${query} events`]
+      },
+      results: {
+        profiles: results.filter(r => r.type === 'profile'),
+        communities: results.filter(r => r.type === 'community'),
+        events: results.filter(r => r.type === 'event'),
+        posts: results.filter(r => r.type === 'post')
+      },
+      suggestions: [`Find ${query} professionals`, `${query} communities`, `${query} events`]
+    };
+  }
+};
 
 export const searchContent = async (query: string, filters?: SearchFilters): Promise<SearchResult[]> => {
   const results: SearchResult[] = [];

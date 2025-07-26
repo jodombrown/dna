@@ -13,9 +13,11 @@ import {
   Building2,
   Filter,
   TrendingUp,
-  Clock
+  Clock,
+  Brain,
+  Sparkles
 } from 'lucide-react';
-import { searchContent, getPopularSearches, SearchResult } from '@/services/searchService';
+import { searchContent, getPopularSearches, SearchResult, aiSearch, AISearchResult } from '@/services/searchService';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -23,9 +25,11 @@ const Search = () => {
   const { toast } = useToast();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [aiResults, setAiResults] = useState<AISearchResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [popularSearches, setPopularSearches] = useState<string[]>([]);
+  const [isAiMode, setIsAiMode] = useState(false);
 
   useEffect(() => {
     loadPopularSearches();
@@ -43,15 +47,43 @@ const Search = () => {
   const handleSearch = async (searchQuery: string) => {
     if (!searchQuery.trim()) {
       setResults([]);
+      setAiResults(null);
       return;
     }
 
     setLoading(true);
     try {
-      const searchResults = await searchContent(searchQuery, {
-        types: activeTab === 'all' ? [] : [activeTab]
-      });
-      setResults(searchResults);
+      if (isAiMode) {
+        // Use AI search for natural language queries
+        const aiSearchResults = await aiSearch(searchQuery);
+        setAiResults(aiSearchResults);
+        
+        // Flatten AI results for tab display
+        const flatResults = [
+          ...aiSearchResults.results.profiles,
+          ...aiSearchResults.results.communities,
+          ...aiSearchResults.results.events,
+          ...aiSearchResults.results.posts
+        ];
+        setResults(flatResults);
+        
+        toast({
+          title: "AI Search completed",
+          description: `Found ${flatResults.length} results with AI understanding`,
+        });
+      } else {
+        // Use regular search
+        const searchResults = await searchContent(searchQuery, {
+          types: activeTab === 'all' ? [] : [activeTab]
+        });
+        setResults(searchResults);
+        setAiResults(null);
+        
+        toast({
+          title: "Search completed",
+          description: `Found ${searchResults.length} results`,
+        });
+      }
     } catch (error) {
       console.error('Search error:', error);
       toast({
@@ -95,6 +127,32 @@ const Search = () => {
         <p className="text-gray-600">Discover people, communities, events, and content across the DNA network</p>
       </div>
 
+      {/* AI Mode Toggle */}
+      <Card className="mb-4">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Brain className="w-5 h-5 text-dna-emerald" />
+              <div>
+                <div className="font-semibold">AI-Powered Search</div>
+                <div className="text-sm text-muted-foreground">
+                  {isAiMode ? 'Ask naturally: "Find tech investors in Lagos"' : 'Enable natural language understanding'}
+                </div>
+              </div>
+            </div>
+            <Button
+              variant={isAiMode ? "default" : "outline"}
+              size="sm"
+              onClick={() => setIsAiMode(!isAiMode)}
+              className="gap-2"
+            >
+              {isAiMode ? <Sparkles className="w-4 h-4" /> : <Brain className="w-4 h-4" />}
+              {isAiMode ? 'AI Mode' : 'Enable AI'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Search Bar */}
       <Card className="mb-6">
         <CardContent className="p-4">
@@ -105,16 +163,24 @@ const Search = () => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Search for people, communities, events..."
+                placeholder={isAiMode 
+                  ? "Ask naturally: 'Find renewable energy investors in Nigeria'" 
+                  : "Search for people, communities, events..."
+                }
                 className="pl-10"
               />
             </div>
             <Button 
               onClick={() => handleSearch(query)}
               disabled={loading}
-              className="bg-dna-emerald hover:bg-dna-forest text-white"
+              className="bg-dna-emerald hover:bg-dna-forest text-white gap-2"
             >
-              {loading ? 'Searching...' : 'Search'}
+              {loading ? 'Searching...' : (
+                <>
+                  {isAiMode ? <Brain className="w-4 h-4" /> : <SearchIcon className="w-4 h-4" />}
+                  Search
+                </>
+              )}
             </Button>
             <Button variant="outline" size="icon">
               <Filter className="w-4 h-4" />
@@ -122,6 +188,32 @@ const Search = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* AI Suggestions */}
+      {aiResults && aiResults.suggestions.length > 0 && (
+        <Card className="mb-4 border-dna-emerald/20 bg-dna-emerald/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-dna-emerald">
+              <Sparkles className="w-5 h-5" />
+              AI Suggestions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {aiResults.suggestions.map((suggestion, index) => (
+                <Badge 
+                  key={index}
+                  variant="secondary" 
+                  className="cursor-pointer bg-dna-emerald/20 hover:bg-dna-emerald hover:text-white transition-colors border-dna-emerald/30"
+                  onClick={() => handleQuickSearch(suggestion)}
+                >
+                  {suggestion}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Popular Searches */}
       {!query && popularSearches.length > 0 && (
