@@ -84,7 +84,7 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-lg w-full mx-4 animate-[float_3s_ease-in-out_infinite] transform-gpu">
-        <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg"></div>
         <DialogHeader className="text-center space-y-3 relative z-10">
           <div className="mx-auto w-14 h-14 bg-gradient-to-br from-dna-emerald to-dna-copper rounded-full flex items-center justify-center animate-bounce shadow-lg">
             <Users className="h-7 w-7 text-white" />
