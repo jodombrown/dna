@@ -14,12 +14,54 @@ const HorizontalTimeline = () => {
     setIsDialogOpen(true);
   };
 
+  // Find the currently highlighted year in view
+  const getCurrentHighlightedYear = () => {
+    // For now, return the middle card (index 1 as shown with the badge)
+    return timelineData[1]?.year || timelineData[0]?.year;
+  };
+
+  const navigateTimelineYear = (direction: 'prev' | 'next') => {
+    const currentHighlighted = getCurrentHighlightedYear();
+    const currentIndex = timelineData.findIndex(item => item.year === currentHighlighted);
+    
+    let newIndex;
+    if (direction === 'prev' && currentIndex > 0) {
+      newIndex = currentIndex - 1;
+    } else if (direction === 'next' && currentIndex < timelineData.length - 1) {
+      newIndex = currentIndex + 1;
+    } else {
+      return; // Can't navigate further
+    }
+
+    // Scroll to the new card and update highlighting
+    const container = document.getElementById('timeline-scroll-container');
+    if (container) {
+      const cardWidth = 320; // Card width + gap
+      const newScrollPosition = newIndex * cardWidth;
+      container.scrollTo({
+        left: newScrollPosition,
+        behavior: 'smooth'
+      });
+    }
+
+    // Trigger the timeline click for the new year
+    setTimeout(() => {
+      handleTimelineClick(timelineData[newIndex].year);
+    }, 300); // Small delay to let scroll complete
+  };
+
   const navigateToYear = (direction: 'prev' | 'next') => {
     const currentIndex = timelineData.findIndex(item => item.year === activeYear);
     if (direction === 'prev' && currentIndex > 0) {
-      setActiveYear(timelineData[currentIndex - 1].year);
+      const newYear = timelineData[currentIndex - 1].year;
+      setActiveYear(newYear);
+      // Also navigate the timeline view
+      navigateTimelineYear('prev');
     } else if (direction === 'next' && currentIndex < timelineData.length - 1) {
-      setActiveYear(timelineData[currentIndex + 1].year);
+      const newYear = timelineData[currentIndex + 1].year;
+      setActiveYear(newYear);
+      // Also navigate the timeline view
+      navigateTimelineYear('next');
     }
   };
 
@@ -37,6 +79,7 @@ const HorizontalTimeline = () => {
       });
     }
   };
+
 
   return (
     <section className="py-20 bg-gradient-to-br from-dna-white via-dna-white to-dna-emerald/5">
