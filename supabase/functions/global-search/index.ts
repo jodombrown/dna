@@ -60,25 +60,23 @@ serve(async (req) => {
     console.log('Making Perplexity API request with prompt:', searchPrompt);
 
     const requestBody = {
-      model: 'llama-3.1-sonar-large-128k-online',
+      model: 'llama-3.1-sonar-small-128k-online',
       messages: [
         {
           role: 'system',
-          content: `You are a global search assistant for the Diaspora Network of Africa (DNA). 
-          Provide comprehensive, accurate, and well-structured information.
-          Format your response as a JSON array of search results with this structure:
+          content: `You are a search assistant. Provide accurate information about the query.
+          Format your response as a JSON array with this structure:
           [
             {
               "title": "Result title",
-              "description": "Detailed description (2-3 sentences)",
-              "url": "source URL if available",
+              "description": "Brief description",
+              "url": "source URL if available", 
               "source": "Source name",
-              "relevanceScore": 0.9,
-              "type": "event|person|organization|opportunity|news|other"
+              "relevanceScore": 0.9
             }
           ]
           
-          Aim for 5-10 diverse, high-quality results. Prioritize recent and relevant information.`
+          Provide 3-5 relevant results.`
         },
         {
           role: 'user',
@@ -86,12 +84,7 @@ serve(async (req) => {
         }
       ],
       temperature: 0.2,
-      top_p: 0.9,
-      max_tokens: 2000,
-      return_images: false,
-      return_related_questions: true,
-      frequency_penalty: 1,
-      presence_penalty: 0
+      max_tokens: 1000
     };
 
     console.log('Request body:', JSON.stringify(requestBody, null, 2));
