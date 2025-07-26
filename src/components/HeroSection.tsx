@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
-import PlatformBadges from '@/components/PlatformBadges';
+
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
 import { Play, Users } from 'lucide-react';
 
@@ -89,19 +89,6 @@ const HeroSection = () => {
         </div>
       </section>
 
-      {/* Platform Development Section with optimized spacing */}
-      <section id="dna-framework" className="py-14 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-dna-forest mb-4">
-            Building Together: From Idea to Impact
-          </h2>
-          <p className="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">
-            Follow our open development journey. Each phase shows you exactly what we're building, 
-            why we're building it, and how you can get involved.
-          </p>
-          <PlatformBadges />
-        </div>
-      </section>
 
       <MainPageFeedbackPanel 
         isOpen={isFeedbackOpen} 
