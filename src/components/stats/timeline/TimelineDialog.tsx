@@ -25,7 +25,22 @@ const TimelineDialog: React.FC<TimelineDialogProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto relative">
+        {/* Custom X button in top right corner */}
+        <button
+          onClick={() => onOpenChange(false)}
+          className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200 group"
+          aria-label="Close dialog"
+        >
+          <svg 
+            className="w-4 h-4 text-gray-600 group-hover:text-gray-800" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
         <DialogHeader>
           <div className="text-center">
             <DialogTitle className="text-2xl font-bold text-dna-forest">

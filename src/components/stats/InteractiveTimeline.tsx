@@ -57,18 +57,23 @@ const InteractiveTimeline = () => {
           ))}
         </div>
         
-        {/* Desktop: Horizontal timeline layout */}
+        {/* Desktop: Horizontal scrollable timeline */}
         <div className="hidden lg:block">
-          <div className="flex items-center justify-between space-x-4 overflow-x-auto pb-4">
+          <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
             {timelineData.map((item) => (
-              <TimelineItem
-                key={item.year}
-                year={item.year}
-                events={item.events}
-                isActive={activeTimelineYear === item.year}
-                onClick={() => handleTimelineClick(item.year)}
-              />
+              <div key={item.year} className="flex-shrink-0 w-80">
+                <TimelineItem
+                  year={item.year}
+                  events={item.events}
+                  isActive={activeTimelineYear === item.year}
+                  onClick={() => handleTimelineClick(item.year)}
+                />
+              </div>
             ))}
+          </div>
+          {/* Scroll indicator */}
+          <div className="text-center mt-4">
+            <p className="text-sm text-gray-500">← Scroll horizontally to explore more years →</p>
           </div>
         </div>
         
