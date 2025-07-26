@@ -137,7 +137,7 @@ const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
             label="Location"
             value={formData.location}
             onChange={(value) => setFormData(prev => ({ ...prev, location: value }))}
-            placeholder="City, State/Province, Country (optional)"
+            placeholder="City, State/Province, Country"
             required={false}
             icon={true}
           />

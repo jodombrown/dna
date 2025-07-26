@@ -132,7 +132,7 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
             label="Location"
             value={formData.location}
             onChange={(value) => setFormData(prev => ({ ...prev, location: value }))}
-            placeholder="City, State/Province, Country (optional)"
+            placeholder="City, State/Province, Country"
             required={false}
             icon={true}
           />

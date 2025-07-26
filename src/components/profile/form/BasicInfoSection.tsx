@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { FormData } from './FormDataTypes';
 import ArrayFieldManager from './ArrayFieldManager';
+import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 
 interface BasicInfoSectionProps {
   formData: FormData;
@@ -53,15 +54,13 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="location">Location</Label>
-            <Input
-              id="location"
-              value={formData.location}
-              onChange={(e) => onInputChange('location', e.target.value)}
-              placeholder="City, Country"
-            />
-          </div>
+          <ComprehensiveLocationInput
+            id="location"
+            label="Location"
+            value={formData.location}
+            onChange={(value) => onInputChange('location', value)}
+            placeholder="City, State/Province, Country"
+          />
           <div>
             <Label htmlFor="city">City</Label>
             <Input

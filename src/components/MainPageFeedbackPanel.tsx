@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { MessageSquare, Star, Lightbulb, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 
 interface MainPageFeedbackPanelProps {
   isOpen: boolean;
@@ -225,16 +226,12 @@ Feedback Type: ${formData.feedbackType || 'General'}
                 />
               </div>
               <div>
-                <Label htmlFor="currentLocation" className="text-sm font-medium text-gray-700">
-                  Current Location
-                </Label>
-                <Input
+                <ComprehensiveLocationInput
                   id="currentLocation"
-                  type="text"
-                  placeholder="City, Country"
+                  label="Current Location"
                   value={formData.currentLocation}
-                  onChange={(e) => handleInputChange('currentLocation', e.target.value)}
-                  maxLength={100}
+                  onChange={(value) => handleInputChange('currentLocation', value)}
+                  placeholder="City, State/Province, Country"
                 />
               </div>
             </div>
