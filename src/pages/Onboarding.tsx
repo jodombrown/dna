@@ -47,7 +47,7 @@ const Onboarding = () => {
     personal_goals: '',
     
     // Contribution
-    contribution_areas: [],
+    contribution_types: [],
     availability: '',
     preferred_contribution_type: ''
   });
@@ -82,7 +82,7 @@ const Onboarding = () => {
       case 2: // Goals
         return formData.bio && formData.headline;
       case 3: // Contribution
-        return formData.contribution_areas.length > 0 && formData.availability;
+        return formData.contribution_types.length > 0;
       default:
         return false;
     }
@@ -122,7 +122,7 @@ const Onboarding = () => {
         industry: formData.industry,
         skills: formData.skills,
         experience_level: formData.experience_level,
-        contribution_areas: formData.contribution_areas,
+        contribution_types: formData.contribution_types,
         availability: formData.availability,
         preferred_contribution_type: formData.preferred_contribution_type,
         onboarding_completed: true,
