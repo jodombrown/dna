@@ -156,86 +156,71 @@ const Search = () => {
         </p>
       </div>
 
-      {/* Search Scope Toggle */}
-      <Card className="mb-4">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              {searchScope === 'global' ? (
-                <Globe className="w-5 h-5 text-blue-600" />
-              ) : (
-                <Database className="w-5 h-5 text-dna-emerald" />
-              )}
-              <div>
-                <div className="font-semibold">
-                  {searchScope === 'global' ? 'Global Web Search' : 'DNA Network Search'}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {searchScope === 'global' 
-                    ? 'Search the entire internet for global information'
-                    : 'Search within the DNA community database'
-                  }
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant={searchScope === 'dna' ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSearchScope('dna')}
-                className="gap-2"
-              >
-                <Database className="w-4 h-4" />
-                DNA
-              </Button>
-              <Button
-                variant={searchScope === 'global' ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSearchScope('global')}
-                className="gap-2"
-              >
-                <Globe className="w-4 h-4" />
-                Global
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* AI Mode Toggle (only for DNA search) */}
-      {searchScope === 'dna' && (
-      <Card className="mb-4">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Brain className="w-5 h-5 text-dna-emerald" />
-              <div>
-                <div className="font-semibold">AI-Powered Search</div>
-                <div className="text-sm text-muted-foreground">
-                  {isAiMode ? 'Ask naturally: "Find tech investors in Lagos"' : 'Enable natural language understanding'}
-                </div>
-              </div>
-            </div>
-            <Button
-              variant={isAiMode ? "default" : "outline"}
-              size="sm"
-              onClick={() => setIsAiMode(!isAiMode)}
-              className="gap-2"
-            >
-              {isAiMode ? <Sparkles className="w-4 h-4" /> : <Brain className="w-4 h-4" />}
-              {isAiMode ? 'AI Mode' : 'Enable AI'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-      )}
-
-      {/* Search Bar */}
+      {/* Unified Search Interface */}
       <Card className="mb-6">
-        <CardContent className="p-4">
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <CardContent className="p-6 space-y-6">
+          {/* Header with Title and Toggle Pills */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <SearchIcon className="w-6 h-6 text-dna-forest" />
+              <div>
+                <h2 className="text-xl font-semibold text-dna-forest">Search DNA Network</h2>
+                <p className="text-sm text-gray-600">
+                  {searchScope === 'global' 
+                    ? 'Searching the entire web for global information'
+                    : 'Discover people, communities, events, and content'
+                  }
+                </p>
+              </div>
+            </div>
+            
+            {/* Compact Toggle Pills */}
+            <div className="flex items-center gap-3">
+              {/* Search Scope Toggle */}
+              <div className="flex bg-gray-100 rounded-full p-1 border">
+                <Button
+                  variant={searchScope === 'dna' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setSearchScope('dna')}
+                  className="rounded-full px-4 py-2 text-sm font-medium transition-all"
+                >
+                  <Database className="w-4 h-4 mr-2" />
+                  DNA
+                </Button>
+                <Button
+                  variant={searchScope === 'global' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setSearchScope('global')}
+                  className="rounded-full px-4 py-2 text-sm font-medium transition-all"
+                >
+                  <Globe className="w-4 h-4 mr-2" />
+                  Global
+                </Button>
+              </div>
+              
+              {/* AI Mode Toggle (only for DNA search) */}
+              {searchScope === 'dna' && (
+                <Button
+                  variant={isAiMode ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setIsAiMode(!isAiMode)}
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                    isAiMode 
+                      ? 'bg-dna-emerald hover:bg-dna-emerald/90 text-white border-dna-emerald' 
+                      : 'border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white'
+                  }`}
+                >
+                  {isAiMode ? <Sparkles className="w-4 h-4 mr-2" /> : <Brain className="w-4 h-4 mr-2" />}
+                  {isAiMode ? 'AI Mode' : 'AI'}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Search Input */}
+          <div className="relative">
+            <div className="relative">
+              <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -247,25 +232,63 @@ const Search = () => {
                       ? "Ask naturally: 'Find renewable energy investors in Nigeria'" 
                       : "Search for people, communities, events..."
                 }
-                className="pl-10"
+                className="pl-12 pr-32 py-4 text-lg border-gray-200 focus:border-dna-emerald focus:ring-dna-emerald rounded-lg"
               />
+              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-2">
+                <Button 
+                  onClick={() => handleSearch(query)}
+                  disabled={loading}
+                  size="sm"
+                  className="bg-dna-emerald hover:bg-dna-forest text-white rounded-md gap-2"
+                >
+                  {loading ? 'Searching...' : (
+                    <>
+                      {searchScope === 'global' ? <Globe className="w-4 h-4" /> : 
+                       isAiMode ? <Brain className="w-4 h-4" /> : <SearchIcon className="w-4 h-4" />}
+                      Search
+                    </>
+                  )}
+                </Button>
+                <Button variant="outline" size="sm" className="rounded-md">
+                  <Filter className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
-            <Button 
-              onClick={() => handleSearch(query)}
-              disabled={loading}
-              className="bg-dna-emerald hover:bg-dna-forest text-white gap-2"
-            >
-              {loading ? 'Searching...' : (
-                <>
-                  {searchScope === 'global' ? <Globe className="w-4 h-4" /> : 
-                   isAiMode ? <Brain className="w-4 h-4" /> : <SearchIcon className="w-4 h-4" />}
-                  Search
-                </>
+          </div>
+
+          {/* Active Mode Indicators */}
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-4 text-gray-500">
+              <span className="flex items-center gap-2">
+                {searchScope === 'dna' ? (
+                  <>
+                    <Database className="w-4 h-4 text-dna-forest" />
+                    <span className="text-dna-forest font-medium">DNA Network</span>
+                  </>
+                ) : (
+                  <>
+                    <Globe className="w-4 h-4 text-blue-600" />
+                    <span className="text-blue-600 font-medium">Global Web</span>
+                  </>
+                )}
+              </span>
+              {searchScope === 'dna' && isAiMode && (
+                <span className="flex items-center gap-2 text-dna-emerald">
+                  <Brain className="w-4 h-4" />
+                  <span className="font-medium">AI Enhanced</span>
+                </span>
               )}
-            </Button>
-            <Button variant="outline" size="icon">
-              <Filter className="w-4 h-4" />
-            </Button>
+            </div>
+            
+            {/* Quick tip based on mode */}
+            <div className="text-xs text-gray-400 italic">
+              {searchScope === 'global' 
+                ? 'Tip: Try specific queries like "African fintech startups"'
+                : isAiMode 
+                  ? 'Tip: Ask in natural language'
+                  : 'Tip: Use keywords and filters'
+              }
+            </div>
           </div>
         </CardContent>
       </Card>
