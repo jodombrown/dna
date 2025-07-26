@@ -95,8 +95,7 @@ serve(async (req) => {
         return_images: false,
         return_related_questions: true,
         frequency_penalty: 1,
-        presence_penalty: 0,
-        ...searchFilters
+        presence_penalty: 0
       }),
     });
 
