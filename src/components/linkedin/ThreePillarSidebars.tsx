@@ -173,8 +173,8 @@ export const ContributeSidebar = () => {
   );
 };
 
-// Discovery Sidebar Component (Right side - replaces NewsAndTrends)
-export const DiscoverySidebar = () => {
+// Discovery Sidebar Component (Right side - dynamic based on active pillar)
+export const DiscoverySidebar = ({ activePillar = 'connect' }: { activePillar?: string }) => {
   const trendingTopics = [
     { topic: "African Fintech", posts: "2.1k posts" },
     { topic: "Climate Tech", posts: "890 posts" },
@@ -186,40 +186,117 @@ export const DiscoverySidebar = () => {
     { title: "HealthTech Platform", skills: ["React", "Healthcare"], urgency: "Medium" }
   ];
 
+  const collaborationMetrics = [
+    { label: "Active Projects", value: "23", change: "+5" },
+    { label: "Open Positions", value: "156", change: "+12" },
+    { label: "Skill Matches", value: "89%", change: "+3%" }
+  ];
+
+  const contributionOpportunities = [
+    { title: "Education Initiative", amount: "$2,500 needed", impact: "500 students", urgency: "Medium" },
+    { title: "Water Project", amount: "$5,000 needed", impact: "200 families", urgency: "High" }
+  ];
+
+  // Dynamic content based on active pillar
+  const renderPillarSpecificContent = () => {
+    switch (activePillar) {
+      case 'collaborate':
+        return (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Handshake className="w-5 h-5 text-dna-emerald" />
+                Collaboration Metrics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-3">
+                {collaborationMetrics.map((metric, index) => (
+                  <div key={index} className="p-3 bg-dna-emerald/5 rounded-lg">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">{metric.label}</span>
+                      <span className="text-xs text-green-600 font-medium">{metric.change}</span>
+                    </div>
+                    <p className="text-xl font-bold text-dna-forest">{metric.value}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      
+      case 'contribute':
+        return (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Heart className="w-5 h-5 text-dna-copper" />
+                Featured Opportunities
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {contributionOpportunities.map((opp, index) => (
+                  <div key={index} className="p-3 bg-dna-copper/5 rounded-lg border border-dna-copper/20">
+                    <div className="flex items-start justify-between mb-2">
+                      <p className="text-sm font-medium">{opp.title}</p>
+                      <Badge 
+                        variant={opp.urgency === 'High' ? 'destructive' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {opp.urgency}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-dna-copper font-semibold">{opp.amount}</p>
+                    <p className="text-xs text-gray-600">Impact: {opp.impact}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      
+      default: // connect
+        return (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Handshake className="w-5 h-5 text-dna-emerald" />
+                Suggested for You
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {suggestedCollaborations.map((collab, index) => (
+                  <div key={index} className="p-3 bg-dna-emerald/5 rounded-lg border border-dna-emerald/20">
+                    <div className="flex items-start justify-between mb-2">
+                      <p className="text-sm font-medium">{collab.title}</p>
+                      <Badge 
+                        variant={collab.urgency === 'High' ? 'destructive' : 'secondary'}
+                        className="text-xs"
+                      >
+                        {collab.urgency}
+                      </Badge>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {collab.skills.map((skill, skillIndex) => (
+                        <Badge key={skillIndex} variant="outline" className="text-xs">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        );
+    }
+  };
+
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Handshake className="w-5 h-5 text-dna-emerald" />
-            Suggested for You
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {suggestedCollaborations.map((collab, index) => (
-              <div key={index} className="p-3 bg-dna-emerald/5 rounded-lg border border-dna-emerald/20">
-                <div className="flex items-start justify-between mb-2">
-                  <p className="text-sm font-medium">{collab.title}</p>
-                  <Badge 
-                    variant={collab.urgency === 'High' ? 'destructive' : 'secondary'}
-                    className="text-xs"
-                  >
-                    {collab.urgency}
-                  </Badge>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {collab.skills.map((skill, skillIndex) => (
-                    <Badge key={skillIndex} variant="outline" className="text-xs">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {renderPillarSpecificContent()}
 
       <Card>
         <CardHeader className="pb-3">

@@ -4,6 +4,7 @@ import ProfileCard from '@/components/linkedin/ProfileCard';
 import PostComposer from '@/components/linkedin/PostComposer';
 import CommunityFeed from '@/components/community/CommunityFeed';
 import { ConnectSidebar, ContributeSidebar, DiscoverySidebar } from '@/components/linkedin/ThreePillarSidebars';
+import { CollaborateSidebar } from '@/components/linkedin/CollaborateSidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Dashboard = () => {
@@ -27,10 +28,7 @@ const Dashboard = () => {
         </TabsContent>
         
         <TabsContent value="collaborate" className="mt-4">
-          <div className="space-y-4">
-            {/* Placeholder for Collaborate sidebar - can be enhanced */}
-            <ConnectSidebar />
-          </div>
+          <CollaborateSidebar />
         </TabsContent>
         
         <TabsContent value="contribute" className="mt-4">
@@ -47,9 +45,10 @@ const Dashboard = () => {
     </div>
   );
 
+  // Dynamic right sidebar content based on active pillar
   const rightSidebar = (
     <div className="space-y-4">
-      <DiscoverySidebar />
+      <DiscoverySidebar activePillar={activePillar} />
     </div>
   );
 
