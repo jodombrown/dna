@@ -55,12 +55,24 @@ export const useWaitlistPopup = () => {
       }
     };
 
-    // Add scroll listener
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Add scroll listener with throttling to prevent multiple calls
+    let ticking = false;
+    const throttledScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    // Add throttled scroll listener
+    window.addEventListener('scroll', throttledScroll, { passive: true });
 
     // Cleanup
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', throttledScroll);
     };
   }, [location.pathname, hasTriggered]);
 

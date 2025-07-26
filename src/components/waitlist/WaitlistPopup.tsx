@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,7 +13,7 @@ interface WaitlistPopupProps {
   scrollProgress?: number;
 }
 
-const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollProgress = 0 }) => {
+const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -73,22 +73,23 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
     }
   };
 
-  // Calculate smooth opacity and transform based on scroll progress
-  const isMobile_check = window.innerWidth < 768;
-  const triggerPercentage = isMobile_check ? 100 : 80;
-  const opacity = Math.min(1, Math.max(0, (scrollProgress - (triggerPercentage - 20)) / 20));
-  const translateY = Math.max(0, (1 - opacity) * 20);
+  if (!isOpen) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
-        className={`${
-          isMobile 
-            ? "w-[92vw] max-w-[360px] h-auto max-h-[85vh] mx-2 my-4 p-6 overflow-y-auto" 
-            : "max-w-lg w-full mx-4 p-6"
-        } relative bg-white border-0 shadow-2xl z-[9999]`}
-        aria-describedby="waitlist-description"
-      >
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      
+      {/* Modal Content */}
+      <div className={`relative ${
+        isMobile 
+          ? "w-[92vw] max-w-[360px] mx-2" 
+          : "max-w-lg w-full mx-4"
+        } bg-white rounded-lg shadow-2xl p-6 max-h-[90vh] overflow-y-auto animate-scale-in`}>
+        
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -98,19 +99,21 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
           <X className="h-4 w-4 text-gray-500 group-hover:text-dna-emerald transition-colors duration-200" />
         </button>
 
+        {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg"></div>
         
-        <DialogHeader className="text-center space-y-3 relative z-10 pr-8">
-          <DialogTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-dna-forest`}>
-            Join the DNA Beta Waitlist
-          </DialogTitle>
-          <p id="waitlist-description" className={`text-gray-600 ${isMobile ? 'text-xs' : 'text-sm'} leading-relaxed`}>
-            Be among the first to connect, collaborate, and contribute with Africa's global diaspora.
-          </p>
-        </DialogHeader>
+        {/* Content */}
+        <div className="relative z-10 pr-8">
+          <div className="text-center space-y-3 mb-6">
+            <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-dna-forest`}>
+              Join the DNA Beta Waitlist
+            </h2>
+            <p className={`text-gray-600 ${isMobile ? 'text-xs' : 'text-sm'} leading-relaxed`}>
+              Be among the first to connect, collaborate, and contribute with Africa's global diaspora.
+            </p>
+          </div>
 
-        <div className="relative z-10">
-          <form onSubmit={handleSubmit} className={`space-y-${isMobile ? '3' : '4'} ${isMobile ? 'mt-4' : 'mt-6'}`}>
+          <form onSubmit={handleSubmit} className={`space-y-${isMobile ? '3' : '4'}`}>
             <div>
               <Label htmlFor="fullName" className={`${isMobile ? 'text-sm' : ''}`}>
                 Full Name
@@ -180,8 +183,8 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
             We respect your privacy. Your information will only be used to notify you about DNA platform updates.
           </p>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };
 
