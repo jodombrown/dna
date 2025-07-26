@@ -1,7 +1,6 @@
 import React from 'react';
 import LinkedInLayout from '@/components/linkedin/LinkedInLayout';
 import ProfileCard from '@/components/linkedin/ProfileCard';
-import PostComposer from '@/components/linkedin/PostComposer';
 import { PillarMainContent } from '@/components/linkedin/PillarMainContent';
 import CommunityFeed from '@/components/community/CommunityFeed';
 import { ConnectSidebar, ContributeSidebar, DiscoverySidebar } from '@/components/linkedin/ThreePillarSidebars';
@@ -65,10 +64,7 @@ const Dashboard = () => {
       {activeView === 'notifications' && <NotificationsMainContent />}
       {activeView === 'dashboard' && (
         activePillar === 'feed' ? (
-          <>
-            <PostComposer />
-            <CommunityFeed />
-          </>
+          <CommunityFeed />
         ) : (
           <PillarMainContent activePillar={activePillar} />
         )
