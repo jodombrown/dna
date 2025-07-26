@@ -149,20 +149,24 @@ const Contact = () => {
             {contactMethods.map((method, index) => (
               <Card 
                 key={index} 
-                className={`border-0 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 ${method.onClick || method.component ? 'cursor-pointer' : ''}`}
+                className={`border-0 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 ${method.onClick || method.component ? 'cursor-pointer' : ''} ${method.component === 'waitlist' ? 'bg-gradient-to-br from-dna-mint/30 via-dna-mint/20 to-dna-emerald/15' : 'bg-white'}`}
                 onClick={method.onClick}
               >
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-4 text-dna-emerald">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${method.component === 'waitlist' ? 'bg-gray-100 text-dna-emerald animate-pulse' : 'bg-dna-emerald/10 text-dna-emerald'}`}>
                     {method.icon}
                   </div>
                   <h3 className="text-lg font-bold text-dna-forest mb-2">{method.title}</h3>
-                  <p className="text-dna-copper font-semibold mb-2">{method.detail}</p>
-                  <p className="text-gray-600 text-sm">{method.description}</p>
+                  {method.component === 'waitlist' ? (
+                    <p className="text-dna-copper font-semibold mb-2">{method.detail}</p>
+                  ) : (
+                    <p className="text-dna-copper font-semibold mb-2">{method.detail}</p>
+                  )}
+                  <p className="text-gray-600 text-sm mb-4">{method.description}</p>
                   {method.onClick && (
                     <Button 
                       onClick={method.onClick}
-                      className="bg-dna-copper hover:bg-dna-gold text-white mt-4"
+                      className="bg-dna-copper hover:bg-dna-gold text-white"
                     >
                       Join Our Community
                     </Button>
@@ -170,7 +174,7 @@ const Contact = () => {
                   {method.component === 'waitlist' && (
                     <WaitlistSlideIn>
                       <Button 
-                        className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white mt-4 w-full"
+                        className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
                       >
                         <Sparkles className="w-4 h-4 mr-2" />
                         Join Waitlist
