@@ -72,11 +72,20 @@ export interface AISearchResult {
 
 export interface SearchFilters {
   types: string[];
-  location?: string;
+  location?: string | {
+    country?: string;
+    city?: string;
+    radius?: number;
+  };
   dateRange?: {
     start: string;
     end: string;
   };
+  categories?: string[];
+  experienceLevel?: string[];
+  availability?: string[];
+  languages?: string[];
+  sortBy?: string;
 }
 
 // AI-powered semantic search

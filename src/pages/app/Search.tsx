@@ -17,14 +17,22 @@ import {
   Brain,
   Sparkles,
   Globe,
-  Database
+  Database,
+  Save,
+  Settings,
+  Bell
 } from 'lucide-react';
 import { searchContent, getPopularSearches, SearchResult, aiSearch, AISearchResult, globalSearch, GlobalSearchResult } from '@/services/searchService';
+import { personalizedSearchService } from '@/services/personalizedSearchService';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
+import { useAuth } from '@/contexts/AuthContext';
+import SearchAutocomplete from '@/components/search/SearchAutocomplete';
+import AdvancedFilters, { AdvancedSearchFilters } from '@/components/search/AdvancedFilters';
 
 const Search = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [aiResults, setAiResults] = useState<AISearchResult | null>(null);
@@ -34,10 +42,37 @@ const Search = () => {
   const [popularSearches, setPopularSearches] = useState<string[]>([]);
   const [isAiMode, setIsAiMode] = useState(false);
   const [searchScope, setSearchScope] = useState<'dna' | 'global'>('dna');
+  const [filters, setFilters] = useState<AdvancedSearchFilters>({});
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [personalizedSuggestions, setPersonalizedSuggestions] = useState<string[]>([]);
+
+  // Initialize personalized search service
+  useEffect(() => {
+    if (user?.id) {
+      personalizedSearchService.initializeUserContext(user.id);
+      loadPersonalizedData();
+    }
+  }, [user]);
 
   useEffect(() => {
     loadPopularSearches();
   }, []);
+
+  const loadPersonalizedData = async () => {
+    if (!user?.id) return;
+    
+    try {
+      // Load recent searches and personalized suggestions
+      const suggestions = await personalizedSearchService.generatePersonalizedSuggestions(user.id);
+      setPersonalizedSuggestions(suggestions);
+      
+      // Get recent searches from personalized service
+      const analytics = await personalizedSearchService.getSearchAnalytics(user.id);
+      setRecentSearches(analytics.popularTerms);
+    } catch (error) {
+      console.error('Error loading personalized data:', error);
+    }
+  };
 
   const loadPopularSearches = async () => {
     try {
@@ -57,6 +92,14 @@ const Search = () => {
     }
 
     setLoading(true);
+    
+    // Save search for personalization
+    if (user?.id) {
+      await personalizedSearchService.saveSearch(user.id, searchQuery);
+      // Refresh recent searches
+      loadPersonalizedData();
+    }
+
     try {
       if (searchScope === 'global') {
         // Global web search
@@ -75,35 +118,63 @@ const Search = () => {
         });
       } else if (isAiMode) {
         // DNA AI search for natural language queries
-        const aiSearchResults = await aiSearch(searchQuery);
+        const aiSearchResults = await aiSearch(searchQuery, user?.id);
         setAiResults(aiSearchResults);
         setGlobalResults(null);
         
-        // Flatten AI results for tab display
-        const flatResults = [
+        // Flatten AI results for tab display and apply personalization
+        let flatResults = [
           ...aiSearchResults.results.profiles,
           ...aiSearchResults.results.communities,
           ...aiSearchResults.results.events,
           ...aiSearchResults.results.posts
         ];
+        
+        // Apply personalization if user is logged in
+        if (user?.id) {
+          flatResults = await personalizedSearchService.personalizeResults(flatResults, searchQuery, user.id);
+        }
+        
         setResults(flatResults);
         
         toast({
-          title: "AI Search completed",
-          description: `Found ${flatResults.length} results with AI understanding`,
+          title: user?.id ? "Personalized AI Search completed" : "AI Search completed",
+          description: `Found ${flatResults.length} results with AI understanding${user?.id ? ' and personalization' : ''}`,
         });
       } else {
-        // Regular DNA search
-        const searchResults = await searchContent(searchQuery, {
+        // Regular DNA search with filters and personalization
+        // Convert filters to compatible format
+        const searchFilters: any = {
           types: activeTab === 'all' ? [] : [activeTab]
-        });
+        };
+        
+        // Convert location filter
+        if (filters.location?.country) {
+          searchFilters.location = filters.location.country;
+        }
+        
+        // Convert date range
+        if (filters.dateRange?.start) {
+          searchFilters.dateRange = {
+            start: filters.dateRange.start.toISOString(),
+            end: filters.dateRange.end?.toISOString()
+          };
+        }
+        
+        let searchResults = await searchContent(searchQuery, searchFilters);
+        
+        // Apply personalization if user is logged in
+        if (user?.id) {
+          searchResults = await personalizedSearchService.personalizeResults(searchResults, searchQuery, user.id);
+        }
+        
         setResults(searchResults);
         setAiResults(null);
         setGlobalResults(null);
         
         toast({
-          title: "Search completed",
-          description: `Found ${searchResults.length} results`,
+          title: user?.id ? "Personalized Search completed" : "Search completed",
+          description: `Found ${searchResults.length} results${user?.id ? ' with personalization' : ''}`,
         });
       }
     } catch (error) {
@@ -221,44 +292,23 @@ const Search = () => {
             </div>
           </div>
 
-          {/* Search Input */}
-          <div className="relative">
-            <div className="relative">
-              <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder={
-                  searchScope === 'global' 
-                    ? "Search globally: 'African tech conferences 2024' or 'Nigerian startups'" 
-                    : isAiMode 
-                      ? "Ask naturally: 'Find renewable energy investors in Nigeria'" 
-                      : "Search for people, communities, events..."
-                }
-                className="pl-12 pr-32 py-4 text-lg border-gray-200 focus:border-dna-emerald focus:ring-dna-emerald rounded-lg"
-              />
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex gap-2">
-                <Button 
-                  onClick={() => handleSearch(query)}
-                  disabled={loading}
-                  size="sm"
-                  className="bg-dna-emerald hover:bg-dna-forest text-white rounded-md gap-2"
-                >
-                  {loading ? 'Searching...' : (
-                    <>
-                      {searchScope === 'global' ? <Globe className="w-4 h-4" /> : 
-                       isAiMode ? <Brain className="w-4 h-4" /> : <SearchIcon className="w-4 h-4" />}
-                      Search
-                    </>
-                  )}
-                </Button>
-                <Button variant="outline" size="sm" className="rounded-md">
-                  <Filter className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
+          {/* Search Input with Autocomplete */}
+          <SearchAutocomplete
+            value={query}
+            onChange={setQuery}
+            onSearch={handleSearch}
+            placeholder={
+              searchScope === 'global' 
+                ? "Search globally: 'African tech conferences 2024' or 'Nigerian startups'" 
+                : isAiMode 
+                  ? "Ask naturally: 'Find renewable energy investors in Nigeria'" 
+                  : "Search for people, communities, events..."
+            }
+            recentSearches={recentSearches}
+            onClearRecent={() => setRecentSearches([])}
+            disabled={loading}
+            className="w-full"
+          />
 
           {/* Active Mode Indicators */}
           <div className="flex items-center justify-between text-sm">
@@ -296,6 +346,42 @@ const Search = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Advanced Filters - Only show for DNA search */}
+      {searchScope === 'dna' && (
+        <AdvancedFilters
+          filters={filters}
+          onFiltersChange={setFilters}
+          onClearFilters={() => setFilters({})}
+          resultCount={results.length}
+        />
+      )}
+
+      {/* Personalized Suggestions for Logged-in Users */}
+      {user && personalizedSuggestions.length > 0 && !query && (
+        <Card className="mb-4 border-dna-gold/20 bg-dna-gold/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-dna-gold">
+              <Save className="w-5 h-5" />
+              Personalized for You
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {personalizedSuggestions.map((suggestion, index) => (
+                <Badge 
+                  key={index}
+                  variant="secondary" 
+                  className="cursor-pointer bg-dna-gold/20 hover:bg-dna-gold hover:text-white transition-colors border-dna-gold/30"
+                  onClick={() => handleQuickSearch(suggestion)}
+                >
+                  {suggestion}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
         {/* Global Search Suggestions */}
         {globalResults && globalResults.suggestions.length > 0 && (
