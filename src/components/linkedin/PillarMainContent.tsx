@@ -1,20 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Users, Handshake, Heart, Calendar, MapPin, Clock, Star, TrendingUp, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import PostComposer from '@/components/linkedin/PostComposer';
+import { SocialFeed } from '@/components/feed/SocialFeed';
+import { EnhancedPostComposer } from '@/components/feed/EnhancedPostComposer';
 
 interface PillarMainContentProps {
   activePillar: string;
 }
 
 export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePillar }) => {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handlePostCreated = () => {
+    setRefreshKey(prev => prev + 1);
+  };
   
   const connectContent = () => (
     <div className="space-y-4">
-      <PostComposer />
+      <EnhancedPostComposer defaultPillar="connect" onPostCreated={handlePostCreated} />
+      <SocialFeed key={`connect-${refreshKey}`} pillar="connect" limit={5} />
       
       {/* Networking Events */}
       <Card>
@@ -129,7 +136,8 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
 
   const collaborateContent = () => (
     <div className="space-y-4">
-      <PostComposer />
+      <EnhancedPostComposer defaultPillar="collaborate" onPostCreated={handlePostCreated} />
+      <SocialFeed key={`collaborate-${refreshKey}`} pillar="collaborate" limit={5} />
       
       {/* Featured Project Opportunities */}
       <Card>
@@ -242,7 +250,8 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
 
   const contributeContent = () => (
     <div className="space-y-4">
-      <PostComposer />
+      <EnhancedPostComposer defaultPillar="contribute" onPostCreated={handlePostCreated} />
+      <SocialFeed key={`contribute-${refreshKey}`} pillar="contribute" limit={5} />
       
       {/* Featured Impact Opportunities */}
       <Card>
