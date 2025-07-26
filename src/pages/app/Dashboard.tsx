@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import CommunityFeed from '@/components/community/CommunityFeed';
 
 const Dashboard = () => {
   const { profile, user } = useAuth();
@@ -21,11 +22,9 @@ const Dashboard = () => {
 
         {/* Main Feed */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <h3 className="font-semibold text-dna-forest mb-4">Community Feed</h3>
-            <p className="text-gray-600 text-sm">
-              Your personalized feed will appear here once more content is available.
-            </p>
+          <div className="space-y-4">
+            <h3 className="font-semibold text-dna-forest text-lg">Community Feed</h3>
+            <CommunityFeed />
           </div>
         </div>
 
