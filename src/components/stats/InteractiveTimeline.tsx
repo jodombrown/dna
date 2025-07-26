@@ -44,7 +44,8 @@ const InteractiveTimeline = () => {
       </div>
       
       <div className="bg-gray-50 rounded-2xl p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Mobile: Keep original grid layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-6">
           {timelineData.map((item) => (
             <TimelineItem
               key={item.year}
@@ -54,6 +55,21 @@ const InteractiveTimeline = () => {
               onClick={() => handleTimelineClick(item.year)}
             />
           ))}
+        </div>
+        
+        {/* Desktop: Horizontal timeline layout */}
+        <div className="hidden lg:block">
+          <div className="flex items-center justify-between space-x-4 overflow-x-auto pb-4">
+            {timelineData.map((item) => (
+              <TimelineItem
+                key={item.year}
+                year={item.year}
+                events={item.events}
+                isActive={activeTimelineYear === item.year}
+                onClick={() => handleTimelineClick(item.year)}
+              />
+            ))}
+          </div>
         </div>
         
         {/* Decade's Legacy Summary */}
