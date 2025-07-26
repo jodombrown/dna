@@ -11,9 +11,76 @@ interface IdentityStepProps {
   updateData: (data: any) => void;
 }
 
-const COUNTRIES = [
-  'Nigeria', 'Ghana', 'Kenya', 'South Africa', 'Ethiopia', 'Egypt', 'Morocco',
-  'Tanzania', 'Uganda', 'Senegal', 'Rwanda', 'Botswana', 'Zimbabwe', 'Other'
+const AFRICAN_COUNTRIES = [
+  'Algeria', 'Angola', 'Benin', 'Botswana', 'Burkina Faso', 'Burundi', 'Cabo Verde', 
+  'Cameroon', 'Central African Republic', 'Chad', 'Comoros', 'Democratic Republic of the Congo', 
+  'Republic of the Congo', 'Côte d\'Ivoire', 'Djibouti', 'Egypt', 'Equatorial Guinea', 
+  'Eritrea', 'Eswatini', 'Ethiopia', 'Gabon', 'Gambia', 'Ghana', 'Guinea', 'Guinea-Bissau', 
+  'Kenya', 'Lesotho', 'Liberia', 'Libya', 'Madagascar', 'Malawi', 'Mali', 'Mauritania', 
+  'Mauritius', 'Morocco', 'Mozambique', 'Namibia', 'Niger', 'Nigeria', 'Rwanda', 
+  'São Tomé and Príncipe', 'Senegal', 'Seychelles', 'Sierra Leone', 'Somalia', 'South Africa', 
+  'South Sudan', 'Sudan', 'Tanzania', 'Togo', 'Tunisia', 'Uganda', 'Zambia', 'Zimbabwe'
+];
+
+const DIASPORA_COMMUNITIES = [
+  // North America
+  'African American (United States)',
+  'Black Canadian',
+  'Afro-Mexican',
+  
+  // Caribbean
+  'Afro-Caribbean - Bahamas',
+  'Afro-Caribbean - Barbados', 
+  'Afro-Caribbean - Cuba',
+  'Afro-Caribbean - Dominican Republic',
+  'Afro-Caribbean - Haiti',
+  'Afro-Caribbean - Jamaica',
+  'Afro-Caribbean - Puerto Rico',
+  'Afro-Caribbean - Trinidad and Tobago',
+  'Afro-Caribbean - Other',
+  
+  // South America
+  'Afro-Brazilian',
+  'Afro-Colombian',
+  'Afro-Venezuelan',
+  'Afro-Argentinian',
+  'Afro-Peruvian',
+  'Afro-Ecuadorian',
+  'Afro-Uruguayan',
+  'Afro-Guyanese',
+  'Afro-Surinamese',
+  
+  // Europe
+  'Afro-British (United Kingdom)',
+  'Afro-French',
+  'Afro-German',
+  'Afro-Italian',
+  'Afro-Spanish',
+  'Afro-Portuguese',
+  'Afro-Dutch',
+  'Afro-Belgian',
+  'Afro-Swedish',
+  'Afro-Norwegian',
+  'Black European - Other',
+  
+  // Asia & Oceania
+  'Afro-Australian',
+  'Black New Zealander',
+  'Afro-Asian',
+  
+  // Middle East
+  'Afro-Arab',
+  'Black Middle Eastern'
+];
+
+const DIASPORA_ORIGINS = [
+  ...AFRICAN_COUNTRIES.sort(),
+  { label: '--- Diaspora Communities ---', value: '', disabled: true },
+  ...DIASPORA_COMMUNITIES.sort(),
+  { label: '--- Other ---', value: '', disabled: true },
+  'Mixed African Heritage',
+  'Prefer not to specify',
+  'Other'
 ];
 
 const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
@@ -88,15 +155,29 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
       <div>
         <Label>Diaspora Origin *</Label>
         <Select value={data.diaspora_origin} onValueChange={(value) => updateData({ diaspora_origin: value })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select your country of origin" />
+          <SelectTrigger className="bg-white">
+            <SelectValue placeholder="Select your origin or diaspora community" />
           </SelectTrigger>
-          <SelectContent>
-            {COUNTRIES.map((country) => (
-              <SelectItem key={country} value={country}>
-                {country}
-              </SelectItem>
-            ))}
+          <SelectContent className="bg-white border border-gray-200 shadow-lg z-50 max-h-[300px]">
+            {DIASPORA_ORIGINS.map((origin, index) => {
+              if (typeof origin === 'object') {
+                return (
+                  <SelectItem 
+                    key={index} 
+                    value={origin.value} 
+                    disabled={origin.disabled}
+                    className="font-semibold text-gray-500 bg-gray-50"
+                  >
+                    {origin.label}
+                  </SelectItem>
+                );
+              }
+              return (
+                <SelectItem key={origin} value={origin} className="hover:bg-dna-mint/20">
+                  {origin}
+                </SelectItem>
+              );
+            })}
           </SelectContent>
         </Select>
       </div>
@@ -105,12 +186,12 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
       <div>
         <Label>Gender *</Label>
         <Select value={data.gender} onValueChange={(value) => updateData({ gender: value })}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white">
             <SelectValue placeholder="Select gender" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
             {GENDERS.map((gender) => (
-              <SelectItem key={gender} value={gender}>
+              <SelectItem key={gender} value={gender} className="hover:bg-dna-mint/20">
                 {gender}
               </SelectItem>
             ))}
