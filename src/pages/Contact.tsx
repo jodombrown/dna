@@ -188,7 +188,7 @@ const Contact = () => {
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="bg-gradient-to-br from-dna-mint/30 via-dna-mint/20 to-dna-emerald/15 rounded-2xl p-8 border border-dna-emerald/10">
-            <div className="w-16 h-16 bg-gradient-to-br from-dna-emerald via-dna-copper to-dna-gold rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-dna-emerald via-dna-copper to-dna-gold rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
               <Sparkles className="h-8 w-8 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-dna-forest mb-4">
