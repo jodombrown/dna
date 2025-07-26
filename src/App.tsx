@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
@@ -25,6 +25,19 @@ import BetaSignupComplete from "./pages/BetaSignupComplete";
 
 const queryClient = new QueryClient();
 
+// Auth guard component to prevent authenticated users from accessing auth/marketing pages
+const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) return null;
+  
+  if (user) {
+    return <Navigate to="/app" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -34,23 +47,23 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
+              <Route path="/auth" element={<AuthGuard><Auth /></AuthGuard>} />
+              <Route path="/onboarding" element={<AuthGuard><Onboarding /></AuthGuard>} />
               <Route path="/app/*" element={<AppDashboard />} />
-              <Route path="/contribute" element={<ContributeExample />} />
-              <Route path="/collaborate" element={<CollaborationsExample />} />
-              <Route path="/connect" element={<ConnectExample />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/about" element={<About />} />
+              <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />
+              <Route path="/collaborate" element={<AuthGuard><CollaborationsExample /></AuthGuard>} />
+              <Route path="/connect" element={<AuthGuard><ConnectExample /></AuthGuard>} />
+              <Route path="/contact" element={<AuthGuard><Contact /></AuthGuard>} />
+              <Route path="/about" element={<AuthGuard><About /></AuthGuard>} />
               
-                <Route path="/phase/market-research" element={<MarketResearchPhase />} />
-                <Route path="/phase/prototyping" element={<PrototypingPhase />} />
-                <Route path="/phase/customer-discovery" element={<CustomerDiscoveryPhase />} />
-                <Route path="/phase/mvp" element={<MvpPhase />} />
-                <Route path="/phase/beta-validation" element={<BetaValidationPhase />} />
-              <Route path="/phase/go-to-market" element={<GoToMarketPhase />} />
-              <Route path="/beta-signup-complete" element={<BetaSignupComplete />} />
+              <Route path="/phase/market-research" element={<AuthGuard><MarketResearchPhase /></AuthGuard>} />
+              <Route path="/phase/prototyping" element={<AuthGuard><PrototypingPhase /></AuthGuard>} />
+              <Route path="/phase/customer-discovery" element={<AuthGuard><CustomerDiscoveryPhase /></AuthGuard>} />
+              <Route path="/phase/mvp" element={<AuthGuard><MvpPhase /></AuthGuard>} />
+              <Route path="/phase/beta-validation" element={<AuthGuard><BetaValidationPhase /></AuthGuard>} />
+              <Route path="/phase/go-to-market" element={<AuthGuard><GoToMarketPhase /></AuthGuard>} />
+              <Route path="/beta-signup-complete" element={<AuthGuard><BetaSignupComplete /></AuthGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </AuthProvider>
