@@ -188,45 +188,6 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Waitlist CTA Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-gradient-to-br from-dna-mint/30 via-dna-mint/20 to-dna-emerald/15 rounded-2xl p-8 border border-dna-emerald/10">
-            <div className="w-16 h-16 bg-gradient-to-br from-dna-emerald via-dna-copper to-dna-gold rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-              <Sparkles className="h-8 w-8 text-white" />
-            </div>
-            <h2 className="text-3xl font-bold text-dna-forest mb-4">
-              Ready to Join the DNA Community?
-            </h2>
-            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              Be the first to connect with the global African diaspora when we launch. 
-              Join our waitlist to get early access and help shape the future of diaspora collaboration.
-            </p>
-            <div className="flex flex-col gap-6 justify-center items-center">
-              <WaitlistSlideIn>
-                <Button 
-                  size="lg"
-                  className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Join Waitlist
-                </Button>
-              </WaitlistSlideIn>
-              <div className="flex flex-wrap justify-center items-center gap-4 text-sm text-gray-600">
-                <span className="flex items-center gap-1">
-                  🎯 Get early access
-                </span>
-                <span className="flex items-center gap-1">
-                  📧 Platform updates
-                </span>
-                <span className="flex items-center gap-1">
-                  🤝 Exclusive events
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* WhatsApp Modal */}
       <Dialog open={showWhatsAppModal} onOpenChange={setShowWhatsAppModal}>
