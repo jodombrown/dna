@@ -1,15 +1,18 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Users, Handshake, Heart } from 'lucide-react';
+import { MessageSquare, Users, Handshake, Heart, ArrowDown } from 'lucide-react';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
-import { useBreathingAnimation } from '@/hooks/useBreathingAnimation';
 
 const HeroTriangleSection = () => {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const connectRef = useBreathingAnimation();
-  const collaborateRef = useBreathingAnimation();
-  const contributeRef = useBreathingAnimation();
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <>
@@ -24,46 +27,67 @@ const HeroTriangleSection = () => {
               Each pillar strengthens the others, multiplying your impact across the continent.
             </p>
 
-            {/* Three Pillars Grid */}
+            {/* Three Pillars Navigation */}
             <div className="grid md:grid-cols-3 gap-8 mb-12">
-              {/* Connect Pillar */}
-              <div ref={connectRef.elementRef} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center">
-                    <Users className="w-8 h-8 text-white" />
+              {/* Connect Navigation Button */}
+              <button 
+                onClick={() => scrollToSection('connect-section')}
+                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:scale-105"
+              >
+                <div className="flex justify-center mb-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Users className="w-7 h-7 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-dna-forest mb-4">Connect</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Forge powerful bonds across the global African Diaspora. Tap into a vibrant ecosystem of innovators, leaders, and changemakers ready to move the continent forward, together.
+                <h3 className="text-xl font-bold text-dna-forest mb-3">Connect</h3>
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                  Forge powerful bonds across the global African diaspora.
                 </p>
-              </div>
+                <div className="flex items-center justify-center text-dna-emerald group-hover:text-dna-forest transition-colors">
+                  <span className="text-sm font-medium mr-2">Learn More</span>
+                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+                </div>
+              </button>
 
-              {/* Collaborate Pillar */}
-              <div ref={collaborateRef.elementRef} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
-                    <Handshake className="w-8 h-8 text-white" />
+              {/* Collaborate Navigation Button */}
+              <button 
+                onClick={() => scrollToSection('collaborate-section')}
+                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:scale-105"
+              >
+                <div className="flex justify-center mb-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Handshake className="w-7 h-7 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-dna-copper mb-4">Collaborate</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Transform shared vision into action. Partner on high-impact initiatives, co-create solutions, and mobilize talent to build what Africa needs now and next.
+                <h3 className="text-xl font-bold text-dna-copper mb-3">Collaborate</h3>
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                  Transform shared vision into action through partnerships.
                 </p>
-              </div>
+                <div className="flex items-center justify-center text-dna-copper group-hover:text-dna-gold transition-colors">
+                  <span className="text-sm font-medium mr-2">Learn More</span>
+                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+                </div>
+              </button>
 
-              {/* Contribute Pillar */}
-              <div ref={contributeRef.elementRef} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div className="flex justify-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-xl flex items-center justify-center">
-                    <Heart className="w-8 h-8 text-white" />
+              {/* Contribute Navigation Button */}
+              <button 
+                onClick={() => scrollToSection('contribute-section')}
+                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:scale-105"
+              >
+                <div className="flex justify-center mb-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Heart className="w-7 h-7 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-dna-emerald mb-4">Contribute</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Step into your role in Africa's future. Invest your skills, capital, or influence in ways that drive tangible change and leave a legacy that matters.
+                <h3 className="text-xl font-bold text-dna-emerald mb-3">Contribute</h3>
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                  Step into your role in Africa's future with tangible impact.
                 </p>
-              </div>
+                <div className="flex items-center justify-center text-dna-emerald group-hover:text-dna-mint transition-colors">
+                  <span className="text-sm font-medium mr-2">Learn More</span>
+                  <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+                </div>
+              </button>
             </div>
           </div>
         </div>

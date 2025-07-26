@@ -15,7 +15,7 @@ const ContributeSection = () => {
   const cardRef = useBreathingAnimation();
 
   return (
-    <section className="py-20">
+    <section id="contribute-section" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <div>
