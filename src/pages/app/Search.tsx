@@ -65,9 +65,13 @@ const Search = () => {
         setResults([]);
         setAiResults(null);
         
+        const hasWebResults = globalSearchResults.sources?.web || 0;
+        const hasDatabaseResults = globalSearchResults.sources?.database || 0;
+        
         toast({
-          title: "AI-Enhanced Global Search completed",
-          description: `Found ${globalSearchResults.totalResults} results (${globalSearchResults.sources?.database || 0} DNA + ${globalSearchResults.sources?.web || 0} web)`,
+          title: hasWebResults > 0 ? "AI-Enhanced Global Search completed" : "Database Search completed",
+          description: `Found ${globalSearchResults.totalResults} results (${hasDatabaseResults} DNA${hasWebResults > 0 ? ` + ${hasWebResults} web` : ', web search unavailable'})`,
+          variant: hasWebResults === 0 ? "default" : "default",
         });
       } else if (isAiMode) {
         // DNA AI search for natural language queries

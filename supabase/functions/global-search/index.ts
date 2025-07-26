@@ -45,6 +45,7 @@ serve(async (req) => {
     const combinedResults = [...databaseResults, ...webResults];
     const rankedResults = await rankSearchResults(combinedResults, query);
     
+    // Return enhanced response with source tracking
     return new Response(JSON.stringify({
       query,
       searchType,
@@ -54,6 +55,10 @@ serve(async (req) => {
       sources: {
         database: databaseResults.length,
         web: webResults.length
+      },
+      status: {
+        perplexityAvailable: !!perplexityApiKey,
+        openaiAvailable: !!openAIApiKey
       }
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -63,7 +68,11 @@ serve(async (req) => {
     console.error('Error in global-search function:', error);
     return new Response(JSON.stringify({ 
       error: 'Global search failed',
-      details: error.message 
+      details: error.message,
+      status: {
+        perplexityAvailable: !!perplexityApiKey,
+        openaiAvailable: !!openAIApiKey
+      }
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -89,7 +98,7 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
         results.push({
           title: profile.display_name || profile.full_name || 'DNA Member',
           description: `${profile.professional_role || 'Professional'} ${profile.location ? `in ${profile.location}` : ''}. ${profile.bio || 'DNA Community Member'}`,
-          url: `/app/profile?id=${profile.id}`, // Fixed URL for internal navigation
+          url: `/app/profile?id=${profile.id}`,
           source: 'DNA Profiles',
           relevanceScore: 0.9,
           type: 'people'
@@ -110,7 +119,7 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
         results.push({
           title: event.title,
           description: `${event.type} event ${event.location ? `in ${event.location}` : ''}. ${event.description || 'Join the DNA community'}`,
-          url: `/app/events?id=${event.id}`, // Fixed URL for internal navigation
+          url: `/app/events?id=${event.id}`,
           source: 'DNA Events',
           relevanceScore: 0.85,
           type: 'events'
@@ -131,7 +140,7 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
         results.push({
           title: community.name,
           description: `${community.category} community with ${community.member_count} members. ${community.description || 'Connect and collaborate'}`,
-          url: `/app/communities?id=${community.id}`, // Fixed URL for internal navigation
+          url: `/app/communities?id=${community.id}`,
           source: 'DNA Communities',
           relevanceScore: 0.8,
           type: 'organizations'
@@ -173,7 +182,7 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
         results.push({
           title: post.title || 'Community Discussion',
           description: `${post.content?.substring(0, 120) || 'Join the conversation'}...`,
-          url: `/app/communities?id=${post.community_id}`, // Fixed URL for internal navigation
+          url: `/app/communities?id=${post.community_id}`,
           source: 'DNA Posts',
           relevanceScore: 0.7,
           type: 'news'
@@ -181,57 +190,10 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
       });
     }
 
-    console.log(`Found ${results.length} dynamic search results for query: ${query}`);
+    console.log(`Found ${results.length} database results for query: ${query}`);
     
   } catch (error) {
-    console.error('Error in dynamic search:', error);
-  }
-
-  // Add some curated external results to supplement database results
-  const externalResults = generateCuratedExternalResults(query, searchType);
-  results.push(...externalResults);
-
-  return results.sort((a, b) => b.relevanceScore - a.relevanceScore);
-}
-
-function generateCuratedExternalResults(query: string, searchType: string): GlobalSearchResult[] {
-  const queryLower = query.toLowerCase();
-  const results: GlobalSearchResult[] = [];
-
-  // Tech and startup keywords
-  if (queryLower.includes('startup') || queryLower.includes('tech') || queryLower.includes('entrepreneur')) {
-    results.push({
-      title: "African Tech Ecosystem Report 2024",
-      description: "Latest insights on Africa's growing tech ecosystem, funding trends, and emerging opportunities.",
-      url: "https://techpoint.africa/reports",
-      source: "External",
-      relevanceScore: 0.6,
-      type: "news"
-    });
-  }
-
-  // Investment keywords
-  if (queryLower.includes('invest') || queryLower.includes('fund') || queryLower.includes('capital')) {
-    results.push({
-      title: "African Investment Opportunities 2024",
-      description: "Comprehensive guide to investment opportunities across African markets and diaspora networks.",
-      url: "https://africaninvestor.com",
-      source: "External",
-      relevanceScore: 0.6,
-      type: "opportunities"
-    });
-  }
-
-  // Event keywords
-  if (queryLower.includes('conference') || queryLower.includes('event') || queryLower.includes('summit')) {
-    results.push({
-      title: "Africa Tech Summit 2024",
-      description: "Premier technology conference connecting African innovators, investors, and entrepreneurs globally.",
-      url: "https://africatechsummit.com",
-      source: "External",
-      relevanceScore: 0.6,
-      type: "events"
-    });
+    console.error('Error in database search:', error);
   }
 
   return results;
@@ -247,9 +209,6 @@ async function performWebSearch(query: string, searchType: string): Promise<Glob
   try {
     console.log(`Performing Perplexity web search for: ${query}`);
     
-    // Enhance query for African diaspora context
-    const enhancedQuery = `${query} African diaspora professionals entrepreneurs opportunities events`;
-    
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
@@ -261,16 +220,22 @@ async function performWebSearch(query: string, searchType: string): Promise<Glob
         messages: [
           {
             role: 'system',
-            content: `You are searching for information relevant to the African diaspora professional network. 
-            Focus on finding: professionals, events, organizations, opportunities, and news related to African 
-            diaspora, African entrepreneurship, and African innovation globally. Return specific, actionable results.`
+            content: `You are helping search for real, current information related to: ${query}. 
+            Focus on finding actual, recent, and verifiable information about:
+            - Real companies, organizations, and people
+            - Actual events, conferences, and opportunities  
+            - Current news and developments
+            - Legitimate investment opportunities
+            
+            Return specific, factual results with sources. Do not make up or invent information.
+            Format your response as a structured list with titles, descriptions, and URLs where available.`
           },
           {
             role: 'user',
-            content: enhancedQuery
+            content: `Find real, current information about: ${query}`
           }
         ],
-        temperature: 0.2,
+        temperature: 0.1,
         top_p: 0.9,
         max_tokens: 1000,
         return_images: false,
@@ -281,12 +246,20 @@ async function performWebSearch(query: string, searchType: string): Promise<Glob
       }),
     });
 
+    if (!response.ok) {
+      console.error(`Perplexity API error: ${response.status} - ${response.statusText}`);
+      return [];
+    }
+
     const data = await response.json();
+    console.log('Perplexity response:', JSON.stringify(data, null, 2));
+    
     const searchResults = data.choices?.[0]?.message?.content;
 
     if (searchResults) {
-      // Parse the AI response to extract structured results
-      return parseWebSearchResults(searchResults, query);
+      const webResults = parseWebSearchResults(searchResults, query);
+      console.log(`Found ${webResults.length} web results`);
+      return webResults;
     }
 
     return [];
@@ -300,48 +273,61 @@ async function performWebSearch(query: string, searchType: string): Promise<Glob
 function parseWebSearchResults(content: string, originalQuery: string): GlobalSearchResult[] {
   const results: GlobalSearchResult[] = [];
   
-  // This is a simplified parser - in production, you'd want more sophisticated parsing
-  const lines = content.split('\n').filter(line => line.trim());
-  
-  let currentResult: Partial<GlobalSearchResult> = {};
-  
-  lines.forEach(line => {
-    if (line.includes('http')) {
-      // Extract URL
-      const urlMatch = line.match(/(https?:\/\/[^\s]+)/);
+  try {
+    // Split content into sections and look for structured information
+    const lines = content.split('\n').filter(line => line.trim());
+    
+    let currentResult: Partial<GlobalSearchResult> = {};
+    
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      
+      // Skip empty lines and very short content
+      if (!trimmedLine || trimmedLine.length < 10) continue;
+      
+      // Look for URLs
+      const urlMatch = trimmedLine.match(/(https?:\/\/[^\s\)]+)/);
       if (urlMatch) {
         currentResult.url = urlMatch[1];
       }
-    }
-    
-    // Look for titles (often in bold or at start of sentences)
-    if (line.length > 10 && line.length < 100 && !line.includes('http')) {
-      if (!currentResult.title) {
-        currentResult.title = line.replace(/[*#]/g, '').trim();
+      
+      // Look for titles (usually bold, numbered, or in specific patterns)
+      if (
+        (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) ||
+        /^\d+\.\s/.test(trimmedLine) ||
+        (trimmedLine.length > 10 && trimmedLine.length < 100 && !trimmedLine.includes('http'))
+      ) {
+        if (!currentResult.title) {
+          currentResult.title = trimmedLine.replace(/[*#\d\.]/g, '').trim();
+        }
+      }
+      
+      // Look for descriptions (longer lines)
+      if (trimmedLine.length > 50 && trimmedLine.length < 300 && !trimmedLine.includes('http')) {
+        if (!currentResult.description) {
+          currentResult.description = trimmedLine.replace(/[*#]/g, '').trim();
+        }
+      }
+      
+      // If we have enough info, save the result
+      if (currentResult.title && currentResult.description) {
+        results.push({
+          title: currentResult.title,
+          description: currentResult.description,
+          url: currentResult.url || '#',
+          source: 'Web Search (Perplexity)',
+          relevanceScore: 0.7,
+          type: inferContentType(currentResult.title + ' ' + currentResult.description)
+        });
+        
+        currentResult = {}; // Reset for next result
+        
+        if (results.length >= 8) break; // Limit web results
       }
     }
-    
-    // Longer lines are likely descriptions
-    if (line.length > 50 && !currentResult.description) {
-      currentResult.description = line.replace(/[*#]/g, '').trim();
-    }
-    
-    // If we have enough info, save the result
-    if (currentResult.title && currentResult.description) {
-      results.push({
-        title: currentResult.title,
-        description: currentResult.description,
-        url: currentResult.url || '#',
-        source: 'Web Search',
-        relevanceScore: 0.6,
-        type: inferContentType(currentResult.title + ' ' + currentResult.description)
-      });
-      
-      currentResult = {}; // Reset for next result
-      
-      if (results.length >= 5) return; // Limit web results
-    }
-  });
+  } catch (error) {
+    console.error('Error parsing web search results:', error);
+  }
 
   return results;
 }
@@ -373,7 +359,6 @@ async function rankSearchResults(results: GlobalSearchResult[], query: string): 
   }
 
   try {
-    // Use OpenAI to score relevance
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -385,17 +370,11 @@ async function rankSearchResults(results: GlobalSearchResult[], query: string): 
         messages: [
           {
             role: 'system',
-            content: `You are a relevance scoring system for search results. Score each result from 0.0 to 1.0 based on how well it matches the user's query intent. Consider:
-            1. Keyword relevance
-            2. Semantic meaning
-            3. Context appropriateness for African diaspora professional network
-            4. Recency and importance
-            
-            Return only a JSON array of scores in the same order as the results: [0.95, 0.8, 0.7, ...]`
+            content: `Score each result from 0.0 to 1.0 based on relevance to the query. Return only a JSON array of scores: [0.95, 0.8, ...]`
           },
           {
             role: 'user',
-            content: `Query: "${query}"\n\nResults to score:\n${results.map((r, i) => `${i+1}. ${r.title}: ${r.description}`).join('\n')}`
+            content: `Query: "${query}"\n\nResults:\n${results.map((r, i) => `${i+1}. ${r.title}: ${r.description}`).join('\n')}`
           }
         ],
         temperature: 0.1,
@@ -428,7 +407,14 @@ async function rankSearchResults(results: GlobalSearchResult[], query: string): 
 // Generate AI-powered search suggestions
 async function generateAISuggestions(query: string): Promise<string[]> {
   if (!openAIApiKey) {
-    return generateDynamicSuggestions(query);
+    return [
+      `${query} professionals`,
+      `${query} events`,
+      `${query} organizations`,
+      `${query} opportunities`,
+      "African professionals",
+      "Networking events"
+    ];
   }
 
   try {
@@ -443,15 +429,7 @@ async function generateAISuggestions(query: string): Promise<string[]> {
         messages: [
           {
             role: 'system',
-            content: `Generate 6 intelligent search suggestions for the Diaspora Network of Africa platform.
-            Consider:
-            - Related professional terms
-            - Geographic expansions (African countries, diaspora locations)
-            - Industry variations
-            - Professional networking context
-            - Event and opportunity discovery
-            
-            Return only a JSON array of strings: ["suggestion 1", "suggestion 2", ...]`
+            content: `Generate 6 realistic search suggestions related to the query. Return only a JSON array: ["suggestion 1", "suggestion 2", ...]`
           },
           {
             role: 'user',
@@ -480,21 +458,13 @@ async function generateAISuggestions(query: string): Promise<string[]> {
     console.error('AI suggestions error:', error);
   }
 
-  // Fallback to static suggestions
-  return generateDynamicSuggestions(query);
-}
-
-function generateDynamicSuggestions(query: string): string[] {
-  const suggestions = [
+  // Fallback suggestions
+  return [
     `${query} professionals`,
-    `${query} events`,
-    `${query} communities`,
+    `${query} events`, 
+    `${query} organizations`,
     `${query} opportunities`,
-    "African tech startups",
-    "Nigeria diaspora network",
-    "Investment opportunities Africa",
-    "African innovation events"
+    "African professionals",
+    "Networking events"
   ];
-  
-  return suggestions.slice(0, 6);
 }
