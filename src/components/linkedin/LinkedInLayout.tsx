@@ -12,7 +12,7 @@ const LinkedInLayout: React.FC<LinkedInLayoutProps> = ({
   rightSidebar,
 }) => {
   return (
-    <div className="w-full pt-6">
+    <div className="w-full pt-3">
       <div className="grid grid-cols-12 gap-3 2xl:gap-6 max-w-[2400px] mx-auto px-2 2xl:px-6">
         {/* Left Sidebar - Scrollable content */}
         {leftSidebar && (
