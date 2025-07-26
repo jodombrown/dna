@@ -14,7 +14,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDashboard } from '@/contexts/DashboardContext';
 
 const Dashboard = () => {
-  const { activeView, activePillar, setActivePillar } = useDashboard();
+  const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
+
+  // Handle pillar change - always switch to dashboard view when pillar changes
+  const handlePillarChange = (pillar: string) => {
+    setActivePillar(pillar);
+    if (activeView !== 'dashboard') {
+      setActiveView('dashboard');
+    }
+  };
 
   // Dynamic left sidebar based on active pillar
   const leftSidebar = (
@@ -22,7 +30,7 @@ const Dashboard = () => {
       <ProfileCard />
       
       {/* Four Pillars Navigation */}
-      <Tabs value={activePillar} onValueChange={setActivePillar} className="w-full">
+      <Tabs value={activePillar} onValueChange={handlePillarChange} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="feed" className="text-xs">Feed</TabsTrigger>
           <TabsTrigger value="connect" className="text-xs">Connect</TabsTrigger>
