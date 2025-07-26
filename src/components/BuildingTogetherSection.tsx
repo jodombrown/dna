@@ -78,9 +78,9 @@ const BuildingTogetherSection = () => {
           <PlatformBadges />
         </div>
 
-        {/* Phase Icons */}
-        <div className="text-center">
-          <div className="flex justify-center items-center gap-6">
+        {/* Transition Content with Phase Icons */}
+        <div className="text-center mb-12">
+          <div className="flex justify-center items-center gap-6 mb-8">
             {phases.map((phase) => {
               const IconComponent = phase.icon;
               return (
@@ -93,6 +93,73 @@ const BuildingTogetherSection = () => {
               );
             })}
           </div>
+          <h3 className="text-3xl md:text-4xl font-bold text-dna-forest mb-4">
+            Join Us in Shaping Africa's Future
+          </h3>
+          <p className="text-lg text-gray-600 max-w-4xl mx-auto">
+            <span className="font-semibold text-dna-forest">Why we're building in the open:</span> We believe openness builds trust. Watch us create the 
+            platform, share feedback, and join our community as we grow together.
+          </p>
+        </div>
+
+        {/* Action Cards */}
+        <div className="grid md:grid-cols-3 gap-8">
+          {/* Share Feedback Card */}
+          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-8 text-center">
+              <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-dna-copper/20 transition-colors">
+                <MessageCircle className="w-8 h-8 text-dna-copper" />
+              </div>
+              <h3 className="text-2xl font-bold text-dna-forest mb-4">Share Feedback</h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Help us build better by sharing your thoughts and ideas
+              </p>
+              <Button 
+                className="bg-dna-copper hover:bg-dna-forest text-white rounded-full px-6 py-2 transition-all duration-300"
+                onClick={() => window.open('mailto:feedback@diasporanetwork.africa', '_blank')}
+              >
+                Give Feedback
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Track Progress Card */}
+          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-8 text-center">
+              <div className="w-16 h-16 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-dna-emerald/20 transition-colors">
+                <Eye className="w-8 h-8 text-dna-emerald" />
+              </div>
+              <h3 className="text-2xl font-bold text-dna-forest mb-4">Track Our Progress</h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Follow our development journey phase by phase
+              </p>
+              <Button 
+                className="bg-dna-emerald hover:bg-dna-forest text-white rounded-full px-6 py-2 transition-all duration-300"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              >
+                View Phases
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Learn About DNA Card */}
+          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-8 text-center">
+              <div className="w-16 h-16 bg-dna-forest/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-dna-forest/20 transition-colors">
+                <BookOpen className="w-8 h-8 text-dna-forest" />
+              </div>
+              <h3 className="text-2xl font-bold text-dna-forest mb-4">Learn About DNA</h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Understand our mission, vision, and approach
+              </p>
+              <Button 
+                className="bg-dna-forest hover:bg-dna-emerald text-white rounded-full px-6 py-2 transition-all duration-300"
+                onClick={() => window.location.href = '/about'}
+              >
+                Learn More
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>
