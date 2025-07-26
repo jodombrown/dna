@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Users } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface WaitlistPopupProps {
@@ -84,13 +84,23 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
       <DialogContent 
         className={`${
           isMobile 
-            ? "w-[92vw] max-w-[360px] h-auto max-h-[85vh] mx-2 my-4 p-4 overflow-y-auto" 
-            : "max-w-lg w-full mx-4"
-        } z-50 bg-white`}
+            ? "w-[92vw] max-w-[360px] h-auto max-h-[85vh] mx-2 my-4 p-6 overflow-y-auto" 
+            : "max-w-lg w-full mx-4 p-6"
+        } relative bg-white border-0 shadow-2xl z-[9999]`}
         aria-describedby="waitlist-description"
       >
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200 group"
+          aria-label="Close"
+        >
+          <X className="h-4 w-4 text-gray-500 group-hover:text-gray-700 transition-colors duration-200" />
+        </button>
+
         <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg"></div>
-        <DialogHeader className="text-center space-y-3 relative z-10">
+        
+        <DialogHeader className="text-center space-y-3 relative z-10 pr-8">
           <DialogTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-dna-forest`}>
             Join the DNA Beta Waitlist
           </DialogTitle>
