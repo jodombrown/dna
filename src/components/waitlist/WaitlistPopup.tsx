@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail, Users } from 'lucide-react';
+import { Mail, Users, X } from 'lucide-react';
 import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -95,15 +95,26 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
       <DialogContent 
         className={`${
           isMobile 
-            ? "w-[92vw] max-w-[360px] h-[85vh] max-h-[600px] mx-2 my-4 p-4 overflow-y-auto" 
-            : "max-w-lg w-full mx-4"
-        } transition-all duration-300 ease-out`}
+            ? "w-[92vw] max-w-[360px] h-[85vh] max-h-[600px] overflow-y-auto" 
+            : "max-w-lg w-full"
+        } fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out`}
         style={{
           opacity: isOpen ? opacity : 0,
-          transform: `translateY(${isOpen ? translateY : 20}px)`,
+          transform: `translate(-50%, -50%) translateY(${isOpen ? translateY : 20}px)`,
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg"></div>
+        
+        {/* Close button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClose}
+          className="absolute top-2 right-2 z-20 h-8 w-8 p-0 hover:bg-gray-100"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+
         <DialogHeader className="text-center space-y-3 relative z-10">
           <div className={`mx-auto ${isMobile ? 'w-12 h-12' : 'w-14 h-14'} bg-gradient-to-br from-dna-emerald to-dna-copper rounded-full flex items-center justify-center shadow-lg`}>
             <Users className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} text-white`} />

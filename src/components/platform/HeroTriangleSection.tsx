@@ -25,7 +25,7 @@ const HeroTriangleSection = () => {
               How DNA Works
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
-              Built on three powerful actions — Connect, Collaborate, and Contribute — DNA is designed to unlock your potential and maximize our collective impact.
+              DNA empowers you to build meaningful relationships, drive impactful initiatives, and create lasting change across Africa and its global diaspora.
             </p>
 
             {/* Three Pillars Navigation */}

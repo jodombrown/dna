@@ -72,45 +72,12 @@ const HeroSection = () => {
         </div>
       </section>
 
-      {/* Call to Action Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            The Diaspora isn't waiting — we're building.
-          </h2>
-          
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Tap into a purpose-driven network of professionals committed to real change. From bold ideas to scalable solutions, DNA is where vision becomes reality.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full"
-              onClick={() => setIsFeedbackOpen(true)}
-            >
-              <Users className="w-5 h-5 mr-2" />
-              Join the Beta
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full"
-              onClick={() => navigate('/collaborate')}
-            >
-              Explore Projects
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* Statistics Section */}
       <section className="py-10 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <DiasporaStats />
         </div>
       </section>
-
 
       <MainPageFeedbackPanel 
         isOpen={isFeedbackOpen} 
