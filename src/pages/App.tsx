@@ -13,7 +13,8 @@ const App = () => {
     if (!loading) {
       if (!user) {
         navigate('/auth');
-      } else if (profile && !profile.onboarding_completed) {
+      } else if (!profile) {
+        // If user exists but no profile, redirect to onboarding
         navigate('/onboarding');
       }
     }
@@ -30,7 +31,7 @@ const App = () => {
     );
   }
 
-  if (!user || !profile) {
+  if (!user) {
     return null;
   }
 
@@ -57,7 +58,7 @@ const App = () => {
                 <div className="lg:col-span-1">
                   <div className="bg-white rounded-lg p-6 shadow-sm">
                     <h3 className="font-semibold text-dna-forest mb-4">
-                      Welcome, {profile.display_name}!
+                      Welcome, {profile?.display_name || profile?.full_name || user.user_metadata?.full_name || 'DNA Member'}!
                     </h3>
                     <p className="text-gray-600 text-sm">
                       This is your DNA dashboard where you can connect, collaborate, and contribute to the diaspora community.
