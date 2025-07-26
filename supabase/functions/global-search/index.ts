@@ -75,7 +75,7 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
         results.push({
           title: profile.display_name || profile.full_name || 'DNA Member',
           description: `${profile.professional_role || 'Professional'} ${profile.location ? `in ${profile.location}` : ''}. ${profile.bio || 'DNA Community Member'}`,
-          url: `/profile/${profile.id}`,
+          url: `/app/profile?id=${profile.id}`, // Fixed URL for internal navigation
           source: 'DNA Profiles',
           relevanceScore: 0.9,
           type: 'people'
@@ -96,7 +96,7 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
         results.push({
           title: event.title,
           description: `${event.type} event ${event.location ? `in ${event.location}` : ''}. ${event.description || 'Join the DNA community'}`,
-          url: `/events/${event.id}`,
+          url: `/app/events?id=${event.id}`, // Fixed URL for internal navigation
           source: 'DNA Events',
           relevanceScore: 0.85,
           type: 'events'
@@ -117,7 +117,7 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
         results.push({
           title: community.name,
           description: `${community.category} community with ${community.member_count} members. ${community.description || 'Connect and collaborate'}`,
-          url: `/communities/${community.id}`,
+          url: `/app/communities?id=${community.id}`, // Fixed URL for internal navigation
           source: 'DNA Communities',
           relevanceScore: 0.8,
           type: 'organizations'
@@ -159,7 +159,7 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
         results.push({
           title: post.title || 'Community Discussion',
           description: `${post.content?.substring(0, 120) || 'Join the conversation'}...`,
-          url: `/communities/${post.community_id}/posts/${post.id}`,
+          url: `/app/communities?id=${post.community_id}`, // Fixed URL for internal navigation
           source: 'DNA Posts',
           relevanceScore: 0.7,
           type: 'news'

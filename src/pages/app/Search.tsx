@@ -468,57 +468,167 @@ const Search = () => {
             ) : filteredResults.length > 0 ? (
               <div className="space-y-4">
                 {filteredResults.map((result) => (
-                  <div key={`${result.type}-${result.id}`} className="flex items-start gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="flex-shrink-0">
-                      {result.avatar_url || result.image_url ? (
-                        <Avatar className="w-12 h-12">
-                          <AvatarImage src={result.avatar_url || result.image_url} />
-                          <AvatarFallback>
-                            {result.title.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                      ) : (
-                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                          {getResultIcon(result.type)}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900 truncate">{result.title}</h3>
-                        <Badge variant="outline" className="text-xs capitalize">
-                          {result.type}
-                        </Badge>
+                  <div key={`${result.type}-${result.id}`} className="border rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex items-start gap-3 p-4">
+                      <div className="flex-shrink-0">
+                        {result.avatar_url || result.image_url ? (
+                          <Avatar className="w-12 h-12">
+                            <AvatarImage src={result.avatar_url || result.image_url} />
+                            <AvatarFallback>
+                              {result.title.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                            {getResultIcon(result.type)}
+                          </div>
+                        )}
                       </div>
                       
-                      {result.description && (
-                        <p className="text-gray-600 text-sm mb-2 line-clamp-2">{result.description}</p>
-                      )}
-                      
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
-                        {result.created_at && (
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {formatDistanceToNow(new Date(result.created_at), { addSuffix: true })}
-                          </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold text-gray-900 truncate">{result.title}</h3>
+                          <Badge variant="outline" className="text-xs capitalize">
+                            {result.type}
+                          </Badge>
+                        </div>
+                        
+                        {result.description && (
+                          <p className="text-gray-600 text-sm mb-2 line-clamp-2">{result.description}</p>
                         )}
                         
-                        {result.metadata?.location && (
-                          <span>{result.metadata.location}</span>
-                        )}
+                        <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
+                          {result.created_at && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {formatDistanceToNow(new Date(result.created_at), { addSuffix: true })}
+                            </span>
+                          )}
+                          
+                          {result.metadata?.location && (
+                            <span>{result.metadata.location}</span>
+                          )}
+                          
+                          {result.metadata?.member_count && (
+                            <span>{result.metadata.member_count} members</span>
+                          )}
+                          
+                          {result.metadata?.author && (
+                            <span>by {result.metadata.author}</span>
+                          )}
+                          
+                          {result.metadata?.community && (
+                            <span>in {result.metadata.community}</span>
+                          )}
+                        </div>
                         
-                        {result.metadata?.member_count && (
-                          <span>{result.metadata.member_count} members</span>
-                        )}
-                        
-                        {result.metadata?.author && (
-                          <span>by {result.metadata.author}</span>
-                        )}
-                        
-                        {result.metadata?.community && (
-                          <span>in {result.metadata.community}</span>
-                        )}
+                        {/* Action Buttons for Different Result Types */}
+                        <div className="flex items-center gap-2">
+                          {result.type === 'profile' && (
+                            <>
+                              <Button 
+                                size="sm" 
+                                variant="default"
+                                className="bg-dna-emerald hover:bg-dna-forest text-white"
+                                onClick={() => window.open(`/app/profile?id=${result.id}`, '_blank')}
+                              >
+                                <Users className="w-4 h-4 mr-1" />
+                                View Profile
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => {
+                                  toast({
+                                    title: "Connection Request",
+                                    description: `Sending connection request to ${result.title}`,
+                                  });
+                                }}
+                              >
+                                Connect
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => {
+                                  toast({
+                                    title: "Message",
+                                    description: `Opening message with ${result.title}`,
+                                  });
+                                }}
+                              >
+                                <MessageSquare className="w-4 h-4 mr-1" />
+                                Message
+                              </Button>
+                            </>
+                          )}
+                          
+                          {result.type === 'community' && (
+                            <>
+                              <Button 
+                                size="sm" 
+                                variant="default"
+                                className="bg-dna-emerald hover:bg-dna-forest text-white"
+                                onClick={() => window.open(`/app/communities?id=${result.id}`, '_blank')}
+                              >
+                                <Building2 className="w-4 h-4 mr-1" />
+                                View Community
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => {
+                                  toast({
+                                    title: "Join Request",
+                                    description: `Requesting to join ${result.title}`,
+                                  });
+                                }}
+                              >
+                                Join
+                              </Button>
+                            </>
+                          )}
+                          
+                          {result.type === 'event' && (
+                            <>
+                              <Button 
+                                size="sm" 
+                                variant="default"
+                                className="bg-dna-emerald hover:bg-dna-forest text-white"
+                                onClick={() => window.open(`/app/events?id=${result.id}`, '_blank')}
+                              >
+                                <Calendar className="w-4 h-4 mr-1" />
+                                View Event
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => {
+                                  toast({
+                                    title: "Event Registration",
+                                    description: `Registering for ${result.title}`,
+                                  });
+                                }}
+                              >
+                                Register
+                              </Button>
+                            </>
+                          )}
+                          
+                          {result.type === 'post' && (
+                            <>
+                              <Button 
+                                size="sm" 
+                                variant="default"
+                                className="bg-dna-emerald hover:bg-dna-forest text-white"
+                                onClick={() => window.open(`/app/communities/${result.metadata?.community_id || ''}`, '_blank')}
+                              >
+                                <MessageSquare className="w-4 h-4 mr-1" />
+                                View Post
+                              </Button>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
