@@ -1,16 +1,144 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Users, Handshake, Heart } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ArrowLeft, Eye, EyeOff, Mail, Lock, User, Loader2 } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { useToast } from '@/hooks/use-toast';
 
 const Auth = () => {
   useScrollToTop();
   
   const navigate = useNavigate();
-  const [showDemo, setShowDemo] = useState(false);
+  const { toast } = useToast();
+  const { user, signIn, signUp, loading } = useAuth();
+  const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (user && !loading) {
+      navigate('/app');
+    }
+  }, [user, loading, navigate]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = () => {
+    if (!formData.email || !formData.password) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    if (!isLogin) {
+      if (!formData.fullName) {
+        toast({
+          title: "Missing Information",
+          description: "Please enter your full name.",
+          variant: "destructive"
+        });
+        return false;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        toast({
+          title: "Password Mismatch",
+          description: "Please make sure your passwords match.",
+          variant: "destructive"
+        });
+        return false;
+      }
+
+      if (formData.password.length < 6) {
+        toast({
+          title: "Password Too Short",
+          description: "Password must be at least 6 characters long.",
+          variant: "destructive"
+        });
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      let result;
+      
+      if (isLogin) {
+        result = await signIn(formData.email, formData.password);
+      } else {
+        result = await signUp(formData.email, formData.password, formData.fullName);
+      }
+
+      if (result.error) {
+        toast({
+          title: isLogin ? "Login Failed" : "Signup Failed",
+          description: result.error.message || "Something went wrong. Please try again.",
+          variant: "destructive"
+        });
+      } else if (!isLogin) {
+        toast({
+          title: "Account Created Successfully!",
+          description: "Please check your email to verify your account.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    setFormData({
+      fullName: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-dna-copper" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex items-center justify-center p-4">
@@ -27,66 +155,132 @@ const Auth = () => {
               Back
             </Button>
             <CardTitle className="text-2xl font-bold text-dna-forest mb-2">
-              Join the DNA Network
+              {isLogin ? 'Welcome Back' : 'Join DNA Community'}
             </CardTitle>
             <p className="text-gray-600">
-              Connect with Africa's diaspora community
+              {isLogin 
+                ? 'Sign in to connect with the diaspora' 
+                : 'Create your account to get started'
+              }
             </p>
           </CardHeader>
           
-          <CardContent className="space-y-6">
-            <div className="text-center">
-              <div className="bg-dna-mint/20 rounded-lg p-6 mb-6">
-                <h3 className="font-semibold text-dna-forest mb-3">Platform Coming Soon</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  We're building the future of diaspora engagement. Be the first to know when we launch!
-                </p>
-                
-                <div className="flex items-center justify-center space-x-4 mb-4">
-                  <div className="flex items-center gap-2 text-dna-emerald">
-                    <Users className="w-4 h-4" />
-                    <span className="text-xs">Connect</span>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <div>
+                  <Label htmlFor="fullName">Full Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="fullName"
+                      name="fullName"
+                      type="text"
+                      placeholder="Enter your full name"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      className="pl-10"
+                      required={!isLogin}
+                    />
                   </div>
-                  <div className="flex items-center gap-2 text-dna-copper">
-                    <Handshake className="w-4 h-4" />
-                    <span className="text-xs">Collaborate</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-dna-forest">
-                    <Heart className="w-4 h-4" />
-                    <span className="text-xs">Contribute</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Button 
-                  onClick={() => setShowDemo(!showDemo)}
-                  className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
-                >
-                  {showDemo ? 'Hide Demo' : 'Preview Platform Features'}
-                </Button>
-                
-                <Button 
-                  variant="outline"
-                  onClick={() => navigate('/clean-social-feed')}
-                  className="w-full border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
-                >
-                  View Demo Feed
-                </Button>
-              </div>
-
-              {showDemo && (
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg text-left">
-                  <h4 className="font-semibold text-sm text-gray-900 mb-3">Platform Features:</h4>
-                  <ul className="text-xs text-gray-600 space-y-2">
-                    <li>• Professional networking for diaspora members</li>
-                    <li>• Community-driven collaboration spaces</li>
-                    <li>• Investment and contribution opportunities</li>
-                    <li>• Real-time impact tracking</li>
-                    <li>• Cultural exchange and mentorship</li>
-                  </ul>
                 </div>
               )}
+
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="pl-10 pr-10"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-1 top-1/2 transform -translate-y-1/2 p-1 h-8 w-8"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {!isLogin && (
+                <div>
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Confirm your password"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      className="pl-10"
+                      required={!isLogin}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-dna-copper hover:bg-dna-gold text-white"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    {isLogin ? 'Signing In...' : 'Creating Account...'}
+                  </>
+                ) : (
+                  isLogin ? 'Sign In' : 'Create Account'
+                )}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                {isLogin ? "Don't have an account?" : "Already have an account?"}
+                {' '}
+                <Button
+                  type="button"
+                  variant="link"
+                  onClick={toggleMode}
+                  className="p-0 text-dna-copper hover:text-dna-gold underline"
+                >
+                  {isLogin ? 'Sign up' : 'Sign in'}
+                </Button>
+              </p>
             </div>
           </CardContent>
         </Card>
