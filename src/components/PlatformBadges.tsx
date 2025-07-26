@@ -18,7 +18,7 @@ const PlatformBadges = () => {
                    hover:bg-blue-500 hover:text-white hover:scale-105 hover:border-blue-500"
       >
         <Search className="w-4 h-4 mr-2" />
-        Phase 1: Market Research
+        Market Research
       </Button>
       <Button 
         onClick={() => navigate('/phase/prototyping')}
@@ -30,7 +30,7 @@ const PlatformBadges = () => {
                    hover:rotate-1"
       >
         <Code className="w-4 h-4 mr-2" />
-        Phase 2: Prototyping
+        Prototyping
       </Button>
       <Button 
         onClick={() => navigate('/phase/customer-discovery')}
@@ -42,7 +42,7 @@ const PlatformBadges = () => {
                    hover:-rotate-1"
       >
         <Users className="w-4 h-4 mr-2" />
-        Phase 3: Customer Discovery
+        Customer Discovery
       </Button>
       <Button 
         onClick={() => navigate('/phase/mvp')}
@@ -54,7 +54,7 @@ const PlatformBadges = () => {
                    hover:rotate-2"
       >
         <Target className="w-4 h-4 mr-2" />
-        Phase 4: MVP Build
+        MVP Build
       </Button>
       
       {/* Phase 5 and 6 on the same row */}
@@ -69,7 +69,7 @@ const PlatformBadges = () => {
                      hover:-rotate-2"
         >
           <BarChart3 className="w-4 h-4 mr-2" />
-          Phase 5: Beta Validation
+          Beta Validation
         </Button>
         <Button 
           onClick={() => navigate('/phase/go-to-market')}
@@ -81,7 +81,7 @@ const PlatformBadges = () => {
                      hover:rotate-1"
         >
           <TrendingUp className="w-4 h-4 mr-2" />
-          Phase 6: Go-to-Market
+          Go-to-Market
         </Button>
       </div>
     </div>
