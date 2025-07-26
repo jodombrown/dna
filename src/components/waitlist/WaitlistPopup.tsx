@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { Mail, Users } from 'lucide-react';
-import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface WaitlistPopupProps {
@@ -17,7 +15,7 @@ interface WaitlistPopupProps {
 
 const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollProgress = 0 }) => {
   const [formData, setFormData] = useState({
-    full_name: '',
+    fullName: '',
     email: '',
     location: ''
   });
@@ -28,10 +26,10 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.full_name || !formData.email) {
+    if (!formData.fullName || !formData.email || !formData.location) {
       toast({
-        title: "Missing Information",
-        description: "Please provide your name and email address.",
+        title: "Please fill in all fields",
+        description: "All fields are required to join the waitlist.",
         variant: "destructive",
       });
       return;
@@ -40,43 +38,34 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
     setIsSubmitting(true);
 
     try {
-      // Insert into waitlist_signups table
-      const { error } = await supabase
-        .from('waitlist_signups')
-        .insert({
-          full_name: formData.full_name,
-          email: formData.email,
-          location: formData.location || null,
-          role: 'waitlist_member',
-          status: 'pending'
-        });
-
-      if (error) throw error;
-
-      // Send notification email
-      await supabase.functions.invoke('send-universal-email', {
-        body: {
-          formType: 'waitlist_signup',
-          formData: formData,
-          userEmail: formData.email
-        }
+      // Submit to API endpoint
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
 
+      if (!response.ok) {
+        throw new Error('Failed to join waitlist');
+      }
+
       toast({
-        title: "Welcome to the Waitlist!",
-        description: "You'll be the first to know when DNA launches. Check your email for confirmation.",
+        title: "Welcome to DNA!",
+        description: "You're in! We'll reach out with updates as the beta launches.",
       });
 
       // Store that user has joined waitlist to avoid showing popup again
       localStorage.setItem('dna_waitlist_joined', 'true');
       
       onClose();
-      setFormData({ full_name: '', email: '', location: '' });
+      setFormData({ fullName: '', email: '', location: '' });
     } catch (error: any) {
       console.error('Waitlist signup error:', error);
       toast({
-        title: "Error",
-        description: "Failed to join waitlist. Please try again.",
+        title: "Something went wrong",
+        description: "Please try again later or contact support.",
         variant: "destructive",
       });
     } finally {
@@ -105,67 +94,59 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
       >
         <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg"></div>
         <DialogHeader className="text-center space-y-3 relative z-10">
-          <div className={`mx-auto ${isMobile ? 'w-12 h-12' : 'w-14 h-14'} bg-gradient-to-br from-dna-emerald to-dna-copper rounded-full flex items-center justify-center shadow-lg`}>
-            <Users className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} text-white`} />
-          </div>
           <DialogTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-dna-forest`}>
-            Join the DNA Waitlist
+            Join the DNA Beta Waitlist
           </DialogTitle>
           <p className={`text-gray-600 ${isMobile ? 'text-xs' : 'text-sm'} leading-relaxed`}>
-            Be the first to connect with the global African diaspora community.
+            Be among the first to connect, collaborate, and contribute with Africa's global diaspora.
           </p>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className={`space-y-${isMobile ? '3' : '4'} ${isMobile ? 'mt-4' : 'mt-6'}`}>
           <div>
-            <Label htmlFor="full_name" className={`flex items-center gap-2 ${isMobile ? 'text-sm' : ''}`}>
-              <Users className="h-4 w-4 text-dna-emerald" />
-              Full Name *
+            <Label htmlFor="fullName" className={`${isMobile ? 'text-sm' : ''}`}>
+              Full Name
             </Label>
             <Input
-              id="full_name"
-              value={formData.full_name}
-              onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
-              placeholder="Your full name"
+              id="fullName"
+              name="fullName"
+              value={formData.fullName}
+              onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+              placeholder="Your first and last name"
               required
               className={isMobile ? 'text-sm' : ''}
             />
           </div>
 
           <div>
-            <Label htmlFor="email" className={`flex items-center gap-2 ${isMobile ? 'text-sm' : ''}`}>
-              <Mail className="h-4 w-4 text-dna-emerald" />
-              Email Address *
+            <Label htmlFor="email" className={`${isMobile ? 'text-sm' : ''}`}>
+              Email Address
             </Label>
             <Input
               id="email"
+              name="email"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              placeholder="your.email@example.com"
+              placeholder="you@example.com"
               required
               className={isMobile ? 'text-sm' : ''}
             />
           </div>
 
-          <ComprehensiveLocationInput
-            id="location"
-            label="Location"
-            value={formData.location}
-            onChange={(value) => setFormData(prev => ({ ...prev, location: value }))}
-            placeholder="City, State/Province, Country"
-            required={false}
-            icon={true}
-          />
-
-          <div className={`bg-dna-emerald/5 ${isMobile ? 'p-3' : 'p-4'} rounded-lg border border-dna-emerald/20`}>
-            <h4 className={`font-semibold text-dna-forest ${isMobile ? 'text-sm mb-1.5' : 'mb-2'}`}>What you'll get:</h4>
-            <ul className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-600 space-y-1`}>
-              <li>• Early access to the DNA platform</li>
-              <li>• Updates on platform development</li>
-              <li>• Exclusive community events</li>
-              <li>• Shape the future of diaspora networking</li>
-            </ul>
+          <div>
+            <Label htmlFor="location" className={`${isMobile ? 'text-sm' : ''}`}>
+              Location (City, Country)
+            </Label>
+            <Input
+              id="location"
+              name="location"
+              value={formData.location}
+              onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+              placeholder="e.g., Los Angeles, USA"
+              required
+              className={isMobile ? 'text-sm' : ''}
+            />
           </div>
 
           <div className={`flex ${isMobile ? 'flex-col space-y-2' : 'space-x-3'} ${isMobile ? 'pt-3' : 'pt-4'}`}>
@@ -175,14 +156,14 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
               onClick={onClose}
               className={`${isMobile ? 'w-full text-sm py-2' : 'flex-1'}`}
             >
-              Maybe Later
+              Cancel
             </Button>
             <Button 
               type="submit" 
               className={`${isMobile ? 'w-full text-sm py-2' : 'flex-1'} bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white`}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Joining...' : 'Join Waitlist'}
+              {isSubmitting ? 'Joining...' : 'Join the Waitlist'}
             </Button>
           </div>
         </form>
