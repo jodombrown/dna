@@ -28,14 +28,14 @@ const TimelineDialog: React.FC<TimelineDialogProps> = ({
       {/* Isolated floating close button - completely separate from dialog content */}
       {isOpen && (
         <div className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] z-[10001] pointer-events-none">
-          <div className="relative sm:w-[700px] w-full">
-            <button
-              onClick={() => onOpenChange(false)}
-              className="absolute -top-6 -right-6 w-12 h-12 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-xl pointer-events-auto"
-              aria-label="Close dialog"
-            >
-              <X className="w-6 h-6" />
-            </button>
+        <div className="relative sm:w-[700px] w-full">
+          <button
+            onClick={() => onOpenChange(false)}
+            className="absolute -top-6 right-0 w-12 h-12 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-xl pointer-events-auto"
+            aria-label="Close dialog"
+          >
+            <X className="w-6 h-6" />
+          </button>
           </div>
         </div>
       )}
