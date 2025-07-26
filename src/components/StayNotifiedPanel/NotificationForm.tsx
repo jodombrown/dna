@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { sanitizeText, isValidLinkedInUrl, isRateLimited } from '@/utils/validation';
+import { getGenericErrorMessage } from '@/utils/errorHandling';
 
 interface NotificationFormProps {
   onClose: () => void;
@@ -18,33 +20,52 @@ const NotificationForm: React.FC<NotificationFormProps> = ({ onClose }) => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lastSubmission, setLastSubmission] = useState(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.email.trim()) {
+    // Rate limiting check
+    if (isRateLimited(lastSubmission, 5000)) {
+      toast.error('Please wait a moment before submitting again');
+      return;
+    }
+
+    // Sanitize and validate inputs
+    const sanitizedName = sanitizeText(formData.name.trim());
+    const sanitizedEmail = sanitizeText(formData.email.trim());
+    const sanitizedMessage = sanitizeText(formData.message);
+    const sanitizedLinkedIn = sanitizeText(formData.linkedin_url);
+
+    if (!sanitizedName || !sanitizedEmail) {
       toast.error('Please fill in your name and email');
       return;
     }
 
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    if (!/\S+@\S+\.\S+/.test(sanitizedEmail)) {
       toast.error('Please enter a valid email address');
       return;
     }
 
+    if (sanitizedLinkedIn && !isValidLinkedInUrl(sanitizedLinkedIn)) {
+      toast.error('Please enter a valid LinkedIn profile URL');
+      return;
+    }
+
     setIsSubmitting(true);
+    setLastSubmission(Date.now());
 
     try {
       const { data, error } = await supabase.functions.invoke('send-universal-email', {
         body: {
           formType: 'contact',
           formData: {
-            name: formData.name,
-            email: formData.email,
-            message: formData.message || 'I would like to stay notified about the DNA platform launch.',
-            linkedin_url: formData.linkedin_url
+            name: sanitizedName,
+            email: sanitizedEmail,
+            message: sanitizedMessage || 'I would like to stay notified about the DNA platform launch.',
+            linkedin_url: sanitizedLinkedIn
           },
-          userEmail: formData.email
+          userEmail: sanitizedEmail
         }
       });
 
@@ -62,7 +83,7 @@ const NotificationForm: React.FC<NotificationFormProps> = ({ onClose }) => {
       }
     } catch (error: any) {
       console.error('Email submission error:', error);
-      toast.error('Failed to send email. Please try again.');
+      toast.error(getGenericErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }

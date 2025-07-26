@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { sanitizeText, isValidLinkedInUrl, isRateLimited } from '@/utils/validation';
+import { getGenericErrorMessage } from '@/utils/errorHandling';
 
 const SimpleEmailForm = () => {
   const [formData, setFormData] = useState({
@@ -14,12 +16,29 @@ const SimpleEmailForm = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lastSubmission, setLastSubmission] = useState(0);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.email.trim()) {
+    // Rate limiting check
+    if (isRateLimited(lastSubmission, 5000)) {
+      toast({
+        title: "Too Many Requests",
+        description: "Please wait a moment before submitting again",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Sanitize and validate inputs
+    const sanitizedName = sanitizeText(formData.name.trim());
+    const sanitizedEmail = sanitizeText(formData.email.trim());
+    const sanitizedMessage = sanitizeText(formData.message);
+    const sanitizedLinkedIn = sanitizeText(formData.linkedin_url);
+
+    if (!sanitizedName || !sanitizedEmail) {
       toast({
         title: "Validation Error",
         description: "Please fill in your name and email",
@@ -28,7 +47,7 @@ const SimpleEmailForm = () => {
       return;
     }
 
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    if (!/\S+@\S+\.\S+/.test(sanitizedEmail)) {
       toast({
         title: "Invalid Email",
         description: "Please enter a valid email address",
@@ -37,19 +56,29 @@ const SimpleEmailForm = () => {
       return;
     }
 
+    if (sanitizedLinkedIn && !isValidLinkedInUrl(sanitizedLinkedIn)) {
+      toast({
+        title: "Invalid LinkedIn URL",
+        description: "Please enter a valid LinkedIn profile URL",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
+    setLastSubmission(Date.now());
 
     try {
       const { data, error } = await supabase.functions.invoke('send-universal-email', {
         body: {
           formType: 'contact',
           formData: {
-            name: formData.name,
-            email: formData.email,
-            message: formData.message || 'I would like to join the DNA platform.',
-            linkedin_url: formData.linkedin_url
+            name: sanitizedName,
+            email: sanitizedEmail,
+            message: sanitizedMessage || 'I would like to join the DNA platform.',
+            linkedin_url: sanitizedLinkedIn
           },
-          userEmail: formData.email
+          userEmail: sanitizedEmail
         }
       });
 
@@ -68,7 +97,7 @@ const SimpleEmailForm = () => {
       console.error('Email submission error:', error);
       toast({
         title: "Error",
-        description: "Failed to send email. Please try again.",
+        description: getGenericErrorMessage(error),
         variant: "destructive",
       });
     } finally {

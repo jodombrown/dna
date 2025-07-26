@@ -15,6 +15,45 @@ interface UniversalEmailRequest {
   userEmail?: string;
 }
 
+// Enhanced input validation and sanitization
+const sanitizeInput = (input: string): string => {
+  if (!input) return '';
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .replace(/[<>]/g, '')
+    .trim();
+};
+
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const validateFormData = (formData: any): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  if (!formData.name || sanitizeInput(formData.name).length === 0) {
+    errors.push('Name is required');
+  }
+  
+  if (!formData.email || !validateEmail(sanitizeInput(formData.email))) {
+    errors.push('Valid email is required');
+  }
+  
+  if (formData.name && sanitizeInput(formData.name).length > 100) {
+    errors.push('Name too long');
+  }
+  
+  if (formData.message && sanitizeInput(formData.message).length > 1000) {
+    errors.push('Message too long');
+  }
+  
+  return { isValid: errors.length === 0, errors };
+};
+
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -24,6 +63,31 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { formType, formData, userEmail }: UniversalEmailRequest = await req.json();
     
+    // Validate and sanitize form data
+    const validation = validateFormData(formData);
+    if (!validation.isValid) {
+      return new Response(
+        JSON.stringify({ error: `Validation failed: ${validation.errors.join(', ')}` }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    // Sanitize all form inputs
+    const sanitizedFormData = {
+      ...formData,
+      name: sanitizeInput(formData.name),
+      email: sanitizeInput(formData.email),
+      message: sanitizeInput(formData.message || ''),
+      company: sanitizeInput(formData.company || ''),
+      role: sanitizeInput(formData.role || ''),
+      experience: sanitizeInput(formData.experience || ''),
+      motivation: sanitizeInput(formData.motivation || ''),
+      linkedin_url: sanitizeInput(formData.linkedin_url || '')
+    };
+    
     // Initialize email service
     const emailService = new EmailService({
       resendApiKey: Deno.env.get("RESEND_API_KEY")!,
@@ -31,8 +95,8 @@ const handler = async (req: Request): Promise<Response> => {
       adminEmail: "aweh@diasporanetwork.africa"
     });
 
-    // Get email content based on form type
-    const emailContent = getEmailContent(formType, formData);
+    // Get email content based on form type using sanitized data
+    const emailContent = getEmailContent(formType, sanitizedFormData);
 
     // Send email to admin
     const adminEmailResponse = await emailService.sendAdminEmail(emailContent);
@@ -40,8 +104,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send confirmation email to user if email provided
     let userEmailResponse = null;
-    if (userEmail) {
-      userEmailResponse = await emailService.sendUserConfirmationEmail(userEmail, emailContent);
+    if (userEmail && validateEmail(sanitizeInput(userEmail))) {
+      userEmailResponse = await emailService.sendUserConfirmationEmail(sanitizeInput(userEmail), emailContent);
       console.log("User confirmation email sent successfully:", userEmailResponse);
     }
 

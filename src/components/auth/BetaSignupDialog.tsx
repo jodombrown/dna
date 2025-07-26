@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { sanitizeText, isRateLimited } from '@/utils/validation';
+import { getGenericErrorMessage } from '@/utils/errorHandling';
 import { Users, Rocket, Target, Eye, EyeOff } from 'lucide-react';
 
 interface BetaSignupDialogProps {
@@ -29,6 +31,7 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lastSubmission, setLastSubmission] = useState(0);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -62,7 +65,28 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.email || !formData.betaPhase) {
+    // Rate limiting check
+    if (isRateLimited(lastSubmission, 10000)) {
+      toast({
+        title: "Too Many Requests",
+        description: "Please wait a moment before submitting again",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Sanitize inputs
+    const sanitizedData = {
+      name: sanitizeText(formData.name.trim()),
+      email: sanitizeText(formData.email.trim()),
+      company: sanitizeText(formData.company),
+      role: sanitizeText(formData.role),
+      experience: sanitizeText(formData.experience),
+      motivation: sanitizeText(formData.motivation),
+      betaPhase: formData.betaPhase
+    };
+    
+    if (!sanitizedData.name || !sanitizedData.email || !sanitizedData.betaPhase) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -71,7 +95,17 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
       return;
     }
 
+    if (!/\S+@\S+\.\S+/.test(sanitizedData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
+    setLastSubmission(Date.now());
 
     try {
       // Submit beta application (no account creation yet)
@@ -79,13 +113,13 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
         .from('beta_applications')
         .insert([
           {
-            name: formData.name,
-            email: formData.email,
-            company: formData.company,
-            role: formData.role,
-            beta_phase: formData.betaPhase,
-            experience: formData.experience,
-            motivation: formData.motivation
+            name: sanitizedData.name,
+            email: sanitizedData.email,
+            company: sanitizedData.company,
+            role: sanitizedData.role,
+            beta_phase: sanitizedData.betaPhase,
+            experience: sanitizedData.experience,
+            motivation: sanitizedData.motivation
           }
         ]);
 
@@ -107,10 +141,10 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
         body: {
           formType: 'beta-application',
           formData: {
-            ...formData,
-            selectedPhase: betaPhases.find(phase => phase.id === formData.betaPhase)?.title || formData.betaPhase
+            ...sanitizedData,
+            selectedPhase: betaPhases.find(phase => phase.id === sanitizedData.betaPhase)?.title || sanitizedData.betaPhase
           },
-          userEmail: formData.email
+          userEmail: sanitizedData.email
         }
       });
 
@@ -141,7 +175,7 @@ const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onClose }) 
       console.error('Beta application error:', error);
       toast({
         title: "Application Failed",
-        description: error.message || "Please try again later or contact us directly.",
+        description: getGenericErrorMessage(error),
         variant: "destructive",
       });
     } finally {
