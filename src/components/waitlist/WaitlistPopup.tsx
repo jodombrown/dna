@@ -84,93 +84,92 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollPr
       <DialogContent 
         className={`${
           isMobile 
-            ? "w-[92vw] max-w-[360px] h-[85vh] max-h-[600px] mx-2 my-4 p-4 overflow-y-auto" 
+            ? "w-[92vw] max-w-[360px] h-auto max-h-[85vh] mx-2 my-4 p-4 overflow-y-auto" 
             : "max-w-lg w-full mx-4"
-        } transition-all duration-300 ease-out`}
-        style={{
-          opacity: isOpen ? opacity : 0,
-          transform: `translateY(${isOpen ? translateY : 20}px)`,
-        }}
+        } z-50 bg-white`}
+        aria-describedby="waitlist-description"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg"></div>
         <DialogHeader className="text-center space-y-3 relative z-10">
           <DialogTitle className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-dna-forest`}>
             Join the DNA Beta Waitlist
           </DialogTitle>
-          <p className={`text-gray-600 ${isMobile ? 'text-xs' : 'text-sm'} leading-relaxed`}>
+          <p id="waitlist-description" className={`text-gray-600 ${isMobile ? 'text-xs' : 'text-sm'} leading-relaxed`}>
             Be among the first to connect, collaborate, and contribute with Africa's global diaspora.
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className={`space-y-${isMobile ? '3' : '4'} ${isMobile ? 'mt-4' : 'mt-6'}`}>
-          <div>
-            <Label htmlFor="fullName" className={`${isMobile ? 'text-sm' : ''}`}>
-              Full Name
-            </Label>
-            <Input
-              id="fullName"
-              name="fullName"
-              value={formData.fullName}
-              onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-              placeholder="Your first and last name"
-              required
-              className={isMobile ? 'text-sm' : ''}
-            />
-          </div>
+        <div className="relative z-10">
+          <form onSubmit={handleSubmit} className={`space-y-${isMobile ? '3' : '4'} ${isMobile ? 'mt-4' : 'mt-6'}`}>
+            <div>
+              <Label htmlFor="fullName" className={`${isMobile ? 'text-sm' : ''}`}>
+                Full Name
+              </Label>
+              <Input
+                id="fullName"
+                name="fullName"
+                value={formData.fullName}
+                onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                placeholder="Your first and last name"
+                required
+                className={isMobile ? 'text-sm' : ''}
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="email" className={`${isMobile ? 'text-sm' : ''}`}>
-              Email Address
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              placeholder="you@example.com"
-              required
-              className={isMobile ? 'text-sm' : ''}
-            />
-          </div>
+            <div>
+              <Label htmlFor="email" className={`${isMobile ? 'text-sm' : ''}`}>
+                Email Address
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                placeholder="you@example.com"
+                required
+                className={isMobile ? 'text-sm' : ''}
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="location" className={`${isMobile ? 'text-sm' : ''}`}>
-              Location (City, Country)
-            </Label>
-            <Input
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-              placeholder="e.g., Los Angeles, USA"
-              required
-              className={isMobile ? 'text-sm' : ''}
-            />
-          </div>
+            <div>
+              <Label htmlFor="location" className={`${isMobile ? 'text-sm' : ''}`}>
+                Location (City, Country)
+              </Label>
+              <Input
+                id="location"
+                name="location"
+                value={formData.location}
+                onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                placeholder="e.g., Los Angeles, USA"
+                required
+                className={isMobile ? 'text-sm' : ''}
+              />
+            </div>
 
-          <div className={`flex ${isMobile ? 'flex-col space-y-2' : 'space-x-3'} ${isMobile ? 'pt-3' : 'pt-4'}`}>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={onClose}
-              className={`${isMobile ? 'w-full text-sm py-2' : 'flex-1'}`}
-            >
-              Cancel
-            </Button>
-            <Button 
-              type="submit" 
-              className={`${isMobile ? 'w-full text-sm py-2' : 'flex-1'} bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white`}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Joining...' : 'Join the Waitlist'}
-            </Button>
-          </div>
-        </form>
+            <div className={`flex ${isMobile ? 'flex-col space-y-2' : 'space-x-3'} ${isMobile ? 'pt-3' : 'pt-4'}`}>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onClose}
+                className={`${isMobile ? 'w-full text-sm py-2' : 'flex-1'}`}
+              >
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                className={`${isMobile ? 'w-full text-sm py-2' : 'flex-1'} bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white`}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Joining...' : 'Join the Waitlist'}
+              </Button>
+            </div>
+          </form>
 
-        <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-500 text-center ${isMobile ? 'mt-3' : 'mt-4'}`}>
-          We respect your privacy. Your information will only be used to notify you about DNA platform updates.
-        </p>
+          <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-500 text-center ${isMobile ? 'mt-3' : 'mt-4'}`}>
+            We respect your privacy. Your information will only be used to notify you about DNA platform updates.
+          </p>
+        </div>
       </DialogContent>
     </Dialog>
   );
