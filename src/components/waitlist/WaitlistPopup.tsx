@@ -91,9 +91,18 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
         isMobile 
           ? "w-[92vw] max-w-[360px] mx-2" 
           : "max-w-lg w-full mx-4"
-        } bg-white rounded-lg shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto animate-scale-in`}
+        } bg-white rounded-xl border-2 border-gray-200/50 max-h-[90vh] overflow-y-auto animate-scale-in`}
         style={{
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+          boxShadow: `
+            0 32px 64px -12px rgba(0, 0, 0, 0.4),
+            0 18px 36px -18px rgba(0, 0, 0, 0.3),
+            0 8px 16px -8px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.6),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+            inset 1px 0 0 rgba(255, 255, 255, 0.3),
+            inset -1px 0 0 rgba(0, 0, 0, 0.05)
+          `,
+          background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)'
         }}
       >
         
