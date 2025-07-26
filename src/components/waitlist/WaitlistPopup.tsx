@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import PrivacyPolicyModal from '@/components/legal/PrivacyPolicyModal';
+import TermsOfServiceModal from '@/components/legal/TermsOfServiceModal';
 
 interface WaitlistPopupProps {
   isOpen: boolean;
@@ -20,6 +21,8 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
     location: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
@@ -180,10 +183,38 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
           </form>
 
           <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-500 text-center ${isMobile ? 'mt-3' : 'mt-4'}`}>
-            We respect your privacy. Your information will only be used to notify you about DNA platform updates.
+            We respect your{' '}
+            <button 
+              type="button"
+              onClick={() => setShowPrivacyModal(true)}
+              className="text-dna-emerald hover:text-dna-forest underline hover:no-underline transition-colors duration-200"
+            >
+              privacy
+            </button>
+            . Your information will only be used to notify you about DNA platform updates.
+            <br />
+            By joining, you agree to our{' '}
+            <button 
+              type="button"
+              onClick={() => setShowTermsModal(true)}
+              className="text-dna-emerald hover:text-dna-forest underline hover:no-underline transition-colors duration-200"
+            >
+              Terms of Service
+            </button>
+            .
           </p>
         </div>
       </div>
+
+      {/* Legal Modals */}
+      <PrivacyPolicyModal 
+        isOpen={showPrivacyModal} 
+        onClose={() => setShowPrivacyModal(false)} 
+      />
+      <TermsOfServiceModal 
+        isOpen={showTermsModal} 
+        onClose={() => setShowTermsModal(false)} 
+      />
     </div>
   );
 };
