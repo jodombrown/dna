@@ -75,9 +75,9 @@ const DIASPORA_COMMUNITIES = [
 
 const DIASPORA_ORIGINS = [
   ...AFRICAN_COUNTRIES.sort(),
-  { label: '--- Diaspora Communities ---', value: '', disabled: true },
+  { label: '--- Diaspora Communities ---', value: 'section-diaspora', disabled: true },
   ...DIASPORA_COMMUNITIES.sort(),
-  { label: '--- Other ---', value: '', disabled: true },
+  { label: '--- Other ---', value: 'section-other', disabled: true },
   'Mixed African Heritage',
   'Prefer not to specify',
   'Other'
@@ -166,7 +166,7 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
                     key={index} 
                     value={origin.value} 
                     disabled={origin.disabled}
-                    className="font-semibold text-gray-500 bg-gray-50"
+                    className="font-semibold text-gray-500 bg-gray-50 cursor-default"
                   >
                     {origin.label}
                   </SelectItem>

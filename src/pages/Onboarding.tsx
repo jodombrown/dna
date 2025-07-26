@@ -74,7 +74,9 @@ const Onboarding = () => {
   const canProceedToNext = () => {
     switch (currentStep) {
       case 0: // Identity
-        return formData.full_name && formData.display_name && formData.diaspora_origin && formData.gender;
+        return formData.full_name && formData.display_name && formData.diaspora_origin && 
+               formData.diaspora_origin !== 'section-diaspora' && formData.diaspora_origin !== 'section-other' && 
+               formData.gender;
       case 1: // Professional
         return formData.current_role && formData.company && formData.industry;
       case 2: // Goals
