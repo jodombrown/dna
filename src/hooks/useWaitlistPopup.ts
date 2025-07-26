@@ -50,6 +50,14 @@ export const useWaitlistPopup = () => {
       const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
       const scrollPercentage = (scrollTop / documentHeight) * 100;
       
+      // Debug logging
+      console.log('Scroll debug:', {
+        scrollTop,
+        documentHeight: document.documentElement.scrollHeight,
+        windowHeight: window.innerHeight,
+        scrollPercentage: scrollPercentage.toFixed(1)
+      });
+      
       // Update scroll progress for smooth animation
       setScrollProgress(scrollPercentage);
       
@@ -57,7 +65,15 @@ export const useWaitlistPopup = () => {
       const isMobile = window.innerWidth < 768;
       const triggerPercentage = isMobile ? 100 : 80;
       
+      console.log('Trigger check:', {
+        isMobile,
+        triggerPercentage,
+        currentPercentage: scrollPercentage,
+        shouldTrigger: scrollPercentage >= triggerPercentage
+      });
+      
       if (scrollPercentage >= triggerPercentage) {
+        console.log('Triggering waitlist popup!');
         setShowWaitlistPopup(true);
         localStorage.setItem('dna_waitlist_last_shown', Date.now().toString());
         window.removeEventListener('scroll', handleScroll);
