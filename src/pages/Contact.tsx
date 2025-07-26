@@ -153,7 +153,7 @@ const Contact = () => {
                 onClick={method.onClick}
               >
                 <CardContent className="p-6 text-center">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${method.component === 'waitlist' ? 'bg-gray-100 text-dna-emerald animate-pulse' : 'bg-dna-emerald/10 text-dna-emerald'}`}>
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${method.component === 'waitlist' ? 'bg-gradient-to-br from-dna-emerald to-dna-copper text-white animate-pulse' : 'bg-dna-emerald/10 text-dna-emerald'}`}>
                     {method.icon}
                   </div>
                   <h3 className="text-lg font-bold text-dna-forest mb-2">{method.title}</h3>
