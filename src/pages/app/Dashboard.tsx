@@ -6,6 +6,7 @@ import { PillarMainContent } from '@/components/linkedin/PillarMainContent';
 import CommunityFeed from '@/components/community/CommunityFeed';
 import { ConnectSidebar, ContributeSidebar, DiscoverySidebar } from '@/components/linkedin/ThreePillarSidebars';
 import { CollaborateSidebar } from '@/components/linkedin/CollaborateSidebar';
+import SearchMainContent from '@/components/linkedin/SearchMainContent';
 import NetworkMainContent from '@/components/linkedin/NetworkMainContent';
 import MessagingMainContent from '@/components/linkedin/MessagingMainContent';
 import NotificationsMainContent from '@/components/linkedin/NotificationsMainContent';
@@ -50,7 +51,7 @@ const Dashboard = () => {
 
   const mainContent = (
     <div className="space-y-4">
-      {activeView === 'search' && <div className="p-8 text-center text-gray-500">Search functionality coming soon...</div>}
+      {activeView === 'search' && <SearchMainContent />}
       {activeView === 'network' && <NetworkMainContent />}
       {activeView === 'messaging' && <MessagingMainContent />}
       {activeView === 'notifications' && <NotificationsMainContent />}
