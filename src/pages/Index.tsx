@@ -12,7 +12,7 @@ import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
 
 const Index = () => {
   useScrollToTop();
-  const { showWaitlistPopup, scrollProgress, closeWaitlistPopup } = useWaitlistPopup();
+  const { showWaitlistPopup, closeWaitlistPopup } = useWaitlistPopup();
 
   return (
     <div className="min-h-screen bg-white">
@@ -36,7 +36,6 @@ const Index = () => {
       <WaitlistPopup 
         isOpen={showWaitlistPopup}
         onClose={closeWaitlistPopup}
-        scrollProgress={scrollProgress}
       />
     </div>
   );
