@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import LinkedInLayout from '@/components/linkedin/LinkedInLayout';
 import ProfileCard from '@/components/linkedin/ProfileCard';
-import PostComposer from '@/components/linkedin/PostComposer';
+import { PillarMainContent } from '@/components/linkedin/PillarMainContent';
 import CommunityFeed from '@/components/community/CommunityFeed';
 import { ConnectSidebar, ContributeSidebar, DiscoverySidebar } from '@/components/linkedin/ThreePillarSidebars';
 import { CollaborateSidebar } from '@/components/linkedin/CollaborateSidebar';
@@ -40,8 +40,7 @@ const Dashboard = () => {
 
   const mainContent = (
     <div className="space-y-4">
-      <PostComposer />
-      <CommunityFeed />
+      <PillarMainContent activePillar={activePillar} />
     </div>
   );
 
