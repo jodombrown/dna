@@ -22,7 +22,7 @@ const STEPS = [
 ];
 
 const Onboarding = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
@@ -131,6 +131,9 @@ const Onboarding = () => {
         .upsert(profileData, { onConflict: 'id' });
 
       if (error) throw error;
+
+      // Refresh the profile to get the updated data
+      await refreshProfile();
 
       toast({
         title: "Welcome to DNA!",
