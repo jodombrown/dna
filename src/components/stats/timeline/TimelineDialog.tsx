@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { TimelineDataItem } from './timelineData';
 
 interface TimelineDialogProps {
@@ -25,16 +25,7 @@ const TimelineDialog: React.FC<TimelineDialogProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto relative">
-        {/* Floating X Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onOpenChange(false)}
-          className="absolute top-4 right-4 z-50 h-8 w-8 p-0 hover:bg-gray-100 rounded-full"
-        >
-          <X className="h-4 w-4" />
-        </Button>
+      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <div className="text-center">
             <DialogTitle className="text-2xl font-bold text-dna-forest">
