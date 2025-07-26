@@ -12,9 +12,10 @@ import { useIsMobile } from '@/hooks/use-mobile';
 interface WaitlistPopupProps {
   isOpen: boolean;
   onClose: () => void;
+  scrollProgress?: number;
 }
 
-const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
+const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose, scrollProgress = 0 }) => {
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
@@ -83,13 +84,25 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  // Calculate smooth opacity and transform based on scroll progress
+  const isMobile_check = window.innerWidth < 768;
+  const triggerPercentage = isMobile_check ? 100 : 80;
+  const opacity = Math.min(1, Math.max(0, (scrollProgress - (triggerPercentage - 20)) / 20));
+  const translateY = Math.max(0, (1 - opacity) * 20);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${
-        isMobile 
-          ? "w-[92vw] max-w-[360px] h-[85vh] max-h-[600px] mx-2 my-4 p-4 overflow-y-auto" 
-          : "max-w-lg w-full mx-4"
-      }`}>
+      <DialogContent 
+        className={`${
+          isMobile 
+            ? "w-[92vw] max-w-[360px] h-[85vh] max-h-[600px] mx-2 my-4 p-4 overflow-y-auto" 
+            : "max-w-lg w-full mx-4"
+        } transition-all duration-300 ease-out`}
+        style={{
+          opacity: isOpen ? opacity : 0,
+          transform: `translateY(${isOpen ? translateY : 20}px)`,
+        }}
+      >
         <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg"></div>
         <DialogHeader className="text-center space-y-3 relative z-10">
           <div className={`mx-auto ${isMobile ? 'w-12 h-12' : 'w-14 h-14'} bg-gradient-to-br from-dna-emerald to-dna-copper rounded-full flex items-center justify-center shadow-lg`}>

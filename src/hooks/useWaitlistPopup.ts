@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 export const useWaitlistPopup = () => {
   const [showWaitlistPopup, setShowWaitlistPopup] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const location = useLocation();
 
   useEffect(() => {
@@ -43,11 +44,14 @@ export const useWaitlistPopup = () => {
       }
     }
 
-    // Scroll-based trigger
+    // Scroll-based trigger with smooth progress
     const handleScroll = () => {
       const scrollTop = window.pageYOffset;
       const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
       const scrollPercentage = (scrollTop / documentHeight) * 100;
+      
+      // Update scroll progress for smooth animation
+      setScrollProgress(scrollPercentage);
       
       // Check if mobile
       const isMobile = window.innerWidth < 768;
@@ -75,6 +79,7 @@ export const useWaitlistPopup = () => {
 
   return {
     showWaitlistPopup,
+    scrollProgress,
     closeWaitlistPopup,
     dismissWaitlistPopup
   };
