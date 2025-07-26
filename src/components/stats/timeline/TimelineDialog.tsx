@@ -25,10 +25,10 @@ const TimelineDialog: React.FC<TimelineDialogProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto pt-12">
-        {/* Custom close button positioned outside content area */}
-        <DialogClose className="absolute -top-2 -right-2 z-50 rounded-full bg-white border-2 border-gray-200 w-8 h-8 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-md">
-          <X className="w-4 h-4" />
+      <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto pt-6">
+        {/* Custom close button positioned fully on top of dialog */}
+        <DialogClose className="absolute -top-4 -right-4 z-50 rounded-full bg-white border-2 border-gray-200 w-10 h-10 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-lg">
+          <X className="w-5 h-5" />
         </DialogClose>
         
         <DialogHeader>
