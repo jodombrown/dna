@@ -91,7 +91,11 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
         isMobile 
           ? "w-[92vw] max-w-[360px] mx-2" 
           : "max-w-lg w-full mx-4"
-        } bg-white rounded-lg shadow-2xl p-6 max-h-[90vh] overflow-y-auto animate-scale-in`}>
+        } bg-white rounded-lg shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto animate-scale-in`}
+        style={{
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+        }}
+      >
         
         {/* Close Button */}
         <button
@@ -106,7 +110,7 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
         <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-dna-copper/5 to-dna-gold/10 rounded-lg"></div>
         
         {/* Content */}
-        <div className="relative z-10 pr-8">
+        <div className="relative z-10 p-6 pr-8">
           <div className="text-center space-y-3 mb-6">
             <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-dna-forest`}>
               Join the DNA Beta Waitlist

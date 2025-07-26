@@ -15,9 +15,10 @@ export const useWaitlistPopup = () => {
     // Check localStorage conditions
     const hasJoined = localStorage.getItem('dna_waitlist_joined');
     const hasDismissed = localStorage.getItem('dna_waitlist_dismissed');
+    const hasBeenShown = localStorage.getItem('dna_waitlist_shown');
     
-    if (hasJoined || hasDismissed) {
-      console.log('Waitlist popup blocked:', { hasJoined: !!hasJoined, hasDismissed: !!hasDismissed });
+    if (hasJoined || hasDismissed || hasBeenShown) {
+      console.log('Waitlist popup blocked:', { hasJoined: !!hasJoined, hasDismissed: !!hasDismissed, hasBeenShown: !!hasBeenShown });
       return;
     }
 
@@ -78,6 +79,8 @@ export const useWaitlistPopup = () => {
 
   const closeWaitlistPopup = () => {
     setShowWaitlistPopup(false);
+    // Mark as shown so it doesn't appear again
+    localStorage.setItem('dna_waitlist_shown', Date.now().toString());
   };
 
   const dismissWaitlistPopup = () => {
