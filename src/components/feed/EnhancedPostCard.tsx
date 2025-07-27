@@ -368,10 +368,10 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                  className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
                 >
                   <Smile className="h-4 w-4" />
-                  React
+                  <span className="text-lg">😊</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-2">
