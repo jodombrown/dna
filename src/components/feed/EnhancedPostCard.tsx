@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PostComments } from './PostComments';
 import { formatDistanceToNow } from 'date-fns';
 import { Heart, MessageCircle, Share2, MoreHorizontal, MapPin, Smile } from 'lucide-react';
@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRealtimeComments, useRealtimeReactions } from '@/hooks/useRealtimePosts';
 
 interface PostReaction {
   id: string;
@@ -57,6 +58,34 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
   const [userReactions, setUserReactions] = useState<string[]>([]);
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Handle realtime reactions
+  const handleRealtimeReaction = useCallback((reaction: any) => {
+    if (reaction.post_id === post.id) {
+      if (reaction._deleted) {
+        setReactions(prev => prev.filter(r => r.id !== reaction.id));
+      } else {
+        setReactions(prev => {
+          const exists = prev.some(r => r.id === reaction.id);
+          if (!exists) {
+            return [...prev, reaction];
+          }
+          return prev;
+        });
+      }
+    }
+  }, [post.id]);
+
+  // Handle realtime comments
+  const handleRealtimeComment = useCallback((comment: any) => {
+    if (comment.post_id === post.id) {
+      setCommentCount(prev => prev + 1);
+    }
+  }, [post.id]);
+
+  // Set up realtime subscriptions
+  useRealtimeReactions(handleRealtimeReaction);
+  useRealtimeComments(handleRealtimeComment);
 
   // Fetch reactions on component mount
   useEffect(() => {

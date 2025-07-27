@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { EnhancedPostCard } from './EnhancedPostCard';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRealtimePosts } from '@/hooks/useRealtimePosts';
 
 interface Post {
   id: string;
@@ -39,6 +40,24 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Handle new posts from realtime
+  const handleNewPost = useCallback((newPost: any) => {
+    // Only add posts that match the current pillar filter
+    if (pillar === 'feed' || newPost.pillar === pillar) {
+      setPosts(prevPosts => {
+        // Check if post already exists to avoid duplicates
+        const exists = prevPosts.some(post => post.id === newPost.id);
+        if (exists) return prevPosts;
+        
+        // Add the new post at the beginning
+        return [newPost, ...prevPosts];
+      });
+    }
+  }, [pillar]);
+
+  // Set up realtime subscription
+  useRealtimePosts(handleNewPost);
 
   const fetchPosts = async (isRefresh = false) => {
     try {
