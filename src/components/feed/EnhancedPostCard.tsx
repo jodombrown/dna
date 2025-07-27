@@ -59,33 +59,13 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
   const { user } = useAuth();
   const { toast } = useToast();
 
-  // Handle realtime reactions
-  const handleRealtimeReaction = useCallback((reaction: any) => {
-    if (reaction.post_id === post.id) {
-      if (reaction._deleted) {
-        setReactions(prev => prev.filter(r => r.id !== reaction.id));
-      } else {
-        setReactions(prev => {
-          const exists = prev.some(r => r.id === reaction.id);
-          if (!exists) {
-            return [...prev, reaction];
-          }
-          return prev;
-        });
-      }
-    }
-  }, [post.id]);
-
-  // Handle realtime comments
-  const handleRealtimeComment = useCallback((comment: any) => {
-    if (comment.post_id === post.id) {
-      setCommentCount(prev => prev + 1);
-    }
-  }, [post.id]);
-
-  // Set up realtime subscriptions
-  useRealtimeReactions(handleRealtimeReaction);
-  useRealtimeComments(handleRealtimeComment);
+  // Initialize post engagement data
+  useEffect(() => {
+    // Set initial state from props
+    setIsLiked(post.user_has_liked || false);
+    setLikeCount(post.like_count || 0);
+    setCommentCount(post.comment_count || 0);
+  }, [post.user_has_liked, post.like_count, post.comment_count]);
 
   // Fetch reactions on component mount
   useEffect(() => {

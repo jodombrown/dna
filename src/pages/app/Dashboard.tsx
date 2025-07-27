@@ -11,6 +11,7 @@ import MessagingMainContent from '@/components/linkedin/MessagingMainContent';
 import NotificationsMainContent from '@/components/linkedin/NotificationsMainContent';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDashboard } from '@/contexts/DashboardContext';
+import { SocialFeedProvider } from '@/contexts/SocialFeedContext';
 
 const Dashboard = () => {
   const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
@@ -80,11 +81,13 @@ const Dashboard = () => {
   );
 
   return (
-    <LinkedInLayout
-      leftSidebar={leftSidebar}
-      mainContent={mainContent}
-      rightSidebar={rightSidebar}
-    />
+    <SocialFeedProvider>
+      <LinkedInLayout
+        leftSidebar={leftSidebar}
+        mainContent={mainContent}
+        rightSidebar={rightSidebar}
+      />
+    </SocialFeedProvider>
   );
 };
 
