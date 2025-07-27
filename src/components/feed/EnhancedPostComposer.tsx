@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Image, Video, FileText, Send, X } from 'lucide-react';
+import { Image, Video, FileText, Send, X, Smile } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,6 +21,7 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
   onPostCreated 
 }) => {
   const [content, setContent] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [pillar, setPillar] = useState(defaultPillar);
   const [postType, setPostType] = useState<'text' | 'image' | 'video' | 'article'>('text');
   const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -176,6 +178,25 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
       .slice(0, 2);
   };
 
+  const insertEmoji = (emoji: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const newContent = content.slice(0, start) + emoji + content.slice(end);
+    
+    setContent(newContent);
+    
+    // Set cursor position after emoji
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + emoji.length, start + emoji.length);
+    }, 0);
+  };
+
+  const EMOJI_OPTIONS = ['😊', '❤️', '🎉', '👍', '🔥', '💡', '🚀', '✨', '👏', '🌟', '💪', '🎯'];
+
   if (!user) {
     return (
       <Card className="bg-background border-border">
@@ -220,6 +241,7 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
             </div>
 
             <Textarea
+              ref={textareaRef}
               placeholder="What's on your mind?"
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -309,6 +331,34 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
                   <FileText className="h-4 w-4 mr-1" />
                   Article
                 </Button>
+
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <Smile className="h-4 w-4 mr-1" />
+                      Emoji
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-2">
+                    <div className="grid grid-cols-6 gap-1">
+                      {EMOJI_OPTIONS.map((emoji) => (
+                        <Button
+                          key={emoji}
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => insertEmoji(emoji)}
+                          className="p-2 h-auto hover:bg-muted"
+                        >
+                          <span className="text-lg">{emoji}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <Button 
