@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { EnhancedPostCard } from './EnhancedPostCard';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRealtimePosts } from '@/hooks/useRealtimePosts';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 interface Post {
   id: string;
@@ -41,6 +42,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const parentRef = useRef<HTMLDivElement>(null);
 
   // Handle new posts from realtime - add to newPosts instead of directly to posts
   const handleNewPost = useCallback((newPost: any) => {
@@ -65,6 +67,14 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
 
   // Set up realtime subscription
   useRealtimePosts(handleNewPost);
+
+  // Set up virtual scrolling
+  const rowVirtualizer = useVirtualizer({
+    count: posts.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 200, // Estimated height per post card
+    overscan: 5, // Render 5 items outside visible area for smooth scrolling
+  });
 
   const fetchPosts = async (isRefresh = false) => {
     try {
@@ -258,17 +268,48 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
         </Button>
       )}
 
-      {/* Posts list */}
-      <div className="space-y-4">
-        {posts.map((post) => (
-          <EnhancedPostCard
-            key={post.id}
-            post={post}
-            onLike={handleLike}
-            onComment={handleComment}
-            onShare={handleShare}
-          />
-        ))}
+      {/* Virtualized Posts List */}
+      <div 
+        ref={parentRef} 
+        className="overflow-y-auto h-[calc(100vh-280px)] scrollbar-thin"
+        style={{ contain: 'strict' }}
+      >
+        <div 
+          style={{ 
+            height: `${rowVirtualizer.getTotalSize()}px`, 
+            position: 'relative',
+            width: '100%'
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+            const post = posts[virtualRow.index];
+            if (!post) return null;
+            
+            return (
+              <div
+                key={post.id}
+                data-index={virtualRow.index}
+                ref={rowVirtualizer.measureElement}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  transform: `translateY(${virtualRow.start}px)`,
+                }}
+              >
+                <div className="pb-4">
+                  <EnhancedPostCard
+                    post={post}
+                    onLike={handleLike}
+                    onComment={handleComment}
+                    onShare={handleShare}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
