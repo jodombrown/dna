@@ -36,25 +36,32 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
   limit = 10 
 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [newPosts, setNewPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  // Handle new posts from realtime
+  // Handle new posts from realtime - add to newPosts instead of directly to posts
   const handleNewPost = useCallback((newPost: any) => {
     // Only add posts that match the current pillar filter
     if (pillar === 'feed' || newPost.pillar === pillar) {
-      setPosts(prevPosts => {
+      setNewPosts(prevNewPosts => {
         // Check if post already exists to avoid duplicates
-        const exists = prevPosts.some(post => post.id === newPost.id);
-        if (exists) return prevPosts;
+        const exists = prevNewPosts.some(post => post.id === newPost.id);
+        if (exists) return prevNewPosts;
         
-        // Add the new post at the beginning
-        return [newPost, ...prevPosts];
+        // Add the new post at the beginning of newPosts
+        return [newPost, ...prevNewPosts];
       });
     }
   }, [pillar]);
+
+  // Merge new posts into main feed
+  const mergeNewPosts = useCallback(() => {
+    setPosts(prevPosts => [...newPosts, ...prevPosts]);
+    setNewPosts([]);
+  }, [newPosts]);
 
   // Set up realtime subscription
   useRealtimePosts(handleNewPost);
@@ -239,6 +246,17 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
           <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
         </Button>
       </div>
+
+      {/* New posts notification */}
+      {newPosts.length > 0 && (
+        <Button
+          onClick={mergeNewPosts}
+          variant="outline"
+          className="w-full mb-4 bg-dna-mint/20 border-dna-mint hover:bg-dna-mint/30 text-dna-forest animate-pulse"
+        >
+          {newPosts.length} New Post{newPosts.length > 1 ? 's' : ''} – Click to View
+        </Button>
+      )}
 
       {/* Posts list */}
       <div className="space-y-4">
