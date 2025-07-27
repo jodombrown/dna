@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PostCard } from './PostCard';
+import { EnhancedPostCard } from './EnhancedPostCard';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -224,7 +224,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
       {/* Posts list */}
       <div className="space-y-4">
         {posts.map((post) => (
-          <PostCard
+          <EnhancedPostCard
             key={post.id}
             post={post}
             onLike={handleLike}
