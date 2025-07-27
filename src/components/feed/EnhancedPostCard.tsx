@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { PostComments } from './PostComments';
 import { formatDistanceToNow } from 'date-fns';
 import { Heart, MessageCircle, Share2, MoreHorizontal, MapPin, Smile } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -50,6 +51,7 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
 }) => {
   const [isLiked, setIsLiked] = useState(post.user_has_liked || false);
   const [likeCount, setLikeCount] = useState(post.like_count || 0);
+  const [commentCount, setCommentCount] = useState(post.comment_count || 0);
   const [isLiking, setIsLiking] = useState(false);
   const [reactions, setReactions] = useState<PostReaction[]>([]);
   const [userReactions, setUserReactions] = useState<string[]>([]);
@@ -95,7 +97,7 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
       const hasReacted = userReactions.includes(emoji);
 
       if (hasReacted) {
-        // Remove reaction
+        // Remove reaction using the unique constraint
         const { error } = await supabase
           .from('post_reactions')
           .delete()
@@ -108,13 +110,16 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
         setUserReactions(prev => prev.filter(e => e !== emoji));
         setReactions(prev => prev.filter(r => !(r.user_id === user.id && r.emoji === emoji)));
       } else {
-        // Add reaction
+        // Add reaction using upsert for efficiency
         const { data, error } = await supabase
           .from('post_reactions')
-          .insert({
+          .upsert({
             post_id: post.id,
             user_id: user.id,
             emoji: emoji,
+          }, { 
+            onConflict: 'post_id,user_id,emoji',
+            ignoreDuplicates: false 
           })
           .select()
           .single();
@@ -336,14 +341,14 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
         )}
 
         {/* Engagement Stats */}
-        {(likeCount > 0 || (post.comment_count && post.comment_count > 0)) && (
+        {(likeCount > 0 || commentCount > 0) && (
           <div className="flex items-center justify-between text-sm text-muted-foreground mb-3 pb-3 border-b">
             <div className="flex items-center gap-4">
               {likeCount > 0 && (
                 <span>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</span>
               )}
-              {post.comment_count && post.comment_count > 0 && (
-                <span>{post.comment_count} {post.comment_count === 1 ? 'comment' : 'comments'}</span>
+              {commentCount > 0 && (
+                <span>{commentCount} {commentCount === 1 ? 'comment' : 'comments'}</span>
               )}
             </div>
           </div>
@@ -416,6 +421,13 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
             Share
           </Button>
         </div>
+
+        {/* Comments Section */}
+        <PostComments 
+          postId={post.id} 
+          initialCount={commentCount}
+          onCommentCountChange={setCommentCount}
+        />
       </CardContent>
     </Card>
   );
