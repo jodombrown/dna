@@ -342,6 +342,7 @@ export type Database = {
           content: string
           created_at: string | null
           id: string
+          is_seeded: boolean | null
           parent_id: string | null
           post_id: string | null
           updated_at: string | null
@@ -351,6 +352,7 @@ export type Database = {
           content: string
           created_at?: string | null
           id?: string
+          is_seeded?: boolean | null
           parent_id?: string | null
           post_id?: string | null
           updated_at?: string | null
@@ -360,6 +362,7 @@ export type Database = {
           content?: string
           created_at?: string | null
           id?: string
+          is_seeded?: boolean | null
           parent_id?: string | null
           post_id?: string | null
           updated_at?: string | null
@@ -1437,18 +1440,21 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_seeded: boolean | null
           post_id: string
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
+          is_seeded?: boolean | null
           post_id: string
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
+          is_seeded?: boolean | null
           post_id?: string
           user_id?: string
         }
@@ -2329,6 +2335,10 @@ export type Database = {
       }
       remove_message_reaction: {
         Args: { p_message_id: string; p_user_id: string; p_reaction: string }
+        Returns: undefined
+      }
+      reset_seeded_data: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       update_adin_last_active: {
