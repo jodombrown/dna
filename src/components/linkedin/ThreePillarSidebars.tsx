@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, Handshake, Heart, TrendingUp, Calendar, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useDashboard } from '@/contexts/DashboardContext';
+import { metricsService } from '@/services/metricsService';
 
 // Connect Sidebar Component
 export const ConnectSidebar = () => {
@@ -175,6 +177,21 @@ export const ContributeSidebar = () => {
 
 // Discovery Sidebar Component (Right side - dynamic based on active pillar)
 export const DiscoverySidebar = ({ activePillar = 'connect' }: { activePillar?: string }) => {
+  const { setActiveView } = useDashboard();
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const platformStats = await metricsService.getPlatformMetrics();
+        setStats(platformStats);
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+    
+    fetchStats();
+  }, []);
   const trendingTopics = [
     { topic: "African Fintech", posts: "2.1k posts" },
     { topic: "Climate Tech", posts: "890 posts" },
@@ -317,27 +334,28 @@ export const DiscoverySidebar = ({ activePillar = 'connect' }: { activePillar?: 
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setActiveView('metrics')}>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm flex items-center gap-2">
             <MessageSquare className="w-4 h-4" />
             Community Pulse
+            <span className="text-xs text-gray-500 ml-auto">Click to explore</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="text-center p-3 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 rounded-lg">
-              <p className="text-2xl font-bold text-dna-forest">12.5k</p>
+            <div className="text-center p-3 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 rounded-lg hover:from-dna-emerald/20 hover:to-dna-copper/20 transition-colors">
+              <p className="text-2xl font-bold text-dna-forest">{stats?.activeUsersThisWeek?.toLocaleString() || '12.5k'}</p>
               <p className="text-xs text-gray-600">Active members this week</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <div className="text-center p-2 bg-dna-mint/20 rounded">
-                <p className="text-sm font-semibold text-dna-forest">348</p>
-                <p className="text-xs text-gray-600">New connections</p>
+              <div className="text-center p-2 bg-dna-mint/20 rounded hover:bg-dna-mint/30 transition-colors">
+                <p className="text-sm font-semibold text-dna-forest">{stats?.totalConnections?.toLocaleString() || '348'}</p>
+                <p className="text-xs text-gray-600">Total connections</p>
               </div>
-              <div className="text-center p-2 bg-dna-copper/20 rounded">
-                <p className="text-sm font-semibold text-dna-forest">89</p>
-                <p className="text-xs text-gray-600">New projects</p>
+              <div className="text-center p-2 bg-dna-copper/20 rounded hover:bg-dna-copper/30 transition-colors">
+                <p className="text-sm font-semibold text-dna-forest">{stats?.totalEvents?.toLocaleString() || '89'}</p>
+                <p className="text-xs text-gray-600">Events & projects</p>
               </div>
             </div>
           </div>
