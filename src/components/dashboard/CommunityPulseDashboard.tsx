@@ -6,6 +6,7 @@ import { useUserAchievements } from "@/stores/useUserAchievements";
 import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { Loader } from "@/components/ui/loader";
 import { SeedDataManager } from "@/components/admin/SeedDataManager";
+import FeatureFlagsManager from "@/components/admin/FeatureFlagsManager";
 import { MilestoneBanner } from "./MilestoneBanner";
 import { ScoreBreakdownCard } from "./ScoreBreakdownCard";
 import { cn } from "@/lib/utils";
@@ -110,7 +111,16 @@ export default function CommunityPulseDashboard() {
       {isAdmin && (
         <Collapsible open={adminPanelOpen} onOpenChange={setAdminPanelOpen}>
           <CollapsibleContent>
-            <SeedDataManager onDataReset={handleRefresh} />
+            <div className="mt-4 space-y-4">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <h3 className="text-lg font-semibold mb-4">Feature Flags</h3>
+                <FeatureFlagsManager />
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <h3 className="text-lg font-semibold mb-4">Development Tools</h3>
+                <SeedDataManager onDataReset={handleRefresh} />
+              </div>
+            </div>
           </CollapsibleContent>
         </Collapsible>
       )}

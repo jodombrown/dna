@@ -966,6 +966,30 @@ export type Database = {
           },
         ]
       }
+      feature_flags: {
+        Row: {
+          created_at: string
+          feature_key: string
+          is_enabled: boolean
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          feature_key: string
+          is_enabled?: boolean
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          feature_key?: string
+          is_enabled?: boolean
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       form_submissions: {
         Row: {
           created_at: string | null
