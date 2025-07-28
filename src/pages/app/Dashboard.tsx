@@ -58,20 +58,31 @@ const Dashboard = () => {
     </div>
   );
 
-  const mainContent = (
-    <div className="space-y-4">
-      {activeView === 'search' && <SearchMainContent />}
-      {activeView === 'network' && <NetworkMainContent />}
-      {activeView === 'messaging' && <MessagingMainContent />}
-      {activeView === 'notifications' && <NotificationsMainContent />}
-      {activeView === 'community_pulse' && <CommunityPulseDashboard />}
-      {activeView === 'dashboard' && (
-        activePillar === 'feed' ? (
+  const renderMainContent = () => {
+    switch (activeView) {
+      case 'community_pulse':
+        return <CommunityPulseDashboard />;
+      case 'search':
+        return <SearchMainContent />;
+      case 'network':
+        return <NetworkMainContent />;
+      case 'messaging':
+        return <MessagingMainContent />;
+      case 'notifications':
+        return <NotificationsMainContent />;
+      case 'dashboard':
+      default:
+        return activePillar === 'feed' ? (
           <CommunityFeed />
         ) : (
           <PillarMainContent activePillar={activePillar} />
-        )
-      )}
+        );
+    }
+  };
+
+  const mainContent = (
+    <div className="space-y-4">
+      {renderMainContent()}
     </div>
   );
 
