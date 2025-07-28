@@ -6,9 +6,14 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { seedDataService } from '@/services/seedDataService';
+import { supabase } from '@/integrations/supabase/client';
 import { Download, Upload, Trash2, Database } from 'lucide-react';
 
-export const SeedDataManager = () => {
+interface SeedDataManagerProps {
+  onDataReset?: () => void;
+}
+
+export const SeedDataManager = ({ onDataReset }: SeedDataManagerProps = {}) => {
   const [loading, setLoading] = useState(false);
   const [fileInput, setFileInput] = useState<File | null>(null);
   const { toast } = useToast();
@@ -70,6 +75,9 @@ export const SeedDataManager = () => {
         description: 'Seed data imported successfully',
       });
 
+      // Trigger refresh if callback provided
+      onDataReset?.();
+
       setFileInput(null);
     } catch (error) {
       toast({
@@ -89,16 +97,22 @@ export const SeedDataManager = () => {
 
     try {
       setLoading(true);
-      await seedDataService.clearSeedData();
+      // Use the new Supabase function for admin-only reset
+      const { error } = await supabase.rpc('reset_seeded_data');
+      
+      if (error) throw error;
 
       toast({
         title: 'Clear Successful',
         description: 'All seed data has been cleared',
       });
-    } catch (error) {
+
+      // Trigger refresh if callback provided
+      onDataReset?.();
+    } catch (error: any) {
       toast({
         title: 'Clear Failed',
-        description: 'Failed to clear seed data',
+        description: error.message || 'Failed to clear seed data',
         variant: 'destructive',
       });
     } finally {
@@ -141,6 +155,9 @@ export const SeedDataManager = () => {
         title: 'Default Data Loaded',
         description: 'Default seed data has been loaded successfully',
       });
+
+      // Trigger refresh if callback provided
+      onDataReset?.();
     } catch (error) {
       toast({
         title: 'Load Failed',
