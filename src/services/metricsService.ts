@@ -80,38 +80,23 @@ export interface WeeklyImpactStory {
 class MetricsService {
   async getPlatformMetrics(): Promise<PlatformMetrics> {
     try {
-      // Get total users
-      const { count: totalUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
+      // Use new RPC functions for better performance
+      const [users, active, posts, connections, events, communities, rate] = await Promise.all([
+        supabase.rpc("get_total_users"),
+        supabase.rpc("get_active_users_this_week"),
+        supabase.rpc("get_total_posts"),
+        supabase.rpc("get_total_connections"),
+        supabase.rpc("get_total_events"),
+        supabase.from('communities').select('*', { count: 'exact', head: true }).eq('is_active', true),
+        supabase.rpc("get_engagement_rate")
+      ]);
 
-      // Get active users this week using last_seen_at
-      const { count: activeUsersThisWeek } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .gte('last_seen_at', 'now() - interval \'7 days\'');
-
-      // Get total posts
-      const { count: totalPosts } = await supabase
-        .from('posts')
-        .select('*', { count: 'exact', head: true });
-
-      // Get total connections (accepted contact requests)
-      const { count: totalConnections } = await supabase
-        .from('contact_requests')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'accepted');
-
-      // Get total communities
-      const { count: totalCommunities } = await supabase
-        .from('communities')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_active', true);
-
-      // Get total events
-      const { count: totalEvents } = await supabase
-        .from('events')
-        .select('*', { count: 'exact', head: true });
+      const totalUsers = users.data ?? 0;
+      const activeUsersThisWeek = active.data ?? 0;
+      const totalPosts = posts.data ?? 0;
+      const totalConnections = connections.data ?? 0;
+      const totalEvents = events.data ?? 0;
+      const totalCommunities = communities.count ?? 0;
 
       // Calculate weekly growth rate
       const oneWeekAgo = new Date();
@@ -134,10 +119,8 @@ class MetricsService {
         ? Math.round(((usersThisWeek || 0) - (usersLastWeek || 0)) / (usersLastWeek || 1) * 100)
         : 0;
 
-      // Calculate engagement rate (simplified)
-      const engagementRate = totalUsers && totalPosts 
-        ? Math.round((activeUsersThisWeek || 0) / (totalUsers || 1) * 100)
-        : 0;
+      // Use engagement rate from RPC function
+      const engagementRate = Math.round((rate.data ?? 0) * 100);
 
       return {
         totalUsers: totalUsers || 0,
@@ -570,22 +553,25 @@ class MetricsService {
         ]
       };
     } else {
-      const recentDate = () => {
-        const date = new Date();
-        date.setDate(date.getDate() - 7);
-        return date.toISOString();
-      };
-
-      const [totalMembers, active] = await Promise.all([
-        supabase.from("profiles").select("*", { count: "exact", head: true }),
-        supabase.from("profiles").select("*", { count: "exact", head: true }).gte("last_seen_at", recentDate())
+      // Use the new RPC functions for better performance
+      const [users, active, connections, posts, events, rate] = await Promise.all([
+        supabase.rpc("get_total_users"),
+        supabase.rpc("get_active_users_this_week"),
+        supabase.rpc("get_total_connections"),
+        supabase.rpc("get_total_posts"),
+        supabase.rpc("get_total_events"),
+        supabase.rpc("get_engagement_rate")
       ]);
 
       const impactScore = await this.getImpactScore(userId);
       
       return {
-        totalMembers: totalMembers.count || 0,
-        activeThisWeek: active.count || 0,
+        totalUsers: users.data ?? 0,
+        activeUsersThisWeek: active.data ?? 0,
+        totalConnections: connections.data ?? 0,
+        totalPosts: posts.data ?? 0,
+        totalEvents: events.data ?? 0,
+        engagementRate: rate.data ?? 0,
         growthRate: "+1%", // temporary placeholder
         impactScore: impactScore,
         suggestedProjects: [
