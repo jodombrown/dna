@@ -79,12 +79,14 @@ export const useWaitlistPopup = () => {
 
   const closeWaitlistPopup = () => {
     setShowWaitlistPopup(false);
+    setHasTriggered(true);
     // Mark as shown so it doesn't appear again
     localStorage.setItem('dna_waitlist_shown', Date.now().toString());
   };
 
   const dismissWaitlistPopup = () => {
     setShowWaitlistPopup(false);
+    setHasTriggered(true);
     localStorage.setItem('dna_waitlist_dismissed', Date.now().toString());
   };
 
