@@ -12,7 +12,6 @@ import {
   Grid3X3,
   LogOut
 } from 'lucide-react';
-import FeatureGate from '@/components/FeatureGate';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -115,11 +114,9 @@ const LinkedInHeader = () => {
                 <DropdownMenuItem onClick={() => navigate('/app/events')}>
                   Events
                 </DropdownMenuItem>
-                <FeatureGate feature="communities">
-                  <DropdownMenuItem onClick={() => navigate('/app/communities')}>
-                    Communities
-                  </DropdownMenuItem>
-                </FeatureGate>
+                <DropdownMenuItem onClick={() => navigate('/app/communities')}>
+                  Communities
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/app/settings')}>
                   Settings
                 </DropdownMenuItem>

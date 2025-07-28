@@ -9,7 +9,7 @@ import SearchMainContent from '@/components/linkedin/SearchMainContent';
 import NetworkMainContent from '@/components/linkedin/NetworkMainContent';
 import MessagingMainContent from '@/components/linkedin/MessagingMainContent';
 import NotificationsMainContent from '@/components/linkedin/NotificationsMainContent';
-import CommunityPulseDashboard from '@/components/dashboard/CommunityPulseDashboard';
+import EnhancedCommunityPulseDashboard from '@/components/metrics/EnhancedCommunityPulseDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDashboard } from '@/contexts/DashboardContext';
 import { SocialFeedProvider } from '@/contexts/SocialFeedContext';
@@ -58,31 +58,20 @@ const Dashboard = () => {
     </div>
   );
 
-  const renderMainContent = () => {
-    switch (activeView) {
-      case 'community_pulse':
-        return <CommunityPulseDashboard />;
-      case 'search':
-        return <SearchMainContent />;
-      case 'network':
-        return <NetworkMainContent />;
-      case 'messaging':
-        return <MessagingMainContent />;
-      case 'notifications':
-        return <NotificationsMainContent />;
-      case 'dashboard':
-      default:
-        return activePillar === 'feed' ? (
+  const mainContent = (
+    <div className="space-y-4">
+      {activeView === 'search' && <SearchMainContent />}
+      {activeView === 'network' && <NetworkMainContent />}
+      {activeView === 'messaging' && <MessagingMainContent />}
+      {activeView === 'notifications' && <NotificationsMainContent />}
+      {activeView === 'metrics' && <EnhancedCommunityPulseDashboard />}
+      {activeView === 'dashboard' && (
+        activePillar === 'feed' ? (
           <CommunityFeed />
         ) : (
           <PillarMainContent activePillar={activePillar} />
-        );
-    }
-  };
-
-  const mainContent = (
-    <div className="space-y-4">
-      {renderMainContent()}
+        )
+      )}
     </div>
   );
 

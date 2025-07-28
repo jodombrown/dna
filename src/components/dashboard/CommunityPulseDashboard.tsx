@@ -1,14 +1,8 @@
 import { usePulseStore } from "@/stores/usePulseStore";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useDashboard } from "@/contexts/DashboardContext";
-import { useUserAchievements } from "@/stores/useUserAchievements";
-import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { Loader } from "@/components/ui/loader";
 import { SeedDataManager } from "@/components/admin/SeedDataManager";
-import FeatureFlagsManager from "@/components/admin/FeatureFlagsManager";
-import { MilestoneBanner } from "./MilestoneBanner";
-import { ScoreBreakdownCard } from "./ScoreBreakdownCard";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { Settings, RefreshCw } from "lucide-react";
@@ -18,8 +12,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 export default function CommunityPulseDashboard() {
   const { user } = useAuth();
   const { data, fetchPulseData, loading, error } = usePulseStore();
-  const { setActiveView, activePillar } = useDashboard();
-  const { checkMilestones } = useUserAchievements();
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -47,41 +39,18 @@ export default function CommunityPulseDashboard() {
     if (user?.id) fetchPulseData(user.id);
   }, [user]);
 
-  // Check for milestones when data changes
-  useEffect(() => {
-    if (data?.impactScore) {
-      checkMilestones(data.impactScore);
-    }
-  }, [data?.impactScore, checkMilestones]);
-
-  const handleRefresh = useCallback(async () => {
+  const handleRefresh = async () => {
     if (!user?.id) return;
     setRefreshing(true);
     await fetchPulseData(user.id);
     setRefreshing(false);
-  }, [user?.id, fetchPulseData]);
-
-  // Auto-refresh every 60 seconds in development/staging
-  const isDev = import.meta.env.DEV;
-  useAutoRefresh({
-    enabled: isDev && !!user?.id,
-    interval: 60000,
-    onRefresh: () => fetchPulseData(user.id)
-  });
+  };
 
   if (loading || !data) return <Loader label="Loading Community Pulse..." />;
   if (error) return <div className="text-red-500">Failed to load data: {error}</div>;
 
   return (
-    <>
-      <MilestoneBanner />
-      <div className="px-6 py-8 space-y-6">
-        <button
-          onClick={() => setActiveView(activePillar as any)} 
-          className="text-sm text-dna-copper underline hover:text-dna-forest mb-4"
-        >
-          ← Back to {activePillar.charAt(0).toUpperCase() + activePillar.slice(1)}
-        </button>
+    <div className="px-6 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-dna-forest">Community Pulse</h1>
         <div className="flex items-center gap-2">
@@ -111,16 +80,7 @@ export default function CommunityPulseDashboard() {
       {isAdmin && (
         <Collapsible open={adminPanelOpen} onOpenChange={setAdminPanelOpen}>
           <CollapsibleContent>
-            <div className="mt-4 space-y-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-lg font-semibold mb-4">Feature Flags</h3>
-                <FeatureFlagsManager />
-              </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-lg font-semibold mb-4">Development Tools</h3>
-                <SeedDataManager onDataReset={handleRefresh} />
-              </div>
-            </div>
+            <SeedDataManager onDataReset={handleRefresh} />
           </CollapsibleContent>
         </Collapsible>
       )}
@@ -151,12 +111,8 @@ export default function CommunityPulseDashboard() {
           <p className="text-sm text-dna-mint font-medium">Impact Score</p>
           <h3 className="text-3xl font-bold text-dna-mint">{data.impactScore ?? 0}</h3>
         </div>
-        
-        {/* Score Breakdown Panel */}
-        <ScoreBreakdownCard />
       </section>
-      </div>
-    </>
+    </div>
   );
 }
 

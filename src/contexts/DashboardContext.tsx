@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type DashboardView = 'dashboard' | 'search' | 'network' | 'messaging' | 'notifications' | 'community_pulse';
+type DashboardView = 'dashboard' | 'search' | 'network' | 'messaging' | 'notifications' | 'metrics';
 
 interface DashboardContextType {
   activeView: DashboardView;

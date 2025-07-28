@@ -334,7 +334,7 @@ export const DiscoverySidebar = ({ activePillar = 'connect' }: { activePillar?: 
         </CardContent>
       </Card>
 
-      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setActiveView('community_pulse')}>
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => setActiveView('metrics')}>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm flex items-center gap-2">
             <MessageSquare className="w-4 h-4" />
