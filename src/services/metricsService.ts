@@ -556,6 +556,60 @@ class MetricsService {
     // This would be called for live updates
     return this.getPlatformMetrics();
   }
+
+  async getPulsePreview(userId: string, useFake: boolean = false) {
+    if (useFake) {
+      return {
+        totalMembers: 1520,
+        activeThisWeek: 241,
+        growthRate: "+6%",
+        impactScore: 85,
+        suggestedProjects: [
+          { name: "AgriTech Chain", tags: ["IoT", "Food"], level: "High" },
+          { name: "Diaspora HealthTech", tags: ["React", "Public Health"], level: "Medium" }
+        ]
+      };
+    } else {
+      const recentDate = () => {
+        const date = new Date();
+        date.setDate(date.getDate() - 7);
+        return date.toISOString();
+      };
+
+      const [totalMembers, active] = await Promise.all([
+        supabase.from("profiles").select("*", { count: "exact", head: true }),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).gte("last_seen_at", recentDate())
+      ]);
+
+      const impactScore = await this.getImpactScore(userId);
+      
+      return {
+        totalMembers: totalMembers.count || 0,
+        activeThisWeek: active.count || 0,
+        growthRate: "+1%", // temporary placeholder
+        impactScore: impactScore,
+        suggestedProjects: [
+          { name: "AgriTech Chain", tags: ["IoT", "Food"], level: "High" },
+          { name: "Diaspora HealthTech", tags: ["React", "Public Health"], level: "Medium" }
+        ]
+      };
+    }
+  }
+
+  async getImpactScore(userId: string): Promise<number> {
+    try {
+      const { data: dnaPoints } = await supabase
+        .from('user_dna_points')
+        .select('total_score')
+        .eq('user_id', userId)
+        .single();
+      
+      return dnaPoints?.total_score || 0;
+    } catch (error) {
+      console.error('Error fetching impact score:', error);
+      return 0;
+    }
+  }
 }
 
 export const metricsService = new MetricsService();
