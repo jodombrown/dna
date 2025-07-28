@@ -1581,6 +1581,7 @@ export type Database = {
           interests: string[] | null
           is_beta_tester: boolean | null
           is_public: boolean | null
+          last_seen_at: string | null
           linkedin_url: string | null
           location: string | null
           newsletter_emails: boolean | null
@@ -1625,6 +1626,7 @@ export type Database = {
           interests?: string[] | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
           newsletter_emails?: boolean | null
@@ -1669,6 +1671,7 @@ export type Database = {
           interests?: string[] | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
           newsletter_emails?: boolean | null
@@ -2243,6 +2246,10 @@ export type Database = {
         Args: { full_name: string }
         Returns: string
       }
+      get_active_users_this_week: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       get_admin_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["admin_role"]
@@ -2253,6 +2260,10 @@ export type Database = {
           user_id: string
           is_public: boolean
         }[]
+      }
+      get_engagement_rate: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       get_leaderboard: {
         Args: {
@@ -2287,6 +2298,22 @@ export type Database = {
           email: string
           full_name: string
         }[]
+      }
+      get_total_connections: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      get_total_events: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      get_total_posts: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      get_total_users: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       get_user_verification_status: {
         Args: { target_user_id: string }
