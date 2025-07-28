@@ -1,6 +1,7 @@
 import { usePulseStore } from "@/stores/usePulseStore";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDashboard } from "@/contexts/DashboardContext";
 import { Loader } from "@/components/ui/loader";
 import { SeedDataManager } from "@/components/admin/SeedDataManager";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 export default function CommunityPulseDashboard() {
   const { user } = useAuth();
   const { data, fetchPulseData, loading, error } = usePulseStore();
+  const { setActiveView, activePillar } = useDashboard();
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -51,6 +53,12 @@ export default function CommunityPulseDashboard() {
 
   return (
     <div className="px-6 py-8 space-y-6">
+      <button
+        onClick={() => setActiveView(activePillar as any)} 
+        className="text-sm text-dna-copper underline hover:text-dna-forest mb-4"
+      >
+        ← Back to {activePillar.charAt(0).toUpperCase() + activePillar.slice(1)}
+      </button>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-dna-forest">Community Pulse</h1>
         <div className="flex items-center gap-2">
