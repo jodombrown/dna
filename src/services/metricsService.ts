@@ -85,14 +85,11 @@ class MetricsService {
         .from('profiles')
         .select('*', { count: 'exact', head: true });
 
-      // Get active users this week
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      
+      // Get active users this week using last_seen_at
       const { count: activeUsersThisWeek } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true })
-        .gte('updated_at', oneWeekAgo.toISOString());
+        .gte('last_seen_at', 'now() - interval \'7 days\'');
 
       // Get total posts
       const { count: totalPosts } = await supabase
@@ -117,6 +114,8 @@ class MetricsService {
         .select('*', { count: 'exact', head: true });
 
       // Calculate weekly growth rate
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
       const twoWeeksAgo = new Date();
       twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
       
