@@ -540,18 +540,32 @@ class MetricsService {
     return this.getPlatformMetrics();
   }
 
+  getSeedPulseData() {
+    return {
+      totalUsers: 1500,
+      activeUsersThisWeek: 245,
+      totalConnections: 890,
+      totalPosts: 320,
+      totalEvents: 47,
+      engagementRate: 0.13,
+      suggestedProjects: [
+        {
+          name: "AgriTech Chain",
+          tags: ["IoT", "Food Security"],
+          level: "High",
+        },
+        {
+          name: "Diaspora HealthBridge",
+          tags: ["AI", "Healthcare"],
+          level: "Medium",
+        },
+      ],
+    };
+  }
+
   async getPulsePreview(userId: string, useFake: boolean = false) {
     if (useFake) {
-      return {
-        totalMembers: 1520,
-        activeThisWeek: 241,
-        growthRate: "+6%",
-        impactScore: 85,
-        suggestedProjects: [
-          { name: "AgriTech Chain", tags: ["IoT", "Food"], level: "High" },
-          { name: "Diaspora HealthTech", tags: ["React", "Public Health"], level: "Medium" }
-        ]
-      };
+      return this.getSeedPulseData();
     } else {
       // Use the new RPC functions for better performance
       const [users, active, connections, posts, events, rate] = await Promise.all([
@@ -564,6 +578,7 @@ class MetricsService {
       ]);
 
       const impactScore = await this.getImpactScore(userId);
+      const seedData = this.getSeedPulseData();
       
       return {
         totalUsers: users.data ?? 0,
@@ -572,12 +587,8 @@ class MetricsService {
         totalPosts: posts.data ?? 0,
         totalEvents: events.data ?? 0,
         engagementRate: rate.data ?? 0,
-        growthRate: "+1%", // temporary placeholder
         impactScore: impactScore,
-        suggestedProjects: [
-          { name: "AgriTech Chain", tags: ["IoT", "Food"], level: "High" },
-          { name: "Diaspora HealthTech", tags: ["React", "Public Health"], level: "Medium" }
-        ]
+        suggestedProjects: seedData.suggestedProjects
       };
     }
   }
