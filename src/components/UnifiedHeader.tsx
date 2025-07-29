@@ -31,7 +31,19 @@ const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { setActiveView, activeView } = useDashboard();
+  
+  // Conditionally use dashboard context only for authenticated users
+  let setActiveView: any = () => {};
+  let activeView: any = 'dashboard';
+  
+  try {
+    const dashboard = useDashboard();
+    setActiveView = dashboard.setActiveView;
+    activeView = dashboard.activeView;
+  } catch (error) {
+    // DashboardProvider not available (marketing pages)
+  }
+  
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
