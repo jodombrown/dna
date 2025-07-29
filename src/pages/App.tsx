@@ -50,7 +50,7 @@ const App = () => {
         <LinkedInHeader />
 
         {/* Main Content */}
-        <main className="pt-14">
+        <main className="pt-16 pb-20 lg:pb-0">
           <Routes>
             <Route index element={<Dashboard />} />
             <Route path="search" element={<Search />} />

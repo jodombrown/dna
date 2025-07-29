@@ -44,7 +44,7 @@ const LinkedInHeader = () => {
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-14">
+        <div className="flex items-center justify-between h-16">
           {/* Left section - Logo and Search */}
           <div className="flex items-center space-x-4">
             <NavLink to="/app" className="flex items-center hover:opacity-80 transition-opacity">
@@ -59,7 +59,7 @@ const LinkedInHeader = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search"
-                className="pl-10 w-48 lg:w-64 bg-gray-50 border-0 h-9 text-sm cursor-pointer"
+                className="pl-10 w-40 lg:w-64 bg-gray-50 border-0 h-10 text-base cursor-pointer"
                 onClick={() => {
                   if (location.pathname === '/app') {
                     setActiveView('search');
@@ -120,82 +120,69 @@ const LinkedInHeader = () => {
           </nav>
 
           {/* Right section - Profile and Menu */}
-          <div className="flex items-center space-x-2 md:space-x-4">
-            {/* Mobile bottom navigation for authenticated users */}
-            <nav className="lg:hidden">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-1 h-8 text-xs">
-                    <Grid3X3 className="w-4 h-4" />
-                    <span className="hidden sm:inline">Menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  {navigationItems.map((item) => (
-                    <DropdownMenuItem 
-                      key={item.title}
-                      onClick={() => {
-                        if (location.pathname === '/app') {
-                          setActiveView(item.view as any);
-                        } else {
-                          navigate('/app');
-                          setTimeout(() => setActiveView(item.view as any), 100);
-                        }
-                      }}
-                      className="flex items-center space-x-2"
-                    >
-                      <item.icon className="w-4 h-4" />
-                      <span>{item.title}</span>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </nav>
-            
+          <div className="flex items-center space-x-2">
+            {/* Single mobile menu that includes everything */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="hidden md:flex items-center space-x-2 h-8">
-                  <Grid3X3 className="w-4 h-4" />
-                  <span className="hidden lg:inline text-xs">Work</span>
+                <Button variant="ghost" className="lg:hidden p-2" aria-label="Menu">
+                  <Grid3X3 className="w-5 h-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => navigate('/app/events')}>
-                  Events
+              <DropdownMenuContent align="end" className="w-56">
+                {navigationItems.map((item) => (
+                  <DropdownMenuItem 
+                    key={item.title}
+                    onClick={() => {
+                      if (location.pathname === '/app') {
+                        setActiveView(item.view as any);
+                      } else {
+                        navigate('/app');
+                        setTimeout(() => setActiveView(item.view as any), 100);
+                      }
+                    }}
+                    className="flex items-center space-x-3 py-3"
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span className="text-base">{item.title}</span>
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/app/events')} className="flex items-center space-x-3 py-3">
+                  <span className="text-base">Events</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/app/communities')}>
-                  Communities
+                <DropdownMenuItem onClick={() => navigate('/app/communities')} className="flex items-center space-x-3 py-3">
+                  <span className="text-base">Communities</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/app/settings')}>
-                  Settings
+                <DropdownMenuItem onClick={() => navigate('/app/settings')} className="flex items-center space-x-3 py-3">
+                  <span className="text-base">Settings</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex flex-col items-center px-1 md:px-2 py-1 h-auto">
-                  <Avatar className="w-7 h-7 md:w-6 md:h-6">
+                <Button variant="ghost" className="flex flex-col items-center px-2 py-2 h-auto">
+                  <Avatar className="w-8 h-8">
                     <AvatarImage src={profile?.avatar_url} />
-                    <AvatarFallback className="text-xs bg-dna-mint text-dna-forest">
+                    <AvatarFallback className="text-sm bg-dna-mint text-dna-forest font-medium">
                       {profile?.display_name?.charAt(0) || profile?.full_name?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-xs mt-1 hidden sm:block">Me</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => navigate('/app/profile')}>
-                  <User className="w-4 h-4 mr-2" />
-                  View Profile
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => navigate('/app/profile')} className="py-3">
+                  <User className="w-5 h-5 mr-3" />
+                  <span className="text-base">View Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/app/settings')}>
-                  Settings & Privacy
+                <DropdownMenuItem onClick={() => navigate('/app/settings')} className="py-3">
+                  <span className="text-base">Settings & Privacy</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
+                <DropdownMenuItem onClick={handleSignOut} className="text-red-600 py-3">
+                  <LogOut className="w-5 h-5 mr-3" />
+                  <span className="text-base">Sign Out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
