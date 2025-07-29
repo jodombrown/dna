@@ -229,7 +229,7 @@ const UnifiedHeader = () => {
                 </SheetTrigger>
                 <SheetContent 
                   side="left" 
-                  className="w-80 p-0"
+                  className="w-80 p-0 [&>button[aria-label='Close']]:hidden"
                   onPointerDownOutside={() => setIsMobileMenuOpen(false)}
                 >
                   <div className="flex flex-col h-full">
