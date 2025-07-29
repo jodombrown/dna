@@ -227,7 +227,7 @@ const UnifiedHeader = () => {
                     <Menu className="w-6 h-6" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-80 p-0">
+                <SheetContent side="left" className="w-80 p-0 [&>button]:hidden">
                   <div className="flex flex-col h-full">
                     <div className="p-6 border-b">
                       <div className="flex items-center gap-2">
