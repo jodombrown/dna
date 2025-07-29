@@ -39,15 +39,15 @@ const MobileSheetMenu: React.FC<MobileSheetMenuProps> = ({
       </SheetTrigger>
       <SheetContent side="left" className="w-80 p-0">
         <div className="flex flex-col h-full">
-          <SheetHeader className="p-6 border-b">
-            <SheetTitle className="flex items-center gap-2">
+          <div className="p-6 border-b">
+            <div className="flex items-center gap-2">
               <img 
                 src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
                 alt="Logo" 
                 className="h-8 w-auto"
               />
-            </SheetTitle>
-          </SheetHeader>
+            </div>
+          </div>
           
           <ScrollArea className="flex-1 px-6">
             <nav className="flex flex-col space-y-2 py-6">

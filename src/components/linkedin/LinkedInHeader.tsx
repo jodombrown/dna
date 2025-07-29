@@ -119,46 +119,8 @@ const LinkedInHeader = () => {
             })}
           </nav>
 
-          {/* Right section - Profile and Menu */}
+          {/* Right section - Profile Menu Only */}
           <div className="flex items-center space-x-2">
-            {/* Single mobile menu that includes everything */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="lg:hidden p-2" aria-label="Menu">
-                  <Grid3X3 className="w-5 h-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                {navigationItems.map((item) => (
-                  <DropdownMenuItem 
-                    key={item.title}
-                    onClick={() => {
-                      if (location.pathname === '/app') {
-                        setActiveView(item.view as any);
-                      } else {
-                        navigate('/app');
-                        setTimeout(() => setActiveView(item.view as any), 100);
-                      }
-                    }}
-                    className="flex items-center space-x-3 py-3"
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span className="text-base">{item.title}</span>
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/app/events')} className="flex items-center space-x-3 py-3">
-                  <span className="text-base">Events</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/app/communities')} className="flex items-center space-x-3 py-3">
-                  <span className="text-base">Communities</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/app/settings')} className="flex items-center space-x-3 py-3">
-                  <span className="text-base">Settings</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex flex-col items-center px-2 py-2 h-auto">
