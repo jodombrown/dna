@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import Header from '@/components/Header';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import ConnectTabs from '@/components/connect/ConnectTabs';
@@ -75,7 +75,7 @@ const ConnectExample = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <UnifiedHeader />
       <PrototypeNotice />
       
       <main className="max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-12 py-6 sm:py-8">

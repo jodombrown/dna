@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from '@/components/Header';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -122,7 +122,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <UnifiedHeader />
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-16 pb-20">

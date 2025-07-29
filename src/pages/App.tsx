@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Routes, Route } from 'react-router-dom';
-import LinkedInHeader from '@/components/linkedin/LinkedInHeader';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import MobileBottomNav from '@/components/navigation/MobileBottomNav';
 import Dashboard from './app/Dashboard';
 import { DashboardProvider } from '@/contexts/DashboardContext';
@@ -46,8 +46,8 @@ const App = () => {
   return (
     <DashboardProvider>
       <div className="min-h-screen bg-gray-50">
-        {/* LinkedIn-style Header */}
-        <LinkedInHeader />
+        {/* Unified Header */}
+        <UnifiedHeader />
 
         {/* Main Content */}
         <main className="pt-16 pb-20 lg:pb-0">

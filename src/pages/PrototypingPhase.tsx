@@ -4,7 +4,7 @@ import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
 import PhaseMetrics from '@/components/phases/PhaseMetrics';
 import { Palette, Users, TestTube, Target, TrendingUp, CheckCircle, Lightbulb, Zap, ArrowRight } from "lucide-react";
-import Header from '@/components/Header';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -102,7 +102,7 @@ const PrototypingPhase = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex flex-col">
-      <Header />
+      <UnifiedHeader />
       
       <PhaseHero
         badge="Phase 2 • Prototyping"

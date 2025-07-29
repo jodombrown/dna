@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import Header from '@/components/Header';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
 import CollaborationsPrototypeNotice from './CollaborationsPrototypeNotice';
@@ -97,7 +97,7 @@ const CollaborationsPageWrapper = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
+      <UnifiedHeader />
       <CollaborationsPrototypeNotice />
       
       <CollaborationsPageHeaderSection />

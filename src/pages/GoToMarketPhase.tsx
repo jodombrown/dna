@@ -3,7 +3,7 @@ import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
 import PhaseMetrics from '@/components/phases/PhaseMetrics';
 import { Megaphone, Globe, TrendingUp, BarChart3, CheckCircle, Lightbulb, Rocket, ArrowRight } from 'lucide-react';
-import Header from '@/components/Header';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import AmbassadorSignupDialog from '@/components/AmbassadorSignupDialog';
@@ -114,7 +114,7 @@ const GoToMarketPhase = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex flex-col">
-      <Header />
+      <UnifiedHeader />
       
       <PhaseHero
         badge="Phase 6 • Go-to-Market"

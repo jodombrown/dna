@@ -4,7 +4,7 @@ import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
 import PhaseMetrics from '@/components/phases/PhaseMetrics';
 import { Search, Users, FileText, Target, TrendingUp, MessageSquare, BookOpen, BarChart3, ArrowRight } from "lucide-react";
-import Header from '@/components/Header';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -113,7 +113,7 @@ const MarketResearchPhase = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-dna-mint/10 flex flex-col">
-      <Header />
+      <UnifiedHeader />
       
       <PhaseHero
         badge="Phase 1 • Market Research"

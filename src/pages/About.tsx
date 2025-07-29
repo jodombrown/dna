@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +28,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <UnifiedHeader />
       
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 py-20">

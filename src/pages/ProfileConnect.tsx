@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MapPin, Building, ExternalLink, Mail, Phone, Calendar, Users, Award, Briefcase } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import Header from '@/components/Header';
+import UnifiedHeader from '@/components/UnifiedHeader';
 
 const ProfileConnect = () => {
   const { id } = useParams();
@@ -51,7 +51,7 @@ const ProfileConnect = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
+        <UnifiedHeader />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-center py-12">
             <div className="text-lg">Loading profile...</div>
@@ -64,7 +64,7 @@ const ProfileConnect = () => {
   if (!profile) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
+        <UnifiedHeader />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">Profile not found.</p>
@@ -79,7 +79,7 @@ const ProfileConnect = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <UnifiedHeader />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Profile Header */}
         <Card className="mb-8">

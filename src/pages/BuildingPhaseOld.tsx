@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, ArrowLeft, Home, Rocket, Users, Globe, Zap, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 
@@ -14,7 +14,7 @@ const BuildingPhase = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <UnifiedHeader />
       
       <main className="pt-20">
         {/* Hero Section */}

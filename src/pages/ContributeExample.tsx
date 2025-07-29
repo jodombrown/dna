@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Header from '@/components/Header';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import ContributePrototypeNotice from '@/components/contribute/ContributePrototypeNotice';
 import ContributeOverviewStats from '@/components/contribute/ContributeOverviewStats';
 import ImpactDashboard from '@/components/contribute/ImpactDashboard';
@@ -36,7 +36,7 @@ const ContributeExample = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <UnifiedHeader />
 
       <ContributePrototypeNotice />
 
