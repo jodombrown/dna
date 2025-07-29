@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Routes, Route } from 'react-router-dom';
 import LinkedInHeader from '@/components/linkedin/LinkedInHeader';
+import MobileBottomNav from '@/components/navigation/MobileBottomNav';
 import Dashboard from './app/Dashboard';
 import { DashboardProvider } from '@/contexts/DashboardContext';
 import Search from './app/Search';
@@ -61,6 +62,7 @@ const App = () => {
             <Route path="settings" element={<Settings />} />
           </Routes>
         </main>
+        <MobileBottomNav />
       </div>
     </DashboardProvider>
   );

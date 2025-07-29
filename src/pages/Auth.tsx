@@ -141,23 +141,23 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex items-center justify-center p-4 pt-20">
       <div className="w-full max-w-md">
-        <Card className="shadow-xl">
+        <Card className="shadow-xl border-0 sm:border">
           <CardHeader className="text-center">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/')}
-              className="absolute top-4 left-4 text-gray-500 hover:text-gray-700"
+              className="absolute top-4 left-4 text-gray-500 hover:text-gray-700 z-10"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">Back</span>
             </Button>
-            <CardTitle className="text-2xl font-bold text-dna-forest mb-2">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-dna-forest mb-2 pt-4 sm:pt-0">
               {isLogin ? 'Welcome Back' : 'Join DNA Community'}
             </CardTitle>
-            <p className="text-gray-600">
+            <p className="text-sm sm:text-base text-gray-600 px-2">
               {isLogin 
                 ? 'Sign in to connect with the diaspora' 
                 : 'Create your account to get started'

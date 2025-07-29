@@ -44,7 +44,7 @@ const LinkedInHeader = () => {
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-14">
+        <div className="flex items-center justify-between h-16 md:h-14">
           {/* Left section - Logo and Search */}
           <div className="flex items-center space-x-4">
             <NavLink to="/app" className="flex items-center hover:opacity-80 transition-opacity">
@@ -55,11 +55,11 @@ const LinkedInHeader = () => {
               />
             </NavLink>
             
-            <div className="relative">
+            <div className="relative hidden sm:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search"
-                className="pl-10 w-64 bg-gray-50 border-0 h-9 text-sm cursor-pointer"
+                className="pl-10 w-48 lg:w-64 bg-gray-50 border-0 h-9 text-sm cursor-pointer"
                 onClick={() => {
                   if (location.pathname === '/app') {
                     setActiveView('search');
@@ -71,10 +71,28 @@ const LinkedInHeader = () => {
                 readOnly
               />
             </div>
+            
+            {/* Mobile search button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="sm:hidden p-2"
+              onClick={() => {
+                if (location.pathname === '/app') {
+                  setActiveView('search');
+                } else {
+                  navigate('/app');
+                  setTimeout(() => setActiveView('search'), 100);
+                }
+              }}
+              aria-label="Search"
+            >
+              <Search className="w-5 h-5 text-gray-600" />
+            </Button>
           </div>
 
           {/* Center section - Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-8">
             {navigationItems.map((item) => {
               const isActive = location.pathname === '/app' && activeView === item.view;
               return (
@@ -102,12 +120,43 @@ const LinkedInHeader = () => {
           </nav>
 
           {/* Right section - Profile and Menu */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
+            {/* Mobile bottom navigation for authenticated users */}
+            <nav className="lg:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center space-x-1 h-8 text-xs">
+                    <Grid3X3 className="w-4 h-4" />
+                    <span className="hidden sm:inline">Menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {navigationItems.map((item) => (
+                    <DropdownMenuItem 
+                      key={item.title}
+                      onClick={() => {
+                        if (location.pathname === '/app') {
+                          setActiveView(item.view as any);
+                        } else {
+                          navigate('/app');
+                          setTimeout(() => setActiveView(item.view as any), 100);
+                        }
+                      }}
+                      className="flex items-center space-x-2"
+                    >
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.title}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </nav>
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center space-x-2 h-8">
+                <Button variant="ghost" className="hidden md:flex items-center space-x-2 h-8">
                   <Grid3X3 className="w-4 h-4" />
-                  <span className="hidden sm:inline text-xs">Work</span>
+                  <span className="hidden lg:inline text-xs">Work</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
@@ -125,14 +174,14 @@ const LinkedInHeader = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex flex-col items-center px-2 py-1 h-auto">
-                  <Avatar className="w-6 h-6">
+                <Button variant="ghost" className="flex flex-col items-center px-1 md:px-2 py-1 h-auto">
+                  <Avatar className="w-7 h-7 md:w-6 md:h-6">
                     <AvatarImage src={profile?.avatar_url} />
                     <AvatarFallback className="text-xs bg-dna-mint text-dna-forest">
                       {profile?.display_name?.charAt(0) || profile?.full_name?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-xs mt-1">Me</span>
+                  <span className="text-xs mt-1 hidden sm:block">Me</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">

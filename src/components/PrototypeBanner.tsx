@@ -30,16 +30,16 @@ const PrototypeBanner: React.FC = () => {
         transformOrigin: 'top'
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-start gap-3">
-        <Info className="w-6 h-6 text-dna-emerald mt-1 flex-shrink-0" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3 flex items-start gap-2 sm:gap-3">
+        <Info className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald mt-0.5 sm:mt-1 flex-shrink-0" />
         <div>
-          <h3 className="font-semibold text-md md:text-lg text-dna-forest mb-0.5">
+          <h3 className="font-semibold text-sm sm:text-md md:text-lg text-dna-forest mb-0.5 leading-tight">
             You're using the DNA Platform Prototype!
           </h3>
-          <p className="text-xs md:text-sm text-gray-700">
+          <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
             This is an early preview of Diaspora Network of Africa. Your ideas, feedback, and involvement
             will shape the future of our community-powered professional platform.
-            <br className="hidden md:block" />
+            <br className="hidden lg:block" />
             <span className="font-semibold">Help us build a home for Africa's Diaspora!</span>
           </p>
         </div>

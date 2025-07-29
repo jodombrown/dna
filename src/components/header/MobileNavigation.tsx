@@ -18,19 +18,13 @@ const MobileNavigation = () => {
 
   return (
     <>
-      <div className="flex items-center space-x-2 md:hidden">
-        <Button
-          onClick={() => navigate('/auth')}
-          size="sm"
-          className="bg-dna-copper hover:bg-dna-gold text-white"
-        >
-          Sign In
-        </Button>
+      <div className="md:hidden">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setIsMobileMenuOpen(true)}
           className="p-2"
+          aria-label="Open menu"
         >
           <Menu className="w-5 h-5" />
         </Button>
