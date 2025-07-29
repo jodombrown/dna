@@ -227,7 +227,11 @@ const UnifiedHeader = () => {
                     <Menu className="w-6 h-6" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-80 p-0 [&>button]:hidden">
+                <SheetContent 
+                  side="left" 
+                  className="w-80 p-0 [&>*:first-child]:hidden"
+                  onPointerDownOutside={() => setIsMobileMenuOpen(false)}
+                >
                   <div className="flex flex-col h-full">
                     <div className="p-6 border-b">
                       <div className="flex items-center gap-2">
