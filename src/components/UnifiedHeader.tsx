@@ -10,7 +10,8 @@ import {
   Search,
   User,
   LogOut,
-  Menu
+  Menu,
+  X
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -230,12 +231,21 @@ const UnifiedHeader = () => {
                 <SheetContent side="left" className="w-80 p-0">
                   <div className="flex flex-col h-full">
                     <div className="p-6 border-b">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between">
                         <img 
                           src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
                           alt="Logo" 
                           className="h-8 w-auto"
                         />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="p-2 hover:bg-gray-100"
+                          aria-label="Close menu"
+                        >
+                          <X className="w-5 h-5" />
+                        </Button>
                       </div>
                     </div>
                     
