@@ -9,10 +9,10 @@ import { Button } from '@/components/ui/button';
 
 const Header = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  // Don't show header if user is authenticated
-  if (user) {
+  // Don't show header if user is authenticated or still loading
+  if (user || loading) {
     return null;
   }
 
