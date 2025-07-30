@@ -234,7 +234,7 @@ const UnifiedHeader = () => {
                 >
                   <div className="flex flex-col h-full">
                     <div className="p-6 border-b">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-end">
                         <img 
                           src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
                           alt="Logo" 
