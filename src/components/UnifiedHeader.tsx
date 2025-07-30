@@ -217,7 +217,17 @@ const UnifiedHeader = () => {
 
               {/* Mobile Menu */}
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-                <SheetContent 
+                <SheetTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="p-2 md:hidden"
+                    aria-label="Open menu"
+                  >
+                    <Menu className="w-6 h-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent
                   side="left" 
                   className="w-80 p-0 [&>*]:!hidden [&>div]:!block"
                   onPointerDownOutside={() => setIsMobileMenuOpen(false)}
