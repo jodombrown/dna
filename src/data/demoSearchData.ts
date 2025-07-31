@@ -936,5 +936,53 @@ export const demoEvents: Event[] = [
       email: 'fatima.alrashid@example.com',
       avatar_url: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=80'
     }
+  },
+  {
+    id: '6',
+    title: 'AgriTech Innovations Conference',
+    description: 'Explore revolutionary agricultural technologies transforming food production across Africa.',
+    type: 'Conference',
+    date_time: '2025-12-03T08:00:00Z',
+    location: 'Nairobi, Kenya',
+    is_virtual: false,
+    attendee_count: 320,
+    max_attendees: 400,
+    created_by: 'creator_6',
+    is_featured: true,
+    banner_url: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&h=200&fit=crop',
+    registration_url: 'https://example.com/register',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z',
+    creator_profile: {
+      id: '6',
+      full_name: 'Dr. Grace Wanjiku',
+      email: 'grace.wanjiku@example.com',
+      avatar_url: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=80'
+    }
+  },
+  {
+    id: '7',
+    title: 'Blockchain for Financial Inclusion Summit',
+    description: 'Discover how blockchain technology is democratizing financial services across Africa.',
+    type: 'Summit',
+    date_time: '2025-08-14T09:30:00Z',
+    location: 'Lagos, Nigeria',
+    is_virtual: false,
+    attendee_count: 450,
+    max_attendees: 600,
+    created_by: 'creator_7',
+    is_featured: true,
+    banner_url: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&h=200&fit=crop',
+    registration_url: 'https://example.com/register',
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z',
+    creator_profile: {
+      id: '7',
+      full_name: 'Emmanuel Nyong',
+      email: 'emmanuel.nyong@example.com',
+      avatar_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80'
+    }
   }
 ];

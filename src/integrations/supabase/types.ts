@@ -2604,12 +2604,14 @@ export type Database = {
         Returns: number
       }
       calculate_match_score: {
-        Args: {
-          user1_regions: string[]
-          user1_sectors: string[]
-          user2_regions: string[]
-          user2_sectors: string[]
-        }
+        Args:
+          | { profile_id: string; signal_id: string }
+          | {
+              user1_regions: string[]
+              user1_sectors: string[]
+              user2_regions: string[]
+              user2_sectors: string[]
+            }
         Returns: number
       }
       check_badge_unlocks: {
@@ -2655,7 +2657,9 @@ export type Database = {
         Returns: string
       }
       find_adin_matches: {
-        Args: { target_user_id: string }
+        Args:
+          | { target_user_id: string }
+          | { user_id: string; match_threshold?: number }
         Returns: {
           matched_user_id: string
           match_score: number
