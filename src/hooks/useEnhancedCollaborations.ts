@@ -17,15 +17,11 @@ const initialFilters: CollaborationFilters = {
 
 export const useEnhancedCollaborations = () => {
   const { toast } = useToast();
-  const [allProjects, setAllProjects] = useState<CollaborationProject[]>([]);
+  const { data: allProjects = [], isLoading } = useLiveCollaborations();
+  const { data: stats } = useCollaborationStats();
   const [filters, setFilters] = useState<CollaborationFilters>(initialFilters);
-  const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'relevance' | 'urgency' | 'progress' | 'recent'>('relevance');
 
-  // Initialize data
-  useEffect(() => {
-    setAllProjects(enhancedCollaborationProjects);
-  }, []);
 
   // Filter and sort projects
   const filteredProjects = useMemo(() => {
@@ -109,10 +105,7 @@ export const useEnhancedCollaborations = () => {
     return filtered;
   }, [allProjects, filters, sortBy]);
 
-  // Calculate dynamic stats based on filtered projects
-  const dynamicStats = useMemo(() => {
-    return calculateStats(filteredProjects);
-  }, [filteredProjects]);
+  // Use stats from the hook instead of calculating locally
 
   const updateFilters = (newFilters: Partial<CollaborationFilters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -148,7 +141,13 @@ export const useEnhancedCollaborations = () => {
     hasActiveFilters,
     sortBy,
     setSortBy,
-    loading,
-    stats: dynamicStats
+    loading: isLoading,
+    stats: stats || {
+      total_projects: 0,
+      active_collaborators: 0,
+      countries_involved: 0,
+      total_funding: '$0M',
+      impact_stories: 0
+    }
   };
 };
