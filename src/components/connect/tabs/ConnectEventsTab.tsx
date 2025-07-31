@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Event } from '@/types/search';
+import { Event } from '@/types/eventTypes';
 import PopularEventsSection from '../PopularEventsSection';
 import EventCategoriesSection from '../EventCategoriesSection';
 import FeaturedCalendarsSection from '../FeaturedCalendarsSection';

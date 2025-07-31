@@ -11,10 +11,16 @@ export interface Event {
   is_featured: boolean;
   is_virtual: boolean;
   created_at: string;
+  updated_at: string;
   created_by: string;
+  banner_url?: string | null;
+  image_url?: string | null;
+  registration_url?: string | null;
   creator_profile?: {
+    id: string;
     full_name: string;
     email: string;
+    avatar_url?: string | null;
   } | null;
 }
 

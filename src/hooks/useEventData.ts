@@ -62,10 +62,16 @@ export const useEventData = (canManageEvents: boolean) => {
           is_featured: event.is_featured || false,
           is_virtual: event.is_virtual || false,
           created_at: event.created_at,
+          updated_at: event.updated_at || event.created_at,
           created_by: event.created_by || '',
+          banner_url: event.banner_url || null,
+          image_url: event.image_url || null,
+          registration_url: event.registration_url || null,
           creator_profile: creatorProfile ? {
+            id: creatorProfile.id,
             full_name: creatorProfile.full_name || 'Unknown',
-            email: creatorProfile.email || ''
+            email: creatorProfile.email || '',
+            avatar_url: creatorProfile.avatar_url || null
           } : null
         };
       });

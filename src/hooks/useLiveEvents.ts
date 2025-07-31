@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { searchEvents } from '@/services/eventsService';
-import { Event } from '@/types/search';
+import { Event } from '@/types/eventTypes';
 
 export const useLiveEvents = (filters: any = {}) => {
   return useQuery({

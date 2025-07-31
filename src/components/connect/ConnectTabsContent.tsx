@@ -6,7 +6,8 @@ import ProfessionalCard from './ProfessionalCard';
 import CommunityCard from './CommunityCard';
 import EmptyState from './EmptyState';
 import ConnectEventsTab from './tabs/ConnectEventsTab';
-import { Professional, Community, Event } from '@/types/search';
+import { Professional, Community } from '@/types/search';
+import { Event } from '@/types/eventTypes';
 
 interface ConnectTabsContentProps {
   // Data
