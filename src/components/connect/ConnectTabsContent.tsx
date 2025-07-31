@@ -6,8 +6,7 @@ import ProfessionalCard from './ProfessionalCard';
 import CommunityCard from './CommunityCard';
 import EmptyState from './EmptyState';
 import ConnectEventsTab from './tabs/ConnectEventsTab';
-import { Professional, Community } from '@/types/search';
-import { Event } from '@/types/eventTypes';
+import { Professional, Community, Event } from '@/types/search';
 
 interface ConnectTabsContentProps {
   // Data
@@ -268,6 +267,9 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
       </TabsContent>
 
       <TabsContent value="events">
+        {events.length === 0 ? (
+          <EmptyState type="events" onRefresh={onRefresh} />
+        ) : (
           <ConnectEventsTab
             events={events}
             onEventClick={onEventClick}
@@ -275,6 +277,7 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
             onCreatorClick={onCreatorClick}
             onViewAll={onViewAll}
           />
+        )}
       </TabsContent>
     </>
   );

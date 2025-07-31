@@ -14,39 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      adin_connection_matches: {
-        Row: {
-          created_at: string | null
-          id: string
-          match_reason: string | null
-          match_score: number | null
-          matched_user_id: string
-          shared_regions: string[] | null
-          shared_sectors: string[] | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          match_reason?: string | null
-          match_score?: number | null
-          matched_user_id: string
-          shared_regions?: string[] | null
-          shared_sectors?: string[] | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          match_reason?: string | null
-          match_score?: number | null
-          matched_user_id?: string
-          shared_regions?: string[] | null
-          shared_sectors?: string[] | null
-          user_id?: string
-        }
-        Relationships: []
-      }
       adin_connection_signals: {
         Row: {
           context: Json | null
@@ -124,144 +91,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-      }
-      adin_profiles: {
-        Row: {
-          admin_notes: string | null
-          created_at: string | null
-          display_name: string | null
-          id: string
-          influence_score: number | null
-          last_updated: string | null
-          region_focus: string[] | null
-          sector_focus: string[] | null
-          tags: Json | null
-          verified: boolean | null
-        }
-        Insert: {
-          admin_notes?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          id: string
-          influence_score?: number | null
-          last_updated?: string | null
-          region_focus?: string[] | null
-          sector_focus?: string[] | null
-          tags?: Json | null
-          verified?: boolean | null
-        }
-        Update: {
-          admin_notes?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          id?: string
-          influence_score?: number | null
-          last_updated?: string | null
-          region_focus?: string[] | null
-          sector_focus?: string[] | null
-          tags?: Json | null
-          verified?: boolean | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "adin_profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      adin_signals: {
-        Row: {
-          created_at: string | null
-          created_by: string | null
-          cta: string | null
-          description: string | null
-          id: string
-          link: string | null
-          region_focus: string[] | null
-          sector_focus: string[] | null
-          seen: boolean | null
-          signal_data: Json | null
-          signal_type: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          created_by?: string | null
-          cta?: string | null
-          description?: string | null
-          id?: string
-          link?: string | null
-          region_focus?: string[] | null
-          sector_focus?: string[] | null
-          seen?: boolean | null
-          signal_data?: Json | null
-          signal_type: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string | null
-          cta?: string | null
-          description?: string | null
-          id?: string
-          link?: string | null
-          region_focus?: string[] | null
-          sector_focus?: string[] | null
-          seen?: boolean | null
-          signal_data?: Json | null
-          signal_type?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "adin_signals_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      admin_analytics: {
-        Row: {
-          action_type: string
-          admin_id: string | null
-          created_at: string | null
-          id: string
-          metadata: Json | null
-          target_id: string | null
-          target_type: string | null
-        }
-        Insert: {
-          action_type: string
-          admin_id?: string | null
-          created_at?: string | null
-          id?: string
-          metadata?: Json | null
-          target_id?: string | null
-          target_type?: string | null
-        }
-        Update: {
-          action_type?: string
-          admin_id?: string | null
-          created_at?: string | null
-          id?: string
-          metadata?: Json | null
-          target_id?: string | null
-          target_type?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "admin_analytics_admin_id_fkey"
-            columns: ["admin_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       admin_logs: {
         Row: {
@@ -914,50 +743,6 @@ export type Database = {
           },
         ]
       }
-      content_moderation: {
-        Row: {
-          action: string
-          content_id: string
-          content_type: string
-          created_at: string | null
-          id: string
-          moderator_id: string | null
-          reason: string | null
-          resolved_at: string | null
-          status: string | null
-        }
-        Insert: {
-          action: string
-          content_id: string
-          content_type: string
-          created_at?: string | null
-          id?: string
-          moderator_id?: string | null
-          reason?: string | null
-          resolved_at?: string | null
-          status?: string | null
-        }
-        Update: {
-          action?: string
-          content_id?: string
-          content_type?: string
-          created_at?: string | null
-          id?: string
-          moderator_id?: string | null
-          reason?: string | null
-          resolved_at?: string | null
-          status?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "content_moderation_moderator_id_fkey"
-            columns: ["moderator_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       contribution_cards: {
         Row: {
           amount_needed: number | null
@@ -1116,44 +901,6 @@ export type Database = {
         }
         Relationships: []
       }
-      event_registrations: {
-        Row: {
-          cancelled_at: string | null
-          event_id: string
-          id: string
-          notes: string | null
-          registered_at: string
-          status: string
-          user_id: string
-        }
-        Insert: {
-          cancelled_at?: string | null
-          event_id: string
-          id?: string
-          notes?: string | null
-          registered_at?: string
-          status?: string
-          user_id: string
-        }
-        Update: {
-          cancelled_at?: string | null
-          event_id?: string
-          id?: string
-          notes?: string | null
-          registered_at?: string
-          status?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "event_registrations_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       events: {
         Row: {
           attendee_count: number | null
@@ -1218,30 +965,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      feature_flags: {
-        Row: {
-          created_at: string
-          feature_key: string
-          is_enabled: boolean
-          notes: string | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          feature_key: string
-          is_enabled?: boolean
-          notes?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          feature_key?: string
-          is_enabled?: boolean
-          notes?: string | null
-          updated_at?: string
-        }
-        Relationships: []
       }
       form_submissions: {
         Row: {
@@ -1314,42 +1037,33 @@ export type Database = {
       }
       impact_log: {
         Row: {
-          action_type: string | null
-          context: Json | null
           created_at: string | null
           id: string
           metadata: Json | null
           pillar: string | null
           points: number | null
-          score: number | null
           target_id: string | null
           target_type: string | null
           type: string
           user_id: string
         }
         Insert: {
-          action_type?: string | null
-          context?: Json | null
           created_at?: string | null
           id?: string
           metadata?: Json | null
           pillar?: string | null
           points?: number | null
-          score?: number | null
           target_id?: string | null
           target_type?: string | null
           type: string
           user_id: string
         }
         Update: {
-          action_type?: string | null
-          context?: Json | null
           created_at?: string | null
           id?: string
           metadata?: Json | null
           pillar?: string | null
           points?: number | null
-          score?: number | null
           target_id?: string | null
           target_type?: string | null
           type?: string
@@ -1574,42 +1288,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      newsletter_subscriptions: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          preferences: Json | null
-          status: string
-          subscribed_at: string
-          unsubscribed_at: string | null
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          preferences?: Json | null
-          status?: string
-          subscribed_at?: string
-          unsubscribed_at?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          preferences?: Json | null
-          status?: string
-          subscribed_at?: string
-          unsubscribed_at?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
       }
       notifications: {
         Row: {
@@ -1919,7 +1597,6 @@ export type Database = {
           profile_picture_url: string | null
           recent_searches: string[] | null
           referrer_id: string | null
-          role: string | null
           skills: string[] | null
           updated_at: string
           username: string | null
@@ -1965,7 +1642,6 @@ export type Database = {
           profile_picture_url?: string | null
           recent_searches?: string[] | null
           referrer_id?: string | null
-          role?: string | null
           skills?: string[] | null
           updated_at?: string
           username?: string | null
@@ -2011,7 +1687,6 @@ export type Database = {
           profile_picture_url?: string | null
           recent_searches?: string[] | null
           referrer_id?: string | null
-          role?: string | null
           skills?: string[] | null
           updated_at?: string
           username?: string | null
@@ -2339,47 +2014,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_contributions: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          id: string
-          region: string | null
-          sector: string | null
-          target_id: string | null
-          type: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          region?: string | null
-          sector?: string | null
-          target_id?: string | null
-          type: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          region?: string | null
-          sector?: string | null
-          target_id?: string | null
-          type?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_contributions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_dna_points: {
         Row: {
           collaborate_score: number
@@ -2497,41 +2131,6 @@ export type Database = {
         }
         Relationships: []
       }
-      verified_contributors: {
-        Row: {
-          expires_at: string | null
-          id: string
-          notes: string | null
-          user_id: string | null
-          verification_source: string
-          verified_at: string | null
-        }
-        Insert: {
-          expires_at?: string | null
-          id?: string
-          notes?: string | null
-          user_id?: string | null
-          verification_source: string
-          verified_at?: string | null
-        }
-        Update: {
-          expires_at?: string | null
-          id?: string
-          notes?: string | null
-          user_id?: string | null
-          verification_source?: string
-          verified_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "verified_contributors_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       waitlist_signups: {
         Row: {
           causes: string[] | null
@@ -2603,17 +2202,6 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: number
       }
-      calculate_match_score: {
-        Args:
-          | { profile_id: string; signal_id: string }
-          | {
-              user1_regions: string[]
-              user1_sectors: string[]
-              user2_regions: string[]
-              user2_sectors: string[]
-            }
-        Returns: number
-      }
       check_badge_unlocks: {
         Args: { target_user_id: string }
         Returns: undefined
@@ -2626,10 +2214,6 @@ export type Database = {
           _time_window_minutes?: number
         }
         Returns: boolean
-      }
-      compute_influence_score: {
-        Args: { target_user_id: string }
-        Returns: number
       }
       create_admin_notification: {
         Args: {
@@ -2655,18 +2239,6 @@ export type Database = {
           p_status?: string
         }
         Returns: string
-      }
-      find_adin_matches: {
-        Args:
-          | { target_user_id: string }
-          | { user_id: string; match_threshold?: number }
-        Returns: {
-          matched_user_id: string
-          match_score: number
-          match_reason: string
-          shared_regions: string[]
-          shared_sectors: string[]
-        }[]
       }
       generate_magic_link_token: {
         Args: Record<PropertyKey, never>
@@ -2749,20 +2321,12 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
-      get_user_role: {
-        Args: { user_id: string }
-        Returns: string
-      }
       get_user_verification_status: {
         Args: { target_user_id: string }
         Returns: Json
       }
       is_admin_user: {
         Args: { _user_id: string }
-        Returns: boolean
-      }
-      is_user_admin: {
-        Args: { user_id: string }
         Returns: boolean
       }
       make_user_admin: {
@@ -2779,10 +2343,6 @@ export type Database = {
       }
       update_adin_last_active: {
         Args: { target_user_id: string }
-        Returns: undefined
-      }
-      update_all_influence_scores: {
-        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       update_dna_points: {

@@ -4,16 +4,36 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Loader } from "@/components/ui/loader";
 import { SeedDataManager } from "@/components/admin/SeedDataManager";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 import { Settings, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { AdminRoute } from "@/components/auth/AdminRoute";
 
 export default function CommunityPulseDashboard() {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const { data, fetchPulseData, loading, error } = usePulseStore();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [adminPanelOpen, setAdminPanelOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user?.id) return;
+      
+      try {
+        const { data: adminData } = await supabase.rpc('is_admin_user', { 
+          _user_id: user.id 
+        });
+        setIsAdmin(adminData || false);
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, [user?.id]);
 
   useEffect(() => {
     if (user?.id) fetchPulseData(user.id);
@@ -30,8 +50,7 @@ export default function CommunityPulseDashboard() {
   if (error) return <div className="text-red-500">Failed to load data: {error}</div>;
 
   return (
-    <AdminRoute>
-      <div className="px-6 py-8 space-y-6">
+    <div className="px-6 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-dna-forest">Community Pulse</h1>
         <div className="flex items-center gap-2">
@@ -93,8 +112,7 @@ export default function CommunityPulseDashboard() {
           <h3 className="text-3xl font-bold text-dna-mint">{data.impactScore ?? 0}</h3>
         </div>
       </section>
-      </div>
-    </AdminRoute>
+    </div>
   );
 }
 

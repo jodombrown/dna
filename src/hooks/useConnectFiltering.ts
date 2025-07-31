@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { mockProfessionals } from '@/components/connect/tabs/ProfessionalsMockData';
-import { demoCommunities } from '@/data/demoSearchData';
-import { useFeaturedEvents } from '@/hooks/useLiveEvents';
+import { demoCommunities, demoEvents } from '@/data/demoSearchData';
 
 interface FilterState {
   location: string;
@@ -12,8 +11,6 @@ interface FilterState {
 }
 
 export const useConnectFiltering = (searchTerm: string, filters: FilterState) => {
-  const { data: liveEvents = [], isLoading } = useFeaturedEvents();
-
   return useMemo(() => {
     const filterText = searchTerm.toLowerCase();
     
@@ -79,7 +76,7 @@ export const useConnectFiltering = (searchTerm: string, filters: FilterState) =>
       return matchesText && matchesCategory;
     });
 
-    const filteredEvents = liveEvents.filter(event => {
+    const filteredEvents = demoEvents.filter(event => {
       // Text search
       const matchesText = !searchTerm || 
         event.title.toLowerCase().includes(filterText) ||
@@ -105,8 +102,7 @@ export const useConnectFiltering = (searchTerm: string, filters: FilterState) =>
     return {
       professionals: filteredProfessionals,
       communities: filteredCommunities,
-      events: filteredEvents,
-      isLoading
+      events: filteredEvents
     };
-  }, [searchTerm, filters, liveEvents, isLoading]);
+  }, [searchTerm, filters]);
 };

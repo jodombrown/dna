@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { CollaborationProject, CollaborationFilters, CollaborationStats } from '@/types/collaborationTypes';
-import { useLiveCollaborations, useCollaborationStats } from '@/hooks/useLiveCollaborations';
+import { enhancedCollaborationProjects, calculateStats } from '@/data/enhancedCollaborationData';
 import { useToast } from '@/hooks/use-toast';
 
 const initialFilters: CollaborationFilters = {
@@ -17,11 +17,15 @@ const initialFilters: CollaborationFilters = {
 
 export const useEnhancedCollaborations = () => {
   const { toast } = useToast();
-  const { data: allProjects = [], isLoading } = useLiveCollaborations();
-  const { data: stats } = useCollaborationStats();
+  const [allProjects, setAllProjects] = useState<CollaborationProject[]>([]);
   const [filters, setFilters] = useState<CollaborationFilters>(initialFilters);
+  const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'relevance' | 'urgency' | 'progress' | 'recent'>('relevance');
 
+  // Initialize data
+  useEffect(() => {
+    setAllProjects(enhancedCollaborationProjects);
+  }, []);
 
   // Filter and sort projects
   const filteredProjects = useMemo(() => {
@@ -105,7 +109,10 @@ export const useEnhancedCollaborations = () => {
     return filtered;
   }, [allProjects, filters, sortBy]);
 
-  // Use stats from the hook instead of calculating locally
+  // Calculate dynamic stats based on filtered projects
+  const dynamicStats = useMemo(() => {
+    return calculateStats(filteredProjects);
+  }, [filteredProjects]);
 
   const updateFilters = (newFilters: Partial<CollaborationFilters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -141,13 +148,7 @@ export const useEnhancedCollaborations = () => {
     hasActiveFilters,
     sortBy,
     setSortBy,
-    loading: isLoading,
-    stats: stats || {
-      total_projects: 0,
-      active_collaborators: 0,
-      countries_involved: 0,
-      total_funding: '$0M',
-      impact_stories: 0
-    }
+    loading,
+    stats: dynamicStats
   };
 };

@@ -5,24 +5,36 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, MessageSquare, UserPlus, MoreHorizontal, Share, ThumbsUp } from 'lucide-react';
-import { Profile } from '@/services/profilesService';
+import { MockProfessional } from './ProfessionalsMockData';
 
 interface ProfessionalListItemProps {
-  professional: Profile;
+  professional: MockProfessional;
 }
 
 const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professional }) => {
-  const getConnectionButton = () => {
-    return (
-      <Button size="sm" className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-1">
-        <UserPlus className="w-4 h-4" />
-        Connect
-      </Button>
-    );
-  };
-
-  const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  const getConnectionButton = (status: string | null, professionalName: string) => {
+    switch (status) {
+      case 'connected':
+        return (
+          <Button variant="outline" size="sm" className="flex items-center gap-1">
+            <MessageSquare className="w-4 h-4" />
+            Message
+          </Button>
+        );
+      case 'pending':
+        return (
+          <Button variant="outline" size="sm" disabled>
+            Request Sent
+          </Button>
+        );
+      default:
+        return (
+          <Button size="sm" className="bg-dna-emerald hover:bg-dna-forest text-white flex items-center gap-1">
+            <UserPlus className="w-4 h-4" />
+            Connect
+          </Button>
+        );
+    }
   };
 
   return (
@@ -31,12 +43,12 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
         <div className="flex items-start gap-4">
           <div className="relative">
             <Avatar className="w-16 h-16">
-              <AvatarImage src={professional.avatar_url || ''} alt={professional.full_name || ''} />
+              <AvatarImage src={professional.avatar} alt={professional.name} />
               <AvatarFallback className="bg-gradient-to-br from-dna-copper to-dna-emerald text-white">
-                {getInitials(professional.full_name || 'DN')}
+                {professional.name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
-            {professional.is_public && (
+            {professional.isOnline && (
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
             )}
           </div>
@@ -44,12 +56,12 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between">
               <div>
-                <CardTitle className="text-lg mb-1">{professional.full_name}</CardTitle>
-                <p className="text-dna-copper font-medium">{professional.profession || professional.professional_role}</p>
+                <CardTitle className="text-lg mb-1">{professional.name}</CardTitle>
+                <p className="text-dna-copper font-medium">{professional.title}</p>
                 <p className="text-gray-600 text-sm">{professional.company}</p>
               </div>
               <div className="flex items-center gap-2">
-                {getConnectionButton()}
+                {getConnectionButton(professional.connectionStatus, professional.name)}
                 <Button variant="ghost" size="sm">
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
@@ -59,12 +71,14 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
             <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
               <div className="flex items-center gap-1">
                 <MapPin className="w-4 h-4" />
-                <span>{professional.location || professional.current_country}</span>
+                <span>{professional.location}</span>
               </div>
-              {professional.country_of_origin && (
+              <span>•</span>
+              <span>Originally from {professional.origin}</span>
+              {professional.mutualConnections > 0 && (
                 <>
                   <span>•</span>
-                  <span>Originally from {professional.country_of_origin}</span>
+                  <span className="text-dna-emerald">{professional.mutualConnections} mutual connections</span>
                 </>
               )}
             </div>
@@ -73,42 +87,38 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
       </CardHeader>
       
       <CardContent className="space-y-4">
-        {professional.bio && <p className="text-gray-700">{professional.bio}</p>}
+        <p className="text-gray-700">{professional.bio}</p>
         
-        {professional.skills && professional.skills.length > 0 && (
-          <div>
-            <div className="text-sm font-medium text-gray-700 mb-2">Key Skills</div>
-            <div className="flex flex-wrap gap-2">
-              {professional.skills.map((skill, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {skill}
-                </Badge>
-              ))}
-            </div>
+        <div>
+          <div className="text-sm font-medium text-gray-700 mb-2">Key Skills</div>
+          <div className="flex flex-wrap gap-2">
+            {professional.skills.map((skill, index) => (
+              <Badge key={index} variant="outline" className="text-xs">
+                {skill}
+              </Badge>
+            ))}
           </div>
-        )}
+        </div>
         
-        {professional.years_experience && (
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="text-sm text-gray-600">Experience:</div>
-            <div className="text-sm font-medium">{professional.years_experience} years</div>
-          </div>
-        )}
+        <div className="bg-gray-50 rounded-lg p-3">
+          <div className="text-sm text-gray-600">Recent Activity:</div>
+          <div className="text-sm font-medium">{professional.recentActivity}</div>
+        </div>
         
         <div className="flex items-center justify-between pt-2 border-t">
           <div className="flex gap-6 text-sm text-gray-600">
-            <span>{professional.industry || 'Professional'}</span>
-            {professional.available_for?.includes('opportunities') && <span>• Open to opportunities</span>}
+            <span>{professional.followers.toLocaleString()} followers</span>
+            <span>{professional.connections.toLocaleString()} connections</span>
           </div>
           
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" className="flex items-center gap-1">
-              <MessageSquare className="w-4 h-4" />
-              Message
+              <ThumbsUp className="w-4 h-4" />
+              Endorse
             </Button>
             <Button variant="ghost" size="sm" className="flex items-center gap-1">
               <Share className="w-4 h-4" />
-              Share
+              Share Profile
             </Button>
           </div>
         </div>

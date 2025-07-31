@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
-import { Event } from '@/types/eventTypes';
+import { Event } from '@/types/search';
 import ModernEventCard from './ModernEventCard';
 
 interface PopularEventsSectionProps {

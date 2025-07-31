@@ -145,7 +145,6 @@ export const useAdvancedSearch = () => {
         attendee_count: event.attendee_count || 0,
         maxAttendees: event.max_attendees,
         max_attendees: event.max_attendees,
-        created_by: event.created_by || '',
         type: event.type || 'event',
         image: event.image_url || event.banner_url,
         isRegistered: false,

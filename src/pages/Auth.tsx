@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Eye, EyeOff, Mail, Lock, User, Loader2 } from 'lucide-react';
-import { Chrome, Linkedin } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useToast } from '@/hooks/use-toast';
 
@@ -16,7 +15,7 @@ const Auth = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user, signIn, signUp, signInWithGoogle, signInWithLinkedIn, loading } = useAuth();
+  const { user, signIn, signUp, loading } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -113,31 +112,6 @@ const Auth = () => {
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleOAuthSignIn = async (provider: 'google' | 'linkedin') => {
-    setIsSubmitting(true);
-    try {
-      const result = provider === 'google' 
-        ? await signInWithGoogle() 
-        : await signInWithLinkedIn();
-        
-      if (result.error) {
-        toast({
-          title: "OAuth Sign In Failed",
-          description: result.error.message || `Failed to sign in with ${provider}. Please try again.`,
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: `Something went wrong with ${provider} sign in. Please try again.`,
         variant: "destructive"
       });
     } finally {
@@ -294,39 +268,6 @@ const Auth = () => {
               </Button>
             </form>
 
-            {/* OAuth Section */}
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-500">Or continue with</span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => handleOAuthSignIn('google')}
-                  disabled={isSubmitting}
-                  className="w-full"
-                >
-                  <Chrome className="w-4 h-4 mr-2" />
-                  Google
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => handleOAuthSignIn('linkedin')}
-                  disabled={isSubmitting}
-                  className="w-full"
-                >
-                  <Linkedin className="w-4 h-4 mr-2" />
-                  LinkedIn
-                </Button>
-              </div>
-            </div>
-
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 {isLogin ? "Don't have an account?" : "Already have an account?"}
@@ -341,8 +282,6 @@ const Auth = () => {
                 </Button>
               </p>
             </div>
-
-
           </CardContent>
         </Card>
       </div>

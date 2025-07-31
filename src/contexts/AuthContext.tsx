@@ -8,12 +8,8 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   profile: any | null;
-  isAdmin: boolean;
-  role: string | null;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signInWithGoogle: () => Promise<{ error: any }>;
-  signInWithLinkedIn: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   updatePassword: (password: string) => Promise<{ error: any }>;
   refreshProfile: () => Promise<void>;
@@ -122,26 +118,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/app/dashboard`,
-      },
-    });
-    return { error };
-  };
-
-  const signInWithLinkedIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'linkedin_oidc',
-      options: {
-        redirectTo: `${window.location.origin}/app/dashboard`,
-      },
-    });
-    return { error };
-  };
-
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfile(null);
@@ -154,20 +130,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const isAdmin = profile?.role === 'admin';
-  const role = profile?.role || null;
-
   const value = {
     user,
     session,
     loading,
     profile,
-    isAdmin,
-    role,
     signUp,
     signIn,
-    signInWithGoogle,
-    signInWithLinkedIn,
     signOut,
     updatePassword,
     refreshProfile,

@@ -1,13 +1,11 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import AdinImpactProfile from '@/components/profile/AdinImpactProfile';
 
 const Profile = () => {
   const { profile, user } = useAuth();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-      {/* Basic Profile Info */}
+    <div className="max-w-7xl mx-auto px-4 py-6">
       <div className="bg-white rounded-lg p-6 shadow-sm">
         <h1 className="text-2xl font-bold text-dna-forest mb-4">Profile</h1>
         <div className="space-y-4">
@@ -26,9 +24,6 @@ const Profile = () => {
         </div>
         <p className="text-gray-600 mt-6">Full profile editing coming soon...</p>
       </div>
-
-      {/* ADIN Impact Profile */}
-      <AdinImpactProfile />
     </div>
   );
 };

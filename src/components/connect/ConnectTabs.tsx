@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import EventRegistrationSidebar from './EventRegistrationSidebar';
 import ConnectTabsContent from './ConnectTabsContent';
 import ConnectDialogsManager from './ConnectDialogsManager';
-import { Professional, Community } from '@/types/search';
-import { Event } from '@/types/eventTypes';
+import { Professional, Community, Event } from '@/types/search';
 
 interface ConnectTabsProps {
   activeTab: string;
