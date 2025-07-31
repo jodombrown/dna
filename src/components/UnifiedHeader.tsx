@@ -10,7 +10,14 @@ import {
   Search,
   User,
   LogOut,
-  Menu
+  Menu,
+  ChevronDown,
+  Zap,
+  Target,
+  Users2,
+  Lightbulb,
+  TestTube,
+  Rocket
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -24,6 +31,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems, phases } from './header/navigationConfig';
 
@@ -76,6 +91,16 @@ const UnifiedHeader = () => {
   const handleNavClick = (item: { name: string; path: string }) => {
     navigate(item.path);
     setIsMobileMenuOpen(false);
+  };
+
+  // Phase icons mapping
+  const phaseIcons = {
+    1: Zap,
+    2: Lightbulb,
+    3: Target,
+    4: TestTube,
+    5: Users2,
+    6: Rocket,
   };
 
   const handleAuthNavigation = (view: string) => {
@@ -173,6 +198,46 @@ const UnifiedHeader = () => {
                         {item.name}
                       </NavLink>
                     ))}
+                    
+                    {/* Phases Dropdown */}
+                    <NavigationMenu>
+                      <NavigationMenuList>
+                        <NavigationMenuItem>
+                          <NavigationMenuTrigger className="text-gray-700 hover:text-dna-forest transition-colors font-medium bg-transparent">
+                            Phases
+                            <ChevronDown className="ml-1 h-4 w-4" />
+                          </NavigationMenuTrigger>
+                          <NavigationMenuContent>
+                            <div className="w-96 p-4">
+                              <div className="grid gap-3">
+                                {phases.map((phase) => {
+                                  const Icon = phaseIcons[phase.phase as keyof typeof phaseIcons];
+                                  return (
+                                    <NavigationMenuLink key={phase.path} asChild>
+                                      <button
+                                        onClick={() => navigate(phase.path)}
+                                        className="flex items-start space-x-3 p-3 rounded-lg hover:bg-dna-mint/20 transition-colors text-left w-full"
+                                      >
+                                        <div className="flex items-center justify-center w-8 h-8 bg-dna-copper text-white rounded-full text-sm font-bold flex-shrink-0">
+                                          {phase.phase}
+                                        </div>
+                                        <div className="flex-1">
+                                          <div className="flex items-center space-x-2 mb-1">
+                                            <Icon className="w-4 h-4 text-dna-forest" />
+                                            <h4 className="text-sm font-medium text-gray-900">{phase.name}</h4>
+                                          </div>
+                                          <p className="text-xs text-gray-600">{phase.timeline}</p>
+                                        </div>
+                                      </button>
+                                    </NavigationMenuLink>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </NavigationMenuContent>
+                        </NavigationMenuItem>
+                      </NavigationMenuList>
+                    </NavigationMenu>
                   </nav>
                   
                   <Button
