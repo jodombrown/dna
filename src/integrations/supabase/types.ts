@@ -1267,6 +1267,69 @@ export type Database = {
         }
         Relationships: []
       }
+      group_conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          participant_ids: string[]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          participant_ids: string[]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          participant_ids?: string[]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      group_messages: {
+        Row: {
+          content: string | null
+          conversation_id: string | null
+          created_at: string | null
+          id: string
+          sender_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          sender_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "group_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       growth_campaigns: {
         Row: {
           content: Json | null
