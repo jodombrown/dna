@@ -33,20 +33,25 @@ export interface Event {
   id: string;
   title: string;
   description: string;
-  type: string;
   date_time: string;
   location: string;
-  is_virtual: boolean;
+  type: string;
   attendee_count: number;
+  max_attendees: number | null;
   is_featured: boolean;
+  is_virtual: boolean;
   created_at: string;
   updated_at: string;
-  banner_url?: string;
+  created_by: string;
+  banner_url?: string | null;
+  image_url?: string | null;
+  registration_url?: string | null;
   creator_profile?: {
     id: string;
     full_name: string;
-    avatar_url?: string;
-  };
+    email: string;
+    avatar_url?: string | null;
+  } | null;
 }
 
 // Demo data for professionals (8 professionals)
@@ -286,13 +291,18 @@ const demoEvents: Event[] = [
     location: 'London, UK',
     is_virtual: false,
     attendee_count: 500,
+    max_attendees: 750,
     is_featured: true,
+    created_by: '1',
     banner_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=300&fit=crop',
+    registration_url: 'https://example.com/register/tech-summit-2025',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '1',
       full_name: 'Dr. Amara Okafor',
+      email: 'amara@afripay.com',
       avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
     }
   },
@@ -305,13 +315,18 @@ const demoEvents: Event[] = [
     location: 'Virtual Event',
     is_virtual: true,
     attendee_count: 250,
+    max_attendees: 500,
     is_featured: true,
+    created_by: '2',
     banner_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=500&h=300&fit=crop',
+    registration_url: 'https://example.com/register/diaspora-investment',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '2',
       full_name: 'Prof. Kwame Asante',
+      email: 'kwame@ghanaitech.edu',
       avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80'
     }
   },
@@ -324,13 +339,18 @@ const demoEvents: Event[] = [
     location: 'Toronto, Canada',
     is_virtual: false,
     attendee_count: 80,
+    max_attendees: 100,
     is_featured: false,
+    created_by: '3',
     banner_url: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=500&h=300&fit=crop',
+    registration_url: 'https://example.com/register/women-tech-leadership',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '3',
       full_name: 'Sarah Mwangi',
+      email: 'sarah@medtech-africa.com',
       avatar_url: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=80'
     }
   },
@@ -343,13 +363,18 @@ const demoEvents: Event[] = [
     location: 'Berlin, Germany',
     is_virtual: false,
     attendee_count: 45,
+    max_attendees: 60,
     is_featured: false,
+    created_by: '4',
     banner_url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=300&fit=crop',
+    registration_url: 'https://example.com/register/sustainable-energy',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '4',
       full_name: 'Ibrahim Diallo',
+      email: 'ibrahim@solartech.com',
       avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80'
     }
   },
@@ -362,13 +387,18 @@ const demoEvents: Event[] = [
     location: 'Virtual Event',
     is_virtual: true,
     attendee_count: 180,
+    max_attendees: 250,
     is_featured: true,
+    created_by: '5',
     banner_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=500&h=300&fit=crop',
+    registration_url: 'https://example.com/register/healthtech-forum',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '5',
       full_name: 'Fatima Al-Rashid',
+      email: 'fatima@learnafrica.edu',
       avatar_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80'
     }
   },
@@ -381,13 +411,18 @@ const demoEvents: Event[] = [
     location: 'Paris, France',
     is_virtual: false,
     attendee_count: 30,
+    max_attendees: 40,
     is_featured: false,
+    created_by: '6',
     banner_url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop',
+    registration_url: 'https://example.com/register/entrepreneurship-bootcamp',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '6',
       full_name: 'Dr. Chinedu Okonkwo',
+      email: 'chinedu@deepmind.com',
       avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80'
     }
   },
@@ -400,13 +435,18 @@ const demoEvents: Event[] = [
     location: 'Dubai, UAE',
     is_virtual: false,
     attendee_count: 300,
+    max_attendees: 400,
     is_featured: true,
+    created_by: '7',
     banner_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=500&h=300&fit=crop',
+    registration_url: 'https://example.com/register/financial-inclusion-summit',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '7',
       full_name: 'Aisha Kone',
+      email: 'aisha@africagrowth.fund',
       avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80'
     }
   },
@@ -419,13 +459,18 @@ const demoEvents: Event[] = [
     location: 'Virtual Event',
     is_virtual: true,
     attendee_count: 120,
+    max_attendees: 150,
     is_featured: false,
+    created_by: '8',
     banner_url: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&h=300&fit=crop',
+    registration_url: 'https://example.com/register/agritech-innovation',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '8',
       full_name: 'Kofi Mensah',
+      email: 'kofi@afrocentricmedia.com',
       avatar_url: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=80'
     }
   },
@@ -438,13 +483,18 @@ const demoEvents: Event[] = [
     location: 'New York, USA',
     is_virtual: false,
     attendee_count: 75,
+    max_attendees: 100,
     is_featured: false,
+    created_by: '1',
     banner_url: 'https://images.unsplash.com/photo-1515169067868-5387ec356754?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1515169067868-5387ec356754?w=500&h=300&fit=crop',
+    registration_url: 'https://example.com/register/creative-industries',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '1',
       full_name: 'Dr. Amara Okafor',
+      email: 'amara@afripay.com',
       avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
     }
   },
@@ -457,13 +507,18 @@ const demoEvents: Event[] = [
     location: 'Amsterdam, Netherlands',
     is_virtual: false,
     attendee_count: 200,
+    max_attendees: 300,
     is_featured: true,
+    created_by: '2',
     banner_url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=500&h=300&fit=crop',
+    registration_url: 'https://example.com/register/youth-leadership',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '2',
       full_name: 'Prof. Kwame Asante',
+      email: 'kwame@ghanaitech.edu',
       avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80'
     }
   }
