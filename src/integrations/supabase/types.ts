@@ -92,6 +92,44 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_analytics: {
+        Row: {
+          action_type: string
+          admin_id: string | null
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          action_type: string
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_analytics_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_logs: {
         Row: {
           action: string
@@ -743,6 +781,50 @@ export type Database = {
           },
         ]
       }
+      content_moderation: {
+        Row: {
+          action: string
+          content_id: string
+          content_type: string
+          created_at: string | null
+          id: string
+          moderator_id: string | null
+          reason: string | null
+          resolved_at: string | null
+          status: string | null
+        }
+        Insert: {
+          action: string
+          content_id: string
+          content_type: string
+          created_at?: string | null
+          id?: string
+          moderator_id?: string | null
+          reason?: string | null
+          resolved_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          action?: string
+          content_id?: string
+          content_type?: string
+          created_at?: string | null
+          id?: string
+          moderator_id?: string | null
+          reason?: string | null
+          resolved_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_moderation_moderator_id_fkey"
+            columns: ["moderator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contribution_cards: {
         Row: {
           amount_needed: number | null
@@ -900,6 +982,44 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      event_registrations: {
+        Row: {
+          cancelled_at: string | null
+          event_id: string
+          id: string
+          notes: string | null
+          registered_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          event_id: string
+          id?: string
+          notes?: string | null
+          registered_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          event_id?: string
+          id?: string
+          notes?: string | null
+          registered_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       events: {
         Row: {
@@ -1313,6 +1433,42 @@ export type Database = {
           },
         ]
       }
+      newsletter_subscriptions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          preferences: Json | null
+          status: string
+          subscribed_at: string
+          unsubscribed_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          preferences?: Json | null
+          status?: string
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          preferences?: Json | null
+          status?: string
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -1621,6 +1777,7 @@ export type Database = {
           profile_picture_url: string | null
           recent_searches: string[] | null
           referrer_id: string | null
+          role: string | null
           skills: string[] | null
           updated_at: string
           username: string | null
@@ -1666,6 +1823,7 @@ export type Database = {
           profile_picture_url?: string | null
           recent_searches?: string[] | null
           referrer_id?: string | null
+          role?: string | null
           skills?: string[] | null
           updated_at?: string
           username?: string | null
@@ -1711,6 +1869,7 @@ export type Database = {
           profile_picture_url?: string | null
           recent_searches?: string[] | null
           referrer_id?: string | null
+          role?: string | null
           skills?: string[] | null
           updated_at?: string
           username?: string | null
@@ -2345,12 +2504,20 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      get_user_role: {
+        Args: { user_id: string }
+        Returns: string
+      }
       get_user_verification_status: {
         Args: { target_user_id: string }
         Returns: Json
       }
       is_admin_user: {
         Args: { _user_id: string }
+        Returns: boolean
+      }
+      is_user_admin: {
+        Args: { user_id: string }
         Returns: boolean
       }
       make_user_admin: {

@@ -7,8 +7,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, ShieldX } from 'lucide-react';
 import { CreateCommunityData } from '@/types/community';
+import { useRoleBasedAccess } from '@/hooks/useRoleBasedAccess';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface CreateCommunityDialogProps {
   open: boolean;
@@ -38,6 +40,7 @@ const CreateCommunityDialog: React.FC<CreateCommunityDialogProps> = ({
   onCreateCommunity,
   trigger
 }) => {
+  const { canCreateCommunity } = useRoleBasedAccess();
   const [formData, setFormData] = useState<CreateCommunityData>({
     name: '',
     description: '',
@@ -94,6 +97,33 @@ const CreateCommunityDialog: React.FC<CreateCommunityDialogProps> = ({
       addTag();
     }
   };
+
+  if (!canCreateCommunity) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+        
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Create New Community</DialogTitle>
+          </DialogHeader>
+          
+          <Alert>
+            <ShieldX className="h-4 w-4" />
+            <AlertDescription>
+              Only DNA administrators can create new communities. Please contact an admin if you'd like to propose a new community.
+            </AlertDescription>
+          </Alert>
+          
+          <div className="flex justify-end pt-4">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

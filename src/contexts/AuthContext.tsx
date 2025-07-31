@@ -8,6 +8,8 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   profile: any | null;
+  isAdmin: boolean;
+  role: string | null;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signInWithGoogle: () => Promise<{ error: any }>;
@@ -152,11 +154,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
+  const isAdmin = profile?.role === 'admin';
+  const role = profile?.role || null;
+
   const value = {
     user,
     session,
     loading,
     profile,
+    isAdmin,
+    role,
     signUp,
     signIn,
     signInWithGoogle,

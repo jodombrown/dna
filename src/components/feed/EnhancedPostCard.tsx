@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { PostComments } from './PostComments';
 import { formatDistanceToNow } from 'date-fns';
-import { Heart, MessageCircle, Share2, MoreHorizontal, MapPin, Smile } from 'lucide-react';
+import { Heart, MessageCircle, Share2, MoreHorizontal, MapPin, Smile, Flag, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRealtimeComments, useRealtimeReactions } from '@/hooks/useRealtimePosts';
+import { useRoleBasedAccess } from '@/hooks/useRoleBasedAccess';
 
 interface PostReaction {
   id: string;
@@ -58,6 +60,7 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
   const [userReactions, setUserReactions] = useState<string[]>([]);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { isAdmin, canDeleteAnyPost } = useRoleBasedAccess();
 
   // Initialize post engagement data
   useEffect(() => {
@@ -249,6 +252,66 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
     return acc;
   }, {} as Record<string, number>);
 
+  // Admin functions
+  const handleDeletePost = async () => {
+    if (!canDeleteAnyPost && post.profiles.id !== user?.id) {
+      toast({
+        title: "Access denied",
+        description: "You don't have permission to delete this post",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', post.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Post deleted",
+        description: "The post has been removed",
+      });
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete post",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleFlagPost = async () => {
+    try {
+      const { error } = await supabase
+        .from('content_flags')
+        .insert({
+          content_type: 'post',
+          content_id: post.id,
+          flagged_by: user?.id,
+          reason: 'inappropriate_content'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Post flagged",
+        description: "This post has been reported for review",
+      });
+    } catch (error) {
+      console.error('Error flagging post:', error);
+      toast({
+        title: "Error",
+        description: "Failed to flag post",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card className="bg-background border-border">
       <CardContent className="p-6">
@@ -291,9 +354,30 @@ export const EnhancedPostCard: React.FC<PostCardProps> = ({
               </div>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="text-muted-foreground">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          
+          {/* Admin/User Actions Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-muted-foreground">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleFlagPost}>
+                <Flag className="h-4 w-4 mr-2" />
+                Report Post
+              </DropdownMenuItem>
+              {(canDeleteAnyPost || post.profiles.id === user?.id) && (
+                <DropdownMenuItem 
+                  onClick={handleDeletePost}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Post
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Content */}
