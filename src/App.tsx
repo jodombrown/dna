@@ -12,6 +12,7 @@ import AppDashboard from "./pages/App";
 import ContributeExample from "./pages/ContributeExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ConnectExample from "./pages/ConnectExample";
+import ImpactProfile from "./pages/ImpactProfile";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import MarketResearchPhase from "./pages/MarketResearchPhase";
@@ -56,6 +57,9 @@ function App() {
               <Route path="/connect" element={<AuthGuard><ConnectExample /></AuthGuard>} />
               <Route path="/contact" element={<AuthGuard><Contact /></AuthGuard>} />
               <Route path="/about" element={<AuthGuard><About /></AuthGuard>} />
+              
+              {/* Public Impact Profile Route */}
+              <Route path="/impact-profile/:username" element={<ImpactProfile />} />
               
               <Route path="/phase/market-research" element={<AuthGuard><MarketResearchPhase /></AuthGuard>} />
               <Route path="/phase/prototyping" element={<AuthGuard><PrototypingPhase /></AuthGuard>} />
