@@ -1608,6 +1608,7 @@ export type Database = {
           id: string
           is_read: boolean | null
           message_type: string | null
+          read_by: string[] | null
           sender_id: string
           updated_at: string
         }
@@ -1618,6 +1619,7 @@ export type Database = {
           id?: string
           is_read?: boolean | null
           message_type?: string | null
+          read_by?: string[] | null
           sender_id: string
           updated_at?: string
         }
@@ -1628,6 +1630,7 @@ export type Database = {
           id?: string
           is_read?: boolean | null
           message_type?: string | null
+          read_by?: string[] | null
           sender_id?: string
           updated_at?: string
         }

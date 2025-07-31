@@ -49,23 +49,46 @@ export const useRealtimeMessaging = (userId?: string) => {
     if (!userId) return;
 
     try {
-      const { data, error } = await supabase
+      // First get conversations
+      const { data: conversationsData, error: conversationsError } = await supabase
         .from('conversations')
-        .select(`
-          *,
-          user_1:profiles!conversations_user_1_id_fkey(id, display_name, avatar_url),
-          user_2:profiles!conversations_user_2_id_fkey(id, display_name, avatar_url)
-        `)
+        .select('*')
         .or(`user_1_id.eq.${userId},user_2_id.eq.${userId}`)
         .order('last_message_at', { ascending: false });
 
-      if (error) throw error;
+      if (conversationsError) throw conversationsError;
 
-      const conversationsWithOtherUser = data?.map(conv => ({
-        ...conv,
-        other_user: conv.user_1_id === userId ? conv.user_2 : conv.user_1,
-        unread_count: 0 // Will be calculated separately
-      })) || [];
+      // Then get profile data for other users
+      const otherUserIds = conversationsData?.map(conv => 
+        conv.user_1_id === userId ? conv.user_2_id : conv.user_1_id
+      ) || [];
+
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, display_name, avatar_url, full_name')
+        .in('id', otherUserIds);
+
+      if (profilesError) throw profilesError;
+
+      // Combine the data
+      const conversationsWithOtherUser = conversationsData?.map(conv => {
+        const otherUserId = conv.user_1_id === userId ? conv.user_2_id : conv.user_1_id;
+        const otherUserProfile = profilesData?.find(profile => profile.id === otherUserId);
+        
+        return {
+          ...conv,
+          other_user: otherUserProfile ? {
+            id: otherUserProfile.id,
+            display_name: otherUserProfile.display_name || otherUserProfile.full_name || 'Unknown User',
+            avatar_url: otherUserProfile.avatar_url || ''
+          } : {
+            id: otherUserId,
+            display_name: 'Unknown User',
+            avatar_url: ''
+          },
+          unread_count: 0 // Will be calculated separately
+        };
+      }) || [];
 
       setConversations(conversationsWithOtherUser);
     } catch (error) {
@@ -83,18 +106,41 @@ export const useRealtimeMessaging = (userId?: string) => {
   // Fetch messages for a conversation
   const fetchMessages = useCallback(async (conversationId: string) => {
     try {
-      const { data, error } = await supabase
+      // First get messages
+      const { data: messagesData, error: messagesError } = await supabase
         .from('messages')
-        .select(`
-          *,
-          sender:profiles!messages_sender_id_fkey(id, display_name, avatar_url)
-        `)
+        .select('*')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (messagesError) throw messagesError;
 
-      setMessages(data || []);
+      // Get sender profiles
+      const senderIds = [...new Set(messagesData?.map(msg => msg.sender_id) || [])];
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, display_name, avatar_url, full_name')
+        .in('id', senderIds);
+
+      if (profilesError) throw profilesError;
+
+      // Combine the data
+      const messagesWithSenders = messagesData?.map(msg => ({
+        ...msg,
+        read_by: msg.read_by || [],
+        sender: profilesData?.find(profile => profile.id === msg.sender_id) ? {
+          id: msg.sender_id,
+          display_name: profilesData.find(p => p.id === msg.sender_id)?.display_name || 
+                       profilesData.find(p => p.id === msg.sender_id)?.full_name || 'Unknown User',
+          avatar_url: profilesData.find(p => p.id === msg.sender_id)?.avatar_url || ''
+        } : {
+          id: msg.sender_id,
+          display_name: 'Unknown User',
+          avatar_url: ''
+        }
+      })) || [];
+
+      setMessages(messagesWithSenders);
     } catch (error) {
       console.error('Error fetching messages:', error);
       toast({
@@ -127,6 +173,8 @@ export const useRealtimeMessaging = (userId?: string) => {
         .update({ last_message_at: new Date().toISOString() })
         .eq('id', conversationId);
 
+      // Refresh messages to show the new one
+      fetchMessages(conversationId);
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
@@ -135,7 +183,7 @@ export const useRealtimeMessaging = (userId?: string) => {
         variant: "destructive"
       });
     }
-  }, [userId, toast]);
+  }, [userId, toast, fetchMessages]);
 
   // Mark messages as read
   const markAsRead = useCallback(async (conversationId: string) => {
@@ -199,11 +247,11 @@ export const useRealtimeMessaging = (userId?: string) => {
         schema: 'public',
         table: 'messages'
       }, (payload) => {
-        const newMessage = payload.new as Message;
+        const newMessage = payload.new as any;
         
         // Add to messages if it's for the current conversation
         if (newMessage.conversation_id === selectedConversation) {
-          setMessages(prev => [...prev, newMessage]);
+          fetchMessages(selectedConversation);
         }
 
         // Show notification if user is not the sender and not on the conversation
@@ -219,11 +267,7 @@ export const useRealtimeMessaging = (userId?: string) => {
           
           toast({
             title: "New Message",
-            description: "You have a new message",
-            action: {
-              altText: "View",
-              onClick: () => setSelectedConversation(newMessage.conversation_id)
-            }
+            description: "You have a new message"
           });
         }
 
@@ -248,7 +292,7 @@ export const useRealtimeMessaging = (userId?: string) => {
       supabase.removeChannel(messagesChannel);
       supabase.removeChannel(conversationsChannel);
     };
-  }, [userId, selectedConversation, fetchConversations, toast]);
+  }, [userId, selectedConversation, fetchConversations, fetchMessages, toast]);
 
   // Set up typing indicators
   useEffect(() => {
