@@ -1,7 +1,6 @@
-
 import { useState, useEffect, useMemo } from 'react';
 import { CollaborationProject, CollaborationFilters, CollaborationStats } from '@/types/collaborationTypes';
-import { enhancedCollaborationProjects, calculateStats } from '@/data/enhancedCollaborationData';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 const initialFilters: CollaborationFilters = {
@@ -16,20 +15,83 @@ const initialFilters: CollaborationFilters = {
 };
 
 export const useEnhancedCollaborations = () => {
-  const { toast } = useToast();
-  const [allProjects, setAllProjects] = useState<CollaborationProject[]>([]);
+  const [projects, setProjects] = useState<CollaborationProject[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<CollaborationFilters>(initialFilters);
-  const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'relevance' | 'urgency' | 'progress' | 'recent'>('relevance');
+  const { toast } = useToast();
 
-  // Initialize data
   useEffect(() => {
-    setAllProjects(enhancedCollaborationProjects);
-  }, []);
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('contribution_cards')
+          .select('*')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching projects:', error);
+          toast({
+            title: "Error",
+            description: "Failed to load collaboration projects",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Transform contribution_cards to CollaborationProject format
+        const transformedProjects: CollaborationProject[] = (data || []).map(card => ({
+          id: card.id,
+          title: card.title,
+          description: card.description || '',
+          impact_area: card.impact_area || 'general',
+          region: 'africa',
+          countries: [card.location || 'Multiple'],
+          contribution_types: card.contribution_type ? [card.contribution_type as any] : ['funding'],
+          skills_needed: [],
+          team_size: 1,
+          collaborators: 0,
+          funding_goal: card.amount_needed || 0,
+          current_funding: card.amount_raised || 0,
+          progress: card.amount_needed ? Math.round(((card.amount_raised || 0) / card.amount_needed) * 100) : 0,
+          status: 'active',
+          urgency: 'medium',
+          time_commitment: 'flexible',
+          creator: {
+            name: 'Community Member',
+            avatar: '',
+            title: 'Contributor'
+          },
+          collaborator_avatars: [],
+          tags: [card.impact_area || 'General'],
+          timeline: 'Ongoing',
+          next_milestone: 'In progress',
+          recent_update: 'Project is active and seeking contributions',
+          image_url: card.image_url,
+          created_at: card.created_at
+        }));
+
+        setProjects(transformedProjects);
+      } catch (err: any) {
+        console.error('Unexpected error:', err);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, [toast]);
 
   // Filter and sort projects
-  const filteredProjects = useMemo(() => {
-    let filtered = allProjects.filter(project => {
+  const filteredAndSortedProjects = useMemo(() => {
+    let filtered = projects.filter(project => {
       // Search query
       if (filters.search_query) {
         const query = filters.search_query.toLowerCase();
@@ -107,12 +169,21 @@ export const useEnhancedCollaborations = () => {
     });
 
     return filtered;
-  }, [allProjects, filters, sortBy]);
+  }, [projects, filters, sortBy]);
 
-  // Calculate dynamic stats based on filtered projects
-  const dynamicStats = useMemo(() => {
-    return calculateStats(filteredProjects);
-  }, [filteredProjects]);
+  const stats: CollaborationStats = useMemo(() => {
+    const totalCollaborators = filteredAndSortedProjects.reduce((sum, project) => sum + project.collaborators, 0);
+    const uniqueCountries = new Set(filteredAndSortedProjects.flatMap(project => project.countries));
+    const totalFunding = filteredAndSortedProjects.reduce((sum, project) => sum + (project.current_funding || 0), 0);
+    
+    return {
+      total_projects: filteredAndSortedProjects.length,
+      active_collaborators: totalCollaborators,
+      countries_involved: uniqueCountries.size,
+      total_funding: `$${(totalFunding / 1000000).toFixed(1)}M`,
+      impact_stories: Math.floor(filteredAndSortedProjects.length * 0.6)
+    };
+  }, [filteredAndSortedProjects]);
 
   const updateFilters = (newFilters: Partial<CollaborationFilters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -140,8 +211,8 @@ export const useEnhancedCollaborations = () => {
   }, [filters]);
 
   return {
-    projects: filteredProjects,
-    allProjects,
+    projects: filteredAndSortedProjects,
+    allProjects: projects,
     filters,
     updateFilters,
     clearFilters,
@@ -149,6 +220,6 @@ export const useEnhancedCollaborations = () => {
     sortBy,
     setSortBy,
     loading,
-    stats: dynamicStats
+    stats
   };
 };
