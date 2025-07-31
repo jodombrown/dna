@@ -1,0 +1,17 @@
+{
+  "name": "dna-seed-scripts",
+  "version": "1.0.0",
+  "description": "Seeding scripts for DNA platform",
+  "scripts": {
+    "seed": "tsx seed-database.ts",
+    "seed:dev": "NODE_ENV=development tsx seed-database.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.9",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "@types/node": "^20.0.0"
+  }
+}
