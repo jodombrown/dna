@@ -1,25 +1,20 @@
 
 import React from 'react';
-import PopularEventsSection from '../PopularEventsSection';
-import EventCategoriesSection from '../EventCategoriesSection';
-import FeaturedCalendarsSection from '../FeaturedCalendarsSection';
-import LocalEventsSection from '../LocalEventsSection';
+import LiveEventsSection from '../LiveEventsSection';
 import { Event } from '@/types/search';
 
 interface ConnectEventsTabProps {
-  events: Event[];
-  onEventClick: (event: Event) => void;
-  onRegisterEvent: (event: Event) => void;
-  onCreatorClick: (creatorId: string) => void;
-  onViewAll: () => void;
+  onEventClick?: (event: Event) => void;
+  onRegisterEvent?: (event: Event) => void;
+  onCreatorClick?: (creatorId: string) => void;
+  onViewAll?: () => void;
 }
 
 const ConnectEventsTab: React.FC<ConnectEventsTabProps> = ({
-  events,
-  onEventClick,
-  onRegisterEvent,
-  onCreatorClick,
-  onViewAll
+  onEventClick = () => {},
+  onRegisterEvent = () => {},
+  onCreatorClick = () => {},
+  onViewAll = () => {}
 }) => {
   return (
     <div className="space-y-16">
@@ -27,23 +22,16 @@ const ConnectEventsTab: React.FC<ConnectEventsTabProps> = ({
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Discover Events</h2>
         <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-          Explore, share, and create events near you, building meaningful connections through gatherings that matter
+          Connect with your community through live events and real-time networking opportunities
         </p>
       </div>
 
-      <PopularEventsSection 
-        events={events}
+      <LiveEventsSection 
         onEventClick={onEventClick}
         onRegisterEvent={onRegisterEvent}
         onCreatorClick={onCreatorClick}
         onViewAll={onViewAll}
       />
-
-      <EventCategoriesSection />
-
-      <FeaturedCalendarsSection />
-
-      <LocalEventsSection />
     </div>
   );
 };

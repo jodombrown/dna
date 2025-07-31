@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { CollaborationProject, CollaborationFilters, CollaborationStats } from '@/types/collaborationTypes';
-import { enhancedCollaborationProjects, calculateStats } from '@/data/enhancedCollaborationData';
+import { useLiveCollaborations, useCollaborationStats } from '@/hooks/useLiveCollaborations';
 import { useToast } from '@/hooks/use-toast';
 
 const initialFilters: CollaborationFilters = {
