@@ -8,6 +8,7 @@ import LocalEventsSection from '../LocalEventsSection';
 import { useFeaturedEvents } from '@/hooks/useLiveEvents';
 
 interface ConnectEventsTabProps {
+  events?: Event[];
   onEventClick?: (event: Event) => void;
   onRegisterEvent?: (event: Event) => void;
   onCreatorClick?: (creatorId: string) => void;
@@ -15,12 +16,15 @@ interface ConnectEventsTabProps {
 }
 
 const ConnectEventsTab: React.FC<ConnectEventsTabProps> = ({
+  events: propEvents,
   onEventClick = () => {},
   onRegisterEvent = () => {},
   onCreatorClick = () => {},
   onViewAll = () => {}
 }) => {
-  const { data: events = [], isLoading } = useFeaturedEvents();
+  // Use prop events if provided, otherwise fetch from database
+  const { data: fetchedEvents = [], isLoading } = useFeaturedEvents();
+  const events = propEvents || fetchedEvents;
 
   return (
     <div className="space-y-16">

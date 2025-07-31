@@ -269,6 +269,7 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
 
       <TabsContent value="events">
           <ConnectEventsTab
+            events={events}
             onEventClick={onEventClick}
             onRegisterEvent={onRegisterEvent}
             onCreatorClick={onCreatorClick}
