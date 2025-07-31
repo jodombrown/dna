@@ -92,6 +92,82 @@ export type Database = {
         }
         Relationships: []
       }
+      adin_profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          influence_score: number | null
+          last_updated: string | null
+          region_focus: string[] | null
+          sector_focus: string[] | null
+          tags: Json | null
+          verified: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          influence_score?: number | null
+          last_updated?: string | null
+          region_focus?: string[] | null
+          sector_focus?: string[] | null
+          tags?: Json | null
+          verified?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          influence_score?: number | null
+          last_updated?: string | null
+          region_focus?: string[] | null
+          sector_focus?: string[] | null
+          tags?: Json | null
+          verified?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adin_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      adin_signals: {
+        Row: {
+          created_at: string | null
+          id: string
+          seen: boolean | null
+          signal_data: Json | null
+          signal_type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          seen?: boolean | null
+          signal_data?: Json | null
+          signal_type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          seen?: boolean | null
+          signal_data?: Json | null
+          signal_type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adin_signals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_analytics: {
         Row: {
           action_type: string
@@ -1181,33 +1257,42 @@ export type Database = {
       }
       impact_log: {
         Row: {
+          action_type: string | null
+          context: Json | null
           created_at: string | null
           id: string
           metadata: Json | null
           pillar: string | null
           points: number | null
+          score: number | null
           target_id: string | null
           target_type: string | null
           type: string
           user_id: string
         }
         Insert: {
+          action_type?: string | null
+          context?: Json | null
           created_at?: string | null
           id?: string
           metadata?: Json | null
           pillar?: string | null
           points?: number | null
+          score?: number | null
           target_id?: string | null
           target_type?: string | null
           type: string
           user_id: string
         }
         Update: {
+          action_type?: string | null
+          context?: Json | null
           created_at?: string | null
           id?: string
           metadata?: Json | null
           pillar?: string | null
           points?: number | null
+          score?: number | null
           target_id?: string | null
           target_type?: string | null
           type?: string
@@ -2197,6 +2282,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_contributions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          region: string | null
+          sector: string | null
+          target_id: string | null
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          region?: string | null
+          sector?: string | null
+          target_id?: string | null
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          region?: string | null
+          sector?: string | null
+          target_id?: string | null
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_contributions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_dna_points: {
         Row: {
           collaborate_score: number
@@ -2314,6 +2440,41 @@ export type Database = {
         }
         Relationships: []
       }
+      verified_contributors: {
+        Row: {
+          expires_at: string | null
+          id: string
+          notes: string | null
+          user_id: string | null
+          verification_source: string
+          verified_at: string | null
+        }
+        Insert: {
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          user_id?: string | null
+          verification_source: string
+          verified_at?: string | null
+        }
+        Update: {
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          user_id?: string | null
+          verification_source?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verified_contributors_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       waitlist_signups: {
         Row: {
           causes: string[] | null
@@ -2397,6 +2558,10 @@ export type Database = {
           _time_window_minutes?: number
         }
         Returns: boolean
+      }
+      compute_influence_score: {
+        Args: { target_user_id: string }
+        Returns: number
       }
       create_admin_notification: {
         Args: {
@@ -2534,6 +2699,10 @@ export type Database = {
       }
       update_adin_last_active: {
         Args: { target_user_id: string }
+        Returns: undefined
+      }
+      update_all_influence_scores: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       update_dna_points: {
