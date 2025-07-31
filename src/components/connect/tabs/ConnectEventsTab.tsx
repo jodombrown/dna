@@ -1,7 +1,11 @@
 
 import React from 'react';
-import LiveEventsSection from '../LiveEventsSection';
 import { Event } from '@/types/search';
+import PopularEventsSection from '../PopularEventsSection';
+import EventCategoriesSection from '../EventCategoriesSection';
+import FeaturedCalendarsSection from '../FeaturedCalendarsSection';
+import LocalEventsSection from '../LocalEventsSection';
+import { useFeaturedEvents } from '@/hooks/useLiveEvents';
 
 interface ConnectEventsTabProps {
   onEventClick?: (event: Event) => void;
@@ -16,22 +20,35 @@ const ConnectEventsTab: React.FC<ConnectEventsTabProps> = ({
   onCreatorClick = () => {},
   onViewAll = () => {}
 }) => {
+  const { data: events = [], isLoading } = useFeaturedEvents();
+
   return (
     <div className="space-y-16">
       {/* Header */}
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Discover Events</h2>
         <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-          Connect with your community through live events and real-time networking opportunities
+          Explore, share, and create events near you, building meaningful connections through gatherings that matter
         </p>
       </div>
 
-      <LiveEventsSection 
+      {/* Popular Events Section */}
+      <PopularEventsSection
+        events={events}
         onEventClick={onEventClick}
         onRegisterEvent={onRegisterEvent}
         onCreatorClick={onCreatorClick}
         onViewAll={onViewAll}
       />
+
+      {/* Browse by Category */}
+      <EventCategoriesSection />
+
+      {/* Featured Calendars */}
+      <FeaturedCalendarsSection />
+
+      {/* Explore Local Events */}
+      <LocalEventsSection />
     </div>
   );
 };
