@@ -14,6 +14,7 @@ import {
   Target
 } from 'lucide-react';
 import { useAdinProfile } from '@/hooks/useAdinProfile';
+import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface AdinImpactProfileProps {
@@ -25,6 +26,9 @@ const AdinImpactProfile: React.FC<AdinImpactProfileProps> = ({
   userId, 
   showSignals = true 
 }) => {
+  const { user } = useAuth();
+  const isOwnProfile = !userId || userId === user?.id;
+  
   const {
     adinProfile,
     contributions,

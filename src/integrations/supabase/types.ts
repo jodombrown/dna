@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      adin_connection_matches: {
+        Row: {
+          created_at: string | null
+          id: string
+          match_reason: string | null
+          match_score: number | null
+          matched_user_id: string
+          shared_regions: string[] | null
+          shared_sectors: string[] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          match_reason?: string | null
+          match_score?: number | null
+          matched_user_id: string
+          shared_regions?: string[] | null
+          shared_sectors?: string[] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          match_reason?: string | null
+          match_score?: number | null
+          matched_user_id?: string
+          shared_regions?: string[] | null
+          shared_sectors?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       adin_connection_signals: {
         Row: {
           context: Json | null
@@ -94,7 +127,9 @@ export type Database = {
       }
       adin_profiles: {
         Row: {
+          admin_notes: string | null
           created_at: string | null
+          display_name: string | null
           id: string
           influence_score: number | null
           last_updated: string | null
@@ -104,7 +139,9 @@ export type Database = {
           verified: boolean | null
         }
         Insert: {
+          admin_notes?: string | null
           created_at?: string | null
+          display_name?: string | null
           id: string
           influence_score?: number | null
           last_updated?: string | null
@@ -114,7 +151,9 @@ export type Database = {
           verified?: boolean | null
         }
         Update: {
+          admin_notes?: string | null
           created_at?: string | null
+          display_name?: string | null
           id?: string
           influence_score?: number | null
           last_updated?: string | null
@@ -136,7 +175,13 @@ export type Database = {
       adin_signals: {
         Row: {
           created_at: string | null
+          created_by: string | null
+          cta: string | null
+          description: string | null
           id: string
+          link: string | null
+          region_focus: string[] | null
+          sector_focus: string[] | null
           seen: boolean | null
           signal_data: Json | null
           signal_type: string
@@ -144,7 +189,13 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          created_by?: string | null
+          cta?: string | null
+          description?: string | null
           id?: string
+          link?: string | null
+          region_focus?: string[] | null
+          sector_focus?: string[] | null
           seen?: boolean | null
           signal_data?: Json | null
           signal_type: string
@@ -152,7 +203,13 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          created_by?: string | null
+          cta?: string | null
+          description?: string | null
           id?: string
+          link?: string | null
+          region_focus?: string[] | null
+          sector_focus?: string[] | null
           seen?: boolean | null
           signal_data?: Json | null
           signal_type?: string
@@ -2546,6 +2603,15 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: number
       }
+      calculate_match_score: {
+        Args: {
+          user1_regions: string[]
+          user1_sectors: string[]
+          user2_regions: string[]
+          user2_sectors: string[]
+        }
+        Returns: number
+      }
       check_badge_unlocks: {
         Args: { target_user_id: string }
         Returns: undefined
@@ -2587,6 +2653,16 @@ export type Database = {
           p_status?: string
         }
         Returns: string
+      }
+      find_adin_matches: {
+        Args: { target_user_id: string }
+        Returns: {
+          matched_user_id: string
+          match_score: number
+          match_reason: string
+          shared_regions: string[]
+          shared_sectors: string[]
+        }[]
       }
       generate_magic_link_token: {
         Args: Record<PropertyKey, never>
