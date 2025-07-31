@@ -205,7 +205,6 @@ const UnifiedHeader = () => {
                         <NavigationMenuItem>
                           <NavigationMenuTrigger className="text-gray-700 hover:text-dna-forest transition-colors font-medium bg-transparent">
                             Phases
-                            <ChevronDown className="ml-1 h-4 w-4" />
                           </NavigationMenuTrigger>
                           <NavigationMenuContent>
                             <div className="w-96 p-4">
