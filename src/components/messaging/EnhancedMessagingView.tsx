@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Search, Send, MoreVertical, Phone, Video, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRealtimeMessaging } from '@/hooks/useRealtimeMessaging';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { format, isToday, isYesterday } from 'date-fns';
 
 interface EnhancedMessagingViewProps {
@@ -16,7 +16,7 @@ interface EnhancedMessagingViewProps {
 }
 
 export const EnhancedMessagingView: React.FC<EnhancedMessagingViewProps> = ({ className }) => {
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   const [messageText, setMessageText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileView, setIsMobileView] = useState(false);
