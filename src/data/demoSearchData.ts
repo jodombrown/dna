@@ -1,4 +1,3 @@
-
 import { Professional, Community, Event } from '@/hooks/useSearch';
 
 export const demoProfessionals: Professional[] = [
@@ -162,7 +161,6 @@ export const demoProfessionals: Professional[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z'
   },
-  // Additional professionals for comprehensive African coverage
   {
     id: '11',
     full_name: 'Tumelo Mokoena',
@@ -403,7 +401,6 @@ export const demoProfessionals: Professional[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z'
   },
-  // Additional professionals from ConnectTabsContent (consolidated)
   {
     id: 'prof11',
     full_name: 'Dr. Aminata Touré',
@@ -420,7 +417,6 @@ export const demoProfessionals: Professional[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z'
   },
-  // Additional 60+ diverse diaspora professionals (prof11-prof85)
   {
     id: 'prof12',
     full_name: 'Emmanuel Nyong',
@@ -578,7 +574,6 @@ export const demoCommunities: Community[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z'
   },
-  // Additional communities for comprehensive African coverage
   {
     id: '10',
     name: 'Botswana Business Network',
@@ -719,7 +714,6 @@ export const demoCommunities: Community[] = [
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z'
   },
-  // Additional 10 communities for expanded coverage
   {
     id: '24',
     name: 'Zambian Copper Innovation Hub',
@@ -832,13 +826,18 @@ export const demoEvents: Event[] = [
     location: 'London, UK',
     is_virtual: false,
     attendee_count: 500,
+    max_attendees: 800,
+    created_by: 'creator_1',
     is_featured: true,
     banner_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=200&fit=crop',
+    registration_url: 'https://example.com/register',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '1',
       full_name: 'Dr. Amara Okafor',
+      email: 'amara.okafor@example.com',
       avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
     }
   },
@@ -851,13 +850,18 @@ export const demoEvents: Event[] = [
     location: 'Virtual Event',
     is_virtual: true,
     attendee_count: 250,
+    max_attendees: 500,
+    created_by: 'creator_2',
     is_featured: true,
     banner_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=500&h=200&fit=crop',
+    registration_url: 'https://example.com/register',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '2',
       full_name: 'Prof. Kwame Asante',
+      email: 'kwame.asante@example.com',
       avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80'
     }
   },
@@ -870,13 +874,18 @@ export const demoEvents: Event[] = [
     location: 'Toronto, Canada',
     is_virtual: false,
     attendee_count: 80,
+    max_attendees: 100,
+    created_by: 'creator_3',
     is_featured: false,
     banner_url: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=500&h=200&fit=crop',
+    registration_url: 'https://example.com/register',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '3',
       full_name: 'Sarah Mwangi',
+      email: 'sarah.mwangi@example.com',
       avatar_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80'
     }
   },
@@ -889,13 +898,18 @@ export const demoEvents: Event[] = [
     location: 'Berlin, Germany',
     is_virtual: false,
     attendee_count: 45,
+    max_attendees: 60,
+    created_by: 'creator_4',
     is_featured: false,
     banner_url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=200&fit=crop',
+    registration_url: 'https://example.com/register',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '4',
       full_name: 'Ibrahim Diallo',
+      email: 'ibrahim.diallo@example.com',
       avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80'
     }
   },
@@ -908,395 +922,19 @@ export const demoEvents: Event[] = [
     location: 'Virtual Event',
     is_virtual: true,
     attendee_count: 180,
+    max_attendees: 300,
+    created_by: 'creator_5',
     is_featured: true,
     banner_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=500&h=200&fit=crop',
+    image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=500&h=200&fit=crop',
+    registration_url: 'https://example.com/register',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     creator_profile: {
       id: '5',
       full_name: 'Fatima Al-Rashid',
+      email: 'fatima.alrashid@example.com',
       avatar_url: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=80'
-    }
-  },
-  {
-    id: '6',
-    title: 'African Entrepreneurship Bootcamp',
-    description: 'Intensive training for African entrepreneurs looking to scale their businesses globally with expert guidance.',
-    type: 'Bootcamp',
-    date_time: '2025-12-15T09:00:00Z',
-    location: 'Paris, France',
-    is_virtual: false,
-    attendee_count: 30,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '6',
-      full_name: 'Dr. Chinedu Okonkwo',
-      avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80'
-    }
-  },
-  {
-    id: '7',
-    title: 'Financial Inclusion Summit 2025',
-    description: 'Explore groundbreaking fintech solutions and digital payment systems driving financial inclusion across African markets.',
-    type: 'Summit',
-    date_time: '2025-08-22T11:00:00Z',
-    location: 'Dubai, UAE',
-    is_virtual: false,
-    attendee_count: 300,
-    is_featured: true,
-    banner_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '7',
-      full_name: 'Aisha Kone',
-      avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80'
-    }
-  },
-  {
-    id: '8',
-    title: 'AgriTech Innovation Workshop',
-    description: 'Discover precision agriculture technologies and supply chain innovations transforming food systems.',
-    type: 'Workshop',
-    date_time: '2025-09-30T15:00:00Z',
-    location: 'Virtual Event',
-    is_virtual: true,
-    attendee_count: 120,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '8',
-      full_name: 'Kofi Mensah',
-      avatar_url: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=80'
-    }
-  },
-  {
-    id: '9',
-    title: 'Creative Industries Networking Night',
-    description: 'Celebrate the vibrant creativity of the African diaspora through networking with artists, designers, and cultural entrepreneurs.',
-    type: 'Networking',
-    date_time: '2025-10-28T18:30:00Z',
-    location: 'New York, USA',
-    is_virtual: false,
-    attendee_count: 75,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1515169067868-5387ec356754?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '1',
-      full_name: 'Dr. Amara Okafor',
-      avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
-    }
-  },
-  {
-    id: '10',
-    title: 'Youth Leadership Development Conference 2025',
-    description: 'Develop essential leadership skills through interactive workshops and learn from accomplished African leaders.',
-    type: 'Conference',
-    date_time: '2025-11-05T09:00:00Z',
-    location: 'Amsterdam, Netherlands',
-    is_virtual: false,
-    attendee_count: 200,
-    is_featured: true,
-    banner_url: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '2',
-      full_name: 'Prof. Kwame Asante',
-      avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80'
-    }
-  },
-  // Additional events for comprehensive African coverage
-  {
-    id: '11',
-    title: 'Botswana Wildlife Conservation Summit 2025',
-    description: 'Leading conservation initiatives and sustainable tourism development in the Okavango Delta region.',
-    type: 'Summit',
-    date_time: '2025-08-15T10:00:00Z',
-    location: 'Gaborone, Botswana',
-    is_virtual: false,
-    attendee_count: 150,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1551244072-5d12893278ab?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '12',
-      full_name: 'Naledi Botshelo',
-      avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80'
-    }
-  },
-  {
-    id: '12',
-    title: 'Ethiopian Coffee Export Conference',
-    description: 'Building direct trade relationships and transforming Ethiopia into a specialty coffee hub.',
-    type: 'Conference',
-    date_time: '2025-09-12T09:00:00Z',
-    location: 'Addis Ababa, Ethiopia',
-    is_virtual: false,
-    attendee_count: 200,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '13',
-      full_name: 'Amina Hassan',
-      avatar_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80'
-    }
-  },
-  {
-    id: '13',
-    title: 'Tunisia Digital Transformation Workshop',
-    description: 'Building digital marketing ecosystems for North African startups and SMEs.',
-    type: 'Workshop',
-    date_time: '2025-10-20T14:00:00Z',
-    location: 'Tunis, Tunisia',
-    is_virtual: false,
-    attendee_count: 80,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '14',
-      full_name: 'Omar Ben Salah',
-      avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80'
-    }
-  },
-  {
-    id: '14',
-    title: 'Burkina Faso Microfinance Forum',
-    description: 'Expanding financial inclusion and microcredit programs for rural communities in West Africa.',
-    type: 'Forum',
-    date_time: '2025-11-08T11:00:00Z',
-    location: 'Ouagadougou, Burkina Faso',
-    is_virtual: false,
-    attendee_count: 120,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '15',
-      full_name: 'Fatoumata Diarra',
-      avatar_url: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=80'
-    }
-  },
-  {
-    id: '15',
-    title: 'Rwanda Innovation & Entrepreneurship Summit',
-    description: 'Fostering innovation and entrepreneurship in Rwanda\'s emerging economy.',
-    type: 'Summit',
-    date_time: '2025-08-25T09:00:00Z',
-    location: 'Kigali, Rwanda',
-    is_virtual: false,
-    attendee_count: 250,
-    is_featured: true,
-    banner_url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '16',
-      full_name: 'Jean-Paul Uwimana',
-      avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80'
-    }
-  },
-  {
-    id: '16',
-    title: 'Tanzania EdTech Solutions Conference',
-    description: 'Creating offline-first educational platforms for rural schools across East Africa.',
-    type: 'Conference',
-    date_time: '2025-09-18T10:00:00Z',
-    location: 'Dar es Salaam, Tanzania',
-    is_virtual: false,
-    attendee_count: 180,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '17',
-      full_name: 'Nuru Mwalimu',
-      avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80'
-    }
-  },
-  {
-    id: '17',
-    title: 'South African Mining Technology Expo',
-    description: 'Developing sustainable mining technologies and automation solutions for the African mining sector.',
-    type: 'Expo',
-    date_time: '2025-10-15T09:00:00Z',
-    location: 'Johannesburg, South Africa',
-    is_virtual: false,
-    attendee_count: 300,
-    is_featured: true,
-    banner_url: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '11',
-      full_name: 'Tumelo Mokoena',
-      avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80'
-    }
-  },
-  {
-    id: '18',
-    title: 'Mali Textile Innovation Workshop',
-    description: 'Developing sustainable textile production and fair trade partnerships with global fashion brands.',
-    type: 'Workshop',
-    date_time: '2025-11-22T13:00:00Z',
-    location: 'Bamako, Mali',
-    is_virtual: false,
-    attendee_count: 100,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1558947530-cbcf6e9aeeae?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '18',
-      full_name: 'Aminata Traoré',
-      avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80'
-    }
-  },
-  {
-    id: '19',
-    title: 'Algeria AI & Arabic Tech Summit',
-    description: 'Building AI-powered solutions for Arabic language processing and North African markets.',
-    type: 'Summit',
-    date_time: '2025-09-05T10:00:00Z',
-    location: 'Algiers, Algeria',
-    is_virtual: false,
-    attendee_count: 180,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '19',
-      full_name: 'Mohamed El-Mansouri',
-      avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80'
-    }
-  },
-  {
-    id: '20',
-    title: 'Chad Lake Fisheries Development Conference',
-    description: 'Sustainable fisheries management and aquaculture development in the Lake Chad region.',
-    type: 'Conference',
-    date_time: '2025-10-12T09:00:00Z',
-    location: 'N\'Djamena, Chad',
-    is_virtual: false,
-    attendee_count: 90,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '20',
-      full_name: 'Grace Nyong',
-      avatar_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80'
-    }
-  },
-  {
-    id: '21',
-    title: 'Sierra Leone Ethical Mining Workshop',
-    description: 'Promoting ethical diamond mining and establishing transparent supply chains.',
-    type: 'Workshop',
-    date_time: '2025-11-15T11:00:00Z',
-    location: 'Freetown, Sierra Leone',
-    is_virtual: false,
-    attendee_count: 70,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '21',
-      full_name: 'Ibrahim Sesay',
-      avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80'
-    }
-  },
-  {
-    id: '22',
-    title: 'Djibouti Trade & Logistics Forum',
-    description: 'Modernizing port infrastructure to serve as a gateway for East African trade.',
-    type: 'Forum',
-    date_time: '2025-08-30T10:00:00Z',
-    location: 'Djibouti City, Djibouti',
-    is_virtual: false,
-    attendee_count: 130,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '22',
-      full_name: 'Asha Mohamed',
-      avatar_url: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=80'
-    }
-  },
-  {
-    id: '23',
-    title: 'Uganda Wildlife Tourism Summit',
-    description: 'Developing sustainable tourism around gorilla conservation and national parks.',
-    type: 'Summit',
-    date_time: '2025-09-28T09:00:00Z',
-    location: 'Kampala, Uganda',
-    is_virtual: false,
-    attendee_count: 140,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '23',
-      full_name: 'Samuel Mutei',
-      avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=80'
-    }
-  },
-  {
-    id: '24',
-    title: 'Mauritania Solar Energy Conference',
-    description: 'Designing large-scale solar installations for the Sahel region and desert communities.',
-    type: 'Conference',
-    date_time: '2025-10-08T10:00:00Z',
-    location: 'Nouakchott, Mauritania',
-    is_virtual: false,
-    attendee_count: 110,
-    is_featured: false,
-    banner_url: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '24',
-      full_name: 'Fatima Al-Zahra',
-      avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80'
-    }
-  },
-  {
-    id: '25',
-    title: 'Côte d\'Ivoire Cocoa Value Chain Summit',
-    description: 'Improving cocoa farmer livelihoods through value addition and direct trade partnerships.',
-    type: 'Summit',
-    date_time: '2025-11-18T09:00:00Z',
-    location: 'Abidjan, Côte d\'Ivoire',
-    is_virtual: false,
-    attendee_count: 220,
-    is_featured: true,
-    banner_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&h=200&fit=crop',
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    creator_profile: {
-      id: '25',
-      full_name: 'Kwabena Osei',
-      avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80'
     }
   }
 ];
