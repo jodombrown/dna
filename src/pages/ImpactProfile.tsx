@@ -17,8 +17,10 @@ import {
   Award,
   Users,
   Target,
-  Activity
+  Activity,
+  Eye
 } from 'lucide-react';
+import { ProfileShareButtons } from '@/components/profile/ProfileShareButtons';
 
 interface UserProfile {
   id: string;
@@ -72,7 +74,23 @@ const ImpactProfile = () => {
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    const fetchProfileData = async () => {
+  const trackProfileView = async (profileId: string) => {
+    try {
+      await supabase
+        .from('profile_views')
+        .insert({
+          profile_id: profileId,
+          viewer_id: null, // Anonymous for now
+          ip_address: null,
+          user_agent: navigator.userAgent
+        });
+    } catch (error) {
+      // Silently fail - view tracking is not critical
+      console.log('View tracking failed:', error);
+    }
+  };
+
+  const fetchProfileData = async () => {
       if (!username) {
         setNotFound(true);
         setLoading(false);
@@ -132,6 +150,9 @@ const ImpactProfile = () => {
         if (!impactError && impactData) {
           setImpactLog(impactData);
         }
+
+        // Track profile view
+        await trackProfileView(profileData.id);
 
       } catch (error: any) {
         console.error('Error fetching profile data:', error);
@@ -208,48 +229,57 @@ const ImpactProfile = () => {
         {/* Profile Header */}
         <Card className="mb-6">
           <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
-              <Avatar className="w-24 h-24">
-                <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
-                <AvatarFallback className="text-2xl bg-dna-mint text-dna-forest">
-                  {profile.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center space-x-2">
-                  <h1 className="text-3xl font-bold text-dna-forest">
-                    {profile.full_name}
-                  </h1>
-                  {adinProfile?.verified && (
-                    <CheckCircle className="w-6 h-6 text-dna-emerald" />
-                  )}
-                </div>
-                
-                <p className="text-gray-600">@{profile.username}</p>
-                
-                {profile.bio && (
-                  <p className="text-gray-700 max-w-2xl">{profile.bio}</p>
-                )}
-                
-                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-                  {profile.location && (
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="w-4 h-4" />
-                      <span>{profile.location}</span>
-                    </div>
-                  )}
-                  {profile.industry && (
-                    <div className="flex items-center space-x-1">
-                      <Briefcase className="w-4 h-4" />
-                      <span>{profile.industry}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
+               <Avatar className="w-24 h-24">
+                 <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
+                 <AvatarFallback className="text-2xl bg-dna-mint text-dna-forest">
+                   {profile.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
+                 </AvatarFallback>
+               </Avatar>
+               
+               <div className="flex-1 space-y-2">
+                 <div className="flex items-center space-x-2">
+                   <h1 className="text-3xl font-bold text-dna-forest">
+                     {profile.full_name}
+                   </h1>
+                   {adinProfile?.verified && (
+                     <CheckCircle className="w-6 h-6 text-dna-emerald" />
+                   )}
+                 </div>
+                 
+                 <p className="text-gray-600">@{profile.username}</p>
+                 
+                 {profile.bio && (
+                   <p className="text-gray-700 max-w-2xl">{profile.bio}</p>
+                 )}
+                 
+                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                   {profile.location && (
+                     <div className="flex items-center space-x-1">
+                       <MapPin className="w-4 h-4" />
+                       <span>{profile.location}</span>
+                     </div>
+                   )}
+                   {profile.industry && (
+                     <div className="flex items-center space-x-1">
+                       <Briefcase className="w-4 h-4" />
+                       <span>{profile.industry}</span>
+                     </div>
+                   )}
+                 </div>
+               </div>
+             </div>
+             
+             {/* Share Buttons */}
+             <div className="border-t pt-4 mt-4">
+               <ProfileShareButtons 
+                 username={profile.username} 
+                 fullName={profile.full_name}
+                 className="justify-center md:justify-start"
+               />
+             </div>
+           </CardContent>
+         </Card>
 
         {/* Influence Score Display */}
         {adinProfile && (

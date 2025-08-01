@@ -1491,8 +1491,10 @@ export type Database = {
           email: string
           expires_at: string | null
           id: string
+          referral_code: string | null
           role: string | null
           used_at: string | null
+          used_by_id: string | null
         }
         Insert: {
           code: string
@@ -1501,8 +1503,10 @@ export type Database = {
           email: string
           expires_at?: string | null
           id?: string
+          referral_code?: string | null
           role?: string | null
           used_at?: string | null
+          used_by_id?: string | null
         }
         Update: {
           code?: string
@@ -1511,8 +1515,10 @@ export type Database = {
           email?: string
           expires_at?: string | null
           id?: string
+          referral_code?: string | null
           role?: string | null
           used_at?: string | null
+          used_by_id?: string | null
         }
         Relationships: []
       }
@@ -1948,6 +1954,33 @@ export type Database = {
           },
         ]
       }
+      profile_views: {
+        Row: {
+          id: string
+          ip_address: unknown | null
+          profile_id: string
+          user_agent: string | null
+          viewed_at: string
+          viewer_id: string | null
+        }
+        Insert: {
+          id?: string
+          ip_address?: unknown | null
+          profile_id: string
+          user_agent?: string | null
+          viewed_at?: string
+          viewer_id?: string | null
+        }
+        Update: {
+          id?: string
+          ip_address?: unknown | null
+          profile_id?: string
+          user_agent?: string | null
+          viewed_at?: string
+          viewer_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_visibility: string | null
@@ -1987,6 +2020,7 @@ export type Database = {
           professional_role: string | null
           profile_picture_url: string | null
           recent_searches: string[] | null
+          referral_code: string | null
           referrer_id: string | null
           role: string | null
           skills: string[] | null
@@ -2033,6 +2067,7 @@ export type Database = {
           professional_role?: string | null
           profile_picture_url?: string | null
           recent_searches?: string[] | null
+          referral_code?: string | null
           referrer_id?: string | null
           role?: string | null
           skills?: string[] | null
@@ -2079,6 +2114,7 @@ export type Database = {
           professional_role?: string | null
           profile_picture_url?: string | null
           recent_searches?: string[] | null
+          referral_code?: string | null
           referrer_id?: string | null
           role?: string | null
           skills?: string[] | null
@@ -2825,6 +2861,10 @@ export type Database = {
       get_user_verification_status: {
         Args: { target_user_id: string }
         Returns: Json
+      }
+      handle_referral_signup: {
+        Args: { new_user_id: string; referral_code_param: string }
+        Returns: undefined
       }
       is_admin_user: {
         Args: { _user_id: string }

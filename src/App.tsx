@@ -23,6 +23,7 @@ import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
 import NotFound from "./pages/NotFound";
 import BetaSignupComplete from "./pages/BetaSignupComplete";
+import InviteSignup from "./pages/InviteSignup";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,9 @@ function App() {
               
               {/* Public Impact Profile Route */}
               <Route path="/impact-profile/:username" element={<ImpactProfile />} />
+              
+              {/* Invite Signup Route */}
+              <Route path="/invite" element={<InviteSignup />} />
               
               <Route path="/phase/market-research" element={<AuthGuard><MarketResearchPhase /></AuthGuard>} />
               <Route path="/phase/prototyping" element={<AuthGuard><PrototypingPhase /></AuthGuard>} />

@@ -13,6 +13,7 @@ import Communities from './app/Communities';
 import Profile from './app/Profile';
 import Settings from './app/Settings';
 import Admin from './app/Admin';
+import Invites from './app/Invites';
 
 const App = () => {
   const { user, profile, loading } = useAuth();
@@ -61,6 +62,7 @@ const App = () => {
             <Route path="communities" element={<Communities />} />
             <Route path="profile" element={<Profile />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="invites" element={<Invites />} />
             <Route path="admin" element={<Admin />} />
           </Routes>
         </main>
