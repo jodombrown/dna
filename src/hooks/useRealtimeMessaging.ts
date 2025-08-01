@@ -90,7 +90,7 @@ export const useRealtimeMessaging = (userId?: string) => {
         };
       }) || [];
 
-      setConversations(conversationsWithOtherUser);
+      setConversations(conversationsWithOtherUser as Conversation[]);
     } catch (error) {
       console.error('Error fetching conversations:', error);
       toast({
@@ -140,7 +140,7 @@ export const useRealtimeMessaging = (userId?: string) => {
         }
       })) || [];
 
-      setMessages(messagesWithSenders);
+      setMessages(messagesWithSenders as Message[]);
     } catch (error) {
       console.error('Error fetching messages:', error);
       toast({
