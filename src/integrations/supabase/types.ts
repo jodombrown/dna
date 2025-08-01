@@ -133,6 +133,7 @@ export type Database = {
           id: string
           influence_score: number | null
           last_updated: string | null
+          prompted_by_event: string | null
           region_focus: string[] | null
           sector_focus: string[] | null
           tags: Json | null
@@ -145,6 +146,7 @@ export type Database = {
           id: string
           influence_score?: number | null
           last_updated?: string | null
+          prompted_by_event?: string | null
           region_focus?: string[] | null
           sector_focus?: string[] | null
           tags?: Json | null
@@ -157,6 +159,7 @@ export type Database = {
           id?: string
           influence_score?: number | null
           last_updated?: string | null
+          prompted_by_event?: string | null
           region_focus?: string[] | null
           sector_focus?: string[] | null
           tags?: Json | null
@@ -1984,6 +1987,7 @@ export type Database = {
       profiles: {
         Row: {
           account_visibility: string | null
+          adin_prompt_status: string | null
           available_for: string[] | null
           avatar_url: string | null
           banner_url: string | null
@@ -1995,9 +1999,12 @@ export type Database = {
           beta_status: string | null
           bio: string | null
           company: string | null
+          contribution_style: string | null
           country_of_origin: string | null
+          country_origin: string | null
           created_at: string
           current_country: string | null
+          current_location: string | null
           diaspora_origin: string | null
           display_name: string | null
           email: string | null
@@ -2016,6 +2023,7 @@ export type Database = {
           location: string | null
           newsletter_emails: boolean | null
           onboarding_completed_at: string | null
+          onboarding_stage: string | null
           profession: string | null
           professional_role: string | null
           profile_picture_url: string | null
@@ -2023,14 +2031,17 @@ export type Database = {
           referral_code: string | null
           referrer_id: string | null
           role: string | null
+          sectors: string[] | null
           skills: string[] | null
           updated_at: string
           username: string | null
+          username_changes: number | null
           website_url: string | null
           years_experience: number | null
         }
         Insert: {
           account_visibility?: string | null
+          adin_prompt_status?: string | null
           available_for?: string[] | null
           avatar_url?: string | null
           banner_url?: string | null
@@ -2042,9 +2053,12 @@ export type Database = {
           beta_status?: string | null
           bio?: string | null
           company?: string | null
+          contribution_style?: string | null
           country_of_origin?: string | null
+          country_origin?: string | null
           created_at?: string
           current_country?: string | null
+          current_location?: string | null
           diaspora_origin?: string | null
           display_name?: string | null
           email?: string | null
@@ -2063,6 +2077,7 @@ export type Database = {
           location?: string | null
           newsletter_emails?: boolean | null
           onboarding_completed_at?: string | null
+          onboarding_stage?: string | null
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
@@ -2070,14 +2085,17 @@ export type Database = {
           referral_code?: string | null
           referrer_id?: string | null
           role?: string | null
+          sectors?: string[] | null
           skills?: string[] | null
           updated_at?: string
           username?: string | null
+          username_changes?: number | null
           website_url?: string | null
           years_experience?: number | null
         }
         Update: {
           account_visibility?: string | null
+          adin_prompt_status?: string | null
           available_for?: string[] | null
           avatar_url?: string | null
           banner_url?: string | null
@@ -2089,9 +2107,12 @@ export type Database = {
           beta_status?: string | null
           bio?: string | null
           company?: string | null
+          contribution_style?: string | null
           country_of_origin?: string | null
+          country_origin?: string | null
           created_at?: string
           current_country?: string | null
+          current_location?: string | null
           diaspora_origin?: string | null
           display_name?: string | null
           email?: string | null
@@ -2110,6 +2131,7 @@ export type Database = {
           location?: string | null
           newsletter_emails?: boolean | null
           onboarding_completed_at?: string | null
+          onboarding_stage?: string | null
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
@@ -2117,9 +2139,11 @@ export type Database = {
           referral_code?: string | null
           referrer_id?: string | null
           role?: string | null
+          sectors?: string[] | null
           skills?: string[] | null
           updated_at?: string
           username?: string | null
+          username_changes?: number | null
           website_url?: string | null
           years_experience?: number | null
         }
@@ -2884,6 +2908,10 @@ export type Database = {
       }
       reset_seeded_data: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      trigger_adin_prompt: {
+        Args: { target_user_id: string; event_type: string }
         Returns: undefined
       }
       update_adin_last_active: {
