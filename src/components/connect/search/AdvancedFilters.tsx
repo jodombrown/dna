@@ -111,7 +111,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[90vw] max-w-[320px] sm:w-[320px] overflow-y-auto">
+      <SheetContent side="right" className="w-[90vw] max-w-sm overflow-y-auto">
         <SheetHeader className="mb-6">
           <SheetTitle>Advanced Filters</SheetTitle>
           {hasActiveFilters && (

@@ -102,7 +102,7 @@ const UserGrowthChart = () => {
     <div className="space-y-6">
       {/* Key Metrics */}
       {metrics && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="p-4">
             <div className="flex items-center gap-3">
               <Users className="h-6 w-6 text-dna-forest" />
@@ -152,10 +152,10 @@ const UserGrowthChart = () => {
       )}
 
       {/* Growth Chart */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">User Signups Over Time (Last 90 Days)</h3>
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
+      <Card className="p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">User Signups Over Time (Last 90 Days)</h3>
+        <div className="h-64 sm:h-80 overflow-x-auto">
+          <ResponsiveContainer width="100%" height="100%" minWidth={300}>
             <LineChart data={growthData}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis 
@@ -188,10 +188,10 @@ const UserGrowthChart = () => {
       </Card>
 
       {/* Referral vs Direct Comparison */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Signup Sources Comparison</h3>
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
+      <Card className="p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-foreground mb-4">Signup Sources Comparison</h3>
+        <div className="h-64 sm:h-80 overflow-x-auto">
+          <ResponsiveContainer width="100%" height="100%" minWidth={300}>
             <BarChart data={growthData}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis 

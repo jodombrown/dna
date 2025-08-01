@@ -159,13 +159,13 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10">
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-dna-forest mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-dna-forest mb-2">
             Welcome to DNA Community
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600 px-4">
             Let's set up your profile to connect you with the diaspora network
           </p>
         </div>
@@ -184,12 +184,12 @@ const Onboarding = () => {
         </div>
 
         {/* Step Cards */}
-        <div className="flex justify-center mb-6">
-          <div className="flex space-x-2">
+        <div className="flex justify-center mb-6 overflow-x-auto px-4">
+          <div className="flex space-x-2 min-w-max">
             {STEPS.map((step, index) => (
               <div key={step.id} className="flex items-center">
                 <div className={`
-                  w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
+                  w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium
                   ${index < currentStep 
                     ? 'bg-dna-emerald text-white' 
                     : index === currentStep 
@@ -198,13 +198,13 @@ const Onboarding = () => {
                   }
                 `}>
                   {index < currentStep ? (
-                    <CheckCircle className="w-4 h-4" />
+                    <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                   ) : (
                     index + 1
                   )}
                 </div>
                 {index < STEPS.length - 1 && (
-                  <div className={`w-12 h-0.5 mx-2 ${
+                  <div className={`w-8 sm:w-12 h-0.5 mx-2 ${
                     index < currentStep ? 'bg-dna-emerald' : 'bg-gray-200'
                   }`} />
                 )}
@@ -229,12 +229,13 @@ const Onboarding = () => {
         </Card>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8">
+        <div className="flex flex-col sm:flex-row justify-between gap-4 sm:gap-0 mt-6 sm:mt-8">
           <Button
             variant="outline"
             onClick={handlePrevious}
             disabled={currentStep === 0}
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2 h-12 sm:h-10"
+            size="lg"
           >
             <ChevronLeft className="w-4 h-4" />
             Previous
@@ -243,7 +244,8 @@ const Onboarding = () => {
           <Button
             onClick={handleNext}
             disabled={!canProceedToNext() || isSubmitting}
-            className="bg-dna-copper hover:bg-dna-gold text-white flex items-center gap-2"
+            className="bg-dna-copper hover:bg-dna-gold text-white flex items-center justify-center gap-2 h-12 sm:h-10"
+            size="lg"
           >
             {isSubmitting ? (
               "Creating Profile..."

@@ -192,7 +192,7 @@ const LeaderboardsByRegion = () => {
         {/* Extended Rankings */}
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4">Extended Rankings</h3>
-          <div className="space-y-2 max-h-[600px] overflow-y-auto">
+          <div className="space-y-2 max-h-[60vh] overflow-y-auto mobile-table-responsive">
             {leaderboardData.slice(10, 50).map((user) => (
               <div key={user.user_id} className="flex items-center gap-3 p-2 border rounded">
                 {getRankBadge(user.rank)}

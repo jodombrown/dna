@@ -108,7 +108,7 @@ export const EnhancedMessagingView: React.FC<EnhancedMessagingViewProps> = ({ cl
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[600px]">
+      <div className="flex items-center justify-center min-h-[400px] h-[calc(100vh-200px)] max-h-[600px]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-dna-copper mx-auto mb-2"></div>
           <p className="text-gray-500">Loading conversations...</p>
@@ -118,7 +118,7 @@ export const EnhancedMessagingView: React.FC<EnhancedMessagingViewProps> = ({ cl
   }
 
   return (
-    <div className={cn("min-h-[400px] h-[calc(100vh-300px)] max-h-[600px] md:grid md:grid-cols-3 gap-2 sm:gap-4", className)}>
+    <div className={cn("min-h-[400px] h-[calc(100vh-200px)] max-h-[80vh] md:grid md:grid-cols-3 gap-2 sm:gap-4", className)}>
       {/* Conversations List - Hidden on mobile when chat is selected */}
       <Card className={cn(
         "md:col-span-1",
