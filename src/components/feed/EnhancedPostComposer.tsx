@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAdinPromptTrigger } from '@/hooks/useAdinPromptTrigger';
 
 interface PostComposerProps {
   defaultPillar?: string;
@@ -30,6 +31,7 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { triggerAdinPrompt } = useAdinPromptTrigger();
 
   const handleMediaUpload = async (file: File): Promise<string | null> => {
     if (!user) return null;
@@ -130,6 +132,11 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
         .single();
 
       if (error) throw error;
+
+      // Trigger ADIN prompt for post creation
+      if (user?.id) {
+        triggerAdinPrompt(user.id, 'post_created');
+      }
 
       toast({
         title: "Post created!",

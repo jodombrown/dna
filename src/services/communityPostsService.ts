@@ -1,5 +1,16 @@
 import { supabase } from '@/integrations/supabase/client';
 
+// Helper function to trigger ADIN prompt
+const triggerAdinPrompt = async (userId: string, eventType: string) => {
+  try {
+    await supabase.functions.invoke('trigger-adin-prompt', {
+      body: { user_id: userId, event_type: eventType }
+    });
+  } catch (error) {
+    console.error('Failed to trigger ADIN prompt:', error);
+  }
+};
+
 export interface CommunityPost {
   id: string;
   title?: string;
@@ -104,6 +115,9 @@ export const createCommunityPost = async (postData: CreateCommunityPostData): Pr
     console.error('Error creating community post:', error);
     throw error;
   }
+
+  // Trigger ADIN prompt for community post creation
+  triggerAdinPrompt(user.id, 'community_post_created');
 
   // Fetch author and community details
   const [authorResult, communityResult] = await Promise.all([
