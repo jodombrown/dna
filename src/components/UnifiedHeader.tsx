@@ -372,6 +372,16 @@ const UnifiedHeader = () => {
                             >
                               Join Beta
                             </Button>
+                            
+                            <Button
+                              className="justify-start text-left bg-dna-forest text-white hover:bg-dna-forest/90 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                              onClick={() => {
+                                navigate('/auth');
+                                setIsMobileMenuOpen(false);
+                              }}
+                            >
+                              Sign In
+                            </Button>
                           </>
                         )}
                         
