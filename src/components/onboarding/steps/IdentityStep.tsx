@@ -86,47 +86,11 @@ const DIASPORA_ORIGINS = [
 const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
 
 const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      updateData({ profile_photo: file });
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div className="text-center">
         <h3 className="text-lg font-semibold text-dna-forest mb-2">Tell us about yourself</h3>
-        <p className="text-gray-600">Let's start with the basics</p>
-      </div>
-
-      {/* Profile Photo */}
-      <div className="flex flex-col items-center space-y-4">
-        <Avatar className="w-24 h-24">
-          <AvatarImage 
-            src={data.profile_photo ? URL.createObjectURL(data.profile_photo) : ''} 
-            alt="Profile" 
-          />
-          <AvatarFallback className="bg-dna-mint text-dna-forest text-xl">
-            {data.full_name ? data.full_name.charAt(0) : <Upload className="w-8 h-8" />}
-          </AvatarFallback>
-        </Avatar>
-        
-        <div>
-          <Label htmlFor="profile-photo" className="cursor-pointer">
-            <div className="flex items-center gap-2 px-4 py-2 bg-dna-mint text-dna-forest rounded-lg hover:bg-dna-mint/80 transition-colors">
-              <Upload className="w-4 h-4" />
-              Upload Photo
-            </div>
-          </Label>
-          <input
-            id="profile-photo"
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-        </div>
+        <p className="text-gray-600">Your identity connects you to the diaspora community</p>
       </div>
 
       {/* Full Name */}
@@ -134,67 +98,59 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
         <Label htmlFor="full-name">Full Name *</Label>
         <Input
           id="full-name"
-          value={data.full_name}
+          value={data.full_name || ''}
           onChange={(e) => updateData({ full_name: e.target.value })}
           placeholder="Enter your full name"
         />
       </div>
 
-      {/* Display Name */}
+      {/* Username */}
       <div>
-        <Label htmlFor="display-name">Display Name *</Label>
+        <Label htmlFor="username">Choose a DNA Username *</Label>
         <Input
-          id="display-name"
-          value={data.display_name}
-          onChange={(e) => updateData({ display_name: e.target.value })}
-          placeholder="How you'd like to be addressed"
+          id="username"
+          value={data.username || ''}
+          onChange={(e) => updateData({ username: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
+          placeholder="username"
         />
+        <p className="text-sm text-amber-600 mt-1">⚠️ This can only be changed twice per lifetime</p>
       </div>
 
-      {/* Diaspora Origin */}
+      {/* Country of Origin */}
       <div>
-        <Label>Diaspora Origin *</Label>
-        <Select value={data.diaspora_origin} onValueChange={(value) => updateData({ diaspora_origin: value })}>
+        <Label>Country of Origin *</Label>
+        <Select value={data.country_origin || ''} onValueChange={(value) => updateData({ country_origin: value })}>
           <SelectTrigger className="bg-white">
-            <SelectValue placeholder="Select your origin or diaspora community" />
+            <SelectValue placeholder="Select your country of origin" />
           </SelectTrigger>
           <SelectContent className="bg-white border border-gray-200 shadow-lg z-50 max-h-[300px]">
-            {DIASPORA_ORIGINS.map((origin, index) => {
-              if (typeof origin === 'object') {
-                return (
-                  <SelectItem 
-                    key={index} 
-                    value={origin.value} 
-                    disabled={origin.disabled}
-                    className="font-semibold text-gray-500 bg-gray-50 cursor-default"
-                  >
-                    {origin.label}
-                  </SelectItem>
-                );
-              }
-              return (
-                <SelectItem key={origin} value={origin} className="hover:bg-dna-mint/20">
-                  {origin}
-                </SelectItem>
-              );
-            })}
+            {AFRICAN_COUNTRIES.map((country) => (
+              <SelectItem key={country} value={country} className="hover:bg-dna-mint/20">
+                {country}
+              </SelectItem>
+            ))}
+            <SelectItem value="other" className="hover:bg-dna-mint/20">Other</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      {/* Gender */}
+      {/* Current Location */}
       <div>
-        <Label>Gender *</Label>
-        <Select value={data.gender} onValueChange={(value) => updateData({ gender: value })}>
+        <Label>Current Location</Label>
+        <Select value={data.current_location || ''} onValueChange={(value) => updateData({ current_location: value })}>
           <SelectTrigger className="bg-white">
-            <SelectValue placeholder="Select gender" />
+            <SelectValue placeholder="Select your current location" />
           </SelectTrigger>
-          <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
-            {GENDERS.map((gender) => (
-              <SelectItem key={gender} value={gender} className="hover:bg-dna-mint/20">
-                {gender}
+          <SelectContent className="bg-white border border-gray-200 shadow-lg z-50 max-h-[300px]">
+            {AFRICAN_COUNTRIES.map((country) => (
+              <SelectItem key={country} value={country} className="hover:bg-dna-mint/20">
+                {country}
               </SelectItem>
             ))}
+            <SelectItem value="usa" className="hover:bg-dna-mint/20">United States</SelectItem>
+            <SelectItem value="canada" className="hover:bg-dna-mint/20">Canada</SelectItem>
+            <SelectItem value="uk" className="hover:bg-dna-mint/20">United Kingdom</SelectItem>
+            <SelectItem value="other" className="hover:bg-dna-mint/20">Other</SelectItem>
           </SelectContent>
         </Select>
       </div>

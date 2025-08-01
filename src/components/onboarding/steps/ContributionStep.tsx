@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -8,94 +7,64 @@ interface ContributionStepProps {
   updateData: (data: any) => void;
 }
 
-const CONTRIBUTION_TYPES = [
-  {
-    id: 'financial',
-    label: 'Financial Capital',
-    description: 'Investments, donations, funding support'
-  },
-  {
-    id: 'mentorship',
-    label: 'Mentorship',
-    description: 'Knowledge sharing and professional guidance'
-  },
-  {
-    id: 'volunteering',
-    label: 'Volunteering',
-    description: 'Hands-on work and time contribution'
-  },
-  {
-    id: 'networks',
-    label: 'Networks',
-    description: 'Introductions, relationships, influence'
-  },
-  {
-    id: 'advocacy',
-    label: 'Advocacy',
-    description: 'Public support, visibility, promotion'
-  },
-  {
-    id: 'in-kind',
-    label: 'In-Kind Support',
-    description: 'Services, resources, equipment'
-  },
-  {
-    id: 'feedback',
-    label: 'Feedback',
-    description: 'Testing, validation, data insights'
-  },
-  {
-    id: 'cultural-guidance',
-    label: 'Cultural Guidance',
-    description: 'Context, community bridging, local knowledge'
-  },
-  {
-    id: 'accountability',
-    label: 'Accountability',
-    description: 'Governance, oversight, stewardship'
-  }
-];
-
 const ContributionStep: React.FC<ContributionStepProps> = ({ data, updateData }) => {
-  const toggleContribution = (contributionId: string) => {
-    const currentTypes = data.contribution_types || [];
-    const newTypes = currentTypes.includes(contributionId)
-      ? currentTypes.filter((id: string) => id !== contributionId)
-      : [...currentTypes, contributionId];
-    
-    updateData({ contribution_types: newTypes });
-  };
-
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-dna-forest mb-2">How You Want to Contribute</h3>
-        <p className="text-gray-600">Select the ways you'd like to make an impact (choose at least one)</p>
+        <h3 className="text-lg font-semibold text-dna-forest mb-2">Community Agreement</h3>
+        <p className="text-gray-600">Welcome to the DNA community</p>
       </div>
 
-      <div className="space-y-4">
-        {CONTRIBUTION_TYPES.map((type) => (
-          <div key={type.id} className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-            <Checkbox
-              id={type.id}
-              checked={data.contribution_types?.includes(type.id) || false}
-              onCheckedChange={() => toggleContribution(type.id)}
-              className="mt-1"
-            />
-            <div className="flex-1">
-              <Label htmlFor={type.id} className="text-base font-medium cursor-pointer">
-                {type.label}
-              </Label>
-              <p className="text-sm text-gray-600 mt-1">{type.description}</p>
+      {/* Community Values */}
+      <div className="bg-dna-mint/20 p-6 rounded-lg">
+        <h4 className="font-semibold text-dna-forest mb-4">DNA Community Values</h4>
+        <div className="space-y-3 text-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 bg-dna-emerald rounded-full mt-2 flex-shrink-0"></div>
+            <div>
+              <strong>Diaspora-led innovation:</strong> We believe in the power of the African diaspora to drive meaningful change through innovation, entrepreneurship, and strategic collaboration.
             </div>
           </div>
-        ))}
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 bg-dna-emerald rounded-full mt-2 flex-shrink-0"></div>
+            <div>
+              <strong>Shared prosperity:</strong> We are committed to creating opportunities that benefit both diaspora communities and the African continent through mutual support and economic empowerment.
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 bg-dna-emerald rounded-full mt-2 flex-shrink-0"></div>
+            <div>
+              <strong>Radical collaboration:</strong> We foster inclusive, cross-border partnerships that transcend traditional boundaries to achieve extraordinary collective impact.
+            </div>
+          </div>
+        </div>
       </div>
 
-      {data.contribution_types?.length > 0 && (
-        <div className="bg-dna-mint/20 p-4 rounded-lg">
-          <p className="text-sm text-dna-forest">
-            <strong>Selected:</strong> {data.contribution_types.length} contribution type{data.contribution_types.length !== 1 ? 's' : ''}
+      {/* Agreement Checkbox */}
+      <div className="flex items-start gap-3 p-4 border rounded-lg">
+        <Checkbox
+          checked={data.agrees_to_values || false}
+          onCheckedChange={(checked) => updateData({ agrees_to_values: checked })}
+          className="mt-1"
+        />
+        <div className="text-sm">
+          <p className="font-medium text-dna-forest mb-1">
+            I agree to the DNA terms, values, and privacy policy *
+          </p>
+          <p className="text-gray-600">
+            By checking this box, I commit to upholding the DNA community values and agree to the 
+            <a href="/terms" className="text-dna-emerald hover:underline mx-1">Terms of Service</a>
+            and
+            <a href="/privacy" className="text-dna-emerald hover:underline mx-1">Privacy Policy</a>.
+          </p>
+        </div>
+      </div>
+
+      {data.agrees_to_values && (
+        <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+          <p className="text-green-800 font-medium">🎉 Welcome to the DNA Community!</p>
+          <p className="text-green-700 text-sm mt-1">
+            You're about to join thousands of diaspora professionals working together to drive African innovation and prosperity.
           </p>
         </div>
       )}

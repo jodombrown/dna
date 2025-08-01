@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 
 interface GoalsBioStepProps {
   data: any;
@@ -10,58 +8,87 @@ interface GoalsBioStepProps {
 }
 
 const GoalsBioStep: React.FC<GoalsBioStepProps> = ({ data, updateData }) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // In a real app, upload to storage and get URL
+      const url = URL.createObjectURL(file);
+      updateData({ avatar_url: url });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-dna-forest mb-2">Tell Your Story</h3>
-        <p className="text-gray-600">Help others understand who you are and what drives you</p>
+        <h3 className="text-lg font-semibold text-dna-forest mb-2">Connect Your Identity</h3>
+        <p className="text-gray-600">Link your professional presence and upload your photo</p>
       </div>
 
-      {/* Headline */}
-      <div>
-        <Label htmlFor="headline">Personal Headline *</Label>
+      {/* LinkedIn URL */}
+      <div className="space-y-2">
+        <Label htmlFor="linkedin_url">LinkedIn Profile</Label>
         <Input
-          id="headline"
-          value={data.headline}
-          onChange={(e) => updateData({ headline: e.target.value })}
-          placeholder="e.g., Passionate tech leader connecting diaspora entrepreneurs"
-          maxLength={100}
+          id="linkedin_url"
+          type="url"
+          value={data.linkedin_url || ''}
+          onChange={(e) => updateData({ linkedin_url: e.target.value })}
+          placeholder="https://linkedin.com/in/yourprofile"
+          className="w-full"
         />
-        <p className="text-xs text-gray-500 mt-1">{data.headline?.length || 0}/100 characters</p>
       </div>
 
-      {/* Bio */}
-      <div>
-        <Label htmlFor="bio">Bio *</Label>
-        <Textarea
-          id="bio"
-          value={data.bio}
-          onChange={(e) => updateData({ bio: e.target.value })}
-          placeholder="Tell us about yourself, your background, and what brings you to the DNA community..."
-          rows={4}
-          maxLength={500}
+      {/* Twitter URL */}
+      <div className="space-y-2">
+        <Label htmlFor="twitter_url">Twitter Profile</Label>
+        <Input
+          id="twitter_url"
+          type="url"
+          value={data.twitter_url || ''}
+          onChange={(e) => updateData({ twitter_url: e.target.value })}
+          placeholder="https://twitter.com/yourusername"
+          className="w-full"
         />
-        <p className="text-xs text-gray-500 mt-1">{data.bio?.length || 0}/500 characters</p>
       </div>
 
-      {/* Personal Goals */}
-      <div>
-        <Label htmlFor="personal-goals">Your Goals in Joining DNA</Label>
-        <Textarea
-          id="personal-goals"
-          value={data.personal_goals}
-          onChange={(e) => updateData({ personal_goals: e.target.value })}
-          placeholder="What do you hope to achieve through this network? What impact do you want to make?"
-          rows={3}
-          maxLength={300}
+      {/* Website URL */}
+      <div className="space-y-2">
+        <Label htmlFor="website_url">Personal Website</Label>
+        <Input
+          id="website_url"
+          type="url"
+          value={data.website_url || ''}
+          onChange={(e) => updateData({ website_url: e.target.value })}
+          placeholder="https://yourwebsite.com"
+          className="w-full"
         />
-        <p className="text-xs text-gray-500 mt-1">{data.personal_goals?.length || 0}/300 characters</p>
       </div>
 
-      <div className="bg-dna-emerald/10 p-4 rounded-lg">
-        <p className="text-sm text-dna-forest">
-          <strong>Almost done!</strong> Once you complete this step, you'll be part of the DNA community and can start connecting with fellow diaspora professionals.
-        </p>
+      {/* Profile Image */}
+      <div className="space-y-3">
+        <Label>Profile Image</Label>
+        <div className="flex items-center gap-4">
+          <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+            {data.avatar_url ? (
+              <img src={data.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <div className="text-gray-400 text-sm">No image</div>
+            )}
+          </div>
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="hidden"
+              id="avatar-upload"
+            />
+            <Label htmlFor="avatar-upload" className="cursor-pointer">
+              <div className="px-4 py-2 bg-dna-mint text-dna-forest rounded-lg hover:bg-dna-mint/80 transition-colors">
+                Upload Photo
+              </div>
+            </Label>
+          </div>
+        </div>
       </div>
     </div>
   );

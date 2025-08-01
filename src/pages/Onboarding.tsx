@@ -15,10 +15,10 @@ import GoalsBioStep from '@/components/onboarding/steps/GoalsBioStep';
 import ContributionStep from '@/components/onboarding/steps/ContributionStep';
 
 const STEPS = [
-  { id: 'identity', title: 'Identity', component: IdentityStep },
-  { id: 'professional', title: 'Professional', component: ProfessionalStep },
-  { id: 'goals', title: 'Goals & Bio', component: GoalsBioStep },
-  { id: 'contribution', title: 'Contribution', component: ContributionStep },
+  { id: 'step1_identity', title: 'Identity', component: IdentityStep },
+  { id: 'step2_contribution', title: 'Skills & Contribution', component: ProfessionalStep },
+  { id: 'step3_links', title: 'Links & Identity', component: GoalsBioStep },
+  { id: 'step4_agreement', title: 'Community Agreement', component: ContributionStep },
 ];
 
 const Onboarding = () => {
@@ -27,29 +27,25 @@ const Onboarding = () => {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
-    // Identity
-    full_name: '',
-    display_name: '',
-    diaspora_origin: '',
-    gender: '',
-    profile_photo: null,
+    // Step 1: Identity
+    full_name: user?.user_metadata?.full_name || '',
+    username: '',
+    country_origin: '',
+    current_location: '',
     
-    // Professional
-    current_role: '',
-    company: '',
-    industry: '',
+    // Step 2: Skills & Contribution
     skills: [],
-    years_experience: 0,
+    sectors: [],
+    contribution_style: '',
     
-    // Goals & Bio
-    headline: '',
-    bio: '',
-    personal_goals: '',
+    // Step 3: Links & Identity
+    linkedin_url: user?.user_metadata?.linkedin_url || '',
+    twitter_url: '',
+    website_url: '',
+    avatar_url: user?.user_metadata?.picture || '',
     
-    // Contribution
-    contribution_types: [],
-    availability: '',
-    preferred_contribution_type: ''
+    // Step 4: Community Agreement
+    agrees_to_values: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -74,15 +70,13 @@ const Onboarding = () => {
   const canProceedToNext = () => {
     switch (currentStep) {
       case 0: // Identity
-        return formData.full_name && formData.display_name && formData.diaspora_origin && 
-               formData.diaspora_origin !== 'section-diaspora' && formData.diaspora_origin !== 'section-other' && 
-               formData.gender;
-      case 1: // Professional
-        return formData.current_role && formData.industry;
-      case 2: // Goals
-        return formData.bio && formData.headline;
-      case 3: // Contribution
-        return formData.contribution_types.length > 0;
+        return formData.full_name && formData.username && formData.country_origin;
+      case 1: // Skills & Contribution
+        return formData.skills.length > 0 && formData.sectors.length > 0 && formData.contribution_style;
+      case 2: // Links & Identity
+        return true; // All fields optional
+      case 3: // Community Agreement
+        return formData.agrees_to_values;
       default:
         return false;
     }
@@ -108,20 +102,22 @@ const Onboarding = () => {
     setIsSubmitting(true);
     
     try {
-      // Create or update profile
+      // Create or update profile with new schema
       const profileData = {
         id: user.id,
+        email: user.email,
         full_name: formData.full_name,
-        display_name: formData.display_name,
-        headline: formData.headline,
-        bio: formData.bio,
-        diaspora_origin: formData.diaspora_origin,
-        professional_role: formData.current_role,
-        company: formData.company,
-        industry: formData.industry,
+        username: formData.username,
+        country_origin: formData.country_origin,
+        current_location: formData.current_location,
         skills: formData.skills,
-        years_experience: formData.years_experience,
-        onboarding_completed_at: new Date().toISOString(),
+        sectors: formData.sectors,
+        contribution_style: formData.contribution_style,
+        linkedin_url: formData.linkedin_url,
+        twitter_url: formData.twitter_url,
+        website_url: formData.website_url,
+        avatar_url: formData.avatar_url,
+        onboarding_stage: 'completed',
         is_public: true,
         updated_at: new Date().toISOString()
       };
