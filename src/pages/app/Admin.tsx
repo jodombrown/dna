@@ -67,6 +67,7 @@ const Admin = () => {
     { id: 'invites', label: 'Invites', icon: MessageSquare, component: InviteSystemOverview },
     { id: 'communities', label: 'Communities', icon: Flag, component: CommunityModeration },
     { id: 'features', label: 'Feature Flags', icon: Settings, component: FeatureTogglesPanel },
+    { id: 'analytics', label: 'Analytics', icon: TrendingUp, component: require('@/components/admin/AdminAnalyticsDashboard').default },
   ];
 
   return (
