@@ -3,8 +3,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Upload } from 'lucide-react';
+import UsernameManager from '@/components/profile/UsernameManager';
 
 interface IdentityStepProps {
   data: any;
@@ -106,14 +105,11 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
 
       {/* Username */}
       <div>
-        <Label htmlFor="username">Choose a DNA Username *</Label>
-        <Input
-          id="username"
-          value={data.username || ''}
-          onChange={(e) => updateData({ username: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
-          placeholder="username"
+        <UsernameManager
+          currentUsername={data.username || ''}
+          changesLeft={2}
+          onUsernameChange={(username) => updateData({ username })}
         />
-        <p className="text-sm text-amber-600 mt-1">⚠️ This can only be changed twice per lifetime</p>
       </div>
 
       {/* Country of Origin */}
