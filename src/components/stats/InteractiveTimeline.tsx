@@ -14,7 +14,7 @@ const InteractiveTimeline = () => {
     if (activeTimelineYear && scrollContainerRef.current) {
       const activeIndex = timelineData.findIndex(item => item.year === activeTimelineYear);
       if (activeIndex !== -1) {
-        const cardWidth = 320 + 24; // w-80 (320px) + gap-6 (24px)
+        const cardWidth = Math.min(320, window.innerWidth - 48) + 24; // Responsive card width
         const scrollPosition = activeIndex * cardWidth;
         
         scrollContainerRef.current.scrollTo({
@@ -76,9 +76,9 @@ const InteractiveTimeline = () => {
         
         {/* Desktop: Horizontal scrollable timeline */}
         <div className="hidden lg:block">
-          <div ref={scrollContainerRef} className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+          <div ref={scrollContainerRef} className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide">
             {timelineData.map((item) => (
-              <div key={item.year} className="flex-shrink-0 w-80">
+              <div key={item.year} className="flex-shrink-0 w-72 sm:w-80">
                 <TimelineItem
                   year={item.year}
                   events={item.events}

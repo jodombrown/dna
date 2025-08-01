@@ -98,6 +98,20 @@
   .mobile-py-2 {
     @apply py-2;
   }
+  
+  /* Mobile table improvements */
+  .mobile-table-scroll {
+    @apply overflow-x-auto -mx-4 px-4;
+  }
+  
+  .mobile-table-scroll table {
+    @apply min-w-full text-sm;
+  }
+  
+  .mobile-table-scroll th,
+  .mobile-table-scroll td {
+    @apply px-2 py-1 text-xs;
+  }
 }
 
 /* Focus states for accessibility */

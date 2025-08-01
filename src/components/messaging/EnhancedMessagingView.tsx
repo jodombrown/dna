@@ -118,7 +118,7 @@ export const EnhancedMessagingView: React.FC<EnhancedMessagingViewProps> = ({ cl
   }
 
   return (
-    <div className={cn("h-[600px] md:grid md:grid-cols-3 gap-4", className)}>
+    <div className={cn("min-h-[400px] h-[calc(100vh-300px)] max-h-[600px] md:grid md:grid-cols-3 gap-2 sm:gap-4", className)}>
       {/* Conversations List - Hidden on mobile when chat is selected */}
       <Card className={cn(
         "md:col-span-1",
@@ -249,7 +249,7 @@ export const EnhancedMessagingView: React.FC<EnhancedMessagingViewProps> = ({ cl
 
             {/* Messages */}
             <CardContent className="p-0">
-              <ScrollArea className="h-[400px] p-4">
+              <ScrollArea className="h-[calc(100vh-450px)] min-h-[250px] max-h-[400px] p-2 sm:p-4">
                 <div className="space-y-4">
                   {messages.map((message) => (
                     <div

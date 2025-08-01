@@ -203,6 +203,33 @@
       display: none;
     }
   }
+  
+  /* Mobile responsive table helper */
+  .mobile-table-responsive {
+    @apply overflow-x-auto;
+    scrollbar-width: thin;
+  }
+  
+  .mobile-table-responsive::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .mobile-table-responsive::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+  }
+  
+  @media (max-width: 640px) {
+    .mobile-table-responsive table {
+      font-size: 0.75rem;
+    }
+    
+    .mobile-table-responsive th,
+    .mobile-table-responsive td {
+      padding: 0.25rem 0.5rem;
+      white-space: nowrap;
+    }
+  }
 }
 
 /* Mobile-safe area for devices with notches/home indicators */
