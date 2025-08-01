@@ -2036,6 +2036,7 @@ export type Database = {
           updated_at: string
           username: string | null
           username_changes: number | null
+          username_changes_left: number | null
           website_url: string | null
           years_experience: number | null
         }
@@ -2090,6 +2091,7 @@ export type Database = {
           updated_at?: string
           username?: string | null
           username_changes?: number | null
+          username_changes_left?: number | null
           website_url?: string | null
           years_experience?: number | null
         }
@@ -2144,6 +2146,7 @@ export type Database = {
           updated_at?: string
           username?: string | null
           username_changes?: number | null
+          username_changes_left?: number | null
           website_url?: string | null
           years_experience?: number | null
         }
@@ -2924,6 +2927,10 @@ export type Database = {
       }
       update_dna_points: {
         Args: { target_user_id: string; pillar: string; points?: number }
+        Returns: undefined
+      }
+      update_username: {
+        Args: { new_username: string }
         Returns: undefined
       }
     }
