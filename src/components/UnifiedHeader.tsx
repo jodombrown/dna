@@ -293,22 +293,22 @@ const UnifiedHeader = () => {
                 </SheetTrigger>
                 <SheetContent
                   side="left" 
-                  className="w-80 p-0 [&>*]:!hidden [&>div]:!block"
+                  className="w-[85vw] max-w-sm p-0 [&>*]:!hidden [&>div]:!block"
                   onPointerDownOutside={() => setIsMobileMenuOpen(false)}
                 >
-                  <div className="flex flex-col h-full">
-                    <div className="p-6 border-b">
+                  <div className="flex flex-col h-full max-h-screen">
+                    <div className="p-4 sm:p-6 border-b flex-shrink-0">
                       <div className="flex items-center justify-end">
                         <img 
                           src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
                           alt="Logo" 
-                          className="h-8 w-auto"
+                          className="h-6 sm:h-8 w-auto"
                         />
                       </div>
                     </div>
                     
-                    <ScrollArea className="flex-1 px-6">
-                      <nav className="flex flex-col space-y-2 py-6">
+                    <ScrollArea className="flex-1 overflow-y-auto">
+                      <nav className="flex flex-col space-y-1 p-4 sm:p-6 pb-20">
                         {/* Show different navigation based on auth status */}
                         {isAuthenticated ? (
                           <>
