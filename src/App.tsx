@@ -24,6 +24,8 @@ import GoToMarketPhase from "./pages/GoToMarketPhase";
 import NotFound from "./pages/NotFound";
 import BetaSignupComplete from "./pages/BetaSignupComplete";
 import InviteSignup from "./pages/InviteSignup";
+import ResetPassword from "./pages/ResetPassword";
+import ResetPasswordComplete from "./pages/ResetPasswordComplete";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +66,10 @@ function App() {
               
               {/* Invite Signup Route */}
               <Route path="/invite" element={<InviteSignup />} />
+              
+              {/* Password Reset Routes */}
+              <Route path="/reset-password" element={<AuthGuard><ResetPassword /></AuthGuard>} />
+              <Route path="/onboarding/reset-password-complete" element={<ResetPasswordComplete />} />
               
               <Route path="/phase/market-research" element={<AuthGuard><MarketResearchPhase /></AuthGuard>} />
               <Route path="/phase/prototyping" element={<AuthGuard><PrototypingPhase /></AuthGuard>} />
