@@ -101,21 +101,34 @@ const Auth = () => {
       }
 
       if (result.error) {
-        toast({
-          title: isLogin ? "Login Failed" : "Signup Failed",
-          description: result.error.message || "Something went wrong. Please try again.",
-          variant: "destructive"
-        });
+        const errorMessage = result.error.message || "Something went wrong. Please try again.";
+        
+        // Handle specific connection errors
+        if (errorMessage.includes('network') || errorMessage.includes('fetch') || 
+            errorMessage.includes('connection') || result.error.name === 'NetworkError') {
+          toast({
+            title: "Connection Error",
+            description: "Unable to connect to our servers. Please check your internet connection and try again.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: isLogin ? "Login Failed" : "Signup Failed",
+            description: errorMessage,
+            variant: "destructive"
+          });
+        }
       } else if (!isLogin) {
         toast({
           title: "Account Created Successfully!",
           description: "Please check your email to verify your account.",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Auth form error:', error);
       toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
+        title: "Connection Error",
+        description: "Unable to process your request. Please check your internet connection and try again.",
         variant: "destructive"
       });
     } finally {
@@ -150,11 +163,22 @@ const Auth = () => {
       }
     } catch (error: any) {
       console.error(`${provider} signin error:`, error);
-      toast({
-        title: "OAuth Sign-in Failed",
-        description: error.message || `Failed to sign in with ${provider === 'google' ? 'Google' : 'LinkedIn'}`,
-        variant: "destructive",
-      });
+      
+      // Handle network/connection errors specifically
+      if (error.message?.includes('network') || error.message?.includes('fetch') || 
+          error.message?.includes('connection') || error.name === 'NetworkError') {
+        toast({
+          title: "Connection Error",
+          description: "Unable to connect to authentication service. Please check your internet connection and try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "OAuth Sign-in Failed",
+          description: error.message || `Failed to sign in with ${provider === 'google' ? 'Google' : 'LinkedIn'}`,
+          variant: "destructive",
+        });
+      }
     } finally {
       if (provider === 'google') setIsGoogleLoading(false);
       if (provider === 'linkedin_oidc') setIsLinkedInLoading(false);

@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state changed:', event, session);
         setSession(session);
         setUser(session?.user ?? null);
@@ -79,43 +79,108 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchProfile(session.user.id);
+    // Get initial session with error handling
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+          setLoading(false);
+          return;
+        }
+
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          await fetchProfile(session.user.id);
+        }
+        
+        setLoading(false);
+      } catch (error) {
+        console.error('Network error getting session:', error);
+        setLoading(false);
       }
-      
-      setLoading(false);
-    });
+    };
+
+    getInitialSession();
 
     return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName,
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: fullName,
+          }
+        }
+      });
+      
+      if (error) {
+        console.error('Sign up error:', error);
+        // Provide more specific error messages
+        if (error.message.includes('already registered')) {
+          return { error: { ...error, message: 'This email is already registered. Please sign in instead.' } };
+        }
+        if (error.message.includes('Password')) {
+          return { error: { ...error, message: 'Password must be at least 6 characters long.' } };
+        }
+        if (error.message.includes('network') || error.message.includes('fetch')) {
+          return { error: { ...error, message: 'Connection error. Please check your internet connection and try again.' } };
         }
       }
-    });
-    return { error };
+      
+      return { error };
+    } catch (networkError: any) {
+      console.error('Network error during sign up:', networkError);
+      return { 
+        error: { 
+          message: 'Unable to connect to the server. Please check your internet connection and try again.',
+          name: 'NetworkError'
+        } 
+      };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        console.error('Sign in error:', error);
+        // Provide more specific error messages
+        if (error.message.includes('Invalid login credentials')) {
+          return { error: { ...error, message: 'Invalid email or password. Please try again.' } };
+        }
+        if (error.message.includes('Email not confirmed')) {
+          return { error: { ...error, message: 'Please check your email and confirm your account before signing in.' } };
+        }
+        if (error.message.includes('network') || error.message.includes('fetch')) {
+          return { error: { ...error, message: 'Connection error. Please check your internet connection and try again.' } };
+        }
+      }
+      
+      return { error };
+    } catch (networkError: any) {
+      console.error('Network error during sign in:', networkError);
+      return { 
+        error: { 
+          message: 'Unable to connect to the server. Please check your internet connection and try again.',
+          name: 'NetworkError'
+        } 
+      };
+    }
   };
 
   const signOut = async () => {
