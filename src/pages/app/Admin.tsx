@@ -89,7 +89,7 @@ const Admin = () => {
 
         {/* Admin Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-4 lg:grid-cols-8 mb-8 h-auto p-1">
+          <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 mb-8 h-auto p-1">
             {adminSections.map((section) => {
               const Icon = section.icon;
               return (

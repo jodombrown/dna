@@ -40,7 +40,7 @@ const SearchContent: React.FC<SearchContentProps> = ({
   onMessage
 }) => {
   return (
-    <div className="lg:col-span-2">
+    <div className="w-full md:col-span-2">
       {/* Show recommendations when no search is active */}
       {showRecommendations && user && recommendations.length > 0 && (
         <RecommendationsSection

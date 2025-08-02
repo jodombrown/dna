@@ -93,8 +93,8 @@ const InnovationPathwayDetail = () => {
         </Button>
 
         {/* Hero Section */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-8">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <div className="col-span-1 lg:col-span-2">
             <img
               src={project.image}
               alt={project.title}
@@ -128,7 +128,7 @@ const InnovationPathwayDetail = () => {
           </div>
           
           {/* Funding Card */}
-          <div className="lg:col-span-1">
+          <div className="col-span-1 lg:col-span-1">
             <Card className="sticky top-8">
               <CardContent className="p-6">
                 <div className="mb-6">
