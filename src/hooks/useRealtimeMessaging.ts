@@ -239,9 +239,9 @@ export const useRealtimeMessaging = (userId?: string) => {
   useEffect(() => {
     if (!userId) return;
 
-    // Subscribe to new messages
+    // Subscribe to new messages - unique channel per user
     const messagesChannel = supabase
-      .channel('messages-changes')
+      .channel(`messages-changes-${userId}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -276,9 +276,9 @@ export const useRealtimeMessaging = (userId?: string) => {
       })
       .subscribe();
 
-    // Subscribe to conversation updates
+    // Subscribe to conversation updates - unique channel per user
     const conversationsChannel = supabase
-      .channel('conversations-changes')
+      .channel(`conversations-changes-${userId}`)
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',

@@ -21,9 +21,9 @@ export const MessageNotifications: React.FC<MessageNotificationsProps> = ({
       Notification.requestPermission();
     }
 
-    // Subscribe to new messages
+    // Subscribe to new messages - unique channel per user
     const channel = supabase
-      .channel('message-notifications')
+      .channel(`message-notifications-${userId}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
