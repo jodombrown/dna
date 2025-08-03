@@ -34,25 +34,3 @@ export const useRealtimeComments = (onNewComment: (comment: any) => void) => {
     };
   }, [onNewComment]);
 };
-
-export const useRealtimeReactions = (onNewReaction: (reaction: any) => void) => {
-  useEffect(() => {
-    const channel = supabase
-      .channel("realtime-reactions")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "post_reactions" },
-        (payload) => onNewReaction(payload.new)
-      )
-      .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: "post_reactions" },
-        (payload) => onNewReaction({ ...payload.old, _deleted: true })
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [onNewReaction]);
-};
