@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import LinkedInLayout from '@/components/linkedin/LinkedInLayout';
 import ProfileCard from '@/components/linkedin/ProfileCard';
 import { PillarMainContent } from '@/components/linkedin/PillarMainContent';
@@ -13,9 +14,22 @@ import EnhancedCommunityPulseDashboard from '@/components/metrics/EnhancedCommun
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDashboard } from '@/contexts/DashboardContext';
 import { SocialFeedProvider } from '@/contexts/SocialFeedContext';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
+
+  // Guard against no user
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Please log in to access the dashboard.</p>
+        </div>
+      </div>
+    );
+  }
 
   // Handle pillar change - always switch to dashboard view when pillar changes
   const handlePillarChange = (pillar: string) => {
@@ -83,13 +97,15 @@ const Dashboard = () => {
   );
 
   return (
-    <SocialFeedProvider>
-      <LinkedInLayout
-        leftSidebar={leftSidebar}
-        mainContent={mainContent}
-        rightSidebar={rightSidebar}
-      />
-    </SocialFeedProvider>
+    <ErrorBoundary>
+      <SocialFeedProvider>
+        <LinkedInLayout
+          leftSidebar={leftSidebar}
+          mainContent={mainContent}
+          rightSidebar={rightSidebar}
+        />
+      </SocialFeedProvider>
+    </ErrorBoundary>
   );
 };
 

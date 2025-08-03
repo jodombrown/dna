@@ -41,6 +41,15 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuth();
+
+  // Early return if no user to prevent subscription errors
+  if (!user) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Please log in to view posts.</p>
+      </div>
+    );
+  }
   const { toast } = useToast();
   const parentRef = useRef<HTMLDivElement>(null);
 

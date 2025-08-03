@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Import existing onboarding steps
 import IdentityStep from '@/components/onboarding/steps/IdentityStep';
@@ -158,7 +159,8 @@ const Onboarding = () => {
   const progress = ((currentStep + 1) / STEPS.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10">
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
@@ -261,6 +263,7 @@ const Onboarding = () => {
         </div>
       </div>
     </div>
+    </ErrorBoundary>
   );
 };
 

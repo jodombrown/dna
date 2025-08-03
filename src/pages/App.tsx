@@ -5,6 +5,7 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import MobileBottomNav from '@/components/navigation/MobileBottomNav';
 import Dashboard from './app/Dashboard';
 import { DashboardProvider } from '@/contexts/DashboardContext';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import Search from './app/Search';
 import Connect from './app/Connect';
 import Messages from './app/Messages';
@@ -46,29 +47,31 @@ const App = () => {
   }
 
   return (
-    <DashboardProvider>
-      <div className="min-h-screen bg-gray-50">
-        {/* Unified Header */}
-        <UnifiedHeader />
+    <ErrorBoundary>
+      <DashboardProvider>
+        <div className="min-h-screen bg-gray-50">
+          {/* Unified Header */}
+          <UnifiedHeader />
 
-        {/* Main Content */}
-        <main className="pt-16 pb-20 lg:pb-0">
-          <Routes>
-            <Route index element={<Dashboard />} />
-            <Route path="search" element={<Search />} />
-            <Route path="connect" element={<Connect />} />
-            <Route path="messages" element={<Messages />} />
-            <Route path="events" element={<Events />} />
-            <Route path="communities" element={<Communities />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="invites" element={<Invites />} />
-            <Route path="admin" element={<Admin />} />
-          </Routes>
-        </main>
-        <MobileBottomNav />
-      </div>
-    </DashboardProvider>
+          {/* Main Content */}
+          <main className="pt-16 pb-20 lg:pb-0">
+            <Routes>
+              <Route index element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
+              <Route path="search" element={<ErrorBoundary><Search /></ErrorBoundary>} />
+              <Route path="connect" element={<ErrorBoundary><Connect /></ErrorBoundary>} />
+              <Route path="messages" element={<ErrorBoundary><Messages /></ErrorBoundary>} />
+              <Route path="events" element={<ErrorBoundary><Events /></ErrorBoundary>} />
+              <Route path="communities" element={<ErrorBoundary><Communities /></ErrorBoundary>} />
+              <Route path="profile" element={<ErrorBoundary><Profile /></ErrorBoundary>} />
+              <Route path="settings" element={<ErrorBoundary><Settings /></ErrorBoundary>} />
+              <Route path="invites" element={<ErrorBoundary><Invites /></ErrorBoundary>} />
+              <Route path="admin" element={<ErrorBoundary><Admin /></ErrorBoundary>} />
+            </Routes>
+          </main>
+          <MobileBottomNav />
+        </div>
+      </DashboardProvider>
+    </ErrorBoundary>
   );
 };
 
