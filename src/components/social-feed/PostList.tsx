@@ -33,6 +33,7 @@ interface PostListProps {
   hasMore?: boolean;
   onLoadMore?: () => void;
   onRefresh?: () => void;
+  onComment?: (postId: string) => void;
   emptyMessage?: string;
 }
 
@@ -42,6 +43,7 @@ export const PostList: React.FC<PostListProps> = ({
   hasMore = false,
   onLoadMore,
   onRefresh,
+  onComment,
   emptyMessage = "No posts yet."
 }) => {
   if (isLoading && posts.length === 0) {
@@ -90,6 +92,10 @@ export const PostList: React.FC<PostListProps> = ({
           <PostCard
             key={post.id}
             post={post}
+            onComment={onComment}
+            onPostUpdated={onRefresh}
+            onPostDeleted={onRefresh}
+            onRepostCreated={onRefresh}
           />
         ))}
         
