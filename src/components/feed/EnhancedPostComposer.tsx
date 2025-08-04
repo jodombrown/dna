@@ -118,6 +118,7 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
       }
 
       // Create the post
+      console.log('Creating post with pillar:', pillar); // Debug log
       const { data, error } = await supabase
         .from('posts')
         .insert({
@@ -131,7 +132,10 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Post creation error:', error); // Debug log
+        throw error;
+      }
 
       // Trigger ADIN prompt for post creation
       if (user?.id) {
