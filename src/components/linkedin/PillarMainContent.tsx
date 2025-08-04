@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Feed } from '@/components/feed/Feed';
+import { FeedContainer } from '@/components/social-feed/FeedContainer';
 import { PostComposer } from '@/components/social-feed/PostComposer';
 import { useLiveEvents } from '@/hooks/useLiveEvents';
 import { useLiveContributions } from '@/hooks/useLiveContributions';
@@ -25,7 +25,7 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
   const connectContent = () => (
     <div className="space-y-4">
       <PostComposer defaultPillar="connect" onPostCreated={handlePostCreated} />
-      <Feed key={`connect-${refreshKey}`} pillar="connect" limit={5} />
+      <FeedContainer defaultPillar="connect" showComposer={false} />
       
       {/* Networking Events */}
       <Card>
@@ -125,7 +125,7 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
   const collaborateContent = () => (
     <div className="space-y-4">
       <PostComposer defaultPillar="collaborate" onPostCreated={handlePostCreated} />
-      <Feed key={`collaborate-${refreshKey}`} pillar="collaborate" limit={5} />
+      <FeedContainer defaultPillar="collaborate" showComposer={false} />
       
       {/* Featured Project Opportunities */}
       <Card>
@@ -239,7 +239,7 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
   const contributeContent = () => (
     <div className="space-y-4">
       <PostComposer defaultPillar="contribute" onPostCreated={handlePostCreated} />
-      <Feed key={`contribute-${refreshKey}`} pillar="contribute" limit={5} />
+      <FeedContainer defaultPillar="contribute" showComposer={false} />
       
       {/* Featured Impact Opportunities */}
       <Card>

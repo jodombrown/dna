@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Post } from './PostList';
 
@@ -13,6 +13,9 @@ export const useFeedRealtime = ({
   onPostUpdate,
   onPostDelete
 }: UseFeedRealtimeProps = {}) => {
+  
+  const channelsRef = useRef<any[]>([]);
+  const isSubscribedRef = useRef(false);
   
   const handlePostChange = useCallback((payload: any, event: 'INSERT' | 'UPDATE' | 'DELETE') => {
     switch (event) {
@@ -35,9 +38,19 @@ export const useFeedRealtime = ({
   }, []);
 
   useEffect(() => {
+    // Prevent multiple subscriptions
+    if (isSubscribedRef.current) {
+      return;
+    }
+
+    isSubscribedRef.current = true;
+
+    // Create unique channel names to avoid conflicts
+    const channelId = Math.random().toString(36).substr(2, 9);
+    
     // Subscribe to post changes
     const postsChannel = supabase
-      .channel('realtime-posts')
+      .channel(`realtime-posts-${channelId}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -57,7 +70,7 @@ export const useFeedRealtime = ({
 
     // Subscribe to post likes for real-time engagement updates
     const likesChannel = supabase
-      .channel('realtime-likes')
+      .channel(`realtime-likes-${channelId}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -70,10 +83,16 @@ export const useFeedRealtime = ({
       }, (payload) => handleLikeChange(payload, 'DELETE'))
       .subscribe();
 
+    // Store channels for cleanup
+    channelsRef.current = [postsChannel, likesChannel];
+
     // Cleanup subscriptions
     return () => {
-      supabase.removeChannel(postsChannel);
-      supabase.removeChannel(likesChannel);
+      isSubscribedRef.current = false;
+      channelsRef.current.forEach(channel => {
+        supabase.removeChannel(channel);
+      });
+      channelsRef.current = [];
     };
   }, [handlePostChange, handleLikeChange]);
 
