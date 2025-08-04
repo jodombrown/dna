@@ -217,7 +217,7 @@ const Search = () => {
   ) : [];
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-2 md:px-4 py-4 md:py-6">
+    <div className="max-w-4xl mx-auto px-4 py-6">
       {/* Search Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-dna-forest mb-2">
@@ -235,7 +235,7 @@ const Search = () => {
       <Card className="mb-6">
         <CardContent className="p-6 space-y-6">
           {/* Header with Title and Toggle Pills */}
-          <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <SearchIcon className="w-6 h-6 text-dna-forest" />
               <div>
@@ -249,15 +249,15 @@ const Search = () => {
               </div>
             </div>
             
-            {/* Compact Toggle Pills - Stack on mobile */}
-            <div className="flex flex-col space-y-2 md:flex-row md:items-center md:gap-3 md:space-y-0">
+            {/* Compact Toggle Pills */}
+            <div className="flex items-center gap-3">
               {/* Search Scope Toggle */}
-              <div className="flex bg-gray-100 rounded-full p-1 border w-full md:w-auto">
+              <div className="flex bg-gray-100 rounded-full p-1 border">
                 <Button
                   variant={searchScope === 'dna' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setSearchScope('dna')}
-                  className="rounded-full px-4 py-2 text-sm font-medium transition-all flex-1 md:flex-none"
+                  className="rounded-full px-4 py-2 text-sm font-medium transition-all"
                 >
                   <Database className="w-4 h-4 mr-2" />
                   DNA
@@ -266,7 +266,7 @@ const Search = () => {
                   variant={searchScope === 'global' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setSearchScope('global')}
-                  className="rounded-full px-4 py-2 text-sm font-medium transition-all flex-1 md:flex-none"
+                  className="rounded-full px-4 py-2 text-sm font-medium transition-all"
                 >
                   <Globe className="w-4 h-4 mr-2" />
                   Global
@@ -279,7 +279,7 @@ const Search = () => {
                   variant={isAiMode ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setIsAiMode(!isAiMode)}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition-all w-full md:w-auto ${
+                  className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
                     isAiMode 
                       ? 'bg-dna-emerald hover:bg-dna-emerald/90 text-white border-dna-emerald' 
                       : 'border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white'
@@ -311,8 +311,8 @@ const Search = () => {
           />
 
           {/* Active Mode Indicators */}
-          <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 text-sm">
-            <div className="flex flex-col space-y-2 md:flex-row md:items-center md:gap-4 md:space-y-0 text-gray-500">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-4 text-gray-500">
               <span className="flex items-center gap-2">
                 {searchScope === 'dna' ? (
                   <>

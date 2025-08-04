@@ -20,7 +20,7 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({
   loading
 }) => {
   return (
-    <div className="w-full md:col-span-1">
+    <div className="lg:col-span-1">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="profiles">Profiles</TabsTrigger>

@@ -167,38 +167,20 @@
   }
   
   .mobile-grid-4 {
-    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4;
+    @apply grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4;
   }
   
-  /* Enforce strict single-column below 768px */
-  .mobile-single-column {
-    @apply block md:hidden w-full space-y-4;
-  }
-
-  .desktop-grid {
-    @apply hidden md:grid;
-  }
-  
-  /* Touch-optimized button sizing - WCAG 2.1 compliant */
+  /* Touch-optimized button sizing */
   .touch-target {
-    @apply min-h-[48px] min-w-[48px] touch-manipulation;
+    @apply min-h-[48px] min-w-[48px];
   }
   
   .touch-target-sm {
-    @apply min-h-[44px] min-w-[44px] touch-manipulation;
+    @apply min-h-[40px] min-w-[40px];
   }
   
   .touch-target-lg {
-    @apply min-h-[56px] min-w-[56px] touch-manipulation;
-  }
-
-  /* Mobile-specific button styling */
-  .mobile-button {
-    @apply touch-target rounded-lg font-medium transition-colors;
-  }
-
-  .mobile-pill {
-    @apply px-4 py-2 rounded-full text-sm font-medium transition-all touch-target-sm;
+    @apply min-h-[56px] min-w-[56px];
   }
   
   .animate-float {

@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRealtimeComments } from '@/hooks/useRealtimePosts';
+import { useRealtimeComments, useRealtimeReactions } from '@/hooks/useRealtimePosts';
 
 interface PostReaction {
   id: string;

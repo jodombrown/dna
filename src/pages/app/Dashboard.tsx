@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import LinkedInLayout from '@/components/linkedin/LinkedInLayout';
 import ProfileCard from '@/components/linkedin/ProfileCard';
 import { PillarMainContent } from '@/components/linkedin/PillarMainContent';
@@ -14,22 +13,9 @@ import EnhancedCommunityPulseDashboard from '@/components/metrics/EnhancedCommun
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDashboard } from '@/contexts/DashboardContext';
 import { SocialFeedProvider } from '@/contexts/SocialFeedContext';
-import ErrorBoundary from '@/components/ErrorBoundary';
 
 const Dashboard = () => {
-  const { user } = useAuth();
   const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
-
-  // Guard against no user
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Please log in to access the dashboard.</p>
-        </div>
-      </div>
-    );
-  }
 
   // Handle pillar change - always switch to dashboard view when pillar changes
   const handlePillarChange = (pillar: string) => {
@@ -46,11 +32,11 @@ const Dashboard = () => {
       
       {/* Four Pillars Navigation */}
       <Tabs value={activePillar} onValueChange={handlePillarChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
-          <TabsTrigger value="feed" className="text-xs md:text-sm truncate">Feed</TabsTrigger>
-          <TabsTrigger value="connect" className="text-xs md:text-sm truncate">Connect</TabsTrigger>
-          <TabsTrigger value="collaborate" className="text-xs md:text-sm truncate">Collab</TabsTrigger>
-          <TabsTrigger value="contribute" className="text-xs md:text-sm truncate">Contrib</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1">
+          <TabsTrigger value="feed" className="text-xs sm:text-sm truncate">Feed</TabsTrigger>
+          <TabsTrigger value="connect" className="text-xs sm:text-sm truncate">Connect</TabsTrigger>
+          <TabsTrigger value="collaborate" className="text-xs sm:text-sm truncate">Collab</TabsTrigger>
+          <TabsTrigger value="contribute" className="text-xs sm:text-sm truncate">Contrib</TabsTrigger>
         </TabsList>
         
         <TabsContent value="feed" className="mt-4">
@@ -97,15 +83,13 @@ const Dashboard = () => {
   );
 
   return (
-    <ErrorBoundary>
-      <SocialFeedProvider>
-        <LinkedInLayout
-          leftSidebar={leftSidebar}
-          mainContent={mainContent}
-          rightSidebar={rightSidebar}
-        />
-      </SocialFeedProvider>
-    </ErrorBoundary>
+    <SocialFeedProvider>
+      <LinkedInLayout
+        leftSidebar={leftSidebar}
+        mainContent={mainContent}
+        rightSidebar={rightSidebar}
+      />
+    </SocialFeedProvider>
   );
 };
 

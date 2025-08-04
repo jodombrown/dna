@@ -105,17 +105,11 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
 
       {/* Username */}
       <div>
-        <Label htmlFor="username">Username *</Label>
-        <Input
-          id="username"
-          value={data.username || ''}
-          onChange={(e) => updateData({ username: e.target.value.toLowerCase().replace(/[^a-z0-9_.-]/g, '') })}
-          placeholder="choose_username"
-          className="bg-white"
+        <UsernameManager
+          currentUsername={data.username || ''}
+          changesLeft={2}
+          onUsernameChange={(username) => updateData({ username })}
         />
-        <p className="text-xs text-gray-500 mt-1">
-          Letters, numbers, dots, underscores, and hyphens only. Can be changed later.
-        </p>
       </div>
 
       {/* Country of Origin */}

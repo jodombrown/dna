@@ -102,32 +102,24 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
     setSaving(true);
 
     try {
-      // For onboarding, just trigger the callback - don't save to DB yet
-      if (onUsernameChange) {
-        onUsernameChange(username);
+      // Use the database function directly via raw SQL
+      const { data, error } = await supabase
+        .rpc('update_username' as any, { 
+          new_username: username 
+        });
+
+      if (error) {
         toast({ 
-          title: "Username Selected", 
-          description: `@${username} will be saved when you complete onboarding.`
+          title: "Error", 
+          description: error.message,
+          variant: "destructive"
         });
       } else {
-        // For profile settings, use the database function
-        const { error } = await supabase
-          .rpc('update_username' as any, { 
-            new_username: username 
-          });
-
-        if (error) {
-          toast({ 
-            title: "Error", 
-            description: error.message,
-            variant: "destructive"
-          });
-        } else {
-          toast({ 
-            title: "Username Saved", 
-            description: `Welcome, @${username}! You have ${changesLeft - 1} changes remaining.`
-          });
-        }
+        toast({ 
+          title: "Username Saved", 
+          description: `Welcome, @${username}! You have ${changesLeft - 1} changes remaining.`
+        });
+        onUsernameChange?.(username);
       }
     } catch (error) {
       toast({ 
