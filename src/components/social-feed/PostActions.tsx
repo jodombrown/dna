@@ -11,7 +11,6 @@ interface PostActionsProps {
   initialCommentCount: number;
   initialIsLiked: boolean;
   onComment?: (postId: string) => void;
-  onShare?: () => void;
 }
 
 export const PostActions: React.FC<PostActionsProps> = ({
@@ -19,8 +18,7 @@ export const PostActions: React.FC<PostActionsProps> = ({
   initialLikeCount,
   initialCommentCount,
   initialIsLiked,
-  onComment,
-  onShare
+  onComment
 }) => {
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
@@ -84,23 +82,18 @@ export const PostActions: React.FC<PostActionsProps> = ({
   };
 
   const handleShare = () => {
-    if (onShare) {
-      onShare();
+    if (navigator.share) {
+      navigator.share({
+        title: 'DNA Platform Post',
+        text: 'Check out this post on DNA Platform',
+        url: window.location.href,
+      });
     } else {
-      // Fallback to native share or copy link
-      if (navigator.share) {
-        navigator.share({
-          title: 'DNA Platform Post',
-          text: 'Check out this post on DNA Platform',
-          url: window.location.href,
-        });
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        toast({
-          title: "Link copied!",
-          description: "Post link copied to clipboard.",
-        });
-      }
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copied!",
+        description: "Post link copied to clipboard.",
+      });
     }
   };
 

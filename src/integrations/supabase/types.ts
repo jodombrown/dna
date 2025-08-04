@@ -1933,7 +1933,6 @@ export type Database = {
           id: string
           media_url: string | null
           pillar: string
-          shared_post_id: string | null
           type: string | null
           updated_at: string | null
           user_id: string
@@ -1947,7 +1946,6 @@ export type Database = {
           id?: string
           media_url?: string | null
           pillar: string
-          shared_post_id?: string | null
           type?: string | null
           updated_at?: string | null
           user_id: string
@@ -1961,7 +1959,6 @@ export type Database = {
           id?: string
           media_url?: string | null
           pillar?: string
-          shared_post_id?: string | null
           type?: string | null
           updated_at?: string | null
           user_id?: string
@@ -1973,13 +1970,6 @@ export type Database = {
             columns: ["author_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "posts_shared_post_id_fkey"
-            columns: ["shared_post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
           {

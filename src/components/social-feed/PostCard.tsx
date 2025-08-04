@@ -10,8 +10,6 @@ import { PostStats } from './PostStats';
 import { CommentThread } from './comments/CommentThread';
 import { EditPostModal } from './EditPostModal';
 import { DeletePostDialog } from './DeletePostDialog';
-import { RepostComposerModal } from './RepostComposerModal';
-import { SharedPostPreview } from './SharedPostPreview';
 import { useDialogManager } from '@/hooks/useDialogManager';
 import { supabase } from '@/integrations/supabase/client';
 import type { Post } from './PostList';
@@ -21,7 +19,6 @@ interface PostCardProps {
   onComment?: (postId: string) => void;
   onPostUpdated?: () => void;
   onPostDeleted?: () => void;
-  onRepostCreated?: () => void;
 }
 
 const getPillarColor = (pillar: string) => {
@@ -50,8 +47,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   post, 
   onComment, 
   onPostUpdated, 
-  onPostDeleted,
-  onRepostCreated
+  onPostDeleted 
 }) => {
   const [showComments, setShowComments] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -80,11 +76,6 @@ export const PostCard: React.FC<PostCardProps> = ({
   const handlePostDeleted = () => {
     closeDialog('delete');
     onPostDeleted?.();
-  };
-
-  const handleRepostCreated = () => {
-    closeDialog('repost');
-    onRepostCreated?.();
   };
   return (
     <Card 
@@ -162,11 +153,6 @@ export const PostCard: React.FC<PostCardProps> = ({
 
       <CardContent className="pt-0">
         <div className="space-y-4">
-          {/* Shared Post Preview */}
-          {post.shared_post && (
-            <SharedPostPreview sharedPost={post.shared_post} />
-          )}
-
           <p className="text-foreground whitespace-pre-wrap leading-relaxed">
             {post.content}
           </p>
@@ -195,7 +181,6 @@ export const PostCard: React.FC<PostCardProps> = ({
               initialCommentCount={post.comment_count || 0}
               initialIsLiked={post.user_has_liked || false}
               onComment={handleCommentToggle}
-              onShare={() => openDialog('repost')}
             />
           </div>
 
@@ -245,14 +230,6 @@ export const PostCard: React.FC<PostCardProps> = ({
         open={isDialogOpen('delete')}
         onOpenChange={(open) => !open && closeDialog('delete')}
         onPostDeleted={handlePostDeleted}
-      />
-
-      {/* Repost Modal */}
-      <RepostComposerModal
-        originalPost={post}
-        open={isDialogOpen('repost')}
-        onOpenChange={(open) => !open && closeDialog('repost')}
-        onRepostCreated={handleRepostCreated}
       />
     </Card>
   );

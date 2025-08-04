@@ -13,8 +13,6 @@ export interface Post {
   pillar: string;
   created_at: string;
   author_id: string;
-  shared_post_id?: string;
-  shared_post?: Post;
   profiles: {
     id: string;
     full_name: string;
