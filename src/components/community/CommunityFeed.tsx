@@ -13,7 +13,7 @@ const CommunityFeed = () => {
   return (
     <div className="space-y-6">
       <EnhancedPostComposer 
-        defaultPillar="feed" 
+        defaultPillar="connect" 
         onPostCreated={handlePostCreated}
       />
       <SocialFeed 
