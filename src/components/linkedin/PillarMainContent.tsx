@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Feed } from '@/components/feed/Feed';
-import { PostComposer } from '@/components/feed/PostComposer';
+import { PostComposer } from '@/components/social-feed/PostComposer';
 import { useLiveEvents } from '@/hooks/useLiveEvents';
 import { useLiveContributions } from '@/hooks/useLiveContributions';
 
