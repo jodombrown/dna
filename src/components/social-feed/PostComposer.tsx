@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send } from 'lucide-react';
+import { Send, ImagePlus, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUploadPostMedia } from './useUploadPostMedia';
 
 interface PostComposerProps {
   defaultPillar?: string;
@@ -22,8 +23,12 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   const [content, setContent] = useState('');
   const [pillar, setPillar] = useState(defaultPillar);
   const [isPosting, setIsPosting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { uploadMedia, uploading } = useUploadPostMedia();
 
   const getPillarColor = (pillarValue: string) => {
     switch (pillarValue) {
@@ -41,6 +46,26 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async () => {
@@ -65,15 +90,27 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     setIsPosting(true);
 
     try {
+      let mediaUrl = null;
+      
+      // Upload image if selected
+      if (selectedImage) {
+        mediaUrl = await uploadMedia(selectedImage);
+        if (!mediaUrl) {
+          setIsPosting(false);
+          return; // Upload failed, don't create post
+        }
+      }
+
       const { error } = await supabase
         .from('posts')
         .insert({
           content: content.trim(),
-          type: 'text',
+          type: selectedImage ? 'media' : 'text',
           pillar: pillar,
           author_id: user.id,
           user_id: user.id,
-          visibility: 'public'
+          visibility: 'public',
+          media_url: mediaUrl
         });
 
       if (error) throw error;
@@ -86,6 +123,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       // Reset form
       setContent('');
       setPillar(defaultPillar);
+      removeImage();
       onPostCreated?.();
     } catch (error) {
       console.error('Error creating post:', error);
@@ -149,7 +187,45 @@ export const PostComposer: React.FC<PostComposerProps> = ({
               rows={3}
             />
 
-            <div className="flex items-center justify-end pt-3 border-t">
+            {/* Image Preview */}
+            {imagePreview && (
+              <div className="relative rounded-lg overflow-hidden border">
+                <img 
+                  src={imagePreview} 
+                  alt="Upload preview" 
+                  className="w-full h-auto max-h-96 object-cover"
+                />
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={removeImage}
+                  className="absolute top-2 right-2"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between pt-3 border-t">
+              <div className="flex items-center gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading || isPosting}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <ImagePlus className="h-4 w-4 mr-2" />
+                  {uploading ? 'Uploading...' : 'Add Image'}
+                </Button>
+              </div>
               <Button 
                 onClick={handleSubmit}
                 disabled={isPosting || !content.trim()}
