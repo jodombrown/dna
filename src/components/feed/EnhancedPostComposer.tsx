@@ -18,7 +18,7 @@ interface PostComposerProps {
 }
 
 export const EnhancedPostComposer: React.FC<PostComposerProps> = ({ 
-  defaultPillar = 'feed',
+  defaultPillar = 'connect',
   onPostCreated 
 }) => {
   const [content, setContent] = useState('');
@@ -233,7 +233,6 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="feed">Feed</SelectItem>
                   <SelectItem value="connect">Connect</SelectItem>
                   <SelectItem value="collaborate">Collaborate</SelectItem>
                   <SelectItem value="contribute">Contribute</SelectItem>

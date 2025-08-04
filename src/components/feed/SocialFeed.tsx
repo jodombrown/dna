@@ -130,7 +130,8 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
           type,
           pillar,
           created_at,
-          profiles:author_id (
+          author_id,
+          profiles!posts_author_id_fkey (
             id,
             full_name,
             avatar_url,
