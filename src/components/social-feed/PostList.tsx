@@ -1,5 +1,7 @@
 import React from 'react';
 import { PostCard } from './PostCard';
+import { LoadMoreTrigger } from './LoadMoreTrigger';
+import { SkeletonPostCard } from './SkeletonPostCard';
 import { Button } from '@/components/ui/button';
 import { Loader2, RefreshCw } from 'lucide-react';
 
@@ -87,26 +89,30 @@ export const PostList: React.FC<PostListProps> = ({
             post={post}
           />
         ))}
+        
+        {/* Loading skeletons while fetching more posts */}
+        {isLoading && posts.length > 0 && (
+          <>
+            <SkeletonPostCard />
+            <SkeletonPostCard />
+            <SkeletonPostCard />
+          </>
+        )}
       </div>
 
-      {/* Load More Button */}
+      {/* Infinite scroll trigger */}
       {hasMore && onLoadMore && (
-        <div className="flex justify-center py-4">
-          <Button 
-            onClick={onLoadMore} 
-            variant="outline"
-            disabled={isLoading}
-            aria-label="Load more posts"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Loading...
-              </>
-            ) : (
-              'Load More'
-            )}
-          </Button>
+        <LoadMoreTrigger 
+          onLoadMore={onLoadMore}
+          hasMore={hasMore}
+          isLoading={isLoading}
+        />
+      )}
+      
+      {/* End of feed indicator */}
+      {!hasMore && posts.length > 0 && (
+        <div className="text-center py-8">
+          <p className="text-muted-foreground text-sm">You've reached the end of the feed</p>
         </div>
       )}
     </div>
