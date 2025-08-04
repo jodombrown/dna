@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { EnhancedPostCard } from './EnhancedPostCard';
+import React, { useState, useEffect } from 'react';
+import { PostCard } from './PostCard';
 import { Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRealtimeFeed } from '@/hooks/useRealtimeFeed';
-import { useVirtualizer } from '@tanstack/react-virtual';
 
 interface Post {
   id: string;
@@ -27,54 +25,20 @@ interface Post {
   user_has_liked?: boolean;
 }
 
-interface SocialFeedProps {
+interface FeedProps {
   pillar?: string;
   limit?: number;
 }
 
-export const SocialFeed: React.FC<SocialFeedProps> = ({ 
+export const Feed: React.FC<FeedProps> = ({ 
   pillar = 'feed', 
   limit = 10 
 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [newPosts, setNewPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
-  const parentRef = useRef<HTMLDivElement>(null);
-
-  // Handle new posts from realtime - add to newPosts instead of directly to posts
-  const handleNewPost = useCallback((newPost: any) => {
-    // Only add posts that match the current pillar filter
-    if (pillar === 'feed' || newPost.pillar === pillar) {
-      setNewPosts(prevNewPosts => {
-        // Check if post already exists to avoid duplicates
-        const exists = prevNewPosts.some(post => post.id === newPost.id);
-        if (exists) return prevNewPosts;
-        
-        // Add the new post at the beginning of newPosts
-        return [newPost, ...prevNewPosts];
-      });
-    }
-  }, [pillar]);
-
-  // Merge new posts into main feed
-  const mergeNewPosts = useCallback(() => {
-    setPosts(prevPosts => [...newPosts, ...prevPosts]);
-    setNewPosts([]);
-  }, [newPosts]);
-
-  // Disabled realtime for stability - will refresh manually
-  const connectionStatus = 'CLOSED';
-
-  // Set up virtual scrolling
-  const rowVirtualizer = useVirtualizer({
-    count: posts.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 200, // Estimated height per post card
-    overscan: 5, // Render 5 items outside visible area for smooth scrolling
-  });
 
   const fetchPosts = async (isRefresh = false) => {
     try {
@@ -125,32 +89,27 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
       const postIds = postsData.map(post => post.id);
 
       // Fetch like counts
-      const { data: likesData, error: likesError } = await supabase
+      const { data: likesData } = await supabase
         .from('post_likes')
         .select('post_id')
         .in('post_id', postIds);
 
-      if (likesError) console.error('Error fetching likes:', likesError);
-
       // Fetch comment counts
-      const { data: commentsData, error: commentsError } = await supabase
+      const { data: commentsData } = await supabase
         .from('post_comments')
         .select('post_id')
         .in('post_id', postIds);
 
-      if (commentsError) console.error('Error fetching comments:', commentsError);
-
       // Check user's likes if authenticated
       let userLikesData = [];
       if (user) {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('post_likes')
           .select('post_id')
           .eq('user_id', user.id)
           .in('post_id', postIds);
 
-        if (error) console.error('Error fetching user likes:', error);
-        else userLikesData = data || [];
+        userLikesData = data || [];
       }
 
       // Combine data
@@ -185,20 +144,8 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
     fetchPosts();
   }, [pillar, user?.id]);
 
-  const handleLike = async (postId: string) => {
-    // Optimistically update the UI
-    setPosts(prev => prev.map(post => {
-      if (post.id === postId) {
-        return {
-          ...post,
-          user_has_liked: !post.user_has_liked,
-          like_count: post.user_has_liked 
-            ? Math.max(0, (post.like_count || 0) - 1)
-            : (post.like_count || 0) + 1
-        };
-      }
-      return post;
-    }));
+  const handleLike = (postId: string) => {
+    // Optimistic update handled in PostCard
   };
 
   const handleComment = (postId: string) => {
@@ -207,7 +154,6 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
   };
 
   const handleShare = (postId: string) => {
-    // Share functionality is handled in PostCard
     console.log('Share post:', postId);
   };
 
@@ -243,7 +189,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Refresh button */}
+      {/* Header with refresh button */}
       <div className="flex justify-between items-center">
         <h3 className="font-semibold text-lg">
           {pillar === 'feed' ? 'Latest Posts' : `${pillar.charAt(0).toUpperCase() + pillar.slice(1)} Posts`}
@@ -258,59 +204,17 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
         </Button>
       </div>
 
-      {/* New posts notification */}
-      {newPosts.length > 0 && (
-        <Button
-          onClick={mergeNewPosts}
-          variant="outline"
-          className="w-full mb-4 bg-dna-mint/20 border-dna-mint hover:bg-dna-mint/30 text-dna-forest animate-pulse"
-        >
-          {newPosts.length} New Post{newPosts.length > 1 ? 's' : ''} – Click to View
-        </Button>
-      )}
-
-      {/* Virtualized Posts List */}
-      <div 
-        ref={parentRef} 
-        className="overflow-y-auto h-[calc(100vh-280px)] scrollbar-thin"
-        style={{ contain: 'strict' }}
-      >
-        <div 
-          style={{ 
-            height: `${rowVirtualizer.getTotalSize()}px`, 
-            position: 'relative',
-            width: '100%'
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const post = posts[virtualRow.index];
-            if (!post) return null;
-            
-            return (
-              <div
-                key={post.id}
-                data-index={virtualRow.index}
-                ref={rowVirtualizer.measureElement}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  transform: `translateY(${virtualRow.start}px)`,
-                }}
-              >
-                <div className="pb-4">
-                  <EnhancedPostCard
-                    post={post}
-                    onLike={handleLike}
-                    onComment={handleComment}
-                    onShare={handleShare}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+      {/* Posts List */}
+      <div className="space-y-4">
+        {posts.map((post) => (
+          <PostCard
+            key={post.id}
+            post={post}
+            onLike={handleLike}
+            onComment={handleComment}
+            onShare={handleShare}
+          />
+        ))}
       </div>
     </div>
   );

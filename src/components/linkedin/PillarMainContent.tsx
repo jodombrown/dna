@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { SocialFeed } from '@/components/feed/SocialFeed';
-import { EnhancedPostComposer } from '@/components/feed/EnhancedPostComposer';
+import { Feed } from '@/components/feed/Feed';
+import { PostComposer } from '@/components/feed/PostComposer';
 import { useLiveEvents } from '@/hooks/useLiveEvents';
 import { useLiveContributions } from '@/hooks/useLiveContributions';
 
@@ -24,8 +24,8 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
   
   const connectContent = () => (
     <div className="space-y-4">
-      <EnhancedPostComposer defaultPillar="connect" onPostCreated={handlePostCreated} />
-      <SocialFeed key={`connect-${refreshKey}`} pillar="connect" limit={5} />
+      <PostComposer defaultPillar="connect" onPostCreated={handlePostCreated} />
+      <Feed key={`connect-${refreshKey}`} pillar="connect" limit={5} />
       
       {/* Networking Events */}
       <Card>
@@ -124,8 +124,8 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
 
   const collaborateContent = () => (
     <div className="space-y-4">
-      <EnhancedPostComposer defaultPillar="collaborate" onPostCreated={handlePostCreated} />
-      <SocialFeed key={`collaborate-${refreshKey}`} pillar="collaborate" limit={5} />
+      <PostComposer defaultPillar="collaborate" onPostCreated={handlePostCreated} />
+      <Feed key={`collaborate-${refreshKey}`} pillar="collaborate" limit={5} />
       
       {/* Featured Project Opportunities */}
       <Card>
@@ -238,8 +238,8 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
 
   const contributeContent = () => (
     <div className="space-y-4">
-      <EnhancedPostComposer defaultPillar="contribute" onPostCreated={handlePostCreated} />
-      <SocialFeed key={`contribute-${refreshKey}`} pillar="contribute" limit={5} />
+      <PostComposer defaultPillar="contribute" onPostCreated={handlePostCreated} />
+      <Feed key={`contribute-${refreshKey}`} pillar="contribute" limit={5} />
       
       {/* Featured Impact Opportunities */}
       <Card>

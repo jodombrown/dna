@@ -1,33 +1,34 @@
 import React, { useState } from 'react';
-import { formatDistanceToNow } from 'date-fns';
-import { Heart, MessageCircle, Share2, MoreHorizontal, MapPin } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { Heart, MessageCircle, Share } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+
+interface Post {
+  id: string;
+  content: string;
+  media_url?: string;
+  type: string;
+  pillar: string;
+  created_at: string;
+  profiles: {
+    id: string;
+    full_name: string;
+    avatar_url?: string;
+    location?: string;
+    professional_role?: string;
+  };
+  like_count?: number;
+  comment_count?: number;
+  user_has_liked?: boolean;
+}
 
 interface PostCardProps {
-  post: {
-    id: string;
-    content: string;
-    media_url?: string;
-    type: string;
-    pillar: string;
-    created_at: string;
-    profiles: {
-      id: string;
-      full_name: string;
-      avatar_url?: string;
-      location?: string;
-      professional_role?: string;
-    };
-    like_count?: number;
-    comment_count?: number;
-    user_has_liked?: boolean;
-  };
+  post: Post;
   onLike?: (postId: string) => void;
   onComment?: (postId: string) => void;
   onShare?: (postId: string) => void;
@@ -44,59 +45,6 @@ export const PostCard: React.FC<PostCardProps> = ({
   const [isLiking, setIsLiking] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
-
-  const handleLike = async () => {
-    if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please log in to like posts",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsLiking(true);
-
-    try {
-      if (isLiked) {
-        // Unlike the post
-        const { error } = await supabase
-          .from('post_likes')
-          .delete()
-          .eq('post_id', post.id)
-          .eq('user_id', user.id);
-
-        if (error) throw error;
-        
-        setIsLiked(false);
-        setLikeCount(prev => Math.max(0, prev - 1));
-      } else {
-        // Like the post
-        const { error } = await supabase
-          .from('post_likes')
-          .insert({
-            post_id: post.id,
-            user_id: user.id,
-          });
-
-        if (error) throw error;
-        
-        setIsLiked(true);
-        setLikeCount(prev => prev + 1);
-      }
-
-      onLike?.(post.id);
-    } catch (error) {
-      console.error('Error liking post:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update like. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLiking(false);
-    }
-  };
 
   const getPillarColor = (pillar: string) => {
     switch (pillar) {
@@ -120,139 +68,173 @@ export const PostCard: React.FC<PostCardProps> = ({
       .slice(0, 2);
   };
 
+  const handleLike = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to like posts",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (isLiking) return;
+    setIsLiking(true);
+
+    try {
+      if (isLiked) {
+        // Remove like
+        await supabase
+          .from('post_likes')
+          .delete()
+          .eq('post_id', post.id)
+          .eq('user_id', user.id);
+        
+        setIsLiked(false);
+        setLikeCount(prev => Math.max(0, prev - 1));
+      } else {
+        // Add like
+        await supabase
+          .from('post_likes')
+          .insert({
+            post_id: post.id,
+            user_id: user.id
+          });
+        
+        setIsLiked(true);
+        setLikeCount(prev => prev + 1);
+      }
+
+      onLike?.(post.id);
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update like. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLiking(false);
+    }
+  };
+
   const handleComment = () => {
     onComment?.(post.id);
   };
 
   const handleShare = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/post/${post.id}`);
-    toast({
-      title: "Link copied!",
-      description: "Post link has been copied to your clipboard.",
-    });
+    if (navigator.share) {
+      navigator.share({
+        title: `Post by ${post.profiles.full_name}`,
+        text: post.content,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copied!",
+        description: "Post link copied to clipboard.",
+      });
+    }
     onShare?.(post.id);
   };
 
   return (
-    <Card className="bg-background border-border">
-      <CardContent className="p-6">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-12 w-12">
-              <AvatarImage src={post.profiles.avatar_url} alt={post.profiles.full_name} />
-              <AvatarFallback className="bg-dna-forest text-white">
-                {getInitials(post.profiles.full_name)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <h4 className="font-semibold text-foreground">
-                  {post.profiles.full_name}
-                </h4>
-                <Badge 
-                  variant="secondary" 
-                  className={`text-xs ${getPillarColor(post.pillar)}`}
-                >
-                  {getPillarLabel(post.pillar)}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                {post.profiles.professional_role && (
-                  <span>{post.profiles.professional_role}</span>
-                )}
-                {post.profiles.location && (
-                  <>
-                    <span>•</span>
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{post.profiles.location}</span>
-                    </div>
-                  </>
-                )}
-                <span>•</span>
-                <span>{formatDistanceToNow(new Date(post.created_at))} ago</span>
-              </div>
+    <Card className="bg-background border-border hover:bg-accent/5 transition-colors">
+      <CardHeader className="pb-3">
+        <div className="flex items-start gap-3">
+          <Avatar className="h-12 w-12">
+            <AvatarImage 
+              src={post.profiles.avatar_url} 
+              alt={post.profiles.full_name} 
+            />
+            <AvatarFallback className="bg-dna-forest text-white text-sm">
+              {getInitials(post.profiles.full_name)}
+            </AvatarFallback>
+          </Avatar>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <h4 className="font-semibold text-foreground truncate">
+                {post.profiles.full_name}
+              </h4>
+              <Badge 
+                variant="secondary" 
+                className={`text-xs ${getPillarColor(post.pillar)}`}
+              >
+                {getPillarLabel(post.pillar)}
+              </Badge>
             </div>
+            
+            {post.profiles.professional_role && (
+              <p className="text-sm text-muted-foreground truncate">
+                {post.profiles.professional_role}
+              </p>
+            )}
+            
+            {post.profiles.location && (
+              <p className="text-xs text-muted-foreground">
+                {post.profiles.location}
+              </p>
+            )}
+            
+            <time className="text-xs text-muted-foreground">
+              {new Date(post.created_at).toLocaleDateString()}
+            </time>
           </div>
-          <Button variant="ghost" size="sm" className="text-muted-foreground">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
         </div>
+      </CardHeader>
 
-        {/* Content */}
-        <div className="mb-4">
+      <CardContent className="pt-0">
+        <div className="space-y-4">
           <p className="text-foreground whitespace-pre-wrap leading-relaxed">
             {post.content}
           </p>
-          
-          {/* Media content */}
+
           {post.media_url && (
-            <div className="mt-3 rounded-lg overflow-hidden border">
-              {post.type === 'image' && (
-                <img 
-                  src={post.media_url} 
-                  alt="Post media" 
-                  className="w-full h-auto max-h-96 object-cover"
-                />
-              )}
-              {post.type === 'video' && (
-                <video 
-                  src={post.media_url} 
-                  controls 
-                  className="w-full h-auto max-h-96"
-                />
-              )}
+            <div className="rounded-lg overflow-hidden border">
+              <img 
+                src={post.media_url} 
+                alt="Post media" 
+                className="w-full h-auto max-h-96 object-cover"
+              />
             </div>
           )}
-        </div>
 
-        {/* Engagement Stats */}
-        {(likeCount > 0 || (post.comment_count && post.comment_count > 0)) && (
-          <div className="flex items-center justify-between text-sm text-muted-foreground mb-3 pb-3 border-b">
+          <div className="flex items-center justify-between pt-2 border-t">
             <div className="flex items-center gap-4">
-              {likeCount > 0 && (
-                <span>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</span>
-              )}
-              {post.comment_count && post.comment_count > 0 && (
-                <span>{post.comment_count} {post.comment_count === 1 ? 'comment' : 'comments'}</span>
-              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLike}
+                disabled={isLiking}
+                className={`gap-2 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground hover:text-red-500'}`}
+              >
+                <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
+                <span>{likeCount}</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleComment}
+                className="gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span>{post.comment_count || 0}</span>
+              </Button>
             </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleShare}
+              className="gap-2 text-muted-foreground hover:text-foreground"
+            >
+              <Share className="h-4 w-4" />
+              Share
+            </Button>
           </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleLike}
-            disabled={isLiking}
-            className={`flex items-center gap-2 ${isLiked ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground hover:text-foreground'}`}
-          >
-            <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
-            Like
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleComment}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-          >
-            <MessageCircle className="h-4 w-4" />
-            Comment
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleShare}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-          >
-            <Share2 className="h-4 w-4" />
-            Share
-          </Button>
         </div>
       </CardContent>
     </Card>
