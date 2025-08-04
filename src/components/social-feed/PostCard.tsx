@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { PostActions } from './PostActions';
 import { PostStats } from './PostStats';
+import { CommentThread } from './comments/CommentThread';
 import type { Post } from './PostList';
 
 interface PostCardProps {
@@ -34,6 +37,12 @@ const getInitials = (name: string) => {
 };
 
 export const PostCard: React.FC<PostCardProps> = ({ post, onComment }) => {
+  const [showComments, setShowComments] = useState(false);
+  
+  const handleCommentToggle = () => {
+    setShowComments(!showComments);
+    onComment?.(post.id);
+  };
   return (
     <Card 
       className="bg-background border-border hover:bg-accent/5 transition-colors"
@@ -113,11 +122,41 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment }) => {
               initialLikeCount={post.like_count || 0}
               initialCommentCount={post.comment_count || 0}
               initialIsLiked={post.user_has_liked || false}
-              onComment={onComment}
+              onComment={handleCommentToggle}
             />
           </div>
+
+          {/* Comments Section Toggle */}
+          {(post.comment_count || 0) > 0 && (
+            <div className="pt-2 border-t">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCommentToggle}
+                className="w-full justify-between text-muted-foreground hover:text-foreground"
+              >
+                <span>
+                  {showComments ? 'Hide' : 'View'} {post.comment_count || 0} {(post.comment_count || 0) === 1 ? 'comment' : 'comments'}
+                </span>
+                {showComments ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
+
+      {/* Expanded Comments Section */}
+      {showComments && (
+        <CardContent className="pt-0">
+          <div className="border-t pt-4">
+            <CommentThread postId={post.id} />
+          </div>
+        </CardContent>
+      )}
     </Card>
   );
 };
