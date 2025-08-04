@@ -2,7 +2,7 @@
 import React from 'react';
 import { CollaborationStats } from '@/types/collaborationTypes';
 import { Users, Globe, DollarSign, TrendingUp } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/useMobile';
 
 interface CollaborationsStatsSectionProps {
   stats: CollaborationStats;

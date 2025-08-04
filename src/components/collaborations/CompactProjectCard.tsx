@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { CollaborationProject } from '@/types/collaborationTypes';
 import { formatFunding, getStatusColor, getUrgencyColor } from './projectUtils';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/useMobile';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import CollaboratorAvatars from './CollaboratorAvatars';
 

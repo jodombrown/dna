@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
-import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
+// Mobile page navigation removed - handled by new mobile system
 import CollaborationsPrototypeNotice from './CollaborationsPrototypeNotice';
 import CollaborationsPageHeaderSection from './CollaborationsPageHeaderSection';
 import CollaborationsStatsSection from './CollaborationsStatsSection';
@@ -143,7 +143,7 @@ const CollaborationsPageWrapper = () => {
         </div>
       </div>
 
-      <MobilePageNavigation currentPage="collaborate" />
+      {/* Mobile navigation handled by global MobileNavigation component */}
       <Footer />
       
       <FeedbackPanel 

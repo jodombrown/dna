@@ -13,7 +13,7 @@ import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import Footer from '@/components/Footer';
 import { useContributeLogic } from '@/hooks/useContributeLogic';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
-import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
+// Mobile page navigation removed - handled by global system
 
 const ContributeExample = () => {
   useScrollToTop();
@@ -74,7 +74,7 @@ const ContributeExample = () => {
         </div>
       </main>
 
-      <MobilePageNavigation currentPage="contribute" />
+      {/* Mobile navigation handled by global MobileNavigation component */}
       <Footer />
       
       <ContributeDialogs

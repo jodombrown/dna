@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ArrowUpDown, Users, Plus, Filter } from 'lucide-react';
 import { CollaborationProject, CollaborationFilters } from '@/types/collaborationTypes';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/useMobile';
 import CollaborationFiltersComponent from './CollaborationFilters';
 import CompactProjectCard from './CompactProjectCard';
 import ProjectDetailDialog from './ProjectDetailDialog';

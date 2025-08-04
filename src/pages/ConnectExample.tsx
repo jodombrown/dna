@@ -9,7 +9,7 @@ import PrototypeNotice from '@/components/connect/PrototypeNotice';
 import SearchSection from '@/components/connect/search/SearchSection';
 import { useConnectFiltering } from '@/hooks/useConnectFiltering';
 import { Tabs } from '@/components/ui/tabs';
-import MobilePageNavigation from '@/components/ui/mobile-page-navigation';
+// Mobile page navigation removed - handled by global system
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import { mockProfessionals } from '@/components/connect/tabs/ProfessionalsMockData';
 import { demoCommunities, demoEvents } from '@/data/demoSearchData';
@@ -129,7 +129,7 @@ const ConnectExample = () => {
         </div>
       </main>
 
-      <MobilePageNavigation currentPage="connect" />
+      {/* Mobile navigation handled by global MobileNavigation component */}
       <Footer />
       
       

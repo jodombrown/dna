@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Routes, Route } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
-import MobileBottomNav from '@/components/navigation/MobileBottomNav';
+import { MobileNavigation } from '@/components/mobile';
 import Dashboard from './app/Dashboard';
 import { DashboardProvider } from '@/contexts/DashboardContext';
 import Search from './app/Search';
@@ -66,7 +66,7 @@ const App = () => {
             <Route path="admin" element={<Admin />} />
           </Routes>
         </main>
-        <MobileBottomNav />
+        <MobileNavigation />
       </div>
     </DashboardProvider>
   );
