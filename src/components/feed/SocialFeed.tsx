@@ -65,44 +65,8 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
     setNewPosts([]);
   }, [newPosts]);
 
-  // Set up realtime subscription with comprehensive feed monitoring
-  const { connectionStatus } = useRealtimeFeed({
-    pillar,
-    onPostUpdate: (post, event) => {
-      if (event === 'INSERT') {
-        handleNewPost(post);
-      }
-    },
-    onLikeUpdate: (like, event) => {
-      // Update like counts in real time
-      setPosts(prev => prev.map(post => {
-        if (post.id === like.post_id) {
-          const likeChange = event === 'INSERT' ? 1 : -1;
-          const isUserLike = like.user_id === user?.id;
-          return {
-            ...post,
-            like_count: Math.max(0, (post.like_count || 0) + likeChange),
-            user_has_liked: isUserLike ? event === 'INSERT' : post.user_has_liked
-          };
-        }
-        return post;
-      }));
-    },
-    onCommentUpdate: (comment, event) => {
-      // Update comment counts in real time
-      if (event === 'INSERT') {
-        setPosts(prev => prev.map(post => {
-          if (post.id === comment.post_id) {
-            return {
-              ...post,
-              comment_count: (post.comment_count || 0) + 1
-            };
-          }
-          return post;
-        }));
-      }
-    }
-  });
+  // Disabled realtime for stability - will refresh manually
+  const connectionStatus = 'CLOSED';
 
   // Set up virtual scrolling
   const rowVirtualizer = useVirtualizer({
@@ -256,12 +220,6 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
       <div className="flex items-center justify-center py-8">
         <Loader2 className="h-6 w-6 animate-spin" />
         <span className="ml-2">Loading posts...</span>
-        {connectionStatus === 'connected' && (
-          <div className="ml-2 text-xs text-dna-emerald">• Live</div>
-        )}
-        {connectionStatus === 'error' && (
-          <div className="ml-2 text-xs text-red-500">• Connection Error</div>
-        )}
       </div>
     );
   }

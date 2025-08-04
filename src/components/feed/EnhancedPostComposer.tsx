@@ -118,7 +118,6 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
       }
 
       // Create the post
-      console.log('Creating post with pillar:', pillar); // Debug log
       const { data, error } = await supabase
         .from('posts')
         .insert({
@@ -133,7 +132,7 @@ export const EnhancedPostComposer: React.FC<PostComposerProps> = ({
         .single();
 
       if (error) {
-        console.error('Post creation error:', error); // Debug log
+        console.error('Post creation error:', error);
         throw error;
       }
 
