@@ -3,22 +3,15 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ChevronDown, ChevronUp, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { PostActions } from './PostActions';
 import { PostStats } from './PostStats';
 import { CommentThread } from './comments/CommentThread';
-import { EditPostModal } from './EditPostModal';
-import { DeletePostDialog } from './DeletePostDialog';
-import { useDialogManager } from '@/hooks/useDialogManager';
-import { supabase } from '@/integrations/supabase/client';
 import type { Post } from './PostList';
 
 interface PostCardProps {
   post: Post;
   onComment?: (postId: string) => void;
-  onPostUpdated?: () => void;
-  onPostDeleted?: () => void;
 }
 
 const getPillarColor = (pillar: string) => {
@@ -43,39 +36,12 @@ const getInitials = (name: string) => {
     .slice(0, 2);
 };
 
-export const PostCard: React.FC<PostCardProps> = ({ 
-  post, 
-  onComment, 
-  onPostUpdated, 
-  onPostDeleted 
-}) => {
+export const PostCard: React.FC<PostCardProps> = ({ post, onComment }) => {
   const [showComments, setShowComments] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const { openDialog, closeDialog, isDialogOpen } = useDialogManager();
-  
-  React.useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUser(user);
-    };
-    getUser();
-  }, []);
   
   const handleCommentToggle = () => {
     setShowComments(!showComments);
     onComment?.(post.id);
-  };
-
-  const isAuthor = currentUser?.id === post.author_id;
-
-  const handlePostUpdated = () => {
-    closeDialog('edit');
-    onPostUpdated?.();
-  };
-
-  const handlePostDeleted = () => {
-    closeDialog('delete');
-    onPostDeleted?.();
   };
   return (
     <Card 
@@ -124,30 +90,6 @@ export const PostCard: React.FC<PostCardProps> = ({
               </p>
             )}
           </div>
-          
-          {/* Post Menu for Authors */}
-          {isAuthor && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => openDialog('edit')}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => openDialog('delete')}
-                  className="text-destructive focus:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
         </div>
       </CardHeader>
 
@@ -215,22 +157,6 @@ export const PostCard: React.FC<PostCardProps> = ({
           </div>
         </CardContent>
       )}
-
-      {/* Edit Post Modal */}
-      <EditPostModal
-        post={post}
-        open={isDialogOpen('edit')}
-        onOpenChange={(open) => !open && closeDialog('edit')}
-        onPostUpdated={handlePostUpdated}
-      />
-
-      {/* Delete Post Dialog */}
-      <DeletePostDialog
-        postId={post.id}
-        open={isDialogOpen('delete')}
-        onOpenChange={(open) => !open && closeDialog('delete')}
-        onPostDeleted={handlePostDeleted}
-      />
     </Card>
   );
 };

@@ -12,7 +12,6 @@ export interface Post {
   type: string;
   pillar: string;
   created_at: string;
-  author_id: string;
   profiles: {
     id: string;
     full_name: string;
