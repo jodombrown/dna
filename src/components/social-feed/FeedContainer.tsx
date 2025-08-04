@@ -86,7 +86,6 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
         hasMore={hasMore}
         onLoadMore={loadMore}
         onRefresh={handleRefresh}
-        onComment={(postId) => console.log('Comment on post:', postId)}
         emptyMessage={
           selectedPillar === 'feed' 
             ? "No posts yet. Be the first to share something!" 

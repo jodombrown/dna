@@ -56,29 +56,12 @@ export const usePaginatedPosts = ({
           pillar,
           created_at,
           author_id,
-          shared_post_id,
           profiles!posts_author_id_fkey (
             id,
             full_name,
             avatar_url,
             location,
             professional_role
-          ),
-          shared_post:posts!shared_post_id (
-            id,
-            content,
-            media_url,
-            type,
-            pillar,
-            created_at,
-            author_id,
-            profiles!posts_author_id_fkey (
-              id,
-              full_name,
-              avatar_url,
-              location,
-              professional_role
-            )
           )
         `)
         .eq('visibility', 'public')
