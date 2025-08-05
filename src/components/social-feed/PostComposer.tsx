@@ -1,17 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, ImagePlus, X, Link, Eye } from 'lucide-react';
+import { Send, ImagePlus, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUploadPostMedia } from './useUploadPostMedia';
-import { useEmbedPreview } from '@/hooks/useEmbedPreview';
+import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
 import { EmbedPreview } from './EmbedPreview';
 
 interface PostComposerProps {
@@ -28,12 +27,11 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   const [isPosting, setIsPosting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
-  const [embedUrl, setEmbedUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const { uploadMedia, uploading } = useUploadPostMedia();
-  const { loading: embedLoading, embedData, fetchEmbedData, clearEmbedData } = useEmbedPreview();
+  const { loading: embedLoading, embedData, handleContentChange: detectEmbeds, clearEmbedData } = useAutoEmbedDetection();
 
   const getPillarColor = (pillarValue: string) => {
     switch (pillarValue) {
@@ -73,9 +71,10 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     }
   };
 
-  const handlePreviewEmbed = async () => {
-    if (!embedUrl.trim()) return;
-    await fetchEmbedData(embedUrl);
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newContent = e.target.value;
+    setContent(newContent);
+    detectEmbeds(newContent);
   };
 
   const handleSubmit = async () => {
@@ -138,7 +137,6 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       // Reset form
       setContent('');
       setPillar(defaultPillar);
-      setEmbedUrl('');
       removeFile();
       clearEmbedData();
       onPostCreated?.();
@@ -197,34 +195,12 @@ export const PostComposer: React.FC<PostComposerProps> = ({
             </div>
 
             <Textarea
-              placeholder="What's on your mind?"
+              placeholder="What's on your mind? (Paste URLs to auto-preview links)"
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={handleTextareaChange}
               className="resize-none border-0 p-0 text-lg placeholder:text-muted-foreground focus-visible:ring-0"
               rows={3}
             />
-
-            {/* URL Input for Embeds */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Input
-                  placeholder="Paste a URL to embed (YouTube, Twitter, etc.)"
-                  value={embedUrl}
-                  onChange={(e) => setEmbedUrl(e.target.value)}
-                  className="flex-1"
-                />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handlePreviewEmbed}
-                  disabled={!embedUrl.trim() || embedLoading}
-                  className="flex items-center gap-2"
-                >
-                  <Eye className="h-4 w-4" />
-                  {embedLoading ? 'Loading...' : 'Preview'}
-                </Button>
-              </div>
-            </div>
 
             {/* Embed Preview */}
             {embedData && (

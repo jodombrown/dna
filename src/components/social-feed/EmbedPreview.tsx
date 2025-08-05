@@ -57,10 +57,10 @@ export const EmbedPreview: React.FC<EmbedPreviewProps> = ({
         
         {/* Rich embed with HTML */}
         {embedData.html && embedData.type === 'video' ? (
-          <div className="aspect-video">
+          <div className="aspect-video w-full">
             <div 
               dangerouslySetInnerHTML={{ __html: embedData.html }}
-              className="w-full h-full"
+              className="w-full h-full [&_iframe]:w-full [&_iframe]:h-full [&_iframe]:border-0"
             />
           </div>
         ) : (
