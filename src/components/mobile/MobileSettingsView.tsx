@@ -25,6 +25,7 @@ const MobileSettingsView = () => {
       items: [
         { label: 'Personal Information', description: 'Update your profile details', action: () => {} },
         { label: 'Professional Details', description: 'Manage your work information', action: () => {} },
+        { label: 'African Diaspora Identity', description: 'Share your heritage and background', action: () => {} },
         { label: 'Privacy Settings', description: 'Control who can see your information', action: () => {} }
       ]
     },
@@ -86,6 +87,7 @@ const MobileSettingsView = () => {
         { label: 'Help Center', description: 'Find answers to common questions', action: () => {} },
         { label: 'Contact Support', description: 'Get help from our team', action: () => {} },
         { label: 'Report a Problem', description: 'Let us know about issues', action: () => {} },
+        { label: 'Community Guidelines', description: 'Learn about our Ubuntu principles', action: () => {} },
         { label: 'About DNA', description: 'Learn more about our platform', action: () => {} }
       ]
     }

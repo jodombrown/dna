@@ -9,7 +9,8 @@ import {
   Bell,
   Search,
   Menu,
-  User
+  User,
+  Settings
 } from 'lucide-react';
 import MobileButton from './MobileButton';
 
@@ -33,8 +34,8 @@ const MobileNavigation = () => {
   const navigationItems: NavigationItem[] = [
     { title: 'Home', view: 'dashboard', icon: Home },
     { title: 'Network', view: 'network', icon: Users },
-    { title: 'Search', view: 'search', icon: Search },
     { title: 'Messages', view: 'messaging', icon: MessageSquare, badge: 0 },
+    { title: 'Menu', view: 'menu', icon: Menu },
     { title: 'Profile', view: 'profile', icon: User },
   ];
 
