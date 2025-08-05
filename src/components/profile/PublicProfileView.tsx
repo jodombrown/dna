@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 import { MapPin, Briefcase, Hash, MessageCircle, UserPlus } from 'lucide-react';
 
 interface ProfileData {
@@ -78,23 +79,27 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
           </div>
           <div className="flex space-x-3">
             {onConnect && (
-              <Button 
-                onClick={onConnect}
-                className="bg-dna-copper hover:bg-dna-gold text-white"
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                Connect
-              </Button>
+              <RequireProfileScore min={50} featureName="sending connection requests">
+                <Button 
+                  onClick={onConnect}
+                  className="bg-dna-copper hover:bg-dna-gold text-white"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Connect
+                </Button>
+              </RequireProfileScore>
             )}
             {onMessage && (
-              <Button 
-                onClick={onMessage}
-                variant="outline"
-                className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Message
-              </Button>
+              <RequireProfileScore min={80} featureName="messaging other members">
+                <Button 
+                  onClick={onMessage}
+                  variant="outline"
+                  className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Message
+                </Button>
+              </RequireProfileScore>
             )}
           </div>
         </div>

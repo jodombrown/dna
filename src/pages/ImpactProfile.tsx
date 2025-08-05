@@ -114,6 +114,13 @@ const ImpactProfile = () => {
           return;
         }
 
+        // Check if profile completeness meets minimum threshold for public visibility (50%)
+        if ((profileData.profile_completeness_score || 0) < 50) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
+
         setProfile(profileData);
 
         // Fetch ADIN profile
