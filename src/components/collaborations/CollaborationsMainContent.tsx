@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 import { ArrowUpDown, Users, Plus, Filter } from 'lucide-react';
 import { CollaborationProject, CollaborationFilters } from '@/types/collaborationTypes';
 import { useIsMobile } from '@/hooks/useMobile';
@@ -124,14 +125,16 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-auto">
-                <Button
-                  size="sm"
-                  className="bg-dna-emerald hover:bg-dna-copper text-white flex-1 sm:flex-none"
-                  onClick={onOpenFeedbackPanel}
-                >
-                  <Plus className="w-4 h-4" />
-                  <span className="ml-2">New Initiative</span>
-                </Button>
+                <RequireProfileScore min={80} featureName="creating collaborations">
+                  <Button
+                    size="sm"
+                    className="bg-dna-emerald hover:bg-dna-copper text-white flex-1 sm:flex-none"
+                    onClick={onOpenFeedbackPanel}
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="ml-2">New Initiative</span>
+                  </Button>
+                </RequireProfileScore>
               </div>
             </div>
 
