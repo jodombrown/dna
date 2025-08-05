@@ -24,18 +24,29 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
   // Auto-collapse/expand based on scroll direction with hysteresis
   useEffect(() => {
     if (!isManuallyCollapsed) {
-      if (isAtTop) {
+      const shouldExpand = isAtTop || (!isScrollingDown && scrollY > 80 && scrollY < 200 && lastAction !== 'expand');
+      const shouldCollapse = isScrollingDown && scrollY > 120 && lastAction !== 'collapse';
+      
+      // Debug logging
+      console.log('Scroll State:', { 
+        scrollY, 
+        isScrollingDown, 
+        isAtTop, 
+        lastAction, 
+        shouldExpand, 
+        shouldCollapse,
+        isExpanded 
+      });
+      
+      if (shouldExpand && !isExpanded) {
         setIsExpanded(true);
         setLastAction('expand');
-      } else if (isScrollingDown && scrollY > 120 && lastAction !== 'collapse') {
+      } else if (shouldCollapse && isExpanded) {
         setIsExpanded(false);
         setLastAction('collapse');
-      } else if (!isScrollingDown && scrollY > 80 && scrollY < 200 && lastAction !== 'expand') {
-        setIsExpanded(true);
-        setLastAction('expand');
       }
     }
-  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed, lastAction]);
+  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed, lastAction, isExpanded]);
 
   const handleExpand = () => {
     setIsExpanded(true);
