@@ -105,7 +105,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         .from('posts')
         .insert({
           content: content.trim(),
-          type: selectedImage ? 'media' : 'text',
+          type: selectedImage ? 'image' : 'text',
           pillar: pillar,
           author_id: user.id,
           user_id: user.id,
