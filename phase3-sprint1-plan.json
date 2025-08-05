@@ -1,0 +1,210 @@
+{
+  "phase": "Phase 3",
+  "sprint": "Sprint 1", 
+  "title": "Sustained user engagement and retention flows",
+  "description": "Automated engagement system with personalized reminders, check-ins, and admin analytics",
+
+  "implementation_plan": {
+    "1_automated_reminders": {
+      "name": "Multi-channel Reminder System",
+      "components_needed": [
+        "supabase/functions/engagement-reminders/index.ts",
+        "src/components/notifications/InAppNotification.tsx",
+        "src/services/engagementService.ts"
+      ],
+      "database_requirements": [
+        "user_engagement_tracking table",
+        "reminder_logs table", 
+        "notification_preferences table"
+      ],
+      "schedule_triggers": [
+        "Day 3: Gentle profile completion reminder",
+        "Day 7: Feature discovery email with community highlights",
+        "Day 14: Personalized re-engagement with success stories"
+      ],
+      "implementation_approach": "Cron-scheduled edge function checking user last_active dates"
+    },
+
+    "2_personalized_checkins": {
+      "name": "Smart Check-in System",
+      "personalization_logic": {
+        "entrepreneur": "Funding opportunities, startup resources, pitch feedback",
+        "professional": "Network expansion, skill development, mentorship",
+        "student": "Learning paths, internships, academic partnerships",
+        "investor": "Deal flow, portfolio companies, market insights"
+      },
+      "components_needed": [
+        "src/components/checkins/PersonalizedCheckin.tsx",
+        "src/services/personalizationEngine.ts"
+      ],
+      "trigger_conditions": [
+        "No activity for 5 days",
+        "Profile <60% complete after 7 days", 
+        "Zero connections after 10 days",
+        "No pillar engagement for 14 days"
+      ]
+    },
+
+    "3_admin_analytics": {
+      "name": "Engagement Analytics Dashboard",
+      "components_needed": [
+        "src/pages/admin/EngagementDashboard.tsx",
+        "src/components/admin/OnboardingFunnel.tsx",
+        "src/components/admin/RetentionMetrics.tsx",
+        "src/components/admin/EngagementHeatmap.tsx"
+      ],
+      "metrics_tracked": [
+        "Onboarding completion rates by step",
+        "Profile completeness distribution",
+        "User activity patterns and drop-off points",
+        "Engagement by user type and demographics",
+        "Email open/click rates",
+        "Feature adoption metrics"
+      ]
+    },
+
+    "4_notification_tracking": {
+      "name": "Comprehensive Notification System",
+      "database_tables": [
+        "notifications (in-app notifications)",
+        "email_logs (email tracking)",
+        "engagement_events (user actions)",
+        "retention_cohorts (cohort analysis)"
+      ]
+    }
+  },
+
+  "database_schema": {
+    "user_engagement_tracking": {
+      "columns": [
+        "id UUID PRIMARY KEY",
+        "user_id UUID REFERENCES profiles(id)",
+        "last_active TIMESTAMP",
+        "last_profile_update TIMESTAMP", 
+        "last_connection_made TIMESTAMP",
+        "last_post_created TIMESTAMP",
+        "engagement_score INTEGER DEFAULT 0",
+        "reminder_stage INTEGER DEFAULT 0",
+        "created_at TIMESTAMP DEFAULT now()"
+      ],
+      "purpose": "Track user activity patterns for automated interventions"
+    },
+    
+    "reminder_logs": {
+      "columns": [
+        "id UUID PRIMARY KEY",
+        "user_id UUID REFERENCES profiles(id)",
+        "reminder_type TEXT", 
+        "channel TEXT (email/in_app)",
+        "sent_at TIMESTAMP DEFAULT now()",
+        "opened_at TIMESTAMP",
+        "clicked_at TIMESTAMP",
+        "action_taken BOOLEAN DEFAULT false"
+      ],
+      "purpose": "Track reminder effectiveness and user responses"
+    },
+
+    "notifications": {
+      "columns": [
+        "id UUID PRIMARY KEY",
+        "user_id UUID REFERENCES profiles(id)",
+        "type TEXT",
+        "title TEXT",
+        "message TEXT", 
+        "action_url TEXT",
+        "read_at TIMESTAMP",
+        "dismissed_at TIMESTAMP",
+        "created_at TIMESTAMP DEFAULT now()"
+      ],
+      "purpose": "In-app notification system"
+    }
+  },
+
+  "edge_functions": {
+    "engagement-reminders": {
+      "schedule": "0 10 * * * (daily at 10 AM)",
+      "purpose": "Send automated reminders based on user engagement patterns",
+      "logic": [
+        "Query users with low engagement scores",
+        "Check reminder stage and last contact",
+        "Generate personalized content based on user_type",
+        "Send via email/in-app based on preferences",
+        "Log reminder and schedule next check"
+      ]
+    },
+    
+    "engagement-analytics": {
+      "purpose": "Calculate engagement metrics and cohort data",
+      "schedule": "0 2 * * * (daily at 2 AM)",
+      "outputs": "Update engagement scores and retention metrics"
+    }
+  },
+
+  "cron_jobs_required": [
+    {
+      "name": "daily-engagement-check",
+      "schedule": "0 10 * * *",
+      "function": "engagement-reminders",
+      "purpose": "Process automated reminders and check-ins"
+    },
+    {
+      "name": "weekly-cohort-analysis", 
+      "schedule": "0 2 * * 0",
+      "function": "engagement-analytics",
+      "purpose": "Calculate weekly retention and engagement metrics"
+    }
+  ],
+
+  "admin_dashboard_features": [
+    "Real-time onboarding funnel visualization",
+    "Profile completeness distribution charts",
+    "User engagement heatmaps by feature",
+    "Retention cohort analysis",
+    "Email campaign performance metrics",
+    "Drop-off point identification",
+    "Segmented user behavior analysis"
+  ],
+
+  "personalization_engine": {
+    "data_inputs": [
+      "user_type (entrepreneur/professional/student/investor)",
+      "selected_pillars (connect/collaborate/contribute)", 
+      "interests array",
+      "professional_sectors",
+      "engagement_history",
+      "profile_completeness_score"
+    ],
+    "content_generation": [
+      "Dynamic email subject lines",
+      "Personalized action recommendations",
+      "Relevant community highlights",
+      "Targeted feature suggestions"
+    ]
+  }
+},
+
+"implementation_priority": [
+  "1. Set up engagement tracking database tables",
+  "2. Create engagement-reminders edge function with cron scheduling",
+  "3. Build in-app notification system",
+  "4. Develop admin analytics dashboard", 
+  "5. Implement personalization engine",
+  "6. Add email preference management"
+],
+
+"success_metrics": [
+  "30-day user retention rate",
+  "Profile completion rates within 14 days",
+  "Email engagement rates (open/click)",
+  "Feature adoption after reminders",
+  "Admin dashboard usage and insights"
+],
+
+"recommendations": [
+  "Start with email reminders, add in-app notifications in phase 2",
+  "A/B test reminder timing and content",
+  "Implement unsubscribe functionality from day 1",
+  "Use progressive profiling to reduce initial friction",
+  "Set up alerts for unusual drop-off patterns",
+  "Consider SMS notifications for high-value users"
+]
