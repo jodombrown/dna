@@ -56,6 +56,7 @@ export const usePaginatedPosts = ({
           pillar,
           created_at,
           author_id,
+          embed_metadata,
           profiles!posts_author_id_fkey (
             id,
             full_name,

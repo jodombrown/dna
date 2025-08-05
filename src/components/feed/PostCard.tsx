@@ -7,6 +7,7 @@ import { Heart, MessageCircle, Share } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { EmbedPreview } from '@/components/social-feed/EmbedPreview';
 
 interface Post {
   id: string;
@@ -15,6 +16,7 @@ interface Post {
   type: string;
   pillar: string;
   created_at: string;
+  embed_metadata?: any;
   profiles: {
     id: string;
     full_name: string;
@@ -187,17 +189,44 @@ export const PostCard: React.FC<PostCardProps> = ({
 
       <CardContent className="pt-0">
         <div className="space-y-4">
-          <p className="text-foreground whitespace-pre-wrap leading-relaxed">
-            {post.content}
-          </p>
+          {/* Show embed preview if embed_metadata exists, otherwise show content */}
+          {post.embed_metadata ? (
+            <div className="space-y-3">
+              {/* Show content without URLs if it has additional text */}
+              {post.content && post.content.trim() && !post.content.trim().match(/^https?:\/\/[^\s]+$/i) && (
+                <p className="text-foreground whitespace-pre-wrap leading-relaxed">
+                  {post.content.replace(/https?:\/\/[^\s]+/gi, '').trim()}
+                </p>
+              )}
+              <EmbedPreview 
+                embedData={post.embed_metadata} 
+                onRemove={() => {}} 
+                showRemoveButton={false}
+              />
+            </div>
+          ) : (
+            <p className="text-foreground whitespace-pre-wrap leading-relaxed">
+              {post.content}
+            </p>
+          )}
 
           {post.media_url && (
             <div className="rounded-lg overflow-hidden border">
-              <img 
-                src={post.media_url} 
-                alt="Post media" 
-                className="w-full h-auto max-h-96 object-cover"
-              />
+              {post.type === 'video' ? (
+                <video 
+                  src={post.media_url} 
+                  controls
+                  className="w-full h-auto max-h-96 object-cover"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <img 
+                  src={post.media_url} 
+                  alt="Post media" 
+                  className="w-full h-auto max-h-96 object-cover"
+                />
+              )}
             </div>
           )}
 

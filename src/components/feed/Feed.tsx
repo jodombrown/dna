@@ -13,6 +13,7 @@ interface Post {
   type: string;
   pillar: string;
   created_at: string;
+  embed_metadata?: any;
   profiles: {
     id: string;
     full_name: string;
@@ -59,6 +60,7 @@ export const Feed: React.FC<FeedProps> = ({
           pillar,
           created_at,
           author_id,
+          embed_metadata,
           profiles!posts_author_id_fkey (
             id,
             full_name,
