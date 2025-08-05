@@ -58,15 +58,12 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
   return (
     <div 
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out",
+        "sticky top-0 z-40 transition-all duration-300 ease-out",
         "bg-white/95 backdrop-blur-sm border-b border-gray-200/50",
-        isMobile ? "px-4 py-3" : "px-6 py-4"
+        isMobile ? "mx-2 mb-4" : "mb-6"
       )}
-      style={{
-        transform: isExpanded ? 'translateY(0)' : 'translateY(-20px)',
-      }}
     >
-      <div className="max-w-2xl mx-auto">
+      <div className={cn("w-full", isMobile ? "px-2 py-3" : "px-4 py-4")}>
         {isExpanded ? (
           <div 
             className={cn(
