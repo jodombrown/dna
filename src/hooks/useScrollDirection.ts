@@ -13,6 +13,8 @@ export const useScrollDirection = (threshold: number = 50): UseScrollDirectionRe
   const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
+    let lastY = 0;
+    
     const handleScroll = () => {
       // Check both window scroll and the main scroll container
       const scrollContainer = document.querySelector('[data-scroll-container="main"]') as HTMLElement;
@@ -22,27 +24,28 @@ export const useScrollDirection = (threshold: number = 50): UseScrollDirectionRe
       setIsAtTop(currentScrollY < 10);
       
       // Only update direction if scroll is significant
-      if (Math.abs(currentScrollY - lastScrollY) > threshold) {
-        setIsScrollingDown(currentScrollY > lastScrollY);
-        setLastScrollY(currentScrollY);
+      if (Math.abs(currentScrollY - lastY) > threshold) {
+        setIsScrollingDown(currentScrollY > lastY);
+        lastY = currentScrollY;
       }
     };
 
-    // Add listener to both window and the scroll container
+    // Add listener to the main scroll container only
     const scrollContainer = document.querySelector('[data-scroll-container="main"]') as HTMLElement;
     
     if (scrollContainer) {
       scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    return () => {
-      if (scrollContainer) {
+      return () => {
         scrollContainer.removeEventListener('scroll', handleScroll);
-      }
+      };
+    }
+    
+    // Fallback to window if container not found
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [lastScrollY, threshold]);
+  }, [threshold]);
 
   return { isScrollingDown, isAtTop, scrollY };
 };
