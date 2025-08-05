@@ -2067,6 +2067,8 @@ export type Database = {
           display_name: string | null
           email: string | null
           email_notifications: boolean | null
+          first_action_completed: boolean | null
+          first_action_type: string | null
           full_name: string | null
           fundraising_status: string | null
           headline: string | null
@@ -2084,6 +2086,7 @@ export type Database = {
           mentorship_interest: string[] | null
           newsletter_emails: boolean | null
           onboarding_completed_at: string | null
+          onboarding_recommendations_viewed: boolean | null
           onboarding_stage: string | null
           profession: string | null
           professional_role: string | null
@@ -2136,6 +2139,8 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
+          first_action_completed?: boolean | null
+          first_action_type?: string | null
           full_name?: string | null
           fundraising_status?: string | null
           headline?: string | null
@@ -2153,6 +2158,7 @@ export type Database = {
           mentorship_interest?: string[] | null
           newsletter_emails?: boolean | null
           onboarding_completed_at?: string | null
+          onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
           profession?: string | null
           professional_role?: string | null
@@ -2205,6 +2211,8 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
+          first_action_completed?: boolean | null
+          first_action_type?: string | null
           full_name?: string | null
           fundraising_status?: string | null
           headline?: string | null
@@ -2222,6 +2230,7 @@ export type Database = {
           mentorship_interest?: string[] | null
           newsletter_emails?: boolean | null
           onboarding_completed_at?: string | null
+          onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
           profession?: string | null
           professional_role?: string | null
@@ -2674,6 +2683,94 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      user_onboarding_selections: {
+        Row: {
+          created_at: string | null
+          id: string
+          selected_at: string | null
+          selection_type: string
+          target_id: string
+          target_title: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          selected_at?: string | null
+          selection_type: string
+          target_id: string
+          target_title?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          selected_at?: string | null
+          selection_type?: string
+          target_id?: string
+          target_title?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_onboarding_selections_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_recommendations: {
+        Row: {
+          created_at: string | null
+          id: string
+          match_reasons: string[] | null
+          match_score: number | null
+          recommendation_type: string
+          status: string | null
+          target_description: string | null
+          target_id: string
+          target_title: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          match_reasons?: string[] | null
+          match_score?: number | null
+          recommendation_type: string
+          status?: string | null
+          target_description?: string | null
+          target_id: string
+          target_title?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          match_reasons?: string[] | null
+          match_score?: number | null
+          recommendation_type?: string
+          status?: string | null
+          target_description?: string | null
+          target_id?: string
+          target_title?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_recommendations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {

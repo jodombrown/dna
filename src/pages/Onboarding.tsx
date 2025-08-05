@@ -17,6 +17,8 @@ import IntentStep from '@/components/onboarding/steps/IntentStep';
 import ProfessionalStep from '@/components/onboarding/steps/ProfessionalStep';
 import GoalsBioStep from '@/components/onboarding/steps/GoalsBioStep';
 import ContributionStep from '@/components/onboarding/steps/ContributionStep';
+import RecommendationsStep from '@/components/onboarding/steps/RecommendationsStep';
+import FirstActionStep from '@/components/onboarding/steps/FirstActionStep';
 
 const STEPS = [
   { id: 'step1_identity', title: 'Identity', component: IdentityStep },
@@ -27,6 +29,8 @@ const STEPS = [
   { id: 'step6_skills', title: 'Skills & Expertise', component: ProfessionalStep },
   { id: 'step7_links', title: 'Profile & Links', component: GoalsBioStep },
   { id: 'step8_agreement', title: 'Community Agreement', component: ContributionStep },
+  { id: 'step9_recommendations', title: 'Recommendations', component: RecommendationsStep },
+  { id: 'step10_first_action', title: 'Get Started', component: FirstActionStep },
 ];
 
 const Onboarding = () => {
@@ -76,7 +80,13 @@ const Onboarding = () => {
     avatar_url: user?.user_metadata?.picture || '',
     
     // Step 8: Community Agreement
-    agrees_to_values: false
+    agrees_to_values: false,
+    
+    // Step 9: Recommendations
+    onboarding_selections: [],
+    
+    // Step 10: First Action
+    first_action_ready: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -116,6 +126,10 @@ const Onboarding = () => {
         return true; // All fields optional
       case 7: // Community Agreement
         return formData.agrees_to_values;
+      case 8: // Recommendations
+        return true; // All selections optional
+      case 9: // First Action
+        return true; // Always ready for action
       default:
         return false;
     }
@@ -125,7 +139,8 @@ const Onboarding = () => {
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      handleSubmit();
+      // Final step is handled by FirstActionStep component
+      // No need to submit here as user will be navigated to app
     }
   };
 
@@ -170,6 +185,8 @@ const Onboarding = () => {
         avatar_url: formData.avatar_url,
         agrees_to_values: formData.agrees_to_values,
         onboarding_stage: 'completed',
+        onboarding_recommendations_viewed: false,
+        first_action_completed: false,
         is_public: true,
         updated_at: new Date().toISOString()
       };
@@ -302,7 +319,9 @@ const Onboarding = () => {
             {isSubmitting ? (
               "Creating Profile..."
             ) : currentStep === STEPS.length - 1 ? (
-              "Complete Setup"
+              "Complete Onboarding"
+            ) : currentStep === STEPS.length - 2 ? (
+              "Continue to Recommendations"
             ) : (
               <>
                 Next
