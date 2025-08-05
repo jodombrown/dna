@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, UserCheck, TrendingUp, Signal, Trophy, MessageSquare, Flag, Settings } from 'lucide-react';
+import { Users, UserCheck, TrendingUp, Signal, Trophy, MessageSquare, Flag, Settings, Activity } from 'lucide-react';
 import { Loader } from '@/components/ui/loader';
 import UserManagementTable from '@/components/admin/UserManagementTable';
 import AdinProfileControls from '@/components/admin/AdinProfileControls';
@@ -16,6 +16,7 @@ import LeaderboardsByRegion from '@/components/admin/LeaderboardsByRegion';
 import InviteSystemOverview from '@/components/admin/InviteSystemOverview';
 import CommunityModeration from '@/components/admin/CommunityModeration';
 import FeatureTogglesPanel from '@/components/admin/FeatureTogglesPanel';
+import EngagementDashboard from '@/components/admin/EngagementDashboard';
 
 const Admin = () => {
   const { user } = useAuth();
@@ -66,6 +67,7 @@ const Admin = () => {
     { id: 'leaderboards', label: 'Leaderboards', icon: Trophy, component: LeaderboardsByRegion },
     { id: 'invites', label: 'Invites', icon: MessageSquare, component: InviteSystemOverview },
     { id: 'communities', label: 'Communities', icon: Flag, component: CommunityModeration },
+    { id: 'engagement', label: 'Engagement', icon: Activity, component: EngagementDashboard },
     { id: 'features', label: 'Feature Flags', icon: Settings, component: FeatureTogglesPanel },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp, component: require('@/components/admin/AdminAnalyticsDashboard').default },
   ];
@@ -89,7 +91,7 @@ const Admin = () => {
 
         {/* Admin Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-4 lg:grid-cols-8 mb-8 h-auto p-1">
+          <TabsList className="grid grid-cols-4 lg:grid-cols-10 mb-8 h-auto p-1">
             {adminSections.map((section) => {
               const Icon = section.icon;
               return (
