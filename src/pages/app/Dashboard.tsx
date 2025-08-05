@@ -10,6 +10,7 @@ import NetworkMainContent from '@/components/linkedin/NetworkMainContent';
 import MessagingMainContent from '@/components/linkedin/MessagingMainContent';
 import NotificationsMainContent from '@/components/linkedin/NotificationsMainContent';
 import EnhancedCommunityPulseDashboard from '@/components/metrics/EnhancedCommunityPulseDashboard';
+import MobileProfileMainContent from '@/components/mobile/MobileProfileMainContent';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDashboard } from '@/contexts/DashboardContext';
 import { SocialFeedProvider } from '@/contexts/SocialFeedContext';
@@ -65,6 +66,7 @@ const Dashboard = () => {
       {activeView === 'network' && <NetworkMainContent />}
       {activeView === 'messaging' && <MessagingMainContent />}
       {activeView === 'notifications' && <NotificationsMainContent />}
+      {activeView === 'profile' && <MobileProfileMainContent />}
       {activeView === 'metrics' && <EnhancedCommunityPulseDashboard />}
       {activeView === 'dashboard' && (
         activePillar === 'feed' ? (

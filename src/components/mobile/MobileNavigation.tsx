@@ -8,7 +8,8 @@ import {
   MessageSquare, 
   Bell,
   Search,
-  Menu
+  Menu,
+  User
 } from 'lucide-react';
 import MobileButton from './MobileButton';
 
@@ -33,8 +34,8 @@ const MobileNavigation = () => {
     { title: 'Home', view: 'dashboard', icon: Home },
     { title: 'Network', view: 'network', icon: Users },
     { title: 'Search', view: 'search', icon: Search },
-    { title: 'Messages', view: 'messaging', icon: MessageSquare, badge: 3 },
-    { title: 'Alerts', view: 'notifications', icon: Bell, badge: 7 },
+    { title: 'Messages', view: 'messaging', icon: MessageSquare, badge: 0 },
+    { title: 'Profile', view: 'profile', icon: User },
   ];
 
   return (

@@ -26,25 +26,25 @@ const NetworkMainContent = () => {
 
   return (
     <div className="space-y-6">
-      {/* Network Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      {/* Network Stats - Mobile responsive grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         {networkStats.map((stat) => (
           <Card key={stat.label}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+            <CardContent className="p-3 lg:p-4">
+              <div className="text-center lg:flex lg:items-center lg:justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-dna-forest">{stat.value}</p>
-                  <p className="text-sm text-gray-600">{stat.label}</p>
+                  <p className="text-xl lg:text-2xl font-bold text-dna-forest">{stat.value}</p>
+                  <p className="text-xs lg:text-sm text-gray-600">{stat.label}</p>
                   <p className="text-xs text-dna-emerald">{stat.change} this week</p>
                 </div>
-                <stat.icon className="w-8 h-8 text-dna-copper" />
+                <stat.icon className="w-6 h-6 lg:w-8 lg:h-8 text-dna-copper mx-auto lg:mx-0 mt-2 lg:mt-0" />
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Pending Connection Requests */}
         <Card>
           <CardHeader>
@@ -65,11 +65,11 @@ const NetworkMainContent = () => {
                     <p className="text-xs text-gray-500">{person.mutual} mutual connections</p>
                   </div>
                 </div>
-                <div className="flex space-x-2">
-                  <Button size="sm" className="bg-dna-copper hover:bg-dna-gold text-white">
+                <div className="flex flex-col sm:flex-row space-y-1 sm:space-y-0 sm:space-x-2">
+                  <Button size="sm" className="bg-dna-copper hover:bg-dna-gold text-white min-w-[60px]">
                     Accept
                   </Button>
-                  <Button size="sm" variant="outline">
+                  <Button size="sm" variant="outline" className="min-w-[60px]">
                     Decline
                   </Button>
                 </div>
@@ -98,7 +98,7 @@ const NetworkMainContent = () => {
                     <p className="text-xs text-gray-500">{person.mutual} mutual connections</p>
                   </div>
                 </div>
-                <Button size="sm" variant="outline" className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white">
+                <Button size="sm" variant="outline" className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white min-w-[70px]">
                   Connect
                 </Button>
               </div>
