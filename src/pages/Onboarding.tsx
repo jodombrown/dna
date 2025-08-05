@@ -241,8 +241,12 @@ const Onboarding = () => {
   };
 
   if (!user) {
+    console.log("Onboarding: No user found, should redirect to auth");
     return null;
   }
+
+  console.log("Onboarding: User found", { user: user?.id, profile: profile?.id });
+  console.log("Onboarding: Current step", currentStep, "Component", STEPS[currentStep]?.component?.name);
 
   const CurrentStepComponent = STEPS[currentStep].component;
   const progress = ((currentStep + 1) / STEPS.length) * 100;
