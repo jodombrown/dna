@@ -13,6 +13,7 @@ import EnhancedCommunityPulseDashboard from '@/components/metrics/EnhancedCommun
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDashboard } from '@/contexts/DashboardContext';
 import { SocialFeedProvider } from '@/contexts/SocialFeedContext';
+import { ProfileCompletenessWidget } from '@/components/dashboard/ProfileCompletenessWidget';
 
 const Dashboard = () => {
   const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
@@ -78,6 +79,7 @@ const Dashboard = () => {
   // Dynamic right sidebar content based on active pillar
   const rightSidebar = (
     <div className="space-y-4">
+      <ProfileCompletenessWidget />
       <DiscoverySidebar activePillar={activePillar} />
     </div>
   );

@@ -1753,6 +1753,33 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_feedback: {
+        Row: {
+          created_at: string
+          emoji_feedback: string | null
+          feedback_text: string | null
+          id: string
+          rating: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji_feedback?: string | null
+          feedback_text?: string | null
+          id?: string
+          rating?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          emoji_feedback?: string | null
+          feedback_text?: string | null
+          id?: string
+          rating?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       phase_metrics: {
         Row: {
           color: string | null
@@ -2078,6 +2105,9 @@ export type Database = {
           industry: string | null
           interest_tags: string[] | null
           interests: string[] | null
+          intro_audio_url: string | null
+          intro_text: string | null
+          intro_video_url: string | null
           is_beta_tester: boolean | null
           is_public: boolean | null
           last_seen_at: string | null
@@ -2090,6 +2120,7 @@ export type Database = {
           onboarding_stage: string | null
           profession: string | null
           professional_role: string | null
+          profile_completeness_score: number | null
           profile_picture_url: string | null
           recent_searches: string[] | null
           referral_code: string | null
@@ -2150,6 +2181,9 @@ export type Database = {
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
+          intro_audio_url?: string | null
+          intro_text?: string | null
+          intro_video_url?: string | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
           last_seen_at?: string | null
@@ -2162,6 +2196,7 @@ export type Database = {
           onboarding_stage?: string | null
           profession?: string | null
           professional_role?: string | null
+          profile_completeness_score?: number | null
           profile_picture_url?: string | null
           recent_searches?: string[] | null
           referral_code?: string | null
@@ -2222,6 +2257,9 @@ export type Database = {
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
+          intro_audio_url?: string | null
+          intro_text?: string | null
+          intro_video_url?: string | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
           last_seen_at?: string | null
@@ -2234,6 +2272,7 @@ export type Database = {
           onboarding_stage?: string | null
           profession?: string | null
           professional_role?: string | null
+          profile_completeness_score?: number | null
           profile_picture_url?: string | null
           recent_searches?: string[] | null
           referral_code?: string | null
@@ -2938,6 +2977,10 @@ export type Database = {
               user2_regions: string[]
               user2_sectors: string[]
             }
+        Returns: number
+      }
+      calculate_profile_completeness: {
+        Args: { target_user_id: string }
         Returns: number
       }
       check_badge_unlocks: {

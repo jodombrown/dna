@@ -26,6 +26,7 @@ import BetaSignupComplete from "./pages/BetaSignupComplete";
 import InviteSignup from "./pages/InviteSignup";
 import ResetPassword from "./pages/ResetPassword";
 import ResetPasswordComplete from "./pages/ResetPasswordComplete";
+import { PostOnboardingFlow } from "./pages/PostOnboardingFlow";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ function App() {
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard><Auth /></AuthGuard>} />
               <Route path="/onboarding" element={<AuthGuard><Onboarding /></AuthGuard>} />
+              <Route path="/post-onboarding" element={<PostOnboardingFlow />} />
               <Route path="/app/*" element={<AppDashboard />} />
               <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />
               <Route path="/collaborate" element={<AuthGuard><CollaborationsExample /></AuthGuard>} />

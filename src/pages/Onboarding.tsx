@@ -197,6 +197,27 @@ const Onboarding = () => {
 
       if (error) throw error;
 
+      // Send welcome email
+      try {
+        await supabase.functions.invoke('send-welcome-email', {
+          body: {
+            userId: user.id,
+            userEmail: user.email,
+            userName: formData.full_name || user.user_metadata?.full_name || 'DNA Member',
+            selectedPillars: formData.selected_pillars || [],
+            completedSteps: [
+              'Created your DNA profile',
+              'Selected your focus areas',
+              'Set up your preferences',
+              'Joined the community'
+            ]
+          }
+        });
+      } catch (emailError) {
+        console.error('Error sending welcome email:', emailError);
+        // Don't block onboarding completion if email fails
+      }
+
       // Refresh the profile to get the updated data
       await refreshProfile();
 
