@@ -3060,6 +3060,10 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: boolean
       }
+      can_send_messages: {
+        Args: { user_id_param: string }
+        Returns: boolean
+      }
       check_badge_unlocks: {
         Args: { target_user_id: string }
         Returns: undefined
@@ -3246,6 +3250,10 @@ export type Database = {
       make_user_admin: {
         Args: { user_email: string }
         Returns: string
+      }
+      profile_meets_visibility_requirement: {
+        Args: { user_id_param: string; min_score?: number }
+        Returns: boolean
       }
       remove_message_reaction: {
         Args: { p_message_id: string; p_user_id: string; p_reaction: string }

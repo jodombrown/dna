@@ -14,7 +14,8 @@ export const profilesService = {
     let query = supabase
       .from('profiles')
       .select('*')
-      .eq('is_public', true);
+      .eq('is_public', true)
+      .gte('profile_completeness_score', 50); // Ensure minimum completeness for visibility
 
     if (filters?.location) {
       query = query.ilike('location', `%${filters.location}%`);
