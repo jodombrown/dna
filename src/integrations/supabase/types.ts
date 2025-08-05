@@ -2043,6 +2043,7 @@ export type Database = {
         Row: {
           account_visibility: string | null
           adin_prompt_status: string | null
+          advocacy_interests: string[] | null
           agrees_to_values: boolean | null
           available_for: string[] | null
           avatar_url: string | null
@@ -2054,6 +2055,7 @@ export type Database = {
           beta_signup_data: Json | null
           beta_status: string | null
           bio: string | null
+          collaboration_needs: string[] | null
           company: string | null
           contribution_style: string | null
           country_of_origin: string | null
@@ -2066,9 +2068,11 @@ export type Database = {
           email: string | null
           email_notifications: boolean | null
           full_name: string | null
+          fundraising_status: string | null
           headline: string | null
           id: string
           impact_areas: string[] | null
+          impact_goals: string[] | null
           industry: string | null
           interest_tags: string[] | null
           interests: string[] | null
@@ -2077,6 +2081,7 @@ export type Database = {
           last_seen_at: string | null
           linkedin_url: string | null
           location: string | null
+          mentorship_interest: string[] | null
           newsletter_emails: boolean | null
           onboarding_completed_at: string | null
           onboarding_stage: string | null
@@ -2088,18 +2093,26 @@ export type Database = {
           referrer_id: string | null
           role: string | null
           sectors: string[] | null
+          selected_pillars: string[] | null
           skills: string[] | null
+          support_areas: string[] | null
           twitter_url: string | null
           updated_at: string
+          user_type: string | null
           username: string | null
           username_changes: number | null
           username_changes_left: number | null
+          venture_name: string | null
+          venture_stage: string | null
           website_url: string | null
+          what_to_give: string[] | null
+          what_to_receive: string[] | null
           years_experience: number | null
         }
         Insert: {
           account_visibility?: string | null
           adin_prompt_status?: string | null
+          advocacy_interests?: string[] | null
           agrees_to_values?: boolean | null
           available_for?: string[] | null
           avatar_url?: string | null
@@ -2111,6 +2124,7 @@ export type Database = {
           beta_signup_data?: Json | null
           beta_status?: string | null
           bio?: string | null
+          collaboration_needs?: string[] | null
           company?: string | null
           contribution_style?: string | null
           country_of_origin?: string | null
@@ -2123,9 +2137,11 @@ export type Database = {
           email?: string | null
           email_notifications?: boolean | null
           full_name?: string | null
+          fundraising_status?: string | null
           headline?: string | null
           id: string
           impact_areas?: string[] | null
+          impact_goals?: string[] | null
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
@@ -2134,6 +2150,7 @@ export type Database = {
           last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
+          mentorship_interest?: string[] | null
           newsletter_emails?: boolean | null
           onboarding_completed_at?: string | null
           onboarding_stage?: string | null
@@ -2145,18 +2162,26 @@ export type Database = {
           referrer_id?: string | null
           role?: string | null
           sectors?: string[] | null
+          selected_pillars?: string[] | null
           skills?: string[] | null
+          support_areas?: string[] | null
           twitter_url?: string | null
           updated_at?: string
+          user_type?: string | null
           username?: string | null
           username_changes?: number | null
           username_changes_left?: number | null
+          venture_name?: string | null
+          venture_stage?: string | null
           website_url?: string | null
+          what_to_give?: string[] | null
+          what_to_receive?: string[] | null
           years_experience?: number | null
         }
         Update: {
           account_visibility?: string | null
           adin_prompt_status?: string | null
+          advocacy_interests?: string[] | null
           agrees_to_values?: boolean | null
           available_for?: string[] | null
           avatar_url?: string | null
@@ -2168,6 +2193,7 @@ export type Database = {
           beta_signup_data?: Json | null
           beta_status?: string | null
           bio?: string | null
+          collaboration_needs?: string[] | null
           company?: string | null
           contribution_style?: string | null
           country_of_origin?: string | null
@@ -2180,9 +2206,11 @@ export type Database = {
           email?: string | null
           email_notifications?: boolean | null
           full_name?: string | null
+          fundraising_status?: string | null
           headline?: string | null
           id?: string
           impact_areas?: string[] | null
+          impact_goals?: string[] | null
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
@@ -2191,6 +2219,7 @@ export type Database = {
           last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
+          mentorship_interest?: string[] | null
           newsletter_emails?: boolean | null
           onboarding_completed_at?: string | null
           onboarding_stage?: string | null
@@ -2202,13 +2231,20 @@ export type Database = {
           referrer_id?: string | null
           role?: string | null
           sectors?: string[] | null
+          selected_pillars?: string[] | null
           skills?: string[] | null
+          support_areas?: string[] | null
           twitter_url?: string | null
           updated_at?: string
+          user_type?: string | null
           username?: string | null
           username_changes?: number | null
           username_changes_left?: number | null
+          venture_name?: string | null
+          venture_stage?: string | null
           website_url?: string | null
+          what_to_give?: string[] | null
+          what_to_receive?: string[] | null
           years_experience?: number | null
         }
         Relationships: [

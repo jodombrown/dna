@@ -10,15 +10,23 @@ import { supabase } from '@/integrations/supabase/client';
 
 // Import existing onboarding steps
 import IdentityStep from '@/components/onboarding/steps/IdentityStep';
+import UserTypeStep from '@/components/onboarding/steps/UserTypeStep';
+import PillarsStep from '@/components/onboarding/steps/PillarsStep';
+import PersonalizedStep from '@/components/onboarding/steps/PersonalizedStep';
+import IntentStep from '@/components/onboarding/steps/IntentStep';
 import ProfessionalStep from '@/components/onboarding/steps/ProfessionalStep';
 import GoalsBioStep from '@/components/onboarding/steps/GoalsBioStep';
 import ContributionStep from '@/components/onboarding/steps/ContributionStep';
 
 const STEPS = [
   { id: 'step1_identity', title: 'Identity', component: IdentityStep },
-  { id: 'step2_contribution', title: 'Skills & Contribution', component: ProfessionalStep },
-  { id: 'step3_links', title: 'Links & Identity', component: GoalsBioStep },
-  { id: 'step4_agreement', title: 'Community Agreement', component: ContributionStep },
+  { id: 'step2_user_type', title: 'Your Path', component: UserTypeStep },
+  { id: 'step3_pillars', title: 'DNA Framework', component: PillarsStep },
+  { id: 'step4_personalized', title: 'Your Journey', component: PersonalizedStep },
+  { id: 'step5_intent', title: 'Impact Intent', component: IntentStep },
+  { id: 'step6_skills', title: 'Skills & Expertise', component: ProfessionalStep },
+  { id: 'step7_links', title: 'Profile & Links', component: GoalsBioStep },
+  { id: 'step8_agreement', title: 'Community Agreement', component: ContributionStep },
 ];
 
 const Onboarding = () => {
@@ -33,18 +41,41 @@ const Onboarding = () => {
     country_of_origin: '',
     current_country: '',
     
-    // Step 2: Skills & Contribution
+    // Step 2: User Type
+    user_type: '',
+    
+    // Step 3: Pillars
+    selected_pillars: [],
+    
+    // Step 4: Personalized (varies by user type)
+    // Professional fields
+    mentorship_interest: [],
+    impact_goals: [],
+    // Founder fields
+    venture_name: '',
+    venture_stage: '',
+    fundraising_status: '',
+    collaboration_needs: [],
+    // Ally fields
+    support_areas: [],
+    advocacy_interests: [],
+    
+    // Step 5: Intent
+    what_to_give: [],
+    what_to_receive: [],
+    
+    // Step 6: Skills & Contribution
     skills: [],
     sectors: [],
     contribution_style: '',
     
-    // Step 3: Links & Identity
+    // Step 7: Links & Identity
     linkedin_url: user?.user_metadata?.linkedin_url || '',
     twitter_url: '',
     website_url: '',
     avatar_url: user?.user_metadata?.picture || '',
     
-    // Step 4: Community Agreement
+    // Step 8: Community Agreement
     agrees_to_values: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,11 +102,19 @@ const Onboarding = () => {
     switch (currentStep) {
       case 0: // Identity
         return formData.full_name && formData.username && formData.country_of_origin;
-      case 1: // Skills & Contribution
-        return formData.skills.length > 0 && formData.sectors.length > 0 && formData.contribution_style;
-      case 2: // Links & Identity
+      case 1: // User Type
+        return formData.user_type;
+      case 2: // Pillars
+        return formData.selected_pillars.length > 0;
+      case 3: // Personalized
         return true; // All fields optional
-      case 3: // Community Agreement
+      case 4: // Intent
+        return formData.what_to_give.length > 0 || formData.what_to_receive.length > 0;
+      case 5: // Skills & Contribution
+        return formData.skills.length > 0 && formData.sectors.length > 0 && formData.contribution_style;
+      case 6: // Links & Identity
+        return true; // All fields optional
+      case 7: // Community Agreement
         return formData.agrees_to_values;
       default:
         return false;
@@ -110,6 +149,18 @@ const Onboarding = () => {
         username: formData.username,
         country_of_origin: formData.country_of_origin,
         current_country: formData.current_country,
+        user_type: formData.user_type,
+        selected_pillars: formData.selected_pillars,
+        what_to_give: formData.what_to_give,
+        what_to_receive: formData.what_to_receive,
+        mentorship_interest: formData.mentorship_interest,
+        impact_goals: formData.impact_goals,
+        venture_name: formData.venture_name,
+        venture_stage: formData.venture_stage,
+        fundraising_status: formData.fundraising_status,
+        collaboration_needs: formData.collaboration_needs,
+        support_areas: formData.support_areas,
+        advocacy_interests: formData.advocacy_interests,
         skills: formData.skills,
         sectors: formData.sectors,
         contribution_style: formData.contribution_style,
