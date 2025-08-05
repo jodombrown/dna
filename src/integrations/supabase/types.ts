@@ -2115,6 +2115,7 @@ export type Database = {
           location: string | null
           mentorship_interest: string[] | null
           newsletter_emails: boolean | null
+          notification_preferences: Json | null
           onboarding_completed_at: string | null
           onboarding_recommendations_viewed: boolean | null
           onboarding_stage: string | null
@@ -2191,6 +2192,7 @@ export type Database = {
           location?: string | null
           mentorship_interest?: string[] | null
           newsletter_emails?: boolean | null
+          notification_preferences?: Json | null
           onboarding_completed_at?: string | null
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
@@ -2267,6 +2269,7 @@ export type Database = {
           location?: string | null
           mentorship_interest?: string[] | null
           newsletter_emails?: boolean | null
+          notification_preferences?: Json | null
           onboarding_completed_at?: string | null
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
@@ -3091,6 +3094,10 @@ export type Database = {
         }
         Returns: string
       }
+      enqueue_reminders_for_all_users: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       find_adin_matches: {
         Args:
           | { target_user_id: string }
@@ -3166,6 +3173,17 @@ export type Database = {
           user_id: string
           email: string
           full_name: string
+        }[]
+      }
+      get_pending_reminders: {
+        Args: { batch_size?: number }
+        Returns: {
+          reminder_id: string
+          user_id: string
+          user_email: string
+          reminder_type: string
+          cohort: string
+          metadata: Json
         }[]
       }
       get_total_connections: {
@@ -3244,6 +3262,14 @@ export type Database = {
       update_dna_points: {
         Args: { target_user_id: string; pillar: string; points?: number }
         Returns: undefined
+      }
+      update_reminder_status: {
+        Args: {
+          reminder_id: string
+          new_status: string
+          error_message?: string
+        }
+        Returns: boolean
       }
       update_username: {
         Args: { new_username: string }
