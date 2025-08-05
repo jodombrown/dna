@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -16,6 +17,7 @@ import {
 
 const MobileProfileView = () => {
   const { user, profile } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -44,7 +46,11 @@ const MobileProfileView = () => {
         </div>
         
         <div className="flex space-x-2">
-          <Button size="sm" className="flex-1 bg-dna-copper hover:bg-dna-gold text-white">
+          <Button 
+            size="sm" 
+            className="flex-1 bg-dna-copper hover:bg-dna-gold text-white"
+            onClick={() => navigate('/app/profile/edit')}
+          >
             <Edit3 className="w-4 h-4 mr-2" />
             Edit Profile
           </Button>

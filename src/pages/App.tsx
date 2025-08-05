@@ -11,6 +11,7 @@ import Messages from './app/Messages';
 import Events from './app/Events';
 import Communities from './app/Communities';
 import Profile from './app/Profile';
+import ProfileEdit from './app/ProfileEdit';
 import Settings from './app/Settings';
 import Admin from './app/Admin';
 import Invites from './app/Invites';
@@ -61,6 +62,7 @@ const App = () => {
             <Route path="events" element={<Events />} />
             <Route path="communities" element={<Communities />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="profile/edit" element={<ProfileEdit />} />
             <Route path="settings" element={<Settings />} />
             <Route path="invites" element={<Invites />} />
             <Route path="admin" element={<Admin />} />
