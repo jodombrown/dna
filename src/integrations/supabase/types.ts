@@ -2407,6 +2407,45 @@ export type Database = {
         }
         Relationships: []
       }
+      reminder_logs: {
+        Row: {
+          cohort: string | null
+          delivery_channel: string | null
+          id: string
+          message_template: string | null
+          metadata: Json | null
+          reminder_type: string
+          scheduled_at: string
+          sent_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          cohort?: string | null
+          delivery_channel?: string | null
+          id?: string
+          message_template?: string | null
+          metadata?: Json | null
+          reminder_type: string
+          scheduled_at: string
+          sent_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          cohort?: string | null
+          delivery_channel?: string | null
+          id?: string
+          message_template?: string | null
+          metadata?: Json | null
+          reminder_type?: string
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_searches: {
         Row: {
           created_at: string
@@ -2683,6 +2722,33 @@ export type Database = {
           created_at?: string
           last_updated?: string
           total_score?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_engagement_tracking: {
+        Row: {
+          cohort: string | null
+          created_at: string
+          event_context: Json | null
+          event_type: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          cohort?: string | null
+          created_at?: string
+          event_context?: Json | null
+          event_type: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          cohort?: string | null
+          created_at?: string
+          event_context?: Json | null
+          event_type?: string
+          id?: string
           user_id?: string
         }
         Relationships: []
@@ -3118,6 +3184,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      get_user_cohort: {
+        Args: { target_user_id: string }
+        Returns: string
+      }
       get_user_role: {
         Args: { user_id: string }
         Returns: string
@@ -3137,6 +3207,15 @@ export type Database = {
       is_user_admin: {
         Args: { user_id: string }
         Returns: boolean
+      }
+      log_engagement_event: {
+        Args: {
+          target_user_id: string
+          event_type_param: string
+          event_context_param?: Json
+          cohort_param?: string
+        }
+        Returns: string
       }
       make_user_admin: {
         Args: { user_email: string }
