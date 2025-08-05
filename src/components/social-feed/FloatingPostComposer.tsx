@@ -20,6 +20,9 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
   const { isScrollingDown, isAtTop, scrollY } = useScrollDirection(30);
   const { isMobile } = useMobile();
 
+  // Debug logging
+  console.log('FloatingPostComposer render:', { isExpanded, isScrollingDown, isAtTop, scrollY });
+
   // Auto-collapse/expand based on scroll direction
   useEffect(() => {
     if (!isManuallyCollapsed) {
