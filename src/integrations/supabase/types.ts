@@ -3056,6 +3056,10 @@ export type Database = {
         Args: { p_id: string }
         Returns: number
       }
+      can_create_collaboration: {
+        Args: { user_id_param: string }
+        Returns: boolean
+      }
       check_badge_unlocks: {
         Args: { target_user_id: string }
         Returns: undefined
