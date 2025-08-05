@@ -24,10 +24,10 @@ const ProfileEdit = () => {
     full_name: '',
     bio: '',
     location: '',
-    current_role: '',
+    profession: '',
     headline: '',
-    city: '',
-    my_dna_statement: '',
+    current_location: '',
+    intro_text: '',
     linkedin_url: '',
     website_url: '',
     avatar_url: ''
@@ -47,10 +47,10 @@ const ProfileEdit = () => {
         full_name: profile.full_name || '',
         bio: profile.bio || '',
         location: profile.location || '',
-        current_role: profile.current_role || '',
+        profession: profile.profession || '',
         headline: profile.headline || '',
-        city: profile.city || '',
-        my_dna_statement: profile.my_dna_statement || '',
+        current_location: profile.current_location || '',
+        intro_text: profile.intro_text || '',
         linkedin_url: profile.linkedin_url || '',
         website_url: profile.website_url || '',
         avatar_url: profile.avatar_url || ''
@@ -215,10 +215,10 @@ const ProfileEdit = () => {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">Current Role</label>
+                <label className="text-sm font-medium">Profession</label>
                 <Input
-                  value={formData.current_role}
-                  onChange={(e) => handleInputChange('current_role', e.target.value)}
+                  value={formData.profession}
+                  onChange={(e) => handleInputChange('profession', e.target.value)}
                   placeholder="e.g., Software Engineer, Entrepreneur"
                 />
               </div>
@@ -243,11 +243,11 @@ const ProfileEdit = () => {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium">City</label>
+                <label className="text-sm font-medium">Current Location</label>
                 <Input
-                  value={formData.city}
-                  onChange={(e) => handleInputChange('city', e.target.value)}
-                  placeholder="Current city"
+                  value={formData.current_location}
+                  onChange={(e) => handleInputChange('current_location', e.target.value)}
+                  placeholder="Current city/country"
                 />
               </div>
             </div>
@@ -273,8 +273,8 @@ const ProfileEdit = () => {
             <div>
               <label className="text-sm font-medium">My DNA Statement</label>
               <Textarea
-                value={formData.my_dna_statement}
-                onChange={(e) => handleInputChange('my_dna_statement', e.target.value)}
+                value={formData.intro_text}
+                onChange={(e) => handleInputChange('intro_text', e.target.value)}
                 placeholder="What drives your connection to Africa and the diaspora?"
                 className="min-h-20"
               />

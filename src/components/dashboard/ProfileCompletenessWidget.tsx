@@ -25,31 +25,8 @@ export const ProfileCompletenessWidget: React.FC<ProfileCompletenessWidgetProps>
 
   if (!profile) return null;
 
-  // Calculate completion score based on filled fields
-  const calculateCompletionScore = () => {
-    const fields = [
-      'full_name', 'bio', 'avatar_url', 'location', 'current_role', 
-      'headline', 'city', 'my_dna_statement', 'linkedin_url', 'website_url'
-    ];
-    const arrayFields = ['skills', 'impact_areas'];
-    
-    let completed = 0;
-    const totalFields = fields.length + arrayFields.length;
-    
-    fields.forEach(field => {
-      if (profile[field]) completed += 1;
-    });
-    
-    arrayFields.forEach(field => {
-      if (profile[field] && Array.isArray(profile[field]) && profile[field].length > 0) {
-        completed += 1;
-      }
-    });
-    
-    return Math.round((completed / totalFields) * 100);
-  };
-
-  const completenessScore = calculateCompletionScore();
+  // Use database-calculated completion score
+  const completenessScore = profile?.profile_completeness_score || 0;
   const isProfileComplete = completenessScore >= 80;
 
   const getIncompleteItems = () => {
@@ -59,9 +36,9 @@ export const ProfileCompletenessWidget: React.FC<ProfileCompletenessWidgetProps>
     if (!profile.bio) items.push({ icon: MessageSquare, label: 'Write your bio', action: () => navigate('/app/profile/edit') });
     if (!profile.avatar_url) items.push({ icon: Camera, label: 'Upload profile picture', action: () => navigate('/app/profile/edit') });
     if (!profile.location) items.push({ icon: MapPin, label: 'Add your location', action: () => navigate('/app/profile/edit') });
-    if (!profile.current_role) items.push({ icon: Briefcase, label: 'Add your current role', action: () => navigate('/app/profile/edit') });
+    if (!profile.profession) items.push({ icon: Briefcase, label: 'Add your profession', action: () => navigate('/app/profile/edit') });
     if (!profile.skills || profile.skills.length === 0) items.push({ icon: Star, label: 'Add your skills', action: () => navigate('/app/profile/edit') });
-    if (!profile.my_dna_statement) {
+    if (!profile.intro_text) {
       items.push({ icon: Heart, label: 'Add your DNA statement', action: () => navigate('/app/profile/edit') });
     }
     

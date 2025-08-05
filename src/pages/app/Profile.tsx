@@ -11,31 +11,8 @@ const Profile = () => {
   const { profile, user } = useAuth();
   const navigate = useNavigate();
 
-  const calculateCompletionScore = () => {
-    if (!profile) return 0;
-    const fields = [
-      'full_name', 'bio', 'avatar_url', 'location', 'current_role', 
-      'headline', 'city', 'my_dna_statement', 'linkedin_url', 'website_url'
-    ];
-    const arrayFields = ['skills', 'impact_areas'];
-    
-    let completed = 0;
-    const totalFields = fields.length + arrayFields.length;
-    
-    fields.forEach(field => {
-      if (profile[field]) completed += 1;
-    });
-    
-    arrayFields.forEach(field => {
-      if (profile[field] && Array.isArray(profile[field]) && profile[field].length > 0) {
-        completed += 1;
-      }
-    });
-    
-    return Math.round((completed / totalFields) * 100);
-  };
-
-  const completionScore = calculateCompletionScore();
+  // Use database-calculated completion score
+  const completionScore = profile?.profile_completeness_score || 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -70,7 +47,7 @@ const Profile = () => {
                     {profile?.full_name || 'Complete your profile'}
                   </h2>
                   <p className="text-lg text-muted-foreground">
-                    {profile?.headline || profile?.current_role || 'DNA Member'}
+                    {profile?.headline || profile?.profession || 'DNA Member'}
                   </p>
                   {profile?.location && (
                     <p className="text-sm text-muted-foreground">📍 {profile.location}</p>
@@ -105,10 +82,10 @@ const Profile = () => {
             <p className="text-gray-700 leading-relaxed">
               {profile?.bio || 'Share your story, background, and what drives your connection to Africa and the diaspora.'}
             </p>
-            {profile?.my_dna_statement && (
+            {profile?.intro_text && (
               <div className="mt-4 p-4 bg-dna-mint/10 rounded-lg border-l-4 border-dna-emerald">
                 <h4 className="font-medium text-dna-forest mb-2">My DNA Statement</h4>
-                <p className="text-gray-700">{profile.my_dna_statement}</p>
+                <p className="text-gray-700">{profile.intro_text}</p>
               </div>
             )}
           </CardContent>

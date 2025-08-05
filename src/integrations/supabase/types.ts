@@ -3052,6 +3052,10 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: number
       }
+      calculate_profile_completeness_score_new: {
+        Args: { p_id: string }
+        Returns: number
+      }
       check_badge_unlocks: {
         Args: { target_user_id: string }
         Returns: undefined
