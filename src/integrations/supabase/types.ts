@@ -1084,6 +1084,24 @@ export type Database = {
         }
         Relationships: []
       }
+      embed_providers: {
+        Row: {
+          endpoint_url: string
+          id: number
+          provider_name: string
+        }
+        Insert: {
+          endpoint_url: string
+          id?: number
+          provider_name: string
+        }
+        Update: {
+          endpoint_url?: string
+          id?: number
+          provider_name?: string
+        }
+        Relationships: []
+      }
       error_logs: {
         Row: {
           component_stack: string | null
@@ -1929,6 +1947,7 @@ export type Database = {
           author_id: string
           content: string | null
           created_at: string | null
+          embed_metadata: Json | null
           hashtags: string[] | null
           id: string
           media_url: string | null
@@ -1943,6 +1962,7 @@ export type Database = {
           author_id: string
           content?: string | null
           created_at?: string | null
+          embed_metadata?: Json | null
           hashtags?: string[] | null
           id?: string
           media_url?: string | null
@@ -1957,6 +1977,7 @@ export type Database = {
           author_id?: string
           content?: string | null
           created_at?: string | null
+          embed_metadata?: Json | null
           hashtags?: string[] | null
           id?: string
           media_url?: string | null

@@ -2,14 +2,17 @@ import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, ImagePlus, X } from 'lucide-react';
+import { Send, ImagePlus, X, Link, Eye } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUploadPostMedia } from './useUploadPostMedia';
+import { useEmbedPreview } from '@/hooks/useEmbedPreview';
+import { EmbedPreview } from './EmbedPreview';
 
 interface PostComposerProps {
   defaultPillar?: string;
@@ -25,10 +28,12 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   const [isPosting, setIsPosting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [embedUrl, setEmbedUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const { uploadMedia, uploading } = useUploadPostMedia();
+  const { loading: embedLoading, embedData, fetchEmbedData, clearEmbedData } = useEmbedPreview();
 
   const getPillarColor = (pillarValue: string) => {
     switch (pillarValue) {
@@ -68,6 +73,11 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     }
   };
 
+  const handlePreviewEmbed = async () => {
+    if (!embedUrl.trim()) return;
+    await fetchEmbedData(embedUrl);
+  };
+
   const handleSubmit = async () => {
     if (!user) {
       toast({
@@ -91,6 +101,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 
     try {
       let mediaUrl = null;
+      let postType = 'text';
       
       // Upload file if selected
       if (selectedFile) {
@@ -99,18 +110,22 @@ export const PostComposer: React.FC<PostComposerProps> = ({
           setIsPosting(false);
           return; // Upload failed, don't create post
         }
+        postType = selectedFile.type.startsWith('video/') ? 'video' : 'image';
+      } else if (embedData) {
+        postType = 'link';
       }
 
       const { error } = await supabase
         .from('posts')
         .insert({
           content: content.trim(),
-          type: selectedFile ? (selectedFile.type.startsWith('video/') ? 'video' : 'image') : 'text',
+          type: postType,
           pillar: pillar,
           author_id: user.id,
           user_id: user.id,
           visibility: 'public',
-          media_url: mediaUrl
+          media_url: mediaUrl,
+          embed_metadata: embedData ? JSON.parse(JSON.stringify(embedData)) : null
         });
 
       if (error) throw error;
@@ -123,7 +138,9 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       // Reset form
       setContent('');
       setPillar(defaultPillar);
+      setEmbedUrl('');
       removeFile();
+      clearEmbedData();
       onPostCreated?.();
     } catch (error) {
       console.error('Error creating post:', error);
@@ -187,6 +204,37 @@ export const PostComposer: React.FC<PostComposerProps> = ({
               rows={3}
             />
 
+            {/* URL Input for Embeds */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Input
+                  placeholder="Paste a URL to embed (YouTube, Twitter, etc.)"
+                  value={embedUrl}
+                  onChange={(e) => setEmbedUrl(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePreviewEmbed}
+                  disabled={!embedUrl.trim() || embedLoading}
+                  className="flex items-center gap-2"
+                >
+                  <Eye className="h-4 w-4" />
+                  {embedLoading ? 'Loading...' : 'Preview'}
+                </Button>
+              </div>
+            </div>
+
+            {/* Embed Preview */}
+            {embedData && (
+              <EmbedPreview 
+                embedData={embedData} 
+                onRemove={clearEmbedData}
+                showRemoveButton={true}
+              />
+            )}
+
             {/* Media Preview */}
             {filePreview && (
               <div className="relative rounded-lg overflow-hidden border">
@@ -238,7 +286,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
               </div>
               <Button 
                 onClick={handleSubmit}
-                disabled={isPosting || !content.trim()}
+                disabled={isPosting || !content.trim() || embedLoading || uploading}
                 className="bg-dna-forest hover:bg-dna-forest/90"
               >
                 {isPosting ? (
