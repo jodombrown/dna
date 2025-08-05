@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { FeedContainer } from '@/components/social-feed/FeedContainer';
 import { PostComposer } from '@/components/social-feed/PostComposer';
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 import { useLiveEvents } from '@/hooks/useLiveEvents';
 import { useLiveContributions } from '@/hooks/useLiveContributions';
 
@@ -24,7 +25,9 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
   
   const connectContent = () => (
     <div className="space-y-4">
-      <PostComposer defaultPillar="connect" onPostCreated={handlePostCreated} />
+      <RequireProfileScore min={50} featureName="creating posts">
+        <PostComposer defaultPillar="connect" onPostCreated={handlePostCreated} />
+      </RequireProfileScore>
       <FeedContainer defaultPillar="connect" showComposer={false} />
       
       {/* Networking Events */}
@@ -74,9 +77,11 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
                         </Avatar>
                       ))}
                     </div>
-                    <Button size="sm" className="bg-dna-emerald hover:bg-dna-forest">
-                      Register
-                    </Button>
+                    <RequireProfileScore min={50} featureName="joining events">
+                      <Button size="sm" className="bg-dna-emerald hover:bg-dna-forest">
+                        Register
+                      </Button>
+                    </RequireProfileScore>
                   </div>
                 </div>
               ))
@@ -113,7 +118,9 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
                     <p className="text-xs text-gray-500">{person.mutual} mutual connections</p>
                   </div>
                 </div>
-                <Button size="sm" variant="outline">Connect</Button>
+                <RequireProfileScore min={50} featureName="sending connection requests">
+                  <Button size="sm" variant="outline">Connect</Button>
+                </RequireProfileScore>
               </div>
             ))}
           </div>
@@ -124,7 +131,9 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
 
   const collaborateContent = () => (
     <div className="space-y-4">
-      <PostComposer defaultPillar="collaborate" onPostCreated={handlePostCreated} />
+      <RequireProfileScore min={50} featureName="creating posts">
+        <PostComposer defaultPillar="collaborate" onPostCreated={handlePostCreated} />
+      </RequireProfileScore>
       <FeedContainer defaultPillar="collaborate" showComposer={false} />
       
       {/* Featured Project Opportunities */}
@@ -194,9 +203,11 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
                     <span className="text-dna-copper font-semibold">{project.funding}</span>
                     <span>{project.deadline}</span>
                   </div>
-                  <Button size="sm" className="bg-dna-emerald hover:bg-dna-forest">
-                    Join Project
-                  </Button>
+                  <RequireProfileScore min={80} featureName="creating collaborations">
+                    <Button size="sm" className="bg-dna-emerald hover:bg-dna-forest">
+                      Join Project
+                    </Button>
+                  </RequireProfileScore>
                 </div>
               </div>
             ))}
@@ -238,7 +249,9 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
 
   const contributeContent = () => (
     <div className="space-y-4">
-      <PostComposer defaultPillar="contribute" onPostCreated={handlePostCreated} />
+      <RequireProfileScore min={50} featureName="creating posts">
+        <PostComposer defaultPillar="contribute" onPostCreated={handlePostCreated} />
+      </RequireProfileScore>
       <FeedContainer defaultPillar="contribute" showComposer={false} />
       
       {/* Featured Impact Opportunities */}
@@ -298,9 +311,11 @@ export const PillarMainContent: React.FC<PillarMainContentProps> = ({ activePill
                         {opportunity.location || 'Multiple locations'}
                       </span>
                     </div>
-                    <Button size="sm" className="bg-dna-copper hover:bg-dna-forest">
-                      Contribute
-                    </Button>
+                    <RequireProfileScore min={80} featureName="applying to programs">
+                      <Button size="sm" className="bg-dna-copper hover:bg-dna-forest">
+                        Contribute
+                      </Button>
+                    </RequireProfileScore>
                   </div>
                 </div>
               ))

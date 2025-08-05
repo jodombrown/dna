@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { PostComposer } from './PostComposer';
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 import { PillarFilter } from './PillarFilter';
 import { PostList } from './PostList';
 import { usePaginatedPosts } from './usePaginatedPosts';
@@ -69,10 +70,12 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
   return (
     <div className="space-y-6" role="main" aria-label="Social Feed">
       {showComposer && (
-        <PostComposer 
-          defaultPillar={selectedPillar === 'feed' ? 'connect' : selectedPillar}
-          onPostCreated={handlePostCreated}
-        />
+        <RequireProfileScore min={50} featureName="creating posts">
+          <PostComposer 
+            defaultPillar={selectedPillar === 'feed' ? 'connect' : selectedPillar}
+            onPostCreated={handlePostCreated}
+          />
+        </RequireProfileScore>
       )}
       
       <PillarFilter

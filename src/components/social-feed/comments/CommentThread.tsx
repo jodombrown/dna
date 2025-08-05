@@ -1,6 +1,7 @@
 import React from 'react';
 import { CommentItem } from './CommentItem';
 import { CommentComposer } from './CommentComposer';
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 import { usePostComments } from './usePostComments';
 import { Loader2, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -65,11 +66,13 @@ export const CommentThread: React.FC<CommentThreadProps> = ({
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Comment Composer */}
-      <CommentComposer
-        onSubmit={handleAddComment}
-        placeholder="Write a comment..."
-        buttonText="Comment"
-      />
+      <RequireProfileScore min={50} featureName="commenting on posts">
+        <CommentComposer
+          onSubmit={handleAddComment}
+          placeholder="Write a comment..."
+          buttonText="Comment"
+        />
+      </RequireProfileScore>
       
       {/* Comments List */}
       {comments.length > 0 ? (

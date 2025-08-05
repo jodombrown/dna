@@ -11,6 +11,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { CommentComposer } from './CommentComposer';
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 import type { Comment } from './usePostComments';
 
 interface CommentItemProps {
@@ -119,28 +120,32 @@ export const CommentItem: React.FC<CommentItemProps> = ({
           {/* Comment Actions */}
           <div className="flex items-center gap-2">
             {canReply && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowReplyComposer(!showReplyComposer)}
-                className="h-6 text-xs text-muted-foreground hover:text-foreground"
-              >
-                <Reply className="h-3 w-3 mr-1" />
-                Reply
-              </Button>
+              <RequireProfileScore min={50} featureName="replying to comments">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowReplyComposer(!showReplyComposer)}
+                  className="h-6 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  <Reply className="h-3 w-3 mr-1" />
+                  Reply
+                </Button>
+              </RequireProfileScore>
             )}
           </div>
           
           {/* Reply Composer */}
           {showReplyComposer && (
             <div className="mt-3">
-              <CommentComposer
-                onSubmit={handleReply}
-                placeholder={`Reply to ${comment.profiles.full_name}...`}
-                buttonText="Reply"
-                autoFocus
-                className="pl-0"
-              />
+              <RequireProfileScore min={50} featureName="replying to comments">
+                <CommentComposer
+                  onSubmit={handleReply}
+                  placeholder={`Reply to ${comment.profiles.full_name}...`}
+                  buttonText="Reply"
+                  autoFocus
+                  className="pl-0"
+                />
+              </RequireProfileScore>
             </div>
           )}
         </div>
