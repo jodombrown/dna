@@ -6,6 +6,7 @@ import { PillarFilter } from './PillarFilter';
 import { PostList } from './PostList';
 import { usePaginatedPosts } from './usePaginatedPosts';
 import { useFeedRealtime } from './useFeedRealtime';
+import { RealtimeStatus } from './RealtimeStatus';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
@@ -45,13 +46,23 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
     refreshKey
   });
 
-  useFeedRealtime({
-    onNewPost: () => {
-      // Refresh on new posts to maintain order
+  const realtimeStatus = useFeedRealtime({
+    onNewPost: (newPost) => {
+      console.log('New post received, refreshing feed...', newPost);
+      // Refresh on new posts to maintain order and get complete data
       refresh();
     },
-    onPostUpdate: () => {
+    onPostUpdate: (postId, updates) => {
+      console.log('Post updated:', postId, updates);
       // Individual post updates will be handled by PostCard optimistic updates
+    },
+    onPostDelete: (postId) => {
+      console.log('Post deleted:', postId);
+      refresh();
+    },
+    onNewComment: (comment) => {
+      console.log('New comment received:', comment);
+      // Comment count updates will be handled by the PostCard components
     }
   });
 
@@ -78,10 +89,13 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
         </RequireProfileScore>
       )}
       
-      <PillarFilter
-        selectedPillar={selectedPillar}
-        onPillarChange={handlePillarChange}
-      />
+      <div className="flex items-center justify-between">
+        <PillarFilter
+          selectedPillar={selectedPillar}
+          onPillarChange={handlePillarChange}
+        />
+        <RealtimeStatus />
+      </div>
       
       <PostList
         posts={posts}

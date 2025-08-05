@@ -6,20 +6,24 @@ interface UseFeedRealtimeProps {
   onNewPost?: (post: any) => void;
   onPostUpdate?: (postId: string, updates: Partial<Post>) => void;
   onPostDelete?: (postId: string) => void;
+  onNewComment?: (comment: any) => void;
 }
 
 export const useFeedRealtime = ({
   onNewPost,
   onPostUpdate,
-  onPostDelete
+  onPostDelete,
+  onNewComment
 }: UseFeedRealtimeProps = {}) => {
   
   const channelsRef = useRef<any[]>([]);
   const isSubscribedRef = useRef(false);
   
   const handlePostChange = useCallback((payload: any, event: 'INSERT' | 'UPDATE' | 'DELETE') => {
+    console.log('Real-time post change:', event, payload);
     switch (event) {
       case 'INSERT':
+        // Fetch complete post data with profiles for new posts
         onNewPost?.(payload.new);
         break;
       case 'UPDATE':
@@ -31,11 +35,12 @@ export const useFeedRealtime = ({
     }
   }, [onNewPost, onPostUpdate, onPostDelete]);
 
-  const handleLikeChange = useCallback((payload: any, event: 'INSERT' | 'DELETE') => {
-    // Handle like updates - this could trigger post stat updates
-    // For now, individual PostCard components handle their own like state
-    console.log('Like change:', event, payload);
-  }, []);
+  const handleCommentChange = useCallback((payload: any, event: 'INSERT' | 'DELETE') => {
+    console.log('Real-time comment change:', event, payload);
+    if (event === 'INSERT') {
+      onNewComment?.(payload.new);
+    }
+  }, [onNewComment]);
 
   useEffect(() => {
     // Prevent multiple subscriptions
@@ -44,9 +49,10 @@ export const useFeedRealtime = ({
     }
 
     isSubscribedRef.current = true;
+    console.log('Setting up real-time feed subscriptions...');
 
     // Create unique channel names to avoid conflicts
-    const channelId = Math.random().toString(36).substr(2, 9);
+    const channelId = `feed-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     // Subscribe to post changes
     const postsChannel = supabase
@@ -54,50 +60,58 @@ export const useFeedRealtime = ({
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
-        table: 'posts'
+        table: 'posts',
+        filter: 'visibility=eq.public'
       }, (payload) => handlePostChange(payload, 'INSERT'))
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
-        table: 'posts'
+        table: 'posts',
+        filter: 'visibility=eq.public'
       }, (payload) => handlePostChange(payload, 'UPDATE'))
       .on('postgres_changes', {
         event: 'DELETE',
         schema: 'public',
         table: 'posts'
       }, (payload) => handlePostChange(payload, 'DELETE'))
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Posts channel status:', status);
+      });
 
-    // Subscribe to post likes for real-time engagement updates
-    const likesChannel = supabase
-      .channel(`realtime-likes-${channelId}`)
+    // Subscribe to comment changes 
+    const commentsChannel = supabase
+      .channel(`realtime-comments-${channelId}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
-        table: 'post_likes'
-      }, (payload) => handleLikeChange(payload, 'INSERT'))
+        table: 'post_comments'
+      }, (payload) => handleCommentChange(payload, 'INSERT'))
       .on('postgres_changes', {
         event: 'DELETE',
         schema: 'public',
-        table: 'post_likes'
-      }, (payload) => handleLikeChange(payload, 'DELETE'))
-      .subscribe();
+        table: 'post_comments'
+      }, (payload) => handleCommentChange(payload, 'DELETE'))
+      .subscribe((status) => {
+        console.log('Comments channel status:', status);
+      });
 
     // Store channels for cleanup
-    channelsRef.current = [postsChannel, likesChannel];
+    channelsRef.current = [postsChannel, commentsChannel];
 
     // Cleanup subscriptions
     return () => {
+      console.log('Cleaning up feed real-time subscriptions');
       isSubscribedRef.current = false;
       channelsRef.current.forEach(channel => {
         supabase.removeChannel(channel);
       });
       channelsRef.current = [];
     };
-  }, [handlePostChange, handleLikeChange]);
+  }, [handlePostChange, handleCommentChange]);
 
   // Return channel status or controls if needed
   return {
-    // Could expose channel status, manual refresh, etc.
+    isConnected: channelsRef.current.length > 0,
+    channelCount: channelsRef.current.length
   };
 };
