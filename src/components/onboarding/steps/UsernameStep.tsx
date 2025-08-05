@@ -18,8 +18,8 @@ interface UsernameStepProps {
   data: {
     full_name?: string;
     username?: string;
-    country_origin?: string;
-    current_location?: string;
+    country_of_origin?: string;
+    current_country?: string;
     industry?: string;
   };
   updateData: (updates: any) => void;
@@ -41,7 +41,7 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
     if (data.full_name) {
       generateAISuggestions();
     }
-  }, [data.full_name, data.country_origin, data.industry]);
+  }, [data.full_name, data.country_of_origin, data.industry]);
 
   useEffect(() => {
     if (username.length < 3) {
@@ -67,8 +67,8 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
         body: {
           fullName: data.full_name,
           industry: data.industry || 'Professional',
-          countryOrigin: data.country_origin,
-          currentLocation: data.current_location
+          countryOrigin: data.country_of_origin,
+          currentLocation: data.current_country
         }
       });
 
@@ -89,7 +89,7 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
 
     const name = data.full_name.toLowerCase().replace(/\s+/g, '_');
     const firstName = data.full_name.split(' ')[0]?.toLowerCase();
-    const country = data.country_origin?.toLowerCase().slice(0, 4) || 'afr';
+    const country = data.country_of_origin?.toLowerCase().slice(0, 4) || 'afr';
     
     const fallbacks: AISuggestion[] = [
       {

@@ -30,8 +30,8 @@ const Onboarding = () => {
     // Step 1: Identity
     full_name: user?.user_metadata?.full_name || '',
     username: '',
-    country_origin: '',
-    current_location: '',
+    country_of_origin: '',
+    current_country: '',
     
     // Step 2: Skills & Contribution
     skills: [],
@@ -70,7 +70,7 @@ const Onboarding = () => {
   const canProceedToNext = () => {
     switch (currentStep) {
       case 0: // Identity
-        return formData.full_name && formData.username && formData.country_origin;
+        return formData.full_name && formData.username && formData.country_of_origin;
       case 1: // Skills & Contribution
         return formData.skills.length > 0 && formData.sectors.length > 0 && formData.contribution_style;
       case 2: // Links & Identity
@@ -108,8 +108,8 @@ const Onboarding = () => {
         email: user.email,
         full_name: formData.full_name,
         username: formData.username,
-        country_origin: formData.country_origin,
-        current_location: formData.current_location,
+        country_of_origin: formData.country_of_origin,
+        current_country: formData.current_country,
         skills: formData.skills,
         sectors: formData.sectors,
         contribution_style: formData.contribution_style,
@@ -117,6 +117,7 @@ const Onboarding = () => {
         twitter_url: formData.twitter_url,
         website_url: formData.website_url,
         avatar_url: formData.avatar_url,
+        agrees_to_values: formData.agrees_to_values,
         onboarding_stage: 'completed',
         is_public: true,
         updated_at: new Date().toISOString()

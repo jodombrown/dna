@@ -1,6 +1,7 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import AvatarUpload from './AvatarUpload';
 
 interface GoalsBioStepProps {
   data: any;
@@ -8,14 +9,6 @@ interface GoalsBioStepProps {
 }
 
 const GoalsBioStep: React.FC<GoalsBioStepProps> = ({ data, updateData }) => {
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // In a real app, upload to storage and get URL
-      const url = URL.createObjectURL(file);
-      updateData({ avatar_url: url });
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -64,32 +57,10 @@ const GoalsBioStep: React.FC<GoalsBioStepProps> = ({ data, updateData }) => {
       </div>
 
       {/* Profile Image */}
-      <div className="space-y-3">
-        <Label>Profile Image</Label>
-        <div className="flex items-center gap-4">
-          <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-            {data.avatar_url ? (
-              <img src={data.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <div className="text-gray-400 text-sm">No image</div>
-            )}
-          </div>
-          <div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileUpload}
-              className="hidden"
-              id="avatar-upload"
-            />
-            <Label htmlFor="avatar-upload" className="cursor-pointer">
-              <div className="px-4 py-2 bg-dna-mint text-dna-forest rounded-lg hover:bg-dna-mint/80 transition-colors">
-                Upload Photo
-              </div>
-            </Label>
-          </div>
-        </div>
-      </div>
+      <AvatarUpload 
+        currentAvatarUrl={data.avatar_url}
+        onAvatarChange={(url) => updateData({ avatar_url: url })}
+      />
     </div>
   );
 };

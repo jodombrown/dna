@@ -115,7 +115,7 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
       {/* Country of Origin */}
       <div>
         <Label>Country of Origin *</Label>
-        <Select value={data.country_origin || ''} onValueChange={(value) => updateData({ country_origin: value })}>
+        <Select value={data.country_of_origin || ''} onValueChange={(value) => updateData({ country_of_origin: value })}>
           <SelectTrigger className="bg-white">
             <SelectValue placeholder="Select your country of origin" />
           </SelectTrigger>
@@ -133,7 +133,7 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
       {/* Current Location */}
       <div>
         <Label>Current Location</Label>
-        <Select value={data.current_location || ''} onValueChange={(value) => updateData({ current_location: value })}>
+        <Select value={data.current_country || ''} onValueChange={(value) => updateData({ current_country: value })}>
           <SelectTrigger className="bg-white">
             <SelectValue placeholder="Select your current location" />
           </SelectTrigger>

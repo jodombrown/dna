@@ -2043,6 +2043,7 @@ export type Database = {
         Row: {
           account_visibility: string | null
           adin_prompt_status: string | null
+          agrees_to_values: boolean | null
           available_for: string[] | null
           avatar_url: string | null
           banner_url: string | null
@@ -2088,6 +2089,7 @@ export type Database = {
           role: string | null
           sectors: string[] | null
           skills: string[] | null
+          twitter_url: string | null
           updated_at: string
           username: string | null
           username_changes: number | null
@@ -2098,6 +2100,7 @@ export type Database = {
         Insert: {
           account_visibility?: string | null
           adin_prompt_status?: string | null
+          agrees_to_values?: boolean | null
           available_for?: string[] | null
           avatar_url?: string | null
           banner_url?: string | null
@@ -2143,6 +2146,7 @@ export type Database = {
           role?: string | null
           sectors?: string[] | null
           skills?: string[] | null
+          twitter_url?: string | null
           updated_at?: string
           username?: string | null
           username_changes?: number | null
@@ -2153,6 +2157,7 @@ export type Database = {
         Update: {
           account_visibility?: string | null
           adin_prompt_status?: string | null
+          agrees_to_values?: boolean | null
           available_for?: string[] | null
           avatar_url?: string | null
           banner_url?: string | null
@@ -2198,6 +2203,7 @@ export type Database = {
           role?: string | null
           sectors?: string[] | null
           skills?: string[] | null
+          twitter_url?: string | null
           updated_at?: string
           username?: string | null
           username_changes?: number | null
