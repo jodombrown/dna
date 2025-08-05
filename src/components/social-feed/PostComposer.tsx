@@ -200,7 +200,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
             </div>
 
             <Textarea
-              placeholder="What's on your mind? (Paste URLs to auto-preview links)"
+              placeholder="What's on your mind?"
               value={content}
               onChange={handleTextareaChange}
               className="resize-none border-0 p-0 text-lg placeholder:text-muted-foreground focus-visible:ring-0"
@@ -262,7 +262,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                   className={`text-muted-foreground hover:text-foreground ${embedData ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <ImagePlus className="h-4 w-4 mr-2" />
-                  {uploading ? 'Uploading...' : embedData ? 'Media disabled (link attached)' : 'Add Media'}
+                  {uploading ? 'Uploading...' : 'Add Media'}
                 </Button>
               </div>
               <Button 
