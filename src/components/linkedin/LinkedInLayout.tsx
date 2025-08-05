@@ -36,15 +36,18 @@ const LinkedInLayout: React.FC<LinkedInLayoutProps> = ({
             ? 'col-span-10' 
             : 'col-span-12'
         }`}>
-          <div className={`
-            ${isMobile 
-              ? 'min-h-[calc(100vh-200px)] px-2' 
-              : isTablet 
-              ? 'min-h-[calc(100vh-180px)] px-3'
-              : 'h-[calc(100vh-140px)] px-1 sm:px-2'
-            } 
-            overflow-y-auto scrollbar-thin
-          `}>
+          <div 
+            className={`
+              ${isMobile 
+                ? 'min-h-[calc(100vh-200px)] px-2' 
+                : isTablet 
+                ? 'min-h-[calc(100vh-180px)] px-3'
+                : 'h-[calc(100vh-140px)] px-1 sm:px-2'
+              } 
+              overflow-y-auto scrollbar-thin
+            `}
+            data-scroll-container="main"
+          >
             {mainContent}
           </div>
         </div>

@@ -14,7 +14,9 @@ export const useScrollDirection = (threshold: number = 50): UseScrollDirectionRe
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      // Check both window scroll and the main scroll container
+      const scrollContainer = document.querySelector('[data-scroll-container="main"]') as HTMLElement;
+      const currentScrollY = scrollContainer?.scrollTop || window.scrollY;
       
       setScrollY(currentScrollY);
       setIsAtTop(currentScrollY < 10);
@@ -26,9 +28,18 @@ export const useScrollDirection = (threshold: number = 50): UseScrollDirectionRe
       }
     };
 
+    // Add listener to both window and the scroll container
+    const scrollContainer = document.querySelector('[data-scroll-container="main"]') as HTMLElement;
+    
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+    }
     window.addEventListener('scroll', handleScroll, { passive: true });
     
     return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleScroll);
+      }
       window.removeEventListener('scroll', handleScroll);
     };
   }, [lastScrollY, threshold]);
