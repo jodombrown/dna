@@ -10,21 +10,23 @@ export const useUploadPostMedia = () => {
     if (!file) return null;
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/mov', 'video/avi', 'video/webm'];
     if (!allowedTypes.includes(file.type)) {
       toast({
         title: "Invalid file type",
-        description: "Please upload a JPEG, PNG, WebP, or GIF image.",
+        description: "Please upload a JPEG, PNG, WebP, GIF image or MP4, MOV, AVI, WebM video.",
         variant: "destructive",
       });
       return null;
     }
 
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (50MB limit for videos, 5MB for images)
+    const isVideo = file.type.startsWith('video/');
+    const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (file.size > maxSize) {
       toast({
         title: "File too large",
-        description: "Please upload an image smaller than 5MB.",
+        description: `Please upload ${isVideo ? 'a video smaller than 50MB' : 'an image smaller than 5MB'}.`,
         variant: "destructive",
       });
       return null;

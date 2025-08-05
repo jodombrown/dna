@@ -23,8 +23,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   const [content, setContent] = useState('');
   const [pillar, setPillar] = useState(defaultPillar);
   const [isPosting, setIsPosting] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -48,21 +48,21 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       .slice(0, 2);
   };
 
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setSelectedImage(file);
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
+        setFilePreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const removeImage = () => {
-    setSelectedImage(null);
-    setImagePreview(null);
+  const removeFile = () => {
+    setSelectedFile(null);
+    setFilePreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -92,9 +92,9 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     try {
       let mediaUrl = null;
       
-      // Upload image if selected
-      if (selectedImage) {
-        mediaUrl = await uploadMedia(selectedImage);
+      // Upload file if selected
+      if (selectedFile) {
+        mediaUrl = await uploadMedia(selectedFile);
         if (!mediaUrl) {
           setIsPosting(false);
           return; // Upload failed, don't create post
@@ -105,7 +105,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         .from('posts')
         .insert({
           content: content.trim(),
-          type: selectedImage ? 'image' : 'text',
+          type: selectedFile ? (selectedFile.type.startsWith('video/') ? 'video' : 'image') : 'text',
           pillar: pillar,
           author_id: user.id,
           user_id: user.id,
@@ -123,7 +123,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       // Reset form
       setContent('');
       setPillar(defaultPillar);
-      removeImage();
+      removeFile();
       onPostCreated?.();
     } catch (error) {
       console.error('Error creating post:', error);
@@ -187,18 +187,28 @@ export const PostComposer: React.FC<PostComposerProps> = ({
               rows={3}
             />
 
-            {/* Image Preview */}
-            {imagePreview && (
+            {/* Media Preview */}
+            {filePreview && (
               <div className="relative rounded-lg overflow-hidden border">
-                <img 
-                  src={imagePreview} 
-                  alt="Upload preview" 
-                  className="w-full h-auto max-h-96 object-cover"
-                />
+                {selectedFile?.type.startsWith('video/') ? (
+                  <video 
+                    src={filePreview} 
+                    controls
+                    className="w-full h-auto max-h-96 object-cover"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <img 
+                    src={filePreview} 
+                    alt="Upload preview" 
+                    className="w-full h-auto max-h-96 object-cover"
+                  />
+                )}
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={removeImage}
+                  onClick={removeFile}
                   className="absolute top-2 right-2"
                 >
                   <X className="h-4 w-4" />
@@ -211,8 +221,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
-                  onChange={handleImageSelect}
+                  accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,video/mp4,video/mov,video/avi,video/webm"
+                  onChange={handleFileSelect}
                   className="hidden"
                 />
                 <Button
@@ -223,7 +233,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                   className="text-muted-foreground hover:text-foreground"
                 >
                   <ImagePlus className="h-4 w-4 mr-2" />
-                  {uploading ? 'Uploading...' : 'Add Image'}
+                  {uploading ? 'Uploading...' : 'Add Media'}
                 </Button>
               </div>
               <Button 
