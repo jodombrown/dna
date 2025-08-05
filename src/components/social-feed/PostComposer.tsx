@@ -51,9 +51,19 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       .slice(0, 2);
   };
 
+  const removeFile = () => {
+    setSelectedFile(null);
+    setFilePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Clear embed data when file is selected
+      clearEmbedData();
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -63,17 +73,13 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     }
   };
 
-  const removeFile = () => {
-    setSelectedFile(null);
-    setFilePreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     setContent(newContent);
+    // Clear file when user adds embed-able content
+    if (selectedFile) {
+      removeFile();
+    }
     detectEmbeds(newContent);
   };
 
@@ -110,9 +116,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({
           return; // Upload failed, don't create post
         }
         postType = selectedFile.type.startsWith('video/') ? 'video' : 'image';
-      } else if (embedData) {
-        postType = 'link';
       }
+      // Don't change type for embeds - keep as 'text' with embed_metadata
 
       const { error } = await supabase
         .from('posts')
@@ -253,11 +258,11 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading || isPosting}
-                  className="text-muted-foreground hover:text-foreground"
+                  disabled={uploading || isPosting || !!embedData}
+                  className={`text-muted-foreground hover:text-foreground ${embedData ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <ImagePlus className="h-4 w-4 mr-2" />
-                  {uploading ? 'Uploading...' : 'Add Media'}
+                  {uploading ? 'Uploading...' : embedData ? 'Media disabled (link attached)' : 'Add Media'}
                 </Button>
               </div>
               <Button 
