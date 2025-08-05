@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PostComposer } from './PostComposer';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { useMobile } from '@/hooks/useMobile';
@@ -17,45 +17,42 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isManuallyCollapsed, setIsManuallyCollapsed] = useState(false);
-  const [lastAction, setLastAction] = useState<'expand' | 'collapse' | null>(null);
+  const lastActionRef = useRef<'expand' | 'collapse' | null>(null);
+  const isExpandedRef = useRef(true);
   const { isScrollingDown, isAtTop, scrollY } = useScrollDirection(50);
   const { isMobile } = useMobile();
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    isExpandedRef.current = isExpanded;
+  }, [isExpanded]);
 
   // Auto-collapse/expand based on scroll direction with hysteresis
   useEffect(() => {
     if (!isManuallyCollapsed) {
-      const shouldExpand = isAtTop || (!isScrollingDown && scrollY > 80 && scrollY < 200 && lastAction !== 'expand');
-      const shouldCollapse = isScrollingDown && scrollY > 120 && lastAction !== 'collapse';
-      
-      // Debug logging
-      console.log('Scroll State:', { 
-        scrollY, 
-        isScrollingDown, 
-        isAtTop, 
-        lastAction, 
-        shouldExpand, 
-        shouldCollapse,
-        isExpanded 
-      });
-      
-      if (shouldExpand && !isExpanded) {
+      if (isAtTop && !isExpandedRef.current) {
         setIsExpanded(true);
-        setLastAction('expand');
-      } else if (shouldCollapse && isExpanded) {
+        lastActionRef.current = 'expand';
+      } else if (isScrollingDown && scrollY > 120 && lastActionRef.current !== 'collapse' && isExpandedRef.current) {
         setIsExpanded(false);
-        setLastAction('collapse');
+        lastActionRef.current = 'collapse';
+      } else if (!isScrollingDown && scrollY > 80 && scrollY < 200 && lastActionRef.current !== 'expand' && !isExpandedRef.current) {
+        setIsExpanded(true);
+        lastActionRef.current = 'expand';
       }
     }
-  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed, lastAction, isExpanded]);
+  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed]);
 
   const handleExpand = () => {
     setIsExpanded(true);
     setIsManuallyCollapsed(false);
+    lastActionRef.current = 'expand';
   };
 
   const handleCollapse = () => {
     setIsExpanded(false);
     setIsManuallyCollapsed(true);
+    lastActionRef.current = 'collapse';
   };
 
   const handlePostCreated = () => {
