@@ -12,6 +12,7 @@ export interface Post {
   type: string;
   pillar: string;
   created_at: string;
+  embed_metadata?: any;
   profiles: {
     id: string;
     full_name: string;

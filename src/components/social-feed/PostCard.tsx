@@ -7,6 +7,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { PostActions } from './PostActions';
 import { PostStats } from './PostStats';
 import { CommentThread } from './comments/CommentThread';
+import { EmbedPreview } from './EmbedPreview';
 import type { Post } from './PostList';
 
 interface PostCardProps {
@@ -95,17 +96,44 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment }) => {
 
       <CardContent className="pt-0">
         <div className="space-y-4">
-          <p className="text-foreground whitespace-pre-wrap leading-relaxed">
-            {post.content}
-          </p>
+          {/* Show embed preview if embed_metadata exists, otherwise show content */}
+          {post.embed_metadata ? (
+            <div className="space-y-3">
+              {/* Show content without URLs if it has additional text */}
+              {post.content && post.content.trim() && !post.content.trim().match(/^https?:\/\/[^\s]+$/i) && (
+                <p className="text-foreground whitespace-pre-wrap leading-relaxed">
+                  {post.content.replace(/https?:\/\/[^\s]+/gi, '').trim()}
+                </p>
+              )}
+              <EmbedPreview 
+                embedData={post.embed_metadata} 
+                onRemove={() => {}} 
+                showRemoveButton={false}
+              />
+            </div>
+          ) : (
+            <p className="text-foreground whitespace-pre-wrap leading-relaxed">
+              {post.content}
+            </p>
+          )}
 
           {post.media_url && (
             <div className="rounded-lg overflow-hidden border">
-              <img 
-                src={post.media_url} 
-                alt="Post media" 
-                className="w-full h-auto max-h-96 object-cover"
-              />
+              {post.type === 'video' ? (
+                <video 
+                  src={post.media_url} 
+                  controls
+                  className="w-full h-auto max-h-96 object-cover"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <img 
+                  src={post.media_url} 
+                  alt="Post media" 
+                  className="w-full h-auto max-h-96 object-cover"
+                />
+              )}
             </div>
           )}
 
