@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -15,9 +15,15 @@ import { uploadMedia } from '@/lib/uploadMedia';
 const ProfileEdit = () => {
   const { profile, user, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  // Get the previous location or default to profile
+  const getPreviousLocation = () => {
+    return location.state?.from || '/app/profile';
+  };
 
   // Form state
   const [formData, setFormData] = useState({
@@ -128,7 +134,7 @@ const ProfileEdit = () => {
         description: "Your profile has been updated successfully",
       });
       
-      navigate('/app/profile');
+      navigate(getPreviousLocation());
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
@@ -151,7 +157,7 @@ const ProfileEdit = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/app/profile')}
+                onClick={() => navigate(getPreviousLocation())}
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
