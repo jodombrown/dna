@@ -57,12 +57,12 @@ export const usePaginatedPosts = ({
           created_at,
           author_id,
           embed_metadata,
-          profiles!posts_author_id_fkey (
+          profiles!author_id (
             id,
             full_name,
             avatar_url,
             location,
-            professional_role
+            profession
           )
         `)
         .eq('visibility', 'public')
@@ -76,9 +76,12 @@ export const usePaginatedPosts = ({
 
       const { data: postsData, error: postsError } = await query;
 
-      if (postsError) throw postsError;
+      if (postsError) {
+        console.error('Error fetching posts:', postsError);
+        throw postsError;
+      }
 
-      if (!postsData) {
+      if (!postsData || postsData.length === 0) {
         if (isRefresh) {
           setPosts([]);
           setOffset(0);
@@ -136,6 +139,14 @@ export const usePaginatedPosts = ({
 
         return {
           ...post,
+          // Ensure profiles is always an object, not null
+          profiles: post.profiles || {
+            id: post.author_id,
+            full_name: 'Unknown User',
+            avatar_url: null,
+            location: null,
+            profession: null
+          },
           like_count: likeCount,
           comment_count: commentCount,
           user_has_liked: userHasLiked,

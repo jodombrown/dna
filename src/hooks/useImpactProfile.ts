@@ -78,7 +78,7 @@ export const useImpactProfile = (username: string) => {
           .select('*')
           .eq('username', username)
           .eq('is_public', true)
-          .single();
+          .maybeSingle();
 
         if (profileError || !profileData) {
           setData(prev => ({ 
@@ -94,7 +94,7 @@ export const useImpactProfile = (username: string) => {
           .from('adin_profiles')
           .select('*')
           .eq('id', profileData.id)
-          .single();
+          .maybeSingle();
 
         // Fetch user contributions
         const { data: contributionsData, error: contributionsError } = await supabase
