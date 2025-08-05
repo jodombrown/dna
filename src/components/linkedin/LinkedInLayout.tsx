@@ -39,10 +39,10 @@ const LinkedInLayout: React.FC<LinkedInLayoutProps> = ({
           <div 
             className={`
               ${isMobile 
-                ? 'min-h-[calc(100vh-200px)] px-2' 
+                ? 'min-h-[calc(100vh-200px)] px-2 pt-20' 
                 : isTablet 
-                ? 'min-h-[calc(100vh-180px)] px-3'
-                : 'h-[calc(100vh-140px)] px-1 sm:px-2'
+                ? 'min-h-[calc(100vh-180px)] px-3 pt-24'
+                : 'h-[calc(100vh-140px)] px-1 sm:px-2 pt-28'
               } 
               overflow-y-auto scrollbar-thin
             `}

@@ -20,9 +20,6 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
   const { isScrollingDown, isAtTop, scrollY } = useScrollDirection(30);
   const { isMobile } = useMobile();
 
-  // Debug logging
-  console.log('FloatingPostComposer render:', { isExpanded, isScrollingDown, isAtTop, scrollY });
-
   // Auto-collapse/expand based on scroll direction
   useEffect(() => {
     if (!isManuallyCollapsed) {
@@ -30,7 +27,7 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
         setIsExpanded(true);
       } else if (isScrollingDown && scrollY > 100) {
         setIsExpanded(false);
-      } else if (!isScrollingDown) {
+      } else if (!isScrollingDown && scrollY > 50) {
         setIsExpanded(true);
       }
     }
@@ -61,59 +58,76 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
   return (
     <div 
       className={cn(
-        "sticky z-40 transition-all duration-300 ease-out",
-        isMobile ? "top-16" : "top-16",
-        isExpanded ? "mb-6" : "mb-2"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out",
+        "bg-white/95 backdrop-blur-sm border-b border-gray-200/50",
+        isMobile ? "px-4 py-3" : "px-6 py-4"
       )}
+      style={{
+        transform: isExpanded ? 'translateY(0)' : 'translateY(-20px)',
+      }}
     >
-      {isExpanded ? (
-        <div className="relative">
-          <PostComposer 
-            defaultPillar={defaultPillar}
-            onPostCreated={handlePostCreated}
-          />
-          {/* Collapse button - only show when scrolled */}
-          {!isAtTop && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleCollapse}
-              className="absolute top-2 right-2 h-8 w-8 p-0 bg-white/80 hover:bg-white border border-gray-200 shadow-sm"
-              aria-label="Minimize composer"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-      ) : (
-        <div className={cn(
-          "bg-white border border-gray-200 rounded-lg shadow-sm transition-all duration-300",
-          isMobile ? "mx-2 p-3" : "p-4"
-        )}>
-          <Button
-            variant="ghost"
-            onClick={handleExpand}
+      <div className="max-w-2xl mx-auto">
+        {isExpanded ? (
+          <div 
             className={cn(
-              "w-full justify-start text-left h-auto p-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-all duration-200",
-              isMobile ? "text-sm" : "text-base"
+              "relative animate-fade-in",
+              "bg-white rounded-xl shadow-lg border border-gray-200",
+              "transition-all duration-300 ease-out"
             )}
           >
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-dna-mint rounded-full flex items-center justify-center">
-                  <Pencil className="w-4 h-4 text-dna-forest" />
+            <PostComposer 
+              defaultPillar={defaultPillar}
+              onPostCreated={handlePostCreated}
+            />
+            {/* Collapse button - only show when scrolled */}
+            {!isAtTop && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCollapse}
+                className="absolute top-3 right-3 h-8 w-8 p-0 bg-white/90 hover:bg-white border border-gray-200 shadow-sm"
+                aria-label="Minimize composer"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div 
+            className={cn(
+              "animate-scale-in",
+              "bg-white border border-gray-200 rounded-xl shadow-md transition-all duration-300"
+            )}
+          >
+            <Button
+              variant="ghost"
+              onClick={handleExpand}
+              className={cn(
+                "w-full justify-start text-left h-auto p-4",
+                "bg-gradient-to-r from-gray-50 to-white",
+                "hover:from-gray-100 hover:to-gray-50",
+                "border-0 rounded-xl transition-all duration-200",
+                "hover-scale",
+                isMobile ? "text-sm" : "text-base"
+              )}
+            >
+              <div className="flex items-center space-x-4">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-gradient-to-r from-dna-mint to-dna-sage rounded-full flex items-center justify-center shadow-sm">
+                    <Pencil className="w-5 h-5 text-dna-forest" />
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-gray-600 font-medium">Share something with the community...</span>
+                </div>
+                <div className="flex-shrink-0">
+                  <ChevronUp className="w-5 h-5 text-gray-400 transition-transform duration-200 group-hover:text-gray-600" />
                 </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <span className="text-gray-600">Share something with the community...</span>
-              </div>
-              <div className="flex-shrink-0">
-                <ChevronUp className="w-4 h-4 text-gray-400" />
-              </div>
-            </div>
-          </Button>
-        </div>
-      )}
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
