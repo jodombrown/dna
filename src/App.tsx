@@ -54,7 +54,7 @@ function App() {
             <Routes>
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard><Auth /></AuthGuard>} />
-              <Route path="/onboarding" element={<AuthGuard><Onboarding /></AuthGuard>} />
+              <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/post-onboarding" element={<PostOnboardingFlow />} />
               <Route path="/app/*" element={<AppDashboard />} />
               <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />
