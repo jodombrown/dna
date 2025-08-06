@@ -37,9 +37,8 @@ const DashboardV1Wrapper = () => {
   ];
 
   const handleEnterDashboard = () => {
-    // This would redirect to the preserved dashboard
-    // For now, we'll show the current dashboard
-    navigate('/app');
+    // Navigate to the actual v1 dashboard experience
+    navigate('/app/dashboard');
   };
 
   return (
