@@ -17,7 +17,9 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isManuallyCollapsed, setIsManuallyCollapsed] = useState(false);
+  const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const lastActionRef = useRef<'expand' | 'collapse' | null>(null);
+  const manualTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { isScrollingDown, isAtTop, scrollY } = useScrollDirection();
   const { isMobile } = useMobile();
 
@@ -27,7 +29,7 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
 
   // Auto-collapse/expand logic with proper hysteresis
   useEffect(() => {
-    if (isManuallyCollapsed) return;
+    if (isManuallyCollapsed || isManuallyExpanded) return;
     
     const shouldExpand = isAtTop || (!isScrollingDown && scrollY <= EXPAND_THRESHOLD && lastActionRef.current !== 'expand');
     const shouldCollapse = isScrollingDown && scrollY >= COLLAPSE_THRESHOLD && lastActionRef.current !== 'collapse';
@@ -39,12 +41,23 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
       setIsExpanded(false);
       lastActionRef.current = 'collapse';
     }
-  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed]); // Removed isExpanded to prevent conflicts
+  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed, isManuallyExpanded]);
 
   const handleExpand = useCallback(() => {
+    // Clear any existing timeout
+    if (manualTimeoutRef.current) {
+      clearTimeout(manualTimeoutRef.current);
+    }
+    
     setIsExpanded(true);
     setIsManuallyCollapsed(false);
+    setIsManuallyExpanded(true);
     lastActionRef.current = 'expand';
+    
+    // Clear manual expand state after 2 seconds to resume auto behavior
+    manualTimeoutRef.current = setTimeout(() => {
+      setIsManuallyExpanded(false);
+    }, 2000);
   }, []);
 
   const handleCollapse = useCallback(() => {
@@ -54,9 +67,15 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
   }, []);
 
   const handlePostCreated = useCallback(() => {
+    // Clear any manual timeouts
+    if (manualTimeoutRef.current) {
+      clearTimeout(manualTimeoutRef.current);
+    }
+    
     // Collapse after posting
     setIsExpanded(false);
     setIsManuallyCollapsed(true);
+    setIsManuallyExpanded(false);
     onPostCreated?.();
     
     // Reset manual collapse after a delay
