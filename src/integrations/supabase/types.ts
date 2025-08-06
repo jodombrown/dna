@@ -2093,6 +2093,7 @@ export type Database = {
           created_at: string
           current_country: string | null
           current_location: string | null
+          dashboard_version: string | null
           diaspora_origin: string | null
           display_name: string | null
           email: string | null
@@ -2170,6 +2171,7 @@ export type Database = {
           created_at?: string
           current_country?: string | null
           current_location?: string | null
+          dashboard_version?: string | null
           diaspora_origin?: string | null
           display_name?: string | null
           email?: string | null
@@ -2247,6 +2249,7 @@ export type Database = {
           created_at?: string
           current_country?: string | null
           current_location?: string | null
+          dashboard_version?: string | null
           diaspora_origin?: string | null
           display_name?: string | null
           email?: string | null
