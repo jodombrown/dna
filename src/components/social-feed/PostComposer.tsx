@@ -122,7 +122,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (status: 'draft' | 'published' = 'published') => {
     if (!user) {
       toast({
         title: "Authentication required",
@@ -167,6 +167,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
           author_id: user.id,
           user_id: user.id,
           visibility: 'public',
+          status: status,
           media_url: mediaUrl,
           embed_metadata: embedData ? JSON.parse(JSON.stringify(embedData)) : null
         });
@@ -174,8 +175,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       if (error) throw error;
 
       toast({
-        title: "Post created!",
-        description: "Your post has been shared successfully.",
+        title: status === 'draft' ? "Draft saved!" : "Post created!",
+        description: status === 'draft' ? "Your draft has been saved." : "Your post has been shared successfully.",
       });
 
       // Reset form
@@ -372,23 +373,33 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                       {uploading ? 'Uploading...' : 'Add Media'}
                     </Button>
                   </div>
-                  <Button 
-                    onClick={handleSubmit}
-                    disabled={isPosting || !content.trim() || embedLoading || uploading}
-                    className="bg-dna-forest hover:bg-dna-forest/90"
-                  >
-                    {isPosting ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Posting...
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <Send className="h-4 w-4" />
-                        Post
-                      </div>
-                    )}
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      onClick={() => handleSubmit('draft')}
+                      disabled={isPosting || !content.trim() || embedLoading || uploading}
+                      variant="outline"
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      Save Draft
+                    </Button>
+                    <Button 
+                      onClick={() => handleSubmit('published')}
+                      disabled={isPosting || !content.trim() || embedLoading || uploading}
+                      className="bg-dna-forest hover:bg-dna-forest/90"
+                    >
+                      {isPosting ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Posting...
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Send className="h-4 w-4" />
+                          Post
+                        </div>
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>

@@ -12,6 +12,7 @@ export interface Post {
   type: string;
   pillar: string;
   created_at: string;
+  author_id: string;
   embed_metadata?: any;
   profiles: {
     id: string;
@@ -23,6 +24,7 @@ export interface Post {
   like_count?: number;
   comment_count?: number;
   user_has_liked?: boolean;
+  user_has_saved?: boolean;
 }
 
 interface PostListProps {

@@ -56,6 +56,7 @@ export const usePaginatedPosts = ({
           pillar,
           created_at,
           author_id,
+          status,
           embed_metadata,
           profiles!author_id (
             id,
@@ -65,6 +66,7 @@ export const usePaginatedPosts = ({
             profession
           )
         `)
+        .eq('status', 'published')
         .eq('visibility', 'public')
         .order('created_at', { ascending: false })
         .range(currentOffset, currentOffset + limit - 1);

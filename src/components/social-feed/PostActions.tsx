@@ -1,30 +1,49 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Share } from 'lucide-react';
+import { Heart, MessageCircle, Share, Bookmark, Trash2, Edit, MoreHorizontal } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface PostActionsProps {
   postId: string;
+  authorId: string;
   initialLikeCount: number;
   initialCommentCount: number;
   initialIsLiked: boolean;
+  initialIsSaved?: boolean;
   onComment?: (postId: string) => void;
+  onEdit?: (postId: string) => void;
+  onDelete?: (postId: string) => void;
 }
 
 export const PostActions: React.FC<PostActionsProps> = ({
   postId,
+  authorId,
   initialLikeCount,
   initialCommentCount,
   initialIsLiked,
-  onComment
+  initialIsSaved = false,
+  onComment,
+  onEdit,
+  onDelete
 }) => {
   const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [isSaved, setIsSaved] = useState(initialIsSaved);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isLiking, setIsLiking] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+
+  const isAuthor = user?.id === authorId;
 
   const handleLike = async () => {
     if (!user) {
@@ -77,6 +96,93 @@ export const PostActions: React.FC<PostActionsProps> = ({
     }
   };
 
+  const handleSave = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to save posts",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (isSaving) return;
+    setIsSaving(true);
+
+    // Optimistic update
+    const newIsSaved = !isSaved;
+    setIsSaved(newIsSaved);
+
+    try {
+      if (newIsSaved) {
+        // Save post
+        await supabase
+          .from('saved_posts')
+          .insert({
+            post_id: postId,
+            user_id: user.id
+          });
+      } else {
+        // Unsave post
+        await supabase
+          .from('saved_posts')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', user.id);
+      }
+
+      toast({
+        title: newIsSaved ? "Post saved!" : "Post unsaved",
+        description: newIsSaved ? "Added to your saved posts" : "Removed from saved posts",
+      });
+    } catch (error) {
+      // Revert optimistic update on error
+      setIsSaved(!newIsSaved);
+      
+      console.error('Error toggling save:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save post. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!user || !isAuthor) return;
+
+    if (isDeleting) return;
+    setIsDeleting(true);
+
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', postId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Post deleted",
+        description: "Your post has been successfully deleted.",
+      });
+
+      onDelete?.(postId);
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete post. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const handleComment = () => {
     onComment?.(postId);
   };
@@ -126,18 +232,64 @@ export const PostActions: React.FC<PostActionsProps> = ({
           <MessageCircle className="h-4 w-4" />
           <span>{initialCommentCount}</span>
         </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleSave}
+          disabled={isSaving}
+          className={`gap-2 transition-colors ${
+            isSaved 
+              ? 'text-dna-gold hover:text-dna-gold/80' 
+              : 'text-muted-foreground hover:text-dna-gold'
+          }`}
+          aria-label={`${isSaved ? 'Unsave' : 'Save'} this post`}
+        >
+          <Bookmark className={`h-4 w-4 transition-transform ${isSaved ? 'fill-current scale-110' : ''}`} />
+        </Button>
       </div>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleShare}
-        className="gap-2 text-muted-foreground hover:text-foreground transition-colors"
-        aria-label="Share this post"
-      >
-        <Share className="h-4 w-4" />
-        Share
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleShare}
+          className="gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Share this post"
+        >
+          <Share className="h-4 w-4" />
+          Share
+        </Button>
+
+        {isAuthor && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="More options"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onEdit?.(postId)}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Post
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="text-destructive focus:text-destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {isDeleting ? 'Deleting...' : 'Delete Post'}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
     </div>
   );
 };

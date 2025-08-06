@@ -44,6 +44,17 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment }) => {
     setShowComments(!showComments);
     onComment?.(post.id);
   };
+
+  const handleEdit = (postId: string) => {
+    // TODO: Implement edit functionality
+    console.log('Edit post:', postId);
+  };
+
+  const handleDelete = (postId: string) => {
+    // Handle post deletion by removing from list
+    console.log('Post deleted:', postId);
+    // This could trigger a refresh of the post list
+  };
   return (
     <Card 
       className="bg-background border-border hover:bg-accent/5 transition-colors"
@@ -147,10 +158,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment }) => {
             
             <PostActions
               postId={post.id}
+              authorId={post.author_id}
               initialLikeCount={post.like_count || 0}
               initialCommentCount={post.comment_count || 0}
               initialIsLiked={post.user_has_liked || false}
+              initialIsSaved={post.user_has_saved || false}
               onComment={handleCommentToggle}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           </div>
 

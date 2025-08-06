@@ -1980,6 +1980,7 @@ export type Database = {
           media_url: string | null
           pillar: string
           shared_post_id: string | null
+          status: string | null
           type: string | null
           updated_at: string | null
           user_id: string
@@ -1995,6 +1996,7 @@ export type Database = {
           media_url?: string | null
           pillar: string
           shared_post_id?: string | null
+          status?: string | null
           type?: string | null
           updated_at?: string | null
           user_id: string
@@ -2010,6 +2012,7 @@ export type Database = {
           media_url?: string | null
           pillar?: string
           shared_post_id?: string | null
+          status?: string | null
           type?: string | null
           updated_at?: string | null
           user_id?: string
@@ -2445,6 +2448,27 @@ export type Database = {
           scheduled_at?: string
           sent_at?: string | null
           status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      saved_posts: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_id?: string
           user_id?: string
         }
         Relationships: []
