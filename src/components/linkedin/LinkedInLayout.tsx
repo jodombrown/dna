@@ -16,10 +16,10 @@ const LinkedInLayout: React.FC<LinkedInLayoutProps> = ({
   
   return (
     <div className="w-full -mt-8 pb-16 lg:pb-0">
-      <div className="flex max-w-full 2xl:max-w-[2400px] mx-auto gap-3 lg:gap-4 2xl:gap-6 px-2 sm:px-3 2xl:px-6">
+      <div className="grid grid-cols-12 gap-2 lg:gap-4 2xl:gap-6 max-w-full 2xl:max-w-[2400px] mx-auto px-2 sm:px-3 2xl:px-6">
         {/* Left Sidebar - Hidden on mobile/tablet */}
         {leftSidebar && !isMobile && !isTablet && (
-          <div className="w-[30%] flex-shrink-0">
+          <div className="col-span-3">
             <div className="h-[calc(100vh-140px)] overflow-y-auto scrollbar-thin pr-3">
               {leftSidebar}
             </div>
@@ -29,13 +29,13 @@ const LinkedInLayout: React.FC<LinkedInLayoutProps> = ({
         {/* Main Content - Responsive width based on device */}
         <div className={`${
           isMobile || isTablet 
-            ? 'w-full' 
+            ? 'col-span-12' 
             : leftSidebar && rightSidebar 
-            ? 'w-[40%]' 
+            ? 'col-span-6' 
             : leftSidebar || rightSidebar 
-            ? 'w-[70%]' 
-            : 'w-full'
-        } flex-shrink-0`}>
+            ? 'col-span-9' 
+            : 'col-span-12'
+        }`}>
           <div 
             className={`
               ${isMobile 
@@ -54,7 +54,7 @@ const LinkedInLayout: React.FC<LinkedInLayoutProps> = ({
 
         {/* Right Sidebar - Hidden on mobile/tablet */}
         {rightSidebar && !isMobile && !isTablet && (
-          <div className="w-[30%] flex-shrink-0">
+          <div className="col-span-3">
             <div className="h-[calc(100vh-140px)] overflow-y-auto scrollbar-thin pl-3">
               {rightSidebar}
             </div>

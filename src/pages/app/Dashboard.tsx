@@ -36,11 +36,11 @@ const Dashboard = () => {
       
       {/* Four Pillars Navigation */}
       <Tabs value={activePillar} onValueChange={handlePillarChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1">
-          <TabsTrigger value="feed" className="text-xs sm:text-sm truncate">Feed</TabsTrigger>
-          <TabsTrigger value="connect" className="text-xs sm:text-sm truncate">Connect</TabsTrigger>
-          <TabsTrigger value="collaborate" className="text-xs sm:text-sm truncate">Collab</TabsTrigger>
-          <TabsTrigger value="contribute" className="text-xs sm:text-sm truncate">Contrib</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 gap-1 h-auto">
+          <TabsTrigger value="feed" className="text-sm font-medium px-2 py-2 whitespace-nowrap">Feed</TabsTrigger>
+          <TabsTrigger value="connect" className="text-sm font-medium px-2 py-2 whitespace-nowrap">Connect</TabsTrigger>
+          <TabsTrigger value="collaborate" className="text-sm font-medium px-2 py-2 whitespace-nowrap">Collaborate</TabsTrigger>
+          <TabsTrigger value="contribute" className="text-sm font-medium px-2 py-2 whitespace-nowrap">Contribute</TabsTrigger>
         </TabsList>
         
         <TabsContent value="feed" className="mt-4">
