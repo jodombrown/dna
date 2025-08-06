@@ -8,12 +8,8 @@ import { DashboardProvider } from '@/contexts/DashboardContext';
 import Dashboard from './app/Dashboard';
 import Search from './app/Search';
 import Connect from './app/Connect';
-import Messages from './app/Messages';
-import Events from './app/Events';
-import Communities from './app/Communities';
 import Profile from './app/Profile';
 import ProfileEdit from './app/ProfileEdit';
-import Settings from './app/Settings';
 import Admin from './app/Admin';
 import Invites from './app/Invites';
 
@@ -63,12 +59,8 @@ const App = () => {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="search" element={<Search />} />
             <Route path="connect" element={<Connect />} />
-            <Route path="messages" element={<Messages />} />
-            <Route path="events" element={<Events />} />
-            <Route path="communities" element={<Communities />} />
             <Route path="profile" element={<Profile />} />
             <Route path="profile/edit" element={<ProfileEdit />} />
-            <Route path="settings" element={<Settings />} />
             <Route path="invites" element={<Invites />} />
             <Route path="admin" element={<Admin />} />
           </Routes>
