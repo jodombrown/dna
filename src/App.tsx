@@ -71,7 +71,7 @@ function App() {
               <Route path="/invite" element={<InviteSignup />} />
               
               {/* Dashboard V1 Access Route */}
-              <Route path="/dashboard-v1" element={<DashboardV1Wrapper />} />
+              <Route path="/app/v1" element={<DashboardV1Wrapper />} />
               
               {/* Password Reset Routes */}
               <Route path="/reset-password" element={<AuthGuard><ResetPassword /></AuthGuard>} />

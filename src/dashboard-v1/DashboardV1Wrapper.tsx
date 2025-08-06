@@ -48,16 +48,6 @@ const DashboardV1Wrapper = () => {
         <MobileLayout variant="padded" spacing="sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              {!isMobile && (
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => navigate('/app')}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to New Experience
-                </Button>
-              )}
               <Logo />
               {!isMobile && (
                 <div>
@@ -81,11 +71,10 @@ const DashboardV1Wrapper = () => {
       <MobileLayout variant="padded" spacing="lg">
         <div className="text-center mb-8">
           <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-dna-forest mb-4`}>
-            Preserved Implementation
+            DNA Platform v1
           </h2>
           <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 max-w-3xl mx-auto`}>
-            This is the complete LinkedIn-style dashboard that was developed as the foundation 
-            for the DNA platform. All functionality, components, and data remain intact.
+            Complete LinkedIn-style dashboard with full functionality for team review and reflection.
           </p>
         </div>
 
@@ -111,16 +100,15 @@ const DashboardV1Wrapper = () => {
           })}
         </div>
 
-        {/* Status Card */}
+        {/* Access Card */}
         <Card className="bg-dna-mint/5 border-dna-mint/20">
           <CardContent className="pt-6">
             <div className="text-center">
               <h3 className="text-lg font-semibold text-dna-forest mb-2">
-                Preservation Status: Complete
+                Ready for Review
               </h3>
               <p className="text-gray-600 mb-4">
-                All components, hooks, contexts, and database relationships are preserved 
-                and ready for reference or reactivation.
+                Access the full v1 dashboard with all features and functionality intact.
               </p>
               <div className="flex justify-center">
                 <MobileButton 
@@ -128,7 +116,7 @@ const DashboardV1Wrapper = () => {
                   className="bg-dna-copper hover:bg-dna-copper/90 text-white"
                   fullWidth={isMobile}
                 >
-                  Access Preserved Dashboard
+                  Access Dashboard v1
                 </MobileButton>
               </div>
             </div>
