@@ -209,7 +209,7 @@ const FirstActionStep: React.FC<FirstActionStepProps> = ({ data, updateData }) =
       <div className="text-center pt-4">
         <Button 
           variant="ghost" 
-          onClick={() => navigate('/app/dashboard')}
+          onClick={() => navigate('/app/v1')}
           className="text-gray-500 hover:text-dna-forest"
         >
           Skip for now - take me to my dashboard

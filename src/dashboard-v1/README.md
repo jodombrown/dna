@@ -36,7 +36,7 @@ VALUES ('enable_dashboard_v1', true);
 ```
 
 ### Via Direct Route
-Access preserved dashboard at `/dashboard-v1/*` routes
+Access preserved dashboard at `/app/v1` route
 
 ## Migration Notes
 - All hooks are preserved in `hooks/` subdirectory

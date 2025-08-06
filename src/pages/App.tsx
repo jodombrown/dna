@@ -3,7 +3,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Routes, Route } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { MobileNavigation, MobilePostButton } from '@/components/mobile';
-import NewExperienceHome from './app/NewExperienceHome';
 import { DashboardProvider } from '@/contexts/DashboardContext';
 // V1 Dashboard imports (preserved)
 import Dashboard from './app/Dashboard';
@@ -57,10 +56,10 @@ const App = () => {
         {/* Main Content */}
         <main className="pt-16 pb-20 lg:pb-0">
           <Routes>
-            {/* New Experience Routes */}
-            <Route index element={<NewExperienceHome />} />
+            {/* Redirect to v1 dashboard by default */}
+            <Route index element={<Dashboard />} />
             
-            {/* V1 Dashboard Routes (preserved - accessible via feature flag or direct navigation) */}
+            {/* V1 Dashboard Routes */}
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="search" element={<Search />} />
             <Route path="connect" element={<Connect />} />
