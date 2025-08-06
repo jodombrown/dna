@@ -104,7 +104,23 @@ const UnifiedHeader = () => {
   };
 
   const handleAuthNavigation = (view: string) => {
-    if (location.pathname === '/app') {
+    // Check if we're in the v1 dashboard context
+    if (location.pathname.startsWith('/app/dashboard') || 
+        location.pathname.startsWith('/app/search') ||
+        location.pathname.startsWith('/app/connect') ||
+        location.pathname.startsWith('/app/messages') ||
+        location.pathname.startsWith('/app/events') ||
+        location.pathname.startsWith('/app/communities')) {
+      // Navigate within v1 dashboard context
+      const viewRouteMap: { [key: string]: string } = {
+        'dashboard': '/app/dashboard',
+        'search': '/app/search', 
+        'network': '/app/connect',
+        'messaging': '/app/messages',
+        'notifications': '/app/notifications'
+      };
+      navigate(viewRouteMap[view] || '/app/dashboard');
+    } else if (location.pathname === '/app') {
       setActiveView(view as any);
     } else {
       navigate('/app');
