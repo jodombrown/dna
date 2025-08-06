@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useDebounce } from './useDebounce';
 
 interface UseScrollDirectionReturn {
   isScrollingDown: boolean;
@@ -6,35 +7,36 @@ interface UseScrollDirectionReturn {
   scrollY: number;
 }
 
-export const useScrollDirection = (threshold: number = 50): UseScrollDirectionReturn => {
-  const [isScrollingDown, setIsScrollingDown] = useState(false);
-  const [isAtTop, setIsAtTop] = useState(true);
+export const useScrollDirection = (threshold: number = 30): UseScrollDirectionReturn => {
   const [scrollY, setScrollY] = useState(0);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isAtTop, setIsAtTop] = useState(true);
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  
+  // Use refs to avoid triggering re-renders during scroll events
+  const lastScrollYRef = useRef(0);
+  const directionThresholdRef = useRef(50); // Separate threshold for direction changes
+  
+  // Debounce scroll position updates
+  const debouncedScrollY = useDebounce(scrollY, 10);
+
+  const handleScroll = useCallback(() => {
+    const scrollContainer = document.querySelector('[data-scroll-container="main"]') as HTMLElement;
+    const currentScrollY = scrollContainer?.scrollTop || window.scrollY;
+    
+    // Update scroll position immediately for smooth tracking
+    setScrollY(currentScrollY);
+    setIsAtTop(currentScrollY < 10);
+    
+    // Only update direction if scroll is significant enough
+    const scrollDiff = Math.abs(currentScrollY - lastScrollYRef.current);
+    if (scrollDiff > directionThresholdRef.current) {
+      const newDirection = currentScrollY > lastScrollYRef.current;
+      setIsScrollingDown(newDirection);
+      lastScrollYRef.current = currentScrollY;
+    }
+  }, []);
 
   useEffect(() => {
-    let lastY = 0;
-    
-    const handleScroll = () => {
-      // Check both window scroll and the main scroll container
-      const scrollContainer = document.querySelector('[data-scroll-container="main"]') as HTMLElement;
-      const currentScrollY = scrollContainer?.scrollTop || window.scrollY;
-      
-      console.log('Scroll Event:', { currentScrollY, lastY, threshold, diff: Math.abs(currentScrollY - lastY) });
-      
-      setScrollY(currentScrollY);
-      setIsAtTop(currentScrollY < 10);
-      
-      // Only update direction if scroll is significant
-      if (Math.abs(currentScrollY - lastY) > threshold) {
-        const newDirection = currentScrollY > lastY;
-        console.log('Direction change:', { from: lastScrollY, to: currentScrollY, isScrollingDown: newDirection });
-        setIsScrollingDown(newDirection);
-        lastY = currentScrollY;
-      }
-    };
-
-    // Add listener to the main scroll container only
     const scrollContainer = document.querySelector('[data-scroll-container="main"]') as HTMLElement;
     
     if (scrollContainer) {
@@ -49,7 +51,7 @@ export const useScrollDirection = (threshold: number = 50): UseScrollDirectionRe
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [threshold]);
+  }, [handleScroll]);
 
-  return { isScrollingDown, isAtTop, scrollY };
+  return { isScrollingDown, isAtTop, scrollY: debouncedScrollY };
 };

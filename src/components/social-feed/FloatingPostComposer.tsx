@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PostComposer } from './PostComposer';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { useMobile } from '@/hooks/useMobile';
@@ -18,56 +18,42 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
   const [isExpanded, setIsExpanded] = useState(true);
   const [isManuallyCollapsed, setIsManuallyCollapsed] = useState(false);
   const lastActionRef = useRef<'expand' | 'collapse' | null>(null);
-  const isExpandedRef = useRef(true);
-  const { isScrollingDown, isAtTop, scrollY } = useScrollDirection(50);
+  const { isScrollingDown, isAtTop, scrollY } = useScrollDirection();
   const { isMobile } = useMobile();
 
-  // Keep refs in sync with state
-  useEffect(() => {
-    isExpandedRef.current = isExpanded;
-  }, [isExpanded]);
+  // Wider hysteresis thresholds to prevent flickering
+  const COLLAPSE_THRESHOLD = 150; // Collapse when scrolling down past 150px
+  const EXPAND_THRESHOLD = 50;    // Expand when scrolling up above 50px
 
-  // Auto-collapse/expand based on scroll direction with hysteresis
+  // Auto-collapse/expand logic with proper hysteresis
   useEffect(() => {
-    console.log('FloatingComposer Effect:', { 
-      isManuallyCollapsed, 
-      isAtTop, 
-      isExpandedRef: isExpandedRef.current,
-      isScrollingDown, 
-      scrollY, 
-      lastActionRef: lastActionRef.current 
-    });
+    if (isManuallyCollapsed) return;
     
-    if (!isManuallyCollapsed) {
-      if (isAtTop && !isExpandedRef.current) {
-        console.log('Expanding: at top');
-        setIsExpanded(true);
-        lastActionRef.current = 'expand';
-      } else if (isScrollingDown && scrollY > 120 && lastActionRef.current !== 'collapse' && isExpandedRef.current) {
-        console.log('Collapsing: scrolling down');
-        setIsExpanded(false);
-        lastActionRef.current = 'collapse';
-      } else if (!isScrollingDown && scrollY > 80 && scrollY < 200 && lastActionRef.current !== 'expand' && !isExpandedRef.current) {
-        console.log('Expanding: scrolling up in range');
-        setIsExpanded(true);
-        lastActionRef.current = 'expand';
-      }
+    const shouldExpand = isAtTop || (!isScrollingDown && scrollY <= EXPAND_THRESHOLD && lastActionRef.current !== 'expand');
+    const shouldCollapse = isScrollingDown && scrollY >= COLLAPSE_THRESHOLD && lastActionRef.current !== 'collapse';
+    
+    if (shouldExpand && !isExpanded) {
+      setIsExpanded(true);
+      lastActionRef.current = 'expand';
+    } else if (shouldCollapse && isExpanded) {
+      setIsExpanded(false);
+      lastActionRef.current = 'collapse';
     }
-  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed]);
+  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed, isExpanded]);
 
-  const handleExpand = () => {
+  const handleExpand = useCallback(() => {
     setIsExpanded(true);
     setIsManuallyCollapsed(false);
     lastActionRef.current = 'expand';
-  };
+  }, []);
 
-  const handleCollapse = () => {
+  const handleCollapse = useCallback(() => {
     setIsExpanded(false);
     setIsManuallyCollapsed(true);
     lastActionRef.current = 'collapse';
-  };
+  }, []);
 
-  const handlePostCreated = () => {
+  const handlePostCreated = useCallback(() => {
     // Collapse after posting
     setIsExpanded(false);
     setIsManuallyCollapsed(true);
@@ -77,7 +63,7 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
     setTimeout(() => {
       setIsManuallyCollapsed(false);
     }, 2000);
-  };
+  }, [onPostCreated]);
 
   return (
     <div 
