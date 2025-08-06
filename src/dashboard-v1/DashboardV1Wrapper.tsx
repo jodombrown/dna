@@ -4,10 +4,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Database, Code, Layout, Settings2 } from 'lucide-react';
+import { useMobile } from '@/hooks/useMobile';
+import Logo from '@/components/header/Logo';
+import { MobileButton, MobileLayout } from '@/components/mobile';
 
 const DashboardV1Wrapper = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
+  const { isMobile } = useMobile();
 
   const features = [
     {
@@ -42,44 +46,52 @@ const DashboardV1Wrapper = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <MobileLayout variant="padded" spacing="sm">
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/app')}
-                className="mr-4"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to New Experience
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-dna-forest">Dashboard v1</h1>
-                <p className="text-sm text-gray-600">Preserved LinkedIn-style implementation</p>
-              </div>
+            <div className="flex items-center space-x-4">
+              {!isMobile && (
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => navigate('/app')}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to New Experience
+                </Button>
+              )}
+              <Logo />
+              {!isMobile && (
+                <div>
+                  <h1 className="text-2xl font-bold text-dna-forest">Dashboard v1</h1>
+                  <p className="text-sm text-gray-600">Preserved LinkedIn-style implementation</p>
+                </div>
+              )}
             </div>
-            <Button onClick={handleEnterDashboard}>
-              Enter Dashboard
-            </Button>
+            <MobileButton 
+              onClick={handleEnterDashboard}
+              size={isMobile ? "sm" : "default"}
+              className="bg-dna-copper hover:bg-dna-copper/90 text-white"
+            >
+              {isMobile ? "Enter" : "Enter Dashboard"}
+            </MobileButton>
           </div>
-        </div>
+        </MobileLayout>
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-dna-forest mb-4">
+      <MobileLayout variant="padded" spacing="lg">
+        <div className="text-center mb-8">
+          <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-dna-forest mb-4`}>
             Preserved Implementation
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 max-w-3xl mx-auto`}>
             This is the complete LinkedIn-style dashboard that was developed as the foundation 
             for the DNA platform. All functionality, components, and data remain intact.
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'md:grid-cols-2 lg:grid-cols-4 gap-6'} mb-8`}>
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
@@ -111,18 +123,10 @@ const DashboardV1Wrapper = () => {
                 All components, hooks, contexts, and database relationships are preserved 
                 and ready for reference or reactivation.
               </p>
-              <div className="flex justify-center">
-                <Button 
-                  onClick={handleEnterDashboard}
-                  className="bg-dna-copper hover:bg-dna-copper/90"
-                >
-                  Access Preserved Dashboard
-                </Button>
-              </div>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </MobileLayout>
     </div>
   );
 };
