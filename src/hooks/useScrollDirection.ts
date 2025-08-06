@@ -20,12 +20,16 @@ export const useScrollDirection = (threshold: number = 50): UseScrollDirectionRe
       const scrollContainer = document.querySelector('[data-scroll-container="main"]') as HTMLElement;
       const currentScrollY = scrollContainer?.scrollTop || window.scrollY;
       
+      console.log('Scroll Event:', { currentScrollY, lastY, threshold, diff: Math.abs(currentScrollY - lastY) });
+      
       setScrollY(currentScrollY);
       setIsAtTop(currentScrollY < 10);
       
       // Only update direction if scroll is significant
       if (Math.abs(currentScrollY - lastY) > threshold) {
-        setIsScrollingDown(currentScrollY > lastY);
+        const newDirection = currentScrollY > lastY;
+        console.log('Direction change:', { from: lastScrollY, to: currentScrollY, isScrollingDown: newDirection });
+        setIsScrollingDown(newDirection);
         lastY = currentScrollY;
       }
     };
