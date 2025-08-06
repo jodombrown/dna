@@ -30,8 +30,10 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isUserInteracting, setIsUserInteracting] = useState(false);
+  const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const composerRef = useRef<HTMLDivElement>(null);
+  const manualTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   const { uploadMedia, uploading } = useUploadPostMedia();
@@ -90,8 +92,20 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   };
 
   const handleExpand = () => {
+    // Clear any existing timeout
+    if (manualTimeoutRef.current) {
+      clearTimeout(manualTimeoutRef.current);
+    }
+    
     setIsExpanded(true);
     setIsUserInteracting(true);
+    setIsManuallyExpanded(true);
+    
+    // Clear manual expand state after 2 seconds to resume auto behavior
+    manualTimeoutRef.current = setTimeout(() => {
+      setIsManuallyExpanded(false);
+    }, 2000);
+    
     // Focus on textarea after expansion
     setTimeout(() => {
       const textarea = composerRef.current?.querySelector('textarea');
@@ -169,6 +183,13 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       clearEmbedData();
       setIsExpanded(false);
       setIsUserInteracting(false);
+      setIsManuallyExpanded(false);
+      
+      // Clear any manual timeouts
+      if (manualTimeoutRef.current) {
+        clearTimeout(manualTimeoutRef.current);
+      }
+      
       onPostCreated?.();
     } catch (error) {
       console.error('Error creating post:', error);
@@ -182,16 +203,18 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     }
   };
 
-  // Determine if composer should be collapsed
-  const shouldCollapse = !isAtTop && isScrollingDown && !isUserInteracting && !content.trim() && !selectedFile && !embedData;
+  // Determine if composer should be collapsed - only when not manually expanded
+  const shouldCollapse = !isAtTop && isScrollingDown && !isUserInteracting && !content.trim() && !selectedFile && !embedData && !isManuallyExpanded;
   const isCollapsed = shouldCollapse && !isExpanded;
 
-  // Auto-expand on scroll up or when user has content
+  // Auto-expand on scroll up or when user has content - only when not manually expanded
   useEffect(() => {
+    if (isManuallyExpanded) return;
+    
     if (!isScrollingDown || isUserInteracting || content.trim() || selectedFile || embedData) {
       setIsExpanded(true);
     }
-  }, [isScrollingDown, isUserInteracting, content, selectedFile, embedData]);
+  }, [isScrollingDown, isUserInteracting, content, selectedFile, embedData, isManuallyExpanded]);
 
   if (!user) {
     return (
