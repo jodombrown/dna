@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDashboard } from '@/contexts/DashboardContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 import { 
-  Home, 
+  Home,
   Users, 
   MessageSquare, 
   Bell,
@@ -44,6 +45,7 @@ import { publicNavItems, phases } from './header/navigationConfig';
 
 const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -86,6 +88,15 @@ const UnifiedHeader = () => {
   const handleBetaSignup = () => {
     setIsMobileMenuOpen(false);
     setIsBetaSignupOpen(true);
+  };
+
+  const handleSignInClick = () => {
+    setIsMobileMenuOpen(false);
+    toast({
+      title: "Coming Soon",
+      description: "We're currently in development and will activate sign-in when we're ready for our beta users. Stay tuned!",
+      duration: 5000,
+    });
   };
 
   const handleNavClick = (item: { name: string; path: string }) => {
@@ -256,7 +267,7 @@ const UnifiedHeader = () => {
                   </nav>
                   
                   <Button
-                    onClick={() => navigate('/auth')}
+                    onClick={handleSignInClick}
                     className="bg-dna-copper hover:bg-dna-gold text-white hidden md:inline-flex"
                   >
                     Sign In
@@ -391,10 +402,7 @@ const UnifiedHeader = () => {
                             
                             <Button
                               className="justify-start text-left bg-dna-forest text-white hover:bg-dna-forest/90 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                              onClick={() => {
-                                navigate('/auth');
-                                setIsMobileMenuOpen(false);
-                              }}
+                              onClick={handleSignInClick}
                             >
                               Sign In
                             </Button>
