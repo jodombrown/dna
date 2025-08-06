@@ -123,6 +123,15 @@ const DashboardV1Wrapper = () => {
                 All components, hooks, contexts, and database relationships are preserved 
                 and ready for reference or reactivation.
               </p>
+              <div className="flex justify-center">
+                <MobileButton 
+                  onClick={handleEnterDashboard}
+                  className="bg-dna-copper hover:bg-dna-copper/90 text-white"
+                  fullWidth={isMobile}
+                >
+                  Access Preserved Dashboard
+                </MobileButton>
+              </div>
             </div>
           </CardContent>
         </Card>
