@@ -13,6 +13,7 @@ import { useUploadPostMedia } from './useUploadPostMedia';
 import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
 import { EmbedPreview } from './EmbedPreview';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { useMobile } from '@/hooks/useMobile';
 
 interface PostComposerProps {
   defaultPillar?: string;
@@ -39,6 +40,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   const { uploadMedia, uploading } = useUploadPostMedia();
   const { loading: embedLoading, embedData, handleContentChange: detectEmbeds, clearEmbedData } = useAutoEmbedDetection();
   const { isScrollingDown, isAtTop } = useScrollDirection(30);
+  const { isMobile } = useMobile();
 
   const getPillarColor = (pillarValue: string) => {
     switch (pillarValue) {
@@ -231,15 +233,15 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   return (
     <div 
       ref={composerRef}
-      className={`sticky top-0 z-40 transition-all duration-300 ${
-        isAtTop ? '' : 'backdrop-blur-sm bg-background/95 border-b border-border'
+      className={`${isMobile ? '' : 'sticky top-0 z-40'} transition-all duration-300 ${
+        !isMobile && !isAtTop ? 'backdrop-blur-sm bg-background/95 border-b border-border' : ''
       }`}
     >
-      <Card className={`bg-transparent border-transparent transition-all duration-300 ${
+      <Card className={`${isMobile ? 'bg-white border-border shadow-sm' : `bg-transparent border-transparent transition-all duration-300 ${
         isCollapsed ? 'shadow-none' : 'bg-background border-border'
-      }`}>
-        <CardContent className={`transition-all duration-300 ${isCollapsed ? 'p-3' : 'p-6'}`}>
-          {isCollapsed ? (
+      }`}`}>
+        <CardContent className={`${isMobile ? 'p-4' : `transition-all duration-300 ${isCollapsed ? 'p-3' : 'p-6'}`}`}>
+          {!isMobile && isCollapsed ? (
             // Collapsed State
             <div 
               className="flex items-center gap-3 cursor-pointer hover:bg-muted/50 rounded-lg p-3 transition-colors"
@@ -263,7 +265,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
               </Badge>
             </div>
           ) : (
-            // Expanded State
+            // Expanded State (Desktop) or Mobile State
             <div className="flex gap-3">
               <Avatar className="h-12 w-12">
                 <AvatarImage src={user.user_metadata?.avatar_url} alt={user.user_metadata?.full_name} />
@@ -285,13 +287,13 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                       <SelectItem value="contribute">Contribute</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Badge 
-                    variant="secondary" 
-                    className={`text-xs ${getPillarColor(pillar)}`}
-                  >
-                    {pillar.charAt(0).toUpperCase() + pillar.slice(1)}
-                  </Badge>
-                  {!isAtTop && (
+                   <Badge 
+                     variant="secondary" 
+                     className={`text-xs ${getPillarColor(pillar)}`}
+                   >
+                     {pillar.charAt(0).toUpperCase() + pillar.slice(1)}
+                   </Badge>
+                   {!isMobile && !isAtTop && (
                     <Button
                       variant="ghost"
                       size="sm"

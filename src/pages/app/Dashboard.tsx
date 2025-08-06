@@ -11,7 +11,7 @@ import MessagingMainContent from '@/components/linkedin/MessagingMainContent';
 import NotificationsMainContent from '@/components/linkedin/NotificationsMainContent';
 import EnhancedCommunityPulseDashboard from '@/components/metrics/EnhancedCommunityPulseDashboard';
 import MobileProfileMainContent from '@/components/mobile/MobileProfileMainContent';
-import MobileMenuView from '@/components/mobile/MobileMenuView';
+
 import MobileSettingsView from '@/components/mobile/MobileSettingsView';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDashboard } from '@/contexts/DashboardContext';
@@ -69,7 +69,6 @@ const Dashboard = () => {
       {activeView === 'messaging' && <MessagingMainContent />}
       {activeView === 'notifications' && <NotificationsMainContent />}
       {activeView === 'profile' && <MobileProfileMainContent />}
-      {activeView === 'menu' && <MobileMenuView />}
       {activeView === 'settings' && <MobileSettingsView />}
       {activeView === 'metrics' && <EnhancedCommunityPulseDashboard />}
       {activeView === 'dashboard' && (

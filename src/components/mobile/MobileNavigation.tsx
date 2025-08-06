@@ -35,7 +35,7 @@ const MobileNavigation = () => {
     { title: 'Home', view: 'dashboard', icon: Home },
     { title: 'Network', view: 'network', icon: Users },
     { title: 'Messages', view: 'messaging', icon: MessageSquare, badge: 0 },
-    { title: 'Menu', view: 'menu', icon: Menu },
+    { title: 'Search', view: 'search', icon: Search },
     { title: 'Profile', view: 'profile', icon: User },
   ];
 

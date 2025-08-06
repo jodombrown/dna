@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Routes, Route } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
-import { MobileNavigation } from '@/components/mobile';
+import { MobileNavigation, MobilePostButton } from '@/components/mobile';
 import Dashboard from './app/Dashboard';
 import { DashboardProvider } from '@/contexts/DashboardContext';
 import Search from './app/Search';
@@ -69,6 +69,7 @@ const App = () => {
           </Routes>
         </main>
         <MobileNavigation />
+        <MobilePostButton />
       </div>
     </DashboardProvider>
   );

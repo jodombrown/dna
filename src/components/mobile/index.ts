@@ -4,6 +4,7 @@ export { default as MobileGrid } from './MobileGrid';
 export { default as MobileCard } from './MobileCard';
 export { default as MobileButton } from './MobileButton';
 export { default as MobileNavigation } from './MobileNavigation';
+export { default as MobilePostButton } from './MobilePostButton';
 
 // Mobile Views
 export { default as MobileMessagingView } from './MobileMessagingView';
