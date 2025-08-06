@@ -33,6 +33,8 @@ interface PostListProps {
   hasMore?: boolean;
   onLoadMore?: () => void;
   onRefresh?: () => void;
+  onEdit?: (post: Post) => void;
+  onDelete?: (postId: string) => void;
   emptyMessage?: string;
 }
 
@@ -42,6 +44,8 @@ export const PostList: React.FC<PostListProps> = ({
   hasMore = false,
   onLoadMore,
   onRefresh,
+  onEdit,
+  onDelete,
   emptyMessage = "No posts yet."
 }) => {
   if (isLoading && posts.length === 0) {
@@ -90,6 +94,8 @@ export const PostList: React.FC<PostListProps> = ({
           <PostCard
             key={post.id}
             post={post}
+            onEdit={onEdit}
+            onDelete={onDelete}
           />
         ))}
         

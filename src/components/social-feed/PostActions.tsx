@@ -170,6 +170,7 @@ export const PostActions: React.FC<PostActionsProps> = ({
         description: "Your post has been successfully deleted.",
       });
 
+      // Call the onDelete callback to update parent component
       onDelete?.(postId);
     } catch (error) {
       console.error('Error deleting post:', error);

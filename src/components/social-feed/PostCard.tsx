@@ -13,6 +13,8 @@ import type { Post } from './PostList';
 interface PostCardProps {
   post: Post;
   onComment?: (postId: string) => void;
+  onEdit?: (post: Post) => void;
+  onDelete?: (postId: string) => void;
 }
 
 const getPillarColor = (pillar: string) => {
@@ -37,7 +39,7 @@ const getInitials = (name: string) => {
     .slice(0, 2);
 };
 
-export const PostCard: React.FC<PostCardProps> = ({ post, onComment }) => {
+export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onDelete }) => {
   const [showComments, setShowComments] = useState(false);
   
   const handleCommentToggle = () => {
@@ -46,14 +48,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment }) => {
   };
 
   const handleEdit = (postId: string) => {
-    // TODO: Implement edit functionality
-    console.log('Edit post:', postId);
+    onEdit?.(post);
   };
 
   const handleDelete = (postId: string) => {
-    // Handle post deletion by removing from list
-    console.log('Post deleted:', postId);
-    // This could trigger a refresh of the post list
+    onDelete?.(postId);
   };
   return (
     <Card 

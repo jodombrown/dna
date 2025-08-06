@@ -3,7 +3,8 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { FloatingPostComposer } from './FloatingPostComposer';
 import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 import { PillarFilter } from './PillarFilter';
-import { PostList } from './PostList';
+import { PostList, type Post } from './PostList';
+import { EditPostModal } from './EditPostModal';
 import { usePaginatedPosts } from './usePaginatedPosts';
 import { useFeedRealtime } from './useFeedRealtime';
 import { RealtimeStatus } from './RealtimeStatus';
@@ -34,6 +35,7 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
 }) => {
   const [selectedPillar, setSelectedPillar] = useState(defaultPillar);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
   
   const {
     posts,
@@ -70,6 +72,20 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
     setRefreshKey(prev => prev + 1);
   }, []);
 
+  const handleEditPost = useCallback((post: Post) => {
+    setEditingPost(post);
+  }, []);
+
+  const handleDeletePost = useCallback((postId: string) => {
+    // The delete will be handled by PostActions, here we just refresh
+    refresh();
+  }, [refresh]);
+
+  const handlePostUpdated = useCallback(() => {
+    setEditingPost(null);
+    setRefreshKey(prev => prev + 1);
+  }, []);
+
   const handlePillarChange = useCallback((pillar: string) => {
     setSelectedPillar(pillar);
   }, []);
@@ -103,12 +119,23 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
         hasMore={hasMore}
         onLoadMore={loadMore}
         onRefresh={handleRefresh}
+        onEdit={handleEditPost}
+        onDelete={handleDeletePost}
         emptyMessage={
           selectedPillar === 'feed' 
             ? "No posts yet. Be the first to share something!" 
             : `No posts in the ${selectedPillar} category yet.`
         }
       />
+
+      {editingPost && (
+        <EditPostModal
+          isOpen={!!editingPost}
+          onClose={() => setEditingPost(null)}
+          post={editingPost}
+          onPostUpdated={handlePostUpdated}
+        />
+      )}
     </div>
   );
 };
