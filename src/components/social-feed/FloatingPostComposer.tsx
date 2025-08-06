@@ -39,7 +39,7 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
       setIsExpanded(false);
       lastActionRef.current = 'collapse';
     }
-  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed, isExpanded]);
+  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed]); // Removed isExpanded to prevent conflicts
 
   const handleExpand = useCallback(() => {
     setIsExpanded(true);
