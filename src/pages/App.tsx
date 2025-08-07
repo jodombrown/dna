@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate, Routes, Route } from 'react-router-dom';
+import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { MobileNavigation, MobilePostButton } from '@/components/mobile';
 import { DashboardProvider } from '@/contexts/DashboardContext';
@@ -63,6 +63,9 @@ const App = () => {
             <Route path="profile/edit" element={<ProfileEdit />} />
             <Route path="invites" element={<Invites />} />
             <Route path="admin" element={<Admin />} />
+            
+            {/* Catch-all: redirect any undefined routes back to dashboard */}
+            <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
           </Routes>
         </main>
         <MobileNavigation />
