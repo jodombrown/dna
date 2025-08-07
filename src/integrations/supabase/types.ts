@@ -125,56 +125,6 @@ export type Database = {
         }
         Relationships: []
       }
-      adin_profiles: {
-        Row: {
-          admin_notes: string | null
-          created_at: string | null
-          display_name: string | null
-          id: string
-          influence_score: number | null
-          last_updated: string | null
-          prompted_by_event: string | null
-          region_focus: string[] | null
-          sector_focus: string[] | null
-          tags: Json | null
-          verified: boolean | null
-        }
-        Insert: {
-          admin_notes?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          id: string
-          influence_score?: number | null
-          last_updated?: string | null
-          prompted_by_event?: string | null
-          region_focus?: string[] | null
-          sector_focus?: string[] | null
-          tags?: Json | null
-          verified?: boolean | null
-        }
-        Update: {
-          admin_notes?: string | null
-          created_at?: string | null
-          display_name?: string | null
-          id?: string
-          influence_score?: number | null
-          last_updated?: string | null
-          prompted_by_event?: string | null
-          region_focus?: string[] | null
-          sector_focus?: string[] | null
-          tags?: Json | null
-          verified?: boolean | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "adin_profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       adin_signals: {
         Row: {
           created_at: string | null
@@ -222,44 +172,6 @@ export type Database = {
           {
             foreignKeyName: "adin_signals_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      admin_analytics: {
-        Row: {
-          action_type: string
-          admin_id: string | null
-          created_at: string | null
-          id: string
-          metadata: Json | null
-          target_id: string | null
-          target_type: string | null
-        }
-        Insert: {
-          action_type: string
-          admin_id?: string | null
-          created_at?: string | null
-          id?: string
-          metadata?: Json | null
-          target_id?: string | null
-          target_type?: string | null
-        }
-        Update: {
-          action_type?: string
-          admin_id?: string | null
-          created_at?: string | null
-          id?: string
-          metadata?: Json | null
-          target_id?: string | null
-          target_type?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "admin_analytics_admin_id_fkey"
-            columns: ["admin_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -376,139 +288,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-      }
-      beta_applications: {
-        Row: {
-          admin_notes: string | null
-          beta_phase: string
-          company: string | null
-          created_at: string | null
-          email: string
-          experience: string | null
-          id: string
-          magic_link_expires_at: string | null
-          magic_link_token: string | null
-          motivation: string | null
-          name: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          role: string | null
-          status: string
-          updated_at: string | null
-        }
-        Insert: {
-          admin_notes?: string | null
-          beta_phase: string
-          company?: string | null
-          created_at?: string | null
-          email: string
-          experience?: string | null
-          id?: string
-          magic_link_expires_at?: string | null
-          magic_link_token?: string | null
-          motivation?: string | null
-          name: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          role?: string | null
-          status?: string
-          updated_at?: string | null
-        }
-        Update: {
-          admin_notes?: string | null
-          beta_phase?: string
-          company?: string | null
-          created_at?: string | null
-          email?: string
-          experience?: string | null
-          id?: string
-          magic_link_expires_at?: string | null
-          magic_link_token?: string | null
-          motivation?: string | null
-          name?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          role?: string | null
-          status?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      beta_feedback: {
-        Row: {
-          created_at: string | null
-          feature_name: string
-          feedback_text: string | null
-          feedback_type: string
-          id: string
-          metadata: Json | null
-          rating: number | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          feature_name: string
-          feedback_text?: string | null
-          feedback_type: string
-          id?: string
-          metadata?: Json | null
-          rating?: number | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          feature_name?: string
-          feedback_text?: string | null
-          feedback_type?: string
-          id?: string
-          metadata?: Json | null
-          rating?: number | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "beta_feedback_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      campaign_analytics: {
-        Row: {
-          campaign_id: string | null
-          created_at: string
-          event_type: string
-          id: string
-          metadata: Json | null
-          user_id: string | null
-        }
-        Insert: {
-          campaign_id?: string | null
-          created_at?: string
-          event_type: string
-          id?: string
-          metadata?: Json | null
-          user_id?: string | null
-        }
-        Update: {
-          campaign_id?: string | null
-          created_at?: string
-          event_type?: string
-          id?: string
-          metadata?: Json | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "campaign_analytics_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "growth_campaigns"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       comments: {
         Row: {
@@ -1027,36 +806,6 @@ export type Database = {
           },
         ]
       }
-      contributions: {
-        Row: {
-          created_at: string
-          id: string
-          metadata: Json | null
-          target_id: string
-          target_title: string | null
-          type: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          metadata?: Json | null
-          target_id: string
-          target_title?: string | null
-          type: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          metadata?: Json | null
-          target_id?: string
-          target_title?: string | null
-          type?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       conversations: {
         Row: {
           created_at: string
@@ -1081,24 +830,6 @@ export type Database = {
           updated_at?: string
           user_1_id?: string
           user_2_id?: string
-        }
-        Relationships: []
-      }
-      embed_providers: {
-        Row: {
-          endpoint_url: string
-          id: number
-          provider_name: string
-        }
-        Insert: {
-          endpoint_url: string
-          id?: number
-          provider_name: string
-        }
-        Update: {
-          endpoint_url?: string
-          id?: number
-          provider_name?: string
         }
         Relationships: []
       }
@@ -1271,30 +1002,6 @@ export type Database = {
         }
         Relationships: []
       }
-      form_submissions: {
-        Row: {
-          created_at: string | null
-          email: string | null
-          id: string
-          ip_address: unknown
-          submission_type: string
-        }
-        Insert: {
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          ip_address: unknown
-          submission_type: string
-        }
-        Update: {
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          ip_address?: unknown
-          submission_type?: string
-        }
-        Relationships: []
-      }
       group_conversations: {
         Row: {
           created_at: string | null
@@ -1360,51 +1067,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      growth_campaigns: {
-        Row: {
-          content: Json | null
-          created_at: string
-          created_by: string | null
-          description: string | null
-          id: string
-          metrics: Json | null
-          name: string
-          scheduled_at: string | null
-          status: string
-          target_segment: Json | null
-          type: string
-          updated_at: string
-        }
-        Insert: {
-          content?: Json | null
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          metrics?: Json | null
-          name: string
-          scheduled_at?: string | null
-          status?: string
-          target_segment?: Json | null
-          type?: string
-          updated_at?: string
-        }
-        Update: {
-          content?: Json | null
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          id?: string
-          metrics?: Json | null
-          name?: string
-          scheduled_at?: string | null
-          status?: string
-          target_segment?: Json | null
-          type?: string
-          updated_at?: string
-        }
-        Relationships: []
       }
       impact_log: {
         Row: {
@@ -1481,36 +1143,6 @@ export type Database = {
         }
         Relationships: []
       }
-      integration_tokens: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          id: string
-          is_active: boolean | null
-          service_name: string
-          token_type: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          is_active?: boolean | null
-          service_name: string
-          token_type?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          is_active?: boolean | null
-          service_name?: string
-          token_type?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       invites: {
         Row: {
           code: string
@@ -1547,66 +1179,6 @@ export type Database = {
           role?: string | null
           used_at?: string | null
           used_by_id?: string | null
-        }
-        Relationships: []
-      }
-      launch_config: {
-        Row: {
-          current_invites: number | null
-          id: string
-          launch_date: string | null
-          launch_mode: string
-          max_invites: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          current_invites?: number | null
-          id?: string
-          launch_date?: string | null
-          launch_mode?: string
-          max_invites?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          current_invites?: number | null
-          id?: string
-          launch_date?: string | null
-          launch_mode?: string
-          max_invites?: number | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      leaderboard_cache: {
-        Row: {
-          country: string | null
-          id: string
-          leaderboard_type: string
-          rank: number
-          score: number
-          sector: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          country?: string | null
-          id?: string
-          leaderboard_type: string
-          rank: number
-          score: number
-          sector?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          country?: string | null
-          id?: string
-          leaderboard_type?: string
-          rank?: number
-          score?: number
-          sector?: string | null
-          updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
@@ -1678,42 +1250,6 @@ export type Database = {
           },
         ]
       }
-      newsletter_subscriptions: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          preferences: Json | null
-          status: string
-          subscribed_at: string
-          unsubscribed_at: string | null
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          preferences?: Json | null
-          status?: string
-          subscribed_at?: string
-          unsubscribed_at?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          preferences?: Json | null
-          status?: string
-          subscribed_at?: string
-          unsubscribed_at?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       notifications: {
         Row: {
           body: string | null
@@ -1752,151 +1288,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-      }
-      onboarding_feedback: {
-        Row: {
-          created_at: string
-          emoji_feedback: string | null
-          feedback_text: string | null
-          id: string
-          rating: number | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          emoji_feedback?: string | null
-          feedback_text?: string | null
-          id?: string
-          rating?: number | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          emoji_feedback?: string | null
-          feedback_text?: string | null
-          id?: string
-          rating?: number | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      phase_metrics: {
-        Row: {
-          color: string | null
-          icon: string | null
-          id: string
-          label: string
-          phase_slug: string
-          target: string | null
-          updated_at: string
-          value: string
-        }
-        Insert: {
-          color?: string | null
-          icon?: string | null
-          id?: string
-          label: string
-          phase_slug: string
-          target?: string | null
-          updated_at?: string
-          value: string
-        }
-        Update: {
-          color?: string | null
-          icon?: string | null
-          id?: string
-          label?: string
-          phase_slug?: string
-          target?: string | null
-          updated_at?: string
-          value?: string
-        }
-        Relationships: []
-      }
-      platform_settings: {
-        Row: {
-          category: string | null
-          created_at: string
-          description: string | null
-          id: string
-          setting_key: string
-          setting_value: Json
-          updated_at: string
-          updated_by: string | null
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          setting_key: string
-          setting_value?: Json
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Update: {
-          category?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          setting_key?: string
-          setting_value?: Json
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Relationships: []
-      }
-      post_comments: {
-        Row: {
-          content: string
-          created_at: string
-          id: string
-          parent_id: string | null
-          post_id: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: string
-          parent_id?: string | null
-          post_id: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: string
-          parent_id?: string | null
-          post_id?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "post_comments_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "post_comments"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_comments_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_comments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       post_likes: {
         Row: {
@@ -2041,33 +1432,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      profile_views: {
-        Row: {
-          id: string
-          ip_address: unknown | null
-          profile_id: string
-          user_agent: string | null
-          viewed_at: string
-          viewer_id: string | null
-        }
-        Insert: {
-          id?: string
-          ip_address?: unknown | null
-          profile_id: string
-          user_agent?: string | null
-          viewed_at?: string
-          viewer_id?: string | null
-        }
-        Update: {
-          id?: string
-          ip_address?: unknown | null
-          profile_id?: string
-          user_agent?: string | null
-          viewed_at?: string
-          viewer_id?: string | null
-        }
-        Relationships: []
       }
       profiles: {
         Row: {
@@ -2347,114 +1711,6 @@ export type Database = {
         }
         Relationships: []
       }
-      reactions: {
-        Row: {
-          created_at: string | null
-          id: string
-          post_id: string | null
-          type: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          post_id?: string | null
-          type: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          post_id?: string | null
-          type?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "reactions_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reactions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      referrals: {
-        Row: {
-          converted_at: string | null
-          created_at: string | null
-          id: string
-          referral_code: string
-          referred_email: string
-          referrer_id: string
-          updated_at: string | null
-        }
-        Insert: {
-          converted_at?: string | null
-          created_at?: string | null
-          id?: string
-          referral_code: string
-          referred_email: string
-          referrer_id: string
-          updated_at?: string | null
-        }
-        Update: {
-          converted_at?: string | null
-          created_at?: string | null
-          id?: string
-          referral_code?: string
-          referred_email?: string
-          referrer_id?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      reminder_logs: {
-        Row: {
-          cohort: string | null
-          delivery_channel: string | null
-          id: string
-          message_template: string | null
-          metadata: Json | null
-          reminder_type: string
-          scheduled_at: string
-          sent_at: string | null
-          status: string
-          user_id: string
-        }
-        Insert: {
-          cohort?: string | null
-          delivery_channel?: string | null
-          id?: string
-          message_template?: string | null
-          metadata?: Json | null
-          reminder_type: string
-          scheduled_at: string
-          sent_at?: string | null
-          status?: string
-          user_id: string
-        }
-        Update: {
-          cohort?: string | null
-          delivery_channel?: string | null
-          id?: string
-          message_template?: string | null
-          metadata?: Json | null
-          reminder_type?: string
-          scheduled_at?: string
-          sent_at?: string | null
-          status?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       saved_posts: {
         Row: {
           created_at: string | null
@@ -2473,69 +1729,6 @@ export type Database = {
           id?: string
           post_id?: string
           user_id?: string
-        }
-        Relationships: []
-      }
-      saved_searches: {
-        Row: {
-          created_at: string
-          filters: Json | null
-          id: string
-          name: string | null
-          query: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          filters?: Json | null
-          id?: string
-          name?: string | null
-          query: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          filters?: Json | null
-          id?: string
-          name?: string | null
-          query?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      search_analytics: {
-        Row: {
-          clicked_results: Json | null
-          created_at: string
-          filters_used: Json | null
-          id: string
-          query: string
-          result_count: number | null
-          search_duration_ms: number | null
-          user_id: string | null
-        }
-        Insert: {
-          clicked_results?: Json | null
-          created_at?: string
-          filters_used?: Json | null
-          id?: string
-          query: string
-          result_count?: number | null
-          search_duration_ms?: number | null
-          user_id?: string | null
-        }
-        Update: {
-          clicked_results?: Json | null
-          created_at?: string
-          filters_used?: Json | null
-          id?: string
-          query?: string
-          result_count?: number | null
-          search_duration_ms?: number | null
-          user_id?: string | null
         }
         Relationships: []
       }
