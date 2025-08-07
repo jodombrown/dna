@@ -203,12 +203,16 @@ const Auth = () => {
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative z-10 text-center text-white max-w-md">
           <div className="mb-8">
-            <div className="w-20 h-20 mx-auto mb-6 flex items-center justify-center">
-              <img 
-                src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
-                alt="DNA Logo" 
-                className="w-16 h-16"
-              />
+            {/* Logo with elegant backdrop */}
+            <div className="relative w-24 h-24 mx-auto mb-6">
+              <div className="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl transform rotate-3"></div>
+              <div className="relative bg-white rounded-2xl p-4 shadow-xl">
+                <img 
+                  src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
+                  alt="DNA Logo" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
             </div>
             <h1 className="text-3xl font-bold mb-4">Connect. Collaborate. Contribute.</h1>
             <p className="text-lg text-dna-mint mb-6">
@@ -239,12 +243,15 @@ const Auth = () => {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-              <img 
-                src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
-                alt="DNA Logo" 
-                className="w-12 h-12"
-              />
+            <div className="relative w-20 h-20 mx-auto mb-4">
+              <div className="absolute inset-0 bg-dna-emerald/20 backdrop-blur-sm rounded-2xl shadow-lg transform rotate-2"></div>
+              <div className="relative bg-white rounded-2xl p-3 shadow-lg">
+                <img 
+                  src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
+                  alt="DNA Logo" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
             </div>
             <h2 className="text-xl font-bold text-dna-forest">DNA Network</h2>
           </div>
