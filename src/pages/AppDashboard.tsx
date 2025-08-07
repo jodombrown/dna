@@ -4,7 +4,7 @@ import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { MobileNavigation, MobilePostButton } from '@/components/mobile';
 import { DashboardProvider } from '@/contexts/DashboardContext';
-// V1 Dashboard imports (preserved)
+// V2 Dashboard imports
 import Dashboard from './app/Dashboard';
 import Search from './app/Search';
 import Connect from './app/Connect';
@@ -13,7 +13,7 @@ import ProfileEdit from './app/ProfileEdit';
 import Admin from './app/Admin';
 import Invites from './app/Invites';
 
-const App = () => {
+const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -52,10 +52,10 @@ const App = () => {
         {/* Main Content */}
         <main className="pt-16 pb-20 lg:pb-0">
           <Routes>
-            {/* Redirect to v1 dashboard by default */}
+            {/* Main dashboard route */}
             <Route index element={<Dashboard />} />
             
-            {/* V1 Dashboard Routes */}
+            {/* V2 Dashboard Routes */}
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="search" element={<Search />} />
             <Route path="connect" element={<Connect />} />
@@ -75,4 +75,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default AppDashboard;

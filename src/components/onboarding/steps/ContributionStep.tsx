@@ -53,9 +53,9 @@ const ContributionStep: React.FC<ContributionStepProps> = ({ data, updateData })
           </p>
           <p className="text-gray-600">
             By checking this box, I commit to upholding the DNA community values and agree to the 
-            <a href="/terms" className="text-dna-emerald hover:underline mx-1">Terms of Service</a>
+            <span className="text-dna-emerald hover:underline mx-1 cursor-pointer">Terms of Service</span>
             and
-            <a href="/privacy" className="text-dna-emerald hover:underline mx-1">Privacy Policy</a>.
+            <span className="text-dna-emerald hover:underline mx-1 cursor-pointer">Privacy Policy</span>.
           </p>
         </div>
       </div>
