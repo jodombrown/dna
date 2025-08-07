@@ -111,6 +111,14 @@ const Auth = () => {
             description: "Unable to connect to our servers. Please check your internet connection and try again.",
             variant: "destructive"
           });
+        } else if (!isLogin && (errorMessage.includes('User already registered') || errorMessage.includes('user_already_exists'))) {
+          // Handle user already exists case - switch to login mode
+          setIsLogin(true);
+          toast({
+            title: "Account Already Exists",
+            description: "This email is already registered. Please sign in instead.",
+            variant: "destructive"
+          });
         } else {
           toast({
             title: isLogin ? "Login Failed" : "Signup Failed",
