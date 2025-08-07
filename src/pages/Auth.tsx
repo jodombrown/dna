@@ -213,7 +213,7 @@ const Auth = () => {
             <div className="relative mx-auto mb-8 w-32 h-32">
               {/* Colored background effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-dna-copper to-dna-gold rounded-3xl shadow-2xl transform -rotate-2 scale-105"></div>
-              <div className="absolute inset-0 bg-white/95 rounded-3xl shadow-xl"></div>
+              <div className="absolute inset-0 bg-dna-emerald rounded-3xl shadow-xl"></div>
               <div className="relative bg-white rounded-3xl p-6 shadow-lg border border-gray-100">
                 <img 
                   src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
