@@ -58,6 +58,9 @@ function App() {
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/post-onboarding" element={<PostOnboardingFlow />} />
+              {/* Dashboard V1 Archive Route - MUST come before /app/* */}
+              <Route path="/app/v1/*" element={<V1App />} />
+              
               <Route path="/app/*" element={<AppDashboard />} />
               <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />
               <Route path="/collaborate" element={<AuthGuard><CollaborationsExample /></AuthGuard>} />
@@ -70,9 +73,6 @@ function App() {
               
               {/* Invite Signup Route */}
               <Route path="/invite" element={<InviteSignup />} />
-              
-              {/* Dashboard V1 Archive Route */}
-              <Route path="/app/v1/*" element={<V1App />} />
               
               {/* Password Reset Routes */}
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
