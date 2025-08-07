@@ -24,6 +24,8 @@ import NotFound from "./pages/NotFound";
 import InviteSignup from "./pages/InviteSignup";
 import ResetPassword from "./pages/ResetPassword";
 import ResetPasswordComplete from "./pages/ResetPasswordComplete";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import { PostOnboardingFlow } from "./pages/PostOnboardingFlow";
 import V1App from "./pages/app/v1";
 import UserDashboard from "./pages/UserDashboard";
@@ -69,6 +71,8 @@ function App() {
               <Route path="/connect" element={<AuthGuard><ConnectExample /></AuthGuard>} />
               <Route path="/contact" element={<AuthGuard><Contact /></AuthGuard>} />
               <Route path="/about" element={<AuthGuard><About /></AuthGuard>} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               
               {/* Invite Signup Route */}
               <Route path="/invite" element={<InviteSignup />} />

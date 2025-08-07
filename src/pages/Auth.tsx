@@ -489,7 +489,7 @@ const Auth = () => {
                 <Button
                   variant="link"
                   className="h-auto p-0 text-xs text-dna-copper hover:text-dna-gold underline"
-                  onClick={() => window.open('/terms', '_blank')}
+                  onClick={() => window.open('/terms-of-service', '_blank')}
                 >
                   Terms of Service
                 </Button>
@@ -497,7 +497,7 @@ const Auth = () => {
                 <Button
                   variant="link"
                   className="h-auto p-0 text-xs text-dna-copper hover:text-dna-gold underline"
-                  onClick={() => window.open('/privacy', '_blank')}
+                  onClick={() => window.open('/privacy-policy', '_blank')}
                 >
                   Privacy Policy
                 </Button>
