@@ -300,24 +300,19 @@ const Auth = () => {
 
           <Card className="shadow-xl border-0 sm:border bg-white/80 backdrop-blur-sm">
             <CardHeader className="text-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/')}
-                className="absolute top-4 left-4 text-gray-500 hover:text-gray-700 z-10"
+              <div 
+                className="absolute top-4 left-4 z-10 group"
+                title="Back to Home"
               >
-                <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Back</span>
-              </Button>
-              <CardTitle className="text-xl sm:text-2xl font-bold text-dna-forest mb-2 pt-4 sm:pt-0">
-                {isLogin ? 'Welcome Back to DNA' : 'Join the DNA Community'}
-              </CardTitle>
-              <p className="text-sm sm:text-base text-gray-600 px-2">
-                {isLogin 
-                  ? 'Sign in to connect with the African diaspora' 
-                  : 'Be part of Africa\'s global innovation network'
-                }
-              </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/')}
+                  className="text-dna-emerald hover:text-dna-copper hover:bg-dna-emerald/5 transition-all duration-200 group-hover:scale-105"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </Button>
+              </div>
             </CardHeader>
           
           <CardContent>
@@ -472,19 +467,41 @@ const Auth = () => {
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}
-                {' '}
+            <div className="mt-6 space-y-4">
+              <div className="text-center">
+                <p className="text-sm text-gray-600">
+                  {isLogin ? "Don't have an account?" : "Already have an account?"}
+                  {' '}
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={toggleMode}
+                    className="p-0 text-dna-copper hover:text-dna-gold underline"
+                  >
+                    {isLogin ? 'Sign up' : 'Sign in'}
+                  </Button>
+                </p>
+              </div>
+              
+              {/* Privacy Policy and Terms */}
+              <div className="text-center text-xs text-gray-500 leading-relaxed">
+                By signing {isLogin ? 'in' : 'up'}, you agree to our{' '}
                 <Button
-                  type="button"
                   variant="link"
-                  onClick={toggleMode}
-                  className="p-0 text-dna-copper hover:text-dna-gold underline"
+                  className="h-auto p-0 text-xs text-dna-copper hover:text-dna-gold underline"
+                  onClick={() => window.open('/terms', '_blank')}
                 >
-                  {isLogin ? 'Sign up' : 'Sign in'}
+                  Terms of Service
                 </Button>
-              </p>
+                {' '}and{' '}
+                <Button
+                  variant="link"
+                  className="h-auto p-0 text-xs text-dna-copper hover:text-dna-gold underline"
+                  onClick={() => window.open('/privacy', '_blank')}
+                >
+                  Privacy Policy
+                </Button>
+              </div>
             </div>
           </CardContent>
           </Card>
