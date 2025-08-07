@@ -348,37 +348,61 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Bokeh Animation Keyframes */
-@keyframes bokeh-float-1 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-  25% { transform: translate(15px, -20px) scale(1.1); opacity: 0.8; }
-  50% { transform: translate(-10px, -15px) scale(0.9); opacity: 0.4; }
-  75% { transform: translate(-20px, 10px) scale(1.05); opacity: 0.7; }
+/* Dynamic Bokeh Animation Keyframes */
+@keyframes bokeh-drift-1 {
+  0% { transform: translate(-20px, 100vh) scale(0.8); opacity: 0; }
+  10% { opacity: 0.6; }
+  25% { transform: translate(40vw, 80vh) scale(1.2); opacity: 0.8; }
+  50% { transform: translate(10vw, 40vh) scale(0.9); opacity: 0.4; }
+  75% { transform: translate(35vw, 20vh) scale(1.1); opacity: 0.7; }
+  90% { opacity: 0.3; }
+  100% { transform: translate(50vw, -10vh) scale(0.6); opacity: 0; }
 }
 
-@keyframes bokeh-float-2 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
-  33% { transform: translate(-18px, 25px) scale(1.15); opacity: 0.8; }
-  66% { transform: translate(22px, -12px) scale(0.85); opacity: 0.3; }
+@keyframes bokeh-drift-2 {
+  0% { transform: translate(50vw, -20px) scale(1); opacity: 0; }
+  15% { opacity: 0.5; }
+  30% { transform: translate(20vw, 25vh) scale(1.3); opacity: 0.8; }
+  55% { transform: translate(45vw, 60vh) scale(0.7); opacity: 0.3; }
+  80% { transform: translate(15vw, 85vh) scale(1.15); opacity: 0.6; }
+  95% { opacity: 0.2; }
+  100% { transform: translate(5vw, 110vh) scale(0.8); opacity: 0; }
 }
 
-@keyframes bokeh-float-3 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
-  20% { transform: translate(12px, 18px) scale(0.95); opacity: 0.9; }
-  40% { transform: translate(-25px, -8px) scale(1.2); opacity: 0.4; }
-  60% { transform: translate(8px, -22px) scale(0.8); opacity: 0.6; }
-  80% { transform: translate(-15px, 15px) scale(1.1); opacity: 0.8; }
+@keyframes bokeh-drift-3 {
+  0% { transform: translate(-15px, 50vh) scale(0.9); opacity: 0; }
+  8% { opacity: 0.7; }
+  20% { transform: translate(25vw, 30vh) scale(1.4); opacity: 0.9; }
+  40% { transform: translate(50vw, 15vh) scale(0.6); opacity: 0.4; }
+  65% { transform: translate(30vw, 70vh) scale(1.0); opacity: 0.8; }
+  85% { transform: translate(10vw, 90vh) scale(1.2); opacity: 0.5; }
+  95% { opacity: 0.1; }
+  100% { transform: translate(-10px, 105vh) scale(0.7); opacity: 0; }
 }
 
-/* Bokeh Animation Classes */
-.bokeh-1 {
-  animation: bokeh-float-1 8s ease-in-out infinite;
+@keyframes bokeh-drift-4 {
+  0% { transform: translate(55vw, 110vh) scale(1.1); opacity: 0; }
+  12% { opacity: 0.4; }
+  35% { transform: translate(20vw, 75vh) scale(0.8); opacity: 0.7; }
+  60% { transform: translate(40vw, 35vh) scale(1.3); opacity: 0.5; }
+  85% { transform: translate(15vw, 10vh) scale(0.9); opacity: 0.6; }
+  95% { opacity: 0.2; }
+  100% { transform: translate(5vw, -15vh) scale(0.5); opacity: 0; }
 }
 
-.bokeh-2 {
-  animation: bokeh-float-2 12s ease-in-out infinite;
+/* Dynamic Bokeh Animation Classes */
+.bokeh-drift-1 {
+  animation: bokeh-drift-1 15s linear infinite;
 }
 
-.bokeh-3 {
-  animation: bokeh-float-3 10s ease-in-out infinite;
+.bokeh-drift-2 {
+  animation: bokeh-drift-2 18s linear infinite;
+}
+
+.bokeh-drift-3 {
+  animation: bokeh-drift-3 20s linear infinite;
+}
+
+.bokeh-drift-4 {
+  animation: bokeh-drift-4 16s linear infinite;
 }
