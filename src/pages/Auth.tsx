@@ -200,42 +200,53 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex lg:flex-row flex-col">
       {/* Left Side - Branding Section */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-dna-forest to-dna-emerald p-12 items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
+        {/* Background Pattern */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-dna-gold/10 rounded-full"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-dna-copper/15 rounded-full"></div>
+          <div className="absolute top-2/3 right-1/3 w-16 h-16 bg-dna-mint/20 rounded-full"></div>
+        </div>
+        
         <div className="relative z-10 text-center text-white max-w-md">
           <div className="mb-8">
-            {/* Logo with elegant backdrop */}
-            <div className="relative w-24 h-24 mx-auto mb-6">
-              <div className="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl transform rotate-3"></div>
-              <div className="relative bg-white rounded-2xl p-4 shadow-xl">
+            {/* Prominent Logo Display */}
+            <div className="relative mx-auto mb-8 w-32 h-32">
+              {/* Glowing background effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl transform -rotate-2 scale-105"></div>
+              <div className="absolute inset-0 bg-white/95 rounded-3xl shadow-xl"></div>
+              <div className="relative bg-white rounded-3xl p-6 shadow-lg border border-gray-100">
                 <img 
                   src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
                   alt="DNA Logo" 
                   className="w-full h-full object-contain"
                 />
               </div>
+              {/* Subtle glow effect */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-dna-copper/20 to-dna-gold/20 rounded-3xl blur-xl -z-10"></div>
             </div>
-            <h1 className="text-3xl font-bold mb-4">Connect. Collaborate. Contribute.</h1>
-            <p className="text-lg text-dna-mint mb-6">
+            
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-dna-mint bg-clip-text text-transparent">
+              Connect. Collaborate. Contribute.
+            </h1>
+            <p className="text-lg text-dna-mint/90 mb-8 leading-relaxed">
               Join the global African diaspora network where innovation meets impact and dreams become reality.
             </p>
-            <div className="space-y-3 text-left">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-dna-copper rounded-full"></div>
-                <span className="text-sm">Build meaningful connections across continents</span>
+            <div className="space-y-4 text-left">
+              <div className="flex items-center gap-4 bg-white/5 rounded-lg p-3 backdrop-blur-sm">
+                <div className="w-3 h-3 bg-dna-copper rounded-full flex-shrink-0"></div>
+                <span className="text-sm font-medium">Build meaningful connections across continents</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-dna-copper rounded-full"></div>
-                <span className="text-sm">Access exclusive opportunities and resources</span>
+              <div className="flex items-center gap-4 bg-white/5 rounded-lg p-3 backdrop-blur-sm">
+                <div className="w-3 h-3 bg-dna-gold rounded-full flex-shrink-0"></div>
+                <span className="text-sm font-medium">Access exclusive opportunities and resources</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-dna-copper rounded-full"></div>
-                <span className="text-sm">Contribute to Africa's development through innovation</span>
+              <div className="flex items-center gap-4 bg-white/5 rounded-lg p-3 backdrop-blur-sm">
+                <div className="w-3 h-3 bg-dna-mint rounded-full flex-shrink-0"></div>
+                <span className="text-sm font-medium">Contribute to Africa's development through innovation</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 right-0 w-32 h-32 bg-dna-copper/20 rounded-full transform translate-x-16 translate-y-16"></div>
-        <div className="absolute top-0 left-0 w-24 h-24 bg-dna-gold/20 rounded-full transform -translate-x-12 -translate-y-12"></div>
       </div>
 
       {/* Right Side - Auth Form */}
@@ -243,9 +254,9 @@ const Auth = () => {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
-            <div className="relative w-20 h-20 mx-auto mb-4">
-              <div className="absolute inset-0 bg-dna-emerald/20 backdrop-blur-sm rounded-2xl shadow-lg transform rotate-2"></div>
-              <div className="relative bg-white rounded-2xl p-3 shadow-lg">
+            <div className="relative mx-auto mb-6 w-24 h-24">
+              <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-2xl shadow-lg transform rotate-3"></div>
+              <div className="relative bg-white rounded-2xl p-4 shadow-xl border-2 border-gray-100">
                 <img 
                   src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
                   alt="DNA Logo" 
@@ -253,7 +264,8 @@ const Auth = () => {
                 />
               </div>
             </div>
-            <h2 className="text-xl font-bold text-dna-forest">DNA Network</h2>
+            <h2 className="text-2xl font-bold text-dna-forest">DNA Network</h2>
+            <p className="text-sm text-gray-600 mt-2">Connecting Africa's Global Diaspora</p>
           </div>
 
           <Card className="shadow-xl border-0 sm:border bg-white/80 backdrop-blur-sm">
