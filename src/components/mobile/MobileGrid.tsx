@@ -22,10 +22,21 @@ const MobileGrid: React.FC<MobileGridProps> = ({
   const { isMobile, isTablet, isDesktop } = useMobile();
 
   const getGridCols = () => {
-    if (isMobile && cols.mobile) return `grid-cols-${cols.mobile}`;
-    if (isTablet && cols.tablet) return `md:grid-cols-${cols.tablet}`;
-    if (isDesktop && cols.desktop) return `lg:grid-cols-${cols.desktop}`;
-    return 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
+    const colClass = (n?: number, prefix = '') => {
+      switch (n) {
+        case 1: return `${prefix}grid-cols-1`;
+        case 2: return `${prefix}grid-cols-2`;
+        case 3: return `${prefix}grid-cols-3`;
+        case 4: return `${prefix}grid-cols-4`;
+        default: return `${prefix}grid-cols-1`;
+      }
+    };
+    const classes = [
+      colClass(cols.mobile),
+      colClass(cols.tablet, 'md:'),
+      colClass(cols.desktop, 'lg:')
+    ].join(' ');
+    return classes || 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
   };
 
   const getGapClass = () => {

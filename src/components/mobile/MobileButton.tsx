@@ -18,12 +18,6 @@ const MobileButton: React.FC<MobileButtonProps> = ({
 }) => {
   const { isMobile, isTouch } = useMobile();
 
-  // Auto-adjust size for mobile
-  const getSize = () => {
-    if (size) return size;
-    return isMobile ? 'default' : 'default';
-  };
-
   const getTouchClasses = () => {
     if (!touchOptimized || !isTouch) return '';
     
@@ -39,7 +33,7 @@ const MobileButton: React.FC<MobileButtonProps> = ({
 
   return (
     <Button
-      size={getSize()}
+      size={size ?? 'default'}
       className={cn(
         fullWidth && 'w-full',
         getTouchClasses(),

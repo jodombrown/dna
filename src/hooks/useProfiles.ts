@@ -14,9 +14,9 @@ export const useProfiles = (filters?: {
   });
 };
 
-export const useProfile = (id: string, enabled = true) => {
+export const useProfileById = (id: string, enabled = true) => {
   return useQuery({
-    queryKey: ['profile', id],
+    queryKey: ['profileById', id],
     queryFn: () => profilesService.getProfileById(id),
     enabled: enabled && !!id,
   });
@@ -31,6 +31,7 @@ export const useUpdateProfile = () => {
     onSuccess: (data) => {
       // Invalidate and refetch profiles queries
       queryClient.invalidateQueries({ queryKey: ['profiles'] });
+      queryClient.setQueryData(['profileById', data.id], data);
       queryClient.setQueryData(['profile', data.id], data);
     },
   });

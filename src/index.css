@@ -181,24 +181,24 @@
   
   /* Enhanced touch targets with better feedback */
   .touch-target {
-    @apply min-h-[48px] min-w-[48px] touch-manipulation;
+    @apply min-h-[48px] min-w-[48px] touch-pan-y;
   }
   
   .touch-target-sm {
-    @apply min-h-[40px] min-w-[40px] touch-manipulation;
+    @apply min-h-[40px] min-w-[40px] touch-pan-y;
   }
   
   .touch-target-lg {
-    @apply min-h-[56px] min-w-[56px] touch-manipulation;
+    @apply min-h-[56px] min-w-[56px] touch-pan-y;
   }
   
   .touch-target-xl {
-    @apply min-h-[64px] min-w-[64px] touch-manipulation;
+    @apply min-h-[64px] min-w-[64px] touch-pan-y;
   }
   
   /* Mobile interaction states */
   .mobile-interactive {
-    @apply touch-manipulation transition-all duration-200 ease-out;
+    @apply touch-pan-y transition-all duration-200 ease-out;
   }
   
   .mobile-interactive:active {
@@ -206,11 +206,11 @@
   }
   
   .mobile-card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200 transition-all duration-200;
+    @apply bg-card rounded-lg shadow-sm border border-border transition-all duration-200;
   }
   
   .mobile-card:hover {
-    @apply shadow-md border-gray-300;
+    @apply shadow-md border-border;
   }
   
   .mobile-card:active {

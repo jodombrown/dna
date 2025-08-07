@@ -23,8 +23,8 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         return 'w-full h-full';
       case 'card':
         return isMobile 
-          ? 'mx-2 my-1 bg-white rounded-lg shadow-sm border' 
-          : 'mx-4 my-2 bg-white rounded-xl shadow-md border';
+          ? 'mx-2 my-1 bg-card rounded-lg shadow-sm border border-border' 
+          : 'mx-4 my-2 bg-card rounded-xl shadow-md border border-border';
       case 'padded':
       default:
         return isMobile ? 'px-4' : isTablet ? 'px-6' : 'px-8';
@@ -50,7 +50,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         getVariantClasses(),
         getSpacingClasses(),
         // Touch-friendly classes for mobile
-        isMobile && 'touch-manipulation',
+        isMobile && 'touch-pan-y',
         className
       )}
       data-device={deviceType}

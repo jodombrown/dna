@@ -337,13 +337,6 @@ export const useRealtimeMessaging = (userId?: string) => {
     }
   }, [selectedConversation, fetchMessages, markAsRead]);
 
-  // Request notification permission
-  useEffect(() => {
-    if (Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
-  }, []);
-
   return {
     conversations,
     selectedConversation,

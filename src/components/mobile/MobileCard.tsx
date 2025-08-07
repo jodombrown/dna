@@ -20,20 +20,20 @@ const MobileCard: React.FC<MobileCardProps> = ({
   const { isMobile, isTouch } = useMobile();
 
   const getVariantClasses = () => {
-    const baseClasses = 'bg-white border rounded-lg';
+    const baseClasses = 'bg-card border border-border rounded-lg';
     
     switch (variant) {
       case 'elevated':
-        return `${baseClasses} shadow-lg border-gray-100`;
+        return `${baseClasses} shadow-lg`;
       case 'flat':
-        return `${baseClasses} shadow-none border-gray-200`;
+        return `${baseClasses} shadow-none`;
       case 'interactive':
-        return `${baseClasses} shadow-sm border-gray-200 transition-all duration-200 hover:shadow-md hover:border-gray-300 ${
+        return `${baseClasses} shadow-sm transition-all duration-200 ${
           isTouch ? 'active:scale-95' : 'hover:scale-[1.02]'
-        } cursor-pointer`;
+        } cursor-pointer hover:shadow-md`;
       case 'default':
       default:
-        return `${baseClasses} shadow-sm border-gray-200`;
+        return `${baseClasses} shadow-sm`;
     }
   };
 
