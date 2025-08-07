@@ -211,8 +211,8 @@ const Auth = () => {
           <div className="mb-8">
             {/* Prominent Logo Display */}
             <div className="relative mx-auto mb-8 w-32 h-32">
-              {/* Glowing background effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl transform -rotate-2 scale-105"></div>
+              {/* Colored background effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-dna-copper to-dna-gold rounded-3xl shadow-2xl transform -rotate-2 scale-105"></div>
               <div className="absolute inset-0 bg-white/95 rounded-3xl shadow-xl"></div>
               <div className="relative bg-white rounded-3xl p-6 shadow-lg border border-gray-100">
                 <img 
@@ -255,7 +255,7 @@ const Auth = () => {
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
             <div className="relative mx-auto mb-6 w-24 h-24">
-              <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-2xl shadow-lg transform rotate-3"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-dna-copper to-dna-gold rounded-2xl shadow-lg transform rotate-3"></div>
               <div className="relative bg-white rounded-2xl p-4 shadow-xl border-2 border-gray-100">
                 <img 
                   src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
