@@ -200,11 +200,13 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex lg:flex-row flex-col">
       {/* Left Side - Branding Section */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-dna-forest to-dna-emerald p-12 items-center justify-center relative overflow-hidden">
-        {/* Background Pattern */}
+        {/* Background Pattern with Bokeh Animation */}
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-dna-gold/10 rounded-full"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-dna-copper/15 rounded-full"></div>
-          <div className="absolute top-2/3 right-1/3 w-16 h-16 bg-dna-mint/20 rounded-full"></div>
+          <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-dna-gold/10 rounded-full bokeh-1"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-dna-copper/15 rounded-full bokeh-2"></div>
+          <div className="absolute top-2/3 right-1/3 w-16 h-16 bg-dna-mint/20 rounded-full bokeh-3"></div>
+          <div className="absolute top-1/2 left-1/6 w-20 h-20 bg-dna-emerald/8 rounded-full bokeh-1" style={{animationDelay: '3s'}}></div>
+          <div className="absolute bottom-1/4 left-1/2 w-28 h-28 bg-dna-gold/6 rounded-full bokeh-2" style={{animationDelay: '6s'}}></div>
         </div>
         
         <div className="relative z-10 text-center text-white max-w-md">

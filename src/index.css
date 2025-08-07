@@ -347,3 +347,38 @@
 .safe-area-pb {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* Bokeh Animation Keyframes */
+@keyframes bokeh-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+  25% { transform: translate(15px, -20px) scale(1.1); opacity: 0.8; }
+  50% { transform: translate(-10px, -15px) scale(0.9); opacity: 0.4; }
+  75% { transform: translate(-20px, 10px) scale(1.05); opacity: 0.7; }
+}
+
+@keyframes bokeh-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+  33% { transform: translate(-18px, 25px) scale(1.15); opacity: 0.8; }
+  66% { transform: translate(22px, -12px) scale(0.85); opacity: 0.3; }
+}
+
+@keyframes bokeh-float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+  20% { transform: translate(12px, 18px) scale(0.95); opacity: 0.9; }
+  40% { transform: translate(-25px, -8px) scale(1.2); opacity: 0.4; }
+  60% { transform: translate(8px, -22px) scale(0.8); opacity: 0.6; }
+  80% { transform: translate(-15px, 15px) scale(1.1); opacity: 0.8; }
+}
+
+/* Bokeh Animation Classes */
+.bokeh-1 {
+  animation: bokeh-float-1 8s ease-in-out infinite;
+}
+
+.bokeh-2 {
+  animation: bokeh-float-2 12s ease-in-out infinite;
+}
+
+.bokeh-3 {
+  animation: bokeh-float-3 10s ease-in-out infinite;
+}
