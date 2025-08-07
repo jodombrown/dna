@@ -1,13 +1,12 @@
-// V1 Supabase hooks with version filtering
+// V1 Supabase hooks - Legacy data access
 import { supabase } from '@/integrations/supabase/client';
 
 export const useV1Data = () => {
-  // All v1 queries should include version_tag: 'v1' filter
+  // Legacy v1 queries without version filtering for now
   const fetchV1Posts = async () => {
     const { data, error } = await supabase
       .from('posts')
       .select('*')
-      .eq('version_tag', 'v1')
       .order('created_at', { ascending: false });
     
     return { data, error };
@@ -16,8 +15,7 @@ export const useV1Data = () => {
   const fetchV1Users = async () => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('*')
-      .eq('version_tag', 'v1');
+      .select('*');
     
     return { data, error };
   };
