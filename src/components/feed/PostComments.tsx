@@ -12,7 +12,7 @@ interface Comment {
   id: string;
   content: string;
   created_at: string;
-  user_id: string;
+  author_id: string;
   profiles: {
     id: string;
     full_name: string;
@@ -45,12 +45,12 @@ export const PostComments: React.FC<PostCommentsProps> = ({
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('post_comments')
+        .from('comments')
         .select(`
           id,
           content,
           created_at,
-          user_id,
+          author_id,
           profiles (
             id,
             full_name,
@@ -100,18 +100,18 @@ export const PostComments: React.FC<PostCommentsProps> = ({
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase
-        .from('post_comments')
+    const { data, error } = await supabase
+      .from('comments')
         .insert({
           post_id: postId,
-          user_id: user.id,
+          author_id: user.id,
           content: newComment.trim(),
         })
         .select(`
           id,
           content,
           created_at,
-          user_id,
+          author_id,
           profiles (
             id,
             full_name,

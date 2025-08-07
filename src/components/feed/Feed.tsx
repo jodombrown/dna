@@ -97,8 +97,8 @@ export const Feed: React.FC<FeedProps> = ({
         .in('post_id', postIds);
 
       // Fetch comment counts
-      const { data: commentsData } = await supabase
-        .from('post_comments')
+        const { data: commentsData } = await supabase
+          .from('comments')
         .select('post_id')
         .in('post_id', postIds);
 

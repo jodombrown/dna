@@ -226,8 +226,13 @@ const Onboarding = () => {
         description: "Your profile has been created successfully.",
       });
 
-      // Redirect to main app
-      navigate('/app');
+      // Redirect to user's dashboard
+      const username = formData.username || profile?.username;
+      if (username) {
+        navigate(`/dna/${username}`);
+      } else {
+        navigate('/app');
+      }
     } catch (error) {
       console.error('Error creating profile:', error);
       toast({

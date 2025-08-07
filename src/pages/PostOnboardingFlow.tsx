@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { FeedbackWidget } from '@/components/onboarding/FeedbackWidget';
+import FeedbackWidget from '@/components/onboarding/FeedbackWidget';
 import { CommunityIntroduction } from '@/components/profile/CommunityIntroduction';
 
 type FlowStep = 'feedback' | 'introduction' | 'complete';

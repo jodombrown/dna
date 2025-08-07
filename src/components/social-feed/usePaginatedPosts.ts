@@ -117,7 +117,7 @@ export const usePaginatedPosts = ({
         
         // Get comment counts
         supabase
-          .from('post_comments')
+          .from('comments')
           .select('post_id')
           .in('post_id', postIds),
         

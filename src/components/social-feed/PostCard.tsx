@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { PostActions } from './PostActions';
 import { PostStats } from './PostStats';
-import { CommentThread } from './comments/CommentThread';
+import CommentThread from './comments/CommentThread';
 import { EmbedPreview } from './EmbedPreview';
 import type { Post } from './PostList';
 
