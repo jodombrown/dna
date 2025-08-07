@@ -3,6 +3,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import LocationAutocomplete from '@/components/ui/location-autocomplete';
 import UsernameManager from '@/components/profile/UsernameManager';
 
 interface IdentityStepProps {
@@ -132,23 +133,13 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
 
       {/* Current Location */}
       <div>
-        <Label>Current Location</Label>
-        <Select value={data.current_country || ''} onValueChange={(value) => updateData({ current_country: value })}>
-          <SelectTrigger className="bg-white">
-            <SelectValue placeholder="Select your current location" />
-          </SelectTrigger>
-          <SelectContent className="bg-white border border-gray-200 shadow-lg z-50 max-h-[300px]">
-            {AFRICAN_COUNTRIES.map((country) => (
-              <SelectItem key={country} value={country} className="hover:bg-dna-mint/20">
-                {country}
-              </SelectItem>
-            ))}
-            <SelectItem value="usa" className="hover:bg-dna-mint/20">United States</SelectItem>
-            <SelectItem value="canada" className="hover:bg-dna-mint/20">Canada</SelectItem>
-            <SelectItem value="uk" className="hover:bg-dna-mint/20">United Kingdom</SelectItem>
-            <SelectItem value="other" className="hover:bg-dna-mint/20">Other</SelectItem>
-          </SelectContent>
-        </Select>
+        <LocationAutocomplete
+          id="current-location"
+          label="Current Location"
+          value={data.current_country || ''}
+          onChange={(value) => updateData({ current_country: value })}
+          placeholder="Start typing your current location..."
+        />
       </div>
     </div>
   );

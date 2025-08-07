@@ -218,7 +218,7 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
         </div>
         <Progress value={progressValue} className="h-2" />
         <p className="text-xs text-gray-500">
-          {changesLeft} username change{changesLeft !== 1 ? 's' : ''} remaining
+          {changesLeft} username change{changesLeft !== 1 ? 's' : ''} remaining over your account lifetime
         </p>
       </div>
 
