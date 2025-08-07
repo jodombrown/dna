@@ -27,7 +27,7 @@ import InviteSignup from "./pages/InviteSignup";
 import ResetPassword from "./pages/ResetPassword";
 import ResetPasswordComplete from "./pages/ResetPasswordComplete";
 import { PostOnboardingFlow } from "./pages/PostOnboardingFlow";
-import DashboardV1Wrapper from "./dashboard-v1/DashboardV1Wrapper";
+import V1App from "./pages/app/v1";
 
 const queryClient = new QueryClient();
 
@@ -71,8 +71,8 @@ function App() {
               {/* Invite Signup Route */}
               <Route path="/invite" element={<InviteSignup />} />
               
-              {/* Dashboard V1 Access Route */}
-              <Route path="/app/v1" element={<DashboardV1Wrapper />} />
+              {/* Dashboard V1 Archive Route */}
+              <Route path="/app/v1/*" element={<V1App />} />
               
               {/* Password Reset Routes */}
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
