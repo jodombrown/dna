@@ -102,6 +102,8 @@ const Auth = () => {
 
       if (result.error) {
         const errorMessage = result.error.message || "Something went wrong. Please try again.";
+        console.log('Auth error:', result.error); // Debug log
+        console.log('Error message:', errorMessage); // Debug log
         
         // Handle specific connection errors
         if (errorMessage.includes('network') || errorMessage.includes('fetch') || 
@@ -111,12 +113,20 @@ const Auth = () => {
             description: "Unable to connect to our servers. Please check your internet connection and try again.",
             variant: "destructive"
           });
-        } else if (!isLogin && (errorMessage.includes('User already registered') || errorMessage.includes('user_already_exists'))) {
+        } else if (!isLogin && (errorMessage.includes('User already registered') || errorMessage.includes('user_already_exists') || errorMessage.includes('already registered'))) {
           // Handle user already exists case - switch to login mode
+          console.log('Switching to login mode'); // Debug log
           setIsLogin(true);
+          // Clear form but keep email
+          setFormData(prev => ({
+            fullName: '',
+            email: prev.email, // Keep the email
+            password: '',
+            confirmPassword: ''
+          }));
           toast({
             title: "Account Already Exists",
-            description: "This email is already registered. Please sign in instead.",
+            description: "This email is already registered. Switched to sign in mode.",
             variant: "destructive"
           });
         } else {
