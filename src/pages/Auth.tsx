@@ -197,29 +197,75 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex items-center justify-center p-4 pt-20">
-      <div className="w-full max-w-md">
-        <Card className="shadow-xl border-0 sm:border">
-          <CardHeader className="text-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="absolute top-4 left-4 text-gray-500 hover:text-gray-700 z-10"
-            >
-              <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Back</span>
-            </Button>
-            <CardTitle className="text-xl sm:text-2xl font-bold text-dna-forest mb-2 pt-4 sm:pt-0">
-              {isLogin ? 'Welcome Back' : 'Join DNA Community'}
-            </CardTitle>
-            <p className="text-sm sm:text-base text-gray-600 px-2">
-              {isLogin 
-                ? 'Sign in to connect with the diaspora' 
-                : 'Create your account to get started'
-              }
+    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex lg:flex-row flex-col">
+      {/* Left Side - Branding Section */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-dna-forest to-dna-emerald p-12 items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10 text-center text-white max-w-md">
+          <div className="mb-8">
+            <div className="w-16 h-16 bg-dna-copper rounded-full mx-auto mb-6 flex items-center justify-center">
+              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <h1 className="text-3xl font-bold mb-4">Connect. Collaborate. Contribute.</h1>
+            <p className="text-lg text-dna-mint mb-6">
+              Join the global African diaspora network where innovation meets impact and dreams become reality.
             </p>
-          </CardHeader>
+            <div className="space-y-3 text-left">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-dna-copper rounded-full"></div>
+                <span className="text-sm">Build meaningful connections across continents</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-dna-copper rounded-full"></div>
+                <span className="text-sm">Access exclusive opportunities and resources</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-dna-copper rounded-full"></div>
+                <span className="text-sm">Contribute to Africa's development through innovation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute bottom-0 right-0 w-32 h-32 bg-dna-copper/20 rounded-full transform translate-x-16 translate-y-16"></div>
+        <div className="absolute top-0 left-0 w-24 h-24 bg-dna-gold/20 rounded-full transform -translate-x-12 -translate-y-12"></div>
+      </div>
+
+      {/* Right Side - Auth Form */}
+      <div className="lg:w-1/2 flex items-center justify-center p-4 pt-20 lg:pt-4">
+        <div className="w-full max-w-md">
+          {/* Mobile Logo */}
+          <div className="lg:hidden text-center mb-8">
+            <div className="w-12 h-12 bg-dna-copper rounded-full mx-auto mb-4 flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-dna-forest">DNA Network</h2>
+          </div>
+
+          <Card className="shadow-xl border-0 sm:border bg-white/80 backdrop-blur-sm">
+            <CardHeader className="text-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/')}
+                className="absolute top-4 left-4 text-gray-500 hover:text-gray-700 z-10"
+              >
+                <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Back</span>
+              </Button>
+              <CardTitle className="text-xl sm:text-2xl font-bold text-dna-forest mb-2 pt-4 sm:pt-0">
+                {isLogin ? 'Welcome Back to DNA' : 'Join the DNA Community'}
+              </CardTitle>
+              <p className="text-sm sm:text-base text-gray-600 px-2">
+                {isLogin 
+                  ? 'Sign in to connect with the African diaspora' 
+                  : 'Be part of Africa\'s global innovation network'
+                }
+              </p>
+            </CardHeader>
           
           <CardContent>
             {/* OAuth Options */}
@@ -388,7 +434,8 @@ const Auth = () => {
               </p>
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );
