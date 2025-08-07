@@ -11,13 +11,14 @@ import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
+import PasswordStrength from '@/components/auth/PasswordStrength';
 
 const Auth = () => {
   useScrollToTop();
   
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user, signIn, signUp, loading } = useAuth();
+  const { user, signIn, signUp, loading, updatePassword } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,18 +31,112 @@ const Auth = () => {
     confirmPassword: ''
   });
 
+  const [isResetMode, setIsResetMode] = useState(false);
+  const [resetData, setResetData] = useState({ password: '', confirmPassword: '' });
+  const [isResetSubmitting, setIsResetSubmitting] = useState(false);
+  const [resetShowPassword, setResetShowPassword] = useState(false);
+  const [capsLockOn, setCapsLockOn] = useState(false);
+  const [capsLockOnConfirm, setCapsLockOnConfirm] = useState(false);
+  const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
+
   // Redirect if already authenticated
   useEffect(() => {
-    if (user && !loading) {
+    if (user && !loading && !isResetMode) {
       navigate('/app');
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, isResetMode]);
 
+  // Detect password recovery callback from Supabase
+  useEffect(() => {
+    const hash = window.location.hash;
+    const search = window.location.search;
+    if ((hash && hash.includes('type=recovery')) || (search && search.includes('type=recovery'))) {
+      setIsResetMode(true);
+      // Clean the URL hash/search for a nicer UX
+      try {
+        const url = new URL(window.location.href);
+        url.hash = '';
+        url.searchParams.delete('type');
+        window.history.replaceState({}, document.title, url.toString());
+      } catch {}
+    }
+  }, []);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleForgotPassword = async () => {
+    try {
+      if (!formData.email) {
+        toast({
+          title: 'Email required',
+          description: 'Enter your email above to receive a reset link.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      setIsForgotSubmitting(true);
+      const redirectTo = `${window.location.origin}/auth`;
+      const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+        redirectTo,
+      });
+      if (error) throw error;
+      toast({
+        title: 'Password reset sent',
+        description: 'Check your email for a link to reset your password.',
+      });
+    } catch (err: any) {
+      console.error('Reset password error:', err);
+      toast({
+        title: 'Reset failed',
+        description: err?.message || 'Could not send reset email. Try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsForgotSubmitting(false);
+    }
+  };
+
+  const handleResetSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetData.password || resetData.password.length < 6) {
+      toast({
+        title: 'Password too short',
+        description: 'Password must be at least 6 characters long.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (resetData.password !== resetData.confirmPassword) {
+      toast({
+        title: 'Password mismatch',
+        description: 'Please make sure your passwords match.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    setIsResetSubmitting(true);
+    try {
+      const { error } = await updatePassword(resetData.password);
+      if (error) throw error;
+      toast({
+        title: 'Password updated',
+        description: 'Your password has been changed successfully.',
+      });
+      setIsResetMode(false);
+      navigate('/app');
+    } catch (err: any) {
+      console.error('Update password error:', err);
+      toast({
+        title: 'Update failed',
+        description: err?.message || 'Could not update password. Try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsResetSubmitting(false);
+    }
+  };
   const validateForm = () => {
     if (!formData.email || !formData.password) {
       toast({
@@ -365,107 +460,214 @@ const Auth = () => {
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
+            {isResetMode ? (
+              <form onSubmit={handleResetSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="fullName">Full Name</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <Input
-                      id="fullName"
-                      name="fullName"
-                      type="text"
-                      placeholder="Enter your full name"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      className="pl-10"
-                      required={!isLogin}
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className="pl-10 pr-10"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-1 top-1/2 transform -translate-y-1/2 p-1 h-8 w-8"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              {!isLogin && (
-                <div>
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="newPassword">New Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Confirm your password"
-                      value={formData.confirmPassword}
+                      id="newPassword"
+                      name="newPassword"
+                      type={resetShowPassword ? 'text' : 'password'}
+                      placeholder="Enter new password"
+                      value={resetData.password}
+                      onChange={(e) => setResetData({ ...resetData, password: e.target.value })}
+                      onKeyUp={(e) => setCapsLockOn((e as any).getModifierState && (e as any).getModifierState('CapsLock'))}
+                      onKeyDown={(e) => setCapsLockOn((e as any).getModifierState && (e as any).getModifierState('CapsLock'))}
+                      className="pl-10 pr-10"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setResetShowPassword(!resetShowPassword)}
+                      className="absolute right-1 top-1/2 transform -translate-y-1/2 p-1 h-8 w-8"
+                    >
+                      {resetShowPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
+                  {capsLockOn && (
+                    <p className="mt-1 text-xs text-gray-500">Caps Lock is on</p>
+                  )}
+                  <PasswordStrength password={resetData.password} />
+                </div>
+
+                <div>
+                  <Label htmlFor="newPasswordConfirm">Confirm New Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="newPasswordConfirm"
+                      name="newPasswordConfirm"
+                      type={resetShowPassword ? 'text' : 'password'}
+                      placeholder="Confirm new password"
+                      value={resetData.confirmPassword}
+                      onChange={(e) => setResetData({ ...resetData, confirmPassword: e.target.value })}
+                      onKeyUp={(e) => setCapsLockOnConfirm((e as any).getModifierState && (e as any).getModifierState('CapsLock'))}
+                      onKeyDown={(e) => setCapsLockOnConfirm((e as any).getModifierState && (e as any).getModifierState('CapsLock'))}
+                      className="pl-10 pr-10"
+                      required
+                    />
+                  </div>
+                  {capsLockOnConfirm && (
+                    <p className="mt-1 text-xs text-gray-500">Caps Lock is on</p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isResetSubmitting}
+                  className="w-full bg-dna-copper hover:bg-dna-gold text-white"
+                >
+                  {isResetSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Resetting...
+                    </>
+                  ) : (
+                    'Reset Password'
+                  )}
+                </Button>
+                <div className="text-center">
+                  <Button
+                    type="button"
+                    variant="link"
+                    onClick={() => setIsResetMode(false)}
+                    className="p-0 text-dna-copper hover:text-dna-gold underline"
+                  >
+                    Back to sign in
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {!isLogin && (
+                  <div>
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input
+                        id="fullName"
+                        name="fullName"
+                        type="text"
+                        placeholder="Enter your full name"
+                        value={formData.fullName}
+                        onChange={handleInputChange}
+                        className="pl-10"
+                        required={!isLogin}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
                       onChange={handleInputChange}
                       className="pl-10"
-                      required={!isLogin}
+                      required
                     />
                   </div>
                 </div>
-              )}
 
-              <Button
-                type="submit"
-                disabled={isSubmitting || isGoogleLoading || isLinkedInLoading}
-                className="w-full bg-dna-copper hover:bg-dna-gold text-white"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    {isLogin ? 'Signing In...' : 'Creating Account...'}
-                  </>
-                ) : (
-                  isLogin ? 'Sign In' : 'Create Account'
+                <div>
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      onKeyUp={(e) => setCapsLockOn((e as any).getModifierState && (e as any).getModifierState('CapsLock'))}
+                      onKeyDown={(e) => setCapsLockOn((e as any).getModifierState && (e as any).getModifierState('CapsLock'))}
+                      className="pl-10 pr-10"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-1 top-1/2 transform -translate-y-1/2 p-1 h-8 w-8"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
+                  {capsLockOn && (
+                    <p className="mt-1 text-xs text-gray-500">Caps Lock is on</p>
+                  )}
+                  {!isLogin && <PasswordStrength password={formData.password} />}
+                  {isLogin && (
+                    <div className="mt-2">
+                      <Button
+                        type="button"
+                        variant="link"
+                        onClick={handleForgotPassword}
+                        disabled={isForgotSubmitting || isSubmitting || isGoogleLoading || isLinkedInLoading}
+                        className="h-auto p-0 text-sm text-dna-copper hover:text-dna-gold underline"
+                      >
+                        {isForgotSubmitting ? 'Sending reset email…' : 'Forgot password?'}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {!isLogin && (
+                  <div>
+                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Confirm your password"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        className="pl-10"
+                        required={!isLogin}
+                      />
+                    </div>
+                  </div>
                 )}
-              </Button>
-            </form>
+
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || isGoogleLoading || isLinkedInLoading}
+                  className="w-full bg-dna-copper hover:bg-dna-gold text-white"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {isLogin ? 'Signing In...' : 'Creating Account...'}
+                    </>
+                  ) : (
+                    isLogin ? 'Sign In' : 'Create Account'
+                  )}
+                </Button>
+              </form>
+            )}
+
 
             <div className="mt-6 space-y-4">
               <div className="text-center">
