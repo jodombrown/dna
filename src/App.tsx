@@ -31,13 +31,14 @@ import DashboardV1Wrapper from "./dashboard-v1/DashboardV1Wrapper";
 
 const queryClient = new QueryClient();
 
-// Auth guard component to prevent authenticated users from accessing auth/marketing pages
-const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+// Auth guard component to prevent authenticated users from accessing auth-specific pages only
+const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNode; redirectAuth?: boolean }) => {
   const { user, loading } = useAuth();
   
   if (loading) return null;
   
-  if (user) {
+  // Only redirect authenticated users if this is an auth-specific page
+  if (user && redirectAuth) {
     return <Navigate to="/app" replace />;
   }
   
@@ -54,7 +55,7 @@ function App() {
           <AuthProvider>
             <Routes>
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
-              <Route path="/auth" element={<AuthGuard><Auth /></AuthGuard>} />
+              <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/post-onboarding" element={<PostOnboardingFlow />} />
               <Route path="/app/*" element={<AppDashboard />} />
@@ -74,7 +75,7 @@ function App() {
               <Route path="/app/v1" element={<DashboardV1Wrapper />} />
               
               {/* Password Reset Routes */}
-              <Route path="/reset-password" element={<AuthGuard><ResetPassword /></AuthGuard>} />
+              <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
               <Route path="/onboarding/reset-password-complete" element={<ResetPasswordComplete />} />
               
               <Route path="/phase/market-research" element={<AuthGuard><MarketResearchPhase /></AuthGuard>} />
