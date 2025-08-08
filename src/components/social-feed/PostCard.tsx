@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,9 @@ import { EmbedPreview } from './EmbedPreview';
 import type { Post } from './PostList';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { AdminPostControls } from './AdminPostControls';
+import { usePostViewTracker } from '@/hooks/usePostViewTracker';
+import { PostAnalyticsPanel } from '@/components/analytics/PostAnalyticsPanel';
+import { supabase } from '@/integrations/supabase/client';
 
 interface PostCardProps {
   post: Post;
@@ -44,6 +47,12 @@ const getInitials = (name: string) => {
 export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onDelete }) => {
   const [showComments, setShowComments] = useState(false);
   const { isAdmin } = useIsAdmin();
+  const viewRef = usePostViewTracker(post.id);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setCurrentUserId(data.user?.id ?? null));
+  }, []);
   
   const handleCommentToggle = () => {
     setShowComments(!showComments);
@@ -59,6 +68,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onD
   };
   return (
     <Card 
+      ref={viewRef}
       className="bg-background border-border hover:bg-accent/5 transition-colors"
       role="article"
       aria-labelledby={`post-author-${post.id}`}
@@ -218,6 +228,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onD
               onDelete={handleDelete}
             />
           </div>
+
+          {currentUserId === post.author_id && (
+            <div className="mt-3">
+              <PostAnalyticsPanel postId={post.id} createdAt={post.created_at} />
+            </div>
+          )}
+
 
           {/* Comments Section Toggle */}
           {(post.comment_count || 0) > 0 && (

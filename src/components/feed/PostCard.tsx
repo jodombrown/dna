@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { EmbedPreview } from '@/components/social-feed/EmbedPreview';
+import { usePostViewTracker } from '@/hooks/usePostViewTracker';
 
 interface Post {
   id: string;
@@ -47,6 +48,8 @@ export const PostCard: React.FC<PostCardProps> = ({
   const [isLiking, setIsLiking] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const viewRef = usePostViewTracker(post.id);
+
 
   const getPillarColor = (pillar: string) => {
     switch (pillar) {
@@ -142,7 +145,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   };
 
   return (
-    <Card className="bg-background border-border hover:bg-accent/5 transition-colors">
+    <Card className="bg-background border-border hover:bg-accent/5 transition-colors" ref={viewRef}>
       <CardHeader className="pb-3">
         <div className="flex items-start gap-3">
           <Avatar className="h-12 w-12">
