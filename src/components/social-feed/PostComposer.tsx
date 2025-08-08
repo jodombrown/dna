@@ -14,11 +14,14 @@ import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
 import { EmbedPreview } from './EmbedPreview';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { useMobile } from '@/hooks/useMobile';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 interface PostComposerProps {
   defaultPillar?: string;
   onPostCreated?: () => void;
 }
+
+type PostType = 'text' | 'image' | 'video' | 'link' | 'opportunity' | 'spotlight';
 
 export const PostComposer: React.FC<PostComposerProps> = ({ 
   defaultPillar = 'connect',
@@ -26,6 +29,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 }) => {
   const [content, setContent] = useState('');
   const [pillar, setPillar] = useState(defaultPillar);
+  const [postType, setPostType] = useState<PostType>('text');
   const [isPosting, setIsPosting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -41,6 +45,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   const { loading: embedLoading, embedData, handleContentChange: detectEmbeds, clearEmbedData } = useAutoEmbedDetection();
   const { isScrollingDown, isAtTop } = useScrollDirection(30);
   const { isMobile } = useMobile();
+  const { isAdmin } = useIsAdmin();
 
   const getPillarColor = (pillarValue: string) => {
     switch (pillarValue) {
@@ -74,6 +79,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       // Clear embed data when file is selected
       clearEmbedData();
       setSelectedFile(file);
+      setPostType(file.type.startsWith('video/') ? 'video' : 'image');
       const reader = new FileReader();
       reader.onload = (e) => {
         setFilePreview(e.target?.result as string);
@@ -132,10 +138,10 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       return;
     }
 
-    if (!content.trim()) {
+    if (!content.trim() && !selectedFile && !embedData) {
       toast({
         title: "Content required",
-        description: "Please add some content to your post",
+        description: "Add text, media, or a link",
         variant: "destructive",
       });
       return;
@@ -144,9 +150,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     setIsPosting(true);
 
     try {
-      let mediaUrl = null;
-      let postType = 'text';
-      
+      let mediaUrl: string | null = null;
+
       // Upload file if selected
       if (selectedFile) {
         mediaUrl = await uploadMedia(selectedFile);
@@ -154,20 +159,33 @@ export const PostComposer: React.FC<PostComposerProps> = ({
           setIsPosting(false);
           return; // Upload failed, don't create post
         }
-        postType = selectedFile.type.startsWith('video/') ? 'video' : 'image';
       }
-      // Don't change type for embeds - keep as 'text' with embed_metadata
+
+      // Determine final type
+      let finalType: PostType = postType;
+      if (selectedFile) {
+        finalType = selectedFile.type.startsWith('video/') ? 'video' : 'image';
+      } else if (embedData) {
+        finalType = 'link';
+      }
+
+      // Enforce admin-only spotlight
+      if (finalType === 'spotlight' && !isAdmin) {
+        finalType = 'text';
+      }
+
+      const finalStatus = finalType === 'spotlight' ? 'featured' : status;
 
       const { error } = await supabase
         .from('posts')
         .insert({
           content: content.trim(),
-          type: postType,
+          type: finalType,
           pillar: pillar,
           author_id: user.id,
           user_id: user.id,
           visibility: 'public',
-          status: status,
+          status: finalStatus,
           media_url: mediaUrl,
           embed_metadata: embedData ? JSON.parse(JSON.stringify(embedData)) : null
         });
@@ -182,17 +200,18 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       // Reset form
       setContent('');
       setPillar(defaultPillar);
+      setPostType('text');
       removeFile();
       clearEmbedData();
       setIsExpanded(false);
       setIsUserInteracting(false);
       setIsManuallyExpanded(false);
-      
+
       // Clear any manual timeouts
       if (manualTimeoutRef.current) {
         clearTimeout(manualTimeoutRef.current);
       }
-      
+
       onPostCreated?.();
     } catch (error) {
       console.error('Error creating post:', error);
@@ -294,16 +313,33 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                    >
                      {pillar.charAt(0).toUpperCase() + pillar.slice(1)}
                    </Badge>
-                   {!isMobile && !isAtTop && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleCollapse}
-                      className="ml-auto text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
+                  {/* Post type selector */}
+                  <div className="ml-auto flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Type:</span>
+                    <Select value={postType} onValueChange={(v) => setPostType(v as PostType)}>
+                      <SelectTrigger className="w-40">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="text">Text</SelectItem>
+                        <SelectItem value="link" disabled={!embedData}>Link</SelectItem>
+                        <SelectItem value="image" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('image/'))}>Image</SelectItem>
+                        <SelectItem value="video" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('video/'))}>Video</SelectItem>
+                        <SelectItem value="opportunity">Opportunity</SelectItem>
+                        {isAdmin && <SelectItem value="spotlight">Spotlight</SelectItem>}
+                      </SelectContent>
+                    </Select>
+                    {!isMobile && !isAtTop && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleCollapse}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
 
                 <Textarea

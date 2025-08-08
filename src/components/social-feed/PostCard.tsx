@@ -9,6 +9,8 @@ import { PostStats } from './PostStats';
 import CommentThread from './comments/CommentThread';
 import { EmbedPreview } from './EmbedPreview';
 import type { Post } from './PostList';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { AdminPostControls } from './AdminPostControls';
 
 interface PostCardProps {
   post: Post;
@@ -41,6 +43,7 @@ const getInitials = (name: string) => {
 
 export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onDelete }) => {
   const [showComments, setShowComments] = useState(false);
+  const { isAdmin } = useIsAdmin();
   
   const handleCommentToggle = () => {
     setShowComments(!showComments);
@@ -87,6 +90,16 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onD
               >
                 {getPillarLabel(post.pillar)}
               </Badge>
+              {post.type === 'opportunity' && (
+                <Badge variant="secondary" className="text-xs bg-dna-emerald text-white" aria-label="Opportunity post">
+                  Opportunity
+                </Badge>
+              )}
+              {post.type === 'spotlight' && (
+                <Badge variant="secondary" className="text-xs bg-dna-gold text-black" aria-label="Spotlight post">
+                  Spotlight
+                </Badge>
+              )}
             </div>
             
             {post.profiles.professional_role && (
