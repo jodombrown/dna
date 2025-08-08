@@ -75,6 +75,16 @@ const getTypeColor = (type: string) => {
   }
 };
 
+// Utility: validate UUID shape
+const isUuid = (val: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val);
+
+// For mock recommendation IDs (like "1", "2"), generate a deterministic mock UUID
+const toMockUuid = (val: string) => {
+  const clean = (val || '0').toString().replace(/[^0-9a-f]/gi, '');
+  const tail = (clean + '0'.repeat(12)).slice(0, 12).toLowerCase();
+  return `00000000-0000-0000-0000-${tail}`;
+};
+
 const getActionText = (type: string) => {
   switch (type) {
     case 'community': return 'Join Community';
@@ -109,7 +119,7 @@ const RecommendationsStep: React.FC<RecommendationsStepProps> = ({ data, updateD
       
       setSelectedItems(newSelections);
 
-      // Save selection to database
+// Save selection to database
       if (newSelections.includes(recommendationId)) {
         const selectionType = {
           community: 'community_join',
@@ -118,12 +128,14 @@ const RecommendationsStep: React.FC<RecommendationsStepProps> = ({ data, updateD
           user: 'user_connect'
         }[recommendation.type] as 'community_join' | 'event_interest' | 'project_interest' | 'user_connect';
 
+        const targetId = isUuid(recommendationId) ? recommendationId : toMockUuid(recommendationId);
+
         const { error } = await supabase
           .from('user_onboarding_selections')
           .insert({
             user_id: (await supabase.auth.getUser()).data.user?.id,
             selection_type: selectionType,
-            target_id: recommendationId,
+            target_id: targetId,
             target_title: recommendation.title
           });
 
@@ -135,10 +147,11 @@ const RecommendationsStep: React.FC<RecommendationsStepProps> = ({ data, updateD
         });
       } else {
         // Remove selection from database
+        const targetId = isUuid(recommendationId) ? recommendationId : toMockUuid(recommendationId);
         const { error } = await supabase
           .from('user_onboarding_selections')
           .delete()
-          .eq('target_id', recommendationId);
+          .eq('target_id', targetId);
 
         if (error) throw error;
       }
