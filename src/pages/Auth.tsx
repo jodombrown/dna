@@ -38,6 +38,7 @@ const Auth = () => {
   const [capsLockOn, setCapsLockOn] = useState(false);
   const [capsLockOnConfirm, setCapsLockOnConfirm] = useState(false);
   const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
+  const [isAdminMagicSending, setIsAdminMagicSending] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -295,6 +296,33 @@ const Auth = () => {
     } finally {
       if (provider === 'google') setIsGoogleLoading(false);
       if (provider === 'linkedin_oidc') setIsLinkedInLoading(false);
+    }
+  };
+
+  const handleAdminMagicLink = async () => {
+    try {
+      if (!formData.email) {
+        toast({ title: 'Email required', description: 'Enter your work email to receive a magic link.', variant: 'destructive' });
+        return;
+      }
+      const email = formData.email.trim();
+      const isAdminDomain = email.toLowerCase().endsWith('@diasporanetwork.africa');
+      if (!isAdminDomain) {
+        toast({ title: 'Admins use work email', description: 'Use your @diasporanetwork.africa email for admin access.', variant: 'destructive' });
+        return;
+      }
+      setIsAdminMagicSending(true);
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: `${window.location.origin}/app/admin` }
+      });
+      if (error) throw error;
+      toast({ title: 'Magic link sent', description: 'Check your email to open the Admin Console.' });
+    } catch (err: any) {
+      console.error('Admin magic link error:', err);
+      toast({ title: 'Could not send magic link', description: err?.message || 'Please try again.', variant: 'destructive' });
+    } finally {
+      setIsAdminMagicSending(false);
     }
   };
 
@@ -685,7 +713,31 @@ const Auth = () => {
                 </p>
               </div>
 
-              
+              {/* Admin Quick Login */}
+              <div className="border rounded-lg p-4 bg-dna-mint/10 border-dna-emerald/20">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-medium text-dna-forest">Admin or Superadmin?</div>
+                    <div className="text-xs text-gray-600">Use your @diasporanetwork.africa email to receive a magic link to the Admin Console.</div>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={handleAdminMagicLink}
+                    disabled={isAdminMagicSending || !formData.email}
+                    className="bg-dna-emerald hover:bg-dna-forest text-white whitespace-nowrap"
+                  >
+                    {isAdminMagicSending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Sending link…
+                      </>
+                    ) : (
+                      'Email me the Admin magic link'
+                    )}
+                  </Button>
+                </div>
+              </div>
+
               {/* Privacy Policy and Terms */}
               <div className="text-center text-xs text-gray-500 leading-relaxed">
                 By signing {isLogin ? 'in' : 'up'}, you agree to our{' '}
