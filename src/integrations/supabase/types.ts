@@ -1546,6 +1546,42 @@ export type Database = {
           },
         ]
       }
+      post_views: {
+        Row: {
+          id: string
+          post_id: string
+          viewed_at: string
+          viewer_id: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          viewed_at?: string
+          viewer_id: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          viewed_at?: string
+          viewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_views_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           author_id: string
@@ -2733,6 +2769,10 @@ export type Database = {
           cohort_param?: string
         }
         Returns: string
+      }
+      log_post_view: {
+        Args: { p_post_id: string }
+        Returns: undefined
       }
       make_user_admin: {
         Args: { user_email: string }
