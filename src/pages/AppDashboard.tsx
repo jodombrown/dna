@@ -18,24 +18,27 @@ import AppSidebar from '@/components/AppSidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import SpaceDetail from './app/SpaceDetail';
 import PreviewBanner, { isPreviewActive } from '@/components/preview/PreviewBanner';
+import { isDevBypassActive, DevBypassMount, DevBypassToggle } from '@/components/dev/DevBypass';
 
 const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
   const preview = isPreviewActive();
+  const devBypass = isDevBypassActive();
+  const bypass = preview || devBypass;
 
   useEffect(() => {
     if (!loading) {
-      if (!user && !preview) {
+      if (!user && !bypass) {
         navigate('/auth');
-      } else if (!profile && !preview) {
+      } else if (!profile && !bypass) {
         // If user exists but no profile, redirect to onboarding
         navigate('/onboarding');
       }
     }
-  }, [user, profile, loading, navigate, preview]);
+  }, [user, profile, loading, navigate, bypass]);
 
-  if (loading && !preview) {
+  if (loading && !bypass) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -46,7 +49,7 @@ const AppDashboard = () => {
     );
   }
 
-  if (!user && !preview) {
+  if (!user && !bypass) {
     return null;
   }
 
@@ -61,6 +64,8 @@ const AppDashboard = () => {
 
             {/* Preview mode banner */}
             <PreviewBanner />
+            {/* Dev bypass activator (URL/localStorage) */}
+            <DevBypassMount />
 
             {/* Unified Header */}
             <UnifiedHeader />
@@ -89,6 +94,7 @@ const AppDashboard = () => {
             </main>
             <MobileNavigation />
             <MobilePostButton />
+            <DevBypassToggle />
           </div>
         </div>
       </SidebarProvider>

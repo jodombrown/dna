@@ -59,9 +59,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Preview mode: bypass Supabase auth and provide mock user/profile
+    // Dev bypass: silently bypass Supabase auth with mock user/profile (no banner)
     try {
       const params = new URLSearchParams(window.location.search);
+      const devFlag = params.get('dev') === '1' || window.location.pathname.includes('/app/dev');
+      const devLocal = typeof localStorage !== 'undefined' && localStorage.getItem('dna_dev') === '1';
+      const isDev = devFlag || devLocal;
+
+      if (isDev) {
+        if (devFlag) {
+          try { localStorage.setItem('dna_dev', '1'); } catch {}
+        }
+        const mockUser = ({
+          id: '00000000-0000-0000-0000-000000000002',
+          email: 'dev@diasporanetwork.africa',
+          app_metadata: { provider: 'dev' },
+          user_metadata: { full_name: 'Dev Bypass' },
+          aud: 'authenticated',
+        } as unknown) as User;
+
+        setSession(null);
+        setUser(mockUser);
+        setProfile({
+          id: mockUser.id,
+          email: mockUser.email,
+          full_name: 'Dev Bypass',
+          display_name: 'Dev Bypass',
+          username: 'dev-bypass',
+          avatar_url: null,
+          is_public: true,
+          profile_completeness_score: 100,
+        });
+        setLoading(false);
+        return; // Do not initialize Supabase listeners in dev bypass
+      }
+
+      // Preview mode: bypass Supabase auth and provide mock user/profile
       const previewFlag = params.get('preview') === '1' || window.location.pathname.includes('/app/preview');
       const localFlag = typeof localStorage !== 'undefined' && localStorage.getItem('dna_preview') === '1';
       const isPreview = previewFlag || localFlag;
