@@ -23,7 +23,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
+  SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -68,13 +68,15 @@ const AppSidebar = () => {
 
   return (
     <Sidebar collapsible="icon">
+      <SidebarRail />
       {/* Brand */}
-      <div className="p-3 border-b border-gray-200 flex items-center justify-center">
+      <div className="p-4 border-b border-border bg-background flex items-center justify-center">
         <NavLink to="/app" className="flex items-center">
           <img
             src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png"
             alt="DNA logo"
-            className={`${isCollapsed ? 'h-6' : 'h-8'} w-auto transition-all`}
+            loading="lazy"
+            className="h-8 w-auto object-contain transition-all"
           />
         </NavLink>
       </div>

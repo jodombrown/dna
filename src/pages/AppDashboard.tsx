@@ -14,7 +14,7 @@ import Invites from './app/Invites';
 import Spaces from './app/Spaces';
 import Opportunities from './app/Opportunities';
 import AppSidebar from '@/components/AppSidebar';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import SpaceDetail from './app/SpaceDetail';
 import { isDevBypassActive, DevBypassMount, DevBypassToggle } from '@/components/dev/DevBypass';
 
@@ -57,14 +57,14 @@ const AppDashboard = () => {
           <AppSidebar />
           <div className="flex-1 relative">
             {/* Global sidebar trigger - always visible */}
-            <SidebarTrigger className="fixed top-4 left-4 z-50" />
+            
 
             {/* Dev bypass activator (URL/localStorage) */}
             <DevBypassMount />
 
 
             {/* Main Content */}
-            <main className="pt-4 pb-20 lg:pb-0">
+            <main className="pt-10 lg:pt-12 pb-20 lg:pb-0">
               <Routes>
                 {/* Main dashboard route */}
                 <Route index element={<Dashboard />} />
