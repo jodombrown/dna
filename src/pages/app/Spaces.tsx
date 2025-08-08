@@ -7,6 +7,14 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+const guard = (res: { data: any; error: any }, friendly = 'Action failed') => {
+  if (res.error) {
+    console.error(res.error);
+    throw new Error(friendly);
+  }
+  return res.data ?? [];
+};
+
 interface Space {
   id: string;
   created_by: string;
@@ -75,12 +83,15 @@ const Spaces: React.FC = () => {
 
   const fetchSpaces = async () => {
     setLoading(true);
-    const { data, error } = await supabase
+    const res = await supabase
       .from('collaboration_spaces')
       .select('*')
       .order('updated_at', { ascending: false });
-    if (!error) setSpaces((data as Space[]) || []);
-    setLoading(false);
+    try {
+      setSpaces(guard(res as any, 'Could not load spaces') as Space[]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -119,9 +130,20 @@ const Spaces: React.FC = () => {
       supabase.from('tasks').select('*').eq('space_id', space.id).order('updated_at', { ascending: false }),
       supabase.from('milestones').select('*').eq('space_id', space.id).order('updated_at', { ascending: false }),
     ]);
-    if (!tasksRes.error) setTasks((tasksRes.data as Task[]) || []);
-    if (!msRes.error) setMilestones((msRes.data as Milestone[]) || []);
+    setTasks(guard(tasksRes as any, "You do not have access to this space's tasks") as Task[]);
+    setMilestones(guard(msRes as any, "You do not have access to this space's milestones") as Milestone[]);
   };
+
+  useEffect(() => {
+    if (!selected) return;
+    const channel = supabase
+      .channel(`space:${selected.id}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks', filter: `space_id=eq.${selected.id}` }, () => fetchDetails(selected))
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'milestones', filter: `space_id=eq.${selected.id}` }, () => fetchDetails(selected))
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [selected?.id]);
 
   const addTask = async () => {
     if (!user || !selected || !taskTitle.trim()) return;
