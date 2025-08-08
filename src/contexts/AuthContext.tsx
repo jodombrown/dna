@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Dev bypass: silently bypass Supabase auth with mock user/profile (no banner)
     try {
       const params = new URLSearchParams(window.location.search);
-      const devFlag = params.get('dev') === '1' || window.location.pathname.includes('/app/dev');
+      const devFlag = params.get('dev') === '1' || window.location.pathname.includes('/app/dev') || window.location.pathname.includes('/dna/dev');
       const devLocal = typeof localStorage !== 'undefined' && localStorage.getItem('dna_dev') === '1';
       const isDev = devFlag || devLocal;
 
