@@ -289,6 +289,72 @@ export type Database = {
         }
         Relationships: []
       }
+      collaboration_memberships: {
+        Row: {
+          id: string
+          joined_at: string
+          role: string
+          space_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          role?: string
+          space_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          role?: string
+          space_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      collaboration_spaces: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          image_url: string | null
+          status: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          status?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          status?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           author_id: string
@@ -1068,6 +1134,39 @@ export type Database = {
           },
         ]
       }
+      impact_badges: {
+        Row: {
+          active: boolean
+          badge_key: string
+          created_at: string
+          criteria: Json | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          badge_key: string
+          created_at?: string
+          criteria?: Json | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          active?: boolean
+          badge_key?: string
+          created_at?: string
+          criteria?: Json | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       impact_log: {
         Row: {
           action_type: string | null
@@ -1250,6 +1349,42 @@ export type Database = {
           },
         ]
       }
+      milestones: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string | null
+          id: string
+          space_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          space_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          space_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -1286,6 +1421,57 @@ export type Database = {
           type?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      opportunities: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          image_url: string | null
+          link: string | null
+          location: string | null
+          space_id: string | null
+          status: string
+          tags: string[] | null
+          title: string
+          type: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          link?: string | null
+          location?: string | null
+          space_id?: string | null
+          status?: string
+          tags?: string[] | null
+          title: string
+          type?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          link?: string | null
+          location?: string | null
+          space_id?: string | null
+          status?: string
+          tags?: string[] | null
+          title?: string
+          type?: string
+          updated_at?: string
+          visibility?: string
         }
         Relationships: []
       }
@@ -1729,6 +1915,48 @@ export type Database = {
           id?: string
           post_id?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          assignee_id: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: string
+          space_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          space_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee_id?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: string
+          space_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
