@@ -131,15 +131,37 @@ const Spaces: React.FC = () => {
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [accessDenied, setAccessDenied] = useState(false);
 
   const fetchDetails = async (space: Space) => {
     setSelected(space);
-    const [tasksRes, msRes] = await Promise.all([
-      supabase.from('tasks').select('*').eq('space_id', space.id).order('updated_at', { ascending: false }),
-      supabase.from('milestones').select('*').eq('space_id', space.id).order('updated_at', { ascending: false }),
-    ]);
-    setTasks(guard(tasksRes as any, "You do not have access to this space's tasks") as Task[]);
-    setMilestones(guard(msRes as any, "You do not have access to this space's milestones") as Milestone[]);
+    try {
+      const [tasksRes, msRes] = await Promise.all([
+        supabase.from('tasks').select('*').eq('space_id', space.id).order('updated_at', { ascending: false }),
+        supabase.from('milestones').select('*').eq('space_id', space.id).order('updated_at', { ascending: false }),
+      ]);
+      setTasks(guard(tasksRes as any, "You do not have access to this space's tasks") as Task[]);
+      setMilestones(guard(msRes as any, "You do not have access to this space's milestones") as Milestone[]);
+      setAccessDenied(false);
+    } catch (e) {
+      console.warn('Access denied or error fetching details', e);
+      setTasks([]);
+      setMilestones([]);
+      setAccessDenied(true);
+    }
+  };
+
+  const requestJoin = async (spaceId: string) => {
+    if (!user) return;
+    const { error } = await supabase.from('collaboration_memberships').insert({
+      space_id: spaceId, user_id: user.id, role: 'member', status: 'pending'
+    });
+    if (error) {
+      console.warn('Join request failed', error);
+      alert('Join request failed');
+    } else {
+      alert('Join request sent');
+    }
   };
 
   useEffect(() => {
@@ -297,6 +319,12 @@ const Spaces: React.FC = () => {
                 {/* Tasks */}
                 <div>
                   <h3 className="text-sm font-medium text-dna-forest mb-2">Tasks</h3>
+                  {accessDenied && (
+                    <div className="p-3 border rounded bg-muted/30 mb-3">
+                      <p className="text-sm text-gray-600 mb-2">You don’t have access to this private space.</p>
+                      <Button onClick={() => selected && requestJoin(selected.id)}>Request to Join</Button>
+                    </div>
+                  )}
                   <div className="flex gap-2 mb-3">
                     <Input placeholder="Task title" value={taskTitle} onChange={(e) => setTaskTitle(e.target.value)} />
                     <Input type="date" value={taskDue} onChange={(e) => setTaskDue(e.target.value)} className="w-40" />

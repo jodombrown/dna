@@ -72,6 +72,14 @@ const Opportunities: React.FC = () => {
   }, [q, status, type]);
 
   useEffect(() => {
+    const ch = supabase
+      .channel('opps')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'opportunities' }, () => fetchOpportunities(page))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [page]);
+
+  useEffect(() => {
     fetchOpportunities(page);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
