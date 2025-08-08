@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface Opportunity {
   id: string;
@@ -23,6 +24,7 @@ interface Opportunity {
 const Opportunities: React.FC = () => {
   const [items, setItems] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
 
   const [q, setQ] = useState('');
   const [status, setStatus] = useState<'all' | 'active' | 'closed'>('all');
@@ -34,28 +36,38 @@ const Opportunities: React.FC = () => {
     if (meta) meta.setAttribute('content', 'Browse active opportunities across the DNA network.');
   }, []);
 
-  const fetchOpportunities = async () => {
+  const fetchOpportunities = async (p = 0) => {
     setLoading(true);
-    const { data, error } = await supabase
+    let query = supabase
       .from('opportunities')
       .select('*')
-      .order('created_at', { ascending: false });
-    if (!error) setItems((data as Opportunity[]) || []);
-    setLoading(false);
+      .ilike('title', `%${q}%`)
+      .order('created_at', { ascending: false })
+      .range(p * PAGE, p * PAGE + PAGE - 1);
+
+    if (status !== 'all') query = query.eq('status', status);
+    if (type !== 'all') query = query.eq('type', type);
+
+    const res = await query;
+    try {
+      setItems(guard(res, 'Could not load opportunities') as Opportunity[]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchOpportunities();
-  }, []);
+    setPage(0);
+    fetchOpportunities(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q, status, type]);
 
-  const filtered = useMemo(() => {
-    return items.filter((it) => {
-      if (status !== 'all' && it.status !== status) return false;
-      if (type !== 'all' && it.type !== type) return false;
-      if (q && !(`${it.title} ${it.description || ''} ${(it.tags || []).join(' ')}`.toLowerCase().includes(q.toLowerCase()))) return false;
-      return true;
-    });
-  }, [items, q, status, type]);
+  useEffect(() => {
+    fetchOpportunities(page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+
+  const data = items;
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">

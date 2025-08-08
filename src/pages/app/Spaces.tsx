@@ -160,6 +160,9 @@ const Spaces: React.FC = () => {
     if (!error) {
       setTaskTitle('');
       setTaskDue('');
+      if (user && selected) {
+        logContribution({ user_id: user.id, type: 'task', target_id: selected.id, target_title: taskTitle, metadata: { action: 'created' } });
+      }
       fetchDetails(selected);
     }
   };
@@ -167,7 +170,12 @@ const Spaces: React.FC = () => {
   const toggleTaskStatus = async (task: Task) => {
     const next: Task['status'] = task.status === 'todo' ? 'in-progress' : task.status === 'in-progress' ? 'done' : 'todo';
     const { error } = await supabase.from('tasks').update({ status: next }).eq('id', task.id);
-    if (!error && selected) fetchDetails(selected);
+    if (!error && selected) {
+      if (user) {
+        logContribution({ user_id: user.id, type: 'task', target_id: task.id, metadata: { action: 'status_changed', to: next } });
+      }
+      fetchDetails(selected);
+    }
   };
 
   const addMilestone = async () => {
@@ -183,6 +191,9 @@ const Spaces: React.FC = () => {
     if (!error) {
       setMsTitle('');
       setMsDue('');
+      if (user && selected) {
+        logContribution({ user_id: user.id, type: 'milestone', target_id: selected.id, target_title: msTitle, metadata: { action: 'created' } });
+      }
       fetchDetails(selected);
     }
   };
