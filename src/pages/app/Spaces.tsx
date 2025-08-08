@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
 
 const guard = (res: { data: any; error: any }, friendly = 'Action failed') => {
   if (res.error) {
@@ -60,6 +61,7 @@ const Spaces: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [selected, setSelected] = useState<Space | null>(null);
+  const navigate = useNavigate();
 
   // create form state
   const [title, setTitle] = useState('');
@@ -83,12 +85,17 @@ const Spaces: React.FC = () => {
 
   const logContribution = async (payload: { user_id?: string; type: string; target_id: string; target_title?: string; metadata?: any }) => {
     try {
-      console.debug('logContribution', payload);
+      const { error } = await supabase.rpc('rpc_log_contribution', {
+        p_type: payload.type,
+        p_target_id: payload.target_id,
+        p_target_title: payload.target_title ?? null,
+        p_metadata: payload.metadata ?? {}
+      });
+      if (error) console.warn('logContribution failed', error);
     } catch (e) {
       console.warn('logContribution failed', e);
     }
   };
-
   const fetchSpaces = async () => {
     setLoading(true);
     const res = await supabase
@@ -282,7 +289,7 @@ const Spaces: React.FC = () => {
                 {spaces.map((s) => (
                   <button
                     key={s.id}
-                    onClick={() => fetchDetails(s)}
+                    onClick={() => navigate(`/app/spaces/${s.id}`)}
                     className={`w-full text-left p-3 rounded border transition ${selected?.id === s.id ? 'border-dna-copper bg-dna-mint/20' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
                     <div className="flex items-center justify-between">

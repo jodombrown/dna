@@ -2468,6 +2468,23 @@ export type Database = {
         }
         Relationships: []
       }
+      view_public_contributions: {
+        Row: {
+          created_at: string | null
+          target_id: string | null
+          type: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_contributions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       add_message_reaction: {

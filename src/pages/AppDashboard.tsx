@@ -16,6 +16,7 @@ import Spaces from './app/Spaces';
 import Opportunities from './app/Opportunities';
 import AppSidebar from '@/components/AppSidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import SpaceDetail from './app/SpaceDetail';
 
 const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -70,6 +71,7 @@ const AppDashboard = () => {
                 <Route path="search" element={<Search />} />
                 <Route path="connect" element={<Connect />} />
                 <Route path="spaces" element={<Spaces />} />
+                <Route path="spaces/:id" element={<SpaceDetail />} />
                 <Route path="opportunities" element={<Opportunities />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="profile/edit" element={<ProfileEdit />} />
