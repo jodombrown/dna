@@ -2735,6 +2735,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_rate_limit_uid: {
+        Args: {
+          p_user: string
+          p_action: string
+          p_limit: number
+          p_window_seconds: number
+        }
+        Returns: boolean
+      }
       compute_influence_score: {
         Args: { target_user_id: string }
         Returns: number
@@ -2896,6 +2905,15 @@ export type Database = {
         Args: { _user_id: string }
         Returns: boolean
       }
+      is_member_of_space: {
+        Args: {
+          _space: string
+          _user: string
+          _roles?: string[]
+          _approved_only?: boolean
+        }
+        Returns: boolean
+      }
       is_user_admin: {
         Args: { user_id: string }
         Returns: boolean
@@ -2921,6 +2939,10 @@ export type Database = {
         Args: { user_id_param: string; min_score?: number }
         Returns: boolean
       }
+      reject_html: {
+        Args: { _txt: string }
+        Returns: boolean
+      }
       remove_message_reaction: {
         Args: { p_message_id: string; p_user_id: string; p_reaction: string }
         Returns: undefined
@@ -2930,7 +2952,9 @@ export type Database = {
         Returns: undefined
       }
       rpc_create_post: {
-        Args: { p: Json }
+        Args:
+          | { p: Json }
+          | { p_content: string; p_pillar?: string; p_media_url?: string }
         Returns: string
       }
       rpc_log_contribution: {
