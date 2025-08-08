@@ -97,10 +97,15 @@ const Onboarding = () => {
     }
   }, [user, navigate]);
 
-  // If profile already exists and is complete, redirect to app
+  // If profile already exists and is complete, redirect to user's public dashboard
   useEffect(() => {
     if (profile && profile.onboarding_completed_at) {
-      navigate('/app');
+      const username = profile?.username;
+      if (username) {
+        navigate(`/dna/${username}`);
+      } else {
+        navigate('/app');
+      }
     }
   }, [profile, navigate]);
 
@@ -341,7 +346,7 @@ const Onboarding = () => {
           </Button>
           
           <Button
-            onClick={handleNext}
+            onClick={() => currentStep === STEPS.length - 1 ? handleSubmit() : handleNext()}
             disabled={!canProceedToNext() || isSubmitting}
             className="bg-dna-copper hover:bg-dna-gold text-white flex items-center justify-center gap-2 h-12 sm:h-10"
             size="lg"
