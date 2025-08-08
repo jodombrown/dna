@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const mainNavItems = [
   { title: 'Home', url: '/app', icon: Home },
@@ -67,6 +68,17 @@ const AppSidebar = () => {
 
   return (
     <Sidebar collapsible="icon">
+      {/* Brand */}
+      <div className="p-3 border-b border-gray-200 flex items-center justify-center">
+        <NavLink to="/app" className="flex items-center">
+          <img
+            src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png"
+            alt="DNA logo"
+            className={`${isCollapsed ? 'h-6' : 'h-8'} w-auto transition-all`}
+          />
+        </NavLink>
+      </div>
+
       {/* User Profile Section */}
       <div className="p-4 border-b border-gray-200">
         {!isCollapsed && profile && (
@@ -109,12 +121,27 @@ const AppSidebar = () => {
             <SidebarMenu>
               {mainNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavCls(item.url)}>
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
+                  {isCollapsed ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarMenuButton asChild>
+                          <NavLink to={item.url} className={getNavCls(item.url)}>
+                            <item.icon className="mr-2 h-4 w-4" />
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="text-xs">
+                        {item.title}
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} className={getNavCls(item.url)}>
+                        <item.icon className="mr-2 h-4 w-4" />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -130,26 +157,58 @@ const AppSidebar = () => {
             <SidebarMenu>
               {bottomNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavCls(item.url)}>
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {!isCollapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
+                  {isCollapsed ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarMenuButton asChild>
+                          <NavLink to={item.url} className={getNavCls(item.url)}>
+                            <item.icon className="mr-2 h-4 w-4" />
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="text-xs">
+                        {item.title}
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <SidebarMenuButton asChild>
+                      <NavLink to={item.url} className={getNavCls(item.url)}>
+                        <item.icon className="mr-2 h-4 w-4" />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  )}
                 </SidebarMenuItem>
               ))}
               
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Button
-                    variant="ghost"
-                    onClick={signOut}
-                    className="w-full justify-start text-gray-700 hover:text-red-600 hover:bg-red-50"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    {!isCollapsed && <span>Sign Out</span>}
-                  </Button>
-                </SidebarMenuButton>
+                {isCollapsed ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SidebarMenuButton asChild>
+                        <Button
+                          variant="ghost"
+                          onClick={signOut}
+                          className="w-full justify-start text-gray-700 hover:text-red-600 hover:bg-red-50"
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                        </Button>
+                      </SidebarMenuButton>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="text-xs">Sign Out</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <SidebarMenuButton asChild>
+                    <Button
+                      variant="ghost"
+                      onClick={signOut}
+                      className="w-full justify-start text-gray-700 hover:text-red-600 hover:bg-red-50"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Sign Out</span>
+                    </Button>
+                  </SidebarMenuButton>
+                )}
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>

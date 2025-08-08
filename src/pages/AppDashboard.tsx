@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
-import UnifiedHeader from '@/components/UnifiedHeader';
 import { MobileNavigation, MobilePostButton } from '@/components/mobile';
 import { DashboardProvider } from '@/contexts/DashboardContext';
 // V2 Dashboard imports
@@ -63,11 +62,9 @@ const AppDashboard = () => {
             {/* Dev bypass activator (URL/localStorage) */}
             <DevBypassMount />
 
-            {/* Unified Header */}
-            <UnifiedHeader />
 
             {/* Main Content */}
-            <main className="pt-16 pb-20 lg:pb-0">
+            <main className="pt-4 pb-20 lg:pb-0">
               <Routes>
                 {/* Main dashboard route */}
                 <Route index element={<Dashboard />} />
