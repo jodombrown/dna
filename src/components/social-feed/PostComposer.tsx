@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -21,7 +22,7 @@ interface PostComposerProps {
   onPostCreated?: () => void;
 }
 
-type PostType = 'text' | 'image' | 'video' | 'article' | 'opportunity' | 'spotlight';
+type PostType = 'text' | 'image' | 'video' | 'link' | 'poll' | 'opportunity' | 'question' | 'spotlight';
 
 export const PostComposer: React.FC<PostComposerProps> = ({ 
   defaultPillar = 'connect',
@@ -46,6 +47,12 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   const { isScrollingDown, isAtTop } = useScrollDirection(30);
   const { isMobile } = useMobile();
   const { isAdmin } = useIsAdmin();
+
+  // Expanded post type states
+  const [pollOptions, setPollOptions] = useState<string[]>(['', '']);
+  const [pollExpiresAt, setPollExpiresAt] = useState<string | null>(null);
+  const [opportunityType, setOpportunityType] = useState('');
+  const [opportunityLink, setOpportunityLink] = useState('');
 
   const getPillarColor = (pillarValue: string) => {
     switch (pillarValue) {
@@ -73,6 +80,16 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     }
   };
 
+  // Poll option handlers
+  const updatePollOption = (index: number, value: string) => {
+    setPollOptions((opts) => opts.map((o, i) => (i === index ? value : o)));
+  };
+  const addPollOption = () => {
+    setPollOptions((opts) => (opts.length < 5 ? [...opts, ''] : opts));
+  };
+  const removePollOption = (index: number) => {
+    setPollOptions((opts) => opts.filter((_, i) => i !== index));
+  };
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -166,7 +183,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       if (selectedFile) {
         finalType = selectedFile.type.startsWith('video/') ? 'video' : 'image';
       } else if (embedData) {
-        finalType = 'article';
+        finalType = 'link';
       }
 
       // Enforce admin-only spotlight
@@ -176,19 +193,49 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 
       const finalStatus = finalType === 'spotlight' ? 'featured' : status;
 
+      // Build payload
+      const payload: any = {
+        content: content.trim(),
+        type: finalType,
+        pillar: pillar,
+        author_id: user.id,
+        user_id: user.id,
+        visibility: 'public',
+        status: finalStatus,
+        media_url: mediaUrl,
+      };
+
+      if (embedData) {
+        payload.embed_metadata = JSON.parse(JSON.stringify(embedData));
+        if (finalType === 'link') {
+          payload.link_url = embedData.url || null;
+          payload.link_metadata = JSON.parse(JSON.stringify(embedData));
+        }
+      }
+
+      if (finalType === 'poll') {
+        const options = pollOptions.map(o => o.trim()).filter(Boolean);
+        if (options.length < 2) {
+          toast({
+            title: "Add poll options",
+            description: "Provide at least 2 options for your poll",
+            variant: "destructive",
+          });
+          setIsPosting(false);
+          return;
+        }
+        payload.poll_options = { options };
+        payload.poll_expires_at = pollExpiresAt ? new Date(pollExpiresAt).toISOString() : null;
+      }
+
+      if (finalType === 'opportunity') {
+        payload.opportunity_type = opportunityType || null;
+        payload.opportunity_link = opportunityLink || null;
+      }
+
       const { error } = await supabase
         .from('posts')
-        .insert({
-          content: content.trim(),
-          type: finalType,
-          pillar: pillar,
-          author_id: user.id,
-          user_id: user.id,
-          visibility: 'public',
-          status: finalStatus,
-          media_url: mediaUrl,
-          embed_metadata: embedData ? JSON.parse(JSON.stringify(embedData)) : null
-        });
+        .insert(payload);
 
       if (error) throw error;
 
@@ -322,7 +369,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="text">Text</SelectItem>
-                        <SelectItem value="article" disabled={!embedData}>Link</SelectItem>
+                        <SelectItem value="link" disabled={!embedData}>Link</SelectItem>
                         <SelectItem value="image" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('image/'))}>Image</SelectItem>
                         <SelectItem value="video" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('video/'))}>Video</SelectItem>
                         <SelectItem value="opportunity">Opportunity</SelectItem>
@@ -351,7 +398,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                   rows={3}
                 />
 
-                {/* Embed Preview */}
+                {/* Link Preview */}
                 {embedData && (
                   <EmbedPreview 
                     embedData={embedData} 
@@ -360,7 +407,50 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                   />
                 )}
 
-                {/* Media Preview */}
+                {/* Poll Builder */}
+                {postType === 'poll' && (
+                  <div className="space-y-3 border rounded-lg p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Poll Options</span>
+                      <Button type="button" variant="outline" size="sm" onClick={addPollOption} disabled={pollOptions.length >= 5}>Add option</Button>
+                    </div>
+                    <div className="space-y-2">
+                      {pollOptions.map((opt, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <Input
+                            value={opt}
+                            onChange={(e) => updatePollOption(i, e.target.value)}
+                            placeholder={`Option ${i + 1}`}
+                          />
+                          {pollOptions.length > 2 && (
+                            <Button type="button" variant="ghost" size="sm" onClick={() => removePollOption(i)}>Remove</Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <label className="text-sm text-muted-foreground">Expires:</label>
+                      <Input type="datetime-local" value={pollExpiresAt ?? ''} onChange={(e) => setPollExpiresAt(e.target.value || null)} className="max-w-xs" />
+                    </div>
+                  </div>
+                )}
+
+                {/* Opportunity Details */}
+                {postType === 'opportunity' && (
+                  <div className="space-y-3 border rounded-lg p-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-sm text-muted-foreground">Opportunity Type</label>
+                        <Input value={opportunityType} onChange={(e) => setOpportunityType(e.target.value)} placeholder="e.g., Grant, Job, RFP" />
+                      </div>
+                      <div>
+                        <label className="text-sm text-muted-foreground">Link</label>
+                        <Input type="url" value={opportunityLink} onChange={(e) => setOpportunityLink(e.target.value)} placeholder="https://..." />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {filePreview && (
                   <div className="relative rounded-lg overflow-hidden border">
                     {selectedFile?.type.startsWith('video/') ? (
@@ -412,7 +502,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                   <div className="flex items-center gap-2">
                     <Button 
                       onClick={() => handleSubmit('draft')}
-                      disabled={isPosting || !content.trim() || embedLoading || uploading}
+                      disabled={isPosting || embedLoading || uploading || !(content.trim() || embedData || selectedFile || (postType === 'poll' && pollOptions.some(o => o.trim())) || (postType === 'opportunity' && opportunityLink.trim()))}
                       variant="outline"
                       className="text-muted-foreground hover:text-foreground"
                     >
@@ -420,7 +510,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                     </Button>
                     <Button 
                       onClick={() => handleSubmit('published')}
-                      disabled={isPosting || !content.trim() || embedLoading || uploading}
+                      disabled={isPosting || embedLoading || uploading || !(content.trim() || embedData || selectedFile || (postType === 'poll' && pollOptions.some(o => o.trim())) || (postType === 'opportunity' && opportunityLink.trim()))}
                       className="bg-dna-forest hover:bg-dna-forest/90"
                     >
                       {isPosting ? (

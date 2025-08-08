@@ -90,6 +90,21 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onD
               >
                 {getPillarLabel(post.pillar)}
               </Badge>
+              {post.type === 'link' && (
+                <Badge variant="secondary" className="text-xs bg-dna-forest text-white" aria-label="Link post">
+                  Link
+                </Badge>
+              )}
+              {post.type === 'poll' && (
+                <Badge variant="secondary" className="text-xs bg-dna-emerald text-white" aria-label="Poll post">
+                  Poll
+                </Badge>
+              )}
+              {post.type === 'question' && (
+                <Badge variant="secondary" className="text-xs bg-dna-copper text-white" aria-label="Question post">
+                  Question
+                </Badge>
+              )}
               {post.type === 'opportunity' && (
                 <Badge variant="secondary" className="text-xs bg-dna-emerald text-white" aria-label="Opportunity post">
                   Opportunity
@@ -119,8 +134,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onD
 
       <CardContent className="pt-0">
         <div className="space-y-4">
-          {/* Show embed preview if embed_metadata exists, otherwise show content */}
-          {post.embed_metadata ? (
+          {/* Show embed preview if link_metadata or embed_metadata exists, otherwise show content */}
+          {((post as any).link_metadata || post.embed_metadata) ? (
             <div className="space-y-3">
               {/* Show content without URLs if it has additional text */}
               {post.content && post.content.trim() && !post.content.trim().match(/^https?:\/\/[^\s]+$/i) && (
@@ -129,7 +144,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onD
                 </p>
               )}
               <EmbedPreview 
-                embedData={post.embed_metadata} 
+                embedData={(post as any).link_metadata || post.embed_metadata}
                 onRemove={() => {}} 
                 showRemoveButton={false}
               />
@@ -157,6 +172,29 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onD
                   className="w-full h-auto max-h-96 object-cover"
                 />
               )}
+            </div>
+          )}
+
+          {post.type === 'poll' && (post as any).poll_options?.options && (
+            <div className="rounded-lg border p-3">
+              <div className="text-sm font-medium mb-2">Poll</div>
+              <ul className="space-y-2">
+                {((post as any).poll_options.options as string[]).map((opt: string, idx: number) => (
+                  <li key={idx} className="flex items-center gap-2">
+                    <span className="inline-block h-2 w-2 rounded-full bg-muted-foreground" />
+                    <span>{opt}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {post.type === 'opportunity' && (post as any).opportunity_link && (
+            <div className="rounded-lg border p-3 flex items-center justify-between">
+              <span className="text-sm">Opportunity link</span>
+              <Button asChild variant="outline" size="sm">
+                <a href={(post as any).opportunity_link} target="_blank" rel="noopener noreferrer">Open</a>
+              </Button>
             </div>
           )}
 

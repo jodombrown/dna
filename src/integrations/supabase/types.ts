@@ -1554,8 +1554,14 @@ export type Database = {
           embed_metadata: Json | null
           hashtags: string[] | null
           id: string
+          link_metadata: Json | null
+          link_url: string | null
           media_url: string | null
+          opportunity_link: string | null
+          opportunity_type: string | null
           pillar: string
+          poll_expires_at: string | null
+          poll_options: Json | null
           shared_post_id: string | null
           status: string | null
           type: string | null
@@ -1570,8 +1576,14 @@ export type Database = {
           embed_metadata?: Json | null
           hashtags?: string[] | null
           id?: string
+          link_metadata?: Json | null
+          link_url?: string | null
           media_url?: string | null
+          opportunity_link?: string | null
+          opportunity_type?: string | null
           pillar: string
+          poll_expires_at?: string | null
+          poll_options?: Json | null
           shared_post_id?: string | null
           status?: string | null
           type?: string | null
@@ -1586,8 +1598,14 @@ export type Database = {
           embed_metadata?: Json | null
           hashtags?: string[] | null
           id?: string
+          link_metadata?: Json | null
+          link_url?: string | null
           media_url?: string | null
+          opportunity_link?: string | null
+          opportunity_type?: string | null
           pillar?: string
+          poll_expires_at?: string | null
+          poll_options?: Json | null
           shared_post_id?: string | null
           status?: string | null
           type?: string | null
