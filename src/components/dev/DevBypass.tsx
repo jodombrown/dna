@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 export const isDevBypassActive = (): boolean => {
   try {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('dev') === '1') return true;
     if (window.location.pathname.includes('/app/dev') || window.location.pathname.includes('/dna/dev')) return true;
     return localStorage.getItem('dna_dev') === '1';
   } catch {
@@ -16,13 +15,8 @@ export const isDevBypassActive = (): boolean => {
 export const DevBypassMount: React.FC = () => {
   useEffect(() => {
     try {
-      const params = new URLSearchParams(window.location.search);
       const pathDev = window.location.pathname.includes('/app/dev') || window.location.pathname.includes('/dna/dev');
-      const enable = params.get('dev') === '1' || pathDev;
-      const disable = params.get('dev') === '0';
-
-      if (enable) localStorage.setItem('dna_dev', '1');
-      if (disable) localStorage.removeItem('dna_dev');
+      if (pathDev) localStorage.setItem('dna_dev', '1');
     } catch {}
   }, []);
   return null;

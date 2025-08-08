@@ -29,6 +29,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import { PostOnboardingFlow } from "./pages/PostOnboardingFlow";
 import V1App from "./pages/app/v1";
 import UserDashboard from "./pages/UserDashboard";
+import DnaDev from "./pages/DnaDev";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,8 @@ function App() {
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/post-onboarding" element={<PostOnboardingFlow />} />
+              {/* Dev Bypass Route (must be before dynamic username) */}
+              <Route path="/dna/dev" element={<DnaDev />} />
               {/* Dynamic User Dashboard Route */}
               <Route path="/dna/:username" element={<UserDashboard />} />
               
