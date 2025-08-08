@@ -10,7 +10,9 @@ import {
   User,
   LogOut,
   Search,
-  BookOpen
+  BookOpen,
+  Briefcase,
+  Square
 } from 'lucide-react';
 import {
   Sidebar,
@@ -31,6 +33,8 @@ const mainNavItems = [
   { title: 'Home', url: '/app', icon: Home },
   { title: 'Search', url: '/app/search', icon: Search },
   { title: 'Connect', url: '/app/connect', icon: Users },
+  { title: 'Spaces', url: '/app/spaces', icon: Square },
+  { title: 'Opportunities', url: '/app/opportunities', icon: Briefcase },
   { title: 'Messages', url: '/app/messages', icon: MessageSquare },
   { title: 'Events', url: '/app/events', icon: Calendar },
   { title: 'Communities', url: '/app/communities', icon: BookOpen },

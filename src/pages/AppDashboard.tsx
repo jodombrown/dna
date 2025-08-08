@@ -12,6 +12,10 @@ import Profile from './app/Profile';
 import ProfileEdit from './app/ProfileEdit';
 import Admin from './app/Admin';
 import Invites from './app/Invites';
+import Spaces from './app/Spaces';
+import Opportunities from './app/Opportunities';
+import AppSidebar from '@/components/AppSidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -45,32 +49,42 @@ const AppDashboard = () => {
 
   return (
     <DashboardProvider>
-      <div className="min-h-screen bg-gray-50">
-        {/* Unified Header */}
-        <UnifiedHeader />
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full bg-gray-50">
+          <AppSidebar />
+          <div className="flex-1 relative">
+            {/* Global sidebar trigger - always visible */}
+            <SidebarTrigger className="fixed top-4 left-4 z-50" />
 
-        {/* Main Content */}
-        <main className="pt-16 pb-20 lg:pb-0">
-          <Routes>
-            {/* Main dashboard route */}
-            <Route index element={<Dashboard />} />
-            
-            {/* V2 Dashboard Routes */}
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="search" element={<Search />} />
-            <Route path="connect" element={<Connect />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="profile/edit" element={<ProfileEdit />} />
-            <Route path="invites" element={<Invites />} />
-            <Route path="admin" element={<Admin />} />
-            
-            {/* Catch-all: redirect any undefined routes back to dashboard */}
-            <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
-          </Routes>
-        </main>
-        <MobileNavigation />
-        <MobilePostButton />
-      </div>
+            {/* Unified Header */}
+            <UnifiedHeader />
+
+            {/* Main Content */}
+            <main className="pt-16 pb-20 lg:pb-0">
+              <Routes>
+                {/* Main dashboard route */}
+                <Route index element={<Dashboard />} />
+                
+                {/* V2 Dashboard Routes */}
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="search" element={<Search />} />
+                <Route path="connect" element={<Connect />} />
+                <Route path="spaces" element={<Spaces />} />
+                <Route path="opportunities" element={<Opportunities />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="profile/edit" element={<ProfileEdit />} />
+                <Route path="invites" element={<Invites />} />
+                <Route path="admin" element={<Admin />} />
+                
+                {/* Catch-all: redirect any undefined routes back to dashboard */}
+                <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
+              </Routes>
+            </main>
+            <MobileNavigation />
+            <MobilePostButton />
+          </div>
+        </div>
+      </SidebarProvider>
     </DashboardProvider>
   );
 };
