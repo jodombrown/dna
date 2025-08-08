@@ -2711,6 +2711,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      rpc_log_contribution: {
+        Args: {
+          p_type: string
+          p_target_id: string
+          p_target_title?: string
+          p_metadata?: Json
+        }
+        Returns: undefined
+      }
       trigger_adin_prompt: {
         Args: { target_user_id: string; event_type: string }
         Returns: undefined
