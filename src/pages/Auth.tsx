@@ -685,20 +685,6 @@ const Auth = () => {
                 </p>
               </div>
 
-              {/* Preview mode: design without signing in */}
-              <div className="text-center">
-                <Button
-                  type="button"
-                  variant="link"
-                  className="p-0 text-dna-emerald hover:text-dna-copper underline"
-                  onClick={() => {
-                    try { localStorage.setItem('dna_preview', '1'); } catch {}
-                    navigate('/app?preview=1');
-                  }}
-                >
-                  Preview dashboard without signing in
-                </Button>
-              </div>
               
               {/* Privacy Policy and Terms */}
               <div className="text-center text-xs text-gray-500 leading-relaxed">
