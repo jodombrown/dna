@@ -2571,6 +2571,10 @@ export type Database = {
         }
         Returns: string
       }
+      cron_overdue_task_reminders: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       enqueue_reminders_for_all_users: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -2735,6 +2739,14 @@ export type Database = {
           p_target_title?: string
           p_metadata?: Json
         }
+        Returns: undefined
+      }
+      rpc_run_cron_overdue_task_reminders: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      rpc_seed_verified_contributor: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       trigger_adin_prompt: {
