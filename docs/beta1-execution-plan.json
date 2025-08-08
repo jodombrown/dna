@@ -1,0 +1,109 @@
+{
+  "goal": "Ship DNA Beta 1 with zero drift between routes and roadmap; prioritize security fixes, real-time collaboration, and public identity.",
+  "owner": "DNA Core (Makena + Jaûne)",
+  "version": "beta-1",
+  "last_updated": "2025-08-08",
+  "routes": [
+    { "path": "/", "access": "public", "notes": "Landing" },
+    { "path": "/auth", "access": "public", "notes": "Sign in/up (Admin magic link)" },
+    { "path": "/onboarding", "access": "auth", "notes": "Guided setup" },
+    { "path": "/dna/:username", "access": "public", "notes": "Public Impact Profile" },
+    { "path": "/dna/me", "access": "auth", "notes": "Alias to own profile" },
+    { "path": "/app", "access": "auth", "notes": "Dashboard shell" },
+    { "path": "/app/dashboard", "access": "auth", "notes": "Feed + Composer + Realtime" },
+    { "path": "/app/search", "access": "auth", "notes": "Advanced search" },
+    { "path": "/app/connect", "access": "auth", "notes": "Networking placeholder" },
+    { "path": "/app/spaces", "access": "auth", "notes": "Spaces list/create" },
+    { "path": "/app/spaces/:id", "access": "auth", "notes": "Space detail, tasks, milestones (realtime)" },
+    { "path": "/app/opportunities", "access": "auth", "notes": "Opportunities index" },
+    { "path": "/app/opportunities/create", "access": "auth", "notes": "Create opportunity" },
+    { "path": "/app/profile", "access": "auth", "notes": "Profile view" },
+    { "path": "/app/profile/edit", "access": "auth", "notes": "Profile edit" },
+    { "path": "/app/invites", "access": "auth", "notes": "Invites" },
+    { "path": "/app/admin", "access": "admin", "notes": "Admin suite" },
+    { "path": "/app/admin/tools", "access": "admin", "notes": "Admin tools (dev)" },
+    { "path": "/app/tools/test", "access": "auth+dev", "notes": "Test console" }
+  ],
+  "acceptance_criteria": [
+    "No critical Supabase security or RLS warnings remain",
+    "User can create and view posts in realtime on /app/dashboard",
+    "User can create a space, add tasks, update status, add milestones",
+    "Notifications appear when membership requested or approved",
+    "Public profile at /dna/:username renders profile and verified contributions",
+    "Test Console can seed, wipe, and run happy path end to end"
+  ],
+  "dependencies": [
+    "Supabase security advisor warnings resolved before Beta 1 sign-off",
+    "Storage RLS uses user-id prefixes for write and public read/signed URLs",
+    "Admin check standardized on is_admin_user in SQL and UI"
+  ],
+  "definitions_of_done": {
+    "security": [
+      "No SECURITY DEFINER functions executable by anon/auth unless intended",
+      "All SQL functions set search_path = public",
+      "RLS policies avoid recursion and use (select auth.uid())"
+    ],
+    "realtime": [
+      "Feed, spaces, and opportunities update via postgres_changes",
+      "Notifications arrive without refresh"
+    ],
+    "quality": [
+      "All new pages have title and meta description",
+      "Mobile layout verified for dashboard, spaces, profile"
+    ]
+  },
+  "work_items": [
+    { "id": "B1-SEC-1", "type": "db", "title": "Resolve RLS initplan warnings", "done_when": "All policies use (select auth.uid()); linter clean", "status": "pending" },
+    { "id": "B1-SEC-2", "type": "db", "title": "Pin search_path for helper functions", "done_when": "All SECURITY DEFINER functions set search_path=public", "status": "pending" },
+    { "id": "B1-FEED-1", "type": "ui", "route": "/app/dashboard", "title": "Create Post composer on feed", "done_when": "Post appears instantly; New items pill", "status": "pending" },
+    { "id": "B1-FEED-2", "type": "db", "title": "Harden rpc_create_post", "done_when": "Reject HTML, enforce length, rate limit per user", "status": "pending" },
+    { "id": "B1-SPOT-1", "type": "ui+db", "title": "Admin Spotlight toggle", "done_when": "Spotlight rises to top; admin-only toggle", "status": "pending" },
+    { "id": "B1-SPC-1", "type": "ui+db", "route": "/app/spaces/:id", "title": "Realtime space detail", "done_when": "Tasks/milestones reflect inserts/updates in realtime", "status": "pending" },
+    { "id": "B1-MEM-1", "type": "ui+db", "route": "/app/spaces/:id/members", "title": "Membership approvals UI", "done_when": "Owner approves/rejects; requester notified", "status": "pending" },
+    { "id": "B1-NOTIF-1", "type": "ui", "title": "Notifications Bell", "done_when": "New notifications appear without reload", "status": "pending" },
+    { "id": "B1-OPP-1", "type": "ui+db", "route": "/app/opportunities/create", "title": "Create Opportunity page", "done_when": "New item appears in index; realtime updates", "status": "pending" },
+    { "id": "B1-ADIN-1", "type": "ui+db", "route": "/dna/:username", "title": "Public Impact Profile scaffold", "done_when": "Profile loads; shows verified contributions for verified users", "status": "pending" },
+    { "id": "B1-TEST-1", "type": "ui+db", "route": "/app/tools/test", "title": "Dev Test Console", "done_when": "Seed, Happy Path, Wipe, Run cron now, Show badges succeed", "status": "pending" }
+  ],
+  "sql_changes_proposed": [
+    {
+      "category": "security",
+      "summary": "Normalize security definer functions and search_path",
+      "actions": [
+        "Ensure all SECURITY DEFINER functions set search_path to 'public' (and needed schemas)",
+        "Verify no public/anon can execute admin-only RPCs"
+      ]
+    },
+    {
+      "category": "rls",
+      "summary": "Standardize RLS policies to use (select auth.uid()) and helper funcs",
+      "actions": [
+        "Replace any recursive policies with security definer helpers",
+        "Add missing UPDATE/DELETE policies where needed"
+      ]
+    },
+    {
+      "category": "realtime",
+      "summary": "Enable realtime on posts, collaboration_* tables as needed",
+      "actions": [
+        "ALTER TABLE ... REPLICA IDENTITY FULL;",
+        "ALTER PUBLICATION supabase_realtime ADD TABLE ...;"
+      ]
+    },
+    {
+      "category": "seo_public_profile",
+      "summary": "Public-read safe view for /dna/:username",
+      "actions": [
+        "CREATE VIEW public.public_profiles AS SELECT whitelisted columns WHERE is_public=true;",
+        "RLS: Allow SELECT to anon on the view"
+      ]
+    }
+  ],
+  "linter_results": {
+    "last_run": null,
+    "critical": [],
+    "high": [],
+    "medium": [],
+    "low": []
+  }
+}
