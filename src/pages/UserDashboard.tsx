@@ -6,10 +6,12 @@ import { Profile } from '@/services/profilesService';
 import UserDashboardLayout from '@/components/dashboard/UserDashboardLayout';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import NotFound from './NotFound';
+import { useProfile } from '@/hooks/useProfile';
 
 const UserDashboard = () => {
   const { username } = useParams<{ username: string }>();
   const { user, loading: authLoading } = useAuth();
+  const { data: myProfile, isLoading: myProfileLoading } = useProfile();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,8 +47,43 @@ const UserDashboard = () => {
       }
     };
 
+    // Skip fetching when using special aliases
+    if (username === 'me' || username === ':username') {
+      setLoading(false);
+      return;
+    }
+
     fetchUserProfile();
   }, [username]);
+
+  // Handle special routes
+  if (username === ':username') {
+    return <Navigate to="/dna/me" replace />;
+  }
+
+  if (username === 'me') {
+    if (authLoading) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      );
+    }
+    if (!user) {
+      return <Navigate to="/auth" replace />;
+    }
+    if (myProfileLoading) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      );
+    }
+    if (myProfile && (myProfile as any).username) {
+      return <Navigate to={`/dna/${(myProfile as any).username}`} replace />;
+    }
+    return <NotFound />;
+  }
 
   // Show loading while auth or profile is loading
   if (authLoading || loading) {
