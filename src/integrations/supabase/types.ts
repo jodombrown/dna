@@ -2939,6 +2939,18 @@ export type Database = {
         Args: { user_id_param: string; min_score?: number }
         Returns: boolean
       }
+      recent_engagement_score_for_opportunity: {
+        Args: { p_op: string }
+        Returns: number
+      }
+      recent_engagement_score_for_space: {
+        Args: { p_space: string }
+        Returns: number
+      }
+      recent_engagement_score_for_user: {
+        Args: { p_target_user: string }
+        Returns: number
+      }
       reject_html: {
         Args: { _txt: string }
         Returns: boolean
@@ -2962,6 +2974,10 @@ export type Database = {
           location: string
           link: string
           score: number
+          why_skills: string[]
+          why_sectors: string[]
+          why_region: boolean
+          engagement_boost: number
         }[]
       }
       rpc_adin_recommend_people: {
@@ -2972,6 +2988,10 @@ export type Database = {
           full_name: string
           headline: string
           score: number
+          why_skills: string[]
+          why_sectors: string[]
+          why_region: boolean
+          engagement_boost: number
         }[]
       }
       rpc_adin_recommend_spaces: {
@@ -2983,6 +3003,9 @@ export type Database = {
           tags: string[]
           visibility: string
           score: number
+          why_skills: string[]
+          why_sectors: string[]
+          engagement_boost: number
         }[]
       }
       rpc_create_post: {

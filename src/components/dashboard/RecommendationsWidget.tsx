@@ -20,29 +20,36 @@ export default function RecommendationsWidget() {
   }, []);
 
   return (
-    <section className="space-y-2">
+    <div className="space-y-2">
       <div className="font-semibold">Recommendations</div>
-      <div className="text-xs text-muted-foreground">Personalized by skills, impact areas, and location</div>
+      <div className="text-xs text-muted-foreground">Personalized by skills, sectors, region, and recent engagement</div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
         <div>
           <div className="text-xs font-medium mb-1">People</div>
           {people.map((p: any) => (
-            <div key={p.user_id} className="text-xs truncate">{p.full_name || p.username}</div>
+            <div key={p.user_id} className="text-xs truncate">
+              {p.full_name || p.username}
+              {p.why_skills?.length ? ` • ${p.why_skills.slice(0,2).join(', ')}` : ''}
+            </div>
           ))}
         </div>
         <div>
           <div className="text-xs font-medium mb-1">Spaces</div>
           {spaces.map((s: any) => (
-            <div key={s.id} className="text-xs truncate">{s.title}</div>
+            <div key={s.id} className="text-xs truncate">
+              {s.title}{s.why_sectors?.length ? ` • ${s.why_sectors[0]}` : ''}
+            </div>
           ))}
         </div>
         <div>
           <div className="text-xs font-medium mb-1">Opportunities</div>
           {opps.map((o: any) => (
-            <div key={o.id} className="text-xs truncate">{o.title}</div>
+            <div key={o.id} className="text-xs truncate">
+              {o.title}{o.why_region ? ' • Region' : ''}
+            </div>
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
