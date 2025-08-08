@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Preview mode: bypass Supabase auth and provide mock user/profile
     try {
       const params = new URLSearchParams(window.location.search);
-      const previewFlag = params.get('preview') === '1';
+      const previewFlag = params.get('preview') === '1' || window.location.pathname.includes('/app/preview');
       const localFlag = typeof localStorage !== 'undefined' && localStorage.getItem('dna_preview') === '1';
       const isPreview = previewFlag || localFlag;
 

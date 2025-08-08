@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-// Lightweight preview mode banner. Activated via ?preview=1 or localStorage flag 'dna_preview'.
+// Lightweight preview mode banner. Activated via ?preview=1, /app/preview, or localStorage flag 'dna_preview'.
 export const isPreviewActive = (): boolean => {
   try {
     const params = new URLSearchParams(window.location.search);
     if (params.get('preview') === '1') return true;
+    if (window.location.pathname.includes('/app/preview')) return true;
     return localStorage.getItem('dna_preview') === '1';
   } catch {
     return false;
@@ -16,7 +17,8 @@ const PreviewBanner: React.FC = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('preview') === '1') {
+    const isPathPreview = window.location.pathname.includes('/app/preview');
+    if (params.get('preview') === '1' || isPathPreview) {
       try { localStorage.setItem('dna_preview', '1'); } catch {}
     }
     setActive(isPreviewActive());
