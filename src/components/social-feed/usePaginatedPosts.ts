@@ -9,6 +9,7 @@ interface UsePaginatedPostsProps {
   limit?: number;
   refreshKey?: number;
   relevantOnly?: boolean; // When true, scope feed to connections and collaborators
+  sortMode?: 'relevant' | 'trending' | 'spotlight';
 }
 
 interface UsePaginatedPostsReturn {
@@ -25,6 +26,7 @@ export const usePaginatedPosts = ({
   limit = 10,
   refreshKey = 0,
   relevantOnly = false,
+  sortMode = 'relevant',
 }: UsePaginatedPostsProps = {}): UsePaginatedPostsReturn => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -107,6 +109,11 @@ export const usePaginatedPosts = ({
         .eq('status', 'published')
         .eq('visibility', 'public');
 
+      // Spotlight filter (admin selected or featured)
+      if (sortMode === 'spotlight') {
+        query = query.or('type.eq.spotlight,status.eq.featured');
+      }
+
       // Apply relevance filter if applicable
       if (relevantOnly) {
         if (authorIds && authorIds.length > 0) {
@@ -127,7 +134,13 @@ export const usePaginatedPosts = ({
         query = query.eq('pillar', pillar);
       }
 
-      // Order and paginate
+      // Recency window for trending
+      if (sortMode === 'trending') {
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        query = query.gte('created_at', sevenDaysAgo);
+      }
+
+      // Order and paginate by recency; we will re-rank client-side for trending
       query = query.order('created_at', { ascending: false })
                    .range(currentOffset, currentOffset + limit - 1);
 
@@ -189,7 +202,7 @@ export const usePaginatedPosts = ({
       const userLikesData = userLikesResponse.data || [];
 
       // Combine data
-      const postsWithEngagement = postsData.map(post => {
+      let postsWithEngagement = postsData.map(post => {
         const likeCount = likesData.filter(like => like.post_id === post.id).length;
         const commentCount = commentsData.filter(comment => comment.post_id === post.id).length;
         const userHasLiked = userLikesData.some(like => like.post_id === post.id);
@@ -209,6 +222,19 @@ export const usePaginatedPosts = ({
           user_has_liked: userHasLiked,
         };
       });
+
+      // Re-rank for trending: score by engagement with light recency boost
+      if (sortMode === 'trending') {
+        const now = Date.now();
+        postsWithEngagement = postsWithEngagement
+          .map(p => {
+            const ageHours = Math.max(1, (now - new Date(p.created_at).getTime()) / 36e5);
+            const engagement = (p.like_count || 0) * 2 + (p.comment_count || 0) * 3;
+            const score = engagement / Math.pow(ageHours, 0.5); // mild time decay
+            return { ...p, _trending_score: score } as any;
+          })
+          .sort((a: any, b: any) => (b._trending_score || 0) - (a._trending_score || 0));
+      }
 
       if (isRefresh) {
         setPosts(postsWithEngagement);
@@ -235,7 +261,7 @@ export const usePaginatedPosts = ({
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [pillar, limit, offset, user?.id, toast, relevantOnly]);
+  }, [pillar, limit, offset, user?.id, toast, relevantOnly, sortMode]);
 
   const loadMore = useCallback(async () => {
     if (!hasMore || loadingMore) return;
@@ -249,7 +275,7 @@ export const usePaginatedPosts = ({
   // Initial load and refresh on dependency changes
   useEffect(() => {
     fetchPosts();
-  }, [pillar, user?.id, refreshKey, relevantOnly]);
+  }, [pillar, user?.id, refreshKey, relevantOnly, sortMode]);
 
   return {
     posts,

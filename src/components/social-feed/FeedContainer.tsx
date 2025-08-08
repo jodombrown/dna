@@ -11,6 +11,7 @@ import { RealtimeStatus } from './RealtimeStatus';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
+import FeedModeTabs from './FeedModeTabs';
 
 interface FeedContainerProps {
   defaultPillar?: string;
@@ -36,6 +37,7 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
   const [selectedPillar, setSelectedPillar] = useState(defaultPillar);
   const [refreshKey, setRefreshKey] = useState(0);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [feedMode, setFeedMode] = useState<'relevant' | 'trending' | 'spotlight'>('relevant');
   
   const {
     posts,
@@ -46,7 +48,8 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
   } = usePaginatedPosts({
     pillar: selectedPillar === 'feed' ? undefined : selectedPillar,
     refreshKey,
-    relevantOnly: true,
+    relevantOnly: feedMode === 'relevant',
+    sortMode: feedMode,
   });
 
   const realtimeStatus = useFeedRealtime({
@@ -111,7 +114,10 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
           selectedPillar={selectedPillar}
           onPillarChange={handlePillarChange}
         />
-        <RealtimeStatus />
+        <div className="flex items-center gap-3">
+          <FeedModeTabs mode={feedMode} onChange={setFeedMode} />
+          <RealtimeStatus />
+        </div>
       </div>
       
       <PostList
