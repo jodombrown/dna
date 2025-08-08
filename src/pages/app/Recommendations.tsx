@@ -7,20 +7,29 @@ export default function Recommendations() {
   const [spaces, setSpaces] = useState<any[]>([]);
   const [opps, setOpps] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const load = async () => {
-    setLoading(true);
-    const [p, s, o] = await Promise.all([
-      supabase.rpc('rpc_adin_recommend_people', { p_limit: 5 }),
-      supabase.rpc('rpc_adin_recommend_spaces', { p_limit: 5 }),
-      supabase.rpc('rpc_adin_recommend_opportunities', { p_limit: 5 })
-    ]);
-    setPeople(p.data || []);
-    setSpaces(s.data || []);
-    setOpps(o.data || []);
-    setLoading(false);
+    try {
+      setError(null);
+      setLoading(true);
+      const [p, s, o] = await Promise.all([
+        supabase.rpc('rpc_adin_recommend_people', { p_limit: 5 }),
+        supabase.rpc('rpc_adin_recommend_spaces', { p_limit: 5 }),
+        supabase.rpc('rpc_adin_recommend_opportunities', { p_limit: 5 })
+      ]);
+      if (p.error) throw p.error;
+      if (s.error) throw s.error;
+      if (o.error) throw o.error;
+      setPeople(p.data || []);
+      setSpaces(s.data || []);
+      setOpps(o.data || []);
+    } catch (e: any) {
+      setError(e?.message || 'Recommendations unavailable');
+    } finally {
+      setLoading(false);
+    }
   };
-
   useEffect(() => {
     document.title = 'ADIN Recommendations | DNA';
     load();
@@ -29,6 +38,7 @@ export default function Recommendations() {
   return (
     <main className="space-y-6">
       <h1 className="text-xl font-semibold">ADIN Recommendations</h1>
+      {error ? <div className="text-sm text-destructive">{error}</div> : null}
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="md:col-span-1">
           <CardHeader><CardTitle>People for you</CardTitle></CardHeader>

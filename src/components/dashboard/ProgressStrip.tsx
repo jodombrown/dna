@@ -4,23 +4,38 @@ import { supabase } from '@/integrations/supabase/client';
 export default function ProgressStrip() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const channelRef = React.useRef<any>(null);
 
   const load = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.rpc('rpc_dashboard_counts');
-    if (!error) setData(data || {});
-    setLoading(false);
+    try {
+      setError(null);
+      const { data, error } = await supabase.rpc('rpc_dashboard_counts');
+      if (error) throw error;
+      setData(data || {});
+    } catch (e: any) {
+      setError(e?.message || 'Data unavailable');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     load();
-    const ch = supabase
-      .channel('dash-strip')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, load)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, load)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'collaboration_memberships' }, load)
-      .subscribe();
-    return () => { void supabase.removeChannel(ch); };
+    if (!channelRef.current) {
+      channelRef.current = supabase
+        .channel('dash-strip')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, load)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, load)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'collaboration_memberships' }, load)
+        .subscribe();
+    }
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+    };
   }, []);
 
   const Item = ({ label, value, href }: { label: string; value: number; href: string }) => (
@@ -31,6 +46,7 @@ export default function ProgressStrip() {
   );
 
   if (loading && !data) return <div className="text-sm text-muted-foreground">Loading…</div>;
+  if (error) return <div className="text-sm text-destructive">{error}</div>;
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-2">

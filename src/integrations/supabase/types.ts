@@ -2974,10 +2974,6 @@ export type Database = {
           location: string
           link: string
           score: number
-          why_skills: string[]
-          why_sectors: string[]
-          why_region: boolean
-          engagement_boost: number
         }[]
       }
       rpc_adin_recommend_people: {
@@ -2988,10 +2984,6 @@ export type Database = {
           full_name: string
           headline: string
           score: number
-          why_skills: string[]
-          why_sectors: string[]
-          why_region: boolean
-          engagement_boost: number
         }[]
       }
       rpc_adin_recommend_spaces: {
@@ -3003,9 +2995,6 @@ export type Database = {
           tags: string[]
           visibility: string
           score: number
-          why_skills: string[]
-          why_sectors: string[]
-          engagement_boost: number
         }[]
       }
       rpc_create_post: {
