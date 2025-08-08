@@ -408,6 +408,13 @@ export type Database = {
             referencedRelation: "posts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "v_feed_ordered"
+            referencedColumns: ["id"]
+          },
         ]
       }
       communities: {
@@ -1506,6 +1513,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "v_feed_ordered"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "post_likes_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -1544,6 +1558,13 @@ export type Database = {
             referencedRelation: "posts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "post_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "v_feed_ordered"
+            referencedColumns: ["id"]
+          },
         ]
       }
       post_views: {
@@ -1574,6 +1595,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "post_views_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "v_feed_ordered"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "post_views_viewer_id_fkey"
             columns: ["viewer_id"]
             isOneToOne: false
@@ -1599,6 +1627,7 @@ export type Database = {
           poll_expires_at: string | null
           poll_options: Json | null
           shared_post_id: string | null
+          spotlight: boolean
           status: string | null
           type: string | null
           updated_at: string | null
@@ -1621,6 +1650,7 @@ export type Database = {
           poll_expires_at?: string | null
           poll_options?: Json | null
           shared_post_id?: string | null
+          spotlight?: boolean
           status?: string | null
           type?: string | null
           updated_at?: string | null
@@ -1643,6 +1673,7 @@ export type Database = {
           poll_expires_at?: string | null
           poll_options?: Json | null
           shared_post_id?: string | null
+          spotlight?: boolean
           status?: string | null
           type?: string | null
           updated_at?: string | null
@@ -1662,6 +1693,13 @@ export type Database = {
             columns: ["shared_post_id"]
             isOneToOne: false
             referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_shared_post_id_fkey"
+            columns: ["shared_post_id"]
+            isOneToOne: false
+            referencedRelation: "v_feed_ordered"
             referencedColumns: ["id"]
           },
           {
@@ -2522,6 +2560,107 @@ export type Database = {
         }
         Relationships: []
       }
+      v_feed_ordered: {
+        Row: {
+          author_id: string | null
+          content: string | null
+          created_at: string | null
+          embed_metadata: Json | null
+          hashtags: string[] | null
+          id: string | null
+          link_metadata: Json | null
+          link_url: string | null
+          media_url: string | null
+          opportunity_link: string | null
+          opportunity_type: string | null
+          pillar: string | null
+          poll_expires_at: string | null
+          poll_options: Json | null
+          shared_post_id: string | null
+          spotlight: boolean | null
+          status: string | null
+          type: string | null
+          updated_at: string | null
+          user_id: string | null
+          visibility: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          embed_metadata?: Json | null
+          hashtags?: string[] | null
+          id?: string | null
+          link_metadata?: Json | null
+          link_url?: string | null
+          media_url?: string | null
+          opportunity_link?: string | null
+          opportunity_type?: string | null
+          pillar?: string | null
+          poll_expires_at?: string | null
+          poll_options?: Json | null
+          shared_post_id?: string | null
+          spotlight?: boolean | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          embed_metadata?: Json | null
+          hashtags?: string[] | null
+          id?: string | null
+          link_metadata?: Json | null
+          link_url?: string | null
+          media_url?: string | null
+          opportunity_link?: string | null
+          opportunity_type?: string | null
+          pillar?: string | null
+          poll_expires_at?: string | null
+          poll_options?: Json | null
+          shared_post_id?: string | null
+          spotlight?: boolean | null
+          status?: string | null
+          type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_shared_post_id_fkey"
+            columns: ["shared_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_shared_post_id_fkey"
+            columns: ["shared_post_id"]
+            isOneToOne: false
+            referencedRelation: "v_feed_ordered"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       view_public_contributions: {
         Row: {
           created_at: string | null
@@ -2790,6 +2929,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      rpc_create_post: {
+        Args: { p: Json }
+        Returns: string
+      }
       rpc_log_contribution: {
         Args: {
           p_type: string
@@ -2805,6 +2948,10 @@ export type Database = {
       }
       rpc_seed_verified_contributor: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      rpc_toggle_spotlight: {
+        Args: { p_post: string; p_value: boolean }
         Returns: undefined
       }
       send_notification: {
