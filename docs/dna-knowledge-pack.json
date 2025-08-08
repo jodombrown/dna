@@ -1,0 +1,286 @@
+{
+  "project": {
+    "name": "Diaspora Network of Africa (DNA)",
+    "core_objective": "Professional networking + collaboration + contribution with ADIN intelligence",
+    "stack": {
+      "frontend": "React + Tailwind + shadcn/ui (Lovable.dev)",
+      "backend": "Supabase (Postgres, Auth, Storage, Realtime, RLS)",
+      "version_control": "GitHub (two-way sync)"
+    },
+    "supabase": {
+      "project_id": "ybhssuehmfnxrzneobok",
+      "url": "https://ybhssuehmfnxrzneobok.supabase.co",
+      "auth": "OAuth (Google, LinkedIn); client persists session; PKCE"
+    },
+    "routes_marketing_untouched": ["/", "/connect", "/collaborate", "/contribute", "/about", "/contact", "phases/*"],
+    "execution_guidelines": {
+      "separation": "Marketing/public vs authenticated dashboard strictly separated",
+      "branding": "dna-mint, dna-forest, dna-copper",
+      "mobile_first": true,
+      "data_priority": "Authenticated areas use live Supabase only"
+    }
+  },
+  "status": {
+    "current_features": [
+      "OAuth login",
+      "Profile creation (basic)",
+      "Live feed v1 (chronological)",
+      "Pillar nav: Connect/Collaborate/Contribute",
+      "Events, projects, professionals pulling live data",
+      "Invite system with limits",
+      "Role-based permissions (admin vs user)",
+      "Newsletter signup",
+      "Event registration (RSVP)"
+    ],
+    "pending": [
+      "Full ADIN engine",
+      "Collaboration spaces with tasks/milestones management",
+      "ADIN-personalized feed",
+      "Public Impact Profiles at /dna/:username",
+      "Contribution tracking + impact badges",
+      "Admin intelligence dashboard (analytics/heatmaps)"
+    ]
+  },
+  "recent_migrations_beta1": {
+    "tables_created": [
+      {
+        "name": "collaboration_spaces",
+        "columns": {
+          "id": "uuid pk",
+          "created_by": "uuid not null",
+          "title": "text not null",
+          "description": "text",
+          "visibility": "text default 'private'",
+          "status": "text default 'active'",
+          "tags": "text[] default {}",
+          "image_url": "text",
+          "created_at": "timestamptz default now()",
+          "updated_at": "timestamptz default now()"
+        },
+        "rls": {
+          "select": "public OR approved member of space",
+          "insert": "created_by = auth.uid()",
+          "update_delete": "owner/admin (approved)"
+        },
+        "triggers": ["update_updated_at_column()"],
+        "auto_membership": "Owner membership auto-created via trigger"
+      },
+      {
+        "name": "collaboration_memberships",
+        "columns": {
+          "id": "uuid pk",
+          "space_id": "uuid not null",
+          "user_id": "uuid not null",
+          "role": "text default 'member'",
+          "status": "text default 'approved'",
+          "joined_at": "timestamptz default now()"
+        },
+        "constraints": ["unique (space_id, user_id)"],
+        "indexes": ["space_id", "user_id"],
+        "rls": {
+          "select": "approved member of that space",
+          "insert": "self-request OR owner/admin inserts",
+          "update_delete": "self OR owner/admin"
+        }
+      },
+      {
+        "name": "tasks",
+        "columns": {
+          "id": "uuid pk",
+          "space_id": "uuid not null",
+          "title": "text not null",
+          "description": "text",
+          "status": "text default 'todo'",
+          "priority": "text default 'normal'",
+          "assignee_id": "uuid",
+          "due_date": "date",
+          "created_by": "uuid not null",
+          "created_at": "timestamptz default now()",
+          "updated_at": "timestamptz default now()"
+        },
+        "indexes": ["space_id", "assignee_id"],
+        "rls": {
+          "select": "approved member of space",
+          "insert": "member + created_by = auth.uid()",
+          "update": "creator OR assignee OR owner/admin",
+          "delete": "creator OR owner/admin"
+        },
+        "triggers": ["update_updated_at_column()"]
+      },
+      {
+        "name": "milestones",
+        "columns": {
+          "id": "uuid pk",
+          "space_id": "uuid not null",
+          "title": "text not null",
+          "description": "text",
+          "due_date": "date",
+          "status": "text default 'planned'",
+          "created_by": "uuid not null",
+          "created_at": "timestamptz default now()",
+          "updated_at": "timestamptz default now()"
+        },
+        "indexes": ["space_id"],
+        "rls": {
+          "select": "approved member of space",
+          "insert": "member + created_by = auth.uid()",
+          "update_delete": "creator OR owner/admin"
+        },
+        "triggers": ["update_updated_at_column()"]
+      },
+      {
+        "name": "opportunities",
+        "columns": {
+          "id": "uuid pk",
+          "created_by": "uuid not null",
+          "space_id": "uuid",
+          "title": "text not null",
+          "description": "text",
+          "type": "text default 'general'",
+          "status": "text default 'active'",
+          "visibility": "text default 'public'",
+          "tags": "text[] default {}",
+          "location": "text",
+          "link": "text",
+          "image_url": "text",
+          "created_at": "timestamptz default now()",
+          "updated_at": "timestamptz default now()"
+        },
+        "indexes": ["created_by", "space_id"],
+        "rls": {
+          "select": "public+active OR approved member of linked space",
+          "insert": "created_by = auth.uid()",
+          "update_delete": "creator OR space owner/admin"
+        },
+        "triggers": ["update_updated_at_column()"]
+      },
+      {
+        "name": "user_contributions",
+        "purpose": "Track user actions for impact scoring and badges",
+        "columns": {
+          "id": "uuid pk",
+          "user_id": "uuid not null",
+          "type": "text (post|initiative|event|opportunity|community|newsletter)",
+          "target_id": "uuid",
+          "target_title": "text",
+          "metadata": "jsonb {}",
+          "created_at": "timestamptz default now()"
+        },
+        "indexes": ["user_id"],
+        "rls": {
+          "select": "self or admin",
+          "insert": "user_id = auth.uid()"
+        }
+      },
+      {
+        "name": "impact_badges",
+        "columns": {
+          "id": "uuid pk",
+          "badge_key": "text unique",
+          "name": "text not null",
+          "description": "text",
+          "icon": "text",
+          "criteria": "jsonb {}",
+          "active": "boolean default true",
+          "created_at": "timestamptz default now()"
+        },
+        "rls": {
+          "select": "public",
+          "manage": "admins only (ALL)"
+        }
+      },
+      {
+        "name": "user_badges",
+        "columns": {
+          "id": "uuid pk",
+          "user_id": "uuid not null",
+          "badge_type": "text",
+          "badge_name": "text",
+          "description": "text",
+          "icon": "text",
+          "created_at": "timestamptz default now()"
+        },
+        "constraints": ["unique (user_id, badge_type)"],
+        "rls": {
+          "select": "self or admin",
+          "insert": "system (broad check true)"
+        }
+      }
+    ],
+    "shared_triggers_used": ["public.update_updated_at_column()"],
+    "notes": [
+      "Owner auto-membership is created on collaboration_spaces insert.",
+      "Statuses are text for flexibility; validation at app layer or future triggers."
+    ]
+  },
+  "existing_key_tables_and_features": {
+    "profiles": "user profiles with completeness scoring; used across app",
+    "posts_comments_likes": "social feed; RLS allows public read where appropriate",
+    "events_event_registrations": "events + RSVP",
+    "initiatives": "user initiatives",
+    "communities_posts_memberships": "community features with memberships and events",
+    "notifications": "user-specific notifications (RLS)",
+    "impact_log": "engagement/points tracking via triggers",
+    "invites": "invite/limits with policies",
+    "admin_users_logs_notifications": "admin roles & auditing"
+  },
+  "realtime": {
+    "client": "supabase.channel with postgres_changes",
+    "implemented": [
+      "Feed realtime subscription (posts + comments)",
+      "RealtimeStatus component showing connectivity badge"
+    ],
+    "caution": "Ensure comments channel table name matches DB ('comments' vs 'post_comments')."
+  },
+  "frontend_components": {
+    "feed": ["Feed.tsx", "social-feed/useFeedRealtime", "social-feed/RealtimeStatus"],
+    "profiles": ["hooks/useProfiles", "ProfileFormSubmission", "useProfileFormState"],
+    "collaborations_ui": [
+      "CollaborationsPageWrapper", "CollaborationsMainContent",
+      "EnhancedProjectDiscovery", "ProjectCard",
+      "types/collaborationTypes.ts"
+    ],
+    "community": ["CommunityFeed -> FeedContainer"],
+    "dashboard": ["pages/UserDashboard", "UserDashboardLayout"]
+  },
+  "constraints_and_policies": {
+    "RLS_everywhere": true,
+    "admins": "is_admin_user(auth.uid()) used across admin tables",
+    "public_data": "some tables are public-readable (events, communities active, opportunities public)",
+    "auth_required": "mutations require auth.uid() checks",
+    "storage": "Use Supabase Storage for media; ensure bucket policies when adding uploads"
+  },
+  "roadmap_alignment": {
+    "beta1": [
+      "Onboarding & profiles complete (baseline)",
+      "Networking & static opportunity feed (opportunities table available)",
+      "Collaboration spaces v1 (spaces/memberships/tasks/milestones ready)",
+      "Real-time feed v1 (hooks/components ready)",
+      "Basic admin dashboard (data available in admin_* tables)"
+    ],
+    "beta2": [
+      "ADIN feed personalization (expand functions & scoring)",
+      "Collab spaces v2 (milestones, reminders)",
+      "Automated contribution logging (user_contributions, impact_log)",
+      "Verified badge system (user_badges + impact_badges)",
+      "Admin heatmaps (aggregate queries + dashboards)"
+    ],
+    "launch": [
+      "Public Impact Profiles (/dna/:username)",
+      "Predictive recommendations (ADIN)",
+      "Full collaboration toolkit + resource library"
+    ]
+  },
+  "known_gaps_or_todos": [
+    "Wire authenticated UI to new collaboration tables (read/write with RLS)",
+    "Confirm comment realtime table name to avoid mismatch",
+    "Add Storage bucket/policies for collaboration assets if needed",
+    "/dna/:username public profile route + RLS-safe queries",
+    "Expand contribution capture (hooks after key actions)",
+    "Admin dashboards (queries for engagement, heatmaps)"
+  ],
+  "metadata": {
+    "version": "beta1-knowledge-pack-1",
+    "generated_at": "${new Date().toISOString()}"
+  }
+}
