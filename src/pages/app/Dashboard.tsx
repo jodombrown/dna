@@ -18,6 +18,7 @@ import { useDashboard } from '@/contexts/DashboardContext';
 import { SocialFeedProvider } from '@/contexts/SocialFeedContext';
 import { ProfileCompletenessWidget } from '@/components/dashboard/ProfileCompletenessWidget';
 import RecommendationsWidget from '@/components/dashboard/RecommendationsWidget';
+import ProgressStrip from '@/components/dashboard/ProgressStrip';
 
 const Dashboard = () => {
   const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
@@ -65,7 +66,9 @@ const Dashboard = () => {
 
   const mainContent = (
     <div className="space-y-4">
+      <ProgressStrip />
       {activeView === 'search' && <SearchMainContent />}
+
       {activeView === 'network' && <NetworkMainContent />}
       {activeView === 'messaging' && <MessagingMainContent />}
       {activeView === 'notifications' && <NotificationsMainContent />}

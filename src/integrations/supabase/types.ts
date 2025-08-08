@@ -3014,6 +3014,10 @@ export type Database = {
           | { p_content: string; p_pillar?: string; p_media_url?: string }
         Returns: string
       }
+      rpc_dashboard_counts: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       rpc_log_contribution: {
         Args: {
           p_type: string
@@ -3023,9 +3027,21 @@ export type Database = {
         }
         Returns: undefined
       }
+      rpc_request_join_space: {
+        Args: { p_space: string }
+        Returns: undefined
+      }
       rpc_run_cron_overdue_task_reminders: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      rpc_save_opportunity: {
+        Args: { p_op: string }
+        Returns: undefined
+      }
+      rpc_seed_reco_demo: {
+        Args: { p_spaces?: number; p_opps?: number; p_people?: number }
+        Returns: Json
       }
       rpc_seed_verified_contributor: {
         Args: Record<PropertyKey, never>
