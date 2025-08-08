@@ -81,6 +81,14 @@ const Spaces: React.FC = () => {
     if (meta) meta.setAttribute('content', 'Manage collaboration spaces, tasks, and milestones on the DNA platform.');
   }, []);
 
+  const logContribution = async (payload: { user_id?: string; type: string; target_id: string; target_title?: string; metadata?: any }) => {
+    try {
+      console.debug('logContribution', payload);
+    } catch (e) {
+      console.warn('logContribution failed', e);
+    }
+  };
+
   const fetchSpaces = async () => {
     setLoading(true);
     const res = await supabase

@@ -5,6 +5,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
+const PAGE = 20;
+const guard = (res: { data: any; error: any }, friendly = 'Action failed') => {
+  if (res.error) {
+    console.error(res.error);
+    throw new Error(friendly);
+  }
+  return res.data ?? [];
+};
+
 interface Opportunity {
   id: string;
   created_by: string;
@@ -104,11 +113,11 @@ const Opportunities: React.FC = () => {
         <CardContent>
           {loading ? (
             <p className="text-sm text-gray-500">Loading…</p>
-          ) : filtered.length === 0 ? (
+          ) : items.length === 0 ? (
             <p className="text-sm text-gray-500">No opportunities match your filters.</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filtered.map((op) => (
+              {items.map((op) => (
                 <div key={op.id} className="border rounded p-4 hover:border-dna-copper transition">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-medium text-dna-forest">{op.title}</h3>
