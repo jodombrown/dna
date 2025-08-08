@@ -17,23 +17,25 @@ import Opportunities from './app/Opportunities';
 import AppSidebar from '@/components/AppSidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import SpaceDetail from './app/SpaceDetail';
+import PreviewBanner, { isPreviewActive } from '@/components/preview/PreviewBanner';
 
 const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
+  const preview = isPreviewActive();
 
   useEffect(() => {
     if (!loading) {
-      if (!user) {
+      if (!user && !preview) {
         navigate('/auth');
-      } else if (!profile) {
+      } else if (!profile && !preview) {
         // If user exists but no profile, redirect to onboarding
         navigate('/onboarding');
       }
     }
-  }, [user, profile, loading, navigate]);
+  }, [user, profile, loading, navigate, preview]);
 
-  if (loading) {
+  if (loading && !preview) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -44,7 +46,7 @@ const AppDashboard = () => {
     );
   }
 
-  if (!user) {
+  if (!user && !preview) {
     return null;
   }
 
@@ -56,6 +58,9 @@ const AppDashboard = () => {
           <div className="flex-1 relative">
             {/* Global sidebar trigger - always visible */}
             <SidebarTrigger className="fixed top-4 left-4 z-50" />
+
+            {/* Preview mode banner */}
+            <PreviewBanner />
 
             {/* Unified Header */}
             <UnifiedHeader />

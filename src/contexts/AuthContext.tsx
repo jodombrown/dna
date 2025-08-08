@@ -59,6 +59,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    // Preview mode: bypass Supabase auth and provide mock user/profile
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const previewFlag = params.get('preview') === '1';
+      const localFlag = typeof localStorage !== 'undefined' && localStorage.getItem('dna_preview') === '1';
+      const isPreview = previewFlag || localFlag;
+
+      if (isPreview) {
+        if (previewFlag) {
+          try { localStorage.setItem('dna_preview', '1'); } catch {}
+        }
+        const mockUser = ({
+          id: '00000000-0000-0000-0000-000000000001',
+          email: 'preview@diasporanetwork.africa',
+          app_metadata: { provider: 'preview' },
+          user_metadata: { full_name: 'Preview User' },
+          aud: 'authenticated',
+        } as unknown) as User;
+
+        setSession(null);
+        setUser(mockUser);
+        setProfile({
+          id: mockUser.id,
+          email: mockUser.email,
+          full_name: 'Preview User',
+          display_name: 'Preview User',
+          username: 'preview-user',
+          avatar_url: null,
+          is_public: true,
+          profile_completeness_score: 100,
+        });
+        setLoading(false);
+        return; // Do not initialize Supabase listeners in preview
+      }
+    } catch {}
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
