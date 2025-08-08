@@ -2807,6 +2807,17 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      send_notification: {
+        Args: {
+          p_recipient_id: string
+          p_type: string
+          p_entity_type: string
+          p_entity_id: string
+          p_title: string
+          p_body: string
+        }
+        Returns: string
+      }
       trigger_adin_prompt: {
         Args: { target_user_id: string; event_type: string }
         Returns: undefined
