@@ -42,6 +42,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems, phases } from './header/navigationConfig';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();
@@ -212,6 +213,7 @@ const UnifiedHeader = () => {
 
             {/* Right section - Navigation and Profile */}
             <div className="flex items-center space-x-4">
+              {isAuthenticated && <NotificationBell />}
               {/* Desktop Navigation for unauthenticated users */}
               {!isAuthenticated && (
                 <>
