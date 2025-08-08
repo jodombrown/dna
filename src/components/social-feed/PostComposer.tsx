@@ -21,7 +21,7 @@ interface PostComposerProps {
   onPostCreated?: () => void;
 }
 
-type PostType = 'text' | 'image' | 'video' | 'link' | 'opportunity' | 'spotlight';
+type PostType = 'text' | 'image' | 'video' | 'article' | 'opportunity' | 'spotlight';
 
 export const PostComposer: React.FC<PostComposerProps> = ({ 
   defaultPillar = 'connect',
@@ -166,7 +166,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       if (selectedFile) {
         finalType = selectedFile.type.startsWith('video/') ? 'video' : 'image';
       } else if (embedData) {
-        finalType = 'link';
+        finalType = 'article';
       }
 
       // Enforce admin-only spotlight
@@ -322,7 +322,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="text">Text</SelectItem>
-                        <SelectItem value="link" disabled={!embedData}>Link</SelectItem>
+                        <SelectItem value="article" disabled={!embedData}>Link</SelectItem>
                         <SelectItem value="image" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('image/'))}>Image</SelectItem>
                         <SelectItem value="video" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('video/'))}>Video</SelectItem>
                         <SelectItem value="opportunity">Opportunity</SelectItem>
