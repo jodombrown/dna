@@ -1,0 +1,76 @@
+{
+  "product": "Diaspora Network of Africa (DNA)",
+  "version": "beta-1",
+  "last_updated": "2025-08-08",
+  "tech_stack": ["React", "Vite", "Tailwind", "Supabase", "shadcn/radix", "React Query"],
+  "current_features": {
+    "auth": {
+      "email_password": true,
+      "admin_magic_link_domain": "@diasporanetwork.africa",
+      "session_management": "Supabase AuthContext (user + session)",
+      "routes": ["/auth", "/app/admin (gated)"]
+    },
+    "profiles": {
+      "public_route": "/dna/:username",
+      "alias": "/dna/me",
+      "fields_model": "rich (skills, impact, culture, mentorship, visibility)",
+      "data_access": "profilesService + React Query hooks (useProfiles, useProfileById, useUpdateProfile)"
+    },
+    "social_feed": {
+      "content_types": ["text", "media", "polls", "opportunities"],
+      "actions": ["like", "save", "comment"],
+      "admin_controls": true,
+      "view_tracking": true
+    },
+    "collaborations": {
+      "wrapper": "filters/sorting/stats orchestration",
+      "actions": ["join", "like", "bookmark", "contact"],
+      "project_card": ["status badge", "urgency badge", "CTAs"]
+    },
+    "search": {
+      "ui": ["AdvancedSearch", "Sidebar tabs: profiles/professionals"],
+      "backend": "public profiles via profilesService"
+    },
+    "onboarding": {
+      "complete_hook": "useMarkOnboardingComplete (toasts + timestamp)"
+    },
+    "ui": {
+      "design_system": ["shadcn/radix", "Tailwind tokens"],
+      "pages": ["/", "/auth", "/dna/:username", "/dna/me"]
+    }
+  },
+  "planned_features": {
+    "engagement_system": [
+      "automated reminders",
+      "personalized check-ins",
+      "admin analytics",
+      "notification tracking"
+    ],
+    "db": ["user_engagement_tracking", "reminder_logs", "notifications (RLS)"],
+    "edge_functions": ["engagement-reminders", "engagement-analytics"],
+    "cron": ["daily/weekly schedules"]
+  },
+  "security": {
+    "rls_everywhere": true,
+    "admin_policy_gating": true,
+    "notes": ["UI domain checks are supplemental; DB policy is authoritative"]
+  },
+  "seo": {
+    "needed": ["titles", "meta descriptions", "canonical", "structured data where applicable"]
+  },
+  "gaps": [
+    "username uniqueness/enforcement",
+    "search backend filters + pagination + indexes",
+    "explicit page-level SEO",
+    "confirm admin RLS on routes/actions",
+    "map profile visibility to RLS"
+  ],
+  "next_steps": [
+    "add SEO tags per page",
+    "enforce and backfill username slugs",
+    "server-side search filters with indexes",
+    "implement sprint-1 engagement tables + functions",
+    "admin dashboard shell + policies"
+  ],
+  "routes": ["/", "/auth", "/dna/:username", "/dna/me", "/app/admin (gated)"]
+}
