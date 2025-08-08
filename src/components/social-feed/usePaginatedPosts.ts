@@ -8,6 +8,7 @@ interface UsePaginatedPostsProps {
   pillar?: string;
   limit?: number;
   refreshKey?: number;
+  relevantOnly?: boolean; // When true, scope feed to connections and collaborators
 }
 
 interface UsePaginatedPostsReturn {
@@ -22,7 +23,8 @@ interface UsePaginatedPostsReturn {
 export const usePaginatedPosts = ({
   pillar,
   limit = 10,
-  refreshKey = 0
+  refreshKey = 0,
+  relevantOnly = false,
 }: UsePaginatedPostsProps = {}): UsePaginatedPostsReturn => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,43 @@ export const usePaginatedPosts = ({
 
       const currentOffset = isRefresh ? 0 : (isLoadMore ? offset : 0);
       
-      // Build the query
+      // Optionally scope to relevant authors (connections + collaborators + self)
+      let authorIds: string[] | null = null;
+      if (relevantOnly && user?.id) {
+        const [connectionsRes, mySpacesRes] = await Promise.all([
+          supabase
+            .from('contact_requests')
+            .select('sender_id, receiver_id')
+            .eq('status', 'accepted')
+            .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`),
+          supabase
+            .from('collaboration_memberships')
+            .select('space_id')
+            .eq('user_id', user.id)
+            .eq('status', 'approved')
+        ]);
+
+        const mySpaceIds = (mySpacesRes.data || []).map((r: any) => r.space_id);
+        let collaborators: string[] = [];
+        if (mySpaceIds.length > 0) {
+          const { data: memberRows } = await supabase
+            .from('collaboration_memberships')
+            .select('user_id, space_id')
+            .in('space_id', mySpaceIds)
+            .eq('status', 'approved');
+          collaborators = (memberRows || [])
+            .map((r: any) => r.user_id)
+            .filter((id: string | null) => !!id && id !== user.id);
+        }
+
+        const connections: string[] = (connectionsRes.data || [])
+          .map((r: any) => (r.sender_id === user.id ? r.receiver_id : r.sender_id))
+          .filter((id: string | null) => !!id && id !== user.id);
+
+        authorIds = Array.from(new Set<string>([user.id, ...connections, ...collaborators]));
+      }
+      
+      // Build the base posts query
       let query = supabase
         .from('posts')
         .select(`
@@ -67,14 +105,31 @@ export const usePaginatedPosts = ({
           )
         `)
         .eq('status', 'published')
-        .eq('visibility', 'public')
-        .order('created_at', { ascending: false })
-        .range(currentOffset, currentOffset + limit - 1);
+        .eq('visibility', 'public');
+
+      // Apply relevance filter if applicable
+      if (relevantOnly) {
+        if (authorIds && authorIds.length > 0) {
+          query = query.in('author_id', authorIds);
+        } else {
+          // No relevant authors found, return empty
+          if (isRefresh) {
+            setPosts([]);
+            setOffset(0);
+          }
+          setHasMore(false);
+          return;
+        }
+      }
 
       // Filter by pillar if specified
       if (pillar) {
         query = query.eq('pillar', pillar);
       }
+
+      // Order and paginate
+      query = query.order('created_at', { ascending: false })
+                   .range(currentOffset, currentOffset + limit - 1);
 
       const { data: postsData, error: postsError } = await query;
 
@@ -180,7 +235,7 @@ export const usePaginatedPosts = ({
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [pillar, limit, offset, user?.id, toast]);
+  }, [pillar, limit, offset, user?.id, toast, relevantOnly]);
 
   const loadMore = useCallback(async () => {
     if (!hasMore || loadingMore) return;
@@ -194,7 +249,7 @@ export const usePaginatedPosts = ({
   // Initial load and refresh on dependency changes
   useEffect(() => {
     fetchPosts();
-  }, [pillar, user?.id, refreshKey]);
+  }, [pillar, user?.id, refreshKey, relevantOnly]);
 
   return {
     posts,

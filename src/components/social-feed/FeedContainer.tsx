@@ -45,7 +45,8 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
     refresh
   } = usePaginatedPosts({
     pillar: selectedPillar === 'feed' ? undefined : selectedPillar,
-    refreshKey
+    refreshKey,
+    relevantOnly: true,
   });
 
   const realtimeStatus = useFeedRealtime({
