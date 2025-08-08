@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDashboard } from '@/contexts/DashboardContext';
 import { SocialFeedProvider } from '@/contexts/SocialFeedContext';
 import { ProfileCompletenessWidget } from '@/components/dashboard/ProfileCompletenessWidget';
+import RecommendationsWidget from '@/components/dashboard/RecommendationsWidget';
 
 const Dashboard = () => {
   const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
@@ -85,6 +86,7 @@ const Dashboard = () => {
   const rightSidebar = (
     <div className="space-y-4">
       <ProfileCompletenessWidget />
+      <RecommendationsWidget />
       <DiscoverySidebar activePillar={activePillar} />
     </div>
   );

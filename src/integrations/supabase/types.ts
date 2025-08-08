@@ -2951,6 +2951,40 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      rpc_adin_recommend_opportunities: {
+        Args: { p_limit?: number }
+        Returns: {
+          id: string
+          title: string
+          description: string
+          type: string
+          tags: string[]
+          location: string
+          link: string
+          score: number
+        }[]
+      }
+      rpc_adin_recommend_people: {
+        Args: { p_limit?: number }
+        Returns: {
+          user_id: string
+          username: string
+          full_name: string
+          headline: string
+          score: number
+        }[]
+      }
+      rpc_adin_recommend_spaces: {
+        Args: { p_limit?: number }
+        Returns: {
+          id: string
+          title: string
+          description: string
+          tags: string[]
+          visibility: string
+          score: number
+        }[]
+      }
       rpc_create_post: {
         Args:
           | { p: Json }

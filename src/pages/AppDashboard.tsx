@@ -16,6 +16,7 @@ import Opportunities from './app/Opportunities';
 import AppSidebar from '@/components/AppSidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import SpaceDetail from './app/SpaceDetail';
+import Recommendations from './app/Recommendations';
 import { isDevBypassActive, DevBypassMount, DevBypassToggle } from '@/components/dev/DevBypass';
 
 const AppDashboard = () => {
@@ -83,6 +84,7 @@ const AppDashboard = () => {
                 <Route path="profile/edit" element={<ProfileEdit />} />
                 <Route path="invites" element={<Invites />} />
                 <Route path="admin" element={<Admin />} />
+                <Route path="recommendations" element={<Recommendations />} />
                 
                 {/* Catch-all: redirect any undefined routes back to dashboard */}
                 <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
