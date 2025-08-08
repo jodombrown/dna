@@ -90,7 +90,16 @@ function App() {
               <Route path="/phase/mvp" element={<AuthGuard><MvpPhase /></AuthGuard>} />
               <Route path="/phase/beta-validation" element={<AuthGuard><BetaValidationPhase /></AuthGuard>} />
               <Route path="/phase/go-to-market" element={<AuthGuard><GoToMarketPhase /></AuthGuard>} />
-                <Route path="*" element={<NotFound />} />
+
+              {/* Backward-compatible redirects for legacy numeric phase URLs */}
+              <Route path="/phase1" element={<Navigate to="/phase/market-research" replace />} />
+              <Route path="/phase2" element={<Navigate to="/phase/prototyping" replace />} />
+              <Route path="/phase3" element={<Navigate to="/phase/customer-discovery" replace />} />
+              <Route path="/phase4" element={<Navigate to="/phase/mvp" replace />} />
+              <Route path="/phase5" element={<Navigate to="/phase/beta-validation" replace />} />
+              <Route path="/phase6" element={<Navigate to="/phase/go-to-market" replace />} />
+
+              <Route path="*" element={<NotFound />} />
               </Routes>
             </AuthProvider>
           </BrowserRouter>
