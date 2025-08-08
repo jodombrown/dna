@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { FloatingPostComposer } from './FloatingPostComposer';
 import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
@@ -12,6 +12,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import FeedModeTabs from './FeedModeTabs';
+import { supabase } from '@/integrations/supabase/client';
+import FloatingFeedbackWidget from '@/components/feedback/FloatingFeedbackWidget';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface FeedContainerProps {
   defaultPillar?: string;
@@ -38,6 +41,7 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
   const [refreshKey, setRefreshKey] = useState(0);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [feedMode, setFeedMode] = useState<'relevant' | 'trending' | 'spotlight'>('relevant');
+  const { user } = useAuth();
   
   const {
     posts,
@@ -98,6 +102,33 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
     refresh();
   }, [refresh]);
 
+  // Analytics: track feed mode and pillar changes
+  useEffect(() => {
+    if (!user?.id) return;
+    (async () => {
+      try {
+        await supabase.rpc('log_engagement_event', {
+          target_user_id: user.id,
+          event_type_param: 'feed_mode_select',
+          event_context_param: { mode: feedMode, pillar: selectedPillar },
+        });
+      } catch {}
+    })();
+  }, [feedMode]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    (async () => {
+      try {
+        await supabase.rpc('log_engagement_event', {
+          target_user_id: user.id,
+          event_type_param: 'pillar_filter_select',
+          event_context_param: { pillar: selectedPillar, mode: feedMode },
+        });
+      } catch {}
+    })();
+  }, [selectedPillar]);
+
   return (
     <div className="space-y-6" role="main" aria-label="Social Feed">
       {showComposer && (
@@ -143,6 +174,8 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
           onPostUpdated={handlePostUpdated}
         />
       )}
+
+      <FloatingFeedbackWidget pageType={(['connect','collaborate','contribute'] as const).includes(selectedPillar as any) ? (selectedPillar as any) : 'connect'} />
     </div>
   );
 };
