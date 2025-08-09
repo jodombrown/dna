@@ -1,5 +1,6 @@
 
 import React from 'react';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import HeroSection from '@/components/HeroSection';
 import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
 import BuildingTogetherSection from '@/components/BuildingTogetherSection';
@@ -15,6 +16,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Navigation Header */}
+      <UnifiedHeader />
+
       {/* Prototype Banner */}
       <PrototypeBanner />
 
