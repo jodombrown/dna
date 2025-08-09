@@ -2010,6 +2010,41 @@ export type Database = {
         }
         Relationships: []
       }
+      task_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          space_id: string
+          task_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          space_id: string
+          task_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          space_id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           assignee_id: string | null
@@ -3051,6 +3086,38 @@ export type Database = {
       }
       rpc_seed_verified_contributor: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      rpc_task_assign: {
+        Args: { p_task: string; p_assignee: string }
+        Returns: undefined
+      }
+      rpc_task_comment: {
+        Args: { p_task: string; p_body: string }
+        Returns: string
+      }
+      rpc_task_create: {
+        Args: {
+          p_space: string
+          p_title: string
+          p_description?: string
+          p_due?: string
+          p_priority?: string
+        }
+        Returns: string
+      }
+      rpc_task_set_status: {
+        Args: { p_task: string; p_status: string }
+        Returns: undefined
+      }
+      rpc_task_update: {
+        Args: {
+          p_task: string
+          p_title?: string
+          p_description?: string
+          p_due?: string
+          p_priority?: string
+        }
         Returns: undefined
       }
       rpc_toggle_spotlight: {
