@@ -2737,6 +2737,16 @@ export type Database = {
           expires_at: string
         }[]
       }
+      award_badge_if_missing: {
+        Args: {
+          p_user: string
+          p_key: string
+          p_name: string
+          p_desc?: string
+          p_icon?: string
+        }
+        Returns: boolean
+      }
       calculate_impact_score: {
         Args: { target_user_id: string }
         Returns: number
@@ -2792,6 +2802,10 @@ export type Database = {
       }
       compute_influence_score: {
         Args: { target_user_id: string }
+        Returns: number
+      }
+      count_contrib: {
+        Args: { p_user: string; p_type: string }
         Returns: number
       }
       create_admin_notification: {

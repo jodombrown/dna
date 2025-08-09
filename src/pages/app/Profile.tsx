@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import BadgeWidget from '@/components/profile/BadgeWidget';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Edit, Eye, Users, Star } from 'lucide-react';
@@ -165,6 +166,9 @@ const Profile = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Badges Section */}
+        {user?.id && <BadgeWidget userId={user.id} />}
       </div>
     </div>
   );
