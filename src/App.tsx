@@ -27,7 +27,7 @@ import ResetPasswordComplete from "./pages/ResetPasswordComplete";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import { PostOnboardingFlow } from "./pages/PostOnboardingFlow";
-import V1App from "./pages/app/v1";
+
 import UserDashboard from "./pages/UserDashboard";
 import DnaDev from "./pages/DnaDev";
 
@@ -66,7 +66,7 @@ function App() {
               <Route path="/dna/:username" element={<UserDashboard />} />
               
               {/* Dashboard V1 Archive Route - MUST come before /app/* */}
-              <Route path="/app/v1/*" element={<V1App />} />
+              <Route path="/app/v1/*" element={<Navigate to="/app" replace />} />
               
               <Route path="/app/*" element={<AppDashboard />} />
               <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />
