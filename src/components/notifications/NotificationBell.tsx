@@ -12,6 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import NotificationsPanel from './NotificationsPanel';
 
 interface NotificationRow {
   id: string;
@@ -30,6 +31,7 @@ export const NotificationBell: React.FC = () => {
   const [items, setItems] = useState<NotificationRow[]>([]);
   const [unread, setUnread] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
 
   const userId = user?.id ?? null;
 
@@ -105,7 +107,7 @@ export const NotificationBell: React.FC = () => {
     }
   };
 
-  return (
+  return (<>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" aria-label="Notifications" className="relative">
@@ -144,7 +146,8 @@ export const NotificationBell: React.FC = () => {
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+    <NotificationsPanel open={panelOpen} onClose={() => setPanelOpen(false)} />
+  </>);
 };
 
 export default NotificationBell;
