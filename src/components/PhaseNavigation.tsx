@@ -13,7 +13,7 @@ const phases = [
     description: "Understanding diaspora needs and validating our concept",
     status: "Active",
     timeline: "Jun - Sep 2025",
-    path: "/phase/market-research",
+    path: "/phase-1/market-research",
     icon: <Search className="w-6 h-6" />,
     color: "bg-dna-emerald"
   },
@@ -23,7 +23,7 @@ const phases = [
     description: "Designing user experiences and testing prototypes",
     status: "Planned",
     timeline: "Oct - Dec 2025",
-    path: "/phase/prototyping",
+    path: "/phase-2/prototyping",
     icon: <Palette className="w-6 h-6" />,
     color: "bg-dna-forest"
   },
@@ -33,7 +33,7 @@ const phases = [
     description: "Measuring early adopter interest and validation",
     status: "Planned",
     timeline: "Jan - Feb 2026",
-    path: "/phase/customer-discovery",
+    path: "/phase-3/customer-discovery",
     icon: <Users className="w-6 h-6" />,
     color: "bg-dna-copper"
   },
@@ -43,7 +43,7 @@ const phases = [
     description: "Building the minimum viable product",
     status: "Planned",
     timeline: "Mar - Jul 2026",
-    path: "/phase/mvp",
+    path: "/phase-4/mvp",
     icon: <Code className="w-6 h-6" />,
     color: "bg-dna-gold"
   },
@@ -53,7 +53,7 @@ const phases = [
     description: "Testing with real users and validating product-market fit",
     status: "Planned",
     timeline: "Aug 2026",
-    path: "/phase/beta-validation",
+    path: "/phase-5/beta-validation",
     icon: <TestTube className="w-6 h-6" />,
     color: "bg-dna-mint"
   },
@@ -63,7 +63,7 @@ const phases = [
     description: "Global launch and sustainable growth",
     status: "Planned",
     timeline: "Sep 2026+",
-    path: "/phase/go-to-market",
+    path: "/phase-6/go-to-market",
     icon: <Rocket className="w-6 h-6" />,
     color: "bg-dna-emerald"
   }

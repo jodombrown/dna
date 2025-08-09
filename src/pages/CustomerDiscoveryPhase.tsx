@@ -108,8 +108,8 @@ const CustomerDiscoveryPhase = () => {
         badge="Phase 3 • Customer Discovery"
         title="Customer Discovery"
         description="Measuring early adopter interest and validation without product build through community engagement and targeted outreach across the diaspora."
-        prevPhase={{ label: "Previous Phase", url: "/phase/prototyping" }}
-        nextPhase={{ label: "Next Phase", url: "/phase/mvp" }}
+        prevPhase={{ label: "Previous Phase", url: "/phase-2/prototyping" }}
+        nextPhase={{ label: "Next Phase", url: "/phase-4/mvp" }}
         gradient="relative bg-gradient-to-r from-dna-forest/90 via-dna-emerald/90 to-dna-copper/90 bg-[url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center before:absolute before:inset-0 before:bg-gradient-to-r before:from-dna-forest/80 before:via-dna-emerald/80 before:to-dna-copper/80 before:z-0"
       />
 
