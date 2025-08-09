@@ -99,13 +99,6 @@ function App() {
               <Route path="/phase/beta-validation" element={<Navigate to="/phase-5/beta-validation" replace />} />
               <Route path="/phase/go-to-market" element={<Navigate to="/phase-6/go-to-market" replace />} />
 
-              {/* Backward-compatible redirects for legacy numeric phase URLs */}
-              <Route path="/phase1" element={<Navigate to="/phase-1/market-research" replace />} />
-              <Route path="/phase2" element={<Navigate to="/phase-2/prototyping" replace />} />
-              <Route path="/phase3" element={<Navigate to="/phase-3/customer-discovery" replace />} />
-              <Route path="/phase4" element={<Navigate to="/phase-4/mvp" replace />} />
-              <Route path="/phase5" element={<Navigate to="/phase-5/beta-validation" replace />} />
-              <Route path="/phase6" element={<Navigate to="/phase-6/go-to-market" replace />} />
 
               <Route path="*" element={<NotFound />} />
               </Routes>
