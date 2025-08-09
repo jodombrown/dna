@@ -2997,6 +2997,26 @@ export type Database = {
           score: number
         }[]
       }
+      rpc_adin_recommendations_opportunities: {
+        Args: { p_user_id: string; p_threshold?: number; p_limit?: number }
+        Returns: {
+          signal_id: string
+          signal_title: string
+          signal_type: string
+          match_score: number
+          signal_created_at: string
+        }[]
+      }
+      rpc_adin_recommendations_people: {
+        Args: { p_user_id: string; p_limit?: number }
+        Returns: {
+          matched_user_id: string
+          match_score: number
+          match_reason: string
+          shared_regions: string[]
+          shared_sectors: string[]
+        }[]
+      }
       rpc_create_post: {
         Args:
           | { p: Json }
@@ -3005,7 +3025,14 @@ export type Database = {
       }
       rpc_dashboard_counts: {
         Args: Record<PropertyKey, never>
-        Returns: Json
+        Returns: {
+          total_users: number
+          total_connections: number
+          total_posts: number
+          total_events: number
+          active_users_week: number
+          engagement_rate: number
+        }[]
       }
       rpc_log_contribution: {
         Args: {
