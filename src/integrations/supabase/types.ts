@@ -2715,6 +2715,17 @@ export type Database = {
       }
     }
     Functions: {
+      _log_contrib_fixed: {
+        Args: {
+          _user: string
+          _type: string
+          _target: string
+          _description: string
+          _sector: string
+          _region: string
+        }
+        Returns: undefined
+      }
       add_message_reaction: {
         Args: { p_message_id: string; p_user_id: string; p_reaction: string }
         Returns: undefined
@@ -3060,12 +3071,20 @@ export type Database = {
         Returns: Json
       }
       rpc_log_contribution: {
-        Args: {
-          p_type: string
-          p_target_id: string
-          p_target_title?: string
-          p_metadata?: Json
-        }
+        Args:
+          | {
+              p_type: string
+              p_target_id: string
+              p_description?: string
+              p_sector?: string
+              p_region?: string
+            }
+          | {
+              p_type: string
+              p_target_id: string
+              p_target_title?: string
+              p_metadata?: Json
+            }
         Returns: undefined
       }
       rpc_membership_approve: {
