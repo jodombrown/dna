@@ -5,10 +5,11 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import TaskList from '@/components/spaces/TaskList';
 import { useAuth } from '@/contexts/AuthContext';
 
 type Space = { id: string; title: string; description: string | null; visibility: string; status: string; tags: string[]|null; created_by: string };
-type Task = { id: string; title: string; status: string; due_date: string|null };
+
 type Milestone = { id: string; title: string; status: string; due_date: string|null };
 
 const guard = (res: { data: any; error: any }, msg = 'Action failed') => { if (res.error) { console.error(res.error); throw new Error(msg); } return res.data ?? []; };
@@ -18,12 +19,10 @@ export default function SpaceDetail() {
   const nav = useNavigate();
   const { user } = useAuth();
   const [space, setSpace] = useState<Space|null>(null);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [accessDenied, setAccessDenied] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [taskTitle, setTaskTitle] = useState('');
-  const [taskDue, setTaskDue] = useState('');
   const [msTitle, setMsTitle] = useState('');
   const [msDue, setMsDue] = useState('');
 
@@ -34,15 +33,11 @@ export default function SpaceDetail() {
       const s = await supabase.from('collaboration_spaces').select('*').eq('id', id).single();
       const spaceData = guard(s, 'Space not found') as Space;
       setSpace(spaceData);
-      const [t, m] = await Promise.all([
-        supabase.from('tasks').select('*').eq('space_id', id).order('updated_at', { ascending: false }),
-        supabase.from('milestones').select('*').eq('space_id', id).order('updated_at', { ascending: false })
-      ]);
-      setTasks(guard(t, 'No access to tasks') as Task[]);
+      const m = await supabase.from('milestones').select('*').eq('space_id', id).order('updated_at', { ascending: false });
       setMilestones(guard(m, 'No access to milestones') as Milestone[]);
       setAccessDenied(false);
     } catch {
-      setTasks([]); setMilestones([]); setAccessDenied(true);
+      setMilestones([]); setAccessDenied(true);
     } finally { setLoading(false); }
   };
 
@@ -64,27 +59,7 @@ export default function SpaceDetail() {
     if (error) alert('Join request failed'); else alert('Join request sent');
   };
 
-  const addTask = async () => {
-    if (!id || !taskTitle.trim() || !user) return;
-    await supabase.from('tasks').insert({ 
-      space_id: id, 
-      title: taskTitle.trim(), 
-      description: null,
-      status: 'todo', 
-      priority: 'normal',
-      assignee_id: user.id,
-      due_date: taskDue || null,
-      created_by: user.id
-    });
-    await supabase.rpc('rpc_log_contribution', { p_type: 'task', p_target_id: id, p_target_title: taskTitle, p_metadata: { action: 'created' } });
-    setTaskTitle(''); setTaskDue(''); fetchAll();
-  };
 
-  const toggleTask = async (t: Task) => {
-    const next = t.status === 'todo' ? 'in-progress' : t.status === 'in-progress' ? 'done' : 'todo';
-    await supabase.from('tasks').update({ status: next }).eq('id', t.id);
-    await supabase.rpc('rpc_log_contribution', { p_type: 'task', p_target_id: t.id, p_metadata: { action: 'status_changed', to: next } });
-  };
 
   const addMilestone = async () => {
     if (!id || !msTitle.trim() || !user) return;
@@ -130,24 +105,7 @@ export default function SpaceDetail() {
                 <Card>
                   <CardHeader><CardTitle>Tasks</CardTitle></CardHeader>
                   <CardContent className="space-y-3">
-                    <div className="flex gap-2">
-                      <Input placeholder="Task title" value={taskTitle} onChange={e => setTaskTitle(e.target.value)} />
-                      <Input type="date" value={taskDue} onChange={e => setTaskDue(e.target.value)} className="w-40" />
-                      <Button onClick={addTask}>Add</Button>
-                    </div>
-                    {tasks.length === 0 ? <div className="text-sm text-muted-foreground">No tasks yet.</div> : (
-                      <ul className="space-y-2">
-                        {tasks.map(t => (
-                          <li key={t.id} className="flex items-center justify-between p-2 border rounded">
-                            <div>
-                              <div className="font-medium">{t.title}</div>
-                              <div className="text-xs text-muted-foreground">{t.status}{t.due_date ? ` • due ${t.due_date}` : ''}</div>
-                            </div>
-                            <Button variant="secondary" onClick={() => toggleTask(t)}>Advance</Button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    {id && <TaskList spaceId={id} />}
                   </CardContent>
                 </Card>
 
