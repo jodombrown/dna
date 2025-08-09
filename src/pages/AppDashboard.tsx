@@ -10,6 +10,7 @@ import Connect from './app/Connect';
 import Profile from './app/Profile';
 import ProfileEdit from './app/ProfileEdit';
 import Admin from './app/Admin';
+import AdminDiagnostics from './app/AdminDiagnostics';
 import Invites from './app/Invites';
 import Spaces from './app/Spaces';
 import Opportunities from './app/Opportunities';
@@ -86,6 +87,7 @@ const AppDashboard = () => {
                 <Route path="profile/edit" element={<ProfileEdit />} />
                 <Route path="invites" element={<Invites />} />
                 <Route path="admin" element={<Admin />} />
+                <Route path="admin/diagnostics" element={<AdminDiagnostics />} />
                 <Route path="recommendations" element={<Recommendations />} />
                 
                 {/* Catch-all: redirect any undefined routes back to dashboard */}

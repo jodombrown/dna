@@ -28,6 +28,7 @@ import ResetPasswordComplete from "./pages/ResetPasswordComplete";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import { PostOnboardingFlow } from "./pages/PostOnboardingFlow";
+import AdminDiagnostics from "./pages/app/AdminDiagnostics";
 
 import UserDashboard from "./pages/UserDashboard";
 import DnaDev from "./pages/DnaDev";

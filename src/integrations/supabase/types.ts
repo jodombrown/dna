@@ -3084,6 +3084,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      rpc_health_snapshot: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       rpc_log_contribution: {
         Args:
           | {
