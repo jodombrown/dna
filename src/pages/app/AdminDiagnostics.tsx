@@ -29,6 +29,26 @@ export default function AdminDiagnostics() {
 
   const runProbes = async () => {
     const results: any = {};
+
+    // Probe 5: attempt safe call to comment RPC with bogus id (expect error but no 401)
+    try {
+      const r = await supabase.rpc('rpc_task_comment', { p_task: '00000000-0000-0000-0000-000000000000', p_body: 'diag' });
+      results.rpc_task_comment_behavior = r.error ? 'error_expected' : 'ok_or_noop';
+      if (r.error) results.rpc_task_comment_error = r.error.message;
+    } catch (e:any) {
+      results.rpc_task_comment_behavior = 'client_exception';
+      results.rpc_task_comment_error = String(e?.message || e);
+    }
+
+    // Probe 6: storage buckets list (read meta)
+    try {
+      const { data: buckets } = await supabase.storage.listBuckets();
+      results.storage_buckets_visible = Array.isArray(buckets) ? buckets.length : 0;
+    } catch (e:any) {
+      results.storage_buckets_visible = -1;
+      results.storage_buckets_error = String(e?.message || e);
+    }
+
     // Probe 1: realtime subscribe to tasks table (should not error)
     try {
       const ch = supabase
@@ -80,6 +100,10 @@ export default function AdminDiagnostics() {
   const functions = useMemo(() => snapshot?.functions || [], [snapshot]);
   const grants = useMemo(() => snapshot?.grants_exec_to_anon_or_auth || [], [snapshot]);
 
+  const storage = useMemo(() => snapshot?.storage || [], [snapshot]);
+  const smellsPolicies = useMemo(() => snapshot?.smells?.policies_using_auth_uid_direct || [], [snapshot]);
+  const smellsFuncs = useMemo(() => snapshot?.smells?.functions_missing_search_path || [], [snapshot]);
+
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-6">
       <Card>
@@ -125,6 +149,22 @@ export default function AdminDiagnostics() {
               </div>
 
               <div>
+                <div className="font-semibold mb-2">Storage buckets</div>
+                {storage.length === 0 ? (
+                  <div className="text-sm text-muted-foreground">No buckets found.</div>
+                ) : (
+                  <div className="grid md:grid-cols-2 gap-2">
+                    {storage.map((b:any) => (
+                      <div key={b.bucket} className="p-3 border rounded text-sm">
+                        <div className="font-medium">{b.bucket}</div>
+                        <div className="text-xs text-muted-foreground">public: {String(b.public)} | rls_enabled: {String(b.rls_enabled)}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
                 <div className="font-semibold mb-2">Triggers (expected)</div>
                 <div className="grid md:grid-cols-2 gap-2">
                   {triggers.length === 0 ? (
@@ -136,6 +176,32 @@ export default function AdminDiagnostics() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              <div>
+                <div className="font-semibold mb-2">Policy smells (auth.uid without select)</div>
+                {smellsPolicies.length === 0 ? (
+                  <div className="text-sm text-muted-foreground">None detected.</div>
+                ) : (
+                  <div className="space-y-1 text-sm">
+                    {smellsPolicies.map((s:any, i:number) => (
+                      <div key={i} className="p-2 border rounded">{s.table} • {s.policy}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div className="font-semibold mb-2">Functions missing search_path</div>
+                {smellsFuncs.length === 0 ? (
+                  <div className="text-sm text-muted-foreground">None detected.</div>
+                ) : (
+                  <div className="space-y-1 text-sm">
+                    {smellsFuncs.map((s:any, i:number) => (
+                      <div key={i} className="p-2 border rounded">{s.name}</div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -158,6 +224,8 @@ export default function AdminDiagnostics() {
                   <div className="p-3 border rounded">Notifications select allowed: {probes.notifications_select_allowed ? 'OK' : 'Fail'}{probes.notifications_select_error ? ` (${probes.notifications_select_error})` : ''}</div>
                   <div className="p-3 border rounded">Public profile RPC: {probes.public_profile_rpc_ok ? 'OK' : 'Fail'}{probes.public_profile_rpc_error ? ` (${probes.public_profile_rpc_error})` : ''}</div>
                   <div className="p-3 border rounded">Notifications multiple permissive insert: {probes.notifications_multiple_permissive_insert ? 'Yes' : 'No'}</div>
+                  <div className="p-3 border rounded">Task comment RPC behavior: {probes.rpc_task_comment_behavior || 'Unknown'}{probes.rpc_task_comment_error ? ` (${probes.rpc_task_comment_error})` : ''}</div>
+                  <div className="p-3 border rounded">Storage buckets visible: {probes.storage_buckets_visible >= 0 ? probes.storage_buckets_visible : 'Error'}{probes.storage_buckets_error ? ` (${probes.storage_buckets_error})` : ''}</div>
                 </div>
               </div>
 
