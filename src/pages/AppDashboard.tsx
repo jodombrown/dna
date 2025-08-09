@@ -17,6 +17,7 @@ import AppSidebar from '@/components/AppSidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import SpaceDetail from './app/SpaceDetail';
 import Recommendations from './app/Recommendations';
+import SpaceMembers from './app/SpaceMembers';
 import { isDevBypassActive, DevBypassMount, DevBypassToggle } from '@/components/dev/DevBypass';
 
 const AppDashboard = () => {
@@ -79,6 +80,7 @@ const AppDashboard = () => {
                 <Route path="connect" element={<Connect />} />
                 <Route path="spaces" element={<Spaces />} />
                 <Route path="spaces/:id" element={<SpaceDetail />} />
+                <Route path="spaces/:id/members" element={<SpaceMembers />} />
                 <Route path="opportunities" element={<Opportunities />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="profile/edit" element={<ProfileEdit />} />

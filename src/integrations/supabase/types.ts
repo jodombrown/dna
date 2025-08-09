@@ -3068,6 +3068,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      rpc_membership_approve: {
+        Args: { p_space: string; p_user: string }
+        Returns: undefined
+      }
+      rpc_membership_reject: {
+        Args: { p_space: string; p_user: string }
+        Returns: undefined
+      }
       rpc_request_join_space: {
         Args: { p_space: string }
         Returns: undefined
