@@ -222,8 +222,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try { await supabase.auth.signOut(); } catch {}
+    try { localStorage.removeItem('dna_dev'); } catch {}
+    setSession(null);
+    setUser(null);
     setProfile(null);
+    // Hard redirect to ensure all state resets
+    window.location.href = '/auth';
   };
 
   const updatePassword = async (password: string) => {
