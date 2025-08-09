@@ -3095,6 +3095,10 @@ export type Database = {
         Args: { p_space: string; p_user: string }
         Returns: undefined
       }
+      rpc_public_profile_bundle: {
+        Args: { p_username: string }
+        Returns: Json
+      }
       rpc_request_join_space: {
         Args: { p_space: string }
         Returns: undefined
