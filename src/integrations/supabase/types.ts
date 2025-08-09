@@ -2964,7 +2964,7 @@ export type Database = {
         Returns: undefined
       }
       rpc_adin_recommend_opportunities: {
-        Args: { p_limit?: number }
+        Args: Record<PropertyKey, never> | { p_limit?: number }
         Returns: {
           id: string
           title: string
@@ -2977,7 +2977,7 @@ export type Database = {
         }[]
       }
       rpc_adin_recommend_people: {
-        Args: { p_limit?: number }
+        Args: Record<PropertyKey, never> | { p_limit?: number }
         Returns: {
           user_id: string
           username: string
@@ -2987,14 +2987,11 @@ export type Database = {
         }[]
       }
       rpc_adin_recommend_spaces: {
-        Args: { p_limit?: number }
+        Args: Record<PropertyKey, never> | { p_limit?: number }
         Returns: {
-          id: string
-          title: string
-          description: string
-          tags: string[]
-          visibility: string
-          score: number
+          space_id: string
+          space_name: string
+          match_score: number
         }[]
       }
       rpc_adin_recommendations_opportunities: {
@@ -3025,14 +3022,7 @@ export type Database = {
       }
       rpc_dashboard_counts: {
         Args: Record<PropertyKey, never>
-        Returns: {
-          total_users: number
-          total_connections: number
-          total_posts: number
-          total_events: number
-          active_users_week: number
-          engagement_rate: number
-        }[]
+        Returns: Json
       }
       rpc_log_contribution: {
         Args: {
