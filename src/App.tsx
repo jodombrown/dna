@@ -32,6 +32,9 @@ import AdminDiagnostics from "./pages/app/AdminDiagnostics";
 
 import UserDashboard from "./pages/UserDashboard";
 import DnaDev from "./pages/DnaDev";
+import Events from "@/pages/app/Events";
+import EventNew from "@/pages/app/EventNew";
+import OpportunityNew from "@/pages/app/OpportunityNew";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +72,10 @@ function App() {
               
               {/* Dashboard V1 Archive Route - MUST come before /app/* */}
               <Route path="/app/v1/*" element={<Navigate to="/app" replace />} />
+              
+              <Route path="/app/events" element={<Events />} />
+              <Route path="/app/events/new" element={<EventNew />} />
+              <Route path="/app/opportunities/new" element={<OpportunityNew />} />
               
               <Route path="/app/*" element={<AppDashboard />} />
               <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />
