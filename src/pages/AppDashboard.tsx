@@ -14,7 +14,7 @@ import Invites from './app/Invites';
 import Spaces from './app/Spaces';
 import Opportunities from './app/Opportunities';
 import AppSidebar from '@/components/AppSidebar';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import SpaceDetail from './app/SpaceDetail';
 import Recommendations from './app/Recommendations';
 import { isDevBypassActive, DevBypassMount, DevBypassToggle } from '@/components/dev/DevBypass';
@@ -57,18 +57,12 @@ const AppDashboard = () => {
         <div className="min-h-screen flex w-full bg-gray-50">
           <AppSidebar />
           <div className="flex-1 relative">
-            {/* App Header with sidebar control */}
-            <header className="sticky top-0 z-40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-              <div className="h-12 flex items-center px-4 gap-3">
-                <SidebarTrigger />
-                <div className="text-sm text-muted-foreground">Navigation</div>
-              </div>
-            </header>
+            {/* Header removed for v2 */}
 
             {/* Dev bypass activator (URL/localStorage) */}
             <DevBypassMount />
             {/* Main Content */}
-            <main className="pt-10 lg:pt-12 pb-20 lg:pb-0">
+            <main className="pt-4 lg:pt-4 pb-20 lg:pb-0">
               <Routes>
                 {/* Main dashboard route */}
                 <Route index element={<Dashboard />} />
