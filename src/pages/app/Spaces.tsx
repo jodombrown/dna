@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { getGenericErrorMessage } from '@/utils/errorHandling';
 
 const guard = (res: { data: any; error: any }, friendly = 'Action failed') => {
   if (res.error) {
@@ -116,23 +118,39 @@ const Spaces: React.FC = () => {
   const visibleTags = useMemo(() => (tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : []), [tags]);
 
   const createSpace = async () => {
-    if (!user || !title.trim()) return;
+    if (!title.trim()) {
+      toast.warning('Add a title', { description: 'Please give your space a clear title.' });
+      return;
+    }
+    if (!user) {
+      toast.error('Sign in required', { description: 'Please sign in to create and manage spaces.' });
+      navigate('/auth');
+      return;
+    }
+
     setCreating(true);
-    const { error } = await supabase.from('collaboration_spaces').insert({
-      created_by: user.id,
-      title: title.trim(),
-      description: description.trim() || null,
-      visibility,
-      status: 'active',
-      tags: visibleTags,
-    });
-    setCreating(false);
-    if (!error) {
+    try {
+      const { error } = await supabase.from('collaboration_spaces').insert({
+        created_by: user.id,
+        title: title.trim(),
+        description: description.trim() || null,
+        visibility,
+        status: 'active',
+        tags: visibleTags,
+      });
+      if (error) throw error;
+
+      toast.success('Space created', { description: 'Your collaboration space is ready.' });
       setTitle('');
       setDescription('');
       setVisibility('private');
       setTags('');
       fetchSpaces();
+    } catch (err: any) {
+      const msg = err?.code === '42501' ? 'Permission denied. Please sign in and try again.' : getGenericErrorMessage(err);
+      toast.error('Could not create space', { description: msg });
+    } finally {
+      setCreating(false);
     }
   };
 
@@ -245,6 +263,12 @@ const Spaces: React.FC = () => {
           <CardTitle>Create a new space</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          {!user && (
+            <div className="md:col-span-5 p-3 border rounded bg-muted/30 text-sm flex items-center justify-between">
+              <span>You must be signed in to create a space.</span>
+              <Button size="sm" onClick={() => navigate('/auth')}>Sign in</Button>
+            </div>
+          )}
           <div className="md:col-span-2">
             <Label htmlFor="title">Title</Label>
             <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., Nairobi Healthtech Hub" />
@@ -268,7 +292,7 @@ const Spaces: React.FC = () => {
             <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="healthtech, kenya, early-stage" />
           </div>
           <div className="md:col-span-1 flex items-end">
-            <Button onClick={createSpace} disabled={creating || !title.trim()} className="w-full">Create</Button>
+            <Button onClick={createSpace} disabled={creating || !title.trim() || !user} className="w-full">Create</Button>
           </div>
         </CardContent>
       </Card>
