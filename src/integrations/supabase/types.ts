@@ -2965,6 +2965,10 @@ export type Database = {
         Args: { _user_id: string }
         Returns: boolean
       }
+      is_event_owner: {
+        Args: { p_event: string; p_user: string }
+        Returns: boolean
+      }
       is_member_of_space: {
         Args: {
           _space: string
@@ -3087,6 +3091,15 @@ export type Database = {
       rpc_event_attendee_count: {
         Args: { p_event: string }
         Returns: number
+      }
+      rpc_event_attendees: {
+        Args: { p_event: string }
+        Returns: {
+          user_id: string
+          username: string
+          full_name: string
+          registered_at: string
+        }[]
       }
       rpc_event_register: {
         Args: { p_event: string }

@@ -13,6 +13,8 @@ export default function EventDetail() {
   const [isRegistered, setIsRegistered] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 const [saving, setSaving] = useState(false);
+  const [attendees, setAttendees] = useState<any[]>([]);
+  const [canViewAttendees, setCanViewAttendees] = useState<boolean>(false);
   const [uid, setUid] = useState<string | null>(null);
 
   const load = async () => {
@@ -34,6 +36,20 @@ const { data: auth } = await supabase.auth.getUser();
         .maybeSingle();
       setIsRegistered(Boolean(myRes.data));
     }
+    // attempt to load attendees (owner/admin only)
+    try {
+      if (id) {
+        const aRes = await supabase.rpc('rpc_event_attendees', { p_event: id });
+        if (!aRes.error && Array.isArray(aRes.data)) {
+          setAttendees(aRes.data);
+          setCanViewAttendees(true);
+        } else {
+          setCanViewAttendees(false);
+        }
+      }
+    } catch {
+      setCanViewAttendees(false);
+    }
     setLoading(false);
   };
 
@@ -43,7 +59,7 @@ const { data: auth } = await supabase.auth.getUser();
     if (meta) meta.setAttribute('content', ev?.description || 'Event details on Diaspora Network of Africa');
     const link = document.querySelector('link[rel="canonical"]') || document.createElement('link');
     link.setAttribute('rel', 'canonical');
-    link.setAttribute('href', window.location.href);
+    link.setAttribute('href', window.location.href.split('?')[0]);
     if (!link.parentNode) document.head.appendChild(link);
   }, [ev]);
 
@@ -79,6 +95,46 @@ const unregister = async () => {
       load();
     }
   };
+  
+  const toICS = () => {
+    if (!ev) return '';
+    const uid = `${ev.id}@dna`;
+    const dtStart = ev.date_time ? new Date(ev.date_time) : new Date();
+    const dtStamp = new Date();
+    const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//DNA//Events//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `DTSTAMP:${fmt(dtStamp)}`,
+      `DTSTART:${fmt(dtStart)}`,
+      ev.title ? `SUMMARY:${ev.title.replace(/\r?\n/g, ' ')}` : 'SUMMARY:DNA Event',
+      ev.location ? `LOCATION:${ev.location.replace(/\r?\n/g, ' ')}` : '',
+      ev.description ? `DESCRIPTION:${ev.description.replace(/\r?\n/g, ' ')}` : '',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].filter(Boolean).join('\r\n');
+    return lines;
+  };
+
+  const downloadICS = () => {
+    const blob = new Blob([toICS()], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = (ev?.title ? ev.title.replace(/[^a-z0-9]+/gi, '-') : 'dna-event') + '.ics';
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  };
+
+  const copyShareLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success('Link copied');
+    } catch {}
+  };
 
 const isFull = ev?.max_attendees != null && count >= ev.max_attendees;
   if (loading) return <div className="p-4">Loading…</div>;
@@ -101,8 +157,8 @@ const isFull = ev?.max_attendees != null && count >= ev.max_attendees;
           {ev.location && <div className="text-sm">{ev.location}</div>}
           {ev.type && <div className="text-sm">Type: {ev.type}</div>}
           {ev.description && <article className="mt-2 whitespace-pre-wrap">{ev.description}</article>}
-          <div className="mt-4 flex items-center gap-3">
-<div className="text-sm">Attendees: {count}{ev?.max_attendees != null ? ` / ${ev.max_attendees}` : ''}</div>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="text-sm">Attendees: {count}{ev?.max_attendees != null ? ` / ${ev.max_attendees}` : ''}</div>
             {isRegistered ? (
               <Button onClick={unregister} disabled={saving}>{saving ? 'Saving…' : 'Cancel registration'}</Button>
             ) : isFull ? (
@@ -110,7 +166,27 @@ const isFull = ev?.max_attendees != null && count >= ev.max_attendees;
             ) : (
               <Button onClick={register} disabled={saving}>{saving ? 'Saving…' : 'Register'}</Button>
             )}
+            <Button variant="outline" onClick={downloadICS}>Add to calendar</Button>
+            <Button variant="outline" onClick={copyShareLink}>Share link</Button>
           </div>
+
+          {canViewAttendees && (
+            <div className="mt-6">
+              <div className="font-medium mb-2">Attendees</div>
+              {attendees.length === 0 ? (
+                <div className="text-sm text-muted-foreground">No registrations yet.</div>
+              ) : (
+                <ul className="space-y-1">
+                  {attendees.map((a) => (
+                    <li key={a.user_id} className="text-sm">
+                      {a.full_name || a.username || a.user_id}
+                      <span className="text-muted-foreground ml-2">• {a.registered_at ? new Date(a.registered_at).toLocaleString() : ''}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </main>
