@@ -22,12 +22,20 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
-    // Retrieve authenticated user
+    // Retrieve authenticated user and profile_id
     const authHeader = req.headers.get("Authorization")!;
     const token = authHeader.replace("Bearer ", "");
     const { data } = await supabaseClient.auth.getUser(token);
     const user = data.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
+
+    // Map auth user -> profiles.id (fallback to user.id if profile missing)
+    const { data: profileRow } = await supabaseClient
+      .from('profiles')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle();
+    const profile_id = profileRow?.id ?? user.id;
 
     // Get ticket type details
     const { data: ticketType, error: ticketError } = await supabaseClient
@@ -99,12 +107,12 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${Deno.env.get("APP_URL") || req.headers.get("origin")}/events/${eventId}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${Deno.env.get("APP_URL") || req.headers.get("origin")}/events/${eventId}`,
+      success_url: `${Deno.env.get("APP_URL")}/events/${eventId}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${Deno.env.get("APP_URL")}/events/${eventId}`,
       metadata: {
         event_id: eventId,
         ticket_type_id: ticketTypeId,
-        user_id: user.id,
+        profile_id,
       },
     });
 

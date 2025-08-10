@@ -62,8 +62,8 @@ serve(async (req) => {
 
         const eventId = session.metadata?.event_id as string | undefined;
         const ticketTypeId = session.metadata?.ticket_type_id as string | undefined;
-        const userId = session.metadata?.user_id as string | undefined;
-        if (!eventId || !userId) {
+        const profileId = session.metadata?.profile_id as string | undefined;
+        if (!eventId || !profileId) {
           console.error("Missing metadata", session.metadata);
           return new Response("Missing metadata", { status: 400, headers: corsHeaders });
         }
@@ -84,7 +84,7 @@ serve(async (req) => {
           .from("event_registrations")
           .select("id")
           .eq("event_id", eventId)
-          .eq("user_id", userId)
+          .eq("user_id", profileId)
           .order("registered_at", { ascending: false })
           .limit(1)
           .maybeSingle();
@@ -107,11 +107,11 @@ serve(async (req) => {
           // As a fallback, create a minimal row (trusted key bypasses RLS)
           const { error: insErr } = await supabaseService.from("event_registrations").insert({
             event_id: eventId,
-            user_id: userId,
+            user_id: profileId,
             ticket_type_id: ticketTypeId ?? null,
             price_paid_cents: session.amount_total ?? null,
             currency: session.currency ?? null,
-            status: "registered",
+            status: "going",
             stripe_session_id: session.id,
             stripe_payment_intent_id: (session.payment_intent as string) ?? null,
           });
