@@ -222,7 +222,7 @@ The Event Team
                   className="mt-1 font-mono text-sm"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Use markdown for formatting. Available variables: {{name}}, {{event_title}}, {{event_date}}
+                  Use markdown for formatting. Available variables: {`{{name}}, {{event_title}}, {{event_date}}`}
                 </p>
               </div>
 
