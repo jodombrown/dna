@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { PaletteIcon, EyeIcon, EyeOffIcon, GlobeIcon, UsersIcon, LockIcon, ImageIcon } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Globe, Lock, Users, Calendar, Settings, Palette, ImageIcon } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { EventData } from './index';
 
 interface StepDesignVisibilityProps {
@@ -12,7 +18,18 @@ interface StepDesignVisibilityProps {
   updateEventData: (field: keyof EventData, value: any) => void;
 }
 
+interface FormData {
+  theme?: string;
+  visibility: "public" | "private" | "members";
+  slug?: string;
+  capacity?: number;
+  waitlist_enabled: boolean;
+}
+
 const StepDesignVisibility: React.FC<StepDesignVisibilityProps> = ({ eventData, updateEventData }) => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   const themes = [
     { id: 'default', name: 'Default', primary: '#2563eb', bg: '#f8fafc' },
     { id: 'green', name: 'Green', primary: '#059669', bg: '#f0fdf4' },
@@ -26,19 +43,19 @@ const StepDesignVisibility: React.FC<StepDesignVisibilityProps> = ({ eventData, 
       value: 'public',
       label: 'Public',
       description: 'Anyone can see and register for this event',
-      icon: GlobeIcon,
+      icon: Globe,
     },
     {
       value: 'members',
-      label: 'Members Only',
+      label: 'Members Only', 
       description: 'Only DNA platform members can see and register',
-      icon: UsersIcon,
+      icon: Users,
     },
     {
       value: 'private',
       label: 'Private',
       description: 'Invite only - not visible in listings',
-      icon: LockIcon,
+      icon: Lock,
     },
   ];
 
@@ -56,7 +73,7 @@ const StepDesignVisibility: React.FC<StepDesignVisibilityProps> = ({ eventData, 
             <Label htmlFor="image_url">Event Image URL</Label>
             <Input
               id="image_url"
-              value={eventData.image_url}
+              value={eventData.image_url || ''}
               onChange={(e) => updateEventData('image_url', e.target.value)}
               placeholder="https://example.com/event-image.jpg"
               className="mt-1"
@@ -70,7 +87,7 @@ const StepDesignVisibility: React.FC<StepDesignVisibilityProps> = ({ eventData, 
             <Label htmlFor="banner_url">Banner Image URL (Optional)</Label>
             <Input
               id="banner_url"
-              value={eventData.banner_url}
+              value={eventData.banner_url || ''}
               onChange={(e) => updateEventData('banner_url', e.target.value)}
               placeholder="https://example.com/banner.jpg"
               className="mt-1"
@@ -85,7 +102,7 @@ const StepDesignVisibility: React.FC<StepDesignVisibilityProps> = ({ eventData, 
       {/* Theme Selection */}
       <div>
         <div className="flex items-center space-x-2 mb-4">
-          <PaletteIcon className="w-5 h-5 text-primary" />
+          <Palette className="w-5 h-5 text-primary" />
           <h3 className="font-medium">Theme</h3>
         </div>
         
@@ -118,7 +135,7 @@ const StepDesignVisibility: React.FC<StepDesignVisibilityProps> = ({ eventData, 
       {/* Visibility Settings */}
       <div>
         <div className="flex items-center space-x-2 mb-4">
-          <EyeIcon className="w-5 h-5 text-primary" />
+          <Globe className="w-5 h-5 text-primary" />
           <h3 className="font-medium">Visibility & Access</h3>
         </div>
         
@@ -149,18 +166,49 @@ const StepDesignVisibility: React.FC<StepDesignVisibilityProps> = ({ eventData, 
         </div>
       </div>
 
+      {/* Capacity & Settings */}
+      <div>
+        <div className="flex items-center space-x-2 mb-4">
+          <Settings className="w-5 h-5 text-primary" />
+          <h3 className="font-medium">Capacity & Settings</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="capacity">Event Capacity</Label>
+            <Input
+              id="capacity"
+              type="number"
+              value={eventData.capacity || ''}
+              onChange={(e) => updateEventData('capacity', e.target.value ? parseInt(e.target.value) : null)}
+              placeholder="Leave empty for unlimited"
+              className="mt-1"
+            />
+          </div>
+          
+          <div className="flex items-center justify-between pt-6">
+            <Label htmlFor="waitlist_enabled">Enable Waitlist</Label>
+            <Switch
+              id="waitlist_enabled"
+              checked={eventData.waitlist_enabled || false}
+              onCheckedChange={(checked) => updateEventData('waitlist_enabled', checked)}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* URL Slug */}
       <div>
         <Label htmlFor="slug">Event URL Slug</Label>
         <Input
           id="slug"
-          value={eventData.slug}
+          value={eventData.slug || ''}
           onChange={(e) => updateEventData('slug', e.target.value)}
           placeholder="your-event-slug"
           className="mt-1"
         />
         <p className="text-sm text-muted-foreground mt-1">
-          Your event will be accessible at: <span className="font-mono">/events/{eventData.slug}</span>
+          Your event will be accessible at: <span className="font-mono">/events/{eventData.slug || 'your-slug'}</span>
         </p>
       </div>
 
@@ -172,10 +220,10 @@ const StepDesignVisibility: React.FC<StepDesignVisibilityProps> = ({ eventData, 
         </p>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-muted-foreground">Visibility:</span> {eventData.visibility}
+            <span className="text-muted-foreground">Visibility:</span> {eventData.visibility || 'public'}
           </div>
           <div>
-            <span className="text-muted-foreground">Theme:</span> {themes.find(t => t.id === eventData.theme)?.name}
+            <span className="text-muted-foreground">Theme:</span> {themes.find(t => t.id === eventData.theme)?.name || 'Default'}
           </div>
         </div>
       </div>
