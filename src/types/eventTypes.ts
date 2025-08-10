@@ -12,6 +12,9 @@ export interface Event {
   is_virtual: boolean;
   created_at: string;
   created_by: string;
+  image_url?: string;
+  banner_url?: string;
+  waitlist_enabled?: boolean;
   creator_profile?: {
     full_name: string;
     email: string;
