@@ -19,7 +19,7 @@ import { SocialFeedProvider } from '@/contexts/SocialFeedContext';
 import { ProfileCompletenessWidget } from '@/components/dashboard/ProfileCompletenessWidget';
 import RecommendationsWidget from '@/components/dashboard/RecommendationsWidget';
 import ProgressStrip from '@/components/dashboard/ProgressStrip';
-
+import DashboardEventsView from '@/components/events/DashboardEventsView';
 const Dashboard = () => {
   const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
 
@@ -75,6 +75,7 @@ const Dashboard = () => {
       {activeView === 'profile' && <MobileProfileMainContent />}
       {activeView === 'settings' && <MobileSettingsView />}
       {activeView === 'metrics' && <EnhancedCommunityPulseDashboard />}
+      {activeView === 'events' && <DashboardEventsView />}
       {activeView === 'dashboard' && (
         activePillar === 'feed' ? (
           <CommunityFeed />

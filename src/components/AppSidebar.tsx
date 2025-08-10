@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDashboard } from '@/contexts/DashboardContext';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
   Home, 
@@ -49,6 +50,7 @@ const bottomNavItems = [
 const AppSidebar = () => {
   const { state } = useSidebar();
   const { profile, signOut } = useAuth();
+  const { activeView, setActiveView } = useDashboard();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -127,9 +129,19 @@ const AppSidebar = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <SidebarMenuButton asChild>
-                          <NavLink to={item.url} className={getNavCls(item.url)}>
-                            <item.icon className="mr-2 h-4 w-4" />
-                          </NavLink>
+                          {item.title === 'Events' ? (
+                            <NavLink
+                              to="/app/dashboard"
+                              className={activeView === 'events' ? 'bg-dna-mint/20 text-dna-forest font-medium border-r-2 border-dna-copper' : 'hover:bg-gray-100 text-gray-700 hover:text-dna-forest'}
+                              onClick={() => setActiveView('events')}
+                            >
+                              <item.icon className="mr-2 h-4 w-4" />
+                            </NavLink>
+                          ) : (
+                            <NavLink to={item.url} className={getNavCls(item.url)}>
+                              <item.icon className="mr-2 h-4 w-4" />
+                            </NavLink>
+                          )}
                         </SidebarMenuButton>
                       </TooltipTrigger>
                       <TooltipContent side="right" className="text-xs">
@@ -138,10 +150,21 @@ const AppSidebar = () => {
                     </Tooltip>
                   ) : (
                     <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavCls(item.url)}>
-                        <item.icon className="mr-2 h-4 w-4" />
-                        <span>{item.title}</span>
-                      </NavLink>
+                      {item.title === 'Events' ? (
+                        <NavLink
+                          to="/app/dashboard"
+                          className={activeView === 'events' ? 'bg-dna-mint/20 text-dna-forest font-medium border-r-2 border-dna-copper' : 'hover:bg-gray-100 text-gray-700 hover:text-dna-forest'}
+                          onClick={() => setActiveView('events')}
+                        >
+                          <item.icon className="mr-2 h-4 w-4" />
+                          <span>{item.title}</span>
+                        </NavLink>
+                      ) : (
+                        <NavLink to={item.url} className={getNavCls(item.url)}>
+                          <item.icon className="mr-2 h-4 w-4" />
+                          <span>{item.title}</span>
+                        </NavLink>
+                      )}
                     </SidebarMenuButton>
                   )}
                 </SidebarMenuItem>
