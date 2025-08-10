@@ -37,6 +37,7 @@ import EventNew from "@/pages/app/EventNew";
 import EventDetail from "@/pages/app/EventDetail";
 import EventEdit from "@/pages/app/EventEdit";
 import OpportunityNew from "@/pages/app/OpportunityNew";
+import Notifications from "@/pages/app/Notifications";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,7 @@ function App() {
               <Route path="/app/events/:id" element={<EventDetail />} />
               <Route path="/app/events/:id/edit" element={<EventEdit />} />
               <Route path="/app/opportunities/new" element={<OpportunityNew />} />
+              <Route path="/app/notifications" element={<Notifications />} />
               
               <Route path="/app/*" element={<AppDashboard />} />
               <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />

@@ -66,6 +66,24 @@ const { data: auth } = await supabase.auth.getUser();
 
   useEffect(() => { load(); }, [id]);
 
+  // Realtime updates for attendee count and event changes
+  useEffect(() => {
+    if (!id) return;
+    const channel = supabase
+      .channel(`event:${id}`)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'events', filter: `id=eq.${id}` }, (payload) => {
+        const next: any = payload.new;
+        setEv((prev: any) => ({ ...(prev || {}), ...next }));
+        if (typeof next?.attendee_count === 'number') setCount(next.attendee_count);
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'event_registrations', filter: `event_id=eq.${id}` }, () => {
+        // Fallback: reload small payload to stay in sync
+        load();
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [id]);
+
 const register = async () => {
     if (!id) return;
     setSaving(true);
