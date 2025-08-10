@@ -40,8 +40,10 @@ const handleRegisterEvent = async (event: Event) => {
     try {
       await supabase.rpc('rpc_event_register', { p_event: event.id });
       toast.success('Registered');
-    } catch (err) {
-      toast.error('Could not register');
+    } catch (err: any) {
+      const msg = String(err?.message || err);
+      if (msg.includes('capacity_reached')) toast.error('This event is full.');
+      else toast.error('Could not register');
     }
   };
 
