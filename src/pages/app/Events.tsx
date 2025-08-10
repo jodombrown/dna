@@ -5,6 +5,7 @@ import ConnectEventsTab from '@/components/connect/tabs/ConnectEventsTab';
 import { Event } from '@/types/search';
 import { searchEvents } from '@/services/eventsService';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Events() {
   const navigate = useNavigate();
@@ -31,13 +32,17 @@ export default function Events() {
     loadEvents();
   }, []);
 
-  const handleEventClick = (event: Event) => {
-    // We can wire a full event details route next
-    toast.info(`Opening: ${event.title}`);
+const handleEventClick = (event: Event) => {
+    navigate(`/app/events/${event.id}`);
   };
 
-  const handleRegisterEvent = (event: Event) => {
-    toast.success('Registration started');
+const handleRegisterEvent = async (event: Event) => {
+    try {
+      await supabase.rpc('rpc_event_register', { p_event: event.id });
+      toast.success('Registered');
+    } catch (err) {
+      toast.error('Could not register');
+    }
   };
 
   const handleCreatorClick = (creatorId: string) => {

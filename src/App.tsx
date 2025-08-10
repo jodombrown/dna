@@ -34,6 +34,7 @@ import UserDashboard from "./pages/UserDashboard";
 import DnaDev from "./pages/DnaDev";
 import Events from "@/pages/app/Events";
 import EventNew from "@/pages/app/EventNew";
+import EventDetail from "@/pages/app/EventDetail";
 import OpportunityNew from "@/pages/app/OpportunityNew";
 
 const queryClient = new QueryClient();
@@ -75,6 +76,7 @@ function App() {
               
               <Route path="/app/events" element={<Events />} />
               <Route path="/app/events/new" element={<EventNew />} />
+              <Route path="/app/events/:id" element={<EventDetail />} />
               <Route path="/app/opportunities/new" element={<OpportunityNew />} />
               
               <Route path="/app/*" element={<AppDashboard />} />

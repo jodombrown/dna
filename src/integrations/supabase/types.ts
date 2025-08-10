@@ -3084,6 +3084,18 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      rpc_event_attendee_count: {
+        Args: { p_event: string }
+        Returns: number
+      }
+      rpc_event_register: {
+        Args: { p_event: string }
+        Returns: undefined
+      }
+      rpc_event_unregister: {
+        Args: { p_event: string }
+        Returns: undefined
+      }
       rpc_health_snapshot: {
         Args: Record<PropertyKey, never>
         Returns: Json
