@@ -2883,6 +2883,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      ensure_profile_for_user: {
+        Args: { p_user: string; p_email?: string }
+        Returns: undefined
+      }
       event_owner_id: {
         Args: { p_event: string }
         Returns: string
@@ -3191,6 +3195,25 @@ export type Database = {
       rpc_membership_reject: {
         Args: { p_space: string; p_user: string }
         Returns: undefined
+      }
+      rpc_notifications_list: {
+        Args: { p_limit?: number; p_offset?: number }
+        Returns: {
+          id: string
+          title: string
+          body: string
+          metadata: Json
+          created_at: string
+          read_at: string
+        }[]
+      }
+      rpc_notifications_mark_all_read: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      rpc_notifications_mark_read: {
+        Args: { p_ids: string[] }
+        Returns: number
       }
       rpc_public_profile_bundle: {
         Args: { p_username: string }
