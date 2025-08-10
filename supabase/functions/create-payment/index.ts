@@ -51,6 +51,24 @@ serve(async (req) => {
       throw new Error('Event not found');
     }
 
+    // Validate business rules before creating checkout session
+    const now = new Date();
+    if (ticketType.hidden) {
+      throw new Error('This ticket type is not available');
+    }
+    if (ticketType.payment_type && !['paid', 'flex'].includes(ticketType.payment_type)) {
+      throw new Error('This ticket type does not require payment');
+    }
+    if (ticketType.sales_start && new Date(ticketType.sales_start) > now) {
+      throw new Error('Ticket sales have not started yet');
+    }
+    if (ticketType.sales_end && new Date(ticketType.sales_end) < now) {
+      throw new Error('Ticket sales have ended');
+    }
+    if (event.date_time && new Date(event.date_time) < now) {
+      throw new Error('Event has already occurred');
+    }
+
     // Initialize Stripe
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2023-10-16",
@@ -81,8 +99,8 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/events/${eventId}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/events/${eventId}`,
+      success_url: `${Deno.env.get("APP_URL") || req.headers.get("origin")}/events/${eventId}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${Deno.env.get("APP_URL") || req.headers.get("origin")}/events/${eventId}`,
       metadata: {
         event_id: eventId,
         ticket_type_id: ticketTypeId,

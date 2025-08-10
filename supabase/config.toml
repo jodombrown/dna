@@ -1,4 +1,3 @@
-
 project_id = "ybhssuehmfnxrzneobok"
 
 [api]
@@ -61,4 +60,14 @@ enable_confirmations = false
 verify_jwt = false
 
 [functions.seed-test-accounts]
+verify_jwt = false
+
+# Explicit function configs
+[functions.create-payment]
+verify_jwt = true
+
+[functions.verify-payment]
+verify_jwt = true
+
+[functions.stripe-webhook]
 verify_jwt = false

@@ -25,33 +25,12 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     if (session.payment_status === 'paid') {
-      // Use service role key to create event registration
-      const supabaseService = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-        { auth: { persistSession: false } }
-      );
-
-      // Create event registration
-      const { error: regError } = await supabaseService
-        .from('event_registrations')
-        .insert({
-          event_id: session.metadata?.event_id,
-          user_id: session.metadata?.user_id,
-          ticket_type_id: session.metadata?.ticket_type_id,
-          price_paid_cents: session.amount_total,
-          currency: session.currency,
-          status: 'registered'
-        });
-
-      if (regError) {
-        console.error('Registration error:', regError);
-        throw new Error('Failed to create registration');
-      }
-
       return new Response(JSON.stringify({ 
         success: true, 
-        payment_status: session.payment_status 
+        payment_status: session.payment_status,
+        amount_total: session.amount_total,
+        currency: session.currency,
+        session_id: session.id
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -60,7 +39,10 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ 
       success: false, 
-      payment_status: session.payment_status 
+      payment_status: session.payment_status,
+      amount_total: session.amount_total,
+      currency: session.currency,
+      session_id: session.id
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
