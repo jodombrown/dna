@@ -42,6 +42,7 @@ import EventsBySlug from "@/pages/app/EventsBySlug";
 import EventJoin from "@/pages/app/EventJoin";
 import OpportunityNew from "@/pages/app/OpportunityNew";
 import Notifications from "@/pages/app/Notifications";
+import EventPaymentSuccess from "@/pages/app/EventPaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -87,6 +88,7 @@ function App() {
         <Route path="/app/events/:id/manage" element={<EventManage />} />
         <Route path="/events/new" element={<EventNewWizard />} />
         <Route path="/events/:slug" element={<EventsBySlug />} />
+        <Route path="/events/:id/payment-success" element={<EventPaymentSuccess />} />
         <Route path="/join/:token" element={<EventJoin />} />
               <Route path="/app/opportunities/new" element={<OpportunityNew />} />
               <Route path="/app/notifications" element={<Notifications />} />

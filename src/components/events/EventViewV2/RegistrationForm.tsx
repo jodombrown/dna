@@ -35,10 +35,29 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [selectedType, setSelectedType] = useState<{ payment_type?: string; price_cents?: number } | null>(null);
 
   useEffect(() => {
     loadRegistrationQuestions();
   }, [event.id]);
+
+  useEffect(() => {
+    const fetchTicketType = async () => {
+      if (!ticketTypeId) { setSelectedType(null); return; }
+      const { data, error } = await supabase
+        .from('event_ticket_types')
+        .select('id, payment_type, price_cents')
+        .eq('id', ticketTypeId)
+        .single();
+      if (error) {
+        console.error('Failed to load ticket type', error);
+        setSelectedType(null);
+      } else {
+        setSelectedType({ payment_type: (data as any).payment_type, price_cents: (data as any).price_cents });
+      }
+    };
+    fetchTicketType();
+  }, [ticketTypeId]);
 
   const loadRegistrationQuestions = async () => {
     try {
@@ -89,8 +108,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
+
+    const isPaid = selectedType && (selectedType.payment_type === 'paid' || selectedType.payment_type === 'flex');
 
     setSubmitting(true);
     try {
@@ -100,7 +120,21 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         return;
       }
 
-      // Register for the event
+      if (isPaid && ticketTypeId) {
+        // Launch Stripe Checkout for paid/flex tickets
+        const { data, error } = await supabase.functions.invoke('create-payment', {
+          body: { ticketTypeId, eventId: event.id },
+        });
+        if (error) throw error;
+        if (data?.url) {
+          toast.success('Redirecting to secure payment...');
+          window.open(data.url, '_blank');
+          return; // Webhook will complete registration
+        }
+        throw new Error('Failed to start checkout');
+      }
+
+      // Free ticket path: store answers and register immediately
       const { error: regError } = await supabase
         .from('event_registrations')
         .insert({
@@ -112,11 +146,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         });
 
       if (regError) {
-        if (regError.message.includes('capacity_reached')) {
+        if ((regError as any).message?.includes('capacity_reached')) {
           // Try joining waitlist
-          const position = await supabase.rpc('rpc_event_join_waitlist', {
+          const { data: position, error: waitErr } = await supabase.rpc('rpc_event_join_waitlist', {
             p_event: event.id
           });
+          if (waitErr) throw waitErr;
           toast.success(`Event is full. You've been added to the waitlist at position ${position}`);
           onRegistrationComplete?.('waitlist');
         } else {
@@ -254,7 +289,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           ))}
           
           <Button type="submit" disabled={submitting} className="w-full">
-            {submitting ? 'Registering...' : 'Complete Registration'}
+            {submitting ? (selectedType && (selectedType.payment_type === 'paid' || selectedType.payment_type === 'flex') ? 'Starting checkout...' : 'Registering...') : (selectedType && (selectedType.payment_type === 'paid' || selectedType.payment_type === 'flex') ? 'Proceed to Payment' : 'Complete Registration')}
           </Button>
         </form>
       </CardContent>
