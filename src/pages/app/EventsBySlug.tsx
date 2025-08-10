@@ -23,7 +23,7 @@ const EventsBySlug: React.FC = () => {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedTicketType, setSelectedTicketType] = useState<string>('');
-  const [registrationStatus, setRegistrationStatus] = useState<'selecting' | 'registered' | 'pending' | 'waitlist'>('selecting');
+  const [registrationStatus, setRegistrationStatus] = useState<'selecting' | 'going' | 'pending' | 'waitlist'>('selecting');
 
   useEffect(() => {
     if (slug) {
@@ -70,7 +70,7 @@ const EventsBySlug: React.FC = () => {
     setSelectedTicketType(ticketTypeId);
   };
 
-  const handleRegistrationComplete = (status: 'registered' | 'pending' | 'waitlist') => {
+  const handleRegistrationComplete = (status: 'going' | 'pending' | 'waitlist') => {
     setRegistrationStatus(status);
   };
 
@@ -131,12 +131,12 @@ const EventsBySlug: React.FC = () => {
                 {registrationStatus !== 'selecting' && (
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <h3 className="font-medium text-green-800 mb-2">
-                      {registrationStatus === 'registered' && 'Successfully Registered!'}
+                      {registrationStatus === 'going' && 'Successfully Registered!'}
                       {registrationStatus === 'pending' && 'Registration Pending'}
                       {registrationStatus === 'waitlist' && 'Added to Waitlist'}
                     </h3>
                     <p className="text-sm text-green-700">
-                      {registrationStatus === 'registered' && 'You\'re all set for this event. Check your email for details.'}
+                      {registrationStatus === 'going' && 'You\'re all set for this event. Check your email for details.'}
                       {registrationStatus === 'pending' && 'Your registration is pending approval by the event organizer.'}
                       {registrationStatus === 'waitlist' && 'You\'ll be notified if a spot becomes available.'}
                     </p>

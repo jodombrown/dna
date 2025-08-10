@@ -3477,13 +3477,14 @@ export type Database = {
       rpc_event_register: {
         Args:
           | { p_event: string }
+          | { p_event: string; p_answers?: Json; p_ticket_type?: string }
           | {
               p_event: string
               p_ticket: string
               p_profile: string
               p_answers?: Json
             }
-        Returns: string
+        Returns: undefined
       }
       rpc_event_unregister: {
         Args: { p_event: string }

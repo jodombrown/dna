@@ -26,7 +26,7 @@ interface TicketType {
   name: string;
   description?: string;
   price_cents: number;
-  payment_type: 'free' | 'paid' | 'donation';
+  payment_type: 'free' | 'paid' | 'flex';
   total_tickets?: number;
   require_approval: boolean;
 }
@@ -34,7 +34,7 @@ interface TicketType {
 type TicketFormData = {
   name: string;
   description: string;
-  payment_type: 'free' | 'paid' | 'donation';
+  payment_type: 'free' | 'paid' | 'flex';
   price: number;
   total_tickets: string;
   require_approval: boolean;
@@ -87,7 +87,7 @@ const StepTickets: React.FC<StepTicketsProps> = ({
         name: ticket.name,
         description: ticket.description || '',
         price_cents: ticket.price_cents || 0,
-        payment_type: ticket.payment_type as 'free' | 'paid' | 'donation',
+        payment_type: ticket.payment_type as 'free' | 'paid' | 'flex',
         total_tickets: ticket.total_tickets || undefined,
         require_approval: ticket.require_approval || false
       }));
@@ -173,7 +173,7 @@ const StepTickets: React.FC<StepTicketsProps> = ({
 
   const formatPrice = (priceCents: number, paymentType: string) => {
     if (paymentType === 'free') return 'Free';
-    if (paymentType === 'donation') return 'Donation';
+    if (paymentType === 'flex') return 'Pay what you can';
     return `$${(priceCents / 100).toFixed(2)}`;
   };
 
@@ -349,7 +349,7 @@ const StepTickets: React.FC<StepTicketsProps> = ({
                       <SelectContent>
                         <SelectItem value="free">Free</SelectItem>
                         <SelectItem value="paid">Fixed Price</SelectItem>
-                        <SelectItem value="donation">Pay What You Can</SelectItem>
+                        <SelectItem value="flex">Pay What You Can</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

@@ -13,7 +13,7 @@ interface TicketType {
   name: string;
   description?: string;
   price_cents: number;
-  payment_type: 'free' | 'paid' | 'donation';
+  payment_type: 'free' | 'paid' | 'flex';
   total_tickets?: number;
   sold_tickets: number;
   require_approval: boolean;
@@ -47,7 +47,7 @@ const TicketTypePicker: React.FC<TicketTypePickerProps> = ({ event, onTicketSele
       // Mock sold tickets count for demo
       const ticketTypesWithSold = (data || []).map(ticket => ({
         ...ticket,
-        payment_type: ticket.payment_type as 'free' | 'paid' | 'donation',
+        payment_type: ticket.payment_type as 'free' | 'paid' | 'flex',
         sold_tickets: Math.floor(Math.random() * 20),
       }));
 
@@ -109,7 +109,7 @@ const TicketTypePicker: React.FC<TicketTypePickerProps> = ({ event, onTicketSele
 
   const formatPrice = (priceCents: number, paymentType: string) => {
     if (paymentType === 'free') return 'Free';
-    if (paymentType === 'donation') return 'Donation';
+    if (paymentType === 'flex') return 'Pay what you can';
     return `$${(priceCents / 100).toFixed(2)}`;
   };
 

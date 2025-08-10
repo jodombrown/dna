@@ -24,13 +24,39 @@ serve(async (req) => {
     // Retrieve the session
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
+    // Optionally fetch event context from Supabase using metadata.event_id
+    let event_title: string | null = null;
+    let event_slug: string | null = null;
+    try {
+      const eventId = (session.metadata?.event_id as string) || null;
+      if (eventId) {
+        const supabase = createClient(
+          Deno.env.get("SUPABASE_URL") ?? "",
+          Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+        );
+        const { data } = await supabase
+          .from("events")
+          .select("title, slug")
+          .eq("id", eventId)
+          .maybeSingle();
+        if (data) {
+          event_title = (data as any).title ?? null;
+          event_slug = (data as any).slug ?? null;
+        }
+      }
+    } catch (_e) {
+      // Non-fatal: event context is helpful but optional
+    }
+
     if (session.payment_status === 'paid') {
       return new Response(JSON.stringify({ 
         success: true, 
         payment_status: session.payment_status,
         amount_total: session.amount_total,
         currency: session.currency,
-        session_id: session.id
+        session_id: session.id,
+        event_title,
+        event_slug,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -42,12 +68,14 @@ serve(async (req) => {
       payment_status: session.payment_status,
       amount_total: session.amount_total,
       currency: session.currency,
-      session_id: session.id
+      session_id: session.id,
+      event_title,
+      event_slug,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Payment verification error:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

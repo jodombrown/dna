@@ -23,7 +23,7 @@ interface RegistrationQuestion {
 interface RegistrationFormProps {
   event: Event;
   ticketTypeId?: string;
-  onRegistrationComplete?: (status: 'registered' | 'pending' | 'waitlist') => void;
+  onRegistrationComplete?: (status: 'going' | 'pending' | 'waitlist') => void;
 }
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ 
@@ -134,16 +134,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         throw new Error('Failed to start checkout');
       }
 
-      // Free ticket path: store answers and register immediately
-      const { error: regError } = await supabase
-        .from('event_registrations')
-        .insert({
-          event_id: event.id,
-          user_id: user.user.id,
-          ticket_type_id: ticketTypeId,
-          answers: answers,
-          status: 'registered'
-        });
+      // Free/flex-zero ticket path: register via RPC (handles capacity)
+      const { error: regError } = await supabase.rpc('rpc_event_register', {
+        p_event: event.id,
+        p_answers: answers,
+        p_ticket_type: ticketTypeId || null,
+      });
+
 
       if (regError) {
         if ((regError as any).message?.includes('capacity_reached')) {
@@ -161,7 +158,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
       }
 
       toast.success('Successfully registered for the event!');
-      onRegistrationComplete?.('registered');
+      onRegistrationComplete?.('going');
     } catch (error) {
       console.error('Registration error:', error);
       toast.error('Failed to register for event');
