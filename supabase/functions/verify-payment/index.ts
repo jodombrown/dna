@@ -21,20 +21,22 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
+    // Supabase client for optional analytics/context
+    const supa = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+    );
+
     // Retrieve the session
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     // Optionally fetch event context from Supabase using metadata.event_id
     let event_title: string | null = null;
     let event_slug: string | null = null;
+    const eventId = (session.metadata?.event_id as string) || null;
     try {
-      const eventId = (session.metadata?.event_id as string) || null;
       if (eventId) {
-        const supabase = createClient(
-          Deno.env.get("SUPABASE_URL") ?? "",
-          Deno.env.get("SUPABASE_ANON_KEY") ?? ""
-        );
-        const { data } = await supabase
+        const { data } = await supa
           .from("events")
           .select("title, slug")
           .eq("id", eventId)
@@ -49,6 +51,15 @@ serve(async (req) => {
     }
 
     if (session.payment_status === 'paid') {
+      try {
+        if (eventId) {
+          await supa.from('event_analytics').insert({
+            event_id: eventId,
+            kind: 'payment_success',
+            payload: { session_id: session.id, amount_total: session.amount_total, currency: session.currency }
+          });
+        }
+      } catch (_) {}
       return new Response(JSON.stringify({ 
         success: true, 
         payment_status: session.payment_status,
@@ -62,6 +73,16 @@ serve(async (req) => {
         status: 200,
       });
     }
+
+    try {
+      if (eventId) {
+        await supa.from('event_analytics').insert({
+          event_id: eventId,
+          kind: 'payment_failed',
+          payload: { session_id: session.id, amount_total: session.amount_total, currency: session.currency, status: session.payment_status }
+        });
+      }
+    } catch (_) {}
 
     return new Response(JSON.stringify({ 
       success: false, 

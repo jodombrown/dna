@@ -66,6 +66,14 @@ const { data: auth } = await supabase.auth.getUser();
 
   useEffect(() => { load(); }, [id]);
 
+  // Track page view
+  useEffect(() => {
+    (async () => {
+      if (!id) return;
+      try { await supabase.from('event_analytics').insert({ event_id: id, kind: 'page_view', payload: { path: window.location.pathname } }); } catch {}
+    })();
+  }, [id]);
+
   // Realtime updates for attendee count and event changes
   useEffect(() => {
     if (!id) return;
@@ -88,6 +96,7 @@ const register = async () => {
     if (!id) return;
     setSaving(true);
     try {
+      try { await supabase.from('event_analytics').insert({ event_id: id, kind: 'checkout_start', payload: { type: 'free_or_internal' } }); } catch {}
       const { error } = await supabase.rpc('rpc_event_register', { p_event: id });
       if (error) throw error;
       toast.success('Registered');

@@ -57,14 +57,25 @@ const EventPaymentSuccess: React.FC = () => {
       if (error) {
         setVerified(false);
       } else {
-        setVerified(!!data?.success);
+        const ok = !!data?.success;
+        setVerified(ok);
         setAmount(data?.amount_total ?? null);
         setCurrency((data?.currency || 'usd').toUpperCase());
+        // Track analytics client-side as well
+        try {
+          if (id) {
+            await supabase.from('event_analytics').insert({
+              event_id: id,
+              kind: ok ? 'payment_success' : 'payment_failed',
+              payload: { session_id: data?.session_id, amount_total: data?.amount_total, currency: data?.currency }
+            });
+          }
+        } catch {}
       }
       setVerifying(false);
     };
     verify();
-  }, [sessionId]);
+  }, [sessionId, id]);
 
   const formattedAmount = useMemo(() => {
     if (amount == null) return '';

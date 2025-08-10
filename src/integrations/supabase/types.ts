@@ -3206,6 +3206,10 @@ export type Database = {
           shared_sectors: string[]
         }[]
       }
+      generate_join_token: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       generate_magic_link_token: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -3434,6 +3438,10 @@ export type Database = {
           shared_regions: string[]
           shared_sectors: string[]
         }[]
+      }
+      rpc_check_in_by_token: {
+        Args: { p_event: string; p_token: string }
+        Returns: Json
       }
       rpc_create_post: {
         Args:

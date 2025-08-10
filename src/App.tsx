@@ -43,6 +43,7 @@ import EventJoin from "@/pages/app/EventJoin";
 import OpportunityNew from "@/pages/app/OpportunityNew";
 import Notifications from "@/pages/app/Notifications";
 import EventPaymentSuccess from "@/pages/app/EventPaymentSuccess";
+import EventCheckIn from "@/pages/app/EventCheckIn";
 
 const queryClient = new QueryClient();
 
@@ -86,6 +87,7 @@ function App() {
         <Route path="/app/events/:id" element={<EventDetail />} />
         <Route path="/app/events/:id/edit" element={<EventEdit />} />
         <Route path="/app/events/:id/manage" element={<EventManage />} />
+        <Route path="/app/events/:id/checkin" element={<EventCheckIn />} />
         <Route path="/events/new" element={<EventNewWizard />} />
         <Route path="/events/:slug" element={<EventsBySlug />} />
         <Route path="/events/:id/payment-success" element={<EventPaymentSuccess />} />

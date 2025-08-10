@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import GuestsTab from '@/components/events/manage/GuestsTab';
 import WaitlistTab from '@/components/events/manage/WaitlistTab';
 import RegistrationQuestionsTab from '@/components/events/manage/RegistrationQuestionsTab';
+import InsightsTab from '@/components/events/manage/InsightsTab';
 interface Event {
   id: string;
   title: string;
@@ -95,6 +96,7 @@ const EventManage: React.FC = () => {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Event
         </Button>
+        <Button onClick={() => navigate(`/app/events/${id}/checkin`)}>Open Check-In</Button>
         <h1 className="text-2xl font-bold">Manage: {event.title}</h1>
       </div>
 
@@ -168,25 +170,7 @@ const EventManage: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="insights">
-          <Card>
-            <CardHeader>
-              <CardTitle>Event Insights</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Analytics and insights about your event performance.
-              </p>
-              <div className="mt-4 p-4 bg-muted rounded-lg">
-                <h3 className="font-medium mb-2">Coming Soon</h3>
-                <ul className="text-sm space-y-1">
-                  <li>• Registration conversion rates</li>
-                  <li>• Traffic sources and UTM tracking</li>
-                  <li>• Check-in rates and attendance</li>
-                  <li>• Revenue and ticket sales analytics</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
+          <InsightsTab eventId={id!} />
         </TabsContent>
       </Tabs>
     </div>
