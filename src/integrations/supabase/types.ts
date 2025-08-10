@@ -3387,6 +3387,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      rpc_event_approve: {
+        Args: { p_registration: string }
+        Returns: undefined
+      }
       rpc_event_attendee_count: {
         Args: { p_event: string }
         Returns: number
@@ -3400,13 +3404,28 @@ export type Database = {
           registered_at: string
         }[]
       }
+      rpc_event_decline: {
+        Args: { p_registration: string }
+        Returns: undefined
+      }
+      rpc_event_join_link: {
+        Args: { p_token: string }
+        Returns: string
+      }
       rpc_event_join_waitlist: {
         Args: { p_event: string }
         Returns: number
       }
       rpc_event_register: {
-        Args: { p_event: string }
-        Returns: undefined
+        Args:
+          | { p_event: string }
+          | {
+              p_event: string
+              p_ticket: string
+              p_profile: string
+              p_answers?: Json
+            }
+        Returns: string
       }
       rpc_event_unregister: {
         Args: { p_event: string }
