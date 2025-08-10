@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Trash2Icon, PlusIcon, DollarSignIcon, UsersIcon } from 'lucide-react';
+import { Trash2Icon, PlusIcon, DollarSignIcon, UsersIcon, CreditCard } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { EventData } from './index';
@@ -50,6 +50,7 @@ const StepTickets: React.FC<StepTicketsProps> = ({
   const [tickets, setTickets] = useState<TicketType[]>(eventData.ticket_types || []);
   const [loading, setLoading] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState<string | null>(null);
 
   const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<TicketFormData>({
     defaultValues: {
@@ -176,6 +177,28 @@ const StepTickets: React.FC<StepTicketsProps> = ({
     return `$${(priceCents / 100).toFixed(2)}`;
   };
 
+  const handlePayment = async (ticketId: string) => {
+    try {
+      setProcessingPayment(ticketId);
+      
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        body: { 
+          ticketTypeId: ticketId,
+          eventId: eventId
+        }
+      });
+
+      if (error) throw error;
+
+      // Open Stripe checkout in a new tab
+      window.open(data.url, '_blank');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create payment');
+    } finally {
+      setProcessingPayment(null);
+    }
+  };
+
   const handleContinue = () => {
     if (tickets.length === 0) {
       toast.error('Please add at least one ticket type');
@@ -251,15 +274,29 @@ const StepTickets: React.FC<StepTicketsProps> = ({
                       </p>
                     )}
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeTicket(index)}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2Icon className="w-4 h-4" />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {ticket.payment_type === 'paid' && ticket.id && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePayment(ticket.id!)}
+                        disabled={processingPayment === ticket.id}
+                        className="flex items-center gap-2"
+                      >
+                        <CreditCard className="h-4 w-4" />
+                        {processingPayment === ticket.id ? "Processing..." : "Test Purchase"}
+                      </Button>
+                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeTicket(index)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2Icon className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
