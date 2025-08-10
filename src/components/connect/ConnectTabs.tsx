@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import EventRegistrationSidebar from './EventRegistrationSidebar';
 import ConnectTabsContent from './ConnectTabsContent';
 import ConnectDialogsManager from './ConnectDialogsManager';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Professional, Community, Event } from '@/types/search';
 
 interface ConnectTabsProps {
@@ -86,7 +87,13 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
 
   return (
     <>
-      <div>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="mb-4 h-auto">
+          <TabsTrigger value="professionals">Professionals</TabsTrigger>
+          <TabsTrigger value="communities">Communities</TabsTrigger>
+          <TabsTrigger value="events">Events</TabsTrigger>
+        </TabsList>
+
         <ConnectTabsContent
           professionals={professionals}
           communities={communities}
@@ -102,7 +109,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
           getConnectionStatus={getConnectionStatus}
           isLoggedIn={isLoggedIn}
         />
-      </div>
+      </Tabs>
 
       <EventRegistrationSidebar
         open={registrationSidebarOpen}
