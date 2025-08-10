@@ -1,161 +1,396 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { PlusIcon, TrashIcon, HelpCircleIcon } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Trash2Icon, PlusIcon, HelpCircleIcon } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import { EventData } from './index';
 
 interface StepRegistrationProps {
   eventData: EventData;
   updateEventData: (field: keyof EventData, value: any) => void;
   eventId?: string | null;
+  onNext?: () => void;
+  onBack?: () => void;
 }
 
-const StepRegistration: React.FC<StepRegistrationProps> = ({ eventData, updateEventData }) => {
-  const addRegistrationQuestion = () => {
-    const newQuestion = {
-      id: Math.random().toString(36).substr(2, 9),
+interface RegistrationQuestion {
+  id?: string;
+  label: string;
+  type: 'text' | 'textarea' | 'select' | 'radio' | 'checkbox';
+  required: boolean;
+  options?: string[];
+  position: number;
+}
+
+type QuestionFormData = {
+  label: string;
+  type: 'text' | 'textarea' | 'select' | 'radio' | 'checkbox';
+  required: boolean;
+  options: string;
+};
+
+const StepRegistration: React.FC<StepRegistrationProps> = ({ 
+  eventData, 
+  updateEventData, 
+  eventId, 
+  onNext, 
+  onBack 
+}) => {
+  const [questions, setQuestions] = useState<RegistrationQuestion[]>(eventData.registration_questions || []);
+  const [loading, setLoading] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<QuestionFormData>({
+    defaultValues: {
       label: '',
       type: 'text',
       required: false,
-      options: [],
-      position: eventData.registration_questions.length,
-    };
-    updateEventData('registration_questions', [...eventData.registration_questions, newQuestion]);
+      options: ''
+    }
+  });
+
+  const questionType = watch('type');
+
+  useEffect(() => {
+    if (eventId) {
+      loadExistingQuestions();
+    }
+  }, [eventId]);
+
+  const loadExistingQuestions = async () => {
+    if (!eventId) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('event_registration_questions')
+        .select('*')
+        .eq('event_id', eventId)
+        .order('position');
+
+      if (error) throw error;
+
+      const formattedQuestions = (data || []).map(q => ({
+        id: q.id,
+        label: q.label,
+        type: mapDbTypeToComponentType(q.type),
+        required: q.required || false,
+        position: q.position || 0,
+        options: Array.isArray(q.options) 
+          ? q.options.map(opt => String(opt))
+          : q.options 
+            ? [String(q.options)]
+            : []
+      }));
+
+      setQuestions(formattedQuestions);
+      updateEventData('registration_questions', formattedQuestions);
+    } catch (error) {
+      console.error('Error loading registration questions:', error);
+      toast.error('Failed to load existing questions');
+    }
   };
 
-  const updateQuestion = (index: number, field: string, value: any) => {
-    const updated = [...eventData.registration_questions];
-    updated[index] = { ...updated[index], [field]: value };
-    updateEventData('registration_questions', updated);
+  const mapDbTypeToComponentType = (dbType: string): 'text' | 'textarea' | 'select' | 'radio' | 'checkbox' => {
+    switch (dbType) {
+      case 'text_short':
+      case 'company':
+      case 'social':
+      case 'website':
+        return 'text';
+      case 'text_long':
+        return 'textarea';
+      case 'options':
+        return 'select';
+      case 'terms':
+      case 'checkbox':
+        return 'checkbox';
+      default:
+        return 'text';
+    }
   };
 
-  const removeQuestion = (index: number) => {
-    const updated = eventData.registration_questions.filter((_, i) => i !== index);
-    updateEventData('registration_questions', updated);
+  const mapComponentTypeToDbType = (componentType: string): string => {
+    switch (componentType) {
+      case 'text':
+        return 'text_short';
+      case 'textarea':
+        return 'text_long';
+      case 'select':
+        return 'options';
+      case 'radio':
+        return 'options';
+      case 'checkbox':
+        return 'checkbox';
+      default:
+        return 'text_short';
+    }
   };
 
-  const updateQuestionOptions = (questionIndex: number, options: string) => {
-    const optionsArray = options.split('\n').filter(opt => opt.trim());
-    updateQuestion(questionIndex, 'options', optionsArray);
+  const addQuestion = async (formData: QuestionFormData) => {
+    setLoading(true);
+    try {
+      const newQuestion: RegistrationQuestion = {
+        label: formData.label,
+        type: formData.type,
+        required: formData.required,
+        position: questions.length,
+        options: formData.options ? formData.options.split('\n').filter(opt => opt.trim()) : []
+      };
+
+      if (eventId) {
+        // Save to database
+        const { data, error } = await supabase
+          .from('event_registration_questions')
+          .insert({
+            event_id: eventId,
+            label: newQuestion.label,
+            type: mapComponentTypeToDbType(newQuestion.type),
+            required: newQuestion.required,
+            position: newQuestion.position,
+            options: newQuestion.options && newQuestion.options.length > 0 ? newQuestion.options : null
+          })
+          .select('id')
+          .maybeSingle();
+
+        if (error) throw error;
+        if (data) newQuestion.id = data.id;
+      }
+
+      const updatedQuestions = [...questions, newQuestion];
+      setQuestions(updatedQuestions);
+      updateEventData('registration_questions', updatedQuestions);
+      
+      toast.success('Question added successfully!');
+      reset();
+      setShowAddForm(false);
+    } catch (error) {
+      console.error('Error adding question:', error);
+      toast.error('Failed to add question');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeQuestion = async (index: number) => {
+    const question = questions[index];
+    
+    if (question.id && eventId) {
+      try {
+        const { error } = await supabase
+          .from('event_registration_questions')
+          .delete()
+          .eq('id', question.id);
+
+        if (error) throw error;
+      } catch (error) {
+        console.error('Error removing question:', error);
+        toast.error('Failed to remove question');
+        return;
+      }
+    }
+
+    const updatedQuestions = questions.filter((_, i) => i !== index);
+    setQuestions(updatedQuestions);
+    updateEventData('registration_questions', updatedQuestions);
+    toast.success('Question removed');
+  };
+
+  const getQuestionTypeDisplay = (type: string) => {
+    switch (type) {
+      case 'text': return 'Short Text';
+      case 'textarea': return 'Long Text';
+      case 'select': return 'Dropdown';
+      case 'radio': return 'Multiple Choice';
+      case 'checkbox': return 'Checkboxes';
+      default: return type;
+    }
   };
 
   return (
     <div className="space-y-6">
-      <div className="bg-muted/50 p-4 rounded-lg">
-        <div className="flex items-center space-x-2 mb-2">
-          <HelpCircleIcon className="w-5 h-5 text-primary" />
-          <h3 className="font-medium">Registration Questions</h3>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium">Registration Questions</h3>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShowAddForm(true)}
+            className="flex items-center gap-2"
+          >
+            <PlusIcon className="w-4 h-4" />
+            Add Question
+          </Button>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Collect additional information from attendees during registration. Name and email are automatically collected.
-        </p>
-      </div>
 
-      <div className="flex justify-between items-center">
-        <h4 className="font-medium">Custom Questions</h4>
-        <Button onClick={addRegistrationQuestion} size="sm" variant="outline">
-          <PlusIcon className="w-4 h-4 mr-2" />
-          Add Question
-        </Button>
-      </div>
-
-      {eventData.registration_questions.length === 0 ? (
-        <Card className="p-8 text-center border-dashed">
-          <div className="text-muted-foreground">
-            <HelpCircleIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p>No custom questions added yet</p>
-            <p className="text-sm">Click "Add Question" to collect additional information from attendees</p>
-          </div>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {eventData.registration_questions.map((question, index) => (
-            <Card key={question.id || index} className="p-4">
-              <div className="space-y-4">
+        {/* Existing Questions */}
+        <div className="space-y-3">
+          {questions.map((question, index) => (
+            <Card key={question.id || index}>
+              <CardContent className="p-4">
                 <div className="flex items-center justify-between">
-                  <h5 className="font-medium">Question {index + 1}</h5>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="font-medium">{question.label}</h4>
+                      <Badge variant="outline">
+                        {getQuestionTypeDisplay(question.type)}
+                      </Badge>
+                      {question.required && (
+                        <Badge variant="secondary">Required</Badge>
+                      )}
+                    </div>
+                    {question.options && question.options.length > 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        Options: {question.options.join(', ')}
+                      </p>
+                    )}
+                  </div>
                   <Button
-                    onClick={() => removeQuestion(index)}
+                    type="button"
+                    variant="outline"
                     size="sm"
-                    variant="ghost"
-                    className="text-destructive"
+                    onClick={() => removeQuestion(index)}
+                    className="text-destructive hover:text-destructive"
                   >
-                    <TrashIcon className="w-4 h-4" />
+                    <Trash2Icon className="w-4 h-4" />
                   </Button>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Question Text</Label>
-                    <Input
-                      value={question.label}
-                      onChange={(e) => updateQuestion(index, 'label', e.target.value)}
-                      placeholder="Enter your question"
-                      className="mt-1"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label>Question Type</Label>
-                    <Select
-                      value={question.type}
-                      onValueChange={(value) => updateQuestion(index, 'type', value)}
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="text">Text Input</SelectItem>
-                        <SelectItem value="textarea">Long Text</SelectItem>
-                        <SelectItem value="select">Dropdown</SelectItem>
-                        <SelectItem value="radio">Multiple Choice</SelectItem>
-                        <SelectItem value="checkbox">Checkboxes</SelectItem>
-                        <SelectItem value="email">Email</SelectItem>
-                        <SelectItem value="phone">Phone</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              </CardContent>
+            </Card>
+          ))}
+
+          {questions.length === 0 && (
+            <Card className="border-dashed">
+              <CardContent className="p-8 text-center">
+                <HelpCircleIcon className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                <p className="text-muted-foreground">No custom questions added yet</p>
+                <p className="text-sm text-muted-foreground">Add questions to collect additional information from attendees</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Add Question Form */}
+        {showAddForm && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Add Registration Question</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit(addQuestion)} className="space-y-4">
+                <div>
+                  <Label htmlFor="label">Question *</Label>
+                  <Input
+                    id="label"
+                    {...register('label', { required: 'Question text is required' })}
+                    placeholder="e.g., What's your dietary preference?"
+                  />
+                  {errors.label && (
+                    <p className="text-sm text-destructive mt-1">{errors.label.message}</p>
+                  )}
                 </div>
 
-                {['select', 'radio', 'checkbox'].includes(question.type) && (
+                <div>
+                  <Label htmlFor="type">Answer Type</Label>
+                  <Select 
+                    value={questionType} 
+                    onValueChange={(value) => {
+                      const event = { target: { value } };
+                      register('type').onChange(event);
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="text">Short Text</SelectItem>
+                      <SelectItem value="textarea">Long Text</SelectItem>
+                      <SelectItem value="select">Dropdown</SelectItem>
+                      <SelectItem value="radio">Multiple Choice</SelectItem>
+                      <SelectItem value="checkbox">Checkboxes</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {(questionType === 'select' || questionType === 'radio' || questionType === 'checkbox') && (
                   <div>
-                    <Label>Options (one per line)</Label>
+                    <Label htmlFor="options">Options (one per line) *</Label>
                     <Textarea
-                      value={question.options?.join('\n') || ''}
-                      onChange={(e) => updateQuestionOptions(index, e.target.value)}
+                      id="options"
+                      {...register('options', { 
+                        required: 'Options are required for this question type' 
+                      })}
                       placeholder="Option 1&#10;Option 2&#10;Option 3"
-                      rows={3}
-                      className="mt-1"
+                      rows={4}
                     />
+                    {errors.options && (
+                      <p className="text-sm text-destructive mt-1">{errors.options.message}</p>
+                    )}
                   </div>
                 )}
 
                 <div className="flex items-center space-x-2">
                   <Switch
-                    checked={question.required || false}
-                    onCheckedChange={(checked) => updateQuestion(index, 'required', checked)}
+                    id="required"
+                    {...register('required')}
                   />
-                  <Label>Required question</Label>
+                  <Label htmlFor="required" className="text-sm">
+                    Required field
+                  </Label>
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
 
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h4 className="font-medium text-blue-900 mb-2">Registration Tips</h4>
-        <ul className="text-sm text-blue-800 space-y-1">
-          <li>• Keep questions relevant and essential</li>
-          <li>• Consider dietary restrictions, accessibility needs</li>
-          <li>• Ask about t-shirt sizes for swag distribution</li>
-          <li>• Professional info: company, role, LinkedIn</li>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowAddForm(false);
+                      reset();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={loading}>
+                    {loading ? 'Adding...' : 'Add Question'}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      <div className="bg-muted/50 p-4 rounded-lg">
+        <h4 className="font-medium mb-2">Registration Tips</h4>
+        <ul className="text-sm text-muted-foreground space-y-1">
+          <li>• Keep questions simple and relevant to your event</li>
+          <li>• Use required fields sparingly to reduce friction</li>
+          <li>• Collect dietary preferences, accessibility needs, or skill levels</li>
+          <li>• Short text works for names, companies, or brief responses</li>
+          <li>• Use dropdown/multiple choice for standardized answers</li>
         </ul>
+      </div>
+
+      <div className="flex gap-2">
+        <Button 
+          type="button" 
+          variant="secondary" 
+          onClick={onBack}
+          disabled={loading}
+        >
+          Back
+        </Button>
+        <Button onClick={onNext} disabled={loading}>
+          Continue
+        </Button>
       </div>
     </div>
   );
