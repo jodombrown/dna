@@ -6,7 +6,7 @@ interface FeatureFlags {
 }
 
 const DEFAULT_FLAGS: FeatureFlags = {
-  DNA_EVENTS_V2: false,
+  DNA_EVENTS_V2: import.meta.env.VITE_DNA_EVENTS_V2 === 'true',
 };
 
 export const useFeatureFlags = () => {
