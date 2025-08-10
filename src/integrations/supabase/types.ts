@@ -1100,6 +1100,8 @@ export type Database = {
           price_paid_cents: number | null
           registered_at: string
           status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
           ticket_type_id: string | null
           user_id: string
         }
@@ -1114,6 +1116,8 @@ export type Database = {
           price_paid_cents?: number | null
           registered_at?: string
           status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           ticket_type_id?: string | null
           user_id: string
         }
@@ -1128,6 +1132,8 @@ export type Database = {
           price_paid_cents?: number | null
           registered_at?: string
           status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           ticket_type_id?: string | null
           user_id?: string
         }
