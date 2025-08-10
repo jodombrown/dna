@@ -98,9 +98,9 @@ const Dashboard = () => {
   return (
     <SocialFeedProvider>
       <LinkedInLayout
-        leftSidebar={leftSidebar}
+        leftSidebar={activeView === 'events' ? undefined : leftSidebar}
         mainContent={mainContent}
-        rightSidebar={rightSidebar}
+        rightSidebar={activeView === 'events' ? undefined : rightSidebar}
       />
     </SocialFeedProvider>
   );
