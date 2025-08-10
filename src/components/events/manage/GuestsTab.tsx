@@ -16,7 +16,7 @@ interface Guest {
   username: string;
   full_name: string;
   registered_at: string;
-  status: 'going' | 'pending' | 'waitlist' | 'declined';
+  status: 'going' | 'pending' | 'waitlist' | 'cancelled';
   ticket_type?: string;
   answers?: any;
 }
@@ -34,19 +34,34 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
 
   const fetchGuests = async () => {
     try {
-      const { data, error } = await supabase.rpc('rpc_event_attendees', {
-        p_event: eventId,
-      });
+      // Pull registrations with status for this event
+      const { data: regs, error: regErr } = await supabase
+        .from('event_registrations')
+        .select('user_id, status, registered_at')
+        .eq('event_id', eventId);
+      if (regErr) throw regErr;
 
-      if (error) throw error;
+      const userIds = (regs || []).map(r => r.user_id);
+      let profilesMap: Record<string, { username: string; full_name: string }> = {};
+      if (userIds.length > 0) {
+        const { data: profiles, error: profErr } = await supabase
+          .from('profiles')
+          .select('id, username, full_name')
+          .in('id', userIds);
+        if (profErr) throw profErr;
+        profilesMap = (profiles || []).reduce((acc: any, p: any) => {
+          acc[p.id] = { username: p.username || 'unknown', full_name: p.full_name || p.username || 'Unknown' };
+          return acc;
+        }, {} as Record<string, { username: string; full_name: string }>);
+      }
 
-      const formattedGuests: Guest[] = data.map((guest: any) => ({
-        id: guest.user_id,
-        user_id: guest.user_id,
-        username: guest.username || 'Unknown',
-        full_name: guest.full_name || guest.username || 'Unknown',
-        registered_at: guest.registered_at,
-        status: 'going', // Default status - would come from registration data
+      const formattedGuests: Guest[] = (regs || []).map((r: any) => ({
+        id: r.user_id,
+        user_id: r.user_id,
+        username: profilesMap[r.user_id]?.username || 'unknown',
+        full_name: profilesMap[r.user_id]?.full_name || 'Unknown',
+        registered_at: r.registered_at,
+        status: (r.status as Guest['status']) || 'going',
       }));
 
       setGuests(formattedGuests);
@@ -87,6 +102,22 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
     }
   };
 
+  const setStatus = async (userId: string, status: Guest['status']) => {
+    try {
+      const { error } = await supabase.rpc('rpc_event_set_status', {
+        p_event: eventId,
+        p_user: userId,
+        p_status: status,
+      });
+      if (error) throw error;
+      toast.success(`Updated status to ${status}`);
+      await fetchGuests();
+    } catch (err) {
+      console.error('Update status error:', err);
+      toast.error('Failed to update status');
+    }
+  };
+
   const handleBulkApprove = async () => {
     if (selectedGuests.size === 0) {
       toast.error('No guests selected');
@@ -94,10 +125,8 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
     }
 
     try {
-      // TODO: Implement bulk approval with rpc_event_approve
-      toast.success(`Approved ${selectedGuests.size} guests`);
+      await Promise.all(Array.from(selectedGuests).map(uid => setStatus(uid, 'going')));
       setSelectedGuests(new Set());
-      fetchGuests();
     } catch (error) {
       console.error('Error approving guests:', error);
       toast.error('Failed to approve guests');
@@ -111,16 +140,13 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
     }
 
     try {
-      // TODO: Implement bulk decline with rpc_event_decline
-      toast.success(`Declined ${selectedGuests.size} guests`);
+      await Promise.all(Array.from(selectedGuests).map(uid => setStatus(uid, 'cancelled')));
       setSelectedGuests(new Set());
-      fetchGuests();
     } catch (error) {
       console.error('Error declining guests:', error);
       toast.error('Failed to decline guests');
     }
   };
-
   const handleExportGuests = () => {
     const csvContent = [
       ['Name', 'Username', 'Status', 'Registered At'],
@@ -313,10 +339,10 @@ const GuestsTab: React.FC<GuestsTabProps> = ({ eventId }) => {
                       <div className="flex items-center space-x-2">
                         {guest.status === 'pending' && (
                           <>
-                            <Button size="sm" variant="outline">
+                            <Button size="sm" variant="outline" onClick={() => setStatus(guest.user_id, 'going')}>
                               <CheckIcon className="w-3 h-3" />
                             </Button>
-                            <Button size="sm" variant="outline">
+                            <Button size="sm" variant="outline" onClick={() => setStatus(guest.user_id, 'cancelled')}>
                               <XIcon className="w-3 h-3" />
                             </Button>
                           </>

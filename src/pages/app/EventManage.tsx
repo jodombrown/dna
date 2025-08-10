@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Users, Mail, BarChart3, Settings, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
+import GuestsTab from '@/components/events/manage/GuestsTab';
+import WaitlistTab from '@/components/events/manage/WaitlistTab';
+import RegistrationQuestionsTab from '@/components/events/manage/RegistrationQuestionsTab';
 interface Event {
   id: string;
   title: string;
@@ -97,14 +99,22 @@ const EventManage: React.FC = () => {
       </div>
 
       <Tabs defaultValue="registration" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="registration" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
             Registration
           </TabsTrigger>
+          <TabsTrigger value="questions" className="flex items-center gap-2">
+            <Settings className="w-4 h-4" />
+            Questions
+          </TabsTrigger>
           <TabsTrigger value="guests" className="flex items-center gap-2">
             <Users className="w-4 h-4" />
             Guests
+          </TabsTrigger>
+          <TabsTrigger value="waitlist" className="flex items-center gap-2">
+            <Users className="w-4 h-4" />
+            Waitlist
           </TabsTrigger>
           <TabsTrigger value="blasts" className="flex items-center gap-2">
             <Mail className="w-4 h-4" />
@@ -122,42 +132,17 @@ const EventManage: React.FC = () => {
               <CardTitle>Registration Settings</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
-                Configure registration forms, ticket types, and capacity settings.
-              </p>
-              <div className="mt-4 p-4 bg-muted rounded-lg">
-                <h3 className="font-medium mb-2">Coming Soon</h3>
-                <ul className="text-sm space-y-1">
-                  <li>• Custom registration questions</li>
-                  <li>• Multiple ticket types</li>
-                  <li>• Pricing and payment options</li>
-                  <li>• Capacity and waitlist management</li>
-                </ul>
-              </div>
+              <RegistrationQuestionsTab eventId={id!} />
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="guests">
-          <Card>
-            <CardHeader>
-              <CardTitle>Guest Management</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                View and manage event attendees, check-ins, and guest communications.
-              </p>
-              <div className="mt-4 p-4 bg-muted rounded-lg">
-                <h3 className="font-medium mb-2">Coming Soon</h3>
-                <ul className="text-sm space-y-1">
-                  <li>• Attendee list with contact details</li>
-                  <li>• Check-in management</li>
-                  <li>• Guest messaging</li>
-                  <li>• Waitlist management</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
+          <GuestsTab eventId={id!} />
+        </TabsContent>
+
+        <TabsContent value="waitlist">
+          <WaitlistTab eventId={id!} />
         </TabsContent>
 
         <TabsContent value="blasts">

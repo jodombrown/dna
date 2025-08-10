@@ -3486,9 +3486,17 @@ export type Database = {
             }
         Returns: undefined
       }
+      rpc_event_set_status: {
+        Args: { p_event: string; p_user: string; p_status: string }
+        Returns: undefined
+      }
       rpc_event_unregister: {
         Args: { p_event: string }
         Returns: undefined
+      }
+      rpc_event_waitlist_promote: {
+        Args: { p_event: string; p_user?: string }
+        Returns: string
       }
       rpc_health_snapshot: {
         Args: Record<PropertyKey, never>

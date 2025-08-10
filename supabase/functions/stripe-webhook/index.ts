@@ -68,15 +68,25 @@ serve(async (req) => {
           return new Response("Missing metadata", { status: 400, headers: corsHeaders });
         }
 
-        // Enforce business rules via RPC (capacity/waitlist)
-        // Existing rpc_event_register registers user for event; then we attach payment info
-        let regId: string | null = null;
+        // Determine if this ticket requires approval
+        let requireApproval = false;
+        if (ticketTypeId) {
+          const { data: tt, error: ttErr } = await supabaseService
+            .from('event_ticket_types')
+            .select('require_approval')
+            .eq('id', ticketTypeId)
+            .maybeSingle();
+          if (ttErr) console.error('ticket type lookup err', ttErr);
+          requireApproval = tt?.require_approval === true;
+        }
 
+        // Enforce business rules via RPC (capacity/waitlist)
+        // Existing rpc_event_register registers user for event; then we attach payment info and status
         try {
           await supabaseService.rpc("rpc_event_register", { p_event: eventId });
         } catch (e) {
           console.error("rpc_event_register error:", e);
-          // Proceed to attach payment data to latest row if it exists; otherwise just return OK
+          // proceed regardless; fallback logic below
         }
 
         // Find latest registration for this user/event
@@ -89,7 +99,7 @@ serve(async (req) => {
           .limit(1)
           .maybeSingle();
 
-        regId = regRow?.id ?? null;
+        const regId = regRow?.id ?? null;
 
         if (regId) {
           const { error: updErr } = await supabaseService
@@ -100,6 +110,7 @@ serve(async (req) => {
               currency: session.currency ?? null,
               stripe_session_id: session.id,
               stripe_payment_intent_id: (session.payment_intent as string) ?? null,
+              status: requireApproval ? 'pending' : 'going',
             })
             .eq("id", regId);
           if (updErr) console.error("Update registration error:", updErr);
@@ -111,7 +122,7 @@ serve(async (req) => {
             ticket_type_id: ticketTypeId ?? null,
             price_paid_cents: session.amount_total ?? null,
             currency: session.currency ?? null,
-            status: "going",
+            status: requireApproval ? 'pending' : 'going',
             stripe_session_id: session.id,
             stripe_payment_intent_id: (session.payment_intent as string) ?? null,
           });
