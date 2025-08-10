@@ -12,6 +12,7 @@ import { EventData } from './index';
 interface StepRegistrationProps {
   eventData: EventData;
   updateEventData: (field: keyof EventData, value: any) => void;
+  eventId?: string | null;
 }
 
 const StepRegistration: React.FC<StepRegistrationProps> = ({ eventData, updateEventData }) => {

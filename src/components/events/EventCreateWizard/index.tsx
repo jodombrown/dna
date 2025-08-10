@@ -38,10 +38,15 @@ export interface EventData {
   ticket_types: any[];
 }
 
-const EventCreateWizard: React.FC = () => {
+interface EventCreateWizardProps {
+  onNext?: (eventId: string) => void;
+}
+
+const EventCreateWizard: React.FC<EventCreateWizardProps> = ({ onNext }) => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [eventId, setEventId] = useState<string | null>(null);
   const [eventData, setEventData] = useState<EventData>({
     title: '',
     description: '',
@@ -81,22 +86,11 @@ const EventCreateWizard: React.FC = () => {
     });
   };
 
-  const handleNext = () => {
-    if (currentStep < WIZARD_STEPS.length - 1) {
-      setCurrentStep(prev => prev + 1);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
-    }
-  };
-
-  const handleSave = async () => {
+  // Save draft after StepBasics
+  const saveDraft = async () => {
     if (!eventData.title.trim()) {
       toast.error('Event title is required');
-      return;
+      return false;
     }
 
     setSaving(true);
@@ -104,17 +98,17 @@ const EventCreateWizard: React.FC = () => {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) {
         toast.error('You must be logged in to create events');
-        return;
+        return false;
       }
 
       const eventPayload = {
         title: eventData.title,
         description: eventData.description,
-        date_time: eventData.date_time,
+        date_time: eventData.date_time || new Date().toISOString(),
         location: eventData.location,
         type: eventData.type,
         is_virtual: eventData.is_virtual,
-        visibility: eventData.visibility,
+        visibility: 'draft',
         capacity: eventData.capacity,
         waitlist_enabled: eventData.waitlist_enabled,
         online_url: eventData.online_url,
@@ -126,23 +120,116 @@ const EventCreateWizard: React.FC = () => {
         max_attendees: eventData.capacity,
       };
 
-      const { data: event, error } = await supabase
-        .from('events')
-        .insert([eventPayload])
-        .select()
-        .single();
+      if (eventId) {
+        // Update existing draft
+        const { error } = await supabase
+          .from('events')
+          .update(eventPayload)
+          .eq('id', eventId);
 
-      if (error) {
-        console.error('Error creating event:', error);
-        toast.error('Failed to create event');
-        return;
+        if (error) throw error;
+      } else {
+        // Create new draft
+        const { data: event, error } = await supabase
+          .from('events')
+          .insert([eventPayload])
+          .select('id')
+          .single();
+
+        if (error) throw error;
+        setEventId(event.id);
+        onNext?.(event.id);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      toast.error('Failed to save draft');
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleNext = async () => {
+    // Save draft after completing StepBasics
+    if (currentStep === 0) {
+      const saved = await saveDraft();
+      if (!saved) return;
+    }
+
+    if (currentStep < WIZARD_STEPS.length - 1) {
+      setCurrentStep(prev => prev + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 0) {
+      setCurrentStep(prev => prev - 1);
+    }
+  };
+
+  const finalizeEvent = async () => {
+    if (!eventId) {
+      toast.error('No draft event found');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      // Update event to published status
+      const { error } = await supabase
+        .from('events')
+        .update({ 
+          visibility: eventData.visibility,
+          ...eventData 
+        })
+        .eq('id', eventId);
+
+      if (error) throw error;
+
+      // Create ticket types
+      if (eventData.ticket_types.length > 0) {
+        const ticketTypes = eventData.ticket_types.map(ticket => ({
+          event_id: eventId,
+          name: ticket.name,
+          price_cents: ticket.price_cents || 0,
+          payment_type: ticket.payment_type || 'free',
+          description: ticket.description,
+          total_tickets: ticket.total_tickets,
+          require_approval: ticket.require_approval || false,
+        }));
+
+        const { error: ticketError } = await supabase
+          .from('event_ticket_types')
+          .insert(ticketTypes);
+
+        if (ticketError) throw ticketError;
+      }
+
+      // Create registration questions
+      if (eventData.registration_questions.length > 0) {
+        const questions = eventData.registration_questions.map((q, index) => ({
+          event_id: eventId,
+          label: q.question,
+          type: q.type,
+          required: q.required || false,
+          options: q.options || null,
+          position: index,
+        }));
+
+        const { error: questionError } = await supabase
+          .from('event_registration_questions')
+          .insert(questions);
+
+        if (questionError) throw questionError;
       }
 
       toast.success('Event created successfully!');
-      navigate(`/app/events/${event.id}`);
+      navigate(`/events/${eventData.slug}`);
     } catch (error) {
-      console.error('Unexpected error:', error);
-      toast.error('An unexpected error occurred');
+      console.error('Error finalizing event:', error);
+      toast.error('Failed to create event');
     } finally {
       setSaving(false);
     }
@@ -157,9 +244,9 @@ const EventCreateWizard: React.FC = () => {
       case 'location':
         return <StepLocation eventData={eventData} updateEventData={updateEventData} />;
       case 'tickets':
-        return <StepTickets eventData={eventData} updateEventData={updateEventData} />;
+        return <StepTickets eventData={eventData} updateEventData={updateEventData} eventId={eventId} />;
       case 'registration':
-        return <StepRegistration eventData={eventData} updateEventData={updateEventData} />;
+        return <StepRegistration eventData={eventData} updateEventData={updateEventData} eventId={eventId} />;
       case 'design':
         return <StepDesignVisibility eventData={eventData} updateEventData={updateEventData} />;
       default:
@@ -211,12 +298,12 @@ const EventCreateWizard: React.FC = () => {
               </Button>
               
               {currentStep === WIZARD_STEPS.length - 1 ? (
-                <Button onClick={handleSave} disabled={saving}>
+                <Button onClick={finalizeEvent} disabled={saving}>
                   {saving ? 'Creating...' : 'Create Event'}
                 </Button>
               ) : (
-                <Button onClick={handleNext}>
-                  Next
+                <Button onClick={handleNext} disabled={saving}>
+                  {saving ? 'Saving...' : 'Next'}
                 </Button>
               )}
             </div>

@@ -12,6 +12,7 @@ import { EventData } from './index';
 interface StepTicketsProps {
   eventData: EventData;
   updateEventData: (field: keyof EventData, value: any) => void;
+  eventId?: string | null;
 }
 
 const StepTickets: React.FC<StepTicketsProps> = ({ eventData, updateEventData }) => {

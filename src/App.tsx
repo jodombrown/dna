@@ -38,7 +38,8 @@ import EventDetail from "@/pages/app/EventDetail";
 import EventEdit from "@/pages/app/EventEdit";
 import EventManage from "@/pages/app/EventManage";
 import EventNewWizard from "@/pages/app/EventNewWizard";
-import EventBySlug from "@/pages/app/EventBySlug";
+import EventsBySlug from "@/pages/app/EventsBySlug";
+import EventJoin from "@/pages/app/EventJoin";
 import OpportunityNew from "@/pages/app/OpportunityNew";
 import Notifications from "@/pages/app/Notifications";
 
@@ -85,7 +86,8 @@ function App() {
         <Route path="/app/events/:id/edit" element={<EventEdit />} />
         <Route path="/app/events/:id/manage" element={<EventManage />} />
         <Route path="/events/new" element={<EventNewWizard />} />
-        <Route path="/events/:slug" element={<EventBySlug />} />
+        <Route path="/events/:slug" element={<EventsBySlug />} />
+        <Route path="/join/:token" element={<EventJoin />} />
               <Route path="/app/opportunities/new" element={<OpportunityNew />} />
               <Route path="/app/notifications" element={<Notifications />} />
               
