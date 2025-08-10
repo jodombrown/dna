@@ -11,6 +11,7 @@ export default function EventDetail() {
   const [ev, setEv] = useState<any>(null);
   const [count, setCount] = useState<number>(0);
   const [isRegistered, setIsRegistered] = useState<boolean>(false);
+  const [waitPos, setWaitPos] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 const [saving, setSaving] = useState(false);
   const [attendees, setAttendees] = useState<any[]>([]);
@@ -95,6 +96,21 @@ const unregister = async () => {
       load();
     }
   };
+
+  const joinWaitlist = async () => {
+    if (!id) return;
+    setSaving(true);
+    try {
+      const r = await supabase.rpc('rpc_event_join_waitlist', { p_event: id });
+      if (!r.error) {
+        setWaitPos(r.data ?? null);
+        toast.success('Joined waitlist');
+      }
+    } finally {
+      setSaving(false);
+      load();
+    }
+  };
   
   const toICS = () => {
     if (!ev) return '';
@@ -162,7 +178,10 @@ const isFull = ev?.max_attendees != null && count >= ev.max_attendees;
             {isRegistered ? (
               <Button onClick={unregister} disabled={saving}>{saving ? 'Saving…' : 'Cancel registration'}</Button>
             ) : isFull ? (
-              <Button disabled>Event full</Button>
+              <div className="flex items-center gap-2">
+                <Button onClick={joinWaitlist} disabled={saving}>{saving ? 'Saving…' : 'Join waitlist'}</Button>
+                {waitPos != null && <span className="text-sm text-muted-foreground">Position: {waitPos}</span>}
+              </div>
             ) : (
               <Button onClick={register} disabled={saving}>{saving ? 'Saving…' : 'Register'}</Button>
             )}

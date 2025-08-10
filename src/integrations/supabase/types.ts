@@ -986,6 +986,38 @@ export type Database = {
           },
         ]
       }
+      event_waitlist: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          position: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          position: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          position?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_waitlist_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           attendee_count: number | null
@@ -2730,6 +2762,16 @@ export type Database = {
         Args: { p_message_id: string; p_user_id: string; p_reaction: string }
         Returns: undefined
       }
+      add_notification: {
+        Args: {
+          p_user: string
+          p_type: string
+          p_title: string
+          p_body: string
+          p_meta: Json
+        }
+        Returns: undefined
+      }
       approve_beta_application: {
         Args: { application_id: string; admin_id: string }
         Returns: {
@@ -2840,6 +2882,10 @@ export type Database = {
       enqueue_reminders_for_all_users: {
         Args: Record<PropertyKey, never>
         Returns: number
+      }
+      event_owner_id: {
+        Args: { p_event: string }
+        Returns: string
       }
       find_adin_matches: {
         Args:
@@ -3003,6 +3049,10 @@ export type Database = {
         Args: { user_id_param: string; min_score?: number }
         Returns: boolean
       }
+      promote_from_waitlist: {
+        Args: { p_event: string }
+        Returns: string
+      }
       recent_engagement_score_for_opportunity: {
         Args: { p_op: string }
         Returns: number
@@ -3100,6 +3150,10 @@ export type Database = {
           full_name: string
           registered_at: string
         }[]
+      }
+      rpc_event_join_waitlist: {
+        Args: { p_event: string }
+        Returns: number
       }
       rpc_event_register: {
         Args: { p_event: string }
