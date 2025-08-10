@@ -3212,6 +3212,10 @@ export type Database = {
         Args: { target_user_id: string; pillar: string; points?: number }
         Returns: undefined
       }
+      update_event_attendee_count: {
+        Args: { p_event: string }
+        Returns: undefined
+      }
       update_reminder_status: {
         Args: {
           reminder_id: string
