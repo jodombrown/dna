@@ -36,6 +36,9 @@ import Events from "@/pages/app/Events";
 import EventNew from "@/pages/app/EventNew";
 import EventDetail from "@/pages/app/EventDetail";
 import EventEdit from "@/pages/app/EventEdit";
+import EventManage from "@/pages/app/EventManage";
+import EventNewWizard from "@/pages/app/EventNewWizard";
+import EventBySlug from "@/pages/app/EventBySlug";
 import OpportunityNew from "@/pages/app/OpportunityNew";
 import Notifications from "@/pages/app/Notifications";
 
@@ -76,10 +79,13 @@ function App() {
               {/* Dashboard V1 Archive Route - MUST come before /app/* */}
               <Route path="/app/v1/*" element={<Navigate to="/app" replace />} />
               
-              <Route path="/app/events" element={<Events />} />
-              <Route path="/app/events/new" element={<EventNew />} />
-              <Route path="/app/events/:id" element={<EventDetail />} />
-              <Route path="/app/events/:id/edit" element={<EventEdit />} />
+        <Route path="/app/events" element={<Events />} />
+        <Route path="/app/events/new" element={<EventNew />} />
+        <Route path="/app/events/:id" element={<EventDetail />} />
+        <Route path="/app/events/:id/edit" element={<EventEdit />} />
+        <Route path="/app/events/:id/manage" element={<EventManage />} />
+        <Route path="/events/new" element={<EventNewWizard />} />
+        <Route path="/events/:slug" element={<EventBySlug />} />
               <Route path="/app/opportunities/new" element={<OpportunityNew />} />
               <Route path="/app/notifications" element={<Notifications />} />
               
