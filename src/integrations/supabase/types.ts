@@ -948,37 +948,258 @@ export type Database = {
         }
         Relationships: []
       }
+      event_analytics: {
+        Row: {
+          event_id: string | null
+          happened_at: string | null
+          id: string
+          kind: string | null
+          payload: Json | null
+        }
+        Insert: {
+          event_id?: string | null
+          happened_at?: string | null
+          id?: string
+          kind?: string | null
+          payload?: Json | null
+        }
+        Update: {
+          event_id?: string | null
+          happened_at?: string | null
+          id?: string
+          kind?: string | null
+          payload?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_analytics_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_blasts: {
+        Row: {
+          body_markdown: string
+          event_id: string | null
+          id: string
+          scheduled_for: string | null
+          segment: Json | null
+          sent_at: string | null
+          subject: string
+        }
+        Insert: {
+          body_markdown: string
+          event_id?: string | null
+          id?: string
+          scheduled_for?: string | null
+          segment?: Json | null
+          sent_at?: string | null
+          subject: string
+        }
+        Update: {
+          body_markdown?: string
+          event_id?: string | null
+          id?: string
+          scheduled_for?: string | null
+          segment?: Json | null
+          sent_at?: string | null
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_blasts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_checkins: {
+        Row: {
+          by_profile_id: string | null
+          checked_in_at: string | null
+          id: string
+          registration_id: string | null
+        }
+        Insert: {
+          by_profile_id?: string | null
+          checked_in_at?: string | null
+          id?: string
+          registration_id?: string | null
+        }
+        Update: {
+          by_profile_id?: string | null
+          checked_in_at?: string | null
+          id?: string
+          registration_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_checkins_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: true
+            referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_registration_questions: {
+        Row: {
+          created_at: string | null
+          event_id: string | null
+          id: string
+          label: string
+          options: Json | null
+          position: number | null
+          required: boolean | null
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          label: string
+          options?: Json | null
+          position?: number | null
+          required?: boolean | null
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          label?: string
+          options?: Json | null
+          position?: number | null
+          required?: boolean | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registration_questions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_registrations: {
         Row: {
+          answers: Json | null
           cancelled_at: string | null
+          currency: string | null
           event_id: string
           id: string
+          join_token: string | null
           notes: string | null
+          price_paid_cents: number | null
           registered_at: string
           status: string
+          ticket_type_id: string | null
           user_id: string
         }
         Insert: {
+          answers?: Json | null
           cancelled_at?: string | null
+          currency?: string | null
           event_id: string
           id?: string
+          join_token?: string | null
           notes?: string | null
+          price_paid_cents?: number | null
           registered_at?: string
           status?: string
+          ticket_type_id?: string | null
           user_id: string
         }
         Update: {
+          answers?: Json | null
           cancelled_at?: string | null
+          currency?: string | null
           event_id?: string
           id?: string
+          join_token?: string | null
           notes?: string | null
+          price_paid_cents?: number | null
           registered_at?: string
           status?: string
+          ticket_type_id?: string | null
           user_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_registrations_ticket_type_id_fkey"
+            columns: ["ticket_type_id"]
+            isOneToOne: false
+            referencedRelation: "event_ticket_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_ticket_types: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          event_id: string | null
+          hidden: boolean | null
+          id: string
+          min_price_cents: number | null
+          name: string
+          payment_type: string
+          price_cents: number | null
+          require_approval: boolean | null
+          sales_end: string | null
+          sales_start: string | null
+          suggested_price_cents: number | null
+          total_tickets: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          event_id?: string | null
+          hidden?: boolean | null
+          id?: string
+          min_price_cents?: number | null
+          name: string
+          payment_type?: string
+          price_cents?: number | null
+          require_approval?: boolean | null
+          sales_end?: string | null
+          sales_start?: string | null
+          suggested_price_cents?: number | null
+          total_tickets?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          event_id?: string | null
+          hidden?: boolean | null
+          id?: string
+          min_price_cents?: number | null
+          name?: string
+          payment_type?: string
+          price_cents?: number | null
+          require_approval?: boolean | null
+          sales_end?: string | null
+          sales_start?: string | null
+          suggested_price_cents?: number | null
+          total_tickets?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_ticket_types_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
@@ -1022,6 +1243,8 @@ export type Database = {
         Row: {
           attendee_count: number | null
           banner_url: string | null
+          calendar_id: string | null
+          capacity: number | null
           created_at: string
           created_by: string
           date_time: string | null
@@ -1031,15 +1254,23 @@ export type Database = {
           is_featured: boolean | null
           is_virtual: boolean | null
           location: string | null
+          location_json: Json | null
           max_attendees: number | null
+          online_url: string | null
           registration_url: string | null
+          slug: string | null
+          theme: string | null
           title: string
           type: string | null
           updated_at: string
+          visibility: string | null
+          waitlist_enabled: boolean | null
         }
         Insert: {
           attendee_count?: number | null
           banner_url?: string | null
+          calendar_id?: string | null
+          capacity?: number | null
           created_at?: string
           created_by?: string
           date_time?: string | null
@@ -1049,15 +1280,23 @@ export type Database = {
           is_featured?: boolean | null
           is_virtual?: boolean | null
           location?: string | null
+          location_json?: Json | null
           max_attendees?: number | null
+          online_url?: string | null
           registration_url?: string | null
+          slug?: string | null
+          theme?: string | null
           title: string
           type?: string | null
           updated_at?: string
+          visibility?: string | null
+          waitlist_enabled?: boolean | null
         }
         Update: {
           attendee_count?: number | null
           banner_url?: string | null
+          calendar_id?: string | null
+          capacity?: number | null
           created_at?: string
           created_by?: string
           date_time?: string | null
@@ -1067,11 +1306,17 @@ export type Database = {
           is_featured?: boolean | null
           is_virtual?: boolean | null
           location?: string | null
+          location_json?: Json | null
           max_attendees?: number | null
+          online_url?: string | null
           registration_url?: string | null
+          slug?: string | null
+          theme?: string | null
           title?: string
           type?: string | null
           updated_at?: string
+          visibility?: string | null
+          waitlist_enabled?: boolean | null
         }
         Relationships: [
           {
