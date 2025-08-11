@@ -31,10 +31,8 @@ const AppDashboard = () => {
     if (!loading) {
       if (!user && !bypass) {
         navigate('/auth');
-      } else if (!profile && !bypass) {
-        // If user exists but no profile, redirect to onboarding
-        navigate('/onboarding');
       }
+      // Allow dashboard access regardless of onboarding/profile completion
     }
   }, [user, profile, loading, navigate, bypass]);
 

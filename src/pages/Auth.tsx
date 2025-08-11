@@ -50,7 +50,7 @@ const Auth = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (user && !loading && !isResetMode) {
-      navigate('/app');
+      navigate('/app/dashboard');
     }
   }, [user, loading, navigate, isResetMode]);
 
@@ -137,11 +137,11 @@ const Auth = () => {
       } = await updatePassword(resetData.password);
       if (error) throw error;
       toast({
-        title: 'Password updated',
-        description: 'Your password has been changed successfully.'
-      });
-      setIsResetMode(false);
-      navigate('/app');
+          title: 'Password updated',
+          description: 'Your password has been changed successfully.'
+        });
+        setIsResetMode(false);
+        navigate('/app/dashboard');
     } catch (err: any) {
       console.error('Update password error:', err);
       toast({
@@ -272,7 +272,7 @@ const Auth = () => {
       } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/app`
+          redirectTo: `${window.location.origin}/app/dashboard`
         }
       });
       if (error) {

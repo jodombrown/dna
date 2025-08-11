@@ -59,7 +59,7 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
   
   // Only redirect authenticated users if this is an auth-specific page
   if (user && redirectAuth) {
-    return <Navigate to="/app" replace />;
+    return <Navigate to="/app/dashboard" replace />;
   }
   
   return <>{children}</>;
@@ -84,7 +84,7 @@ function App() {
               <Route path="/dna/:username" element={<UserDashboard />} />
               
               {/* Dashboard V1 Archive Route - MUST come before /app/* */}
-              <Route path="/app/v1/*" element={<Navigate to="/app" replace />} />
+              <Route path="/app/v1/*" element={<Navigate to="/app/dashboard" replace />} />
               
         <Route path="/app/events" element={<Events />} />
         <Route path="/app/events/new" element={<EventNew />} />
