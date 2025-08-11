@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDashboard } from '@/contexts/DashboardContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
+
 import { 
   Home,
   Users, 
@@ -46,7 +46,7 @@ import NotificationsBell from '@/components/notifications/NotificationsBell';
 
 const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();
-  const { toast } = useToast();
+  
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -93,11 +93,7 @@ const UnifiedHeader = () => {
 
   const handleSignInClick = () => {
     setIsMobileMenuOpen(false);
-    toast({
-      title: "Coming Soon",
-      description: "We're currently in development and will activate sign-in when we're ready for our beta users. Stay tuned!",
-      duration: 5000,
-    });
+    navigate('/auth');
   };
 
   const handleNavClick = (item: { name: string; path: string }) => {
