@@ -35,26 +35,4 @@ export interface Community {
   updated_at: string;
 }
 
-export interface Event {
-  id: string;
-  title: string;
-  description?: string;
-  type?: string;
-  date_time?: string;
-  location?: string;
-  is_virtual: boolean;
-  attendee_count: number;
-  max_attendees?: number;
-  is_featured: boolean;
-  image_url?: string;
-  banner_url?: string; // banner image!
-  registration_url?: string;
-  created_at: string;
-  updated_at: string;
-  created_by?: string; // Add creator id reference for linking to profile
-  creator_profile?: {
-    id: string;
-    full_name: string;
-    avatar_url?: string;
-  }
-}
+export type { Event } from './eventTypes';

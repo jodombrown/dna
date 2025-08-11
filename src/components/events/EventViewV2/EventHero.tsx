@@ -19,14 +19,14 @@ const EventHero: React.FC<EventHeroProps> = ({ event }) => {
         {event.banner_url && (
           <img
             src={event.banner_url}
-            alt={event.title}
+            alt={`${event.title} banner image`}
             className="absolute inset-0 w-full h-full object-cover"
           />
         )}
         <div className="absolute inset-0 bg-black/40" />
         
         {/* Hero Content */}
-        <div className="relative h-full flex items-end">
+        <div className="relative h-full flex items=end">
           <div className="container mx-auto px-4 pb-8">
             <div className="text-white space-y-4">
               <div className="flex flex-wrap gap-2">
@@ -82,8 +82,9 @@ const EventHero: React.FC<EventHeroProps> = ({ event }) => {
         <Card className="absolute -bottom-16 left-8 w-32 h-32 overflow-hidden">
           <img
             src={event.image_url}
-            alt={event.title}
+            alt={`${event.title} image`}
             className="w-full h-full object-cover"
+            loading="lazy"
           />
         </Card>
       )}

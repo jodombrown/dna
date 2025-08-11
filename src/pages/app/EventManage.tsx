@@ -10,6 +10,7 @@ import GuestsTab from '@/components/events/manage/GuestsTab';
 import WaitlistTab from '@/components/events/manage/WaitlistTab';
 import RegistrationQuestionsTab from '@/components/events/manage/RegistrationQuestionsTab';
 import InsightsTab from '@/components/events/manage/InsightsTab';
+import BlastsTab from '@/components/events/manage/BlastsTab';
 interface Event {
   id: string;
   title: string;
@@ -148,25 +149,7 @@ const EventManage: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="blasts">
-          <Card>
-            <CardHeader>
-              <CardTitle>Email Blasts</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Send targeted emails to your event attendees.
-              </p>
-              <div className="mt-4 p-4 bg-muted rounded-lg">
-                <h3 className="font-medium mb-2">Coming Soon</h3>
-                <ul className="text-sm space-y-1">
-                  <li>• Create and schedule email campaigns</li>
-                  <li>• Segment attendees by ticket type or status</li>
-                  <li>• Email templates and automation</li>
-                  <li>• Delivery tracking and analytics</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
+          <BlastsTab eventId={id!} />
         </TabsContent>
 
         <TabsContent value="insights">

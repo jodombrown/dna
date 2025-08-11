@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Event } from '@/types/eventTypes';
-import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { toast } from 'sonner';
 
 // V1 Components
@@ -12,7 +11,7 @@ import EventTicketPicker from '@/components/events/EventViewV2/EventTicketPicker
 import EventSocialProof from '@/components/events/EventViewV2/EventSocialProof';
 
 // V2 Components
-import Hero from '@/components/events/EventViewV2/Hero';
+import EventHeroV2 from '@/components/events/EventViewV2/EventHero';
 import TicketTypePicker from '@/components/events/EventViewV2/TicketTypePicker';
 import RegistrationForm from '@/components/events/EventViewV2/RegistrationForm';
 import SocialProof from '@/components/events/EventViewV2/SocialProof';
@@ -30,6 +29,61 @@ const EventsBySlug: React.FC = () => {
       loadEvent();
     }
   }, [slug]);
+
+  // SEO: Update title, meta, canonical, and JSON-LD
+  useEffect(() => {
+    if (!event) return;
+
+    const title = `${event.title} | DNA Events`;
+    const description = (event.description || '').slice(0, 155);
+
+    document.title = title;
+
+    let metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.setAttribute('name', 'description');
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.content = description;
+
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.href = window.location.origin + window.location.pathname;
+
+    const jsonLdEl = document.getElementById('event-json-ld');
+    if (jsonLdEl) jsonLdEl.remove();
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      name: event.title,
+      startDate: event.date_time,
+      description: event.description,
+      image: [event.banner_url || event.image_url].filter(Boolean),
+      eventAttendanceMode: event.is_virtual
+        ? 'https://schema.org/OnlineEventAttendanceMode'
+        : 'https://schema.org/OfflineEventAttendanceMode',
+      eventStatus: 'https://schema.org/EventScheduled',
+      location: event.is_virtual
+        ? { '@type': 'VirtualLocation', url: window.location.href }
+        : { '@type': 'Place', name: event.location, address: event.location },
+      organizer: event.creator_profile
+        ? { '@type': 'Organization', name: event.creator_profile.full_name }
+        : undefined,
+      url: window.location.href,
+    } as any;
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'event-json-ld';
+    script.text = JSON.stringify(jsonLd);
+    document.head.appendChild(script);
+  }, [event]);
 
   const loadEvent = async () => {
     try {
@@ -100,7 +154,7 @@ const EventsBySlug: React.FC = () => {
     // V2 Layout with flag-aware renderer
     return (
       <div className="min-h-screen bg-background">
-        <Hero event={event} />
+        <EventHeroV2 event={event} />
         
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -1,4 +1,3 @@
-
 export interface Event {
   id: string;
   title: string;
@@ -7,17 +6,21 @@ export interface Event {
   location: string;
   type: string;
   attendee_count: number;
-  max_attendees: number | null;
+  max_attendees?: number | null;
   is_featured: boolean;
   is_virtual: boolean;
   created_at: string;
-  created_by: string;
+  updated_at?: string;
+  created_by?: string;
   image_url?: string;
   banner_url?: string;
   waitlist_enabled?: boolean;
+  registration_url?: string;
   creator_profile?: {
+    id?: string;
     full_name: string;
-    email: string;
+    email?: string;
+    avatar_url?: string;
   } | null;
 }
 
