@@ -44,16 +44,15 @@ const TicketTypePicker: React.FC<TicketTypePickerProps> = ({ event, onTicketSele
 
       if (error) throw error;
 
-      // Mock sold tickets count for demo
-      const ticketTypesWithSold = (data || []).map(ticket => ({
+      const normalized = (data || []).map(ticket => ({
         ...ticket,
         payment_type: ticket.payment_type as 'free' | 'paid' | 'flex',
-        sold_tickets: Math.floor(Math.random() * 20),
+        sold_tickets: 0,
       }));
 
-      setTicketTypes(ticketTypesWithSold);
-      if (ticketTypesWithSold.length > 0) {
-        setSelectedTicket(ticketTypesWithSold[0].id);
+      setTicketTypes(normalized);
+      if (normalized.length > 0) {
+        setSelectedTicket(normalized[0].id);
       }
     } catch (error) {
       console.error('Error loading ticket types:', error);
@@ -149,7 +148,7 @@ const TicketTypePicker: React.FC<TicketTypePickerProps> = ({ event, onTicketSele
       <CardContent className="space-y-4">
         <RadioGroup value={selectedTicket} onValueChange={setSelectedTicket}>
           {ticketTypes.map((ticket) => {
-            const isSoldOut = ticket.total_tickets && ticket.sold_tickets >= ticket.total_tickets;
+            const isSoldOut = false;
             
             return (
               <div key={ticket.id} className="space-y-2">
@@ -157,7 +156,7 @@ const TicketTypePicker: React.FC<TicketTypePickerProps> = ({ event, onTicketSele
                   <RadioGroupItem 
                     value={ticket.id} 
                     id={ticket.id}
-                    disabled={isSoldOut || isEventFull}
+                    disabled={isEventFull}
                   />
                   <Label 
                     htmlFor={ticket.id} 
@@ -181,11 +180,6 @@ const TicketTypePicker: React.FC<TicketTypePickerProps> = ({ event, onTicketSele
                         {ticket.description && (
                           <div className="text-sm text-muted-foreground mt-1">
                             {ticket.description}
-                          </div>
-                        )}
-                        {ticket.total_tickets && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                            {ticket.sold_tickets} of {ticket.total_tickets} sold
                           </div>
                         )}
                       </div>

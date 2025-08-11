@@ -19,7 +19,7 @@ import SocialProof from '@/components/events/EventViewV2/SocialProof';
 
 const EventsBySlug: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { eventsV2 } = useFeatureFlags();
+  const eventsV2 = true; // Default to V2; feature flag can be reintroduced if needed
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedTicketType, setSelectedTicketType] = useState<string>('');

@@ -129,6 +129,23 @@ serve(async (req) => {
           if (insErr) console.error("Insert fallback error:", insErr);
         }
 
+        // Log payment_success analytics
+        try {
+          await supabaseService.from('event_analytics').insert({
+            event_id: eventId,
+            kind: 'payment_success',
+            payload: {
+              stripe_session_id: session.id,
+              payment_intent_id: session.payment_intent ?? null,
+              amount_total: session.amount_total ?? null,
+              currency: session.currency ?? null,
+              ticket_type_id: ticketTypeId ?? null,
+              profile_id: profileId ?? null,
+            },
+          });
+        } catch (e) {
+          console.error('event_analytics insert error:', e);
+        }
         break;
       }
       // You may handle async success events here if you enable 3DS/etc.
