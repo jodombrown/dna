@@ -3055,51 +3055,39 @@ export type Database = {
       public_profile: {
         Row: {
           avatar_url: string | null
-          banner_url: string | null
           bio: string | null
-          created_at: string | null
           display_name: string | null
           headline: string | null
           id: string | null
-          interests: string[] | null
-          linkedin_url: string | null
+          links: Json | null
           location: string | null
+          org: string | null
           skills: string[] | null
-          twitter_url: string | null
           username: string | null
-          website_url: string | null
         }
         Insert: {
           avatar_url?: string | null
-          banner_url?: string | null
           bio?: string | null
-          created_at?: string | null
           display_name?: string | null
           headline?: string | null
           id?: string | null
-          interests?: string[] | null
-          linkedin_url?: string | null
+          links?: never
           location?: string | null
-          skills?: string[] | null
-          twitter_url?: string | null
+          org?: string | null
+          skills?: never
           username?: string | null
-          website_url?: string | null
         }
         Update: {
           avatar_url?: string | null
-          banner_url?: string | null
           bio?: string | null
-          created_at?: string | null
           display_name?: string | null
           headline?: string | null
           id?: string | null
-          interests?: string[] | null
-          linkedin_url?: string | null
+          links?: never
           location?: string | null
-          skills?: string[] | null
-          twitter_url?: string | null
+          org?: string | null
+          skills?: never
           username?: string | null
-          website_url?: string | null
         }
         Relationships: []
       }
