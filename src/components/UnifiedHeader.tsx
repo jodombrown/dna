@@ -271,7 +271,7 @@ const UnifiedHeader = () => {
                   <Button
                     variant="default"
                     onClick={handleSignInClick}
-                    className="hidden md:inline-flex"
+                    className="hidden md:inline-flex hover:bg-dna-copper"
                   >
                     Sign In
                   </Button>
