@@ -269,8 +269,9 @@ const UnifiedHeader = () => {
                   </nav>
                   
                   <Button
+                    variant="default"
                     onClick={handleSignInClick}
-                    className="bg-dna-copper hover:bg-dna-gold text-white hidden md:inline-flex"
+                    className="hidden md:inline-flex"
                   >
                     Sign In
                   </Button>
@@ -403,7 +404,8 @@ const UnifiedHeader = () => {
                             </Button>
                             
                             <Button
-                              className="justify-start text-left bg-dna-forest text-white hover:bg-dna-forest/90 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                              variant="default"
+                              className="justify-start text-left transition-all duration-200 focus:ring-0 focus:ring-offset-0"
                               onClick={handleSignInClick}
                             >
                               Sign In
