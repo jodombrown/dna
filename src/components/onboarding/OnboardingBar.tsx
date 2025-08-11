@@ -101,7 +101,14 @@ const OnboardingBar: React.FC = () => {
         avatar_url: avatar,
       };
       if (!profile?.display_name) updates.display_name = display;
-      const percent = Math.max(40, Number(profile?.onboarding_progress?.percent || 0));
+      const existingPercentRaw = (profile as any)?.onboarding_progress;
+      const existingPercent =
+        typeof existingPercentRaw === 'string'
+          ? (() => { try { return JSON.parse(existingPercentRaw)?.percent ?? 0; } catch { return 0; } })()
+          : typeof existingPercentRaw === 'object' && existingPercentRaw !== null
+          ? (existingPercentRaw as any)?.percent ?? 0
+          : 0;
+      const percent = Math.max(40, Number(existingPercent || 0));
       updates.onboarding_progress = { percent };
 
       const { error } = await supabase

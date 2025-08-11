@@ -27,7 +27,7 @@ const PrivacySettings: React.FC = () => {
 
   const onSave = async () => {
     if (!user) return;
-    await updateProfile({ id: user.id, updates: { visibility } });
+    await updateProfile({ id: user.id, updates: { visibility } as any });
     refetch();
   };
 
