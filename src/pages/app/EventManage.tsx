@@ -11,11 +11,7 @@ import WaitlistTab from '@/components/events/manage/WaitlistTab';
 import RegistrationQuestionsTab from '@/components/events/manage/RegistrationQuestionsTab';
 import InsightsTab from '@/components/events/manage/InsightsTab';
 import BlastsTab from '@/components/events/manage/BlastsTab';
-interface Event {
-  id: string;
-  title: string;
-  created_by: string;
-}
+import type { Event } from '@/types/eventTypes';
 
 const EventManage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

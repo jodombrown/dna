@@ -64,32 +64,31 @@ serve(async (req) => {
     const results: any[] = [];
 
     for (const blast of blasts) {
-      const seg = (blast.segment || {}) as { status?: string };
-      const status = seg.status && seg.status !== 'all' ? seg.status : null;
+      const seg = (blast.segment || {}) as { type?: string; status?: string };
+      const segType = (seg.type ?? seg.status ?? 'all') as string;
 
-      // Collect recipient emails
-      const { data: regs, error: regErr } = await supabase
-        .from('event_registrations')
-        .select('user_id, status')
-        .eq('event_id', blast.event_id)
-        .maybeSingle();
+      // Collect recipient user IDs based on segment
+      let userIds: string[] = [];
 
-      // When .maybeSingle used incorrectly; fetch list properly
-      let registrations: { user_id: string; status: string }[] = [];
-      if (regErr && regErr.code !== 'PGRST116') {
-        console.error('regs error', regErr);
+      if (segType === 'waitlist') {
+        const { data: wl, error: wlErr } = await supabase
+          .from('event_waitlist')
+          .select('user_id')
+          .eq('event_id', blast.event_id);
+        if (wlErr) throw wlErr;
+        userIds = Array.from(new Set((wl || []).map((w: any) => w.user_id)));
       } else {
-        // Fallback to proper list fetch
+        const statuses = segType === 'all' ? ['going', 'pending']
+          : segType === 'confirmed' ? ['going']
+          : [segType];
         const { data: regsList, error: regsListErr } = await supabase
           .from('event_registrations')
           .select('user_id, status')
-          .eq('event_id', blast.event_id);
+          .eq('event_id', blast.event_id)
+          .in('status', statuses);
         if (regsListErr) throw regsListErr;
-        registrations = (regsList || []) as any[];
+        userIds = Array.from(new Set(((regsList || []) as any[]).map(r => r.user_id)));
       }
-
-      const filtered = registrations.filter(r => !status || r.status === status);
-      const userIds = Array.from(new Set(filtered.map(r => r.user_id)));
 
       let emails: string[] = [];
       if (userIds.length) {
@@ -101,9 +100,11 @@ serve(async (req) => {
         emails = (profiles || []).map((p: any) => p.email).filter((e: string) => !!e);
       }
 
+      const isHtml = (blast.body_markdown || '').trim().startsWith('<');
+      const bodyHtml = isHtml ? (blast.body_markdown || '') : mdToHtml(blast.body_markdown || '');
       const html = `<div style="font-family:Inter,system-ui,sans-serif;line-height:1.6;">
         <h2>${escapeHtml(blast.subject)}</h2>
-        <div>${mdToHtml(blast.body_markdown || '')}</div>
+        <div>${bodyHtml}</div>
       </div>`;
 
       const sendResults: any[] = [];
@@ -141,6 +142,6 @@ function escapeHtml(str: string) {
 }
 
 function mdToHtml(md: string) {
-  // Minimal conversion: newlines to <br/>
-  return (md || '').split('\n').map(l => l.trim()).join('<br/>');
+  // Minimal conversion: escape HTML then convert newlines to <br/>
+  return (md || '').split('\n').map(l => escapeHtml(l)).join('<br/>');
 }

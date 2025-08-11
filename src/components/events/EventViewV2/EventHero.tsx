@@ -21,12 +21,15 @@ const EventHero: React.FC<EventHeroProps> = ({ event }) => {
             src={event.banner_url}
             alt={`${event.title} banner image`}
             className="absolute inset-0 w-full h-full object-cover"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
           />
         )}
         <div className="absolute inset-0 bg-black/40" />
         
         {/* Hero Content */}
-        <div className="relative h-full flex items=end">
+        <div className="relative h-full flex items-end">
           <div className="container mx-auto px-4 pb-8">
             <div className="text-white space-y-4">
               <div className="flex flex-wrap gap-2">

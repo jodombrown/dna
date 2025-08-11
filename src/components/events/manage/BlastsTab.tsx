@@ -68,12 +68,15 @@ const BlastsTab: React.FC<BlastsTabProps> = ({ eventId }) => {
 
     setSending(true);
     try {
+      const segType = segment === 'confirmed' ? 'going' : segment; // map UI -> registration status
       const blastData = {
         event_id: eventId,
         subject: subject.trim(),
         body_markdown: body.trim(),
-        segment: segment === 'all' ? null : { type: segment },
-        scheduled_for: scheduleType === 'later' && scheduledFor ? new Date(scheduledFor).toISOString() : null,
+        segment: segType === 'all' ? null : { type: segType },
+        scheduled_for: scheduleType === 'later' && scheduledFor
+          ? new Date(scheduledFor).toISOString()
+          : new Date().toISOString(), // send-now defaults to now so the function picks it up
       };
 
       const { error } = await supabase
@@ -81,6 +84,13 @@ const BlastsTab: React.FC<BlastsTabProps> = ({ eventId }) => {
         .insert([blastData]);
 
       if (error) throw error;
+
+      // Trigger edge function for immediate sends
+      if (scheduleType === 'now') {
+        await supabase.functions.invoke('send-event-blasts', {
+          body: { eventId },
+        });
+      }
 
       toast.success(scheduleType === 'now' ? 'Email blast sent!' : 'Email blast scheduled!');
       
@@ -101,10 +111,10 @@ const BlastsTab: React.FC<BlastsTabProps> = ({ eventId }) => {
   };
 
   const segmentOptions = [
-    { value: 'all', label: 'All Attendees', count: '120' },
-    { value: 'confirmed', label: 'Confirmed Only', count: '95' },
-    { value: 'pending', label: 'Pending Approval', count: '15' },
-    { value: 'waitlist', label: 'Waitlisted', count: '10' },
+    { value: 'all', label: 'All Registrants' },
+    { value: 'confirmed', label: 'Confirmed (Going)' },
+    { value: 'pending', label: 'Pending Approval' },
+    { value: 'waitlist', label: 'Waitlist Only' },
   ];
 
   const getBlastStatus = (blast: Blast) => {
@@ -179,7 +189,6 @@ const BlastsTab: React.FC<BlastsTabProps> = ({ eventId }) => {
                       <div className="text-center space-y-1">
                         <div className="flex items-center justify-center space-x-2">
                           <UsersIcon className="w-4 h-4" />
-                          <span className="font-medium text-lg">{option.count}</span>
                         </div>
                         <p className="text-sm font-medium">{option.label}</p>
                         <div className={`w-3 h-3 rounded-full mx-auto ${
