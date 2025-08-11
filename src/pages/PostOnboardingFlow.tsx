@@ -14,7 +14,7 @@ export const PostOnboardingFlow: React.FC = () => {
   useEffect(() => {
     // Check if user should be in post-onboarding flow
     if (!user || !profile?.onboarding_completed_at) {
-      navigate('/onboarding');
+      navigate('/app/dashboard');
       return;
     }
 

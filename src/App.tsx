@@ -33,6 +33,7 @@ import AuthCallback from "./pages/AuthCallback";
 
 import UserDashboard from "./pages/UserDashboard";
 import DnaDev from "./pages/DnaDev";
+import DnaMeRedirect from "./pages/DnaMeRedirect";
 import Events from "@/pages/app/Events";
 import EventNew from "@/pages/app/EventNew";
 import EventDetail from "@/pages/app/EventDetail";
@@ -79,10 +80,14 @@ function App() {
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/onboarding" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/onboarding/*" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/welcome/*" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/complete-profile/*" element={<Navigate to="/app/dashboard" replace />} />
               <Route path="/post-onboarding" element={<Navigate to="/app/dashboard" replace />} />
               {/* Dev Bypass Route (must be before dynamic username) */}
               <Route path="/dna/dev" element={<DnaDev />} />
               {/* Dynamic User Dashboard Route */}
+              <Route path="/dna/me" element={<DnaMeRedirect />} />
               <Route path="/dna/:username" element={<UserDashboard />} />
               
               {/* Dashboard V1 Archive Route - MUST come before /app/* */}

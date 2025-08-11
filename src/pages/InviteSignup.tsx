@@ -106,8 +106,8 @@ const InviteSignup = () => {
         description: "Your account has been created successfully",
       });
 
-      // Redirect to onboarding
-      navigate('/onboarding');
+      // Redirect to dashboard
+      navigate('/app/dashboard');
     } catch (error: any) {
       console.error('Signup error:', error);
       toast({
