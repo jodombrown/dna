@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import LocationSearch from "./LocationSearch";
+import LocationTypeahead from "@/components/location/LocationTypeahead";
 import AvatarUploader from "@/components/uploader/AvatarUploader";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
@@ -148,7 +148,7 @@ const OnboardingBar: React.FC = () => {
             />
             {usernameError && <div className="text-xs text-destructive">{usernameError}</div>}
           </div>
-          <LocationSearch value={location} onChange={setLocation} placeholder="Current location" />
+          <LocationTypeahead value={location} onChange={setLocation} />
           <AvatarUploader value={avatar} onUploaded={(url) => setAvatar(url)} />
         </div>
         <div className="flex items-center gap-3">
