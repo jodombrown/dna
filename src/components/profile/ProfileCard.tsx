@@ -23,6 +23,7 @@ interface ProfileCardProps {
     interests?: string;
     availability_for_mentoring?: boolean;
     looking_for_opportunities?: boolean;
+    username?: string;
   };
   onClick?: () => void;
 }
@@ -53,20 +54,39 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
 
   const interestsList = getStringArray(profile.interests).slice(0, 2);
 
+  const profileUrl = profile.username ? `/dna/${profile.username}` : undefined;
+
   return (
     <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full" onClick={onClick}>
       <CardContent className="p-6 h-full flex flex-col">
         <div className="flex items-start space-x-4 mb-4">
-          <Avatar className="w-16 h-16 flex-shrink-0">
-            <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
-            <AvatarFallback className="bg-dna-copper text-white">
-              {profile.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
-            </AvatarFallback>
-          </Avatar>
+          {profileUrl ? (
+            <a href={profileUrl} onClick={(e) => e.stopPropagation()} aria-label={`View ${profile.full_name || 'profile'}`} className="inline-block">
+              <Avatar className="w-16 h-16 flex-shrink-0">
+                <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
+                <AvatarFallback className="bg-dna-copper text-white">
+                  {profile.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
+                </AvatarFallback>
+              </Avatar>
+            </a>
+          ) : (
+            <Avatar className="w-16 h-16 flex-shrink-0">
+              <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
+              <AvatarFallback className="bg-dna-copper text-white">
+                {profile.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
+              </AvatarFallback>
+            </Avatar>
+          )}
           
           <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold text-dna-forest truncate">
-              {profile.full_name || 'Anonymous User'}
+              {profileUrl ? (
+                <a href={profileUrl} onClick={(e) => e.stopPropagation()} className="hover:underline">
+                  {profile.full_name || 'Anonymous User'}
+                </a>
+              ) : (
+                profile.full_name || 'Anonymous User'
+              )}
             </h3>
             
             {profile.profession && (

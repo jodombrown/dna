@@ -62,7 +62,7 @@ export default function RecommendationsWidget() {
           ) : (
             people.map((p) => (
               <div key={p.user_id} className="text-xs truncate">
-                {p.full_name || p.username}
+                <a href={`/dna/${p.username}`} className="hover:underline">{p.full_name || p.username}</a>
               </div>
             ))
           )}
