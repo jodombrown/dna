@@ -56,7 +56,7 @@ const handleViewAll = () => {
     <section aria-labelledby="dashboard-events-heading" className="space-y-6">
       <header className="flex items-center justify-between">
         <h2 id="dashboard-events-heading" className="text-2xl font-bold">Events</h2>
-        <Button variant="dna" size="sm" aria-label="Create a new event" onClick={() => navigate('/app/events/new')}>Create event</Button>
+        <Button variant="dna" size="sm" aria-label="Create a new event" onClick={() => navigate('/events/new')}>Create event</Button>
       </header>
 
       {loading ? (

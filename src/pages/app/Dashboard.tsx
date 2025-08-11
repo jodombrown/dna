@@ -69,7 +69,7 @@ const Dashboard = () => {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <a href="/app/opportunities/new" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Post Update</a>
-        <a href="/app/events/new" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Create Event</a>
+        <a href="/events/new" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Create Event</a>
         <a href="/invite" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Invite a Friend</a>
       </div>
 

@@ -67,6 +67,7 @@ const save = async () => {
         registration_url: registrationUrl.trim() || null,
         banner_url,
         image_url,
+        created_by: uid,
       };
 
       const { error } = await supabase.from('events').insert(payload);

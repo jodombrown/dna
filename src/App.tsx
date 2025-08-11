@@ -94,7 +94,7 @@ function App() {
               <Route path="/app/v1/*" element={<Navigate to="/app/dashboard" replace />} />
               
         <Route path="/app/events" element={<Events />} />
-        <Route path="/app/events/new" element={<EventNew />} />
+        <Route path="/app/events/new" element={<Navigate to="/events/new" replace />} />
         <Route path="/app/events/:id" element={<EventDetail />} />
         <Route path="/app/events/:id/edit" element={<EventEdit />} />
         <Route path="/app/events/:id/manage" element={<EventManage />} />
