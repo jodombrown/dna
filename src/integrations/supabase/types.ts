@@ -2077,6 +2077,7 @@ export type Database = {
           email_notifications: boolean | null
           first_action_completed: boolean | null
           first_action_type: string | null
+          first_name: string | null
           full_name: string | null
           fundraising_status: string | null
           headline: string | null
@@ -2091,13 +2092,16 @@ export type Database = {
           intro_video_url: string | null
           is_beta_tester: boolean | null
           is_public: boolean | null
+          last_name: string | null
           last_seen_at: string | null
           linkedin_url: string | null
           location: string | null
           mentorship_interest: string[] | null
+          middle_initial: string | null
           newsletter_emails: boolean | null
           notification_preferences: Json | null
           onboarding_completed_at: string | null
+          onboarding_progress: Json
           onboarding_recommendations_viewed: boolean | null
           onboarding_stage: string | null
           profession: string | null
@@ -2155,6 +2159,7 @@ export type Database = {
           email_notifications?: boolean | null
           first_action_completed?: boolean | null
           first_action_type?: string | null
+          first_name?: string | null
           full_name?: string | null
           fundraising_status?: string | null
           headline?: string | null
@@ -2169,13 +2174,16 @@ export type Database = {
           intro_video_url?: string | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          last_name?: string | null
           last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
           mentorship_interest?: string[] | null
+          middle_initial?: string | null
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
           onboarding_completed_at?: string | null
+          onboarding_progress?: Json
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
           profession?: string | null
@@ -2233,6 +2241,7 @@ export type Database = {
           email_notifications?: boolean | null
           first_action_completed?: boolean | null
           first_action_type?: string | null
+          first_name?: string | null
           full_name?: string | null
           fundraising_status?: string | null
           headline?: string | null
@@ -2247,13 +2256,16 @@ export type Database = {
           intro_video_url?: string | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          last_name?: string | null
           last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
           mentorship_interest?: string[] | null
+          middle_initial?: string | null
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
           onboarding_completed_at?: string | null
+          onboarding_progress?: Json
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
           profession?: string | null
