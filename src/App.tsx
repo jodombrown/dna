@@ -44,6 +44,10 @@ import OpportunityNew from "@/pages/app/OpportunityNew";
 import Notifications from "@/pages/app/Notifications";
 import EventPaymentSuccess from "@/pages/app/EventPaymentSuccess";
 import EventCheckIn from "@/pages/app/EventCheckIn";
+import ProfileSettings from "@/pages/settings/ProfileSettings";
+import ExperienceSettings from "@/pages/settings/ExperienceSettings";
+import LinksSettings from "@/pages/settings/LinksSettings";
+import PrivacySettings from "@/pages/settings/PrivacySettings";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +99,15 @@ function App() {
               <Route path="/app/opportunities/new" element={<OpportunityNew />} />
               <Route path="/app/notifications" element={<Notifications />} />
               
+              {/* Settings */}
+              <Route path="/settings/profile" element={<ProfileSettings />} />
+              <Route path="/settings/experience" element={<ExperienceSettings />} />
+              <Route path="/settings/links" element={<LinksSettings />} />
+              <Route path="/settings/privacy" element={<PrivacySettings />} />
+
+              {/* Me route */}
+              <Route path="/me" element={<Navigate to="/app/profile" replace />} />
+
               <Route path="/app/*" element={<AppDashboard />} />
               <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />
               <Route path="/collaborate" element={<AuthGuard><CollaborationsExample /></AuthGuard>} />

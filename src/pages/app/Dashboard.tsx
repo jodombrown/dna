@@ -66,6 +66,14 @@ const Dashboard = () => {
 
   const mainContent = (
     <div className="space-y-4">
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <a href="/app/opportunities/new" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Post Update</a>
+        <a href="/app/events/new" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Create Event</a>
+        <a href="/invite" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Invite a Friend</a>
+      </div>
+
+      {/* Feed / Pillar content */}
       <ProgressStrip />
       {activeView === 'search' && <SearchMainContent />}
 
@@ -78,7 +86,12 @@ const Dashboard = () => {
       {activeView === 'events' && <DashboardEventsView />}
       {activeView === 'dashboard' && (
         activePillar === 'feed' ? (
-          <CommunityFeed />
+          <>
+            <CommunityFeed />
+            <div className="rounded-md border border-border bg-background p-6 text-sm text-muted-foreground">
+              No posts yet? Share your first update.
+            </div>
+          </>
         ) : (
           <PillarMainContent activePillar={activePillar} />
         )

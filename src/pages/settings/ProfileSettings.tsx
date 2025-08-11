@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import AvatarUploader from "@/components/uploader/AvatarUploader";
 import { useToast } from "@/hooks/use-toast";
+import LocationTypeahead from "@/components/location/LocationTypeahead";
 
 const ProfileSettings: React.FC = () => {
   const { user } = useAuth();
@@ -76,7 +77,7 @@ const ProfileSettings: React.FC = () => {
         </div>
         <div>
           <label className="text-sm text-muted-foreground">Location</label>
-          <Input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="City, Country" />
+          <LocationTypeahead value={location} onChange={setLocation} />
         </div>
         <div>
           <label className="text-sm text-muted-foreground">Organization</label>

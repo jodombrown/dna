@@ -39,6 +39,11 @@ const OnboardingBar: React.FC = () => {
     return !requiredSatisfied(profile);
   }, [open, profile]);
 
+  const isValid = useMemo(() => {
+    const v = (username || '').toLowerCase();
+    return Boolean(firstName && lastName && location && avatar && usernameRegex.test(v) && !usernameError);
+  }, [firstName, lastName, location, avatar, username, usernameError]);
+
   useEffect(() => {
     if (profile) {
       setFirstName(profile.first_name || "");
@@ -152,7 +157,7 @@ const OnboardingBar: React.FC = () => {
           <AvatarUploader value={avatar} onUploaded={(url) => setAvatar(url)} />
         </div>
         <div className="flex items-center gap-3">
-          <Button onClick={onSave} disabled={saving || checking}>
+          <Button onClick={onSave} disabled={saving || checking || !isValid}>
             {saving ? "Saving..." : "Save & Continue"}
           </Button>
           <a href="/settings/profile" className="text-sm text-primary underline">Edit full profile in Settings</a>

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Profile } from '@/services/profilesService';
 import UserDashboardLayout from '@/components/dashboard/UserDashboardLayout';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import NotFound from './NotFound';
@@ -12,7 +11,7 @@ const UserDashboard = () => {
   const { username } = useParams<{ username: string }>();
   const { user, loading: authLoading } = useAuth();
   const { data: myProfile, isLoading: myProfileLoading } = useProfile();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,8 +24,8 @@ const UserDashboard = () => {
       }
 
       try {
-        const { data, error } = await supabase
-          .from('profiles')
+        const { data, error } = await (supabase as any)
+          .from('public_profile')
           .select('*')
           .eq('username', username)
           .maybeSingle();
@@ -54,6 +53,19 @@ const UserDashboard = () => {
     }
 
     fetchUserProfile();
+
+    // Realtime subscribe to profile changes
+    const channel = supabase
+      .channel('public-profiles-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+        // Refetch public view on any profile change
+        fetchUserProfile();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [username]);
 
   // Handle special routes
