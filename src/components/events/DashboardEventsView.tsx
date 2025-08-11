@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { EnhancedButton as Button } from '@/components/ui/enhanced-button';
 import ConnectEventsTab from '@/components/connect/tabs/ConnectEventsTab';
 import { Event } from '@/types/search';
 import { searchEvents } from '@/services/eventsService';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const DashboardEventsView: React.FC = () => {
   const navigate = useNavigate();
@@ -28,27 +29,34 @@ const DashboardEventsView: React.FC = () => {
     loadEvents();
   }, []);
 
-  const handleEventClick = (event: Event) => {
-    toast.info(`Opening: ${event.title}`);
-  };
+const handleEventClick = (event: Event) => {
+  navigate(`/app/events/${event.id}`);
+};
 
-  const handleRegisterEvent = (event: Event) => {
-    toast.success('Registration started');
-  };
+const handleRegisterEvent = async (event: Event) => {
+  try {
+    await supabase.rpc('rpc_event_register', { p_event: event.id });
+    toast.success('Registered');
+  } catch (err: any) {
+    const msg = String(err?.message || err);
+    if (msg.includes('capacity_reached')) toast.error('This event is full.');
+    else toast.error('Could not register');
+  }
+};
 
   const handleCreatorClick = (creatorId: string) => {
     toast.info('Viewing host profile');
   };
 
-  const handleViewAll = () => {
-    toast.message('Showing all upcoming events');
-  };
+const handleViewAll = () => {
+  navigate('/app/events');
+};
 
   return (
     <section aria-labelledby="dashboard-events-heading" className="space-y-6">
       <header className="flex items-center justify-between">
         <h2 id="dashboard-events-heading" className="text-2xl font-bold">Events</h2>
-        <Button onClick={() => navigate('/app/events/new')}>Create event</Button>
+        <Button variant="dna" size="sm" aria-label="Create a new event" onClick={() => navigate('/app/events/new')}>Create event</Button>
       </header>
 
       {loading ? (
