@@ -272,7 +272,7 @@ const Auth = () => {
       } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/app/dashboard`
+          redirectTo: `${window.location.origin}/auth/callback`
         }
       });
       if (error) {

@@ -27,7 +27,7 @@ const Admin = () => {
   useEffect(() => {
     const checkAdminAccess = async () => {
       if (!user) {
-        navigate('/app');
+        navigate('/app/dashboard');
         return;
       }
 
@@ -36,15 +36,15 @@ const Admin = () => {
           _user_id: user.id 
         });
 
-        if (!adminStatus) {
-          navigate('/app');
-          return;
-        }
+      if (!adminStatus) {
+        navigate('/app/dashboard');
+        return;
+      }
 
         setIsAdmin(true);
       } catch (error) {
         console.error('Error checking admin access:', error);
-        navigate('/app');
+        navigate('/app/dashboard');
       }
     };
 

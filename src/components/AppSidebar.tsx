@@ -32,7 +32,7 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const mainNavItems = [
-  { title: 'Home', url: '/app', icon: Home },
+  { title: 'Home', url: '/app/dashboard', icon: Home },
   { title: 'Search', url: '/app/search', icon: Search },
   { title: 'Connect', url: '/app/connect', icon: Users },
   { title: 'Spaces', url: '/app/spaces', icon: Square },
@@ -73,7 +73,7 @@ const AppSidebar = () => {
       <SidebarRail />
       {/* Brand */}
       <div className="p-4 border-b border-border bg-background flex items-center justify-center">
-        <NavLink to="/app" className="flex items-center">
+        <NavLink to="/app/dashboard" className="flex items-center">
           <img
             src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png"
             alt="DNA logo"

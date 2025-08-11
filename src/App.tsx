@@ -29,6 +29,7 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import { PostOnboardingFlow } from "./pages/PostOnboardingFlow";
 import AdminDiagnostics from "./pages/app/AdminDiagnostics";
+import AuthCallback from "./pages/AuthCallback";
 
 import UserDashboard from "./pages/UserDashboard";
 import DnaDev from "./pages/DnaDev";
@@ -76,8 +77,9 @@ function App() {
             <Routes>
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
-              <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/post-onboarding" element={<PostOnboardingFlow />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/onboarding" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/post-onboarding" element={<Navigate to="/app/dashboard" replace />} />
               {/* Dev Bypass Route (must be before dynamic username) */}
               <Route path="/dna/dev" element={<DnaDev />} />
               {/* Dynamic User Dashboard Route */}
@@ -108,6 +110,7 @@ function App() {
               {/* Me route */}
               <Route path="/me" element={<Navigate to="/app/profile" replace />} />
 
+              <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
               <Route path="/app/*" element={<AppDashboard />} />
               <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />
               <Route path="/collaborate" element={<AuthGuard><CollaborationsExample /></AuthGuard>} />
