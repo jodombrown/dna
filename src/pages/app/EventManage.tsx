@@ -11,12 +11,12 @@ import WaitlistTab from '@/components/events/manage/WaitlistTab';
 import RegistrationQuestionsTab from '@/components/events/manage/RegistrationQuestionsTab';
 import InsightsTab from '@/components/events/manage/InsightsTab';
 import BlastsTab from '@/components/events/manage/BlastsTab';
-import type { Event } from '@/types/eventTypes';
+type ManagedEvent = { id: string; title: string; created_by: string };
 
 const EventManage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [event, setEvent] = useState<Event | null>(null);
+  const [event, setEvent] = useState<ManagedEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [canManage, setCanManage] = useState(false);
 
@@ -51,7 +51,7 @@ const EventManage: React.FC = () => {
           return;
         }
 
-        setEvent(data);
+        setEvent(data as ManagedEvent);
         setCanManage(data.created_by === user.user.id);
 
         if (data.created_by !== user.user.id) {
