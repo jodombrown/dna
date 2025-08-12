@@ -72,6 +72,16 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
   return <>{children}</>;
 };
 
+// Onboarding gate: require completion before accessing app routes
+const OnboardingGate = ({ children }: { children: React.ReactNode }) => {
+  const { user, profile, loading } = useAuth() as any;
+  if (loading) return null;
+  if (user && profile && !profile.onboarding_completed_at) {
+    return <Navigate to="/onboarding" replace />;
+  }
+  return <>{children}</>;
+};
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -84,11 +94,11 @@ function App() {
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/onboarding" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/onboarding/*" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/welcome/*" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/complete-profile/*" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/post-onboarding" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/onboarding/*" element={<Onboarding />} />
+              <Route path="/welcome/*" element={<Navigate to="/onboarding" replace />} />
+              <Route path="/complete-profile/*" element={<Navigate to="/onboarding" replace />} />
+              <Route path="/post-onboarding" element={<PostOnboardingFlow />} />
               {/* Dynamic User Dashboard Route */}
               <Route path="/dna/me" element={<DnaMeRedirect />} />
               <Route path="/dna/:username" element={<UserDashboard />} />
@@ -112,16 +122,16 @@ function App() {
               <Route path="/app/connections/:id" element={<ConnectionDetailPage />} />
               
               {/* Settings */}
-              <Route path="/settings/profile" element={<ProfileSettings />} />
-              <Route path="/settings/experience" element={<ExperienceSettings />} />
-              <Route path="/settings/links" element={<LinksSettings />} />
-              <Route path="/settings/privacy" element={<PrivacySettings />} />
+              <Route path="/settings/profile" element={<OnboardingGate><ProfileSettings /></OnboardingGate>} />
+              <Route path="/settings/experience" element={<OnboardingGate><ExperienceSettings /></OnboardingGate>} />
+              <Route path="/settings/links" element={<OnboardingGate><LinksSettings /></OnboardingGate>} />
+              <Route path="/settings/privacy" element={<OnboardingGate><PrivacySettings /></OnboardingGate>} />
 
               {/* Me route */}
               <Route path="/me" element={<Navigate to="/app/profile" replace />} />
 
               <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/app/*" element={<AppDashboard />} />
+              <Route path="/app/*" element={<OnboardingGate><AppDashboard /></OnboardingGate>} />
               <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />
               <Route path="/collaborate" element={<AuthGuard><CollaborationsExample /></AuthGuard>} />
               <Route path="/connect" element={<AuthGuard><ConnectExample /></AuthGuard>} />

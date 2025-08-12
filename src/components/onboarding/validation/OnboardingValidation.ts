@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { isValidUsername, isUsernameAvailable, normalizeUsername } from '@/utils/username';
 
 export interface ValidationError {
   field: string;
@@ -55,16 +56,14 @@ const validateIdentityStep = async (data: OnboardingFormData, errors: Validation
   if (!data.username?.trim()) {
     errors.push({ field: 'username', message: 'Username is required' });
   } else {
-    // Check username format
-    const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
-    if (!usernameRegex.test(data.username)) {
+    const uname = normalizeUsername(data.username);
+    if (!isValidUsername(uname)) {
       errors.push({ 
         field: 'username', 
-        message: 'Username must be 3-20 characters and contain only letters, numbers, hyphens, and underscores' 
+        message: '3–30 chars; lowercase letters, numbers, . _ -' 
       });
     } else {
-      // Check username availability
-      const isAvailable = await checkUsernameAvailability(data.username);
+      const isAvailable = await isUsernameAvailable(uname);
       if (!isAvailable) {
         errors.push({ field: 'username', message: 'This username is already taken' });
       }

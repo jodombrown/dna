@@ -9,12 +9,12 @@ import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-const usernameRegex = /^[a-z0-9._-]{3,30}$/;
+import { USERNAME_REGEX as usernameRegex, isValidUsername, isUsernameAvailable, normalizeUsername } from "@/utils/username";
 
 const requiredSatisfied = (p: any) => {
   if (!p) return false;
   return Boolean(
-    p.first_name && p.last_name && p.username && p.location && p.avatar_url
+    p.full_name && p.username && (p.current_country || p.location) && p.avatar_url
   );
 };
 
@@ -41,7 +41,7 @@ const OnboardingBar: React.FC = () => {
 
   const isValid = useMemo(() => {
     const v = (username || '').toLowerCase();
-    return Boolean(firstName && lastName && location && avatar && usernameRegex.test(v) && !usernameError);
+    return Boolean(firstName && lastName && location && avatar && isValidUsername(v) && !usernameError);
   }, [firstName, lastName, location, avatar, username, usernameError]);
 
   useEffect(() => {
@@ -58,21 +58,15 @@ const OnboardingBar: React.FC = () => {
   if (!user || !show) return null;
 
   const checkUsername = async (val: string) => {
-    const v = val.toLowerCase();
-    if (!usernameRegex.test(v)) {
+    const v = normalizeUsername(val);
+    if (!isValidUsername(v)) {
       setUsernameError("3–30 chars; lowercase letters, numbers, . _ -");
       return false;
     }
     setChecking(true);
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("username", v)
-        .neq("id", user.id)
-        .maybeSingle();
-      if (error) throw error;
-      if (data) {
+      const ok = await isUsernameAvailable(v, user?.id);
+      if (!ok) {
         setUsernameError("Username already taken");
         return false;
       }
@@ -101,7 +95,8 @@ const OnboardingBar: React.FC = () => {
         first_name: firstName,
         middle_initial: middleInitial ? middleInitial[0].toUpperCase() : null,
         last_name: lastName,
-        username: username.toLowerCase(),
+        full_name: display,
+        username: normalizeUsername(username),
         location,
         avatar_url: avatar,
       };

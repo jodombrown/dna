@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { normalizeUsername } from '@/utils/username';
 
 // Import existing onboarding steps
 import IdentityStep from '@/components/onboarding/steps/IdentityStep';
@@ -166,7 +167,7 @@ const Onboarding = () => {
         id: user.id,
         email: user.email,
         full_name: formData.full_name,
-        username: formData.username,
+        username: normalizeUsername(formData.username),
         country_of_origin: formData.country_of_origin,
         current_country: formData.current_country,
         user_type: formData.user_type,
@@ -190,6 +191,7 @@ const Onboarding = () => {
         avatar_url: formData.avatar_url,
         agrees_to_values: formData.agrees_to_values,
         onboarding_stage: 'completed',
+        onboarding_completed_at: new Date().toISOString(),
         onboarding_recommendations_viewed: false,
         first_action_completed: false,
         is_public: true,
