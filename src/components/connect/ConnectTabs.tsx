@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 
 import EventRegistrationSidebar from './EventRegistrationSidebar';
 import ConnectTabsContent from './ConnectTabsContent';
 import ConnectDialogsManager from './ConnectDialogsManager';
+import DirectMessageDialog from './DirectMessageDialog';
 import { Tabs } from '@/components/ui/tabs';
 import { Professional, Community, Event } from '@/types/search';
 
@@ -42,6 +42,8 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
   const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
   const [professionalDialogOpen, setProfessionalDialogOpen] = useState(false);
   const [demoExplanationOpen, setDemoExplanationOpen] = useState(false);
+  const [dmDialogOpen, setDmDialogOpen] = useState(false);
+  const [dmRecipient, setDmRecipient] = useState<{ id: string; full_name: string; avatar_url?: string } | null>(null);
 
   const openRegistrationSidebar = (event: Event) => {
     const eventIndex = events.findIndex(e => e.id === event.id);
@@ -85,6 +87,17 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
     }
   };
 
+  const handleOpenDirectMessage = (recipientId: string, recipientName: string) => {
+    const prof = professionals.find(p => p.id === recipientId);
+    const recipient = prof
+      ? { id: prof.id, full_name: prof.full_name, avatar_url: (prof as any).avatar_url }
+      : { id: recipientId, full_name: recipientName };
+    setDmRecipient(recipient);
+    setDmDialogOpen(true);
+    // Preserve external side-effects (e.g., analytics/toast)
+    onMessage(recipientId, recipientName);
+  };
+
   return (
     <>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -94,7 +107,7 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
           communities={communities}
           events={events}
           onConnect={onConnect}
-          onMessage={onMessage}
+          onMessage={handleOpenDirectMessage}
           onJoinCommunity={onJoinCommunity}
           onEventClick={openRegistrationSidebar}
           onRegisterEvent={openRegistrationSidebar}
@@ -123,9 +136,15 @@ const ConnectTabs: React.FC<ConnectTabsProps> = ({
         selectedProfessional={selectedProfessional}
         onProfessionalDialogChange={setProfessionalDialogOpen}
         onConnect={onConnect}
-        onMessage={onMessage}
+        onMessage={handleOpenDirectMessage}
         demoExplanationOpen={demoExplanationOpen}
         onDemoExplanationChange={setDemoExplanationOpen}
+      />
+
+      <DirectMessageDialog
+        open={dmDialogOpen}
+        onOpenChange={setDmDialogOpen}
+        recipient={dmRecipient}
       />
     </>
   );

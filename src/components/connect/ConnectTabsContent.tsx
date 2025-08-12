@@ -213,7 +213,7 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
                   key={professional.id}
                   professional={professional}
                   onConnect={() => onCreatorClick(professional.id)}
-                  onMessage={() => onCreatorClick(professional.id)}
+                  onMessage={() => onMessage(professional.id, professional.full_name)}
                   connectionStatus={getConnectionStatus(professional.id)}
                   isLoggedIn={isLoggedIn}
                 />
