@@ -33,6 +33,9 @@ import AuthCallback from "./pages/AuthCallback";
 
 import UserDashboard from "./pages/UserDashboard";
 
+// Safety stub: guard against any stale references to removed dev route
+const DnaDev = () => null;
+
 import DnaMeRedirect from "./pages/DnaMeRedirect";
 import Events from "@/pages/app/Events";
 import EventNew from "@/pages/app/EventNew";
