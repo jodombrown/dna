@@ -6,12 +6,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import { eventCategories } from './eventData';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const EventCategoriesSection: React.FC = () => {
+  const navigate = useNavigate();
   const handleCategoryClick = (category: any) => {
+    navigate(`/events/category/${category.id}`);
     toast.info(`${category.name} Events`, {
       description: category.description,
-      duration: 4000,
+      duration: 3000,
     });
   };
 

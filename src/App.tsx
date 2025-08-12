@@ -44,6 +44,7 @@ import EventEdit from "@/pages/app/EventEdit";
 import EventManage from "@/pages/app/EventManage";
 import EventNewWizard from "@/pages/app/EventNewWizard";
 import EventsBySlug from "@/pages/app/EventsBySlug";
+import EventCategoryPage from "@/pages/app/EventCategoryPage";
 import EventJoin from "@/pages/app/EventJoin";
 import OpportunityNew from "@/pages/app/OpportunityNew";
 import Notifications from "@/pages/app/Notifications";
@@ -101,6 +102,7 @@ function App() {
         <Route path="/app/events/:id/manage" element={<EventManage />} />
         <Route path="/app/events/:id/checkin" element={<EventCheckIn />} />
         <Route path="/events/new" element={<EventNewWizard />} />
+        <Route path="/events/category/:slug" element={<EventCategoryPage />} />
         <Route path="/events/:slug" element={<EventsBySlug />} />
         <Route path="/events/:id/payment-success" element={<EventPaymentSuccess />} />
         <Route path="/join/:token" element={<EventJoin />} />
