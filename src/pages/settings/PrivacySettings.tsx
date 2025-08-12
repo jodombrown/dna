@@ -3,6 +3,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useUpdateProfile } from "@/hooks/useProfiles";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ui/confirm-dialog";
+import { supabase } from "@/integrations/supabase/client";
+import { Trash2 } from "lucide-react";
 
 const opts = [
   { key: "public", label: "Public" },
@@ -11,11 +14,13 @@ const opts = [
 ];
 
 const PrivacySettings: React.FC = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { data: profile, refetch } = useProfile();
   const { mutateAsync: updateProfile } = useUpdateProfile();
 
   const [visibility, setVisibility] = useState<any>({});
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (profile) setVisibility((profile as any).visibility || {});
@@ -29,6 +34,22 @@ const PrivacySettings: React.FC = () => {
     if (!user) return;
     await updateProfile({ id: user.id, updates: { visibility } as any });
     refetch();
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setIsDeleting(true);
+      const { error } = await supabase.functions.invoke('delete-account', { body: {} });
+      if (error) throw error;
+      await signOut();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Delete account failed:', error);
+      alert('Failed to delete account. Please try again.');
+    } finally {
+      setIsDeleting(false);
+      setDeleteOpen(false);
+    }
   };
 
   return (
@@ -56,6 +77,30 @@ const PrivacySettings: React.FC = () => {
           </div>
         ))}
         <Button onClick={onSave}>Save</Button>
+
+        <hr className="my-6" />
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold">Danger zone</h2>
+          <p className="text-sm text-muted-foreground">Permanently delete your account and data.</p>
+          <Button
+            variant="destructive"
+            onClick={() => setDeleteOpen(true)}
+            className="inline-flex items-center gap-2"
+          >
+            <Trash2 className="w-4 h-4" /> Delete Account
+          </Button>
+        </div>
+
+        <ConfirmDialog
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+          onConfirm={handleConfirmDelete}
+          title="Delete account"
+          description="This will permanently delete your account and data. This action cannot be undone."
+          confirmText={isDeleting ? 'Deleting…' : 'Delete'}
+          cancelText="Cancel"
+          variant="destructive"
+        />
       </div>
     </div>
   );

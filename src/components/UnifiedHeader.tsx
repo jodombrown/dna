@@ -296,7 +296,7 @@ const UnifiedHeader = () => {
                       <User className="w-5 h-5 mr-3" />
                       <span className="text-base">View Profile</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/app/settings')} className="py-3">
+                    <DropdownMenuItem onClick={() => navigate('/settings/privacy')} className="py-3">
                       <span className="text-base">Settings & Privacy</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
