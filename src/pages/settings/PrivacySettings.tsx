@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Trash2 } from "lucide-react";
+import SettingsNav from "./SettingsNav";
 
 const opts = [
   { key: "public", label: "Public" },
@@ -25,6 +26,25 @@ const PrivacySettings: React.FC = () => {
   useEffect(() => {
     if (profile) setVisibility((profile as any).visibility || {});
   }, [profile]);
+
+  useEffect(() => {
+    document.title = "Settings — Privacy | DNA";
+    const desc = "Control who can see your info: public, connections, or private.";
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = "description";
+      document.head.appendChild(meta);
+    }
+    meta.content = desc;
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'canonical';
+      document.head.appendChild(link);
+    }
+    link.href = window.location.href;
+  }, []);
 
   const setField = (field: string, value: string) => {
     setVisibility((v: any) => ({ ...v, [field]: value }));
@@ -55,6 +75,7 @@ const PrivacySettings: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <h1 className="text-xl font-semibold">Privacy</h1>
+      <SettingsNav active="privacy" />
       <p className="text-sm text-muted-foreground">Choose who can see each field. Public = visible to all; Connections = people you connect with; Private = only you.</p>
       <div className="space-y-4">
         {[
