@@ -12,11 +12,32 @@ import {
   HelpCircle,
   LogOut,
   ChevronRight,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  Trash2
 } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/confirm-dialog';
+import { supabase } from '@/integrations/supabase/client';
 
 const MobileSettingsView = () => {
   const { signOut } = useAuth();
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
+
+  const handleConfirmDelete = async () => {
+    try {
+      setIsDeleting(true);
+      const { error } = await supabase.functions.invoke('delete-account', { body: {} });
+      if (error) throw error;
+      await signOut();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Delete account failed:', error);
+      alert('Failed to delete account. Please try again.');
+    } finally {
+      setIsDeleting(false);
+      setDeleteOpen(false);
+    }
+  };
 
   const settingsGroups = [
     {
@@ -157,6 +178,21 @@ const MobileSettingsView = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Delete Account */}
+        <Card>
+          <CardContent className="p-0">
+            <Button
+              variant="ghost"
+              onClick={() => setDeleteOpen(true)}
+              className="w-full justify-start p-4 text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="w-5 h-5 mr-3" />
+              Delete Account
+            </Button>
+          </CardContent>
+        </Card>
+
       </div>
 
       {/* App Info */}
@@ -164,6 +200,17 @@ const MobileSettingsView = () => {
         <p className="text-sm">DNA Platform v1.0.0</p>
         <p className="text-xs mt-1">© 2024 Diaspora Network of Africa</p>
       </div>
+
+      <ConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={handleConfirmDelete}
+        title="Delete account"
+        description="This will permanently delete your account and data. This action cannot be undone."
+        confirmText={isDeleting ? 'Deleting…' : 'Delete'}
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 };
