@@ -4,18 +4,38 @@ import { Label } from '@/components/ui/label';
 import { MapPin, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+export type SelectedLocation = {
+  city: string;
+  region?: string;
+  countryCode: string;
+  countryName: string;
+  lat?: string;
+  lon?: string;
+  label: string;
+};
+
 interface LocationResult {
   display_name: string;
   place_id: string;
   lat: string;
   lon: string;
+  address?: {
+    city?: string;
+    town?: string;
+    village?: string;
+    hamlet?: string;
+    state?: string;
+    region?: string;
+    country?: string;
+    country_code?: string;
+  };
 }
-
 interface LocationAutocompleteProps {
   id?: string;
   label?: string;
   value: string;
   onChange: (value: string) => void;
+  onSelect?: (location: SelectedLocation) => void;
   placeholder?: string;
   required?: boolean;
   className?: string;
@@ -26,6 +46,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   label = 'Location',
   value,
   onChange,
+  onSelect,
   placeholder = 'Search for city, country...',
   required = false,
   className
@@ -34,6 +55,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<LocationResult[]>([]);
   const [searchTerm, setSearchTerm] = useState(value);
+  const [selected, setSelected] = useState<SelectedLocation | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -57,9 +79,10 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
           const data = await response.json();
           const formattedResults: LocationResult[] = data.map((item: any) => ({
             display_name: item.display_name,
-            place_id: item.place_id,
-            lat: item.lat,
-            lon: item.lon
+            place_id: String(item.place_id),
+            lat: String(item.lat),
+            lon: String(item.lon),
+            address: item.address || {}
           }));
           setResults(formattedResults);
           setIsOpen(formattedResults.length > 0);
@@ -79,26 +102,36 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setSearchTerm(newValue);
+    setSelected(null);
     onChange(newValue);
   };
 
   // Handle result selection
   const handleResultSelect = (result: LocationResult) => {
-    // Format the result for better display (City, Country)
-    const parts = result.display_name.split(', ');
-    let formattedLocation = '';
-    
-    if (parts.length >= 2) {
-      // Try to get city and country
-      const country = parts[parts.length - 1];
-      const city = parts[0];
-      formattedLocation = `${city}, ${country}`;
-    } else {
-      formattedLocation = result.display_name;
-    }
-    
-    setSearchTerm(formattedLocation);
-    onChange(formattedLocation);
+    const addr = result.address || {};
+    const city = addr.city || addr.town || addr.village || addr.hamlet || '';
+    const region = addr.state || addr.region || '';
+    const countryName = addr.country || '';
+    const countryCode = (addr.country_code || '').toUpperCase();
+
+    const pieces = [city, region, countryName].filter(Boolean);
+    const label = pieces.length ? pieces.join(', ') : result.display_name;
+
+    const sel: SelectedLocation = {
+      city,
+      region: region || undefined,
+      countryCode,
+      countryName,
+      lat: result.lat,
+      lon: result.lon,
+      label,
+    };
+
+    setSelected(sel);
+    setSearchTerm(label);
+    onSelect?.(sel);
+    // Backward compatibility: keep emitting the display label to onChange
+    onChange(label);
     setIsOpen(false);
     setResults([]);
   };
