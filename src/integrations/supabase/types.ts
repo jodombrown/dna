@@ -2441,8 +2441,12 @@ export type Database = {
           country_of_origin: string | null
           country_origin: string | null
           created_at: string
+          current_city: string | null
           current_country: string | null
+          current_country_code: string | null
+          current_country_name: string | null
           current_location: string | null
+          current_region: string | null
           dashboard_version: string | null
           diaspora_origin: string | null
           display_name: string | null
@@ -2480,6 +2484,8 @@ export type Database = {
           onboarding_progress: Json
           onboarding_recommendations_viewed: boolean | null
           onboarding_stage: string | null
+          origin_country_code: string | null
+          origin_country_name: string | null
           preferred_contact: string | null
           profession: string | null
           professional_role: string | null
@@ -2530,8 +2536,12 @@ export type Database = {
           country_of_origin?: string | null
           country_origin?: string | null
           created_at?: string
+          current_city?: string | null
           current_country?: string | null
+          current_country_code?: string | null
+          current_country_name?: string | null
           current_location?: string | null
+          current_region?: string | null
           dashboard_version?: string | null
           diaspora_origin?: string | null
           display_name?: string | null
@@ -2569,6 +2579,8 @@ export type Database = {
           onboarding_progress?: Json
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
+          origin_country_code?: string | null
+          origin_country_name?: string | null
           preferred_contact?: string | null
           profession?: string | null
           professional_role?: string | null
@@ -2619,8 +2631,12 @@ export type Database = {
           country_of_origin?: string | null
           country_origin?: string | null
           created_at?: string
+          current_city?: string | null
           current_country?: string | null
+          current_country_code?: string | null
+          current_country_name?: string | null
           current_location?: string | null
+          current_region?: string | null
           dashboard_version?: string | null
           diaspora_origin?: string | null
           display_name?: string | null
@@ -2658,6 +2674,8 @@ export type Database = {
           onboarding_progress?: Json
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
+          origin_country_code?: string | null
+          origin_country_name?: string | null
           preferred_contact?: string | null
           profession?: string | null
           professional_role?: string | null
