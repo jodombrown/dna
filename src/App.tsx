@@ -54,6 +54,7 @@ import ProfileSettings from "@/pages/settings/ProfileSettings";
 import ExperienceSettings from "@/pages/settings/ExperienceSettings";
 import LinksSettings from "@/pages/settings/LinksSettings";
 import PrivacySettings from "@/pages/settings/PrivacySettings";
+import ConnectionDetailPage from "@/pages/app/ConnectionDetailPage";
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,7 @@ function App() {
         <Route path="/join/:token" element={<EventJoin />} />
               <Route path="/app/opportunities/new" element={<OpportunityNew />} />
               <Route path="/app/notifications" element={<Notifications />} />
+              <Route path="/app/connections/:id" element={<ConnectionDetailPage />} />
               
               {/* Settings */}
               <Route path="/settings/profile" element={<ProfileSettings />} />

@@ -3560,6 +3560,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      accept_connection: {
+        Args: { p_connection: string }
+        Returns: undefined
+      }
       add_message_reaction: {
         Args: { p_message_id: string; p_user_id: string; p_reaction: string }
         Returns: undefined
@@ -3684,6 +3688,10 @@ export type Database = {
       enqueue_reminders_for_all_users: {
         Args: Record<PropertyKey, never>
         Returns: number
+      }
+      ensure_connection: {
+        Args: { u1: string; u2: string }
+        Returns: string
       }
       ensure_profile_for_user: {
         Args: { p_user: string; p_email?: string }
@@ -3821,6 +3829,10 @@ export type Database = {
         Args: { _user_id: string }
         Returns: boolean
       }
+      is_connection_participant: {
+        Args: { p_connection: string }
+        Returns: boolean
+      }
       is_event_owner: {
         Args: { p_event: string; p_user: string }
         Returns: boolean
@@ -3841,6 +3853,10 @@ export type Database = {
       is_user_admin: {
         Args: { user_id: string }
         Returns: boolean
+      }
+      log_connection_event: {
+        Args: { p_connection: string; p_event_type: string; p_payload?: Json }
+        Returns: string
       }
       log_engagement_event: {
         Args: {
@@ -4139,7 +4155,7 @@ export type Database = {
           p_notes?: string
           p_visibility?: string
         }
-        Returns: undefined
+        Returns: string
       }
       trigger_adin_prompt: {
         Args: { target_user_id: string; event_type: string }
