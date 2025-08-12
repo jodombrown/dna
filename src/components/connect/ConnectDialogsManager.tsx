@@ -2,6 +2,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Professional } from '@/types/search';
+import ProfessionalProfilePreview from './ProfessionalProfilePreview';
 
 interface ConnectDialogsManagerProps {
   // Professional Profile Dialog
@@ -34,97 +35,17 @@ const ConnectDialogsManager: React.FC<ConnectDialogsManagerProps> = ({
             <DialogTitle>Professional Profile</DialogTitle>
           </DialogHeader>
           {selectedProfessional && (
-            <div className="space-y-6">
-              {/* Header */}
-              <div className="flex items-start gap-4">
-                <img
-                  src={selectedProfessional.avatar_url}
-                  alt={`${selectedProfessional.full_name} profile photo`}
-                  className="w-24 h-24 rounded-full object-cover border"
-                />
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-gray-900">{selectedProfessional.full_name}</h3>
-                  {selectedProfessional.profession && (
-                    <p className="text-dna-emerald font-semibold">{selectedProfessional.profession}</p>
-                  )}
-                  {selectedProfessional.company && (
-                    <p className="text-gray-600">{selectedProfessional.company}</p>
-                  )}
-                  {selectedProfessional.location && (
-                    <p className="text-gray-500 text-sm">{selectedProfessional.location}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Quick actions */}
-              <div className="flex gap-3">
-                <Button 
-                  className="bg-dna-emerald hover:bg-dna-forest text-white"
-                  onClick={() => {
-                    onConnect(selectedProfessional.id);
-                    onProfessionalDialogChange(false);
-                  }}
-                >
-                  Connect
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => {
-                    onMessage(selectedProfessional.id, selectedProfessional.full_name);
-                    onProfessionalDialogChange(false);
-                  }}
-                >
-                  Message
-                </Button>
-              </div>
-
-              {/* Overview */}
-              <section>
-                <h4 className="font-semibold text-gray-900 mb-2">About</h4>
-                <p className="text-gray-700">
-                  {selectedProfessional.bio || 'This professional has not added a bio yet.'}
-                </p>
-              </section>
-
-              {selectedProfessional.skills && selectedProfessional.skills.length > 0 && (
-                <section>
-                  <h4 className="font-semibold text-gray-900 mb-2">Skills</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedProfessional.skills.slice(0, 10).map((skill, index) => (
-                      <span key={index} className="px-3 py-1 bg-dna-emerald/10 text-dna-emerald rounded-full text-sm">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {(selectedProfessional.years_experience !== undefined || selectedProfessional.education || selectedProfessional.languages) && (
-                <section>
-                  <h4 className="font-semibold text-gray-900 mb-2">Experience</h4>
-                  <div className="grid sm:grid-cols-2 gap-4 text-sm text-gray-700">
-                    {selectedProfessional.years_experience !== undefined && (
-                      <div>
-                        <div className="text-gray-500">Years of Experience</div>
-                        <div className="font-medium">{selectedProfessional.years_experience}+</div>
-                      </div>
-                    )}
-                    {selectedProfessional.education && (
-                      <div>
-                        <div className="text-gray-500">Education</div>
-                        <div className="font-medium">{selectedProfessional.education}</div>
-                      </div>
-                    )}
-                    {selectedProfessional.languages && (
-                      <div className="sm:col-span-2">
-                        <div className="text-gray-500">Languages</div>
-                        <div className="font-medium">{selectedProfessional.languages.join(', ')}</div>
-                      </div>
-                    )}
-                  </div>
-                </section>
-              )}
-            </div>
+            <ProfessionalProfilePreview 
+              professional={selectedProfessional}
+              onConnect={(id) => {
+                onConnect(id);
+                onProfessionalDialogChange(false);
+              }}
+              onMessage={(id, name) => {
+                onMessage(id, name);
+                onProfessionalDialogChange(false);
+              }}
+            />
           )}
         </DialogContent>
       </Dialog>
