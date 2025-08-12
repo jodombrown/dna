@@ -125,6 +125,91 @@ export type Database = {
         }
         Relationships: []
       }
+      adin_nudges: {
+        Row: {
+          connection_id: string
+          created_at: string
+          id: string
+          message: string
+          nudge_type: string
+          payload: Json | null
+          resolved_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          connection_id: string
+          created_at?: string
+          id?: string
+          message: string
+          nudge_type: string
+          payload?: Json | null
+          resolved_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          connection_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          nudge_type?: string
+          payload?: Json | null
+          resolved_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adin_nudges_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      adin_recommendations: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          for_connection_id: string | null
+          id: string
+          payload: Json | null
+          rec_type: string
+          score: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          for_connection_id?: string | null
+          id?: string
+          payload?: Json | null
+          rec_type: string
+          score?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          for_connection_id?: string | null
+          id?: string
+          payload?: Json | null
+          rec_type?: string
+          score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adin_recommendations_for_connection_id_fkey"
+            columns: ["for_connection_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       adin_signals: {
         Row: {
           created_at: string | null
@@ -712,6 +797,156 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      connection_events: {
+        Row: {
+          actor: string | null
+          connection_id: string
+          created_at: string
+          event_type: string
+          id: string
+          payload: Json | null
+        }
+        Insert: {
+          actor?: string | null
+          connection_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          payload?: Json | null
+        }
+        Update: {
+          actor?: string | null
+          connection_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          payload?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connection_events_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connection_intentions: {
+        Row: {
+          by_user: string
+          connection_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          target_outcome: string | null
+          type: string
+          visibility: string
+        }
+        Insert: {
+          by_user: string
+          connection_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          target_outcome?: string | null
+          type: string
+          visibility?: string
+        }
+        Update: {
+          by_user?: string
+          connection_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          target_outcome?: string | null
+          type?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connection_intentions_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connection_preferences: {
+        Row: {
+          channels: string[] | null
+          connection_id: string
+          created_at: string
+          id: string
+          next_review_at: string | null
+          nudge_cadence: string
+          snoozed_until: string | null
+          user_id: string
+        }
+        Insert: {
+          channels?: string[] | null
+          connection_id: string
+          created_at?: string
+          id?: string
+          next_review_at?: string | null
+          nudge_cadence?: string
+          snoozed_until?: string | null
+          user_id: string
+        }
+        Update: {
+          channels?: string[] | null
+          connection_id?: string
+          created_at?: string
+          id?: string
+          next_review_at?: string | null
+          nudge_cadence?: string
+          snoozed_until?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connection_preferences_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connections: {
+        Row: {
+          a: string
+          adin_health: number
+          adin_health_reason: string | null
+          b: string
+          created_at: string
+          id: string
+          last_interaction_at: string | null
+          status: string
+        }
+        Insert: {
+          a: string
+          adin_health?: number
+          adin_health_reason?: string | null
+          b: string
+          created_at?: string
+          id?: string
+          last_interaction_at?: string | null
+          status: string
+        }
+        Update: {
+          a?: string
+          adin_health?: number
+          adin_health_reason?: string | null
+          b?: string
+          created_at?: string
+          id?: string
+          last_interaction_at?: string | null
+          status?: string
+        }
+        Relationships: []
       }
       contact_requests: {
         Row: {
@@ -1539,6 +1774,51 @@ export type Database = {
           },
         ]
       }
+      impact_attributions: {
+        Row: {
+          connection_id: string
+          created_at: string
+          id: string
+          impact_type: string | null
+          metric: Json | null
+          source_event_id: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          connection_id: string
+          created_at?: string
+          id?: string
+          impact_type?: string | null
+          metric?: Json | null
+          source_event_id?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          connection_id?: string
+          created_at?: string
+          id?: string
+          impact_type?: string | null
+          metric?: Json | null
+          source_event_id?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impact_attributions_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "impact_attributions_source_event_id_fkey"
+            columns: ["source_event_id"]
+            isOneToOne: false
+            referencedRelation: "connection_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       impact_badges: {
         Row: {
           active: boolean
@@ -2140,10 +2420,12 @@ export type Database = {
       profiles: {
         Row: {
           account_visibility: string | null
+          adin_mode: string | null
           adin_prompt_status: string | null
           advocacy_interests: string[] | null
           agrees_to_values: boolean | null
           available_for: string[] | null
+          available_hours_per_month: number | null
           avatar_url: string | null
           banner_url: string | null
           beta_expires_at: string | null
@@ -2175,6 +2457,7 @@ export type Database = {
           id: string
           impact_areas: string[] | null
           impact_goals: string[] | null
+          impact_regions: string[] | null
           industry: string | null
           interest_tags: string[] | null
           interests: string[] | null
@@ -2189,12 +2472,15 @@ export type Database = {
           location: string | null
           mentorship_interest: string[] | null
           middle_initial: string | null
+          needs: string[] | null
           newsletter_emails: boolean | null
           notification_preferences: Json | null
+          offers: string[] | null
           onboarding_completed_at: string | null
           onboarding_progress: Json
           onboarding_recommendations_viewed: boolean | null
           onboarding_stage: string | null
+          preferred_contact: string | null
           profession: string | null
           professional_role: string | null
           profile_completeness_score: number | null
@@ -2203,6 +2489,7 @@ export type Database = {
           referral_code: string | null
           referrer_id: string | null
           role: string | null
+          sdg_focus: string[] | null
           sectors: string[] | null
           selected_pillars: string[] | null
           skills: string[] | null
@@ -2222,10 +2509,12 @@ export type Database = {
         }
         Insert: {
           account_visibility?: string | null
+          adin_mode?: string | null
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           agrees_to_values?: boolean | null
           available_for?: string[] | null
+          available_hours_per_month?: number | null
           avatar_url?: string | null
           banner_url?: string | null
           beta_expires_at?: string | null
@@ -2257,6 +2546,7 @@ export type Database = {
           id: string
           impact_areas?: string[] | null
           impact_goals?: string[] | null
+          impact_regions?: string[] | null
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
@@ -2271,12 +2561,15 @@ export type Database = {
           location?: string | null
           mentorship_interest?: string[] | null
           middle_initial?: string | null
+          needs?: string[] | null
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
+          offers?: string[] | null
           onboarding_completed_at?: string | null
           onboarding_progress?: Json
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
+          preferred_contact?: string | null
           profession?: string | null
           professional_role?: string | null
           profile_completeness_score?: number | null
@@ -2285,6 +2578,7 @@ export type Database = {
           referral_code?: string | null
           referrer_id?: string | null
           role?: string | null
+          sdg_focus?: string[] | null
           sectors?: string[] | null
           selected_pillars?: string[] | null
           skills?: string[] | null
@@ -2304,10 +2598,12 @@ export type Database = {
         }
         Update: {
           account_visibility?: string | null
+          adin_mode?: string | null
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           agrees_to_values?: boolean | null
           available_for?: string[] | null
+          available_hours_per_month?: number | null
           avatar_url?: string | null
           banner_url?: string | null
           beta_expires_at?: string | null
@@ -2339,6 +2635,7 @@ export type Database = {
           id?: string
           impact_areas?: string[] | null
           impact_goals?: string[] | null
+          impact_regions?: string[] | null
           industry?: string | null
           interest_tags?: string[] | null
           interests?: string[] | null
@@ -2353,12 +2650,15 @@ export type Database = {
           location?: string | null
           mentorship_interest?: string[] | null
           middle_initial?: string | null
+          needs?: string[] | null
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
+          offers?: string[] | null
           onboarding_completed_at?: string | null
           onboarding_progress?: Json
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
+          preferred_contact?: string | null
           profession?: string | null
           professional_role?: string | null
           profile_completeness_score?: number | null
@@ -2367,6 +2667,7 @@ export type Database = {
           referral_code?: string | null
           referrer_id?: string | null
           role?: string | null
+          sdg_focus?: string[] | null
           sectors?: string[] | null
           selected_pillars?: string[] | null
           skills?: string[] | null
@@ -3533,6 +3834,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_participant_of_connection: {
+        Args: { p_connection: string; p_user: string }
+        Returns: boolean
+      }
       is_user_admin: {
         Args: { user_id: string }
         Returns: boolean
@@ -3584,6 +3889,10 @@ export type Database = {
       }
       reset_seeded_data: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      resolve_nudge: {
+        Args: { p_nudge: string; p_status: string; p_snooze_until?: string }
         Returns: undefined
       }
       rpc_adin_recommend_opportunities: {
@@ -3822,6 +4131,15 @@ export type Database = {
           p_body: string
         }
         Returns: string
+      }
+      set_connection_intention: {
+        Args: {
+          p_connection: string
+          p_type: string
+          p_notes?: string
+          p_visibility?: string
+        }
+        Returns: undefined
       }
       trigger_adin_prompt: {
         Args: { target_user_id: string; event_type: string }
