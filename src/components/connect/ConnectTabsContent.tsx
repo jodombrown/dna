@@ -236,7 +236,7 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
       </TabsContent>
 
       <TabsContent value="communities">
-        {communities.length === 0 ? (
+        {allCommunities.length === 0 ? (
           <EmptyState type="communities" onRefresh={onRefresh} />
         ) : (
           <div className="space-y-8">

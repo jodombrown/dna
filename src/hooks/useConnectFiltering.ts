@@ -32,72 +32,70 @@ export const useConnectFiltering = (searchTerm: string, filters: FilterState) =>
       updated_at: '2024-01-01T00:00:00Z'
     }));
     
-    const filteredProfessionals = convertedProfessionals.filter(prof => {
-      // Text search
-      const matchesText = !searchTerm || 
-        prof.full_name.toLowerCase().includes(filterText) ||
-        prof.profession.toLowerCase().includes(filterText) ||
-        prof.company?.toLowerCase().includes(filterText) ||
-        prof.location?.toLowerCase().includes(filterText) ||
-        prof.country_of_origin?.toLowerCase().includes(filterText) ||
-        prof.bio?.toLowerCase().includes(filterText);
-      
-      // Location filter  
-      const matchesLocation = !filters.location || filters.location === 'all' || 
-        prof.location?.toLowerCase() === filters.location.toLowerCase() ||
-        prof.location?.toLowerCase().includes(filters.location.toLowerCase());
-      
-      // Skills filter
-      const matchesSkills = filters.skills.length === 0 ||
-        filters.skills.some(skill => 
-          prof.skills?.some(profSkill => 
-            profSkill.toLowerCase().includes(skill.toLowerCase())
-          )
-        );
-      
-      return matchesText && matchesLocation && matchesSkills;
-    });
+    const textMatch = (value?: string) => !searchTerm || value?.toLowerCase().includes(filterText);
+    const locationMatch = (value?: string) => !filters.location || filters.location === 'all' || value?.toLowerCase().includes(filters.location.toLowerCase());
+    const skillsMatch = (skills?: string[]) => filters.skills.length === 0 || filters.skills.some(skill => skills?.some(s => s.toLowerCase().includes(skill.toLowerCase())));
 
-    const filteredCommunities = demoCommunities.filter(comm => {
-      // Text search
+    // Professionals
+    let filteredProfessionals = convertedProfessionals.filter(prof => (
+      // AND of individual matches
+      textMatch(prof.full_name) || textMatch(prof.profession) || textMatch(prof.company) || textMatch(prof.location) || textMatch(prof.country_of_origin) || textMatch(prof.bio)
+    ) && locationMatch(prof.location) && skillsMatch(prof.skills));
+
+    // Graceful fallback: if none, relax progressively
+    if (filteredProfessionals.length === 0) {
+      // Try location + skills only
+      filteredProfessionals = convertedProfessionals.filter(prof => locationMatch(prof.location) && skillsMatch(prof.skills));
+    }
+    if (filteredProfessionals.length === 0) {
+      // Try text only
+      filteredProfessionals = convertedProfessionals.filter(prof => (
+        textMatch(prof.full_name) || textMatch(prof.profession) || textMatch(prof.company) || textMatch(prof.location) || textMatch(prof.country_of_origin) || textMatch(prof.bio)
+      ));
+    }
+    if (filteredProfessionals.length === 0) {
+      // Top picks default
+      filteredProfessionals = convertedProfessionals.slice(0, 12);
+    }
+
+    // Communities
+    let filteredCommunities = demoCommunities.filter(comm => {
       const matchesText = !searchTerm || 
         comm.name.toLowerCase().includes(filterText) ||
         comm.description.toLowerCase().includes(filterText) ||
         comm.category.toLowerCase().includes(filterText);
-      
-      // Category filter (using skills filter for community categories)
       const matchesCategory = filters.skills.length === 0 ||
         filters.skills.some(skill => 
           comm.category.toLowerCase().includes(skill.toLowerCase()) ||
           comm.name.toLowerCase().includes(skill.toLowerCase()) ||
           comm.description.toLowerCase().includes(skill.toLowerCase())
         );
-      
       return matchesText && matchesCategory;
     });
+    if (filteredCommunities.length === 0) {
+      filteredCommunities = demoCommunities.slice(0, 9);
+    }
 
-    const filteredEvents = demoEvents.filter(event => {
-      // Text search
+    // Events
+    let filteredEvents = demoEvents.filter(event => {
       const matchesText = !searchTerm || 
         event.title.toLowerCase().includes(filterText) ||
         event.description?.toLowerCase().includes(filterText) ||
         event.location?.toLowerCase().includes(filterText) ||
         event.type?.toLowerCase().includes(filterText);
-      
-      // Location filter
       const matchesLocation = !filters.location || filters.location === 'all' || 
         event.location?.toLowerCase().includes(filters.location.toLowerCase());
-      
-      // Type/Skills filter (using skills filter for event types and categories)
       const matchesType = filters.skills.length === 0 ||
         filters.skills.some(skill => 
           event.type?.toLowerCase().includes(skill.toLowerCase()) ||
           event.title.toLowerCase().includes(skill.toLowerCase()) ||
           event.description?.toLowerCase().includes(skill.toLowerCase())
         );
-      
       return matchesText && matchesLocation && matchesType;
     });
+    if (filteredEvents.length === 0) {
+      filteredEvents = demoEvents.slice(0, 6);
+    }
 
     return {
       professionals: filteredProfessionals,
