@@ -41,9 +41,13 @@ const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     // Step 1: Identity
+    first_name: '',
+    last_name: '',
     full_name: user?.user_metadata?.full_name || '',
     username: '',
     country_of_origin: '',
+    current_country_code: '',
+    current_country_name: '',
     current_country: '',
     
     // Step 2: User Type
@@ -117,7 +121,12 @@ const Onboarding = () => {
   const canProceedToNext = () => {
     switch (currentStep) {
       case 0: // Identity
-        return formData.full_name && formData.username && formData.country_of_origin;
+        return Boolean(
+          formData.first_name &&
+          formData.last_name &&
+          formData.username &&
+          formData.current_country_code
+        );
       case 1: // User Type
         return formData.user_type;
       case 2: // Pillars
@@ -166,10 +175,14 @@ const Onboarding = () => {
       const profileData = {
         id: user.id,
         email: user.email,
-        full_name: formData.full_name,
+        full_name: `${(formData.first_name || '').trim()} ${(formData.last_name || '').trim()}`.trim().replace(/\s+/g, ' '),
+        first_name: formData.first_name,
+        last_name: formData.last_name,
         username: normalizeUsername(formData.username),
         country_of_origin: formData.country_of_origin,
-        current_country: formData.current_country,
+        current_country_code: formData.current_country_code,
+        current_country_name: formData.current_country_name,
+        current_country: formData.current_country_name,
         user_type: formData.user_type,
         selected_pillars: formData.selected_pillars,
         what_to_give: formData.what_to_give,

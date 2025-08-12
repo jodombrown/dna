@@ -3,7 +3,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import LocationAutocomplete from '@/components/ui/location-autocomplete';
+import CountrySelect from '@/components/ui/CountrySelect';
 import UsernameManager from '@/components/profile/UsernameManager';
 
 interface IdentityStepProps {
@@ -93,15 +93,26 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
         <p className="text-gray-600">Your identity connects you to the diaspora community</p>
       </div>
 
-      {/* Full Name */}
-      <div>
-        <Label htmlFor="full-name">Full Name *</Label>
-        <Input
-          id="full-name"
-          value={data.full_name || ''}
-          onChange={(e) => updateData({ full_name: e.target.value })}
-          placeholder="Enter your full name"
-        />
+      {/* Name */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="first-name">First Name *</Label>
+          <Input
+            id="first-name"
+            value={data.first_name || ''}
+            onChange={(e) => updateData({ first_name: e.target.value })}
+            placeholder="First Name"
+          />
+        </div>
+        <div>
+          <Label htmlFor="last-name">Last Name *</Label>
+          <Input
+            id="last-name"
+            value={data.last_name || ''}
+            onChange={(e) => updateData({ last_name: e.target.value })}
+            placeholder="Last Name"
+          />
+        </div>
       </div>
 
       {/* Username */}
@@ -131,14 +142,12 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, updateData }) => {
         </Select>
       </div>
 
-      {/* Current Location */}
+      {/* Current Country */}
       <div>
-        <LocationAutocomplete
-          id="current-location"
-          label="Current Location"
-          value={data.current_country || ''}
-          onChange={(value) => updateData({ current_country: value })}
-          placeholder="Start typing your current location..."
+        <Label>Current Country *</Label>
+        <CountrySelect
+          value={data.current_country_code || ''}
+          onChange={(code, name) => updateData({ current_country_code: code, current_country_name: name })}
         />
       </div>
     </div>
