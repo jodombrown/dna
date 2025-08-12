@@ -10,15 +10,14 @@ export function useAdinRecommendations(forConnectionId?: string) {
     let mounted = true;
     const run = async () => {
       setLoading(true);
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("adin_recommendations")
         .select("*")
         .order("score", { ascending: false })
-        .limit(10)
-        .maybeSingle();
+        .limit(10);
 
       if (mounted) {
-        setItems(data ? [data] : []);
+        setItems(data ?? []);
         setLoading(false);
       }
     };
