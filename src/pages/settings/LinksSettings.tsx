@@ -5,6 +5,7 @@ import { useUpdateProfile } from "@/hooks/useProfiles";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import SettingsNav from "./SettingsNav";
 
 const LinksSettings: React.FC = () => {
   const { user } = useAuth();
@@ -25,6 +26,25 @@ const LinksSettings: React.FC = () => {
     }
   }, [profile]);
 
+  useEffect(() => {
+    document.title = "Settings — Links | DNA";
+    const desc = "Manage your website and social links on DNA.";
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = "description";
+      document.head.appendChild(meta);
+    }
+    meta.content = desc;
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'canonical';
+      document.head.appendChild(link);
+    }
+    link.href = window.location.href;
+  }, []);
+
   const onSave = async () => {
     if (!user) return;
     try {
@@ -43,6 +63,7 @@ const LinksSettings: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <h1 className="text-xl font-semibold">Links</h1>
+      <SettingsNav active="links" />
       <div className="space-y-4">
         <div>
           <label className="text-sm text-muted-foreground">Website</label>

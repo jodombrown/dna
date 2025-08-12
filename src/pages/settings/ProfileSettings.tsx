@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import AvatarUploader from "@/components/uploader/AvatarUploader";
 import { useToast } from "@/hooks/use-toast";
 import LocationTypeahead from "@/components/location/LocationTypeahead";
+import SettingsNav from "./SettingsNav";
 
 const ProfileSettings: React.FC = () => {
   const { user } = useAuth();
@@ -29,6 +30,25 @@ const ProfileSettings: React.FC = () => {
       setOrg((profile as any).company || "");
     }
   }, [profile]);
+
+  useEffect(() => {
+    document.title = "Settings — Profile | DNA";
+    const desc = "Update your profile details, avatar, and location on DNA.";
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = "description";
+      document.head.appendChild(meta);
+    }
+    meta.content = desc;
+    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'canonical';
+      document.head.appendChild(link);
+    }
+    link.href = window.location.href;
+  }, []);
 
   const completion = useMemo(() => {
     let c = 0;
@@ -62,6 +82,7 @@ const ProfileSettings: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       <h1 className="text-xl font-semibold">Profile Settings</h1>
+      <SettingsNav active="profile" />
       <div className="space-y-4">
         <div>
           <label className="text-sm text-muted-foreground">Avatar</label>
