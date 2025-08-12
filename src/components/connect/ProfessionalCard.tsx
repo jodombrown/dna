@@ -80,21 +80,13 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
   const handleConnectClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isLoggedIn) {
-      onConnect();
-    } else {
-      setIsConnectDialogOpen(true);
-    }
+    onConnect();
   };
 
   const handleMessageClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isLoggedIn) {
-      onMessage();
-    } else {
-      setIsMessageDialogOpen(true);
-    }
+    onMessage();
   };
 
   return (
