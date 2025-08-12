@@ -222,10 +222,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setProfile(null);
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      try { localStorage.removeItem('dna_dev'); } catch {}
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+    }
   };
-
   const updatePassword = async (password: string) => {
     const { error } = await supabase.auth.updateUser({
       password: password

@@ -72,6 +72,7 @@ const UnifiedHeader = () => {
 
   const isAuthenticated = !!user;
   const currentPath = location.pathname;
+  const isAppRoute = currentPath.startsWith('/app');
 
   // Navigation items for authenticated users
   const authNavigationItems = [
@@ -158,7 +159,7 @@ const UnifiedHeader = () => {
               </NavLink>
               
               {/* Search - only for authenticated users */}
-              {isAuthenticated && (
+              {isAuthenticated && isAppRoute && (
                 <>
                   <div className="relative hidden sm:block">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -185,7 +186,7 @@ const UnifiedHeader = () => {
             </div>
 
             {/* Center section - Navigation for authenticated users */}
-            {isAuthenticated && (
+            {isAuthenticated && isAppRoute && (
               <nav className="hidden lg:flex items-center space-x-8">
                 {authNavigationItems.map((item) => {
                   const isActive = location.pathname === '/app' && activeView === item.view;
@@ -209,9 +210,9 @@ const UnifiedHeader = () => {
 
             {/* Right section - Navigation and Profile */}
             <div className="flex items-center space-x-4">
-              {isAuthenticated && <NotificationsBell />}
+              {isAuthenticated && isAppRoute && <NotificationsBell />}
               {/* Desktop Navigation for unauthenticated users */}
-              {!isAuthenticated && (
+              {(!isAuthenticated || !isAppRoute) && (
                 <>
                   <nav className="hidden md:flex items-center space-x-6">
                     {publicNavItems.filter(item => item.path !== currentPath).map((item) => (
@@ -264,18 +265,20 @@ const UnifiedHeader = () => {
                     </NavigationMenu>
                   </nav>
                   
-                  <Button
-                    variant="default"
-                    onClick={handleSignInClick}
-                    className="hidden md:inline-flex bg-dna-copper text-white hover:bg-primary"
-                  >
-                    Sign In
-                  </Button>
+                  {!isAuthenticated && (
+                    <Button
+                      variant="default"
+                      onClick={handleSignInClick}
+                      className="hidden md:inline-flex bg-dna-copper text-white hover:bg-primary"
+                    >
+                      Sign In
+                    </Button>
+                  )}
                 </>
               )}
 
               {/* Profile Menu for authenticated users */}
-              {isAuthenticated && (
+              {isAuthenticated && isAppRoute && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex flex-col items-center px-2 py-2 h-auto">
@@ -336,7 +339,7 @@ const UnifiedHeader = () => {
                     <ScrollArea className="flex-1 overflow-y-auto">
                       <nav className="flex flex-col space-y-1 p-4 sm:p-6 pb-20">
                         {/* Show different navigation based on auth status */}
-                        {isAuthenticated ? (
+                        {isAuthenticated && isAppRoute ? (
                           <>
                             {authNavigationItems.map((item) => (
                               <Button
