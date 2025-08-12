@@ -106,12 +106,12 @@ function App() {
               {/* Dashboard V1 Archive Route - MUST come before /app/* */}
               <Route path="/app/v1/*" element={<Navigate to="/app/dashboard" replace />} />
               
-        <Route path="/app/events" element={<Events />} />
-        <Route path="/app/events/new" element={<Navigate to="/events/new" replace />} />
-        <Route path="/app/events/:id" element={<EventDetail />} />
-        <Route path="/app/events/:id/edit" element={<EventEdit />} />
-        <Route path="/app/events/:id/manage" element={<EventManage />} />
-        <Route path="/app/events/:id/checkin" element={<EventCheckIn />} />
+        <Route path="/app/events" element={<OnboardingGate><Events /></OnboardingGate>} />
+        <Route path="/app/events/new" element={<OnboardingGate><Navigate to="/events/new" replace /></OnboardingGate>} />
+        <Route path="/app/events/:id" element={<OnboardingGate><EventDetail /></OnboardingGate>} />
+        <Route path="/app/events/:id/edit" element={<OnboardingGate><EventEdit /></OnboardingGate>} />
+        <Route path="/app/events/:id/manage" element={<OnboardingGate><EventManage /></OnboardingGate>} />
+        <Route path="/app/events/:id/checkin" element={<OnboardingGate><EventCheckIn /></OnboardingGate>} />
         <Route path="/events/new" element={<EventNewWizard />} />
         <Route path="/events/category/:slug" element={<EventCategoryPage />} />
         <Route path="/events/:slug" element={<EventsBySlug />} />
