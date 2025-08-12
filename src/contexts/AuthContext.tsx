@@ -59,43 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Dev bypass: silently bypass Supabase auth with mock user/profile (no banner)
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const devFlag = params.get('dev') === '1' || window.location.pathname.includes('/app/dev') || window.location.pathname.includes('/dna/dev');
-      const devLocal = typeof localStorage !== 'undefined' && localStorage.getItem('dna_dev') === '1';
-      const isDev = devFlag || devLocal;
-
-      if (isDev) {
-        if (devFlag) {
-          try { localStorage.setItem('dna_dev', '1'); } catch {}
-        }
-        const mockUser = ({
-          id: '00000000-0000-0000-0000-000000000002',
-          email: 'dev@diasporanetwork.africa',
-          app_metadata: { provider: 'dev' },
-          user_metadata: { full_name: 'Dev Bypass' },
-          aud: 'authenticated',
-        } as unknown) as User;
-
-        setSession(null);
-        setUser(mockUser);
-        setProfile({
-          id: mockUser.id,
-          email: mockUser.email,
-          full_name: 'Dev Bypass',
-          display_name: 'Dev Bypass',
-          username: 'dev-bypass',
-          avatar_url: null,
-          is_public: true,
-          profile_completeness_score: 100,
-        });
-        setLoading(false);
-        return; // Do not initialize Supabase listeners in dev bypass
-      }
-
-      // Initialize Supabase auth listeners
-    } catch {}
+    // Removed dev bypass; relying solely on Supabase auth
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -225,12 +189,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await supabase.auth.signOut();
     } finally {
-      try { localStorage.removeItem('dna_dev'); } catch {}
       setSession(null);
       setUser(null);
       setProfile(null);
     }
   };
+
   const updatePassword = async (password: string) => {
     const { error } = await supabase.auth.updateUser({
       password: password
@@ -249,6 +213,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     updatePassword,
     refreshProfile,
   };
-
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

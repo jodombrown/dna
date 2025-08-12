@@ -19,24 +19,21 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import SpaceDetail from './app/SpaceDetail';
 import Recommendations from './app/Recommendations';
 import SpaceMembers from './app/SpaceMembers';
-import { isDevBypassActive, DevBypassMount, DevBypassToggle } from '@/components/dev/DevBypass';
+
 
 const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
-  const devBypass = isDevBypassActive();
-  const bypass = devBypass;
-
   useEffect(() => {
     if (!loading) {
-      if (!user && !bypass) {
+      if (!user) {
         navigate('/auth');
       }
       // Allow dashboard access regardless of onboarding/profile completion
     }
-  }, [user, profile, loading, navigate, bypass]);
+  }, [user, loading, navigate]);
 
-  if (loading && !bypass) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -47,7 +44,7 @@ const AppDashboard = () => {
     );
   }
 
-  if (!user && !bypass) {
+  if (!user) {
     return null;
   }
 
@@ -65,9 +62,6 @@ const AppDashboard = () => {
               </div>
             </header>
 
-            {/* Dev bypass activator (URL/localStorage) */}
-            <DevBypassMount />
-            {/* Main Content */}
             <main className="pt-10 lg:pt-12 pb-20 lg:pb-0">
               <Routes>
                 {/* Main dashboard route */}
@@ -94,7 +88,7 @@ const AppDashboard = () => {
             </main>
             <MobileNavigation />
             <MobilePostButton />
-            <DevBypassToggle />
+            
           </div>
         </div>
       </SidebarProvider>
