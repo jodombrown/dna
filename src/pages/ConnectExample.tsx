@@ -16,7 +16,7 @@ import { demoCommunities, demoEvents } from '@/data/demoSearchData';
 
 const ConnectExample = () => {
   useScrollToTop();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   
   
   const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
@@ -32,13 +32,21 @@ const ConnectExample = () => {
     lookingForOpportunities: false
   });
 
-  // Handle search parameter from URL
-  useEffect(() => {
-    const queryParam = searchParams.get('q');
-    if (queryParam) {
-      setSearchTerm(queryParam);
-    }
-  }, [searchParams]);
+// Handle search parameter from URL
+useEffect(() => {
+  const queryParam = searchParams.get('q');
+  const tabParam = searchParams.get('tab');
+  const locationParam = searchParams.get('location');
+  if (queryParam) {
+    setSearchTerm(queryParam);
+  }
+  if (tabParam) {
+    setActiveTab(tabParam);
+  }
+  if (locationParam) {
+    setFilters((prev) => ({ ...prev, location: locationParam }));
+  }
+}, [searchParams]);
 
 
   const filteredData = useConnectFiltering(searchTerm, filters);
@@ -69,9 +77,19 @@ const ConnectExample = () => {
     // TODO: Implement event registration logic
   };
 
-  const getConnectionStatus = (professionalId: string) => {
-    return { status: 'not_connected' };
-  };
+const getConnectionStatus = (professionalId: string) => {
+  return { status: 'not_connected' };
+};
+
+const handleApplyPreset = (preset: { searchTerm: string; tab?: string; filters?: any }) => {
+  setSearchTerm(preset.searchTerm);
+  if (preset.filters) setFilters((prev) => ({ ...prev, ...preset.filters }));
+  if (preset.tab) setActiveTab(preset.tab);
+  const params: Record<string, string> = { q: preset.searchTerm };
+  if (preset.tab) params.tab = preset.tab;
+  if (preset.filters?.location) params.location = preset.filters.location;
+  setSearchParams(params, { replace: true });
+};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -92,6 +110,7 @@ const ConnectExample = () => {
               activeTab={activeTab}
               onTabChange={setActiveTab}
               resultCounts={getFilteredCounts()}
+              onApplyPreset={handleApplyPreset}
             />
           </div>
           

@@ -4,6 +4,7 @@ import AdvancedFilters from './AdvancedFilters';
 import ActiveFilters from './ActiveFilters';
 import SearchResultsSummary from './SearchResultsSummary';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
+import QuickStartPresets, { Preset } from './QuickStartPresets';
 
 interface SearchSectionProps {
   searchTerm: string;
@@ -26,6 +27,7 @@ interface SearchSectionProps {
   };
   activeTab?: string;
   onTabChange?: (tab: string) => void;
+  onApplyPreset?: (preset: Preset) => void;
 }
 
 const SearchSection: React.FC<SearchSectionProps> = ({
@@ -38,7 +40,8 @@ const SearchSection: React.FC<SearchSectionProps> = ({
   onFiltersChange,
   resultCounts,
   activeTab,
-  onTabChange
+  onTabChange,
+  onApplyPreset
 }) => {
   const handleClearSearch = () => {
     onSearchChange('');
@@ -81,12 +84,11 @@ const SearchSection: React.FC<SearchSectionProps> = ({
         )}
       </div>
 
-      {/* Active Filters Display */}
-      {filters && onFiltersChange && (
-        <ActiveFilters
-          filters={filters}
-          onFiltersChange={onFiltersChange}
-        />
+      {/* QuickStart Presets */}
+      {onApplyPreset && (
+        <div className="-mt-1">
+          <QuickStartPresets onApplyPreset={onApplyPreset} />
+        </div>
       )}
 
       {/* Tabs Section */}
