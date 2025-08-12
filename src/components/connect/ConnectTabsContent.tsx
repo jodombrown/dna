@@ -212,8 +212,8 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
                 <ProfessionalCard
                   key={professional.id}
                   professional={professional}
-                  onConnect={() => onConnect(professional.id)}
-                  onMessage={() => onMessage(professional.id, professional.full_name)}
+                  onConnect={() => onCreatorClick(professional.id)}
+                  onMessage={() => onCreatorClick(professional.id)}
                   connectionStatus={getConnectionStatus(professional.id)}
                   isLoggedIn={isLoggedIn}
                 />
