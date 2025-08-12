@@ -1,9 +1,12 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Community } from '@/hooks/useSearch';
+import CommunityJoinDialog from '@/components/connect/CommunityJoinDialog';
+import ConnectDialogs from '@/components/connect/ConnectDialogs';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CommunitiesResultsProps {
   communities: Community[];
@@ -12,6 +15,17 @@ interface CommunitiesResultsProps {
 const CommunitiesResults: React.FC<CommunitiesResultsProps> = ({
   communities
 }) => {
+  const [selected, setSelected] = useState<Community | null>(null);
+  const [isJoinOpen, setIsJoinOpen] = useState(false);
+  const [isConnectOpen, setIsConnectOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setIsLoggedIn(!!data.session);
+    }).catch(() => setIsLoggedIn(false));
+  }, []);
+
   if (communities.length === 0) return null;
 
   return (
@@ -42,13 +56,34 @@ const CommunitiesResults: React.FC<CommunitiesResultsProps> = ({
               <Button
                 size="sm"
                 className="bg-dna-emerald hover:bg-dna-forest text-white"
+                onClick={() => { setSelected(community); setIsJoinOpen(true); }}
               >
-                Join Community
+                Join
               </Button>
             </div>
           </CardContent>
         </Card>
       ))}
+
+      <CommunityJoinDialog
+        open={isJoinOpen}
+        onOpenChange={setIsJoinOpen}
+        community={selected}
+        isLoggedIn={isLoggedIn}
+        onOpenLogin={() => setIsConnectOpen(true)}
+        onProceed={() => { setIsJoinOpen(false); }}
+      />
+
+      <ConnectDialogs
+        isConnectDialogOpen={isConnectOpen}
+        setIsConnectDialogOpen={setIsConnectOpen}
+        isMessageDialogOpen={false}
+        setIsMessageDialogOpen={() => {}}
+        isJoinCommunityDialogOpen={false}
+        setIsJoinCommunityDialogOpen={() => {}}
+        isRegisterEventDialogOpen={false}
+        setIsRegisterEventDialogOpen={() => {}}
+      />
     </div>
   );
 };

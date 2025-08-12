@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Users as UsersIcon } from 'lucide-react';
 import { Community } from '@/types/search';
 import ConnectDialogs from './ConnectDialogs';
+import CommunityJoinDialog from './CommunityJoinDialog';
 
 interface CommunityCardProps {
   community: Community;
@@ -14,16 +15,13 @@ interface CommunityCardProps {
 }
 
 const CommunityCard: React.FC<CommunityCardProps> = ({ community, onJoin, isLoggedIn }) => {
-  const [isJoinCommunityDialogOpen, setIsJoinCommunityDialogOpen] = useState(false);
+  const [isCommunityJoinDialogOpen, setIsCommunityJoinDialogOpen] = useState(false);
+  const [isConnectDialogOpen, setIsConnectDialogOpen] = useState(false);
 
   const handleJoinClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isLoggedIn) {
-      onJoin();
-    } else {
-      setIsJoinCommunityDialogOpen(true);
-    }
+    setIsCommunityJoinDialogOpen(true);
   };
 
   return (
@@ -51,13 +49,25 @@ const CommunityCard: React.FC<CommunityCardProps> = ({ community, onJoin, isLogg
         </CardContent>
       </Card>
 
+      <CommunityJoinDialog
+        open={isCommunityJoinDialogOpen}
+        onOpenChange={setIsCommunityJoinDialogOpen}
+        community={community}
+        isLoggedIn={isLoggedIn}
+        onOpenLogin={() => setIsConnectDialogOpen(true)}
+        onProceed={() => {
+          onJoin();
+          setIsCommunityJoinDialogOpen(false);
+        }}
+      />
+
       <ConnectDialogs
-        isConnectDialogOpen={false}
-        setIsConnectDialogOpen={() => {}}
+        isConnectDialogOpen={isConnectDialogOpen}
+        setIsConnectDialogOpen={setIsConnectDialogOpen}
         isMessageDialogOpen={false}
         setIsMessageDialogOpen={() => {}}
-        isJoinCommunityDialogOpen={isJoinCommunityDialogOpen}
-        setIsJoinCommunityDialogOpen={setIsJoinCommunityDialogOpen}
+        isJoinCommunityDialogOpen={false}
+        setIsJoinCommunityDialogOpen={() => {}}
         isRegisterEventDialogOpen={false}
         setIsRegisterEventDialogOpen={() => {}}
       />
