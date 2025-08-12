@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Professional } from '@/types/search';
 import { MapPin, Link as LinkIcon, Globe, Award, Languages, Briefcase } from 'lucide-react';
 import { demoCommunities } from '@/data/demoSearchData';
+import { canView } from '@/utils/privacy';
 
 interface ProfessionalProfilePreviewProps {
   professional: Professional;
@@ -23,6 +24,14 @@ const InfoRow: React.FC<{ label: string; value?: React.ReactNode } > = ({ label,
 
 const ProfessionalProfilePreview: React.FC<ProfessionalProfilePreviewProps> = ({ professional, onConnect, onMessage }) => {
   const suggestedCommunities = demoCommunities.slice(0, 3);
+
+  const visibility = (professional as any)?.visibility || {};
+  const linksObj = (professional as any)?.links || {};
+  const normalizedLinks = {
+    linkedin: (professional as any)?.linkedin_url || linksObj.linkedin || '',
+    website: (professional as any)?.website_url || linksObj.website || '',
+    twitter: linksObj.twitter || ''
+  };
 
   // Unique, deterministic banner gradient using design tokens
   const gradientVariants = [
@@ -82,7 +91,7 @@ const ProfessionalProfilePreview: React.FC<ProfessionalProfilePreviewProps> = ({
               <p className="text-gray-600">{professional.company}</p>
             )}
             <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-gray-600">
-              {(professional.location || professional.country_of_origin) && (
+              {canView(visibility, 'location', { isSelf: false, isConnection: false }) && (professional.location || professional.country_of_origin) && (
                 <span className="inline-flex items-center gap-1">
                   <MapPin className="w-4 h-4" />
                   {professional.location}
@@ -175,17 +184,17 @@ const ProfessionalProfilePreview: React.FC<ProfessionalProfilePreviewProps> = ({
       )}
 
       {/* Links */}
-      {(professional.linkedin_url || professional.website_url) && (
+      {canView(visibility, 'links', { isSelf: false, isConnection: false }) && (normalizedLinks.linkedin || normalizedLinks.website) && (
         <section>
           <h2 className="font-semibold text-gray-900 mb-2">Links</h2>
           <div className="flex flex-wrap gap-2 text-sm">
-            {professional.linkedin_url && (
-              <a href={professional.linkedin_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-dna-emerald underline">
+            {normalizedLinks.linkedin && (
+              <a href={normalizedLinks.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-dna-emerald underline">
                 <LinkIcon className="w-4 h-4" /> LinkedIn
               </a>
             )}
-            {professional.website_url && (
-              <a href={professional.website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-dna-emerald underline">
+            {normalizedLinks.website && (
+              <a href={normalizedLinks.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-dna-emerald underline">
                 <Globe className="w-4 h-4" /> Website
               </a>
             )}

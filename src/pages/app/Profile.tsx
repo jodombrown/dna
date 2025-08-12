@@ -7,10 +7,20 @@ import { Edit, Eye, Users, Star } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { canView } from '@/utils/privacy';
 
 const Profile = () => {
   const { profile, user } = useAuth();
   const navigate = useNavigate();
+
+  // Visibility and normalized links
+  const visibility = (profile as any)?.visibility || {};
+  const linksObj = (profile as any)?.links || {};
+  const normalizedLinks = {
+    linkedin: profile?.linkedin_url || linksObj.linkedin || '',
+    website: profile?.website_url || linksObj.website || '',
+    twitter: linksObj.twitter || ''
+  };
 
   // Use database-calculated completion score
   const completionScore = profile?.profile_completeness_score || 0;
@@ -50,7 +60,7 @@ const Profile = () => {
                   <p className="text-lg text-muted-foreground">
                     {profile?.headline || profile?.profession || 'DNA Member'}
                   </p>
-                  {profile?.location && (
+                  {profile?.location && canView(visibility, 'location', { isSelf: true }) && (
                     <p className="text-sm text-muted-foreground">📍 {profile.location}</p>
                   )}
                 </div>
@@ -134,35 +144,41 @@ const Profile = () => {
             <CardTitle>Contact & Links</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div>
-              <label className="text-sm font-medium text-gray-500">Email</label>
-              <p className="text-gray-900">{user?.email}</p>
-            </div>
-            {profile?.linkedin_url && (
+            {canView(visibility, 'email', { isSelf: true }) && (
               <div>
-                <label className="text-sm font-medium text-gray-500">LinkedIn</label>
-                <a 
-                  href={profile.linkedin_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-dna-emerald hover:underline block"
-                >
-                  {profile.linkedin_url}
-                </a>
+                <label className="text-sm font-medium text-gray-500">Email</label>
+                <p className="text-gray-900">{user?.email}</p>
               </div>
             )}
-            {profile?.website_url && (
-              <div>
-                <label className="text-sm font-medium text-gray-500">Website</label>
-                <a 
-                  href={profile.website_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-dna-emerald hover:underline block"
-                >
-                  {profile.website_url}
-                </a>
-              </div>
+            {canView(visibility, 'links', { isSelf: true }) && (
+              <>
+                {normalizedLinks.linkedin && (
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">LinkedIn</label>
+                    <a
+                      href={normalizedLinks.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-dna-emerald hover:underline block"
+                    >
+                      {normalizedLinks.linkedin}
+                    </a>
+                  </div>
+                )}
+                {normalizedLinks.website && (
+                  <div>
+                    <label className="text-sm font-medium text-gray-500">Website</label>
+                    <a
+                      href={normalizedLinks.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-dna-emerald hover:underline block"
+                    >
+                      {normalizedLinks.website}
+                    </a>
+                  </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>

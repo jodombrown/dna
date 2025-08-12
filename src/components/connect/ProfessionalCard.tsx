@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, MessageSquare } from 'lucide-react';
 import { Professional } from '@/types/search';
 import ConnectDialogs from './ConnectDialogs';
+import { canView } from '@/utils/privacy';
 
 interface ProfessionalCardProps {
   professional: Professional;
@@ -89,6 +90,8 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
     onMessage();
   };
 
+  const visibility = (professional as any)?.visibility || {};
+
   return (
     <>
       <Card className="hover:shadow-lg transition-shadow">
@@ -112,10 +115,12 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
         </CardHeader>
         
         <CardContent className="space-y-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <MapPin className="w-4 h-4" />
-            <span className="truncate">{professional.location} • Originally from {professional.country_of_origin}</span>
-          </div>
+          {canView(visibility, 'location', { isSelf: false, isConnection: false }) && (
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <MapPin className="w-4 h-4" />
+              <span className="truncate">{professional.location} • Originally from {professional.country_of_origin}</span>
+            </div>
+          )}
           
           {professional.expertise && (
             <div>
