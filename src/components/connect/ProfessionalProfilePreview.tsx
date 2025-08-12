@@ -24,15 +24,53 @@ const InfoRow: React.FC<{ label: string; value?: React.ReactNode } > = ({ label,
 const ProfessionalProfilePreview: React.FC<ProfessionalProfilePreviewProps> = ({ professional, onConnect, onMessage }) => {
   const suggestedCommunities = demoCommunities.slice(0, 3);
 
+  // Unique, deterministic banner gradient using design tokens
+  const gradientVariants = [
+    'bg-gradient-to-r from-dna-emerald/30 via-dna-copper/20 to-dna-gold/20',
+    'bg-gradient-to-r from-dna-copper/30 via-dna-gold/20 to-dna-emerald/20',
+    'bg-gradient-to-r from-dna-forest/20 via-dna-emerald/25 to-dna-copper/20',
+    'bg-gradient-to-r from-dna-gold/25 via-dna-emerald/20 to-dna-copper/25',
+  ];
+  const hash = (s: string) => s.split('').reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0);
+  const gradientClass = gradientVariants[Math.abs(hash(professional.id || professional.full_name)) % gradientVariants.length];
+
+  // Avatar fallback selection (diverse, Afro-centric)
+  const getFallbackAvatar = (name: string) => {
+    const imageMap: Record<string, string> = {
+      'Amara Okafor': 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=320&h=320&fit=crop&crop=face',
+      'Kwame Asante': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=320&h=320&fit=crop&crop=face',
+      'Zara Mbeki': 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=320&h=320&fit=crop&crop=face',
+      'Kofi Mensah': 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=320&h=320&fit=crop&crop=face',
+    };
+    if (imageMap[name]) return imageMap[name];
+    const femaleHints = ['Amara','Zara','Fatima','Aisha','Ngozi','Yasmin','Kemi','Adaora','Safiya','Sarah'];
+    const isFemale = femaleHints.some(h => name.includes(h));
+    return isFemale
+      ? 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=320&h=320&fit=crop&crop=face'
+      : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=320&h=320&fit=crop&crop=face';
+  };
+
+  const computedFallback = getFallbackAvatar(professional.full_name);
+  const [avatarSrc, setAvatarSrc] = React.useState(
+    professional.avatar_url && professional.avatar_url.length > 0 ? professional.avatar_url : computedFallback
+  );
+  React.useEffect(() => {
+    setAvatarSrc(
+      professional.avatar_url && professional.avatar_url.length > 0 ? professional.avatar_url : getFallbackAvatar(professional.full_name)
+    );
+  }, [professional]);
   return (
     <article className="space-y-6">
       {/* Cover + Header */}
       <header>
-        <div className="h-24 w-full rounded-t-lg bg-gradient-to-r from-dna-emerald/30 via-dna-copper/20 to-dna-gold/20" />
+        <div className={`h-24 w-full rounded-t-lg ${gradientClass}`} />
         <div className="flex items-start gap-4 -mt-10 px-1">
           <img
-            src={professional.avatar_url}
+            src={avatarSrc}
             alt={`Profile photo of ${professional.full_name}`}
+            loading="lazy"
+            decoding="async"
+            onError={() => setAvatarSrc(computedFallback)}
             className="w-24 h-24 rounded-full object-cover border-4 border-white shadow -mt-6"
           />
           <div className="flex-1">
