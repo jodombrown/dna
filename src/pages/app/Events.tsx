@@ -59,7 +59,7 @@ const handleRegisterEvent = async (event: Event) => {
     <div className="max-w-7xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Events</h1>
-        <RequireProfileScore min={50} featureName="Create Event" showToast>
+        <RequireProfileScore min={50} featureName="Create Event" showToast showModal={false}>
           <Button onClick={() => navigate('/events/new')}>Create event</Button>
         </RequireProfileScore>
       </div>

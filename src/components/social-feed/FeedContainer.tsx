@@ -132,7 +132,7 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
   return (
     <div className="space-y-6" role="main" aria-label="Social Feed">
       {showComposer && (
-        <RequireProfileScore min={50} featureName="creating posts">
+        <RequireProfileScore min={50} featureName="creating posts" showToast showModal={false}>
           <FloatingPostComposer 
             defaultPillar={selectedPillar === 'feed' ? 'connect' : selectedPillar}
             onPostCreated={handlePostCreated}

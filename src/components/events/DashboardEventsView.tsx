@@ -57,7 +57,7 @@ const handleViewAll = () => {
       <header className="flex items-center justify-between">
         <h2 id="dashboard-events-heading" className="text-2xl font-bold">Events</h2>
         {/* Soft-gated create event button */}
-        <RequireProfileScore min={50} featureName="Create Event" showToast>
+        <RequireProfileScore min={50} featureName="Create Event" showToast showModal={false}>
           <Button variant="dna" size="sm" aria-label="Create a new event" onClick={() => navigate('/events/new')}>Create event</Button>
         </RequireProfileScore>
       </header>

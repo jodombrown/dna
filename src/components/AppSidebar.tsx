@@ -139,7 +139,7 @@ const AppSidebar = () => {
                               <item.icon className="mr-2 h-4 w-4" />
                             </NavLink>
                           ) : item.title === 'Messages' ? (
-                            <RequireProfileScore min={80} featureName="Messages" showToast>
+                            <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
                               <NavLink to={item.url} className={getNavCls(item.url)}>
                                 <item.icon className="mr-2 h-4 w-4" />
                               </NavLink>
@@ -167,7 +167,7 @@ const AppSidebar = () => {
                           <span>{item.title}</span>
                         </NavLink>
                       ) : item.title === 'Messages' ? (
-                        <RequireProfileScore min={80} featureName="Messages" showToast>
+                        <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
                           <NavLink to={item.url} className={getNavCls(item.url)}>
                             <item.icon className="mr-2 h-4 w-4" />
                             <span>{item.title}</span>

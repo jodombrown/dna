@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, MessageCircle, Users, Lightbulb } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 interface DashboardCenterColumnProps {
   profile: Profile;
   isOwnProfile: boolean;
@@ -93,10 +93,12 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
           {isOwnProfile && (
-            <Button variant="outline" size="sm">
-              <Plus className="w-4 h-4 mr-2" />
-              Share Update
-            </Button>
+            <RequireProfileScore min={50} featureName="Create Post" showToast showModal={false}>
+              <Button variant="outline" size="sm">
+                <Plus className="w-4 h-4 mr-2" />
+                Share Update
+              </Button>
+            </RequireProfileScore>
           )}
         </CardHeader>
         <CardContent>
@@ -114,10 +116,12 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
               }
             </p>
             {isOwnProfile && (
-              <Button className="mt-4" variant="default">
-                <Plus className="w-4 h-4 mr-2" />
-                Create Post
-              </Button>
+              <RequireProfileScore min={50} featureName="Create Post" showToast showModal={false}>
+                <Button className="mt-4" variant="default">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Post
+                </Button>
+              </RequireProfileScore>
             )}
           </div>
         </CardContent>
