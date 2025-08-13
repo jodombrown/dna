@@ -34,7 +34,7 @@ interface LocationAutocompleteProps {
   id?: string;
   label?: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange?: (location: SelectedLocation) => void;
   onSelect?: (location: SelectedLocation) => void;
   placeholder?: string;
   required?: boolean;
@@ -130,6 +130,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
     setSelected(sel);
     setSearchTerm(label);
     onSelect?.(sel);
+    onChange?.(sel);
     setIsOpen(false);
     setResults([]);
   };
