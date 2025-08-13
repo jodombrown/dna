@@ -11,30 +11,14 @@ export const profilesService = {
     profession?: string;
     limit?: number;
   }) {
-    let query = supabase
-      .from('profiles')
-      .select('*')
-      .eq('is_public', true)
-      .gte('profile_completeness_score', 50); // Ensure minimum completeness for visibility
+    const { data, error } = await supabase
+      .rpc('rpc_public_profiles', {
+        p_location: filters?.location ?? null,
+        p_profession: filters?.profession ?? null,
+        p_skills: filters?.skills ?? null,
+        p_limit: filters?.limit ?? null,
+      });
 
-    if (filters?.location) {
-      query = query.ilike('location', `%${filters.location}%`);
-    }
-
-    if (filters?.profession) {
-      query = query.ilike('profession', `%${filters.profession}%`);
-    }
-
-    if (filters?.skills && filters.skills.length > 0) {
-      query = query.overlaps('skills', filters.skills);
-    }
-
-    if (filters?.limit) {
-      query = query.limit(filters.limit);
-    }
-
-    const { data, error } = await query.order('created_at', { ascending: false });
-    
     if (error) throw error;
     return data;
   },
@@ -42,9 +26,7 @@ export const profilesService = {
   // Get profile by ID
   async getProfileById(id: string) {
     const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', id)
+      .rpc('rpc_public_profile_by_id', { p_id: id })
       .single();
     
     if (error) throw error;

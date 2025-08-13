@@ -4099,6 +4099,47 @@ export type Database = {
         Args: { p_username: string }
         Returns: Json
       }
+      rpc_public_profile_by_id: {
+        Args: { p_id: string }
+        Returns: {
+          id: string
+          username: string
+          full_name: string
+          headline: string
+          bio: string
+          region: string
+          location: string
+          profession: string
+          company: string
+          skills: string[]
+          impact_areas: string[]
+          avatar_url: string
+          created_at: string
+        }[]
+      }
+      rpc_public_profiles: {
+        Args: {
+          p_location?: string
+          p_profession?: string
+          p_skills?: string[]
+          p_limit?: number
+        }
+        Returns: {
+          id: string
+          username: string
+          full_name: string
+          headline: string
+          bio: string
+          region: string
+          location: string
+          profession: string
+          company: string
+          skills: string[]
+          impact_areas: string[]
+          avatar_url: string
+          created_at: string
+        }[]
+      }
       rpc_request_join_space: {
         Args: { p_space: string }
         Returns: undefined
