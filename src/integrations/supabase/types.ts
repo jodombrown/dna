@@ -3603,6 +3603,10 @@ export type Database = {
           expires_at: string
         }[]
       }
+      are_users_connected: {
+        Args: { u1: string; u2: string }
+        Returns: boolean
+      }
       award_badge_if_missing: {
         Args: {
           p_user: string
@@ -3642,6 +3646,15 @@ export type Database = {
       }
       can_send_messages: {
         Args: { user_id_param: string }
+        Returns: boolean
+      }
+      can_view_field: {
+        Args: {
+          p_visibility: Json
+          p_field: string
+          p_viewer: string
+          p_owner: string
+        }
         Returns: boolean
       }
       check_badge_unlocks: {
