@@ -82,6 +82,14 @@ const OnboardingGate = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const AppShell = ({ children }: { children: React.ReactNode }) => (
+  <AuthGuard>
+    <OnboardingGate>
+      {children}
+    </OnboardingGate>
+  </AuthGuard>
+);
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -106,35 +114,35 @@ function App() {
               {/* Dashboard V1 Archive Route - MUST come before /app/* */}
               <Route path="/app/v1/*" element={<Navigate to="/app/dashboard" replace />} />
               
-        <Route path="/app/events" element={<OnboardingGate><Events /></OnboardingGate>} />
-        <Route path="/app/events/new" element={<OnboardingGate><Navigate to="/events/new" replace /></OnboardingGate>} />
-        <Route path="/app/events/:id" element={<OnboardingGate><EventDetail /></OnboardingGate>} />
-        <Route path="/app/events/:id/edit" element={<OnboardingGate><EventEdit /></OnboardingGate>} />
-        <Route path="/app/events/:id/manage" element={<OnboardingGate><EventManage /></OnboardingGate>} />
-        <Route path="/app/events/:id/checkin" element={<OnboardingGate><EventCheckIn /></OnboardingGate>} />
+        <Route path="/app/events" element={<AppShell><Events /></AppShell>} />
+        <Route path="/app/events/new" element={<AppShell><Navigate to="/events/new" replace /></AppShell>} />
+        <Route path="/app/events/:id" element={<AppShell><EventDetail /></AppShell>} />
+        <Route path="/app/events/:id/edit" element={<AppShell><EventEdit /></AppShell>} />
+        <Route path="/app/events/:id/manage" element={<AppShell><EventManage /></AppShell>} />
+        <Route path="/app/events/:id/checkin" element={<AppShell><EventCheckIn /></AppShell>} />
         <Route path="/events/new" element={<EventNewWizard />} />
         <Route path="/events/category/:slug" element={<EventCategoryPage />} />
         <Route path="/events/:slug" element={<EventsBySlug />} />
         <Route path="/events/:id/payment-success" element={<EventPaymentSuccess />} />
         <Route path="/join/:token" element={<EventJoin />} />
-              <Route path="/app/opportunities/new" element={<OpportunityNew />} />
-              <Route path="/app/notifications" element={<Notifications />} />
-              <Route path="/app/connections/:id" element={<ConnectionDetailPage />} />
+              <Route path="/app/opportunities/new" element={<AppShell><OpportunityNew /></AppShell>} />
+              <Route path="/app/notifications" element={<AppShell><Notifications /></AppShell>} />
+              <Route path="/app/connections/:id" element={<AppShell><ConnectionDetailPage /></AppShell>} />
               
               {/* Settings */}
-              <Route path="/settings/profile" element={<OnboardingGate><ProfileSettings /></OnboardingGate>} />
-              <Route path="/settings/experience" element={<OnboardingGate><ExperienceSettings /></OnboardingGate>} />
-              <Route path="/settings/links" element={<OnboardingGate><LinksSettings /></OnboardingGate>} />
-              <Route path="/settings/privacy" element={<OnboardingGate><PrivacySettings /></OnboardingGate>} />
+              <Route path="/settings/profile" element={<AppShell><ProfileSettings /></AppShell>} />
+              <Route path="/settings/experience" element={<AppShell><ExperienceSettings /></AppShell>} />
+              <Route path="/settings/links" element={<AppShell><LinksSettings /></AppShell>} />
+              <Route path="/settings/privacy" element={<AppShell><PrivacySettings /></AppShell>} />
 
               {/* Me route */}
               <Route path="/me" element={<Navigate to="/app/profile" replace />} />
 
               <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/app/*" element={<OnboardingGate><AppDashboard /></OnboardingGate>} />
-              <Route path="/contribute" element={<AuthGuard><ContributeExample /></AuthGuard>} />
-              <Route path="/collaborate" element={<AuthGuard><CollaborationsExample /></AuthGuard>} />
-              <Route path="/connect" element={<AuthGuard><ConnectExample /></AuthGuard>} />
+              <Route path="/app/*" element={<AppShell><AppDashboard /></AppShell>} />
+              <Route path="/contribute" element={<AppShell><ContributeExample /></AppShell>} />
+              <Route path="/collaborate" element={<AppShell><CollaborationsExample /></AppShell>} />
+              <Route path="/connect" element={<AppShell><ConnectExample /></AppShell>} />
               <Route path="/contact" element={<AuthGuard><Contact /></AuthGuard>} />
               <Route path="/about" element={<AuthGuard><About /></AuthGuard>} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
