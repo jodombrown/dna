@@ -143,8 +143,8 @@ function App() {
               <Route path="/contribute" element={<AppShell><ContributeExample /></AppShell>} />
               <Route path="/collaborate" element={<AppShell><CollaborationsExample /></AppShell>} />
               <Route path="/connect" element={<AppShell><ConnectExample /></AppShell>} />
-              <Route path="/contact" element={<AuthGuard><Contact /></AuthGuard>} />
-              <Route path="/about" element={<AuthGuard><About /></AuthGuard>} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               
