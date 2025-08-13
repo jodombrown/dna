@@ -19,7 +19,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import SpaceDetail from './app/SpaceDetail';
 import Recommendations from './app/Recommendations';
 import SpaceMembers from './app/SpaceMembers';
-
+import ProfileCompletionBanner from '@/components/profile/ProfileCompletionBanner';
 
 const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -63,6 +63,7 @@ const AppDashboard = () => {
             </header>
 
             <main className="pt-10 lg:pt-12 pb-20 lg:pb-0">
+              <ProfileCompletionBanner />
               <Routes>
                 {/* Main dashboard route */}
                 <Route index element={<Dashboard />} />

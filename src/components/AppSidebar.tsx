@@ -30,6 +30,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 
 const mainNavItems = [
   { title: 'Home', url: '/app/dashboard', icon: Home },
@@ -137,6 +138,12 @@ const AppSidebar = () => {
                             >
                               <item.icon className="mr-2 h-4 w-4" />
                             </NavLink>
+                          ) : item.title === 'Messages' ? (
+                            <RequireProfileScore min={80} featureName="Messages" showToast>
+                              <NavLink to={item.url} className={getNavCls(item.url)}>
+                                <item.icon className="mr-2 h-4 w-4" />
+                              </NavLink>
+                            </RequireProfileScore>
                           ) : (
                             <NavLink to={item.url} className={getNavCls(item.url)}>
                               <item.icon className="mr-2 h-4 w-4" />
@@ -159,6 +166,13 @@ const AppSidebar = () => {
                           <item.icon className="mr-2 h-4 w-4" />
                           <span>{item.title}</span>
                         </NavLink>
+                      ) : item.title === 'Messages' ? (
+                        <RequireProfileScore min={80} featureName="Messages" showToast>
+                          <NavLink to={item.url} className={getNavCls(item.url)}>
+                            <item.icon className="mr-2 h-4 w-4" />
+                            <span>{item.title}</span>
+                          </NavLink>
+                        </RequireProfileScore>
                       ) : (
                         <NavLink to={item.url} className={getNavCls(item.url)}>
                           <item.icon className="mr-2 h-4 w-4" />

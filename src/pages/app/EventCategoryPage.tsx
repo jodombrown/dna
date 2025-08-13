@@ -6,7 +6,7 @@ import ModernEventCard from '@/components/connect/ModernEventCard';
 import { eventCategories, additionalEvents } from '@/components/connect/eventData';
 import { Event } from '@/types/search';
 import { toast } from 'sonner';
-
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 const EventCategoryPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -58,7 +58,9 @@ const EventCategoryPage: React.FC = () => {
         <p className="text-muted-foreground mt-2">{category.description}</p>
         <div className="mt-4 flex gap-3">
           <Button onClick={handleSubscribe}>Subscribe</Button>
-          <Button variant="outline" onClick={handleHost}>Host Event</Button>
+          <RequireProfileScore min={50} featureName="Create Event" showToast>
+            <Button variant="outline" onClick={handleHost}>Host Event</Button>
+          </RequireProfileScore>
         </div>
       </header>
 

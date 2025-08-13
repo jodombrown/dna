@@ -6,7 +6,7 @@ import { Event } from '@/types/search';
 import { searchEvents } from '@/services/eventsService';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 const DashboardEventsView: React.FC = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
@@ -56,7 +56,10 @@ const handleViewAll = () => {
     <section aria-labelledby="dashboard-events-heading" className="space-y-6">
       <header className="flex items-center justify-between">
         <h2 id="dashboard-events-heading" className="text-2xl font-bold">Events</h2>
-        <Button variant="dna" size="sm" aria-label="Create a new event" onClick={() => navigate('/events/new')}>Create event</Button>
+        {/* Soft-gated create event button */}
+        <RequireProfileScore min={50} featureName="Create Event" showToast>
+          <Button variant="dna" size="sm" aria-label="Create a new event" onClick={() => navigate('/events/new')}>Create event</Button>
+        </RequireProfileScore>
       </header>
 
       {loading ? (

@@ -20,6 +20,7 @@ import { ProfileCompletenessWidget } from '@/components/dashboard/ProfileComplet
 import RecommendationsWidget from '@/components/dashboard/RecommendationsWidget';
 import ProgressStrip from '@/components/dashboard/ProgressStrip';
 import DashboardEventsView from '@/components/events/DashboardEventsView';
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 const Dashboard = () => {
   const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
 
@@ -68,8 +69,12 @@ const Dashboard = () => {
     <div className="space-y-4">
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <a href="/app/opportunities/new" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Post Update</a>
-        <a href="/events/new" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Create Event</a>
+        <RequireProfileScore min={50} featureName="Create Post" showToast>
+          <a href="/app/opportunities/new" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Post Update</a>
+        </RequireProfileScore>
+        <RequireProfileScore min={50} featureName="Create Event" showToast>
+          <a href="/events/new" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Create Event</a>
+        </RequireProfileScore>
         <a href="/invite" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Invite a Friend</a>
       </div>
 

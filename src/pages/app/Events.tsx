@@ -6,7 +6,7 @@ import { Event } from '@/types/search';
 import { searchEvents } from '@/services/eventsService';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-
+import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 export default function Events() {
   const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
@@ -59,7 +59,9 @@ const handleRegisterEvent = async (event: Event) => {
     <div className="max-w-7xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Events</h1>
-        <Button onClick={() => navigate('/events/new')}>Create event</Button>
+        <RequireProfileScore min={50} featureName="Create Event" showToast>
+          <Button onClick={() => navigate('/events/new')}>Create event</Button>
+        </RequireProfileScore>
       </div>
 
       {loading ? (
