@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-
+import { supabase } from '@/integrations/supabase/client';
 interface EmbedMetadata {
   url: string;
   version: string;
@@ -44,27 +44,16 @@ export const useAutoEmbedDetection = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `https://ybhssuehmfnxrzneobok.supabase.co/functions/v1/oembed-proxy?url=${encodeURIComponent(url)}`,
-        {
-          headers: {
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliaHNzdWVobWZueHJ6bmVvYm9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwMTI0NzMsImV4cCI6MjA2NDU4ODQ3M30.Uur_V4TYm4yCYtDQAa4diIpdsKoKb5Bkuo0cWNZAY-Y`
-          }
-        }
-      );
+      const { data, error } = await supabase.functions.invoke('oembed-proxy', {
+        body: { url }
+      });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch embed data: ${response.status}`);
+      if (error) {
+        throw error;
       }
 
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      setEmbedData(data);
-      return data;
+      setEmbedData(data as EmbedMetadata);
+      return data as EmbedMetadata;
     } catch (error) {
       console.error('Embed fetch error:', error);
       // Don't show toast for auto-detection failures to avoid spam

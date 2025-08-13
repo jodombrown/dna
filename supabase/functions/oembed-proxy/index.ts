@@ -1,6 +1,21 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { corsHeaders } from "../_shared/cors.ts"
 
+// Basic HTML sanitizer to reduce XSS risk from provider HTML
+function sanitizeHtml(input?: string): string | undefined {
+  if (!input) return input;
+  let out = input;
+  // Remove script tags completely
+  out = out.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
+  // Remove inline event handlers like onload=, onclick=
+  out = out.replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "");
+  // Disallow javascript: URLs
+  out = out.replace(/javascript:/gi, "");
+  // Harden iframes: add sandbox and referrerpolicy
+  out = out.replace(/<iframe(\s+)/gi, '<iframe sandbox="allow-same-origin allow-scripts" referrerpolicy="no-referrer" $1');
+  return out;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -8,8 +23,18 @@ serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url)
-    const targetUrl = url.searchParams.get('url')
+    // Support both GET ?url=... and POST { url }
+    const requestUrl = new URL(req.url)
+    let targetUrl = requestUrl.searchParams.get('url')
+
+    if (!targetUrl && req.method === 'POST') {
+      try {
+        const body = await req.json();
+        targetUrl = body?.url;
+      } catch {
+        // ignore JSON parse errors; handled by validation below
+      }
+    }
 
     if (!targetUrl) {
       return new Response(
@@ -50,6 +75,11 @@ serve(async (req) => {
 
     const data = await response.json()
 
+    // Sanitize provider HTML if present
+    if (typeof data?.html === 'string') {
+      data.html = sanitizeHtml(data.html)
+    }
+
     // Add our own metadata
     const enrichedData = {
       ...data,
@@ -74,7 +104,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: 'Failed to fetch embed data',
-        details: error.message 
+        details: (error as Error).message 
       }),
       { 
         status: 500, 
