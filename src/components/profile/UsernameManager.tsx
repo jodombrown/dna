@@ -59,9 +59,13 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
         .from('profiles')
         .select('id')
         .eq('username', name)
-        .single();
+        .maybeSingle();
 
-      const taken = !!data && !error;
+      if (error) {
+        throw error;
+      }
+
+      const taken = !!data;
       setIsAvailable(!taken);
 
       if (taken) {

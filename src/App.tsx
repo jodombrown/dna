@@ -76,7 +76,7 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
 const OnboardingGate = ({ children }: { children: React.ReactNode }) => {
   const { user, profile, loading } = useAuth() as any;
   if (loading) return null;
-  if (user && profile && !profile.onboarding_completed_at) {
+  if (user && (!profile || !profile.onboarding_completed_at)) {
     return <Navigate to="/onboarding" replace />;
   }
   return <>{children}</>;

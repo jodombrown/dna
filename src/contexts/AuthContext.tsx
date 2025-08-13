@@ -45,6 +45,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
+      if (!data) {
+        // Auto-create a minimal profile on first auth to avoid gate bypasses
+        try {
+          const { data: u } = await supabase.auth.getUser();
+          const minimal: any = {
+            id: userId,
+            email: u.user?.email || null,
+            full_name: u.user?.user_metadata?.full_name || null,
+            is_public: false,
+          };
+          const { error: insertError } = await supabase.from('profiles').insert(minimal);
+          if (insertError) {
+            console.error('Error creating minimal profile:', insertError);
+          }
+          // Refetch to get DB defaults
+          const { data: created } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .maybeSingle();
+          setProfile(created || minimal);
+          return;
+        } catch (createErr) {
+          console.error('Auto-create profile failed:', createErr);
+          return;
+        }
+      }
+      
       setProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);

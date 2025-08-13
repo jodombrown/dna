@@ -205,14 +205,9 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Welcome email sent successfully:", emailResponse);
 
-    // Update profile to mark onboarding as completed
-    await supabase
-      .from('profiles')
-      .update({ 
-        onboarding_completed_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', userId);
+    // Do not mutate onboarding status here; the client owns completion state
+    // This avoids race conditions and duplication with the onboarding flow.
+
 
     return new Response(
       JSON.stringify({ 
