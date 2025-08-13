@@ -7,9 +7,12 @@ export interface ValidationError {
 }
 
 export interface OnboardingFormData {
-  full_name: string;
+  full_name?: string; // composed later from first/last
+  first_name?: string;
+  last_name?: string;
   username: string;
   country_of_origin: string;
+  current_country_code?: string;
   current_country?: string;
   skills: string[];
   sectors: string[];
@@ -43,13 +46,12 @@ export const validateStep = async (step: number, data: OnboardingFormData): Prom
 };
 
 const validateIdentityStep = async (data: OnboardingFormData, errors: ValidationError[]) => {
-  // Full name validation
-  if (!data.full_name?.trim()) {
-    errors.push({ field: 'full_name', message: 'Full name is required' });
-  } else if (data.full_name.length < 2) {
-    errors.push({ field: 'full_name', message: 'Full name must be at least 2 characters' });
-  } else if (data.full_name.length > 100) {
-    errors.push({ field: 'full_name', message: 'Full name must be less than 100 characters' });
+  // First and last name validation
+  if (!data.first_name?.trim()) {
+    errors.push({ field: 'first_name', message: 'First name is required' });
+  }
+  if (!data.last_name?.trim()) {
+    errors.push({ field: 'last_name', message: 'Last name is required' });
   }
 
   // Username validation
@@ -73,6 +75,11 @@ const validateIdentityStep = async (data: OnboardingFormData, errors: Validation
   // Country of origin validation
   if (!data.country_of_origin?.trim()) {
     errors.push({ field: 'country_of_origin', message: 'Country of origin is required' });
+  }
+
+  // Current country code (selection-only) validation
+  if (!data.current_country_code?.trim()) {
+    errors.push({ field: 'current_country_code', message: 'Current country is required' });
   }
 };
 
@@ -125,25 +132,6 @@ const validateAgreementStep = (data: OnboardingFormData, errors: ValidationError
   }
 };
 
-export const checkUsernameAvailability = async (username: string): Promise<boolean> => {
-  try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('username')
-      .ilike('username', username)
-      .limit(1);
-
-    if (error) {
-      console.error('Error checking username availability:', error);
-      return false; // Assume unavailable on error for safety
-    }
-
-    return !data || data.length === 0;
-  } catch (error) {
-    console.error('Error checking username availability:', error);
-    return false;
-  }
-};
 
 const isValidLinkedInUrl = (url: string): boolean => {
   try {

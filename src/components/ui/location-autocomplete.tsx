@@ -103,7 +103,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
     const newValue = e.target.value;
     setSearchTerm(newValue);
     setSelected(null);
-    onChange(newValue);
+    // Do NOT commit value on typing; commit only on selection
   };
 
   // Handle result selection
@@ -130,8 +130,6 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
     setSelected(sel);
     setSearchTerm(label);
     onSelect?.(sel);
-    // Backward compatibility: keep emitting the display label to onChange
-    onChange(label);
     setIsOpen(false);
     setResults([]);
   };

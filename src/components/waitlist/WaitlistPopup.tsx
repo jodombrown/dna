@@ -186,7 +186,8 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
             <LocationAutocomplete
               id="location"
               value={formData.location}
-              onChange={(value) => setFormData(prev => ({ ...prev, location: value }))}
+              onChange={(value) => {/* typing does not commit */}}
+              onSelect={(sel) => setFormData(prev => ({ ...prev, location: sel.label }))}
               placeholder="Start typing your city..."
               required
               className={isMobile ? 'text-sm' : ''}

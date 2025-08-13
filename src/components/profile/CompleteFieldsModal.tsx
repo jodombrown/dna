@@ -12,6 +12,10 @@ export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; o
   const [currentCity, setCurrentCity] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [countryName, setCountryName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [skillsText, setSkillsText] = useState('');
+  const [interestsText, setInterestsText] = useState('');
+  const [organization, setOrganization] = useState('');
   const [saving, setSaving] = useState(false);
 
   const needs = useMemo(() => new Set(missing || []), [missing]);
@@ -30,7 +34,10 @@ export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; o
         updates.current_country_name = countryName || null;
         updates.current_country = countryName || null;
       }
-      // Note: avatar upload not implemented here; wire to storage if required.
+      if (needs.has('avatar_url')) updates.avatar_url = avatarUrl || null;
+      if (needs.has('skills')) updates.skills = skillsText ? skillsText.split(',').map(s => s.trim()).filter(Boolean) : [];
+      if (needs.has('interests')) updates.interests = interestsText ? interestsText.split(',').map(s => s.trim()).filter(Boolean) : [];
+      if (needs.has('organization')) updates.organization = organization || null;
 
       if (Object.keys(updates).length === 0) {
         onClose();
@@ -71,6 +78,30 @@ export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; o
             <div>
               <Label>Current Country</Label>
               <CountrySelect value={countryCode} onChange={(code, name) => { setCountryCode(code); setCountryName(name); }} />
+            </div>
+          )}
+          {needs.has('avatar_url') && (
+            <div>
+              <Label htmlFor="avatar_url">Profile Photo URL</Label>
+              <Input id="avatar_url" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="https://..." />
+            </div>
+          )}
+          {needs.has('skills') && (
+            <div>
+              <Label htmlFor="skills">Key Skills (comma-separated)</Label>
+              <Input id="skills" value={skillsText} onChange={(e) => setSkillsText(e.target.value)} placeholder="e.g. Product, Fundraising, Policy" />
+            </div>
+          )}
+          {needs.has('interests') && (
+            <div>
+              <Label htmlFor="interests">Interests (comma-separated)</Label>
+              <Input id="interests" value={interestsText} onChange={(e) => setInterestsText(e.target.value)} placeholder="e.g. Climate, Fintech, Education" />
+            </div>
+          )}
+          {needs.has('organization') && (
+            <div>
+              <Label htmlFor="organization">Organization</Label>
+              <Input id="organization" value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder="Your company or org" />
             </div>
           )}
         </div>
