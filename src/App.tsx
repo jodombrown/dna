@@ -8,7 +8,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Onboarding from "./pages/Onboarding";
+// import Onboarding from "./pages/Onboarding"; // Onboarding UI disabled for now
 import AppDashboard from "./pages/AppDashboard";
 import ContributeExample from "./pages/ContributeExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
@@ -72,21 +72,12 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
   return <>{children}</>;
 };
 
-// Onboarding gate: require completion before accessing app routes
-const OnboardingGate = ({ children }: { children: React.ReactNode }) => {
-  const { user, profile, loading } = useAuth() as any;
-  if (loading) return null;
-  if (user && (!profile || !profile.onboarding_completed_at)) {
-    return <Navigate to="/onboarding" replace />;
-  }
-  return <>{children}</>;
-};
+// Onboarding gate disabled
+
 
 const AppShell = ({ children }: { children: React.ReactNode }) => (
   <AuthGuard>
-    <OnboardingGate>
-      {children}
-    </OnboardingGate>
+    {children}
   </AuthGuard>
 );
 
@@ -102,11 +93,11 @@ function App() {
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/onboarding" element={<Onboarding />} />
-              <Route path="/onboarding/*" element={<Onboarding />} />
-              <Route path="/welcome/*" element={<Navigate to="/onboarding" replace />} />
-              <Route path="/complete-profile/*" element={<Navigate to="/onboarding" replace />} />
-              <Route path="/post-onboarding" element={<PostOnboardingFlow />} />
+              <Route path="/onboarding" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/onboarding/*" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/welcome/*" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/complete-profile/*" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/post-onboarding" element={<Navigate to="/app/dashboard" replace />} />
               {/* Dynamic User Dashboard Route */}
               <Route path="/dna/me" element={<DnaMeRedirect />} />
               <Route path="/dna/:username" element={<UserDashboard />} />
