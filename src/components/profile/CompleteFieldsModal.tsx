@@ -13,6 +13,7 @@ export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; o
   const [countryCode, setCountryCode] = useState('');
   const [countryName, setCountryName] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
+  const [websiteUrl, setWebsiteUrl] = useState('');
   const [skillsText, setSkillsText] = useState('');
   const [interestsText, setInterestsText] = useState('');
   const [organization, setOrganization] = useState('');
@@ -35,6 +36,7 @@ export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; o
         updates.current_country = countryName || null;
       }
       if (needs.has('avatar_url')) updates.avatar_url = avatarUrl || null;
+      if (needs.has('website_url')) updates.website_url = websiteUrl || null;
       if (needs.has('skills')) updates.skills = skillsText ? skillsText.split(',').map(s => s.trim()).filter(Boolean) : [];
       if (needs.has('interests')) updates.interests = interestsText ? interestsText.split(',').map(s => s.trim()).filter(Boolean) : [];
       if (needs.has('organization')) updates.organization = organization || null;
@@ -84,6 +86,12 @@ export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; o
             <div>
               <Label htmlFor="avatar_url">Profile Photo URL</Label>
               <Input id="avatar_url" value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="https://..." />
+            </div>
+          )}
+          {needs.has('website_url') && (
+            <div>
+              <Label htmlFor="website_url">Website</Label>
+              <Input id="website_url" value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} placeholder="https://your-site.com" />
             </div>
           )}
           {needs.has('skills') && (
