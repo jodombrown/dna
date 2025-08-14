@@ -24,11 +24,10 @@ const UserDashboard = () => {
       }
 
       try {
-        const { data, error } = await (supabase as any)
-          .from('public_profile')
-          .select('*')
-          .eq('username', username)
-          .maybeSingle();
+        // Use secure service function to get profile by username
+        const { profilesService } = await import('@/services/profilesService');
+        const data = await profilesService.getProfileByUsername(username);
+        const error = null;
 
         if (error) {
           console.error('Error fetching profile:', error);

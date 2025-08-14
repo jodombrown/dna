@@ -33,6 +33,17 @@ export const profilesService = {
     return data;
   },
 
+  // Get profile by username using secure function
+  async getProfileByUsername(username: string) {
+    const { data: profiles, error } = await supabase
+      .rpc('get_public_profiles', { p_limit: 50 });
+    
+    if (error) throw error;
+    
+    const profile = profiles?.find((p: any) => p.username === username);
+    return profile || null;
+  },
+
   // Update user's own profile
   async updateProfile(id: string, updates: Partial<Profile>) {
     const { data, error } = await supabase
