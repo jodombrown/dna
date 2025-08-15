@@ -14,6 +14,12 @@ const PILLARS = [
     title: 'Connect',
     icon: Users,
     description: 'Build meaningful relationships across the African diaspora. Network with professionals, mentors, and collaborators who share your vision.',
+    benefits: [
+      'Get matched with professionals in your industry',
+      'Receive personalized networking recommendations',
+      'Access curated connection opportunities',
+      'Join location-based diaspora communities'
+    ],
     color: 'dna-emerald'
   },
   {
@@ -21,6 +27,12 @@ const PILLARS = [
     title: 'Collaborate',
     icon: HandHeart,
     description: 'Join forces on projects, ventures, and initiatives that drive impact. Work together to solve challenges and create opportunities.',
+    benefits: [
+      'Discover partnership opportunities in your field',
+      'Get notified about relevant projects seeking collaborators',
+      'Access exclusive collaboration spaces and tools',
+      'Connect with co-founders and business partners'
+    ],
     color: 'dna-copper'
   },
   {
@@ -28,6 +40,12 @@ const PILLARS = [
     title: 'Contribute',
     icon: Lightbulb,
     description: 'Share your expertise, resources, and knowledge to uplift the community. Make your mark on Africa\'s development story.',
+    benefits: [
+      'Showcase your expertise to potential mentees',
+      'Get featured in community spotlights',
+      'Access exclusive contributor recognition programs',
+      'Connect with organizations seeking your skills'
+    ],
     color: 'dna-gold'
   }
 ];
@@ -52,11 +70,16 @@ const PillarsStep: React.FC<PillarsStepProps> = ({ data, updateData }) => {
     <div className="space-y-6">
       <div className="text-center mb-6">
         <h2 className="text-xl font-semibold text-dna-forest mb-2">
-          The DNA Framework
+          Customize Your DNA Experience
         </h2>
-        <p className="text-gray-600">
-          Select the pillars that resonate with your journey. You can choose multiple areas of focus.
+        <p className="text-gray-600 mb-3">
+          Your pillar selections shape your entire platform experience - from who you're matched with to what opportunities you see.
         </p>
+        <div className="bg-dna-emerald/10 p-4 rounded-lg">
+          <p className="text-sm text-dna-forest font-medium">
+            💡 <strong>Smart Matching:</strong> The more pillars you select, the better we can personalize your connections, content, and collaboration opportunities.
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-1">
@@ -92,9 +115,24 @@ const PillarsStep: React.FC<PillarsStepProps> = ({ data, updateData }) => {
                         {isSelected ? 'Selected' : 'Select'}
                       </Button>
                     </div>
-                    <p className="text-gray-600 mt-2">
+                    <p className="text-gray-600 mt-2 mb-3">
                       {pillar.description}
                     </p>
+                    
+                    {/* Benefits list */}
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                        What you'll get:
+                      </p>
+                      <ul className="space-y-1">
+                        {pillar.benefits.map((benefit, index) => (
+                          <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
+                            <span className={`text-${pillar.color} font-bold text-xs mt-1`}>✓</span>
+                            {benefit}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -104,8 +142,22 @@ const PillarsStep: React.FC<PillarsStepProps> = ({ data, updateData }) => {
       </div>
 
       {selectedPillars.length > 0 && (
-        <div className="text-center text-sm text-gray-600">
-          Selected: {selectedPillars.length} pillar{selectedPillars.length > 1 ? 's' : ''}
+        <div className="text-center space-y-2">
+          <div className="text-sm font-medium text-dna-forest">
+            ✨ Perfect! You've selected {selectedPillars.length} pillar{selectedPillars.length > 1 ? 's' : ''}
+          </div>
+          <div className="text-xs text-gray-600 bg-gray-50 p-3 rounded-lg">
+            Your feed will now show targeted content, you'll receive smarter connection recommendations, 
+            and we'll notify you about relevant opportunities in your selected areas.
+          </div>
+        </div>
+      )}
+      
+      {selectedPillars.length === 0 && (
+        <div className="text-center">
+          <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg">
+            💭 Select at least one pillar to unlock personalized matching and recommendations
+          </div>
         </div>
       )}
     </div>
