@@ -8,7 +8,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-// import Onboarding from "./pages/Onboarding"; // Onboarding UI disabled for now
+import Onboarding from "./pages/Onboarding";
 import AppDashboard from "./pages/AppDashboard";
 import ContributeExample from "./pages/ContributeExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
@@ -93,8 +93,8 @@ function App() {
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/onboarding" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/onboarding/*" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/onboarding" element={<AppShell><Onboarding /></AppShell>} />
+              <Route path="/onboarding/*" element={<Navigate to="/onboarding" replace />} />
               <Route path="/welcome/*" element={<Navigate to="/app/dashboard" replace />} />
               <Route path="/complete-profile/*" element={<Navigate to="/app/dashboard" replace />} />
               <Route path="/post-onboarding" element={<Navigate to="/app/dashboard" replace />} />

@@ -20,6 +20,7 @@ import { ProfileCompletenessWidget } from '@/components/dashboard/ProfileComplet
 import RecommendationsWidget from '@/components/dashboard/RecommendationsWidget';
 import ProgressStrip from '@/components/dashboard/ProgressStrip';
 import DashboardEventsView from '@/components/events/DashboardEventsView';
+import DashboardNudges from '@/components/dashboard/DashboardNudges';
 import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 const Dashboard = () => {
   const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
@@ -79,6 +80,7 @@ const Dashboard = () => {
       </div>
 
       {/* Feed / Pillar content */}
+      <DashboardNudges />
       <ProgressStrip />
       {activeView === 'search' && <SearchMainContent />}
 

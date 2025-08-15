@@ -14,7 +14,7 @@ import { USERNAME_REGEX as usernameRegex, isValidUsername, isUsernameAvailable, 
 const requiredSatisfied = (p: any) => {
   if (!p) return false;
   return Boolean(
-    p.full_name && p.username && (p.current_country || p.location) && p.avatar_url
+    p.full_name && (p.current_country || p.location) && p.avatar_url
   );
 };
 
@@ -27,12 +27,9 @@ const OnboardingBar: React.FC = () => {
   const [firstName, setFirstName] = useState("");
   const [middleInitial, setMiddleInitial] = useState("");
   const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
   const [location, setLocation] = useState("");
   const [avatar, setAvatar] = useState<string | undefined>(undefined);
-  const [checking, setChecking] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [usernameError, setUsernameError] = useState<string | null>(null);
 
   const show = useMemo(() => {
     if (!open) return false;
@@ -40,16 +37,14 @@ const OnboardingBar: React.FC = () => {
   }, [open, profile]);
 
   const isValid = useMemo(() => {
-    const v = (username || '').toLowerCase();
-    return Boolean(firstName && lastName && location && avatar && isValidUsername(v) && !usernameError);
-  }, [firstName, lastName, location, avatar, username, usernameError]);
+    return Boolean(firstName && lastName && location && avatar);
+  }, [firstName, lastName, location, avatar]);
 
   useEffect(() => {
     if (profile) {
       setFirstName(profile.first_name || "");
       setMiddleInitial(profile.middle_initial || "");
       setLastName(profile.last_name || "");
-      setUsername((profile.username as string) || "");
       setLocation(profile.location || "");
       setAvatar(profile.avatar_url || undefined);
     }
@@ -57,32 +52,7 @@ const OnboardingBar: React.FC = () => {
 
   if (!user || !show) return null;
 
-  const checkUsername = async (val: string) => {
-    const v = normalizeUsername(val);
-    if (!isValidUsername(v)) {
-      setUsernameError("3–30 chars; lowercase letters, numbers, . _ -");
-      return false;
-    }
-    setChecking(true);
-    try {
-      const ok = await isUsernameAvailable(v, user?.id);
-      if (!ok) {
-        setUsernameError("Username already taken");
-        return false;
-      }
-      setUsernameError(null);
-      return true;
-    } catch (e: any) {
-      setUsernameError(e.message || "Check failed");
-      return false;
-    } finally {
-      setChecking(false);
-    }
-  };
-
   const onSave = async () => {
-    const ok = await checkUsername(username);
-    if (!ok) return;
     if (!firstName || !lastName || !location || !avatar) {
       toast({ title: "Missing fields", description: "Please complete all required fields." });
       return;
@@ -96,7 +66,6 @@ const OnboardingBar: React.FC = () => {
         middle_initial: middleInitial ? middleInitial[0].toUpperCase() : null,
         last_name: lastName,
         full_name: display,
-        username: normalizeUsername(username),
         location,
         avatar_url: avatar,
       };
@@ -132,27 +101,17 @@ const OnboardingBar: React.FC = () => {
       <div className="flex items-start justify-between gap-4 flex-col lg:flex-row">
         <div className="space-y-1">
           <h3 className="text-base font-semibold text-foreground">Finish these quick steps to personalize your profile</h3>
-          <p className="text-sm text-muted-foreground">Required: name, username, location, photo</p>
+          <p className="text-sm text-muted-foreground">Required: name, location, photo</p>
         </div>
-        <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
+        <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
           <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" aria-label="First name" />
           <Input value={middleInitial} onChange={(e) => setMiddleInitial(e.target.value.slice(0,1).toUpperCase())} placeholder="M" aria-label="Middle initial" />
           <Input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" aria-label="Last name" />
-          <div className="space-y-1">
-            <Input
-              value={username}
-              onChange={(e) => { const v = e.target.value.toLowerCase(); setUsername(v); }}
-              onBlur={() => checkUsername(username)}
-              placeholder="username"
-              aria-label="Username"
-            />
-            {usernameError && <div className="text-xs text-destructive">{usernameError}</div>}
-          </div>
           <LocationTypeahead value={location} onChange={setLocation} />
           <AvatarUploader value={avatar} onUploaded={(url) => setAvatar(url)} />
         </div>
         <div className="flex items-center gap-3">
-          <Button onClick={onSave} disabled={saving || checking || !isValid}>
+          <Button onClick={onSave} disabled={saving || !isValid}>
             {saving ? "Saving..." : "Save & Continue"}
           </Button>
           <a href="/settings/profile" className="text-sm text-primary underline">Edit full profile in Settings</a>
