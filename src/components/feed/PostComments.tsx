@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserAvatar } from '@/components/common/UserAvatar';
+import { getUserInitials } from '@/utils/profileLinks';
 
 interface Comment {
   id: string;
@@ -16,6 +18,7 @@ interface Comment {
   profiles: {
     id: string;
     full_name: string;
+    username?: string;
     avatar_url?: string;
   };
 }
@@ -54,6 +57,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({
           profiles (
             id,
             full_name,
+            username,
             avatar_url
           )
         `)
@@ -115,6 +119,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({
           profiles (
             id,
             full_name,
+            username,
             avatar_url
           )
         `)
@@ -149,15 +154,6 @@ export const PostComments: React.FC<PostCommentsProps> = ({
     }
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
     <div className="border-t border-border">
       {/* Comments Toggle Button */}
@@ -190,12 +186,15 @@ export const PostComments: React.FC<PostCommentsProps> = ({
             <div className="space-y-3 max-h-60 overflow-y-auto">
               {comments.map((comment) => (
                 <div key={comment.id} className="flex gap-3">
-                  <Avatar className="h-8 w-8 flex-shrink-0">
-                    <AvatarImage src={comment.profiles.avatar_url} alt={comment.profiles.full_name} />
-                    <AvatarFallback className="bg-dna-forest text-white text-xs">
-                      {getInitials(comment.profiles.full_name)}
-                    </AvatarFallback>
-                  </Avatar>
+                  <UserAvatar
+                    user={{
+                      id: comment.profiles.id,
+                      username: comment.profiles.username,
+                      full_name: comment.profiles.full_name,
+                      avatar_url: comment.profiles.avatar_url
+                    }}
+                    size="sm"
+                  />
                   <div className="flex-1 min-w-0">
                     <div className="bg-muted rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
@@ -226,7 +225,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({
               <Avatar className="h-8 w-8 flex-shrink-0">
                 <AvatarImage src={user.user_metadata?.avatar_url} alt={user.user_metadata?.full_name} />
                 <AvatarFallback className="bg-dna-forest text-white text-xs">
-                  {getInitials(user.user_metadata?.full_name || 'User')}
+                  {getUserInitials(user.user_metadata?.full_name || 'User')}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 space-y-2">

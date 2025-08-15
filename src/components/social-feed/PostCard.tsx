@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -14,6 +13,7 @@ import { AdminPostControls } from './AdminPostControls';
 import { usePostViewTracker } from '@/hooks/usePostViewTracker';
 import { PostAnalyticsPanel } from '@/components/analytics/PostAnalyticsPanel';
 import { supabase } from '@/integrations/supabase/client';
+import { UserChip } from '@/components/common/UserChip';
 
 interface PostCardProps {
   post: Post;
@@ -75,15 +75,16 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onD
     >
       <CardHeader className="pb-3">
         <div className="flex items-start gap-3">
-          <Avatar className="h-12 w-12">
-            <AvatarImage 
-              src={post.profiles.avatar_url} 
-              alt={`${post.profiles.full_name}'s profile picture`}
-            />
-            <AvatarFallback className="bg-dna-forest text-white text-sm">
-              {getInitials(post.profiles.full_name)}
-            </AvatarFallback>
-          </Avatar>
+          <UserChip
+            user={{
+              id: post.profiles.id,
+              username: (post.profiles as any).username,
+              full_name: post.profiles.full_name,
+              avatar_url: post.profiles.avatar_url
+            }}
+            showName={false}
+            avatarSize="lg"
+          />
           
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">

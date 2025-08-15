@@ -20,7 +20,7 @@ import {
   TestTube,
   Rocket
 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UserAvatar } from '@/components/common/UserAvatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -282,12 +282,16 @@ const UnifiedHeader = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex flex-col items-center px-2 py-2 h-auto">
-                      <Avatar className="w-8 h-8">
-                        <AvatarImage src={profile?.avatar_url} />
-                        <AvatarFallback className="text-sm bg-dna-mint text-dna-forest font-medium">
-                          {profile?.display_name?.charAt(0) || profile?.full_name?.charAt(0) || 'U'}
-                        </AvatarFallback>
-                      </Avatar>
+                      <UserAvatar
+                        user={{
+                          id: profile?.id || user?.id || '',
+                          username: (profile as any)?.username,
+                          full_name: profile?.full_name,
+                          avatar_url: profile?.avatar_url
+                        }}
+                        size="md"
+                        showLink={false}
+                      />
                       <span className="text-xs mt-1 hidden sm:block">Me</span>
                     </Button>
                   </DropdownMenuTrigger>

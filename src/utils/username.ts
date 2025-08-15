@@ -11,7 +11,9 @@ import { supabase } from '@/integrations/supabase/client';
 export const isUsernameAvailable = async (name: string, excludeUserId?: string) => {
   const v = normalizeUsername(name);
   if (!isValidUsername(v)) return false;
-  const query = supabase.from('profiles').select('id').eq('username', v).limit(1);
+  
+  // Use case-insensitive check to match the unique index
+  const query = supabase.from('profiles').select('id').ilike('username', v).limit(1);
   const { data, error } = excludeUserId ? await query.neq('id', excludeUserId) : await query;
   if (error) throw error;
   return !data || data.length === 0;

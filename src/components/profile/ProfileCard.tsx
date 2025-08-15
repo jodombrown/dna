@@ -2,9 +2,9 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MapPin, Building, ExternalLink, Users, Calendar, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { UserAvatar } from '@/components/common/UserAvatar';
 
 interface ProfileCardProps {
   profile: {
@@ -54,39 +54,25 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
 
   const interestsList = getStringArray(profile.interests).slice(0, 2);
 
-  const profileUrl = profile.username ? `/dna/${profile.username}` : undefined;
-
   return (
     <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full" onClick={onClick}>
       <CardContent className="p-6 h-full flex flex-col">
         <div className="flex items-start space-x-4 mb-4">
-          {profileUrl ? (
-            <a href={profileUrl} onClick={(e) => e.stopPropagation()} aria-label={`View ${profile.full_name || 'profile'}`} className="inline-block">
-              <Avatar className="w-16 h-16 flex-shrink-0">
-                <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
-                <AvatarFallback className="bg-dna-copper text-white">
-                  {profile.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
-                </AvatarFallback>
-              </Avatar>
-            </a>
-          ) : (
-            <Avatar className="w-16 h-16 flex-shrink-0">
-              <AvatarImage src={profile.avatar_url} alt={profile.full_name} />
-              <AvatarFallback className="bg-dna-copper text-white">
-                {profile.full_name?.split(' ').map(n => n[0]).join('') || 'U'}
-              </AvatarFallback>
-            </Avatar>
-          )}
+          <UserAvatar
+            user={{
+              id: profile.id,
+              username: profile.username,
+              full_name: profile.full_name,
+              avatar_url: profile.avatar_url
+            }}
+            size="lg"
+            className="w-16 h-16 flex-shrink-0"
+            onClick={(e) => e.stopPropagation()}
+          />
           
           <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold text-dna-forest truncate">
-              {profileUrl ? (
-                <a href={profileUrl} onClick={(e) => e.stopPropagation()} className="hover:underline">
-                  {profile.full_name || 'Anonymous User'}
-                </a>
-              ) : (
-                profile.full_name || 'Anonymous User'
-              )}
+              {profile.full_name || 'Anonymous User'}
             </h3>
             
             {profile.profession && (

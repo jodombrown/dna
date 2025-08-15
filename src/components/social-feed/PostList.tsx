@@ -17,6 +17,7 @@ export interface Post {
   profiles: {
     id: string;
     full_name: string;
+    username?: string;
     avatar_url?: string;
     location?: string;
     professional_role?: string;
