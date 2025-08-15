@@ -69,8 +69,8 @@ const AppDashboard = () => {
               </div>
               <div className="pt-6 lg:pt-8">
                 <Routes>
-                {/* Main dashboard route */}
-                <Route index element={<Dashboard />} />
+                {/* Main dashboard route - Universal DNA Feed */}
+                <Route index element={<DnaDashboardPage />} />
                 
                 {/* V2 Dashboard Routes */}
                 <Route path="dashboard" element={<Dashboard />} />
@@ -89,7 +89,7 @@ const AppDashboard = () => {
                 <Route path="recommendations" element={<Recommendations />} />
                 
                 {/* Catch-all: redirect any undefined routes back to dashboard */}
-                <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
+                <Route path="*" element={<Navigate to="/dna" replace />} />
               </Routes>
               </div>
             </main>

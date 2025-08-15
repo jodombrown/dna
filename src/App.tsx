@@ -67,10 +67,10 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
   
   if (loading) return null;
   
-  // Only redirect authenticated users if this is an auth-specific page
-  if (user && redirectAuth) {
-    return <Navigate to="/app/dashboard" replace />;
-  }
+    // Only redirect authenticated users if this is an auth-specific page
+    if (user && redirectAuth) {
+      return <Navigate to="/dna" replace />;
+    }
   
   return <>{children}</>;
 };
@@ -98,15 +98,16 @@ function App() {
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/onboarding" element={<AppShell><Onboarding /></AppShell>} />
               <Route path="/onboarding/*" element={<Navigate to="/onboarding" replace />} />
-              <Route path="/welcome/*" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/complete-profile/*" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/post-onboarding" element={<Navigate to="/app/dashboard" replace />} />
-              {/* Dynamic User Dashboard Route */}
+              <Route path="/welcome/*" element={<Navigate to="/dna" replace />} />
+              <Route path="/complete-profile/*" element={<Navigate to="/dna" replace />} />
+              <Route path="/post-onboarding" element={<Navigate to="/dna" replace />} />
+              {/* Universal DNA Dashboard and User Profiles */}
+              <Route path="/dna" element={<AppShell><AppDashboard /></AppShell>} />
               <Route path="/dna/me" element={<DnaMeRedirect />} />
               <Route path="/dna/:username" element={<UserDashboard />} />
               
               {/* Dashboard V1 Archive Route - MUST come before /app/* */}
-              <Route path="/app/v1/*" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/app/v1/*" element={<Navigate to="/dna" replace />} />
               
         <Route path="/app/events" element={<AppShell><Events /></AppShell>} />
         <Route path="/app/events/my" element={<AppShell><MyEvents /></AppShell>} />
@@ -141,9 +142,9 @@ function App() {
               <Route path="/settings/privacy" element={<AppShell><UnifiedSettings /></AppShell>} />
 
               {/* Me route */}
-              <Route path="/me" element={<Navigate to="/app/profile" replace />} />
+              <Route path="/me" element={<Navigate to="/dna/me" replace />} />
 
-              <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
+              <Route path="/app" element={<Navigate to="/dna" replace />} />
               <Route path="/app/*" element={<AppShell><AppDashboard /></AppShell>} />
               <Route path="/contribute" element={<AppShell><ContributeExample /></AppShell>} />
               <Route path="/collaborate" element={<AppShell><CollaborationsExample /></AppShell>} />

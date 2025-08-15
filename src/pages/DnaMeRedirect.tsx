@@ -20,7 +20,7 @@ const DnaMeRedirect: React.FC = () => {
       if (error) {
         console.error('Profile lookup error:', error);
       }
-      setTo(data?.username ? `/dna/${data.username}` : '/app/dashboard');
+      setTo(data?.username ? `/dna/${data.username}` : '/dna');
     };
     run();
   }, []);
