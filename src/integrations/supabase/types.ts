@@ -2404,6 +2404,7 @@ export type Database = {
           referral_code: string | null
           referrer_id: string | null
           role: string | null
+          roles: string[] | null
           sdg_focus: string[] | null
           sectors: string[] | null
           selected_pillars: string[] | null
@@ -2499,6 +2500,7 @@ export type Database = {
           referral_code?: string | null
           referrer_id?: string | null
           role?: string | null
+          roles?: string[] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
           selected_pillars?: string[] | null
@@ -2594,6 +2596,7 @@ export type Database = {
           referral_code?: string | null
           referrer_id?: string | null
           role?: string | null
+          roles?: string[] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
           selected_pillars?: string[] | null
