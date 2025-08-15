@@ -70,12 +70,6 @@ const AppDashboard = () => {
         <div className="min-h-screen flex w-full bg-gray-50">
           <AppSidebar />
           <div className="flex-1 relative">
-            {/* App Header with sidebar control */}
-            <header className="sticky top-0 z-40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-              <div className="h-12 flex items-center px-4 gap-3">
-                <SidebarTrigger />
-              </div>
-            </header>
 
             <main className="pb-20 lg:pb-0">
               <div className="pt-4">
