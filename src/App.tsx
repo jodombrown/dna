@@ -101,37 +101,20 @@ function App() {
               <Route path="/welcome/*" element={<Navigate to="/dna" replace />} />
               <Route path="/complete-profile/*" element={<Navigate to="/dna" replace />} />
               <Route path="/post-onboarding" element={<Navigate to="/dna" replace />} />
-              {/* Universal DNA Dashboard and User Profiles */}
+              {/* Universal DNA Platform - All features under /dna */}
               <Route path="/dna" element={<AppShell><AppDashboard /></AppShell>} />
+              <Route path="/dna/*" element={<AppShell><AppDashboard /></AppShell>} />
               <Route path="/dna/me" element={<DnaMeRedirect />} />
               <Route path="/dna/:username" element={<UserDashboard />} />
               
-              {/* Dashboard V1 Archive Route - MUST come before /app/* */}
-              <Route path="/app/v1/*" element={<Navigate to="/dna" replace />} />
-              
-        <Route path="/app/events" element={<AppShell><Events /></AppShell>} />
-        <Route path="/app/events/my" element={<AppShell><MyEvents /></AppShell>} />
-        <Route path="/app/events/new" element={<AppShell><Navigate to="/events/new" replace /></AppShell>} />
-        <Route path="/app/events/:id" element={<AppShell><EventDetail /></AppShell>} />
-        <Route path="/app/events/:id/edit" element={<AppShell><EventEdit /></AppShell>} />
-        <Route path="/app/events/:id/manage" element={<AppShell><EventManage /></AppShell>} />
-         <Route path="/app/events/:id/checkin" element={<AppShell><EventCheckIn /></AppShell>} />
-         
-         {/* Project Routes */}
-         <Route path="/app/projects" element={<AppShell><Projects /></AppShell>} />
-         <Route path="/app/projects/create" element={<AppShell><ProjectCreate /></AppShell>} />
-         <Route path="/app/projects/:id" element={<AppShell><ProjectDetail /></AppShell>} />
-         <Route path="/app/projects/:id/manage" element={<AppShell><ProjectManage /></AppShell>} />
-         <Route path="/app/projects/:id/edit" element={<AppShell><ProjectEdit /></AppShell>} />
-         
+              {/* Legacy /app redirects */}
+              <Route path="/app" element={<Navigate to="/dna" replace />} />
+              <Route path="/app/*" element={<Navigate to="/dna" replace />} />
          <Route path="/events/new" element={<EventNewWizard />} />
         <Route path="/events/category/:slug" element={<EventCategoryPage />} />
         <Route path="/events/:slug" element={<EventsBySlug />} />
         <Route path="/events/:id/payment-success" element={<EventPaymentSuccess />} />
         <Route path="/join/:token" element={<EventJoin />} />
-              <Route path="/app/opportunities/new" element={<AppShell><OpportunityNew /></AppShell>} />
-              <Route path="/app/notifications" element={<AppShell><Notifications /></AppShell>} />
-              <Route path="/app/connections/:id" element={<AppShell><ConnectionDetailPage /></AppShell>} />
               
               {/* Unified Settings */}
               <Route path="/settings" element={<AppShell><UnifiedSettings /></AppShell>} />
@@ -140,12 +123,8 @@ function App() {
               <Route path="/settings/dna-experience" element={<AppShell><UnifiedSettings /></AppShell>} />
               <Route path="/settings/links" element={<AppShell><UnifiedSettings /></AppShell>} />
               <Route path="/settings/privacy" element={<AppShell><UnifiedSettings /></AppShell>} />
-
-              {/* Me route */}
-              <Route path="/me" element={<Navigate to="/dna/me" replace />} />
-
-              <Route path="/app" element={<Navigate to="/dna" replace />} />
-              <Route path="/app/*" element={<AppShell><AppDashboard /></AppShell>} />
+              
+              {/* Static Pages */}
               <Route path="/contribute" element={<AppShell><ContributeExample /></AppShell>} />
               <Route path="/collaborate" element={<AppShell><CollaborationsExample /></AppShell>} />
               <Route path="/connect" element={<AppShell><ConnectExample /></AppShell>} />
@@ -153,6 +132,9 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
+              {/* Me route */}
+              <Route path="/me" element={<Navigate to="/dna/me" replace />} />
               
               {/* Invite Signup Route */}
               <Route path="/invite" element={<InviteSignup />} />
