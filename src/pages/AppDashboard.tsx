@@ -34,6 +34,8 @@ import ProjectEdit from "@/pages/app/ProjectEdit";
 import OpportunityNew from "@/pages/app/OpportunityNew";
 import Notifications from "@/pages/app/Notifications";
 import ConnectionDetailPage from "@/pages/app/ConnectionDetailPage";
+import Messages from "@/pages/app/Messages";
+import Communities from "@/pages/app/Communities";
 
 const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -93,6 +95,9 @@ const AppDashboard = () => {
                 <Route path="spaces/:id" element={<SpaceDetail />} />
                 <Route path="spaces/:id/members" element={<SpaceMembers />} />
                 <Route path="opportunities" element={<Opportunities />} />
+                <Route path="messages" element={<Messages />} />
+                <Route path="events" element={<Events />} />
+                <Route path="communities" element={<Communities />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="profile/edit" element={<ProfileEdit />} />
                 <Route path="invites" element={<Invites />} />
@@ -101,7 +106,6 @@ const AppDashboard = () => {
                 <Route path="recommendations" element={<Recommendations />} />
                 
                 {/* Events under DNA */}
-                <Route path="events" element={<Events />} />
                 <Route path="events/my" element={<MyEvents />} />
                 <Route path="events/:id" element={<EventDetail />} />
                 <Route path="events/:id/edit" element={<EventEdit />} />
