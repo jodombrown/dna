@@ -2,20 +2,8 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDashboard } from '@/contexts/DashboardContext';
 import { NavLink, useLocation } from 'react-router-dom';
-import { 
-  Home, 
-  Users, 
-  MessageSquare, 
-  Calendar, 
-  Settings, 
-  User,
-  LogOut,
-  BookOpen,
-  Briefcase,
-  Square,
-  LayoutGrid,
-  Search
-} from 'lucide-react';
+import { LogOut, Search, LayoutGrid } from 'lucide-react';
+import { NAV, NavItem } from '@/config/nav';
 import {
   Sidebar,
   SidebarContent,
@@ -33,21 +21,6 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 
-const mainNavItems = [
-  { title: 'Home', url: '/dna', icon: Home },
-  { title: 'Connect', url: '/dna/connect', icon: Users },
-  { title: 'Spaces', url: '/dna/spaces', icon: Square },
-  { title: 'Opportunities', url: '/dna/opportunities', icon: Briefcase },
-  { title: 'Messages', url: '/dna/messages', icon: MessageSquare },
-  { title: 'Events', url: '/dna/events', icon: Calendar },
-  { title: 'Communities', url: '/dna/communities', icon: BookOpen },
-];
-
-const bottomNavItems = [
-  { title: 'Profile', url: '/dna/profile', icon: User },
-  { title: 'Settings', url: '/settings/privacy', icon: Settings },
-];
-
 const AppSidebar = () => {
   const { state, toggleSidebar } = useSidebar();
   const { profile, signOut } = useAuth();
@@ -55,9 +28,18 @@ const AppSidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  // Filter navigation items for main and bottom sections
+  const mainNavItems = NAV.filter(item => 
+    ['home', 'discover', 'connect', 'collaborate', 'contribute', 'notifications'].includes(item.key)
+  );
+  
+  const bottomNavItems = NAV.filter(item => 
+    ['profile', 'settings', 'help'].includes(item.key)
+  );
+
   const isActive = (path: string) => {
-    if (path === '/dna') {
-      return currentPath === '/dna';
+    if (path === '/' || path === '/dna') {
+      return currentPath === '/' || currentPath === '/dna';
     }
     return currentPath.startsWith(path);
   };
@@ -145,48 +127,51 @@ const AppSidebar = () => {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  {isCollapsed ? (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <SidebarMenuButton asChild>
-                           {item.title === 'Messages' ? (
-                             <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
-                              <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-center p-2 rounded-md`}>
-                                <item.icon className="h-5 w-5" />
+              {mainNavItems.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <SidebarMenuItem key={item.key}>
+                    {isCollapsed ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton asChild>
+                             {item.key === 'messages' ? (
+                               <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
+                                <NavLink to={item.path || '#'} className={`${getNavCls(item.path || '#')} flex items-center justify-center p-2 rounded-md`}>
+                                  <IconComponent className="h-5 w-5" />
+                                </NavLink>
+                               </RequireProfileScore>
+                             ) : (
+                              <NavLink to={item.path || '#'} className={`${getNavCls(item.path || '#')} flex items-center justify-center p-2 rounded-md`}>
+                                <IconComponent className="h-5 w-5" />
                               </NavLink>
-                             </RequireProfileScore>
-                           ) : (
-                            <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-center p-2 rounded-md`}>
-                              <item.icon className="h-5 w-5" />
-                            </NavLink>
-                          )}
-                        </SidebarMenuButton>
-                      </TooltipTrigger>
-                      <TooltipContent side="right" className="text-xs">
-                        {item.title}
-                      </TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    <SidebarMenuButton asChild>
-                      {item.title === 'Messages' ? (
-                        <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
-                         <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-start p-2 rounded-md`}>
-                           <item.icon className="mr-2 h-5 w-5" />
-                           <span>{item.title}</span>
-                         </NavLink>
-                        </RequireProfileScore>
-                      ) : (
-                        <NavLink to={item.url} className={getNavCls(item.url)}>
-                          <item.icon className="mr-2 h-5 w-5" />
-                          <span>{item.title}</span>
-                        </NavLink>
-                      )}
-                    </SidebarMenuButton>
-                  )}
-                </SidebarMenuItem>
-              ))}
+                            )}
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="text-xs">
+                          {item.label}
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <SidebarMenuButton asChild>
+                        {item.key === 'messages' ? (
+                          <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
+                           <NavLink to={item.path || '#'} className={`${getNavCls(item.path || '#')} flex items-center justify-start p-2 rounded-md`}>
+                             <IconComponent className="mr-2 h-5 w-5" />
+                             <span>{item.label}</span>
+                           </NavLink>
+                          </RequireProfileScore>
+                        ) : (
+                          <NavLink to={item.path || '#'} className={getNavCls(item.path || '#')}>
+                            <IconComponent className="mr-2 h-5 w-5" />
+                            <span>{item.label}</span>
+                          </NavLink>
+                        )}
+                      </SidebarMenuButton>
+                    )}
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -233,31 +218,34 @@ const AppSidebar = () => {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {bottomNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  {isCollapsed ? (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <SidebarMenuButton asChild>
-                           <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-center p-2 rounded-md`}>
-                             <item.icon className="h-5 w-5" />
-                           </NavLink>
-                        </SidebarMenuButton>
-                      </TooltipTrigger>
-                      <TooltipContent side="right" className="text-xs">
-                        {item.title}
-                      </TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    <SidebarMenuButton asChild>
-                       <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-start p-2 rounded-md`}>
-                         <item.icon className="mr-2 h-5 w-5" />
-                         <span>{item.title}</span>
-                       </NavLink>
-                    </SidebarMenuButton>
-                  )}
-                </SidebarMenuItem>
-              ))}
+              {bottomNavItems.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <SidebarMenuItem key={item.key}>
+                    {isCollapsed ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton asChild>
+                             <NavLink to={item.path || '#'} className={`${getNavCls(item.path || '#')} flex items-center justify-center p-2 rounded-md`}>
+                               <IconComponent className="h-5 w-5" />
+                             </NavLink>
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="text-xs">
+                          {item.label}
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <SidebarMenuButton asChild>
+                         <NavLink to={item.path || '#'} className={`${getNavCls(item.path || '#')} flex items-center justify-start p-2 rounded-md`}>
+                           <IconComponent className="mr-2 h-5 w-5" />
+                           <span>{item.label}</span>
+                         </NavLink>
+                      </SidebarMenuButton>
+                    )}
+                  </SidebarMenuItem>
+                );
+              })}
               
               <SidebarMenuItem>
                 {isCollapsed ? (
