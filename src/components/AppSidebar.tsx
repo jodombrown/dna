@@ -33,18 +33,18 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 
 const mainNavItems = [
-  { title: 'Home', url: '/app/dashboard', icon: Home },
-  { title: 'Search', url: '/app/search', icon: Search },
-  { title: 'Connect', url: '/app/connect', icon: Users },
-  { title: 'Spaces', url: '/app/spaces', icon: Square },
-  { title: 'Opportunities', url: '/app/opportunities', icon: Briefcase },
-  { title: 'Messages', url: '/app/messages', icon: MessageSquare },
-  { title: 'Events', url: '/app/events', icon: Calendar },
-  { title: 'Communities', url: '/app/communities', icon: BookOpen },
+  { title: 'Home', url: '/dna', icon: Home },
+  { title: 'Search', url: '/dna/search', icon: Search },
+  { title: 'Connect', url: '/dna/connect', icon: Users },
+  { title: 'Spaces', url: '/dna/spaces', icon: Square },
+  { title: 'Opportunities', url: '/dna/opportunities', icon: Briefcase },
+  { title: 'Messages', url: '/dna/messages', icon: MessageSquare },
+  { title: 'Events', url: '/dna/events', icon: Calendar },
+  { title: 'Communities', url: '/dna/communities', icon: BookOpen },
 ];
 
 const bottomNavItems = [
-  { title: 'Profile', url: '/app/profile', icon: User },
+  { title: 'Profile', url: '/dna/profile', icon: User },
   { title: 'Settings', url: '/settings/privacy', icon: Settings },
 ];
 
@@ -56,8 +56,8 @@ const AppSidebar = () => {
   const currentPath = location.pathname;
 
   const isActive = (path: string) => {
-    if (path === '/app') {
-      return currentPath === '/app';
+    if (path === '/dna') {
+      return currentPath === '/dna';
     }
     return currentPath.startsWith(path);
   };
@@ -74,7 +74,7 @@ const AppSidebar = () => {
       <SidebarRail />
       {/* Brand */}
       <div className="p-4 border-b border-border bg-background flex items-center justify-center">
-        <NavLink to="/app/dashboard" className="flex items-center">
+        <NavLink to="/dna" className="flex items-center">
           <img
             src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png"
             alt="DNA logo"
@@ -130,15 +130,7 @@ const AppSidebar = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <SidebarMenuButton asChild>
-                          {item.title === 'Events' ? (
-                            <NavLink
-                              to="/app/dashboard"
-                              className={activeView === 'events' ? 'bg-dna-mint/20 text-dna-forest font-medium border-r-2 border-dna-copper' : 'hover:bg-gray-100 text-gray-700 hover:text-dna-forest'}
-                              onClick={() => setActiveView('events')}
-                            >
-                              <item.icon className="mr-2 h-4 w-4" />
-                            </NavLink>
-                          ) : item.title === 'Messages' ? (
+                          {item.title === 'Messages' ? (
                             <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
                               <NavLink to={item.url} className={getNavCls(item.url)}>
                                 <item.icon className="mr-2 h-4 w-4" />
@@ -157,16 +149,7 @@ const AppSidebar = () => {
                     </Tooltip>
                   ) : (
                     <SidebarMenuButton asChild>
-                      {item.title === 'Events' ? (
-                        <NavLink
-                          to="/app/dashboard"
-                          className={activeView === 'events' ? 'bg-dna-mint/20 text-dna-forest font-medium border-r-2 border-dna-copper' : 'hover:bg-gray-100 text-gray-700 hover:text-dna-forest'}
-                          onClick={() => setActiveView('events')}
-                        >
-                          <item.icon className="mr-2 h-4 w-4" />
-                          <span>{item.title}</span>
-                        </NavLink>
-                      ) : item.title === 'Messages' ? (
+                      {item.title === 'Messages' ? (
                         <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
                           <NavLink to={item.url} className={getNavCls(item.url)}>
                             <item.icon className="mr-2 h-4 w-4" />
