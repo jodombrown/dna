@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 export default function ProgressStrip() {
@@ -39,10 +40,10 @@ export default function ProgressStrip() {
   }, []);
 
   const Item = ({ label, value, href }: { label: string; value: number; href: string }) => (
-    <a href={href} className="border rounded p-3 flex flex-col hover:bg-muted transition">
+    <Link to={href} className="border rounded p-3 flex flex-col hover:bg-muted transition">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="text-2xl font-semibold">{value ?? 0}</div>
-    </a>
+    </Link>
   );
 
   if (loading && !data) return <div className="text-sm text-muted-foreground">Loading…</div>;
@@ -50,11 +51,11 @@ export default function ProgressStrip() {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-      <Item label="Active spaces" value={data?.active_spaces || 0} href="/app/spaces" />
-      <Item label="Pending joins" value={data?.pending_joins || 0} href="/app/spaces" />
-      <Item label="Tasks due 7d" value={data?.tasks_due_7d || 0} href="/app/spaces" />
-      <Item label="Saved opportunities" value={data?.saved_opportunities || 0} href="/app/opportunities" />
-      <Item label="Unread notifications" value={data?.unread_notifications || 0} href="/app/dashboard" />
+      <Item label="Active spaces" value={data?.active_spaces || 0} href="/dna/spaces" />
+      <Item label="Pending joins" value={data?.pending_joins || 0} href="/dna/spaces" />
+      <Item label="Tasks due 7d" value={data?.tasks_due_7d || 0} href="/dna/spaces" />
+      <Item label="Saved opportunities" value={data?.saved_opportunities || 0} href="/dna/opportunities" />
+      <Item label="Unread notifications" value={data?.unread_notifications || 0} href="/dna" />
     </div>
   );
 }

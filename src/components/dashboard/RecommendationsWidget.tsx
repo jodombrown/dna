@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 export default function RecommendationsWidget() {
@@ -62,7 +63,7 @@ export default function RecommendationsWidget() {
           ) : (
             people.map((p) => (
               <div key={p.user_id} className="text-xs truncate">
-                <a href={`/dna/${p.username}`} className="hover:underline">{p.full_name || p.username}</a>
+                <Link to={`/dna/profile/${p.username}`} className="hover:underline">{p.full_name || p.username}</Link>
               </div>
             ))
           )}

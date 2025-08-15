@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { Progress } from '@/components/ui/progress';
@@ -12,6 +13,7 @@ interface ProfileCompletionBannerProps {
 export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = ({ minForFull = 80 }) => {
   const { user, profile } = useAuth();
   const { completenessScore } = useProfileAccess();
+  const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(false);
 
   const storageKey = user ? `dna_profile_banner_dismissed_${user.id}_v1` : 'dna_profile_banner_dismissed';
@@ -43,7 +45,7 @@ export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = (
               <Progress value={completenessScore} />
             </div>
             <div className="mt-3 flex gap-2">
-              <Button size="sm" onClick={() => (window.location.href = '/app/profile/edit')}>Complete profile</Button>
+              <Button size="sm" onClick={() => navigate('/dna/profile/edit')}>Complete profile</Button>
               <Button size="sm" variant="outline" onClick={handleDismiss}>Not now</Button>
             </div>
           </div>
