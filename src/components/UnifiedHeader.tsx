@@ -158,15 +158,15 @@ const UnifiedHeader = () => {
                 />
               </NavLink>
               
-              {/* Search - only for authenticated users */}
-              {isAuthenticated && isAppRoute && (
+              {/* Search - show for all authenticated users */}
+              {isAuthenticated && (
                 <>
                   <div className="relative hidden sm:block">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
-                      placeholder="Search"
-                      className="pl-10 w-40 lg:w-64 bg-gray-50 border-0 h-10 text-base cursor-pointer"
-                      onClick={() => handleAuthNavigation('search')}
+                      placeholder="Search people, companies, or opportunities..."
+                      className="pl-10 w-40 lg:w-80 bg-gray-50 border-0 h-10 text-base cursor-pointer"
+                      onClick={() => navigate('/dna/search')}
                       readOnly
                     />
                   </div>
@@ -176,7 +176,7 @@ const UnifiedHeader = () => {
                     variant="ghost"
                     size="sm"
                     className="sm:hidden p-2"
-                    onClick={() => handleAuthNavigation('search')}
+                    onClick={() => navigate('/dna/search')}
                     aria-label="Search"
                   >
                     <Search className="w-5 h-5 text-gray-600" />

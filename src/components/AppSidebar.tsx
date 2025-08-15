@@ -10,10 +10,10 @@ import {
   Settings, 
   User,
   LogOut,
-  Search,
   BookOpen,
   Briefcase,
-  Square
+  Square,
+  LayoutGrid
 } from 'lucide-react';
 import {
   Sidebar,
@@ -34,7 +34,6 @@ import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 
 const mainNavItems = [
   { title: 'Home', url: '/dna', icon: Home },
-  { title: 'Search', url: '/dna/search', icon: Search },
   { title: 'Connect', url: '/dna/connect', icon: Users },
   { title: 'Spaces', url: '/dna/spaces', icon: Square },
   { title: 'Opportunities', url: '/dna/opportunities', icon: Briefcase },
@@ -79,41 +78,9 @@ const AppSidebar = () => {
             src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png"
             alt="DNA logo"
             loading="lazy"
-            className="h-8 w-auto object-contain transition-all"
+            className={isCollapsed ? "h-10 w-10 object-contain transition-all" : "h-12 w-auto object-contain transition-all"}
           />
         </NavLink>
-      </div>
-
-      {/* User Profile Section */}
-      <div className="p-4 border-b border-gray-200">
-        {!isCollapsed && profile && (
-          <div className="flex items-center space-x-3">
-            <Avatar className="w-10 h-10">
-              <AvatarImage src={profile.avatar_url} />
-              <AvatarFallback className="bg-dna-mint text-dna-forest font-semibold">
-                {profile.display_name?.charAt(0) || profile.full_name?.charAt(0) || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-dna-forest truncate">
-                {profile.display_name || profile.full_name}
-              </p>
-              <p className="text-xs text-gray-500 truncate">
-                {profile.current_role || 'DNA Member'}
-              </p>
-            </div>
-          </div>
-        )}
-        {isCollapsed && profile && (
-          <div className="flex justify-center">
-            <Avatar className="w-8 h-8">
-              <AvatarImage src={profile.avatar_url} />
-              <AvatarFallback className="bg-dna-mint text-dna-forest text-xs">
-                {profile.display_name?.charAt(0) || 'U'}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-        )}
       </div>
 
       <SidebarContent>
@@ -170,11 +137,41 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
+      </SidebarContent>
+
+      {/* User Profile Section at Bottom */}
+      <div className="mt-auto p-4 border-t border-gray-200 bg-background">
+        {!isCollapsed && profile && (
+          <div className="flex items-center space-x-3 mb-4">
+            <Avatar className="w-10 h-10">
+              <AvatarImage src={profile.avatar_url} />
+              <AvatarFallback className="bg-dna-mint text-dna-forest font-semibold">
+                {profile.display_name?.charAt(0) || profile.full_name?.charAt(0) || 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-dna-forest truncate">
+                {profile.display_name || profile.full_name}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {profile.current_role || 'DNA Member'}
+              </p>
+            </div>
+          </div>
+        )}
+        {isCollapsed && profile && (
+          <div className="flex justify-center mb-4">
+            <Avatar className="w-8 h-8">
+              <AvatarImage src={profile.avatar_url} />
+              <AvatarFallback className="bg-dna-mint text-dna-forest text-xs">
+                {profile.display_name?.charAt(0) || 'U'}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+        )}
+
         {/* Account Section */}
         <SidebarGroup>
-          <SidebarGroupLabel className={isCollapsed ? 'sr-only' : ''}>
-            Account
-          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {bottomNavItems.map((item) => (
@@ -235,7 +232,7 @@ const AppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-      </SidebarContent>
+      </div>
     </Sidebar>
   );
 };
