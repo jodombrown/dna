@@ -108,7 +108,7 @@ const ProfileSettings: React.FC = () => {
           <span className="text-sm text-muted-foreground">Onboarding completion</span>
           <span className="text-sm font-medium">{completion}%</span>
         </div>
-        <Button onClick={onSave}>Save</Button>
+        <Button onClick={() => { onSave(); window.location.href = '/app/dashboard'; }}>Save & Return to Dashboard</Button>
       </div>
     </div>
   );

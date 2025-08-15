@@ -2622,6 +2622,53 @@ export type Database = {
           },
         ]
       }
+      project_contributions: {
+        Row: {
+          contribution_type: string
+          contributor_id: string
+          created_at: string | null
+          funding_interest: number | null
+          id: string
+          message: string | null
+          project_id: string
+          skills_offered: string[] | null
+          status: string | null
+          time_commitment: string | null
+        }
+        Insert: {
+          contribution_type: string
+          contributor_id: string
+          created_at?: string | null
+          funding_interest?: number | null
+          id?: string
+          message?: string | null
+          project_id: string
+          skills_offered?: string[] | null
+          status?: string | null
+          time_commitment?: string | null
+        }
+        Update: {
+          contribution_type?: string
+          contributor_id?: string
+          created_at?: string | null
+          funding_interest?: number | null
+          id?: string
+          message?: string | null
+          project_id?: string
+          skills_offered?: string[] | null
+          status?: string | null
+          time_commitment?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_contributions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           created_at: string | null

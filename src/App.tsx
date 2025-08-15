@@ -47,6 +47,11 @@ import EventsBySlug from "@/pages/app/EventsBySlug";
 import EventCategoryPage from "@/pages/app/EventCategoryPage";
 import EventJoin from "@/pages/app/EventJoin";
 import MyEvents from "@/pages/app/MyEvents";
+import Projects from "@/pages/app/Projects";
+import ProjectCreate from "@/pages/app/ProjectCreate";
+import ProjectDetail from "@/pages/app/ProjectDetail";
+import ProjectManage from "@/pages/app/ProjectManage";
+import ProjectEdit from "@/pages/app/ProjectEdit";
 import OpportunityNew from "@/pages/app/OpportunityNew";
 import Notifications from "@/pages/app/Notifications";
 import EventPaymentSuccess from "@/pages/app/EventPaymentSuccess";
@@ -112,8 +117,16 @@ function App() {
         <Route path="/app/events/:id" element={<AppShell><EventDetail /></AppShell>} />
         <Route path="/app/events/:id/edit" element={<AppShell><EventEdit /></AppShell>} />
         <Route path="/app/events/:id/manage" element={<AppShell><EventManage /></AppShell>} />
-        <Route path="/app/events/:id/checkin" element={<AppShell><EventCheckIn /></AppShell>} />
-        <Route path="/events/new" element={<EventNewWizard />} />
+         <Route path="/app/events/:id/checkin" element={<AppShell><EventCheckIn /></AppShell>} />
+         
+         {/* Project Routes */}
+         <Route path="/app/projects" element={<AppShell><Projects /></AppShell>} />
+         <Route path="/app/projects/create" element={<AppShell><ProjectCreate /></AppShell>} />
+         <Route path="/app/projects/:id" element={<AppShell><ProjectDetail /></AppShell>} />
+         <Route path="/app/projects/:id/manage" element={<AppShell><ProjectManage /></AppShell>} />
+         <Route path="/app/projects/:id/edit" element={<AppShell><ProjectEdit /></AppShell>} />
+         
+         <Route path="/events/new" element={<EventNewWizard />} />
         <Route path="/events/category/:slug" element={<EventCategoryPage />} />
         <Route path="/events/:slug" element={<EventsBySlug />} />
         <Route path="/events/:id/payment-success" element={<EventPaymentSuccess />} />
