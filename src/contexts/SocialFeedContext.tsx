@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useRealtimeReactions } from '@/hooks/useRealtimeReactions';
 import type { RealtimeReactionPayload, RealtimeLikePayload } from '@/hooks/useRealtimeReactions';
 
@@ -14,10 +15,14 @@ interface PostEngagement {
 
 interface SocialFeedContextType {
   engagement: PostEngagement;
+  isLoading: boolean;
+  error: string | null;
   updatePostLike: (postId: string, isLiked: boolean, userId: string) => void;
   updatePostReaction: (postId: string, emoji: string, userId: string, action: 'add' | 'remove') => void;
   updateCommentCount: (postId: string, delta: number) => void;
   initializePost: (postId: string, initialData: Partial<PostEngagement[string]>) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
 }
 
 const SocialFeedContext = createContext<SocialFeedContextType | undefined>(undefined);
@@ -36,6 +41,8 @@ interface SocialFeedProviderProps {
 
 export const SocialFeedProvider: React.FC<SocialFeedProviderProps> = ({ children }) => {
   const [engagement, setEngagement] = useState<PostEngagement>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize post engagement data
   const initializePost = useCallback((postId: string, initialData: Partial<PostEngagement[string]>) => {
@@ -148,19 +155,54 @@ export const SocialFeedProvider: React.FC<SocialFeedProviderProps> = ({ children
     });
   }, []);
 
+  // Set up realtime subscriptions for posts
+  useEffect(() => {
+    const channel = supabase
+      .channel('posts-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'posts'
+        },
+        (payload) => {
+          console.log('Post change:', payload);
+          // Handle post updates in real-time if needed
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   // Set up realtime subscriptions
   useRealtimeReactions({
     onReactionUpdate: handleReactionUpdate,
     onLikeUpdate: handleLikeUpdate
   });
 
+  const setLoadingHandler = useCallback((loading: boolean) => {
+    setIsLoading(loading);
+  }, []);
+
+  const setErrorHandler = useCallback((errorMessage: string | null) => {
+    setError(errorMessage);
+  }, []);
+
   return (
     <SocialFeedContext.Provider value={{
       engagement,
+      isLoading,
+      error,
       updatePostLike,
       updatePostReaction,
       updateCommentCount,
-      initializePost
+      initializePost,
+      setLoading: setLoadingHandler,
+      setError: setErrorHandler
     }}>
       {children}
     </SocialFeedContext.Provider>

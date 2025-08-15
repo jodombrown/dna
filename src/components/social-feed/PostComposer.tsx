@@ -319,11 +319,13 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 
                 {/* Link Preview */}
                 {embedData && (
-                  <EmbedPreview 
-                    embedData={embedData} 
-                    onRemove={clearEmbedData}
-                    showRemoveButton={true}
-                  />
+                  <div className="relative">
+                    <EmbedPreview
+                      embedData={embedData}
+                      onRemove={clearEmbedData}
+                      showRemoveButton={true}
+                    />
+                  </div>
                 )}
 
                 {/* Poll Builder */}
