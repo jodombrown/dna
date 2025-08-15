@@ -4,7 +4,6 @@ import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import { MobileNavigation, MobilePostButton } from '@/components/mobile';
 import { DashboardProvider } from '@/contexts/DashboardContext';
 // V2 Dashboard imports
-import Dashboard from './app/Dashboard';
 import DnaDashboardPage from '@/pages/DnaDashboardPage';
 import Search from './app/Search';
 import Connect from './app/Connect';
@@ -73,7 +72,7 @@ const AppDashboard = () => {
                 <Route index element={<DnaDashboardPage />} />
                 
                 {/* V2 Dashboard Routes */}
-                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="dashboard" element={<DnaDashboardPage />} />
                 <Route path="dna" element={<DnaDashboardPage />} />
                 <Route path="search" element={<Search />} />
                 <Route path="connect" element={<Connect />} />
