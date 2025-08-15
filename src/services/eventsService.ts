@@ -1,6 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { Event } from '@/types/search';
+import { Event } from '@/types/eventTypes';
 
 export const searchEvents = async (searchTerm: string = '', filters: any = {}): Promise<Event[]> => {
   console.log('Searching events with term:', searchTerm, 'and filters:', filters);
