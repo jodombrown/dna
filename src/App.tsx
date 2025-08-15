@@ -106,8 +106,8 @@ function App() {
               <Route path="/home" element={<AppShell><HomePage /></AppShell>} />
               
               {/* Universal DNA Platform - All features under /dna */}
-              <Route path="/dna" element={<AppShell><AppDashboard /></AppShell>} />
-              <Route path="/dna/*" element={<AppShell><AppDashboard /></AppShell>} />
+              <Route path="/dna" element={<AppShell><HomePage /></AppShell>} />
+              <Route path="/dna/*" element={<AppShell><HomePage /></AppShell>} />
               <Route path="/dna/me" element={<DnaMeRedirect />} />
               <Route path="/dna/:username" element={<UserDashboard />} />
               

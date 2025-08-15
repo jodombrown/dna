@@ -18,7 +18,7 @@ export type NavItem = {
 };
 
 export const NAV: NavItem[] = [
-  { key: "home", label: "Home", icon: Home, path: "/" },
+  { key: "home", label: "Home", icon: Home, path: "/dna" },
   { key: "discover", label: "Discover", icon: Compass, path: "/discover" },
 
   {
