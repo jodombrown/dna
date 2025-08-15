@@ -17,9 +17,9 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
   isOwnProfile
 }) => {
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6 overflow-x-hidden">
       {/* Profile Preview Card */}
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden w-full">
         <CardContent className="p-6">
           <div className="text-center">
             <Avatar className="w-20 h-20 mx-auto mb-4">

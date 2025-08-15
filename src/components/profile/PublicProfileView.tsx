@@ -49,10 +49,10 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full overflow-x-hidden">
       <CardHeader className="pb-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col lg:flex-row items-start justify-between gap-4">
+          <div className="flex items-center space-x-4 w-full lg:w-auto">
             <Avatar className="w-20 h-20">
               <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name || 'User'} />
               <AvatarFallback className="bg-dna-mint text-dna-forest text-2xl">
@@ -77,7 +77,7 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
               )}
             </div>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full lg:w-auto">
             {onConnect && (
               <RequireProfileScore min={50} featureName="sending connection requests">
                 <Button 
@@ -124,7 +124,7 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
                 <Badge
                   key={index}
                   variant="secondary"
-                  className="bg-dna-mint text-dna-forest hover:bg-dna-emerald hover:text-white"
+                  className="bg-dna-mint text-dna-forest hover:bg-dna-emerald hover:text-white text-xs"
                 >
                   {interest}
                 </Badge>

@@ -87,7 +87,7 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
   return (
     <div 
       className={cn(
-        "sticky top-0 z-40 transition-all duration-300 ease-out",
+        "w-full overflow-x-hidden sticky top-0 z-40 transition-all duration-300 ease-out",
         "bg-white/95 backdrop-blur-sm border-b border-gray-200/50",
         isMobile ? "mx-2 mb-4" : "mb-6"
       )}

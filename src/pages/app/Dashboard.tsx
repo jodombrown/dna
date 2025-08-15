@@ -69,7 +69,7 @@ const Dashboard = () => {
   const mainContent = (
     <div className="space-y-4">
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="flex flex-col md:grid md:grid-cols-3 gap-3">
         <RequireProfileScore min={50} featureName="Create Post" showToast showModal={false}>
           <a href="/app/opportunities/new" className="rounded-md border border-border bg-background p-3 text-sm hover:bg-muted transition-colors">Post Update</a>
         </RequireProfileScore>

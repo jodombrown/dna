@@ -300,14 +300,14 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   return (
     <div 
       ref={composerRef}
-      className={`${isMobile ? '' : 'sticky top-0 z-40'} transition-all duration-300 ${
+      className={`w-full overflow-x-hidden ${isMobile ? '' : 'sticky top-0 z-40'} transition-all duration-300 ${
         !isMobile && !isAtTop ? 'backdrop-blur-sm bg-background/95 border-b border-border' : ''
       }`}
     >
-      <Card className={`${isMobile ? 'bg-white border-border shadow-sm' : `bg-transparent border-transparent transition-all duration-300 ${
+      <Card className={`w-full ${isMobile ? 'bg-white border-border shadow-sm' : `bg-transparent border-transparent transition-all duration-300 ${
         isCollapsed ? 'shadow-none' : 'bg-background border-border'
       }`}`}>
-        <CardContent className={`${isMobile ? 'p-4' : `transition-all duration-300 ${isCollapsed ? 'p-3' : 'p-6'}`}`}>
+        <CardContent className={`w-full ${isMobile ? 'p-4' : `transition-all duration-300 ${isCollapsed ? 'p-3' : 'p-6'}`}`}>
           {!isMobile && isCollapsed ? (
             // Collapsed State
             <div 
