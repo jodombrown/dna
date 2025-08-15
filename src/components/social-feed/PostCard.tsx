@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { PostActions } from './PostActions';
+import { PostEngagement } from './PostEngagement';
 import { PostStats } from './PostStats';
 import CommentThread from './comments/CommentThread';
 import { EmbedPreview } from './EmbedPreview';
@@ -217,16 +217,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onComment, onEdit, onD
               commentCount={post.comment_count || 0}
             />
             
-            <PostActions
+            <PostEngagement
               postId={post.id}
-              authorId={post.author_id}
-              initialLikeCount={post.like_count || 0}
-              initialCommentCount={post.comment_count || 0}
-              initialIsLiked={post.user_has_liked || false}
-              initialIsSaved={post.user_has_saved || false}
-              onComment={handleCommentToggle}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+              likeCount={post.like_count || 0}
+              commentCount={post.comment_count || 0}
+              userHasLiked={post.user_has_liked || false}
+              userHasSaved={post.user_has_saved || false}
+              onCommentToggle={handleCommentToggle}
             />
           </div>
 
