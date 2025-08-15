@@ -91,20 +91,25 @@ export const EnhancedPostComposer: React.FC<EnhancedPostComposerProps> = ({
   const COLLAPSE_THRESHOLD = 150;
   const EXPAND_THRESHOLD = 50;
 
-  // Auto-collapse/expand logic with proper hysteresis
+  // Auto-collapse/expand logic with proper hysteresis and debouncing
   useEffect(() => {
     if (isManuallyCollapsed || isManuallyExpanded) return;
     
-    const shouldExpand = isAtTop || (!isScrollingDown && scrollY <= EXPAND_THRESHOLD && lastActionRef.current !== 'expand');
-    const shouldCollapse = isScrollingDown && scrollY >= COLLAPSE_THRESHOLD && lastActionRef.current !== 'collapse';
-    
-    if (shouldExpand && !isExpanded) {
-      setIsExpanded(true);
-      lastActionRef.current = 'expand';
-    } else if (shouldCollapse && isExpanded) {
-      setIsExpanded(false);
-      lastActionRef.current = 'collapse';
-    }
+    // Prevent rapid state changes
+    const timeoutId = setTimeout(() => {
+      const shouldExpand = isAtTop || (!isScrollingDown && scrollY <= EXPAND_THRESHOLD);
+      const shouldCollapse = isScrollingDown && scrollY >= COLLAPSE_THRESHOLD && !isAtTop;
+      
+      if (shouldExpand && !isExpanded) {
+        setIsExpanded(true);
+        lastActionRef.current = 'expand';
+      } else if (shouldCollapse && isExpanded) {
+        setIsExpanded(false);
+        lastActionRef.current = 'collapse';
+      }
+    }, 100); // Debounce state changes
+
+    return () => clearTimeout(timeoutId);
   }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed, isManuallyExpanded, isExpanded]);
 
   const handleExpand = () => {
@@ -290,13 +295,13 @@ export const EnhancedPostComposer: React.FC<EnhancedPostComposerProps> = ({
             )}
           >
             <div className="p-6">
-              {/* Collapse button - only show when scrolled */}
-              {!isAtTop && (
+              {/* Collapse button - only show when scrolled and not at top */}
+              {scrollY > 100 && !isAtTop && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleCollapse}
-                  className="absolute top-3 right-3 h-8 w-8 p-0 bg-white/90 hover:bg-white border border-gray-200 shadow-sm"
+                  className="absolute top-3 right-3 h-8 w-8 p-0 bg-white/90 hover:bg-white border border-gray-200 shadow-sm z-10"
                   aria-label="Minimize composer"
                 >
                   <X className="h-4 w-4" />

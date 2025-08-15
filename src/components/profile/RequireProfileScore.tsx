@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { ProfileCompletionModal } from './ProfileCompletionModal';
 import { useToast } from '@/hooks/use-toast';
@@ -12,14 +12,14 @@ interface RequireProfileScoreProps {
   showModal?: boolean;
 }
 
-export const RequireProfileScore: React.FC<RequireProfileScoreProps> = ({
+export const RequireProfileScore = forwardRef<HTMLDivElement, RequireProfileScoreProps>(({
   min,
   children,
   featureName,
   fallback,
   showToast = false,
   showModal = true,
-}) => {
+}, ref) => {
   const { meetsMinScore, completenessScore } = useProfileAccess();
   const [modalOpen, setModalOpen] = useState(false);
   const { toast } = useToast();
@@ -49,6 +49,7 @@ export const RequireProfileScore: React.FC<RequireProfileScoreProps> = ({
     return (
       <>
         <div
+          ref={ref}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -70,5 +71,5 @@ export const RequireProfileScore: React.FC<RequireProfileScoreProps> = ({
     );
   }
 
-  return <>{children}</>;
-};
+  return <div ref={ref}>{children}</div>;
+});
