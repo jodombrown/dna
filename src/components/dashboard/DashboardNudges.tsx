@@ -68,16 +68,17 @@ const DashboardNudges: React.FC = () => {
       action: () => navigate('/settings/links'),
       dismissible: true
     },
-    {
-      id: 'find-connections',
-      title: 'Discover your network',
-      description: 'Browse DNA members who share your interests and professional background.',
-      category: 'connect',
-      priority: 'medium',
-      icon: <Users className="w-4 h-4" />,
-      action: () => navigate('/app/connect'),
-      dismissible: true
-    }
+    // Temporarily disabled until platform goes live
+    // {
+    //   id: 'find-connections',
+    //   title: 'Discover your network',
+    //   description: 'Browse DNA members who share your interests and professional background.',
+    //   category: 'connect',
+    //   priority: 'medium',
+    //   icon: <Users className="w-4 h-4" />,
+    //   action: () => navigate('/app/connect'),
+    //   dismissible: true
+    // }
   ];
 
   // Filter based on profile completeness and dismissed nudges
