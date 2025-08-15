@@ -13,6 +13,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Trash2, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LocationTypeahead from "@/components/location/LocationTypeahead";
+import SettingsNav from "./SettingsNav";
+import DNAExperienceSettings from "@/components/settings/DNAExperienceSettings";
+import { useLocation } from "react-router-dom";
 
 const privacyOptions = [
   { key: "public", label: "Public" },
@@ -26,6 +29,7 @@ const UnifiedSettings: React.FC = () => {
   const { mutateAsync: updateProfile } = useUpdateProfile();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const routerLocation = useLocation();
 
   // Profile section state
   const [displayName, setDisplayName] = useState("");
@@ -48,6 +52,9 @@ const UnifiedSettings: React.FC = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteConfirmEmail, setDeleteConfirmEmail] = useState("");
+
+  // DNA Experience section state
+  const [selectedPillars, setSelectedPillars] = useState<string[]>([]);
 
   // Skills as array for tag functionality
   const [skillsArray, setSkillsArray] = useState<string[]>([]);
@@ -75,6 +82,9 @@ const UnifiedSettings: React.FC = () => {
 
       // Privacy data
       setVisibility((profile as any).visibility || {});
+
+      // DNA Experience data
+      setSelectedPillars((profile as any).selected_pillars || []);
     }
   }, [profile]);
 
@@ -122,7 +132,10 @@ const UnifiedSettings: React.FC = () => {
         linkedin_url: linkedin || null,
 
         // Privacy updates
-        visibility
+        visibility,
+
+        // DNA Experience updates
+        selected_pillars: selectedPillars
       };
 
       await updateProfile({ id: user.id, updates });
@@ -184,6 +197,18 @@ const UnifiedSettings: React.FC = () => {
     setSkillsArray(skillsArray.filter(skill => skill !== skillToRemove));
   };
 
+  // Determine current section from pathname
+  const getCurrentSection = () => {
+    const path = routerLocation.pathname;
+    if (path.includes('/dna-experience')) return 'dna-experience';
+    if (path.includes('/experience')) return 'experience';
+    if (path.includes('/links')) return 'links';
+    if (path.includes('/privacy')) return 'privacy';
+    return 'profile';
+  };
+
+  const currentSection = getCurrentSection();
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -199,12 +224,16 @@ const UnifiedSettings: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold text-foreground">Settings</h1>
             <p className="text-muted-foreground mt-1">
-              Manage your profile, experience, links and privacy
+              Manage your profile, experience, DNA customization, links and privacy
             </p>
           </div>
         </div>
 
+        {/* Navigation */}
+        <SettingsNav active={currentSection as any} />
+
         {/* Profile Section */}
+        {currentSection === 'profile' && (
         <Card>
           <CardHeader>
             <CardTitle>Profile</CardTitle>
@@ -257,8 +286,10 @@ const UnifiedSettings: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+        )}
 
         {/* Experience Section */}
+        {currentSection === 'experience' && (
         <Card>
           <CardHeader>
             <CardTitle>Experience</CardTitle>
@@ -304,8 +335,18 @@ const UnifiedSettings: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+        )}
+
+        {/* DNA Experience Section */}
+        {currentSection === 'dna-experience' && (
+          <DNAExperienceSettings 
+            selectedPillars={selectedPillars}
+            onPillarsChange={setSelectedPillars}
+          />
+        )}
 
         {/* Links Section */}
+        {currentSection === 'links' && (
         <Card>
           <CardHeader>
             <CardTitle>Links</CardTitle>
@@ -329,8 +370,10 @@ const UnifiedSettings: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+        )}
 
         {/* Privacy Section */}
+        {currentSection === 'privacy' && (
         <Card>
           <CardHeader>
             <CardTitle>Privacy</CardTitle>
@@ -362,6 +405,7 @@ const UnifiedSettings: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+        )}
 
         {/* Save Button */}
         <div className="flex justify-center">

@@ -13,7 +13,8 @@ const PROFILE_FIELDS = [
   "engagement_intentions",
   "available_for",
   "linkedin_url",
-  "website_url"
+  "website_url",
+  "selected_pillars"
 ];
 
 interface ProfileCompletionBarProps {

@@ -33,7 +33,7 @@ export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = (
   if (completenessScore >= minForFull) return null;
 
   return (
-    <section aria-label="Profile completion" className="mx-4 mt-3">
+    <section aria-label="Profile completion" className="mx-4 mt-3 relative z-30">
       <div className="rounded-lg border border-border bg-background/80 backdrop-blur p-4 shadow-sm">
         <div className="flex items-start gap-3">
           <div className="flex-1">

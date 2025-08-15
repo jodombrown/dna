@@ -40,12 +40,12 @@ const DashboardNudges: React.FC = () => {
     },
     {
       id: 'select-pillars',
-      title: 'Choose your DNA framework pillars',
-      description: 'Select the areas where you want to make an impact: Create, Connect, or Contribute.',
+      title: 'Customize Your DNA Experience',
+      description: 'Select the areas where you want to make an impact: Connect, Collaborate, or Contribute.',
       category: 'profile',
       priority: 'high',
       icon: <Target className="w-4 h-4" />,
-      action: () => navigate('/settings/experience'),
+      action: () => navigate('/settings/dna-experience'),
       dismissible: true
     },
     {

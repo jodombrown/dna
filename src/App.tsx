@@ -136,6 +136,7 @@ function App() {
               <Route path="/settings" element={<AppShell><UnifiedSettings /></AppShell>} />
               <Route path="/settings/profile" element={<AppShell><UnifiedSettings /></AppShell>} />
               <Route path="/settings/experience" element={<AppShell><UnifiedSettings /></AppShell>} />
+              <Route path="/settings/dna-experience" element={<AppShell><UnifiedSettings /></AppShell>} />
               <Route path="/settings/links" element={<AppShell><UnifiedSettings /></AppShell>} />
               <Route path="/settings/privacy" element={<AppShell><UnifiedSettings /></AppShell>} />
 
