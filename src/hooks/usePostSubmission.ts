@@ -92,12 +92,10 @@ export const usePostSubmission = () => {
         postPayload.link_url = data.embedData.url;
       }
 
-      // Insert post
-      const { data: newPost, error } = await supabase
-        .from('posts')
-        .insert(postPayload)
-        .select()
-        .single();
+      // Insert post using security-definer RPC to satisfy RLS
+      const { data: newId, error } = await supabase
+        .rpc('rpc_create_post', { p: postPayload })
+        ;
 
       if (error) {
         console.error('Post creation error:', error);
