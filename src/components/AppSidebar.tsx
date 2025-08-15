@@ -79,7 +79,7 @@ const AppSidebar = () => {
             src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png"
             alt="DNA logo"
             loading="lazy"
-            className="h-12 w-auto object-contain transition-all"
+            className={isCollapsed ? "h-8 w-auto object-contain transition-all" : "h-12 w-auto object-contain transition-all"}
           />
         </NavLink>
       </div>
