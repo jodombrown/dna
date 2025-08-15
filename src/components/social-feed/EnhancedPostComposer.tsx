@@ -55,6 +55,7 @@ export const EnhancedPostComposer: React.FC<EnhancedPostComposerProps> = ({
   const composerRef = useRef<HTMLDivElement>(null);
   const manualTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastActionRef = useRef<'expand' | 'collapse' | null>(null);
+  const toggleCooldownRef = useRef<number>(0);
 
   // Content type specific states
   const [eventData, setEventData] = useState({
@@ -91,23 +92,28 @@ export const EnhancedPostComposer: React.FC<EnhancedPostComposerProps> = ({
   const COLLAPSE_THRESHOLD = 150;
   const EXPAND_THRESHOLD = 50;
 
-  // Auto-collapse/expand logic with proper hysteresis and debouncing
+  // Auto-collapse/expand logic with proper hysteresis, debouncing, and cooldown
   useEffect(() => {
     if (isManuallyCollapsed || isManuallyExpanded) return;
-    
-    // Prevent rapid state changes
+
     const timeoutId = setTimeout(() => {
+      const now = Date.now();
+      // Cooldown to avoid oscillation due to layout/scroll coupling
+      if (now - toggleCooldownRef.current < 600) return;
+
       const shouldExpand = isAtTop || (!isScrollingDown && scrollY <= EXPAND_THRESHOLD);
       const shouldCollapse = isScrollingDown && scrollY >= COLLAPSE_THRESHOLD && !isAtTop;
-      
+
       if (shouldExpand && !isExpanded) {
+        toggleCooldownRef.current = now;
         setIsExpanded(true);
         lastActionRef.current = 'expand';
       } else if (shouldCollapse && isExpanded) {
+        toggleCooldownRef.current = now;
         setIsExpanded(false);
         lastActionRef.current = 'collapse';
       }
-    }, 100); // Debounce state changes
+    }, 250); // Debounce state changes
 
     return () => clearTimeout(timeoutId);
   }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed, isManuallyExpanded, isExpanded]);
@@ -295,18 +301,19 @@ export const EnhancedPostComposer: React.FC<EnhancedPostComposerProps> = ({
             )}
           >
             <div className="p-6">
-              {/* Collapse button - only show when scrolled and not at top */}
-              {scrollY > 100 && !isAtTop && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCollapse}
-                  className="absolute top-3 right-3 h-8 w-8 p-0 bg-white/90 hover:bg-white border border-gray-200 shadow-sm z-10"
-                  aria-label="Minimize composer"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
+              {/* Collapse control - keep mounted to avoid layout thrash */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCollapse}
+                className={cn(
+                  "absolute top-3 right-3 h-8 w-8 p-0 bg-white/90 border border-gray-200 shadow-sm z-10",
+                  (scrollY > 100 && !isAtTop) ? "opacity-100" : "opacity-0 pointer-events-none"
+                )}
+                aria-label="Minimize composer"
+              >
+                <X className="h-4 w-4" />
+              </Button>
 
               <div className="flex gap-3 mb-4">
                 <Avatar className="h-12 w-12">
