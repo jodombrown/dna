@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useUpdateProfile } from "@/hooks/useProfiles";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -47,6 +48,11 @@ const UnifiedSettings: React.FC = () => {
   const [visibility, setVisibility] = useState<any>({});
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteConfirmEmail, setDeleteConfirmEmail] = useState("");
+
+  // Skills as array for tag functionality
+  const [skillsArray, setSkillsArray] = useState<string[]>([]);
+  const [currentSkill, setCurrentSkill] = useState("");
 
   useEffect(() => {
     if (profile) {
@@ -60,13 +66,14 @@ const UnifiedSettings: React.FC = () => {
 
       // Experience data
       setRoles(((profile as any).roles || []).join(", "));
-      setSkills(((profile as any).skills || []).join(", "));
+      const profileSkills = (profile as any).skills || [];
+      setSkillsArray(profileSkills);
+      setSkills(profileSkills.join(", "));
 
-      // Links data
-      const links = (profile as any).links || {};
-      setWebsite(links.website || "");
-      setTwitter(links.twitter || "");
-      setLinkedin((profile as any).linkedin_url || links.linkedin || "");
+      // Links data - using individual fields instead of links object
+      setWebsite((profile as any).website_url || "");
+      setTwitter((profile as any).twitter_url || "");
+      setLinkedin((profile as any).linkedin_url || "");
 
       // Privacy data
       setVisibility((profile as any).visibility || {});
@@ -110,10 +117,11 @@ const UnifiedSettings: React.FC = () => {
 
         // Experience updates
         roles: roles ? roles.split(/\s*,\s*/).filter(Boolean) : [],
-        skills: skills ? skills.split(/\s*,\s*/).filter(Boolean) : [],
+        skills: skillsArray,
 
-        // Links updates
-        links: { website, twitter, linkedin },
+        // Links updates - using individual URL fields
+        website_url: website || null,
+        twitter_url: twitter || null,
         linkedin_url: linkedin || null,
 
         // Privacy updates
@@ -136,6 +144,15 @@ const UnifiedSettings: React.FC = () => {
   };
 
   const handleConfirmDelete = async () => {
+    if (!user?.email || deleteConfirmEmail !== user.email) {
+      toast({
+        title: "Email mismatch",
+        description: "Please enter your login email to confirm deletion.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setIsDeleting(true);
       const { error } = await supabase.functions.invoke('delete-account', { body: {} });
@@ -144,11 +161,30 @@ const UnifiedSettings: React.FC = () => {
       window.location.href = '/';
     } catch (error) {
       console.error('Delete account failed:', error);
-      alert('Failed to delete account. Please try again.');
+      toast({
+        title: "Delete failed",
+        description: "Failed to delete account. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsDeleting(false);
       setDeleteOpen(false);
+      setDeleteConfirmEmail("");
     }
+  };
+
+  const handleSkillKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && currentSkill.trim()) {
+      e.preventDefault();
+      if (!skillsArray.includes(currentSkill.trim())) {
+        setSkillsArray([...skillsArray, currentSkill.trim()]);
+      }
+      setCurrentSkill("");
+    }
+  };
+
+  const removeSkill = (skillToRemove: string) => {
+    setSkillsArray(skillsArray.filter(skill => skill !== skillToRemove));
   };
 
   return (
@@ -197,10 +233,11 @@ const UnifiedSettings: React.FC = () => {
             </div>
             <div>
               <label className="text-sm text-muted-foreground">Bio</label>
-              <Input 
+              <Textarea 
                 value={bio} 
                 onChange={(e) => setBio(e.target.value)} 
-                placeholder="Tell us about yourself" 
+                placeholder="Tell us about yourself..." 
+                className="min-h-[120px] resize-y"
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -239,12 +276,34 @@ const UnifiedSettings: React.FC = () => {
               />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground">Skills (comma separated)</label>
-              <Input 
-                value={skills} 
-                onChange={(e) => setSkills(e.target.value)} 
-                placeholder="Go-To-Market, React, Policy" 
-              />
+              <label className="text-sm text-muted-foreground">Skills</label>
+              <div className="space-y-2">
+                <Input 
+                  value={currentSkill} 
+                  onChange={(e) => setCurrentSkill(e.target.value)}
+                  onKeyDown={handleSkillKeyDown}
+                  placeholder="Type a skill and press Enter" 
+                />
+                {skillsArray.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {skillsArray.map((skill, index) => (
+                      <span 
+                        key={index}
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm border border-primary/20 hover:bg-primary/20 transition-colors"
+                      >
+                        {skill}
+                        <button
+                          type="button"
+                          onClick={() => removeSkill(skill)}
+                          className="ml-1 hover:text-primary/70"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -343,10 +402,27 @@ const UnifiedSettings: React.FC = () => {
 
         <ConfirmDialog
           open={deleteOpen}
-          onOpenChange={setDeleteOpen}
+          onOpenChange={(open) => {
+            setDeleteOpen(open);
+            if (!open) setDeleteConfirmEmail("");
+          }}
           onConfirm={handleConfirmDelete}
           title="Delete account"
-          description="This will permanently delete your account and data. This action cannot be undone."
+          description={
+            <div className="space-y-4">
+              <p>This will permanently delete your account and data. This action cannot be undone.</p>
+              <div>
+                <label className="text-sm font-medium">Enter your email to confirm:</label>
+                <Input
+                  type="email"
+                  value={deleteConfirmEmail}
+                  onChange={(e) => setDeleteConfirmEmail(e.target.value)}
+                  placeholder={user?.email}
+                  className="mt-1"
+                />
+              </div>
+            </div>
+          }
           confirmText={isDeleting ? 'Deleting…' : 'Delete'}
           cancelText="Cancel"
           variant="destructive"
