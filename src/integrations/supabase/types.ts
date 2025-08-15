@@ -2418,6 +2418,7 @@ export type Database = {
           username_changes_left: number | null
           venture_name: string | null
           venture_stage: string | null
+          visibility: Json | null
           website_url: string | null
           what_to_give: string[] | null
           what_to_receive: string[] | null
@@ -2514,6 +2515,7 @@ export type Database = {
           username_changes_left?: number | null
           venture_name?: string | null
           venture_stage?: string | null
+          visibility?: Json | null
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
@@ -2610,6 +2612,7 @@ export type Database = {
           username_changes_left?: number | null
           venture_name?: string | null
           venture_stage?: string | null
+          visibility?: Json | null
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
