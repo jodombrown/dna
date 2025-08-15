@@ -194,7 +194,7 @@ const AppSidebar = () => {
       </SidebarContent>
 
       {/* User Profile Section at Bottom */}
-      <div className="mt-auto p-4 border-t border-gray-200 bg-background">
+      <div className="mt-auto border-t border-gray-200 bg-background py-4 px-0">
         {!isCollapsed && profile && (
           <div className="flex items-center space-x-3 mb-4">
             <Avatar className="w-10 h-10">
