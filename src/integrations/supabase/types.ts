@@ -2723,6 +2723,60 @@ export type Database = {
         }
         Relationships: []
       }
+      skill_analytics: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          id: string
+          profile_updated_at: string | null
+          skill_name: string
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          id?: string
+          profile_updated_at?: string | null
+          skill_name: string
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          id?: string
+          profile_updated_at?: string | null
+          skill_name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      skill_connections: {
+        Row: {
+          connection_strength: number | null
+          created_at: string | null
+          id: string
+          shared_skills: string[]
+          user_a_id: string | null
+          user_b_id: string | null
+        }
+        Insert: {
+          connection_strength?: number | null
+          created_at?: string | null
+          id?: string
+          shared_skills: string[]
+          user_a_id?: string | null
+          user_b_id?: string | null
+        }
+        Update: {
+          connection_strength?: number | null
+          created_at?: string | null
+          id?: string
+          shared_skills?: string[]
+          user_a_id?: string | null
+          user_b_id?: string | null
+        }
+        Relationships: []
+      }
       task_comments: {
         Row: {
           author_id: string
