@@ -49,7 +49,7 @@ const bottomNavItems = [
 ];
 
 const AppSidebar = () => {
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const { profile, signOut } = useAuth();
   const { activeView, setActiveView } = useDashboard();
   const location = useLocation();
@@ -94,7 +94,10 @@ const AppSidebar = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <SidebarMenuButton asChild>
-                        <button className="w-full justify-start text-gray-700 hover:text-dna-forest hover:bg-gray-100">
+                         <button 
+                           onClick={toggleSidebar}
+                           className="w-full justify-start text-gray-700 hover:text-dna-forest hover:bg-gray-100"
+                         >
                           <LayoutGrid className="mr-2 h-4 w-4" />
                         </button>
                       </SidebarMenuButton>
@@ -103,7 +106,10 @@ const AppSidebar = () => {
                   </Tooltip>
                 ) : (
                   <SidebarMenuButton asChild>
-                    <button className="w-full justify-start text-gray-700 hover:text-dna-forest hover:bg-gray-100">
+                     <button 
+                       onClick={toggleSidebar}
+                       className="w-full justify-start text-gray-700 hover:text-dna-forest hover:bg-gray-100"
+                     >
                       <LayoutGrid className="mr-2 h-4 w-4" />
                       <span>Navigation</span>
                     </button>
