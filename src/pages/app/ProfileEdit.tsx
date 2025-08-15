@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Camera, Plus, X } from 'lucide-react';
 import { profilesService } from '@/services/profilesService';
 import { uploadMedia } from '@/lib/uploadMedia';
+import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 
 const ProfileEdit = () => {
   const { profile, user, refreshProfile } = useAuth();
@@ -239,23 +240,14 @@ const ProfileEdit = () => {
               />
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Location</label>
-                <Input
-                  value={formData.location}
-                  onChange={(e) => handleInputChange('location', e.target.value)}
-                  placeholder="Country, Region"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Current Location</label>
-                <Input
-                  value={formData.current_location}
-                  onChange={(e) => handleInputChange('current_location', e.target.value)}
-                  placeholder="Current city/country"
-                />
-              </div>
+            <div>
+              <label className="text-sm font-medium">Location</label>
+              <ComprehensiveLocationInput
+                id="location"
+                value={formData.location}
+                onChange={(value) => handleInputChange('location', value)}
+                placeholder="Current location (City, Country)"
+              />
             </div>
           </CardContent>
         </Card>

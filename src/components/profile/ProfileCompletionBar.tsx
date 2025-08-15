@@ -5,15 +5,12 @@ import { Progress } from "@/components/ui/progress";
 const PROFILE_FIELDS = [
   "full_name",
   "headline",
-  "city",
-  "location",
+  "location", // Consolidated single location field
   "bio",
   "my_dna_statement",
   "impact_areas",
   "engagement_intentions",
-  "available_for",
   "linkedin_url",
-  "website_url",
   "selected_pillars"
 ];
 
