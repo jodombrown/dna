@@ -32,6 +32,7 @@ import AdminDiagnostics from "./pages/app/AdminDiagnostics";
 import AuthCallback from "./pages/AuthCallback";
 
 import UserDashboard from "./pages/UserDashboard";
+import HomePage from "./pages/HomePage";
 
 // Safety stub: guard against any stale references to removed dev route
 const DnaDev = () => null;
@@ -101,6 +102,9 @@ function App() {
               <Route path="/welcome/*" element={<Navigate to="/dna" replace />} />
               <Route path="/complete-profile/*" element={<Navigate to="/dna" replace />} />
               <Route path="/post-onboarding" element={<Navigate to="/dna" replace />} />
+              {/* New Home Page */}
+              <Route path="/home" element={<AppShell><HomePage /></AppShell>} />
+              
               {/* Universal DNA Platform - All features under /dna */}
               <Route path="/dna" element={<AppShell><AppDashboard /></AppShell>} />
               <Route path="/dna/*" element={<AppShell><AppDashboard /></AppShell>} />
