@@ -151,13 +151,13 @@ const AppSidebar = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <SidebarMenuButton asChild>
-                          {item.title === 'Messages' ? (
-                            <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
-                             <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-center p-2 rounded-md`}>
-                               <item.icon className="h-5 w-5" />
-                             </NavLink>
-                            </RequireProfileScore>
-                          ) : (
+                           {item.title === 'Messages' ? (
+                             <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
+                              <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-center p-2 rounded-md`}>
+                                <item.icon className="h-5 w-5" />
+                              </NavLink>
+                             </RequireProfileScore>
+                           ) : (
                             <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-center p-2 rounded-md`}>
                               <item.icon className="h-5 w-5" />
                             </NavLink>
@@ -215,12 +215,17 @@ const AppSidebar = () => {
         )}
         {isCollapsed && profile && (
           <div className="flex justify-center mb-4">
-            <Avatar className="w-8 h-8">
-              <AvatarImage src={profile.avatar_url} />
-              <AvatarFallback className="bg-dna-mint text-dna-forest text-xs">
-                {profile.display_name?.charAt(0) || 'U'}
-              </AvatarFallback>
-            </Avatar>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src={profile.avatar_url} />
+                  <AvatarFallback className="bg-dna-mint text-dna-forest text-xs">
+                    {profile.display_name?.charAt(0) || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="text-xs">Profile</TooltipContent>
+            </Tooltip>
           </div>
         )}
 
