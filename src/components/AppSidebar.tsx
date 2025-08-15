@@ -169,8 +169,8 @@ const AppSidebar = () => {
                              </NavLink>
                             </RequireProfileScore>
                           ) : (
-                            <NavLink to={item.url} className={getNavCls(item.url)}>
-                              <item.icon className="mr-2 h-4 w-4" />
+                            <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-center p-2 rounded-md`}>
+                              <item.icon className="h-5 w-5" />
                             </NavLink>
                           )}
                         </SidebarMenuButton>
