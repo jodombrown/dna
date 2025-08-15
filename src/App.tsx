@@ -56,11 +56,8 @@ import OpportunityNew from "@/pages/app/OpportunityNew";
 import Notifications from "@/pages/app/Notifications";
 import EventPaymentSuccess from "@/pages/app/EventPaymentSuccess";
 import EventCheckIn from "@/pages/app/EventCheckIn";
-import ProfileSettings from "@/pages/settings/ProfileSettings";
-import ExperienceSettings from "@/pages/settings/ExperienceSettings";
-import LinksSettings from "@/pages/settings/LinksSettings";
-import PrivacySettings from "@/pages/settings/PrivacySettings";
 import ConnectionDetailPage from "@/pages/app/ConnectionDetailPage";
+import UnifiedSettings from "@/pages/settings/UnifiedSettings";
 
 const queryClient = new QueryClient();
 
@@ -135,11 +132,12 @@ function App() {
               <Route path="/app/notifications" element={<AppShell><Notifications /></AppShell>} />
               <Route path="/app/connections/:id" element={<AppShell><ConnectionDetailPage /></AppShell>} />
               
-              {/* Settings */}
-              <Route path="/settings/profile" element={<AppShell><ProfileSettings /></AppShell>} />
-              <Route path="/settings/experience" element={<AppShell><ExperienceSettings /></AppShell>} />
-              <Route path="/settings/links" element={<AppShell><LinksSettings /></AppShell>} />
-              <Route path="/settings/privacy" element={<AppShell><PrivacySettings /></AppShell>} />
+              {/* Unified Settings */}
+              <Route path="/settings" element={<AppShell><UnifiedSettings /></AppShell>} />
+              <Route path="/settings/profile" element={<AppShell><UnifiedSettings /></AppShell>} />
+              <Route path="/settings/experience" element={<AppShell><UnifiedSettings /></AppShell>} />
+              <Route path="/settings/links" element={<AppShell><UnifiedSettings /></AppShell>} />
+              <Route path="/settings/privacy" element={<AppShell><UnifiedSettings /></AppShell>} />
 
               {/* Me route */}
               <Route path="/me" element={<Navigate to="/app/profile" replace />} />
