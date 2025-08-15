@@ -46,6 +46,7 @@ import EventNewWizard from "@/pages/app/EventNewWizard";
 import EventsBySlug from "@/pages/app/EventsBySlug";
 import EventCategoryPage from "@/pages/app/EventCategoryPage";
 import EventJoin from "@/pages/app/EventJoin";
+import MyEvents from "@/pages/app/MyEvents";
 import OpportunityNew from "@/pages/app/OpportunityNew";
 import Notifications from "@/pages/app/Notifications";
 import EventPaymentSuccess from "@/pages/app/EventPaymentSuccess";
@@ -106,6 +107,7 @@ function App() {
               <Route path="/app/v1/*" element={<Navigate to="/app/dashboard" replace />} />
               
         <Route path="/app/events" element={<AppShell><Events /></AppShell>} />
+        <Route path="/app/events/my" element={<AppShell><MyEvents /></AppShell>} />
         <Route path="/app/events/new" element={<AppShell><Navigate to="/events/new" replace /></AppShell>} />
         <Route path="/app/events/:id" element={<AppShell><EventDetail /></AppShell>} />
         <Route path="/app/events/:id/edit" element={<AppShell><EventEdit /></AppShell>} />
