@@ -62,9 +62,12 @@ const AppDashboard = () => {
               </div>
             </header>
 
-            <main className="pt-10 lg:pt-12 pb-20 lg:pb-0">
-              <ProfileCompletionBanner />
-              <Routes>
+            <main className="pb-20 lg:pb-0">
+              <div className="pt-4">
+                <ProfileCompletionBanner />
+              </div>
+              <div className="pt-6 lg:pt-8">
+                <Routes>
                 {/* Main dashboard route */}
                 <Route index element={<Dashboard />} />
                 
@@ -86,6 +89,7 @@ const AppDashboard = () => {
                 {/* Catch-all: redirect any undefined routes back to dashboard */}
                 <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
               </Routes>
+              </div>
             </main>
             <MobileNavigation />
             <MobilePostButton />
