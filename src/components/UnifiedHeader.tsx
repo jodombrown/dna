@@ -145,10 +145,10 @@ const UnifiedHeader = () => {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Left section - Logo and Search */}
-            <div className="flex items-center space-x-4">
+            {/* Left section - Logo only */}
+            <div className="flex items-center">
               <NavLink 
-                to={isAuthenticated ? "/app" : "/"} 
+                to={isAuthenticated ? "/dna" : "/"} 
                 className="flex items-center hover:opacity-80 transition-opacity"
               >
                 <img 
@@ -157,32 +157,6 @@ const UnifiedHeader = () => {
                   className="h-8 w-auto"
                 />
               </NavLink>
-              
-              {/* Search - show for all authenticated users */}
-              {isAuthenticated && (
-                <>
-                  <div className="relative hidden sm:block">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      placeholder="Search people, companies, or opportunities..."
-                      className="pl-10 w-40 lg:w-80 bg-gray-50 border-0 h-10 text-base cursor-pointer"
-                      onClick={() => navigate('/dna/search')}
-                      readOnly
-                    />
-                  </div>
-                  
-                  {/* Mobile search button */}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="sm:hidden p-2"
-                    onClick={() => navigate('/dna/search')}
-                    aria-label="Search"
-                  >
-                    <Search className="w-5 h-5 text-gray-600" />
-                  </Button>
-                </>
-              )}
             </div>
 
             {/* Center section - Navigation for authenticated users */}

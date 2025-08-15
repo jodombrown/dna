@@ -13,7 +13,8 @@ import {
   BookOpen,
   Briefcase,
   Square,
-  LayoutGrid
+  LayoutGrid,
+  Search
 } from 'lucide-react';
 import {
   Sidebar,
@@ -78,16 +79,74 @@ const AppSidebar = () => {
             src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png"
             alt="DNA logo"
             loading="lazy"
-            className={isCollapsed ? "h-10 w-10 object-contain transition-all" : "h-12 w-auto object-contain transition-all"}
+            className="h-12 w-auto object-contain transition-all"
           />
         </NavLink>
       </div>
 
       <SidebarContent>
+        {/* Sidebar Toggle */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                {isCollapsed ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SidebarMenuButton asChild>
+                        <button className="w-full justify-start text-gray-700 hover:text-dna-forest hover:bg-gray-100">
+                          <LayoutGrid className="mr-2 h-4 w-4" />
+                        </button>
+                      </SidebarMenuButton>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="text-xs">Navigation</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <SidebarMenuButton asChild>
+                    <button className="w-full justify-start text-gray-700 hover:text-dna-forest hover:bg-gray-100">
+                      <LayoutGrid className="mr-2 h-4 w-4" />
+                      <span>Navigation</span>
+                    </button>
+                  </SidebarMenuButton>
+                )}
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Search */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                {isCollapsed ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SidebarMenuButton asChild>
+                        <NavLink to="/dna/search" className={getNavCls('/dna/search')}>
+                          <Search className="mr-2 h-4 w-4" />
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="text-xs">Search</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <SidebarMenuButton asChild>
+                    <NavLink to="/dna/search" className={getNavCls('/dna/search')}>
+                      <Search className="mr-2 h-4 w-4" />
+                      <span>Search</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                )}
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className={isCollapsed ? 'sr-only' : ''}>
-            Navigation
+            Main
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>

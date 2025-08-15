@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Sparkles, Images, MessageSquarePlus, TrendingUp, Users, ChevronRight, Save, Share2, Heart, Filter, ArrowUpRight, Loader2 } from "lucide-react";
+import { EnhancedPostComposer } from "@/components/social-feed/EnhancedPostComposer";
 
 // ===================== Shared Types ============================
 export type Pillar = "all" | "connect" | "collaborate" | "contribute";
@@ -102,27 +103,8 @@ function ImpactHeader({ user }: { user?: UserSummary | null }) {
   );
 }
 
-function Composer() {
-  return (
-    <Card>
-      <CardContent className="p-4 md:p-5">
-        <div className="flex items-start gap-3">
-          <Avatar className="h-9 w-9"><AvatarFallback>YO</AvatarFallback></Avatar>
-          <div className="flex-1">
-            <Textarea placeholder="What's on your mind?" className="min-h-[64px] resize-none" />
-            <div className="mt-3 flex items-center gap-2">
-              <Button variant="ghost" size="sm"><Images className="h-4 w-4 mr-1"/>Add media</Button>
-              <Button variant="ghost" size="sm"><MessageSquarePlus className="h-4 w-4 mr-1"/>Opportunity</Button>
-              <div className="ml-auto flex items-center gap-2">
-                <Button variant="outline" size="sm">Save Draft</Button>
-                <Button size="sm" className="bg-dna-mint">Post</Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+function Composer({ onPostCreated }: { onPostCreated?: () => void }) {
+  return <EnhancedPostComposer onPostCreated={onPostCreated} />;
 }
 
 function PillarFilters({ value, onChange }: { value: Pillar; onChange: (v: Pillar) => void }) {
@@ -276,7 +258,11 @@ export default function DnaDashboardUI(props: DashboardProps) {
 
       <div className="mt-4 grid grid-cols-1 md:grid-cols-12 gap-4">
         <div className="md:col-span-8 space-y-4">
-          <Composer />
+          <Composer onPostCreated={() => {
+            if (typeof loadMorePosts === 'function') {
+              loadMorePosts();
+            }
+          }} />
 
           <Card>
             <CardHeader className="pb-3">
