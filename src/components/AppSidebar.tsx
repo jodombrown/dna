@@ -72,14 +72,14 @@ const AppSidebar = () => {
   return (
     <Sidebar collapsible="icon">
       <SidebarRail />
-      {/* Brand */}
-      <div className="p-4 border-b border-border bg-background flex items-center justify-center">
+      {/* Brand - Fixed size regardless of sidebar state */}
+      <div className="p-4 border-b border-border bg-background flex items-center justify-center min-h-[120px]">
         <NavLink to="/dna" className="flex items-center">
           <img
             src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png"
             alt="DNA logo"
             loading="lazy"
-            className="h-16 w-auto object-contain transition-all"
+            className="h-16 w-auto object-contain"
           />
         </NavLink>
       </div>
