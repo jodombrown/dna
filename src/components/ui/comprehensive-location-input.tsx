@@ -1,3 +1,4 @@
+import React from 'react';
 import AdvancedLocationSearch from '@/components/location/AdvancedLocationSearch';
 
 interface ComprehensiveLocationInputProps {
