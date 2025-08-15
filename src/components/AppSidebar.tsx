@@ -96,9 +96,9 @@ const AppSidebar = () => {
                       <SidebarMenuButton asChild>
                          <button 
                            onClick={toggleSidebar}
-                           className="w-full justify-start text-gray-700 hover:text-dna-forest hover:bg-gray-100"
+                           className="w-full flex items-center justify-center text-gray-700 hover:text-dna-forest hover:bg-gray-100 p-2 rounded-md"
                          >
-                          <LayoutGrid className="mr-2 h-4 w-4" />
+                           <LayoutGrid className="h-4 w-4" />
                         </button>
                       </SidebarMenuButton>
                     </TooltipTrigger>
@@ -108,9 +108,9 @@ const AppSidebar = () => {
                   <SidebarMenuButton asChild>
                      <button 
                        onClick={toggleSidebar}
-                       className="w-full justify-start text-gray-700 hover:text-dna-forest hover:bg-gray-100"
+                       className="w-full flex items-center justify-start text-gray-700 hover:text-dna-forest hover:bg-gray-100 p-2 rounded-md"
                      >
-                      <LayoutGrid className="mr-2 h-4 w-4" />
+                       <LayoutGrid className="mr-2 h-4 w-4" />
                       <span>Navigation</span>
                     </button>
                   </SidebarMenuButton>
@@ -129,19 +129,19 @@ const AppSidebar = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <SidebarMenuButton asChild>
-                        <NavLink to="/dna/search" className={getNavCls('/dna/search')}>
-                          <Search className="mr-2 h-4 w-4" />
-                        </NavLink>
+                         <NavLink to="/dna/search" className={`${getNavCls('/dna/search')} flex items-center justify-center p-2 rounded-md`}>
+                           <Search className="h-4 w-4" />
+                         </NavLink>
                       </SidebarMenuButton>
                     </TooltipTrigger>
                     <TooltipContent side="right" className="text-xs">Search</TooltipContent>
                   </Tooltip>
                 ) : (
                   <SidebarMenuButton asChild>
-                    <NavLink to="/dna/search" className={getNavCls('/dna/search')}>
-                      <Search className="mr-2 h-4 w-4" />
-                      <span>Search</span>
-                    </NavLink>
+                     <NavLink to="/dna/search" className={`${getNavCls('/dna/search')} flex items-center justify-start p-2 rounded-md`}>
+                       <Search className="mr-2 h-4 w-4" />
+                       <span>Search</span>
+                     </NavLink>
                   </SidebarMenuButton>
                 )}
               </SidebarMenuItem>
@@ -164,9 +164,9 @@ const AppSidebar = () => {
                         <SidebarMenuButton asChild>
                           {item.title === 'Messages' ? (
                             <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
-                              <NavLink to={item.url} className={getNavCls(item.url)}>
-                                <item.icon className="mr-2 h-4 w-4" />
-                              </NavLink>
+                             <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-center p-2 rounded-md`}>
+                               <item.icon className="h-4 w-4" />
+                             </NavLink>
                             </RequireProfileScore>
                           ) : (
                             <NavLink to={item.url} className={getNavCls(item.url)}>
@@ -183,10 +183,10 @@ const AppSidebar = () => {
                     <SidebarMenuButton asChild>
                       {item.title === 'Messages' ? (
                         <RequireProfileScore min={80} featureName="Messages" showToast showModal={false}>
-                          <NavLink to={item.url} className={getNavCls(item.url)}>
-                            <item.icon className="mr-2 h-4 w-4" />
-                            <span>{item.title}</span>
-                          </NavLink>
+                         <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-start p-2 rounded-md`}>
+                           <item.icon className="mr-2 h-4 w-4" />
+                           <span>{item.title}</span>
+                         </NavLink>
                         </RequireProfileScore>
                       ) : (
                         <NavLink to={item.url} className={getNavCls(item.url)}>
@@ -245,9 +245,9 @@ const AppSidebar = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <SidebarMenuButton asChild>
-                          <NavLink to={item.url} className={getNavCls(item.url)}>
-                            <item.icon className="mr-2 h-4 w-4" />
-                          </NavLink>
+                           <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-center p-2 rounded-md`}>
+                             <item.icon className="h-4 w-4" />
+                           </NavLink>
                         </SidebarMenuButton>
                       </TooltipTrigger>
                       <TooltipContent side="right" className="text-xs">
@@ -256,10 +256,10 @@ const AppSidebar = () => {
                     </Tooltip>
                   ) : (
                     <SidebarMenuButton asChild>
-                      <NavLink to={item.url} className={getNavCls(item.url)}>
-                        <item.icon className="mr-2 h-4 w-4" />
-                        <span>{item.title}</span>
-                      </NavLink>
+                       <NavLink to={item.url} className={`${getNavCls(item.url)} flex items-center justify-start p-2 rounded-md`}>
+                         <item.icon className="mr-2 h-4 w-4" />
+                         <span>{item.title}</span>
+                       </NavLink>
                     </SidebarMenuButton>
                   )}
                 </SidebarMenuItem>
@@ -270,12 +270,12 @@ const AppSidebar = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <SidebarMenuButton asChild>
-                        <Button
-                          variant="ghost"
-                          onClick={signOut}
-                          className="w-full justify-start text-gray-700 hover:text-red-600 hover:bg-red-50"
-                        >
-                          <LogOut className="mr-2 h-4 w-4" />
+                         <Button
+                           variant="ghost"
+                           onClick={signOut}
+                           className="w-full flex items-center justify-center text-gray-700 hover:text-red-600 hover:bg-red-50 p-2 rounded-md"
+                         >
+                           <LogOut className="h-4 w-4" />
                         </Button>
                       </SidebarMenuButton>
                     </TooltipTrigger>
@@ -283,12 +283,12 @@ const AppSidebar = () => {
                   </Tooltip>
                 ) : (
                   <SidebarMenuButton asChild>
-                    <Button
-                      variant="ghost"
-                      onClick={signOut}
-                      className="w-full justify-start text-gray-700 hover:text-red-600 hover:bg-red-50"
-                    >
-                      <LogOut className="mr-2 h-4 w-4" />
+                     <Button
+                       variant="ghost"
+                       onClick={signOut}
+                       className="w-full flex items-center justify-start text-gray-700 hover:text-red-600 hover:bg-red-50 p-2 rounded-md"
+                     >
+                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Sign Out</span>
                     </Button>
                   </SidebarMenuButton>
