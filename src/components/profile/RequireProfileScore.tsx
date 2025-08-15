@@ -73,3 +73,5 @@ export const RequireProfileScore = forwardRef<HTMLDivElement, RequireProfileScor
 
   return <div ref={ref}>{children}</div>;
 });
+
+RequireProfileScore.displayName = 'RequireProfileScore';

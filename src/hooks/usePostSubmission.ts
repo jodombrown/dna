@@ -66,6 +66,8 @@ export const usePostSubmission = () => {
 
       // Prepare post payload
       const postPayload: any = {
+        author_id: user.id, // This field is required by RLS policy
+        user_id: user.id,   // Keep this for backward compatibility
         content: data.content.trim() || null,
         pillar: data.pillar,
         type: finalType,

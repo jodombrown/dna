@@ -317,26 +317,6 @@ export const EnhancedPostComposer: React.FC<EnhancedPostComposerProps> = ({
                 </Avatar>
                 
                 <div className="flex-1 space-y-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm font-medium">Share in:</span>
-                    <Select value={pillar} onValueChange={setPillar}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="connect">Connect</SelectItem>
-                        <SelectItem value="collaborate">Collaborate</SelectItem>
-                        <SelectItem value="contribute">Contribute</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Badge 
-                      variant="secondary" 
-                      className={`text-xs ${getPillarColor(pillar)}`}
-                    >
-                      {pillar.charAt(0).toUpperCase() + pillar.slice(1)}
-                    </Badge>
-                  </div>
-
                   {/* Content Type Tabs */}
                   <Tabs value={contentType} onValueChange={(v) => setContentType(v as ContentType)} className="w-full">
                     <TabsList className="grid w-full grid-cols-4">
