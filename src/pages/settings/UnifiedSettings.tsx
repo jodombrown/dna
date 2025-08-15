@@ -41,7 +41,6 @@ const UnifiedSettings: React.FC = () => {
 
   // Links section state
   const [website, setWebsite] = useState("");
-  const [twitter, setTwitter] = useState("");
   const [linkedin, setLinkedin] = useState("");
 
   // Privacy section state
@@ -72,7 +71,6 @@ const UnifiedSettings: React.FC = () => {
 
       // Links data - using individual fields instead of links object
       setWebsite((profile as any).website_url || "");
-      setTwitter((profile as any).twitter_url || "");
       setLinkedin((profile as any).linkedin_url || "");
 
       // Privacy data
@@ -121,7 +119,6 @@ const UnifiedSettings: React.FC = () => {
 
         // Links updates - using individual URL fields
         website_url: website || null,
-        twitter_url: twitter || null,
         linkedin_url: linkedin || null,
 
         // Privacy updates
@@ -320,14 +317,6 @@ const UnifiedSettings: React.FC = () => {
                 value={website} 
                 onChange={(e) => setWebsite(e.target.value)} 
                 placeholder="https://..." 
-              />
-            </div>
-            <div>
-              <label className="text-sm text-muted-foreground">Twitter/X</label>
-              <Input 
-                value={twitter} 
-                onChange={(e) => setTwitter(e.target.value)} 
-                placeholder="https://twitter.com/you" 
               />
             </div>
             <div>
