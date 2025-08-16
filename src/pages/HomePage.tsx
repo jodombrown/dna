@@ -3,6 +3,7 @@ import { Sparkles, Loader2, Users, HeartHandshake, Calendar, TrendingUp, Filter 
 
 import useRoleBasedAccess from "@/hooks/useRoleBasedAccess";
 import { usePaginatedPosts } from "@/components/social-feed/usePaginatedPosts";
+import { useFeedRealtime } from "@/components/social-feed/useFeedRealtime";
 import useLiveCollaborations from "@/hooks/useLiveCollaborations";
 import { usePostSubmission } from "@/hooks/usePostSubmission";
 import { useLiveEvents } from "@/hooks/useLiveEvents";
@@ -29,6 +30,9 @@ export default function HomePage() {
     refreshKey: refreshKey,
     relevantOnly: mode === "forYou",
   });
+
+  // Realtime: refresh feed when new posts arrive
+  useFeedRealtime({ onNewPost: () => feed.refresh() });
 
   // Composer
   const { submitPost, isSubmitting } = usePostSubmission();
