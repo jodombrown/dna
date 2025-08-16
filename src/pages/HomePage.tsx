@@ -44,14 +44,15 @@ export default function HomePage() {
   // Composer
   const { submitPost, isSubmitting } = usePostSubmission();
   const onCreatePost = async (data: { content: string; pillar: Pillar; file?: File | null }) => {
+    const pillarToSave = data.pillar === 'all' ? 'connect' : data.pillar;
     const success = await submitPost({
       content: data.content,
-      pillar: data.pillar,
+      pillar: pillarToSave,
       type: "post",
       file: data.file || null,
     });
     if (success) {
-      await feed.refresh(); // refresh feed after successful post
+      await feed.refresh();
     }
   };
 
