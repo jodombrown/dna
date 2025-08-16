@@ -93,12 +93,7 @@ export default function HomePage() {
         <div className="space-y-3">
           <MatchesPanel people={collabData?.recommended_people || []} />
           <OpportunitiesPanel items={collabData?.items || []} />
-          {liveEvents.events?.length ? <EventsPanel events={liveEvents.events.filter(e => e.date_time).map(e => ({ 
-            id: e.id, 
-            title: e.title, 
-            date_time: e.date_time!, 
-            location: e.location 
-          }))} /> : null}
+          {liveEvents.events?.length ? <EventsPanel events={liveEvents.events} /> : null}
           {insights.length ? <InsightsPanel items={insights} /> : null}
         </div>
       </div>
@@ -247,7 +242,7 @@ function ComposerCard({
                 try {
                   await onSubmit({ content: text.trim(), pillar, file });
                   setText(""); setPillar("all"); setFile(null);
-                  // track?.("post_created", { pillar }); // optional analytics
+                  // Optional: track("post_created", { pillar });
                 } finally { setSubmitting(false); }
               }}
               className="inline-flex items-center gap-2 rounded-lg bg-dna-forest text-white px-4 py-2 text-sm font-medium disabled:opacity-60"
