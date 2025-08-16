@@ -6,21 +6,10 @@ import { usePaginatedPosts } from "@/components/social-feed/usePaginatedPosts";
 import useLiveCollaborations from "@/hooks/useLiveCollaborations";
 import { usePostSubmission } from "@/hooks/usePostSubmission";
 import { useLiveEvents } from "@/hooks/useLiveEvents";
+import useInsights from "@/hooks/useInsights";
 
 type Pillar = "all" | "connect" | "collaborate" | "contribute";
 type FeedMode = "forYou" | "trending" | "spotlight";
-
-// Simple insights hook until you create the real one
-const useInsights = (profile: any) => {
-  return React.useMemo(() => {
-    if (!profile) return [];
-    return [
-      "Fintech founders in ECOWAS saw a 14% increase in cross-border pilots last quarter.",
-      "SME digitization grants closing in 2 weeks.",
-      "Your AgriTech connections are 3x more active this month."
-    ];
-  }, [profile]);
-};
 
 export default function HomePage() {
   const { profile } = useRoleBasedAccess() || {};
