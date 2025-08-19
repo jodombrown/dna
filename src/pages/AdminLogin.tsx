@@ -121,9 +121,6 @@ const AdminLogin = () => {
             <CardTitle className="text-2xl font-bold text-dna-forest">
               Admin Login
             </CardTitle>
-            <p className="text-sm text-gray-600 mt-2">
-              {LAUNCH_MESSAGES.ADMIN_LOGIN_SUBTITLE}
-            </p>
           </CardHeader>
           
           <CardContent className="space-y-6">
@@ -139,7 +136,7 @@ const AdminLogin = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@diasporanetwork.africa"
+                    placeholder="your-email@admin.com"
                     className="pl-10 bg-white border-gray-200"
                     required
                   />
