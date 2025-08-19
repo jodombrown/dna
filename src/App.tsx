@@ -32,6 +32,12 @@ import AdminDiagnostics from "./pages/app/AdminDiagnostics";
 import AuthCallback from "./pages/AuthCallback";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminModeration from "./pages/admin/AdminModeration";
+import AdminEvents from "./pages/admin/AdminEvents";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminSettings from "./pages/admin/AdminSettings";
+import AdminReports from "./pages/admin/AdminReports";
 
 import UserDashboard from "./pages/UserDashboard";
 import HomePage from "./pages/HomePage";
@@ -101,6 +107,12 @@ function App() {
               <Route path="/admin-login" element={<AuthGuard redirectAuth><AdminLogin /></AuthGuard>} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/admin" element={<AppShell><AdminDashboard /></AppShell>} />
+              <Route path="/admin/users" element={<AppShell><AdminUsers /></AppShell>} />
+              <Route path="/admin/moderation" element={<AppShell><AdminModeration /></AppShell>} />
+              <Route path="/admin/events" element={<AppShell><AdminEvents /></AppShell>} />
+              <Route path="/admin/analytics" element={<AppShell><AdminAnalytics /></AppShell>} />
+              <Route path="/admin/settings" element={<AppShell><AdminSettings /></AppShell>} />
+              <Route path="/admin/reports" element={<AppShell><AdminReports /></AppShell>} />
               <Route path="/onboarding" element={<AppShell><Onboarding /></AppShell>} />
               <Route path="/onboarding/*" element={<Navigate to="/onboarding" replace />} />
               <Route path="/welcome/*" element={<Navigate to="/dna" replace />} />
