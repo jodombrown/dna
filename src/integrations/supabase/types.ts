@@ -2385,6 +2385,7 @@ export type Database = {
           intro_audio_url: string | null
           intro_text: string | null
           intro_video_url: string | null
+          is_admin: boolean | null
           is_beta_tester: boolean | null
           is_public: boolean | null
           last_name: string | null
@@ -2482,6 +2483,7 @@ export type Database = {
           intro_audio_url?: string | null
           intro_text?: string | null
           intro_video_url?: string | null
+          is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
           last_name?: string | null
@@ -2579,6 +2581,7 @@ export type Database = {
           intro_audio_url?: string | null
           intro_text?: string | null
           intro_video_url?: string | null
+          is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
           last_name?: string | null
