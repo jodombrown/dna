@@ -3803,6 +3803,10 @@ export type Database = {
         Args: { new_user_id: string; referral_code_param: string }
         Returns: undefined
       }
+      is_admin_email: {
+        Args: { email_address: string }
+        Returns: boolean
+      }
       is_admin_user: {
         Args: { _user_id: string }
         Returns: boolean
@@ -3826,6 +3830,10 @@ export type Database = {
       }
       is_participant_of_connection: {
         Args: { p_connection: string; p_user: string }
+        Returns: boolean
+      }
+      is_prelaunch_locked: {
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
       is_user_admin: {
@@ -4207,6 +4215,10 @@ export type Database = {
       update_username: {
         Args: { new_username: string }
         Returns: undefined
+      }
+      validate_prelaunch_access: {
+        Args: { user_email: string }
+        Returns: boolean
       }
     }
     Enums: {
