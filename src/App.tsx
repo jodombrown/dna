@@ -30,6 +30,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import { PostOnboardingFlow } from "./pages/PostOnboardingFlow";
 import AdminDiagnostics from "./pages/app/AdminDiagnostics";
 import AuthCallback from "./pages/AuthCallback";
+import AdminLogin from "./pages/AdminLogin";
 
 import UserDashboard from "./pages/UserDashboard";
 import HomePage from "./pages/HomePage";
@@ -96,6 +97,7 @@ function App() {
             <Routes>
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
+              <Route path="/admin-login" element={<AuthGuard redirectAuth><AdminLogin /></AuthGuard>} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/onboarding" element={<AppShell><Onboarding /></AppShell>} />
               <Route path="/onboarding/*" element={<Navigate to="/onboarding" replace />} />
