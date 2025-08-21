@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Users, Globe, Lightbulb, Heart, Target, Zap, Quote } from 'lucide-react';
-import JoinDNADialog from '@/components/auth/JoinDNADialog';
+
 import SurveyDialog from '@/components/survey/SurveyDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 
@@ -15,12 +15,7 @@ const About = () => {
   useScrollToTop();
   const navigate = useNavigate();
   
-  const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
-
-  const handleJoinPlatform = () => {
-    setIsJoinDialogOpen(true);
-  };
 
   const handleTakeSurvey = () => {
     setIsSurveyOpen(true);
@@ -320,15 +315,8 @@ const About = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Button 
-              onClick={handleJoinPlatform}
-              className="bg-dna-copper hover:bg-dna-gold text-white px-10 py-4 text-lg rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
-            >
-              Join the Platform
-            </Button>
-            <Button 
               onClick={() => navigate('/contact')}
-              variant="outline"
-              className="border-2 border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white px-10 py-4 text-lg rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
+              className="bg-dna-copper hover:bg-dna-gold text-white px-10 py-4 text-lg rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
             >
               Get in Touch
             </Button>
@@ -336,12 +324,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Join DNA Dialog */}
-      <JoinDNADialog 
-        isOpen={isJoinDialogOpen} 
-        onClose={() => setIsJoinDialogOpen(false)}
-        onTakeSurvey={handleTakeSurvey}
-      />
 
       {/* Survey Dialog */}
       <SurveyDialog 

@@ -8,7 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import WaitlistSlideIn from '@/components/waitlist/WaitlistSlideIn';
+import WaitlistPopup from '@/components/waitlist/WaitlistPopup';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Mail, 
   Phone, 
@@ -31,6 +32,7 @@ const Contact = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [showWaitlistPopup, setShowWaitlistPopup] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -65,7 +67,8 @@ const Contact = () => {
       title: "Join the DNA Community",
       detail: "Be the first to connect",
       description: "Get early access to our platform and exclusive community events",
-      component: 'waitlist'
+      component: 'waitlist',
+      onClick: () => setShowWaitlistPopup(true)
     }
   ];
 
@@ -172,14 +175,13 @@ const Contact = () => {
                     </Button>
                   )}
                   {method.component === 'waitlist' && (
-                    <WaitlistSlideIn>
-                      <Button 
-                        className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
-                      >
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Join Waitlist
-                      </Button>
-                    </WaitlistSlideIn>
+                    <Button 
+                      onClick={() => setShowWaitlistPopup(true)}
+                      className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Join Waitlist
+                    </Button>
                   )}
                 </CardContent>
               </Card>
@@ -229,6 +231,12 @@ const Contact = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Waitlist Popup */}
+      <WaitlistPopup 
+        isOpen={showWaitlistPopup}
+        onClose={() => setShowWaitlistPopup(false)}
+      />
 
       <Footer />
     </div>

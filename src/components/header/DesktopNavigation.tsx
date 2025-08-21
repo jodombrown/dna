@@ -87,12 +87,6 @@ const DesktopNavigation = () => {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <Button
-          onClick={() => setIsBetaSignupOpen(true)}
-          className="bg-dna-copper hover:bg-dna-gold text-white hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-copper/50 focus:ring-offset-2"
-        >
-          Join Beta
-        </Button>
       </nav>
 
       <BetaSignupDialog 
