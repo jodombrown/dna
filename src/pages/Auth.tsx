@@ -618,27 +618,35 @@ const Auth = () => {
                   <PrelaunchNotice className="mb-4" />
                 )}
 
-                <Button 
-                  type="submit" 
-                  disabled={
-                    isSubmitting || 
-                    isGoogleLoading || 
-                    isLinkedInLoading || 
-                    (isPrelaunchBlocked && !isLogin && !isAdminEmail(formData.email)) ||
-                    (isPrelaunchBlocked && isLogin && !isAdminEmail(formData.email))
-                  } 
-                  className="w-full bg-dna-copper hover:bg-dna-gold text-white disabled:opacity-50"
-                  title={
-                    isPrelaunchBlocked && !isAdminEmail(formData.email) 
-                      ? (isLogin ? LAUNCH_MESSAGES.SIGNIN_BLOCKED : LAUNCH_MESSAGES.SIGNUP_NOTICE)
-                      : undefined
-                  }
-                >
-                  {isSubmitting ? <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      {isLogin ? 'Signing In...' : 'Creating Account...'}
-                    </> : isLogin ? 'Sign In' : 'Create Account'}
-                </Button>
+                {/* Beta Launch Notice */}
+                {isPrelaunchBlocked && !isAdminEmail(formData.email) ? (
+                  <div className="space-y-4">
+                    <div className="bg-dna-emerald/5 border border-dna-emerald/20 rounded-lg p-4 text-center">
+                      <h3 className="font-semibold text-dna-forest mb-2">Beta Launch Coming Soon!</h3>
+                      <p className="text-sm text-gray-700 mb-3">
+                        Join our waitlist now - Beta signup opens <strong>September 1st</strong>
+                      </p>
+                      <Button 
+                        type="button"
+                        onClick={() => navigate('/?show=waitlist')}
+                        className="w-full bg-dna-copper hover:bg-dna-gold text-white"
+                      >
+                        Join Our Waitlist
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting || isGoogleLoading || isLinkedInLoading} 
+                    className="w-full bg-dna-copper hover:bg-dna-gold text-white disabled:opacity-50"
+                  >
+                    {isSubmitting ? <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        {isLogin ? 'Signing In...' : 'Creating Account...'}
+                      </> : isLogin ? 'Sign In' : 'Create Account'}
+                  </Button>
+                )}
               </form>}
 
 
