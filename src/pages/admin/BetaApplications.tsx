@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Dialog, 
   DialogContent, 
@@ -27,11 +28,13 @@ import {
   XCircle, 
   Eye, 
   ArrowLeft,
-  ExternalLink
+  ExternalLink,
+  BarChart3
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import OnboardingProgress from '@/components/admin/OnboardingProgress';
 
 interface BetaApplication {
   id: string;
@@ -224,158 +227,178 @@ const BetaApplications = () => {
             </Button>
           </div>
           <h1 className="text-3xl font-bold text-dna-forest mb-2">
-            Beta Applications Review
+            Beta Applications & Onboarding
           </h1>
           <p className="text-gray-600">
-            Review and approve beta applications from waitlist members
+            Review applications and track onboarding progress
           </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Users className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-dna-forest">{stats.total}</p>
-                  <p className="text-sm text-gray-600">Total Applications</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-yellow-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-dna-forest">{stats.pending}</p>
-                  <p className="text-sm text-gray-600">Pending Review</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-dna-forest">{stats.approved}</p>
-                  <p className="text-sm text-gray-600">Approved</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                  <XCircle className="w-6 h-6 text-red-600" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-dna-forest">{stats.rejected}</p>
-                  <p className="text-sm text-gray-600">Rejected</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Tabs for Applications and Onboarding Progress */}
+        <Tabs defaultValue="applications" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="applications" className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Applications Review
+            </TabsTrigger>
+            <TabsTrigger value="progress" className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" />
+              Onboarding Progress
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Filter Tabs */}
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="flex gap-2">
-              {['all', 'pending', 'approved', 'rejected'].map((status) => (
-                <Button
-                  key={status}
-                  variant={filter === status ? 'default' : 'outline'}
-                  onClick={() => setFilter(status as typeof filter)}
-                  className="capitalize"
-                >
-                  {status}
-                </Button>
-              ))}
+          <TabsContent value="applications" className="space-y-6">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Users className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-dna-forest">{stats.total}</p>
+                      <p className="text-sm text-gray-600">Total Applications</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                      <Clock className="w-6 h-6 text-yellow-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-dna-forest">{stats.pending}</p>
+                      <p className="text-sm text-gray-600">Pending Review</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                      <CheckCircle className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-dna-forest">{stats.approved}</p>
+                      <p className="text-sm text-gray-600">Approved</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                      <XCircle className="w-6 h-6 text-red-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-dna-forest">{stats.rejected}</p>
+                      <p className="text-sm text-gray-600">Rejected</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Applications Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Applications ({filteredApplications.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {filteredApplications.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-500">No applications found</p>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Applicant</TableHead>
-                    <TableHead>Impact Area</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Applied</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredApplications.map((app) => (
-                    <TableRow key={app.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{app.full_name}</div>
-                          <div className="text-sm text-gray-500">{app.email}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{app.impact_area || '-'}</TableCell>
-                      <TableCell>{app.location || '-'}</TableCell>
-                      <TableCell>{getStatusBadge(app.status)}</TableCell>
-                      <TableCell>
-                        {new Date(app.created_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedApp(app);
-                              setShowReviewModal(true);
-                            }}
-                          >
-                            <Eye className="w-4 h-4 mr-1" />
-                            Review
-                          </Button>
-                          {app.linkedin_url && (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => window.open(app.linkedin_url, '_blank')}
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
+            {/* Filter Tabs */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex gap-2">
+                  {['all', 'pending', 'approved', 'rejected'].map((status) => (
+                    <Button
+                      key={status}
+                      variant={filter === status ? 'default' : 'outline'}
+                      onClick={() => setFilter(status as typeof filter)}
+                      className="capitalize"
+                    >
+                      {status}
+                    </Button>
                   ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Applications Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Applications ({filteredApplications.length})</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {filteredApplications.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No applications found</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Applicant</TableHead>
+                        <TableHead>Impact Area</TableHead>
+                        <TableHead>Location</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Applied</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredApplications.map((app) => (
+                        <TableRow key={app.id}>
+                          <TableCell>
+                            <div>
+                              <div className="font-medium">{app.full_name}</div>
+                              <div className="text-sm text-gray-500">{app.email}</div>
+                            </div>
+                          </TableCell>
+                          <TableCell>{app.impact_area || '-'}</TableCell>
+                          <TableCell>{app.location || '-'}</TableCell>
+                          <TableCell>{getStatusBadge(app.status)}</TableCell>
+                          <TableCell>
+                            {new Date(app.created_at).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedApp(app);
+                                  setShowReviewModal(true);
+                                }}
+                              >
+                                <Eye className="w-4 h-4 mr-1" />
+                                Review
+                              </Button>
+                              {app.linkedin_url && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => window.open(app.linkedin_url, '_blank')}
+                                >
+                                  <ExternalLink className="w-4 h-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="progress">
+            <OnboardingProgress />
+          </TabsContent>
+        </Tabs>
 
         {/* Review Modal */}
         <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
