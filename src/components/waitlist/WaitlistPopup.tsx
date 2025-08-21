@@ -55,6 +55,24 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
         }]);
 
       if (error) {
+        // Handle duplicate email gracefully
+        if (error.code === '23505' && error.message.includes('waitlist_signups_email_key')) {
+          toast({
+            title: "You're already on the waitlist! 🎉",
+            description: "Thanks for your continued interest. You can now apply for beta access!",
+          });
+          
+          // Store that user has joined waitlist
+          localStorage.setItem('dna_waitlist_joined', 'true');
+          localStorage.setItem('dna_waitlist_data', JSON.stringify({
+            fullName: formData.fullName,
+            email: formData.email,
+            location: formData.location
+          }));
+          
+          onClose();
+          return;
+        }
         throw error;
       }
 

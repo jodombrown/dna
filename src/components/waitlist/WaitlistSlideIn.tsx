@@ -48,7 +48,28 @@ const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
           status: 'pending'
         });
 
-      if (error) throw error;
+      if (error) {
+        // Handle duplicate email gracefully
+        if (error.code === '23505' && error.message.includes('waitlist_signups_email_key')) {
+          toast({
+            title: "You're already on the waitlist! 🎉",
+            description: "Thanks for your continued interest. You can now apply for beta access!",
+          });
+          
+          // Store that user has joined waitlist
+          localStorage.setItem('dna_waitlist_joined', 'true');
+          localStorage.setItem('dna_waitlist_data', JSON.stringify({
+            fullName: formData.full_name,
+            email: formData.email,
+            location: formData.location,
+            timestamp: Date.now()
+          }));
+          
+          setIsOpen(false);
+          return;
+        }
+        throw error;
+      }
 
       // Send notification email
       await supabase.functions.invoke('send-universal-email', {
