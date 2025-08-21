@@ -35,7 +35,11 @@ const validateEmail = (email: string): boolean => {
 const validateFormData = (formData: any): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
   
-  if (!formData.name || sanitizeInput(formData.name).length === 0) {
+  const effectiveName = sanitizeInput(
+    formData?.name || formData?.full_name || formData?.fullName || formData?.first_name || ''
+  );
+  
+  if (!effectiveName || effectiveName.length === 0) {
     errors.push('Name is required');
   }
   
@@ -43,7 +47,7 @@ const validateFormData = (formData: any): { isValid: boolean; errors: string[] }
     errors.push('Valid email is required');
   }
   
-  if (formData.name && sanitizeInput(formData.name).length > 100) {
+  if (effectiveName && effectiveName.length > 100) {
     errors.push('Name too long');
   }
   
@@ -76,9 +80,12 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Sanitize all form inputs
+    const normalizedName = sanitizeInput(
+      formData.name || formData.full_name || formData.fullName || formData.first_name || ''
+    );
     const sanitizedFormData = {
       ...formData,
-      name: sanitizeInput(formData.name),
+      name: normalizedName,
       email: sanitizeInput(formData.email),
       message: sanitizeInput(formData.message || ''),
       company: sanitizeInput(formData.company || ''),
