@@ -67,7 +67,6 @@ const Contact = () => {
       title: "Join the DNA Community",
       detail: "Be the first to connect",
       description: "Get early access to our platform and exclusive community events",
-      component: 'waitlist',
       onClick: () => setShowWaitlistPopup(true)
     }
   ];
@@ -152,21 +151,17 @@ const Contact = () => {
             {contactMethods.map((method, index) => (
               <Card 
                 key={index} 
-                className={`border-0 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 ${method.onClick || method.component ? 'cursor-pointer' : ''} ${method.component === 'waitlist' ? 'bg-gradient-to-br from-dna-mint/30 via-dna-mint/20 to-dna-emerald/15' : 'bg-white'}`}
+                className={`border-0 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 ${method.onClick ? 'cursor-pointer' : ''} ${index === 2 ? 'bg-gradient-to-br from-dna-mint/30 via-dna-mint/20 to-dna-emerald/15' : 'bg-white'}`}
                 onClick={method.onClick}
               >
                 <CardContent className="p-6 text-center">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${method.component === 'waitlist' ? 'bg-gradient-to-br from-dna-emerald to-dna-copper text-white animate-pulse' : 'bg-dna-emerald/10 text-dna-emerald'}`}>
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${index === 2 ? 'bg-gradient-to-br from-dna-emerald to-dna-copper text-white animate-pulse' : 'bg-dna-emerald/10 text-dna-emerald'}`}>
                     {method.icon}
                   </div>
                   <h3 className="text-lg font-bold text-dna-forest mb-2">{method.title}</h3>
-                  {method.component === 'waitlist' ? (
-                    <p className="text-dna-copper font-semibold mb-2">{method.detail}</p>
-                  ) : (
-                    <p className="text-dna-copper font-semibold mb-2">{method.detail}</p>
-                  )}
+                  <p className="text-dna-copper font-semibold mb-2">{method.detail}</p>
                   <p className="text-gray-600 text-sm mb-4">{method.description}</p>
-                  {method.onClick && (
+                  {method.onClick && index === 0 && (
                     <Button 
                       onClick={method.onClick}
                       className="bg-dna-copper hover:bg-dna-gold text-white"
@@ -174,7 +169,7 @@ const Contact = () => {
                       Join Our Community
                     </Button>
                   )}
-                  {method.component === 'waitlist' && (
+                  {index === 2 && (
                     <Button 
                       onClick={() => setShowWaitlistPopup(true)}
                       className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
