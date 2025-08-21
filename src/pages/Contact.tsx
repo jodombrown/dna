@@ -95,12 +95,28 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Send email using the universal email function
+      const { error } = await supabase.functions.invoke('send-universal-email', {
+        body: {
+          formType: 'contact',
+          formData: {
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject,
+            message: formData.message,
+            inquiryType: formData.inquiryType
+          },
+          userEmail: formData.email
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
       
       toast({
         title: "Message sent successfully!",
-        description: "We'll get back to you within 24 hours.",
+        description: "We'll get back to you within 24 hours. Check your email for confirmation.",
       });
       
       // Reset form
