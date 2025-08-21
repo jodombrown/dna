@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ActivityFeed from '@/components/activity/ActivityFeed';
+import ProfileEnhancement from '@/components/profile/ProfileEnhancement';
+import CollaborationSpaces from '@/components/collaboration/CollaborationSpaces';
 import { 
   TrendingUp, 
   Users, 
@@ -14,7 +18,10 @@ import {
   Target,
   Activity,
   ChevronRight,
-  Plus
+  Plus,
+  BarChart3,
+  User,
+  Briefcase
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -162,6 +169,29 @@ const EnhancedDashboard = () => {
           Connect with Members
         </Button>
       </div>
+
+      {/* Enhanced Dashboard Tabs */}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview" className="flex items-center space-x-2">
+            <BarChart3 className="h-4 w-4" />
+            <span>Overview</span>
+          </TabsTrigger>
+          <TabsTrigger value="profile" className="flex items-center space-x-2">
+            <User className="h-4 w-4" />
+            <span>Profile</span>
+          </TabsTrigger>
+          <TabsTrigger value="collaboration" className="flex items-center space-x-2">
+            <Briefcase className="h-4 w-4" />
+            <span>Collaboration</span>
+          </TabsTrigger>
+          <TabsTrigger value="activity" className="flex items-center space-x-2">
+            <MessageSquare className="h-4 w-4" />
+            <span>Activity</span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -380,6 +410,49 @@ const EnhancedDashboard = () => {
           )}
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="profile">
+          <ProfileEnhancement />
+        </TabsContent>
+
+        <TabsContent value="collaboration">
+          <CollaborationSpaces />
+        </TabsContent>
+
+        <TabsContent value="activity">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <ActivityFeed />
+            </div>
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Quick Stats</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Connections</span>
+                    <span className="font-semibold">{stats.connections_count}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Events Attended</span>
+                    <span className="font-semibold">{stats.events_attended}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Posts</span>
+                    <span className="font-semibold">{stats.posts_count}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Impact Score</span>
+                    <span className="font-semibold text-primary">{stats.impact_score}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
