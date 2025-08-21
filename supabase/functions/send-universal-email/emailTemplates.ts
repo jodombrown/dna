@@ -348,7 +348,7 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         userSubject: "Welcome to the DNA Waitlist! 🎉",
         userHtml: `
           <h1>Welcome to the DNA Community!</h1>
-          <p>Hi ${formData.full_name},</p>
+          <p>Hi ${formData.full_name || formData.fullName || 'there'},</p>
           <p>Thank you for joining the Diaspora Network of Africa waitlist! You're now part of a growing movement to connect, collaborate, and contribute to Africa's development.</p>
           
           <div style="background: linear-gradient(135deg, #059669, #D97706); color: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
