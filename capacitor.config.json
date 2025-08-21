@@ -1,0 +1,19 @@
+{
+  "appId": "app.lovable.866bbb52dc1d4eb7807c62f17d69e56e",
+  "appName": "diaspora-network-of-africa",
+  "webDir": "dist",
+  "server": {
+    "url": "https://866bbb52-dc1d-4eb7-807c-62f17d69e56e.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#488AFF",
+      "sound": "beep.wav"
+    },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  }
+}
