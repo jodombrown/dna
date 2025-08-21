@@ -394,6 +394,116 @@ const Auth = () => {
         </div>
       </div>;
   }
+  // During prelaunch, show waitlist page instead of auth forms
+  if (isPrelaunchBlocked) {
+    return <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex lg:flex-row flex-col">
+        {/* Left Side - Branding Section */}
+        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-dna-forest to-dna-emerald p-12 items-center justify-center relative overflow-hidden">
+          {/* Dynamic Bokeh Background */}
+          <div className="absolute inset-0 overflow-hidden">
+            {/* Large floating orbs */}
+            <div className="absolute w-40 h-40 bg-dna-gold/12 rounded-full blur-sm bokeh-drift-1" style={{
+            animationDelay: '0s'
+          }}></div>
+            <div className="absolute w-32 h-32 bg-dna-copper/15 rounded-full blur-sm bokeh-drift-2" style={{
+            animationDelay: '4s'
+          }}></div>
+            <div className="absolute w-24 h-24 bg-dna-mint/20 rounded-full blur-sm bokeh-drift-3" style={{
+            animationDelay: '8s'
+          }}></div>
+            <div className="absolute w-36 h-36 bg-dna-emerald/10 rounded-full blur-sm bokeh-drift-4" style={{
+            animationDelay: '12s'
+          }}></div>
+          </div>
+          
+          <div className="relative z-10 text-center text-white max-w-md">
+            <div className="mb-8">
+              {/* Prominent Logo Display */}
+              <div className="relative mx-auto mb-8 w-32 h-32">
+                {/* Colored background effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-dna-copper to-dna-gold rounded-3xl shadow-2xl transform -rotate-2 scale-105"></div>
+                <div className="absolute inset-0 bg-dna-emerald rounded-3xl shadow-xl"></div>
+                <div className="relative bg-white rounded-3xl p-6 shadow-lg border border-gray-100">
+                  <img src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" alt="DNA Logo" className="w-full h-full object-contain" />
+                </div>
+                {/* Subtle glow effect */}
+                <div className="absolute -inset-2 bg-gradient-to-r from-dna-copper/20 to-dna-gold/20 rounded-3xl blur-xl -z-10"></div>
+              </div>
+              
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-dna-mint bg-clip-text text-transparent">
+                Coming September 1st
+              </h1>
+              <p className="text-lg text-dna-mint/90 mb-8 leading-relaxed">
+                The global African diaspora network where innovation meets impact and dreams become reality.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side - Waitlist Form */}
+        <div className="lg:w-1/2 flex items-center justify-center p-8">
+          <div className="w-full max-w-md space-y-8">
+            <Button 
+              onClick={() => navigate('/?show=waitlist')}
+              className="w-full bg-dna-copper hover:bg-dna-gold text-white text-lg py-6"
+              size="lg"
+            >
+              Join the Waitlist
+            </Button>
+            
+            <div className="text-center space-y-4">
+              <h2 className="text-2xl font-bold text-dna-forest">
+                Beta Access Opens September 1st
+              </h2>
+              <p className="text-muted-foreground">
+                Get early access to DNA Community by joining our waitlist. 
+                You'll be among the first to connect, collaborate, and contribute to Africa's digital transformation.
+              </p>
+              
+              <div className="bg-dna-mint/10 rounded-lg p-4 border border-dna-mint/20">
+                <p className="text-sm text-dna-forest font-medium">
+                  🎉 Limited beta spots available - secure yours today!
+                </p>
+              </div>
+            </div>
+
+            {/* Admin login section */}
+            <div className="border-t pt-6">
+              <p className="text-xs text-muted-foreground text-center mb-4">
+                Administrator Access
+              </p>
+              <div className="space-y-3">
+                <Input
+                  type="email"
+                  placeholder="Enter admin email..."
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  name="email"
+                  className="text-center"
+                />
+                <Button
+                  onClick={handleAdminMagicLink}
+                  disabled={isAdminMagicSending || !formData.email}
+                  variant="outline"
+                  className="w-full"
+                  size="sm"
+                >
+                  {isAdminMagicSending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Admin Magic Link"
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>;
+  }
+
   return <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex lg:flex-row flex-col">
       {/* Left Side - Branding Section */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-dna-forest to-dna-emerald p-12 items-center justify-center relative overflow-hidden">
