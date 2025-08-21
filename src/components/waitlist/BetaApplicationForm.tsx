@@ -20,12 +20,32 @@ const BetaApplicationForm: React.FC<BetaApplicationFormProps> = ({
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  
+  // Check for pre-filled data from waitlist
+  const getPrefilledData = () => {
+    try {
+      const waitlistData = localStorage.getItem('dna_waitlist_data');
+      if (waitlistData) {
+        const data = JSON.parse(waitlistData);
+        // Check if data is recent (within last hour)
+        if (Date.now() - data.timestamp < 3600000) {
+          return data;
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing waitlist data:', error);
+    }
+    return null;
+  };
+
+  const prefilledData = getPrefilledData();
+  
   const [formData, setFormData] = useState({
-    email: initialEmail,
-    full_name: '',
+    email: initialEmail || prefilledData?.email || '',
+    full_name: prefilledData?.fullName || '',
     motivation: '',
     impact_area: '',
-    location: '',
+    location: prefilledData?.location || '',
     linkedin_url: ''
   });
 
@@ -42,10 +62,10 @@ const BetaApplicationForm: React.FC<BetaApplicationFormProps> = ({
 
     try {
       // Validate required fields
-      if (!formData.email || !formData.full_name || !formData.motivation) {
+      if (!formData.email || !formData.full_name || !formData.motivation || !formData.linkedin_url) {
         toast({
           title: "Missing Information",
-          description: "Please fill in all required fields.",
+          description: "Please fill in all required fields including LinkedIn profile.",
           variant: "destructive"
         });
         return;
@@ -76,6 +96,10 @@ const BetaApplicationForm: React.FC<BetaApplicationFormProps> = ({
       }
 
       setSubmitted(true);
+      
+      // Clear the waitlist data since it's been used
+      localStorage.removeItem('dna_waitlist_data');
+      
       onSuccess?.();
       
       toast({
@@ -108,6 +132,11 @@ const BetaApplicationForm: React.FC<BetaApplicationFormProps> = ({
           <p className="text-gray-600 mb-4">
             Thank you for your interest in joining the DNA beta. Our team will review your application and get back to you soon.
           </p>
+          {prefilledData && (
+            <p className="text-sm text-dna-emerald font-medium mb-2">
+              ✓ Your waitlist information was automatically filled in to make the process easier.
+            </p>
+          )}
           <p className="text-sm text-gray-500">
             We'll send updates to <strong>{formData.email}</strong>
           </p>
@@ -125,6 +154,11 @@ const BetaApplicationForm: React.FC<BetaApplicationFormProps> = ({
         <p className="text-center text-gray-600">
           Help us shape the future of the African diaspora network
         </p>
+        {prefilledData && (
+          <p className="text-center text-sm text-dna-emerald font-medium">
+            ✓ Your waitlist information has been automatically filled in
+          </p>
+        )}
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -184,7 +218,7 @@ const BetaApplicationForm: React.FC<BetaApplicationFormProps> = ({
 
           <div>
             <Label htmlFor="linkedin_url" className="text-sm font-medium">
-              LinkedIn Profile (Optional)
+              LinkedIn Profile *
             </Label>
             <Input
               id="linkedin_url"
@@ -192,6 +226,7 @@ const BetaApplicationForm: React.FC<BetaApplicationFormProps> = ({
               value={formData.linkedin_url}
               onChange={(e) => handleInputChange('linkedin_url', e.target.value)}
               placeholder="https://linkedin.com/in/yourprofile"
+              required
             />
           </div>
 

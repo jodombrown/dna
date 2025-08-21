@@ -63,12 +63,25 @@ const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
         title: "Welcome to the Waitlist!",
         description: "You'll be the first to know when DNA launches. Check your email for confirmation.",
       });
-
+      
       // Store that user has joined waitlist
       localStorage.setItem('dna_waitlist_joined', 'true');
       
+      // Store waitlist data for pre-populating beta application
+      localStorage.setItem('dna_waitlist_data', JSON.stringify({
+        fullName: formData.full_name,
+        email: formData.email,
+        location: formData.location,
+        timestamp: Date.now()
+      }));
+      
       setIsOpen(false);
       setFormData({ full_name: '', email: '', location: '' });
+      
+      // Optional: Redirect to beta application
+      setTimeout(() => {
+        window.location.href = '/beta-application';
+      }, 1500);
     } catch (error: any) {
       console.error('Waitlist signup error:', error);
       toast({

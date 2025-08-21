@@ -84,6 +84,14 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
       // Store that user has joined waitlist to avoid showing popup again
       localStorage.setItem('dna_waitlist_joined', 'true');
       
+      // Store waitlist data for pre-populating beta application
+      localStorage.setItem('dna_waitlist_data', JSON.stringify({
+        fullName: formData.fullName,
+        email: formData.email,
+        location: formData.location,
+        timestamp: Date.now()
+      }));
+      
       onClose();
       setFormData({ fullName: '', email: '', location: '' });
       
