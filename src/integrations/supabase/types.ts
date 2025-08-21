@@ -374,6 +374,71 @@ export type Database = {
         }
         Relationships: []
       }
+      beta_applications: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          impact_area: string | null
+          linkedin_url: string | null
+          location: string | null
+          magic_link_sent_at: string | null
+          motivation: string
+          profile_created_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          waitlist_signup_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          impact_area?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          magic_link_sent_at?: string | null
+          motivation: string
+          profile_created_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          waitlist_signup_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          impact_area?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          magic_link_sent_at?: string | null
+          motivation?: string
+          profile_created_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          waitlist_signup_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beta_applications_waitlist_signup_id_fkey"
+            columns: ["waitlist_signup_id"]
+            isOneToOne: false
+            referencedRelation: "waitlist_signups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       collaboration_memberships: {
         Row: {
           id: string
@@ -3529,11 +3594,10 @@ export type Database = {
         Returns: undefined
       }
       approve_beta_application: {
-        Args: { admin_id: string; application_id: string }
-        Returns: {
-          expires_at: string
-          magic_link_token: string
-        }[]
+        Args:
+          | { admin_id: string; application_id: string }
+          | { p_admin_notes?: string; p_application_id: string }
+        Returns: string
       }
       are_users_connected: {
         Args: { u1: string; u2: string }
@@ -3880,6 +3944,10 @@ export type Database = {
       recent_engagement_score_for_user: {
         Args: { p_target_user: string }
         Returns: number
+      }
+      reject_beta_application: {
+        Args: { p_admin_notes: string; p_application_id: string }
+        Returns: undefined
       }
       reject_html: {
         Args: { _txt: string }

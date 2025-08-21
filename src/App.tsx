@@ -32,6 +32,7 @@ import AdminDiagnostics from "./pages/app/AdminDiagnostics";
 import AuthCallback from "./pages/AuthCallback";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import BetaApplications from "./pages/admin/BetaApplications";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminModeration from "./pages/admin/AdminModeration";
 import AdminEvents from "./pages/admin/AdminEvents";
@@ -107,6 +108,7 @@ function App() {
               <Route path="/admin-login" element={<AuthGuard redirectAuth><AdminLogin /></AuthGuard>} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/admin" element={<AppShell><AdminDashboard /></AppShell>} />
+              <Route path="/admin/beta-applications" element={<AppShell><BetaApplications /></AppShell>} />
               <Route path="/admin/users" element={<AppShell><AdminUsers /></AppShell>} />
               <Route path="/admin/moderation" element={<AppShell><AdminModeration /></AppShell>} />
               <Route path="/admin/events" element={<AppShell><AdminEvents /></AppShell>} />

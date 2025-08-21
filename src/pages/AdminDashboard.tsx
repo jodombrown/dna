@@ -9,6 +9,13 @@ const AdminDashboard = () => {
 
   const adminSections = [
     {
+      title: 'Beta Applications',
+      description: 'Review and approve beta applications',
+      icon: Users,
+      path: '/admin/beta-applications',
+      color: 'bg-dna-copper/10 text-dna-copper border-dna-copper/20'
+    },
+    {
       title: 'User Management',
       description: 'Manage users, profiles, and permissions',
       icon: Users,
