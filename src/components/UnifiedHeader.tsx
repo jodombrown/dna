@@ -92,9 +92,9 @@ const UnifiedHeader = () => {
     setIsBetaSignupOpen(true);
   };
 
-  const handleSignInClick = () => {
+  const handleJoinWaitlistClick = () => {
     setIsMobileMenuOpen(false);
-    navigate('/auth');
+    setIsBetaSignupOpen(true);
   };
 
   const handleNavClick = (item: { name: string; path: string }) => {
@@ -242,10 +242,10 @@ const UnifiedHeader = () => {
                   {!isAuthenticated && (
                     <Button
                       variant="default"
-                      onClick={handleSignInClick}
+                      onClick={handleJoinWaitlistClick}
                       className="hidden md:inline-flex bg-dna-copper text-white hover:bg-primary"
                     >
-                      Sign In
+                      Join Waitlist
                     </Button>
                   )}
                 </>
@@ -377,9 +377,9 @@ const UnifiedHeader = () => {
                             <Button
                               variant="default"
                               className="justify-start text-left transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                              onClick={handleSignInClick}
+                              onClick={handleJoinWaitlistClick}
                             >
-                              Sign In
+                              Join Waitlist
                             </Button>
                           </>
                         )}
