@@ -62,7 +62,7 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
       try {
         await supabase.functions.invoke('send-universal-email', {
           body: {
-            formType: 'waitlist',
+            formType: 'waitlist_signup',
             formData: {
               name: formData.fullName,
               email: formData.email,

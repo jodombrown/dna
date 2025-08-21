@@ -95,6 +95,20 @@ const BetaApplicationForm: React.FC<BetaApplicationFormProps> = ({
         throw error;
       }
 
+      // Fire confirmation emails (non-blocking)
+      try {
+        await supabase.functions.invoke('send-universal-email', {
+          body: {
+            formType: 'beta-application',
+            formData: formData,
+            userEmail: formData.email
+          }
+        });
+      } catch (e) {
+        console.warn('Email dispatch failed:', e);
+      }
+
+
       setSubmitted(true);
       
       // Clear the waitlist data since it's been used
