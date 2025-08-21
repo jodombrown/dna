@@ -9,6 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface BetaSignupDialogProps {
   isOpen: boolean;
@@ -22,6 +24,7 @@ export const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onCl
     location: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,23 +39,43 @@ export const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onCl
     setIsSubmitting(true);
     
     try {
-      // Here you would typically send the data to your backend/database
-      console.log('Waitlist signup:', formData);
-      
-      // Reset form
+      // Send confirmation emails via Edge Function
+      const payload = {
+        full_name: formData.fullName.trim(),
+        email: formData.email.trim(),
+        location: formData.location.trim(),
+      };
+
+      const { error } = await supabase.functions.invoke('send-universal-email', {
+        body: {
+          formType: 'waitlist_signup',
+          formData: payload,
+          userEmail: payload.email,
+        },
+      });
+
+      if (error) throw error;
+
+      // Reset and close
       setFormData({ fullName: '', email: '', location: '' });
-      
-      // Close dialog
       onClose();
-      
-      // You could show a success toast here
+
+      // Success toast
+      toast({
+        title: "You're on the list!",
+        description: 'We\'ve emailed you a confirmation and will keep you updated.',
+      });
     } catch (error) {
       console.error('Error submitting waitlist signup:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Something went wrong',
+        description: 'Please try again in a moment.',
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
-
   const handleCancel = () => {
     setFormData({ fullName: '', email: '', location: '' });
     onClose();
