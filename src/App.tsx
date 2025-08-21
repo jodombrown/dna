@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
+import BetaApplication from "./pages/BetaApplication";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
@@ -105,6 +106,7 @@ function App() {
             <Routes>
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
+              <Route path="/beta-application" element={<BetaApplication />} />
               <Route path="/admin-login" element={<AuthGuard redirectAuth><AdminLogin /></AuthGuard>} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/admin" element={<AppShell><AdminDashboard /></AppShell>} />

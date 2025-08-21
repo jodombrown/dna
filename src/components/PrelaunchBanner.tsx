@@ -43,11 +43,11 @@ const PrelaunchBanner = () => {
                   Admin Access
                 </Button>
                 <Button
-                  onClick={() => navigate('/auth')}
+                  onClick={() => navigate('/beta-application')}
                   className="bg-dna-copper hover:bg-dna-copper/90 text-white"
                   size="sm"
                 >
-                  Join Waitlist
+                  Apply for Beta
                 </Button>
               </div>
             </div>

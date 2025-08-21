@@ -77,8 +77,8 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
       }
 
       toast({
-        title: "Welcome to DNA!",
-        description: "You're in! We'll reach out with updates as the beta launches.",
+        title: "Successfully joined waitlist!",
+        description: "Thanks for your interest. You can now apply for beta access!",
       });
 
       // Store that user has joined waitlist to avoid showing popup again
@@ -86,6 +86,11 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
       
       onClose();
       setFormData({ fullName: '', email: '', location: '' });
+      
+      // Optional: Redirect to beta application after a brief delay
+      setTimeout(() => {
+        window.location.href = '/beta-application';
+      }, 1500);
     } catch (error: any) {
       console.error('Waitlist signup error:', error);
       toast({

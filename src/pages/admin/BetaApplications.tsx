@@ -95,9 +95,16 @@ const BetaApplications = () => {
         });
         
         if (error) throw error;
+
+        // Send approval email with magic link
+        await sendNotificationEmail(selectedApp.email, 'application_approved', {
+          full_name: selectedApp.full_name,
+          admin_notes: adminNotes
+        });
+        
         toast({
           title: 'Application Approved',
-          description: 'Beta application has been approved and magic link will be sent.',
+          description: 'Beta application has been approved and approval email sent.',
         });
       } else {
         const { error } = await supabase.rpc('reject_beta_application', {
@@ -106,9 +113,16 @@ const BetaApplications = () => {
         });
         
         if (error) throw error;
+
+        // Send rejection email
+        await sendNotificationEmail(selectedApp.email, 'application_rejected', {
+          full_name: selectedApp.full_name,
+          admin_notes: adminNotes
+        });
+        
         toast({
           title: 'Application Rejected',
-          description: 'Beta application has been rejected.',
+          description: 'Beta application has been rejected and notification email sent.',
         });
       }
       
@@ -123,6 +137,30 @@ const BetaApplications = () => {
         description: 'Failed to process application review',
         variant: 'destructive'
       });
+    }
+  };
+
+  const sendNotificationEmail = async (email: string, type: string, data: any) => {
+    try {
+      const { error } = await supabase.functions.invoke('beta-notifications', {
+        body: {
+          to: email,
+          type,
+          data
+        }
+      });
+      
+      if (error) {
+        console.error('Email notification error:', error);
+        // Don't throw here - we don't want to fail the approval if email fails
+        toast({
+          title: 'Email Warning',
+          description: 'Application processed but email notification may have failed.',
+          variant: 'destructive'
+        });
+      }
+    } catch (error) {
+      console.error('Email function error:', error);
     }
   };
 

@@ -1968,6 +1968,47 @@ export type Database = {
         }
         Relationships: []
       }
+      magic_links: {
+        Row: {
+          beta_application_id: string | null
+          created_at: string
+          expires_at: string
+          full_name: string
+          id: string
+          token: string
+          used_at: string | null
+          user_email: string
+        }
+        Insert: {
+          beta_application_id?: string | null
+          created_at?: string
+          expires_at?: string
+          full_name: string
+          id?: string
+          token?: string
+          used_at?: string | null
+          user_email: string
+        }
+        Update: {
+          beta_application_id?: string | null
+          created_at?: string
+          expires_at?: string
+          full_name?: string
+          id?: string
+          token?: string
+          used_at?: string | null
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "magic_links_beta_application_id_fkey"
+            columns: ["beta_application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_reactions: {
         Row: {
           created_at: string
@@ -3744,6 +3785,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      generate_magic_link: {
+        Args: { p_application_id: string; p_email: string; p_full_name: string }
+        Returns: string
+      }
       generate_magic_link_token: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -3924,6 +3969,10 @@ export type Database = {
       make_user_admin: {
         Args: { user_email: string }
         Returns: string
+      }
+      notify_beta_status: {
+        Args: { p_data: Json; p_email: string; p_type: string }
+        Returns: undefined
       }
       profile_meets_visibility_requirement: {
         Args: { min_score?: number; user_id_param: string }
