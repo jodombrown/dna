@@ -154,7 +154,7 @@ const Services = () => {
 
         {/* Services by Category */}
         <Tabs defaultValue="consulting" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
             {serviceCategories.map((category) => (
               <TabsTrigger key={category.id} value={category.id} className="flex items-center gap-2">
                 {category.icon}

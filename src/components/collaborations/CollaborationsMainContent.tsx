@@ -67,17 +67,17 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
   );
 
   return (
-    <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-      <div className={`flex gap-6 ${isMobile ? 'flex-col' : ''} min-h-[calc(100vh-400px)]`}>
+    <div className="flex-1 max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 pb-4 sm:pb-8 safe-area-pb">
+      <div className={`flex gap-3 lg:gap-6 ${isMobile ? 'flex-col' : ''} min-h-[60vh]`}>
         {/* Desktop Sidebar */}
         {!isMobile && (
-          <div className="w-80 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col">
+          <div className="w-72 lg:w-80 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col max-h-[75vh]">
             <FiltersSidebar />
           </div>
         )}
 
         {/* Main Content Area */}
-        <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col">
+        <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col min-h-[60vh] max-h-[75vh]">
           {/* Controls Header */}
           <div className="p-4 sm:p-6 border-b border-gray-200">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -165,7 +165,7 @@ const CollaborationsMainContent: React.FC<CollaborationsMainContentProps> = ({
                   </Button>
                 </div>
               ) : (
-                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin">
+                <div className="space-y-3 sm:space-y-4 max-h-[50vh] overflow-y-auto pr-1 sm:pr-2 scrollbar-thin">
                   {projects.map((project) => (
                     <CompactProjectCard
                       key={project.id}

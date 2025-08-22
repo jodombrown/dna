@@ -326,7 +326,7 @@ export const EnhancedPostComposer: React.FC<EnhancedPostComposerProps> = ({
                 <div className="flex-1 space-y-3">
                   {/* Content Type Tabs */}
                   <Tabs value={contentType} onValueChange={(v) => setContentType(v as ContentType)} className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
+                    <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
                       <TabsTrigger value="post" className="flex items-center gap-2">
                         <Edit3 className="w-4 h-4" />
                         <span className="hidden sm:inline">Post</span>

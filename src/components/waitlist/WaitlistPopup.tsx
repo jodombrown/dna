@@ -142,9 +142,9 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
       {/* Modal Content */}
       <div className={`relative ${
         isMobile 
-          ? "w-[90vw] max-w-[340px] mx-2" 
+          ? "w-[calc(100vw-2rem)] max-w-[320px] mx-4" 
           : "max-w-lg w-full mx-4"
-        } bg-white rounded-xl border-2 border-gray-200/50 max-h-[90vh] overflow-y-auto animate-scale-in`}
+        } bg-white rounded-xl border-2 border-gray-200/50 max-h-[85vh] overflow-y-auto animate-scale-in safe-area-pb`}
         style={{
           boxShadow: `
             0 32px 64px -12px rgba(0, 0, 0, 0.4),
