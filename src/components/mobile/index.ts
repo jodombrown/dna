@@ -10,7 +10,6 @@ export { default as MobilePostButton } from './MobilePostButton';
 export { default as MobileMessagingView } from './MobileMessagingView';
 export { default as MobileProfileView } from './MobileProfileView';
 export { default as MobileSettingsView } from './MobileSettingsView';
-export { default as MobileEventView } from './MobileEventView';
 
 // Hooks
 export { useMobile, useIsMobile, useBreakpoint } from '@/hooks/useMobile';

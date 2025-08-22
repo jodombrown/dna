@@ -48,28 +48,7 @@ const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
           status: 'pending'
         });
 
-      if (error) {
-        // Handle duplicate email gracefully
-        if (error.code === '23505' && error.message.includes('waitlist_signups_email_key')) {
-          toast({
-            title: "You're already on the waitlist! 🎉",
-            description: "Thanks for your continued interest. You can now apply for beta access!",
-          });
-          
-          // Store that user has joined waitlist
-          localStorage.setItem('dna_waitlist_joined', 'true');
-          localStorage.setItem('dna_waitlist_data', JSON.stringify({
-            fullName: formData.full_name,
-            email: formData.email,
-            location: formData.location,
-            timestamp: Date.now()
-          }));
-          
-          setIsOpen(false);
-          return;
-        }
-        throw error;
-      }
+      if (error) throw error;
 
       // Send notification email
       await supabase.functions.invoke('send-universal-email', {
@@ -84,25 +63,12 @@ const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
         title: "Welcome to the Waitlist!",
         description: "You'll be the first to know when DNA launches. Check your email for confirmation.",
       });
-      
+
       // Store that user has joined waitlist
       localStorage.setItem('dna_waitlist_joined', 'true');
       
-      // Store waitlist data for pre-populating beta application
-      localStorage.setItem('dna_waitlist_data', JSON.stringify({
-        fullName: formData.full_name,
-        email: formData.email,
-        location: formData.location,
-        timestamp: Date.now()
-      }));
-      
       setIsOpen(false);
       setFormData({ full_name: '', email: '', location: '' });
-      
-      // Optional: Redirect to beta application
-      setTimeout(() => {
-        window.location.href = '/beta-application';
-      }, 1500);
     } catch (error: any) {
       console.error('Waitlist signup error:', error);
       toast({

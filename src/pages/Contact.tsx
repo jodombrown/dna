@@ -8,8 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import WaitlistPopup from '@/components/waitlist/WaitlistPopup';
-import { supabase } from '@/integrations/supabase/client';
+import WaitlistSlideIn from '@/components/waitlist/WaitlistSlideIn';
 import { 
   Mail, 
   Phone, 
@@ -32,7 +31,6 @@ const Contact = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
-  const [showWaitlistPopup, setShowWaitlistPopup] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -67,7 +65,7 @@ const Contact = () => {
       title: "Join the DNA Community",
       detail: "Be the first to connect",
       description: "Get early access to our platform and exclusive community events",
-      onClick: () => setShowWaitlistPopup(true)
+      component: 'waitlist'
     }
   ];
 
@@ -95,28 +93,12 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      // Send email using the universal email function
-      const { error } = await supabase.functions.invoke('send-universal-email', {
-        body: {
-          formType: 'contact',
-          formData: {
-            name: formData.name,
-            email: formData.email,
-            subject: formData.subject,
-            message: formData.message,
-            inquiryType: formData.inquiryType
-          },
-          userEmail: formData.email
-        }
-      });
-
-      if (error) {
-        throw error;
-      }
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       toast({
         title: "Message sent successfully!",
-        description: "We'll get back to you within 24 hours. Check your email for confirmation.",
+        description: "We'll get back to you within 24 hours.",
       });
       
       // Reset form
@@ -167,17 +149,21 @@ const Contact = () => {
             {contactMethods.map((method, index) => (
               <Card 
                 key={index} 
-                className={`border-0 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 ${method.onClick ? 'cursor-pointer' : ''} ${index === 2 ? 'bg-gradient-to-br from-dna-mint/30 via-dna-mint/20 to-dna-emerald/15' : 'bg-white'}`}
+                className={`border-0 shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 ${method.onClick || method.component ? 'cursor-pointer' : ''} ${method.component === 'waitlist' ? 'bg-gradient-to-br from-dna-mint/30 via-dna-mint/20 to-dna-emerald/15' : 'bg-white'}`}
                 onClick={method.onClick}
               >
                 <CardContent className="p-6 text-center">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${index === 2 ? 'bg-gradient-to-br from-dna-emerald to-dna-copper text-white animate-pulse' : 'bg-dna-emerald/10 text-dna-emerald'}`}>
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${method.component === 'waitlist' ? 'bg-gradient-to-br from-dna-emerald to-dna-copper text-white animate-pulse' : 'bg-dna-emerald/10 text-dna-emerald'}`}>
                     {method.icon}
                   </div>
                   <h3 className="text-lg font-bold text-dna-forest mb-2">{method.title}</h3>
-                  <p className="text-dna-copper font-semibold mb-2">{method.detail}</p>
+                  {method.component === 'waitlist' ? (
+                    <p className="text-dna-copper font-semibold mb-2">{method.detail}</p>
+                  ) : (
+                    <p className="text-dna-copper font-semibold mb-2">{method.detail}</p>
+                  )}
                   <p className="text-gray-600 text-sm mb-4">{method.description}</p>
-                  {method.onClick && index === 0 && (
+                  {method.onClick && (
                     <Button 
                       onClick={method.onClick}
                       className="bg-dna-copper hover:bg-dna-gold text-white"
@@ -185,14 +171,15 @@ const Contact = () => {
                       Join Our Community
                     </Button>
                   )}
-                  {index === 2 && (
-                    <Button 
-                      onClick={() => setShowWaitlistPopup(true)}
-                      className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
-                    >
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Join Waitlist
-                    </Button>
+                  {method.component === 'waitlist' && (
+                    <WaitlistSlideIn>
+                      <Button 
+                        className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
+                      >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Join Waitlist
+                      </Button>
+                    </WaitlistSlideIn>
                   )}
                 </CardContent>
               </Card>
@@ -242,12 +229,6 @@ const Contact = () => {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Waitlist Popup */}
-      <WaitlistPopup 
-        isOpen={showWaitlistPopup}
-        onClose={() => setShowWaitlistPopup(false)}
-      />
 
       <Footer />
     </div>

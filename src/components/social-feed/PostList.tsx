@@ -3,9 +3,7 @@ import { PostCard } from './PostCard';
 import { LoadMoreTrigger } from './LoadMoreTrigger';
 import { SkeletonPostCard } from './SkeletonPostCard';
 import { Button } from '@/components/ui/button';
-import { EmptyState } from '@/components/ui/empty-state';
-import { PostListSkeleton } from '@/components/ui/loading-skeleton';
-import { Loader2, RefreshCw, MessageSquare, AlertCircle } from 'lucide-react';
+import { Loader2, RefreshCw } from 'lucide-react';
 
 export interface Post {
   id: string;
@@ -19,7 +17,6 @@ export interface Post {
   profiles: {
     id: string;
     full_name: string;
-    username?: string;
     avatar_url?: string;
     location?: string;
     professional_role?: string;
@@ -39,7 +36,6 @@ interface PostListProps {
   onEdit?: (post: Post) => void;
   onDelete?: (postId: string) => void;
   emptyMessage?: string;
-  error?: string | null;
 }
 
 export const PostList: React.FC<PostListProps> = ({
@@ -50,41 +46,28 @@ export const PostList: React.FC<PostListProps> = ({
   onRefresh,
   onEdit,
   onDelete,
-  emptyMessage = "No posts yet.",
-  error = null
+  emptyMessage = "No posts yet."
 }) => {
-  // Error State
-  if (error) {
+  if (isLoading && posts.length === 0) {
     return (
-      <EmptyState
-        icon={AlertCircle}
-        title="Failed to load posts"
-        description={error}
-        action={onRefresh ? {
-          label: "Try again",
-          onClick: onRefresh
-        } : undefined}
-      />
+      <div className="flex items-center justify-center py-8" role="status" aria-label="Loading posts">
+        <Loader2 className="h-6 w-6 animate-spin" />
+        <span className="ml-2 text-muted-foreground">Loading posts...</span>
+      </div>
     );
   }
 
-  // Loading State (initial load)
-  if (isLoading && posts.length === 0) {
-    return <PostListSkeleton count={5} />;
-  }
-
-  // Empty State
   if (posts.length === 0) {
     return (
-      <EmptyState
-        icon={MessageSquare}
-        title="No posts found"
-        description={emptyMessage}
-        action={onRefresh ? {
-          label: "Refresh",
-          onClick: onRefresh
-        } : undefined}
-      />
+      <div className="text-center py-8">
+        <p className="text-muted-foreground mb-4">{emptyMessage}</p>
+        {onRefresh && (
+          <Button onClick={onRefresh} variant="outline" size="sm">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+        )}
+      </div>
     );
   }
 
@@ -118,7 +101,11 @@ export const PostList: React.FC<PostListProps> = ({
         
         {/* Loading skeletons while fetching more posts */}
         {isLoading && posts.length > 0 && (
-          <PostListSkeleton count={3} />
+          <>
+            <SkeletonPostCard />
+            <SkeletonPostCard />
+            <SkeletonPostCard />
+          </>
         )}
       </div>
 

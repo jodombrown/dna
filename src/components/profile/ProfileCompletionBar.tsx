@@ -5,13 +5,15 @@ import { Progress } from "@/components/ui/progress";
 const PROFILE_FIELDS = [
   "full_name",
   "headline",
-  "location", // Consolidated single location field
+  "city",
+  "location",
   "bio",
   "my_dna_statement",
   "impact_areas",
   "engagement_intentions",
+  "available_for",
   "linkedin_url",
-  "selected_pillars"
+  "website_url"
 ];
 
 interface ProfileCompletionBarProps {

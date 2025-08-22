@@ -6,7 +6,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { useNavigate } from 'react-router-dom';
-import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 
 export default function OpportunityNew() {
   const nav = useNavigate();
@@ -59,12 +58,7 @@ export default function OpportunityNew() {
                 <SelectItem value="grant">Grant</SelectItem>
               </SelectContent>
             </Select>
-            <ComprehensiveLocationInput
-              id="opportunity-location"
-              value={location}
-              onChange={setLocation}
-              placeholder="Location"
-            />
+            <Input placeholder="Location" value={location} onChange={e=>setLocation(e.target.value)} />
           </div>
           <Input placeholder="Impact area (e.g., Health, Energy)" value={impactArea} onChange={e=>setImpactArea(e.target.value)} />
           <div className="flex gap-2">

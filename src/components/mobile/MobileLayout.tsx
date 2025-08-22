@@ -16,21 +16,18 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   className,
 }) => {
   const { isMobile, isTablet, deviceType } = useMobile();
-  
-  // Force single column behavior under 768px
-  const forceColumn = isMobile || isTablet || window.innerWidth < 768;
 
   const getVariantClasses = () => {
     switch (variant) {
       case 'full':
         return 'w-full h-full';
       case 'card':
-        return forceColumn 
+        return isMobile 
           ? 'mx-2 my-1 bg-card rounded-lg shadow-sm border border-border' 
           : 'mx-4 my-2 bg-card rounded-xl shadow-md border border-border';
       case 'padded':
       default:
-        return forceColumn ? 'px-4' : isTablet ? 'px-6' : 'px-8';
+        return isMobile ? 'px-4' : isTablet ? 'px-6' : 'px-8';
     }
   };
 

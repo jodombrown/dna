@@ -11,8 +11,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import PasswordStrength from '@/components/auth/PasswordStrength';
-import PrelaunchNotice from '@/components/auth/PrelaunchNotice';
-import { isPrelaunchLocked, isAdminEmail, LAUNCH_MESSAGES } from '@/utils/prelaunchGate';
 const Auth = () => {
   useScrollToTop();
   const navigate = useNavigate();
@@ -48,24 +46,11 @@ const Auth = () => {
   const [capsLockOnConfirm, setCapsLockOnConfirm] = useState(false);
   const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
   const [isAdminMagicSending, setIsAdminMagicSending] = useState(false);
-  const [showPrelaunchNotice, setShowPrelaunchNotice] = useState(false);
-  const [isPrelaunchBlocked, setIsPrelaunchBlocked] = useState(false);
-
-  // Check prelaunch status
-  useEffect(() => {
-    const blocked = isPrelaunchLocked();
-    setIsPrelaunchBlocked(blocked);
-  }, []);
 
   // Redirect if already authenticated
   useEffect(() => {
     if (user && !loading && !isResetMode) {
-      // Check if admin user and redirect to admin
-      if (isAdminEmail(user.email || '')) {
-        navigate('/admin');
-      } else {
-        navigate('/app/dashboard');
-      }
+      navigate('/app/dashboard');
     }
   }, [user, loading, navigate, isResetMode]);
 
@@ -93,11 +78,6 @@ const Auth = () => {
       ...prev,
       [name]: value
     }));
-
-    // Show prelaunch notice when user starts typing in email field during signup
-    if (name === 'email' && !isLogin && isPrelaunchBlocked && value.length > 0 && !showPrelaunchNotice) {
-      setShowPrelaunchNotice(true);
-    }
   };
   const handleForgotPassword = async () => {
     try {
@@ -212,17 +192,6 @@ const Auth = () => {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Block submissions during prelaunch for non-admin users
-    if (isPrelaunchBlocked && !isAdminEmail(formData.email)) {
-      toast({
-        title: isLogin ? "Sign-in Blocked" : "Sign-up Blocked",
-        description: isLogin ? LAUNCH_MESSAGES.SIGNIN_BLOCKED : LAUNCH_MESSAGES.SIGNUP_NOTICE,
-        variant: "destructive"
-      });
-      return;
-    }
-    
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
@@ -295,16 +264,6 @@ const Auth = () => {
     });
   };
   const handleOAuthSignIn = async (provider: 'google' | 'linkedin_oidc') => {
-    // Block OAuth during prelaunch
-    if (isPrelaunchBlocked) {
-      toast({
-        title: "Sign-in Blocked",
-        description: LAUNCH_MESSAGES.SIGNIN_BLOCKED,
-        variant: "destructive"
-      });
-      return;
-    }
-
     if (provider === 'google') setIsGoogleLoading(true);
     if (provider === 'linkedin_oidc') setIsLinkedInLoading(true);
     try {
@@ -394,116 +353,6 @@ const Auth = () => {
         </div>
       </div>;
   }
-  // During prelaunch, show waitlist page instead of auth forms
-  if (isPrelaunchBlocked) {
-    return <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex lg:flex-row flex-col">
-        {/* Left Side - Branding Section */}
-        <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-dna-forest to-dna-emerald p-12 items-center justify-center relative overflow-hidden">
-          {/* Dynamic Bokeh Background */}
-          <div className="absolute inset-0 overflow-hidden">
-            {/* Large floating orbs */}
-            <div className="absolute w-40 h-40 bg-dna-gold/12 rounded-full blur-sm bokeh-drift-1" style={{
-            animationDelay: '0s'
-          }}></div>
-            <div className="absolute w-32 h-32 bg-dna-copper/15 rounded-full blur-sm bokeh-drift-2" style={{
-            animationDelay: '4s'
-          }}></div>
-            <div className="absolute w-24 h-24 bg-dna-mint/20 rounded-full blur-sm bokeh-drift-3" style={{
-            animationDelay: '8s'
-          }}></div>
-            <div className="absolute w-36 h-36 bg-dna-emerald/10 rounded-full blur-sm bokeh-drift-4" style={{
-            animationDelay: '12s'
-          }}></div>
-          </div>
-          
-          <div className="relative z-10 text-center text-white max-w-md">
-            <div className="mb-8">
-              {/* Prominent Logo Display */}
-              <div className="relative mx-auto mb-8 w-32 h-32">
-                {/* Colored background effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-dna-copper to-dna-gold rounded-3xl shadow-2xl transform -rotate-2 scale-105"></div>
-                <div className="absolute inset-0 bg-dna-emerald rounded-3xl shadow-xl"></div>
-                <div className="relative bg-white rounded-3xl p-6 shadow-lg border border-gray-100">
-                  <img src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" alt="DNA Logo" className="w-full h-full object-contain" />
-                </div>
-                {/* Subtle glow effect */}
-                <div className="absolute -inset-2 bg-gradient-to-r from-dna-copper/20 to-dna-gold/20 rounded-3xl blur-xl -z-10"></div>
-              </div>
-              
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-dna-mint bg-clip-text text-transparent">
-                Coming September 1st
-              </h1>
-              <p className="text-lg text-dna-mint/90 mb-8 leading-relaxed">
-                The global African diaspora network where innovation meets impact and dreams become reality.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side - Waitlist Form */}
-        <div className="lg:w-1/2 flex items-center justify-center p-8">
-          <div className="w-full max-w-md space-y-8">
-            <Button 
-              onClick={() => navigate('/?show=waitlist')}
-              className="w-full bg-dna-copper hover:bg-dna-gold text-white text-lg py-6"
-              size="lg"
-            >
-              Join the Waitlist
-            </Button>
-            
-            <div className="text-center space-y-4">
-              <h2 className="text-2xl font-bold text-dna-forest">
-                Beta Access Opens September 1st
-              </h2>
-              <p className="text-muted-foreground">
-                Get early access to DNA Community by joining our waitlist. 
-                You'll be among the first to connect, collaborate, and contribute to Africa's digital transformation.
-              </p>
-              
-              <div className="bg-dna-mint/10 rounded-lg p-4 border border-dna-mint/20">
-                <p className="text-sm text-dna-forest font-medium">
-                  🎉 Limited beta spots available - secure yours today!
-                </p>
-              </div>
-            </div>
-
-            {/* Admin login section */}
-            <div className="border-t pt-6">
-              <p className="text-xs text-muted-foreground text-center mb-4">
-                Administrator Access
-              </p>
-              <div className="space-y-3">
-                <Input
-                  type="email"
-                  placeholder="Enter admin email..."
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  name="email"
-                  className="text-center"
-                />
-                <Button
-                  onClick={handleAdminMagicLink}
-                  disabled={isAdminMagicSending || !formData.email}
-                  variant="outline"
-                  className="w-full"
-                  size="sm"
-                >
-                  {isAdminMagicSending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    "Send Admin Magic Link"
-                  )}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>;
-  }
-
   return <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 flex lg:flex-row flex-col">
       {/* Left Side - Branding Section */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-dna-forest to-dna-emerald p-12 items-center justify-center relative overflow-hidden">
@@ -609,36 +458,34 @@ const Auth = () => {
             </CardHeader>
           
           <CardContent>
-            {/* OAuth Options - Hidden during prelaunch */}
-            {!isPrelaunchBlocked && (
-              <div className="space-y-4 mb-6">
-                <div className="space-y-3">
-                  <Button type="button" variant="outline" className="w-full flex items-center gap-3 p-4 h-auto" onClick={() => handleOAuthSignIn('google')} disabled={isGoogleLoading || isLinkedInLoading || isSubmitting}>
-                    {isGoogleLoading ? <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin" /> : <svg className="w-5 h-5" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                      </svg>}
-                    <span>{isLogin ? 'Continue with Google' : 'Sign up with Google'}</span>
-                  </Button>
-                  
-                  <Button type="button" variant="outline" className="w-full flex items-center gap-3 p-4 h-auto" onClick={() => handleOAuthSignIn('linkedin_oidc')} disabled={isGoogleLoading || isLinkedInLoading || isSubmitting}>
-                    {isLinkedInLoading ? <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin" /> : <svg className="w-5 h-5" fill="#0077B5" viewBox="0 0 24 24">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                      </svg>}
-                    <span>{isLogin ? 'Continue with LinkedIn' : 'Sign up with LinkedIn'}</span>
-                  </Button>
-                </div>
+            {/* OAuth Options */}
+            <div className="space-y-4 mb-6">
+              <div className="space-y-3">
+                <Button type="button" variant="outline" className="w-full flex items-center gap-3 p-4 h-auto" onClick={() => handleOAuthSignIn('google')} disabled={isGoogleLoading || isLinkedInLoading || isSubmitting}>
+                  {isGoogleLoading ? <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin" /> : <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                    </svg>}
+                  <span>{isLogin ? 'Continue with Google' : 'Sign up with Google'}</span>
+                </Button>
                 
-                <div className="relative">
-                  <Separator />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="bg-white px-2 text-sm text-gray-500">or</span>
-                  </div>
+                <Button type="button" variant="outline" className="w-full flex items-center gap-3 p-4 h-auto" onClick={() => handleOAuthSignIn('linkedin_oidc')} disabled={isGoogleLoading || isLinkedInLoading || isSubmitting}>
+                  {isLinkedInLoading ? <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin" /> : <svg className="w-5 h-5" fill="#0077B5" viewBox="0 0 24 24">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    </svg>}
+                  <span>{isLogin ? 'Continue with LinkedIn' : 'Sign up with LinkedIn'}</span>
+                </Button>
+              </div>
+              
+              <div className="relative">
+                <Separator />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="bg-white px-2 text-sm text-gray-500">or</span>
                 </div>
               </div>
-            )}
+            </div>
 
             {isResetMode ? <form onSubmit={handleResetSubmit} className="space-y-4">
                 <div>
@@ -723,40 +570,12 @@ const Auth = () => {
                     </div>
                   </div>}
 
-                {/* Show prelaunch notice for signup */}
-                {!isLogin && showPrelaunchNotice && isPrelaunchBlocked && (
-                  <PrelaunchNotice className="mb-4" />
-                )}
-
-                {/* Beta Launch Notice */}
-                {isPrelaunchBlocked && !isAdminEmail(formData.email) ? (
-                  <div className="space-y-4">
-                    <div className="bg-dna-emerald/5 border border-dna-emerald/20 rounded-lg p-4 text-center">
-                      <h3 className="font-semibold text-dna-forest mb-2">Beta Launch Coming Soon!</h3>
-                      <p className="text-sm text-gray-700 mb-3">
-                        Join our waitlist now - Beta signup opens <strong>September 1st</strong>
-                      </p>
-                      <Button 
-                        type="button"
-                        onClick={() => navigate('/?show=waitlist')}
-                        className="w-full bg-dna-copper hover:bg-dna-gold text-white"
-                      >
-                        Join Our Waitlist
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <Button 
-                    type="submit" 
-                    disabled={isSubmitting || isGoogleLoading || isLinkedInLoading} 
-                    className="w-full bg-dna-copper hover:bg-dna-gold text-white disabled:opacity-50"
-                  >
-                    {isSubmitting ? <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        {isLogin ? 'Signing In...' : 'Creating Account...'}
-                      </> : isLogin ? 'Sign In' : 'Create Account'}
-                  </Button>
-                )}
+                <Button type="submit" disabled={isSubmitting || isGoogleLoading || isLinkedInLoading} className="w-full bg-dna-copper hover:bg-dna-gold text-white">
+                  {isSubmitting ? <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {isLogin ? 'Signing In...' : 'Creating Account...'}
+                    </> : isLogin ? 'Sign In' : 'Create Account'}
+                </Button>
               </form>}
 
 

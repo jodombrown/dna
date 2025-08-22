@@ -21,16 +21,7 @@ export const useUpdateUsername = () => {
 
       return { success: true };
     } catch (error: any) {
-      let errorMessage = 'Failed to update username';
-      
-      // Handle duplicate username error with friendly message
-      if (error.message?.includes('duplicate key value') || 
-          error.message?.includes('profiles_username_ci_idx') ||
-          error.code === '23505') {
-        errorMessage = 'This username is already taken. Please choose a different one.';
-      } else {
-        errorMessage = error.message || 'Failed to update username';
-      }
+      const errorMessage = error.message || 'Failed to update username';
       
       toast({
         title: "Username update failed",

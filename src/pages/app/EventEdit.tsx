@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 
 export default function EventEdit() {
   const { id } = useParams();
@@ -113,12 +112,7 @@ export default function EventEdit() {
               Virtual event
             </label>
             {!isVirtual && (
-              <ComprehensiveLocationInput
-                id="event-location"
-                value={location}
-                onChange={setLocation}
-                placeholder="Event location"
-              />
+              <Input placeholder="Location" value={location} onChange={e=>setLocation(e.target.value)} />
             )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

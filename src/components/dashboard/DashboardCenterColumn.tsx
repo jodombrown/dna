@@ -15,10 +15,10 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
   isOwnProfile
 }) => {
   return (
-    <div className="w-full space-y-6 overflow-x-hidden">
+    <div className="space-y-6">
       {/* Welcome/Setup Card for new users */}
       {isOwnProfile && (
-        <Card className="border-dna-mint bg-gradient-to-r from-dna-mint/5 to-dna-emerald/5 w-full">
+        <Card className="border-dna-mint bg-gradient-to-r from-dna-mint/5 to-dna-emerald/5">
           <CardContent className="p-6">
             <div className="text-center">
               <h2 className="text-xl font-semibold text-gray-900 mb-2">

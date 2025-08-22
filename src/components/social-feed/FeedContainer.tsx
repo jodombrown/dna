@@ -130,7 +130,7 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
   }, [selectedPillar]);
 
   return (
-    <div className="w-full space-y-6 overflow-x-hidden" role="main" aria-label="Social Feed">
+    <div className="space-y-6" role="main" aria-label="Social Feed">
       {showComposer && (
         <RequireProfileScore min={50} featureName="creating posts" showToast showModal={false}>
           <FloatingPostComposer 
@@ -140,12 +140,12 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
         </RequireProfileScore>
       )}
       
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex items-center justify-between">
         <PillarFilter
           selectedPillar={selectedPillar}
           onPillarChange={handlePillarChange}
         />
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex items-center gap-3">
           <FeedModeTabs mode={feedMode} onChange={setFeedMode} />
           <RealtimeStatus />
         </div>

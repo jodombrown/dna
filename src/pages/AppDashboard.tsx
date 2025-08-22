@@ -4,7 +4,7 @@ import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import { MobileNavigation, MobilePostButton } from '@/components/mobile';
 import { DashboardProvider } from '@/contexts/DashboardContext';
 // V2 Dashboard imports
-import DnaDashboardPage from '@/pages/DnaDashboardPage';
+import Dashboard from './app/Dashboard';
 import Search from './app/Search';
 import Connect from './app/Connect';
 import Profile from './app/Profile';
@@ -20,22 +20,6 @@ import SpaceDetail from './app/SpaceDetail';
 import Recommendations from './app/Recommendations';
 import SpaceMembers from './app/SpaceMembers';
 import ProfileCompletionBanner from '@/components/profile/ProfileCompletionBanner';
-import Events from "@/pages/app/Events";
-import EventDetail from "@/pages/app/EventDetail";
-import EventEdit from "@/pages/app/EventEdit";
-import EventManage from "@/pages/app/EventManage";
-import EventCheckIn from "@/pages/app/EventCheckIn";
-import MyEvents from "@/pages/app/MyEvents";
-import Projects from "@/pages/app/Projects";
-import ProjectCreate from "@/pages/app/ProjectCreate";
-import ProjectDetail from "@/pages/app/ProjectDetail";
-import ProjectManage from "@/pages/app/ProjectManage";
-import ProjectEdit from "@/pages/app/ProjectEdit";
-import OpportunityNew from "@/pages/app/OpportunityNew";
-import Notifications from "@/pages/app/Notifications";
-import ConnectionDetailPage from "@/pages/app/ConnectionDetailPage";
-import Messages from "@/pages/app/Messages";
-import Communities from "@/pages/app/Communities";
 
 const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -70,27 +54,28 @@ const AppDashboard = () => {
         <div className="min-h-screen flex w-full bg-gray-50">
           <AppSidebar />
           <div className="flex-1 relative">
-
-            <main className="pb-20 lg:pb-0">
-              <div className="pt-4">
-                <ProfileCompletionBanner />
+            {/* App Header with sidebar control */}
+            <header className="sticky top-0 z-40 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+              <div className="h-12 flex items-center px-4 gap-3">
+                <SidebarTrigger />
+                <div className="text-sm text-muted-foreground">Navigation</div>
               </div>
-              <div className="pt-6 lg:pt-8">
+            </header>
+
+            <main className="pt-10 lg:pt-12 pb-20 lg:pb-0">
+              <ProfileCompletionBanner />
               <Routes>
-                {/* Main dashboard route - Universal DNA Feed */}
-                <Route index element={<DnaDashboardPage />} />
+                {/* Main dashboard route */}
+                <Route index element={<Dashboard />} />
                 
-                {/* Core DNA Features */}
-                <Route path="dashboard" element={<DnaDashboardPage />} />
+                {/* V2 Dashboard Routes */}
+                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="search" element={<Search />} />
                 <Route path="connect" element={<Connect />} />
                 <Route path="spaces" element={<Spaces />} />
                 <Route path="spaces/:id" element={<SpaceDetail />} />
                 <Route path="spaces/:id/members" element={<SpaceMembers />} />
                 <Route path="opportunities" element={<Opportunities />} />
-                <Route path="messages" element={<Messages />} />
-                <Route path="events" element={<Events />} />
-                <Route path="communities" element={<Communities />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="profile/edit" element={<ProfileEdit />} />
                 <Route path="invites" element={<Invites />} />
@@ -98,29 +83,9 @@ const AppDashboard = () => {
                 <Route path="admin/diagnostics" element={<AdminDiagnostics />} />
                 <Route path="recommendations" element={<Recommendations />} />
                 
-                {/* Events under DNA */}
-                <Route path="events/my" element={<MyEvents />} />
-                <Route path="events/:id" element={<EventDetail />} />
-                <Route path="events/:id/edit" element={<EventEdit />} />
-                <Route path="events/:id/manage" element={<EventManage />} />
-                <Route path="events/:id/checkin" element={<EventCheckIn />} />
-                
-                {/* Projects under DNA */}
-                <Route path="projects" element={<Projects />} />
-                <Route path="projects/create" element={<ProjectCreate />} />
-                <Route path="projects/:id" element={<ProjectDetail />} />
-                <Route path="projects/:id/manage" element={<ProjectManage />} />
-                <Route path="projects/:id/edit" element={<ProjectEdit />} />
-                
-                {/* Other DNA features */}
-                <Route path="opportunities/new" element={<OpportunityNew />} />
-                <Route path="notifications" element={<Notifications />} />
-                <Route path="connections/:id" element={<ConnectionDetailPage />} />
-                
                 {/* Catch-all: redirect any undefined routes back to dashboard */}
-                <Route path="*" element={<Navigate to="/dna" replace />} />
+                <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
               </Routes>
-              </div>
             </main>
             <MobileNavigation />
             <MobilePostButton />

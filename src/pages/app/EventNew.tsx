@@ -6,7 +6,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 
 export default function EventNew() {
   const nav = useNavigate();
@@ -103,12 +102,7 @@ const save = async () => {
               Virtual event
             </label>
             {!isVirtual && (
-              <ComprehensiveLocationInput
-                id="event-location"
-                value={location}
-                onChange={setLocation}
-                placeholder="Event location"
-              />
+              <Input placeholder="Location" value={location} onChange={e=>setLocation(e.target.value)} />
             )}
           </div>
 

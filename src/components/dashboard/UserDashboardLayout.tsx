@@ -17,21 +17,18 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
   profile,
   currentUser
 }) => {
-  const { isMobile, isTablet } = useMobile();
+  const { isMobile } = useMobile();
   const isOwnProfile = currentUser.id === profile.id;
-  
-  // Force single column under 768px
-  const forceColumn = isMobile || isTablet || window.innerWidth < 768;
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50">
       <UnifiedHeader />
       
       <main className="pt-16 pb-20 lg:pb-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {forceColumn ? (
-            // Single column layout for mobile/small devices
-            <div className="w-full space-y-6 py-6">
+          {isMobile ? (
+            // Mobile: Single column layout, stacked
+            <div className="space-y-6 py-6">
               <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
               <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
               <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />

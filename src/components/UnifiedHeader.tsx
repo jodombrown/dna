@@ -20,7 +20,7 @@ import {
   TestTube,
   Rocket
 } from 'lucide-react';
-import { UserAvatar } from '@/components/common/UserAvatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -92,9 +92,9 @@ const UnifiedHeader = () => {
     setIsBetaSignupOpen(true);
   };
 
-  const handleJoinWaitlistClick = () => {
+  const handleSignInClick = () => {
     setIsMobileMenuOpen(false);
-    setIsBetaSignupOpen(true);
+    navigate('/auth');
   };
 
   const handleNavClick = (item: { name: string; path: string }) => {
@@ -145,10 +145,10 @@ const UnifiedHeader = () => {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Left section - Logo only */}
-            <div className="flex items-center">
+            {/* Left section - Logo and Search */}
+            <div className="flex items-center space-x-4">
               <NavLink 
-                to={isAuthenticated ? "/dna" : "/"} 
+                to={isAuthenticated ? "/app" : "/"} 
                 className="flex items-center hover:opacity-80 transition-opacity"
               >
                 <img 
@@ -157,6 +157,32 @@ const UnifiedHeader = () => {
                   className="h-8 w-auto"
                 />
               </NavLink>
+              
+              {/* Search - only for authenticated users */}
+              {isAuthenticated && isAppRoute && (
+                <>
+                  <div className="relative hidden sm:block">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Input
+                      placeholder="Search"
+                      className="pl-10 w-40 lg:w-64 bg-gray-50 border-0 h-10 text-base cursor-pointer"
+                      onClick={() => handleAuthNavigation('search')}
+                      readOnly
+                    />
+                  </div>
+                  
+                  {/* Mobile search button */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="sm:hidden p-2"
+                    onClick={() => handleAuthNavigation('search')}
+                    aria-label="Search"
+                  >
+                    <Search className="w-5 h-5 text-gray-600" />
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Center section - Navigation for authenticated users */}
@@ -242,10 +268,10 @@ const UnifiedHeader = () => {
                   {!isAuthenticated && (
                     <Button
                       variant="default"
-                      onClick={handleJoinWaitlistClick}
+                      onClick={handleSignInClick}
                       className="hidden md:inline-flex bg-dna-copper text-white hover:bg-primary"
                     >
-                      Join Waitlist
+                      Sign In
                     </Button>
                   )}
                 </>
@@ -256,16 +282,12 @@ const UnifiedHeader = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex flex-col items-center px-2 py-2 h-auto">
-                      <UserAvatar
-                        user={{
-                          id: profile?.id || user?.id || '',
-                          username: (profile as any)?.username,
-                          full_name: profile?.full_name,
-                          avatar_url: profile?.avatar_url
-                        }}
-                        size="md"
-                        showLink={false}
-                      />
+                      <Avatar className="w-8 h-8">
+                        <AvatarImage src={profile?.avatar_url} />
+                        <AvatarFallback className="text-sm bg-dna-mint text-dna-forest font-medium">
+                          {profile?.display_name?.charAt(0) || profile?.full_name?.charAt(0) || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
                       <span className="text-xs mt-1 hidden sm:block">Me</span>
                     </Button>
                   </DropdownMenuTrigger>
@@ -373,13 +395,19 @@ const UnifiedHeader = () => {
                               </Button>
                             ))}
                             
+                            <Button
+                              className="justify-start text-left bg-dna-copper text-white hover:bg-dna-copper/90 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                              onClick={handleBetaSignup}
+                            >
+                              Join Beta
+                            </Button>
                             
                             <Button
                               variant="default"
                               className="justify-start text-left transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                              onClick={handleJoinWaitlistClick}
+                              onClick={handleSignInClick}
                             >
-                              Join Waitlist
+                              Sign In
                             </Button>
                           </>
                         )}

@@ -340,7 +340,7 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         subject: "New Waitlist Signup - DNA Platform",
         adminHtml: `
           <h2>New Waitlist Signup</h2>
-          <p><strong>Name:</strong> ${formData.full_name || formData.fullName || formData.name || 'Unknown'}</p>
+          <p><strong>Name:</strong> ${formData.full_name}</p>
           <p><strong>Email:</strong> ${formData.email}</p>
           <p><strong>Location:</strong> ${formData.location || 'Not provided'}</p>
           <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
@@ -348,7 +348,7 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         userSubject: "Welcome to the DNA Waitlist! 🎉",
         userHtml: `
           <h1>Welcome to the DNA Community!</h1>
-          <p>Hi ${((formData.full_name || formData.fullName || formData.name || '').trim().split(' ')[0] || 'there')},</p>
+          <p>Hi ${formData.full_name},</p>
           <p>Thank you for joining the Diaspora Network of Africa waitlist! You're now part of a growing movement to connect, collaborate, and contribute to Africa's development.</p>
           
           <div style="background: linear-gradient(135deg, #059669, #D97706); color: white; padding: 20px; border-radius: 10px; margin: 20px 0;">

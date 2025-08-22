@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import MinimalProfileStep from '@/components/onboarding/MinimalProfileStep';
-import { isPrelaunchLocked, isAdminEmail } from '@/utils/prelaunchGate';
 
 // Single step onboarding
 
@@ -23,24 +22,12 @@ const Onboarding = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-// Redirect if user is not authenticated
+  // Redirect if user is not authenticated
   useEffect(() => {
     if (!user) {
       navigate('/auth');
     }
   }, [user, navigate]);
-
-  // During prelaunch, block onboarding for non-admins
-  useEffect(() => {
-    if (!user?.email) return;
-    if (isPrelaunchLocked() && !isAdminEmail(user.email)) {
-      toast({
-        title: "Beta signup locked",
-        description: "Please join our waitlist. Beta signup opens September 1.",
-      });
-      navigate('/?show=waitlist', { replace: true });
-    }
-  }, [user?.email, navigate, toast]);
 
   // If profile already exists and basic info is complete, redirect to dashboard
   useEffect(() => {

@@ -2,13 +2,12 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 interface SettingsNavProps {
-  active?: 'profile' | 'experience' | 'links' | 'privacy' | 'dna-experience';
+  active?: 'profile' | 'experience' | 'links' | 'privacy';
 }
 
 const tabs = [
   { key: 'profile', label: 'Profile', href: '/settings/profile' },
   { key: 'experience', label: 'Experience', href: '/settings/experience' },
-  { key: 'dna-experience', label: 'DNA Experience', href: '/settings/dna-experience' },
   { key: 'links', label: 'Links', href: '/settings/links' },
   { key: 'privacy', label: 'Privacy', href: '/settings/privacy' },
 ] as const;

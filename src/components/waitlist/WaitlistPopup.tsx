@@ -55,24 +55,6 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
         }]);
 
       if (error) {
-        // Handle duplicate email gracefully
-        if (error.code === '23505' && error.message.includes('waitlist_signups_email_key')) {
-          toast({
-            title: "You're already on the waitlist! 🎉",
-            description: "Thanks for your continued interest. You can now apply for beta access!",
-          });
-          
-          // Store that user has joined waitlist
-          localStorage.setItem('dna_waitlist_joined', 'true');
-          localStorage.setItem('dna_waitlist_data', JSON.stringify({
-            fullName: formData.fullName,
-            email: formData.email,
-            location: formData.location
-          }));
-          
-          onClose();
-          return;
-        }
         throw error;
       }
 
@@ -80,7 +62,7 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
       try {
         await supabase.functions.invoke('send-universal-email', {
           body: {
-            formType: 'waitlist_signup',
+            formType: 'waitlist',
             formData: {
               name: formData.fullName,
               email: formData.email,
@@ -95,28 +77,15 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
       }
 
       toast({
-        title: "Successfully joined waitlist!",
-        description: "Thanks for your interest. You can now apply for beta access!",
+        title: "Welcome to DNA!",
+        description: "You're in! We'll reach out with updates as the beta launches.",
       });
 
       // Store that user has joined waitlist to avoid showing popup again
       localStorage.setItem('dna_waitlist_joined', 'true');
       
-      // Store waitlist data for pre-populating beta application
-      localStorage.setItem('dna_waitlist_data', JSON.stringify({
-        fullName: formData.fullName,
-        email: formData.email,
-        location: formData.location,
-        timestamp: Date.now()
-      }));
-      
       onClose();
       setFormData({ fullName: '', email: '', location: '' });
-      
-      // Optional: Redirect to beta application after a brief delay
-      setTimeout(() => {
-        window.location.href = '/beta-application';
-      }, 1500);
     } catch (error: any) {
       console.error('Waitlist signup error:', error);
       toast({
@@ -142,9 +111,9 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
       {/* Modal Content */}
       <div className={`relative ${
         isMobile 
-          ? "w-[calc(100vw-2rem)] max-w-[320px] mx-4" 
+          ? "w-[90vw] max-w-[340px] mx-2" 
           : "max-w-lg w-full mx-4"
-        } bg-white rounded-xl border-2 border-gray-200/50 max-h-[85vh] overflow-y-auto animate-scale-in safe-area-pb`}
+        } bg-white rounded-xl border-2 border-gray-200/50 max-h-[90vh] overflow-y-auto animate-scale-in`}
         style={{
           boxShadow: `
             0 32px 64px -12px rgba(0, 0, 0, 0.4),

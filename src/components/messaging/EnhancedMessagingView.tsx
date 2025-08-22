@@ -118,11 +118,11 @@ export const EnhancedMessagingView: React.FC<EnhancedMessagingViewProps> = ({ cl
   }
 
   return (
-    <div className={cn("min-h-[50vh] h-[70vh] max-h-[85vh] md:grid md:grid-cols-3 gap-3 sm:gap-4 safe-area-pb", className)}>
+    <div className={cn("min-h-[400px] h-[calc(100vh-200px)] max-h-[80vh] md:grid md:grid-cols-3 gap-2 sm:gap-4", className)}>
       {/* Conversations List - Hidden on mobile when chat is selected */}
       <Card className={cn(
-        "md:col-span-1 h-full",
-        isMobileView && selectedConversation ? "hidden" : "flex flex-col"
+        "md:col-span-1",
+        isMobileView && selectedConversation ? "hidden" : "block"
       )}>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -139,8 +139,8 @@ export const EnhancedMessagingView: React.FC<EnhancedMessagingViewProps> = ({ cl
             />
           </div>
         </CardHeader>
-        <CardContent className="p-0 flex-1">
-          <ScrollArea className="h-[50vh] min-h-[300px]">
+        <CardContent className="p-0">
+          <ScrollArea className="h-[450px]">
             {filteredConversations.map((conversation) => (
               <div
                 key={conversation.id}
@@ -195,8 +195,8 @@ export const EnhancedMessagingView: React.FC<EnhancedMessagingViewProps> = ({ cl
 
       {/* Chat Area - Full width on mobile when selected */}
       <Card className={cn(
-        "md:col-span-2 h-full",
-        isMobileView && !selectedConversation ? "hidden" : "flex flex-col"
+        "md:col-span-2",
+        isMobileView && !selectedConversation ? "hidden" : "block"
       )}>
         {currentConversation ? (
           <>
@@ -248,8 +248,8 @@ export const EnhancedMessagingView: React.FC<EnhancedMessagingViewProps> = ({ cl
             </CardHeader>
 
             {/* Messages */}
-            <CardContent className="p-0 flex-1 flex flex-col">
-              <ScrollArea className="flex-1 min-h-[200px] max-h-[50vh] p-2 sm:p-4">
+            <CardContent className="p-0">
+              <ScrollArea className="h-[calc(100vh-450px)] min-h-[250px] max-h-[400px] p-2 sm:p-4">
                 <div className="space-y-4">
                   {messages.map((message) => (
                     <div

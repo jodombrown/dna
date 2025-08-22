@@ -294,44 +294,13 @@
     }
   }
   
-  /* Enhanced mobile modal and sheet responsive helpers */
+  /* Mobile modal and sheet responsive helpers */
   .mobile-modal {
-    @apply w-[calc(100vw-1.5rem)] max-w-[340px] mx-3 max-h-[85vh] overflow-y-auto;
+    @apply w-[90vw] max-w-lg max-h-[90vh] overflow-y-auto;
   }
   
   .mobile-sheet {
-    @apply w-[calc(100vw-1rem)] max-w-[320px] mx-2 max-h-[90vh] overflow-y-auto;
-  }
-  
-  /* Mobile-first responsive utilities */
-  .container-mobile {
-    @apply px-3 sm:px-4 mx-auto max-w-sm sm:max-w-md;
-  }
-
-  .section-mobile {
-    @apply py-6 sm:py-8 px-3 sm:px-4;
-  }
-
-  /* Enhanced touch targets */
-  .touch-target {
-    @apply min-h-[48px] min-w-[48px] touch-manipulation;
-  }
-
-  .touch-target-lg {
-    @apply min-h-[56px] min-w-[56px] touch-manipulation;
-  }
-
-  /* Interactive elements with better mobile support */
-  .interactive-mobile-enhanced {
-    @apply touch-pan-y select-none overscroll-contain;
-  }
-
-  .button-mobile-enhanced {
-    @apply py-3 px-4 sm:px-6 text-sm sm:text-base font-medium touch-target;
-  }
-
-  .input-mobile-enhanced {
-    @apply py-3 px-3 sm:px-4 text-sm sm:text-base touch-target;
+    @apply w-[90vw] max-w-sm max-h-[100vh] overflow-y-auto;
   }
   
   /* Mobile typography scale */
@@ -372,70 +341,11 @@
   .mobile-chart-container .recharts-responsive-container {
     min-width: 300px !important;
   }
-  
-  /* Mobile-specific spacing utilities */
-  .space-mobile {
-    @apply space-y-3 sm:space-y-4 lg:space-y-6;
-  }
-
-  .gap-mobile {
-    @apply gap-3 sm:gap-4 lg:gap-6;
-  }
-
-  .p-mobile {
-    @apply p-3 sm:p-4 lg:p-6;
-  }
-
-  .px-mobile {
-    @apply px-3 sm:px-4 lg:px-6;
-  }
-
-  .py-mobile {
-    @apply py-3 sm:py-4 lg:py-6;
-  }
-  
-  /* Enhanced mobile grid utilities */
-  .grid-mobile-responsive {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6;
-  }
-  
-  /* Mobile-optimized heights */
-  .h-mobile-screen {
-    height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  }
-  
-  .min-h-mobile-screen {
-    min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  }
 }
 
-/* Enhanced mobile-safe area for devices with notches/home indicators */
+/* Mobile-safe area for devices with notches/home indicators */
 .safe-area-pb {
-  padding-bottom: max(env(safe-area-inset-bottom, 0), 1rem);
-}
-
-.safe-area-pt {
-  padding-top: env(safe-area-inset-top, 0);
-}
-
-.safe-area-px {
-  padding-left: env(safe-area-inset-left, 0);
-  padding-right: env(safe-area-inset-right, 0);
-}
-
-/* Responsive breakpoint overrides for very small screens */
-@media (max-width: 360px) {
-  .mobile-modal {
-    @apply w-[calc(100vw-0.75rem)] max-w-[300px] mx-1.5;
-  }
-  
-  .mobile-sheet {
-    @apply w-[calc(100vw-0.5rem)] max-w-[280px] mx-1;
-  }
-  
-  .text-responsive-3xl {
-    font-size: clamp(1.25rem, 8vw, 1.875rem) !important;
-  }
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Dynamic Bokeh Animation Keyframes */

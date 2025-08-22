@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { Progress } from '@/components/ui/progress';
@@ -13,7 +12,6 @@ interface ProfileCompletionBannerProps {
 export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = ({ minForFull = 80 }) => {
   const { user, profile } = useAuth();
   const { completenessScore } = useProfileAccess();
-  const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(false);
 
   const storageKey = user ? `dna_profile_banner_dismissed_${user.id}_v1` : 'dna_profile_banner_dismissed';
@@ -35,8 +33,8 @@ export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = (
   if (completenessScore >= minForFull) return null;
 
   return (
-    <section aria-label="Profile completion" className="mx-4 mb-6 relative z-30">
-      <div className="rounded-lg border border-border bg-background/95 backdrop-blur p-4 shadow-md">
+    <section aria-label="Profile completion" className="mx-4 mt-3">
+      <div className="rounded-lg border border-border bg-background/80 backdrop-blur p-4 shadow-sm">
         <div className="flex items-start gap-3">
           <div className="flex-1">
             <h2 className="text-sm font-semibold">Complete your profile to unlock more features</h2>
@@ -45,7 +43,7 @@ export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = (
               <Progress value={completenessScore} />
             </div>
             <div className="mt-3 flex gap-2">
-              <Button size="sm" onClick={() => navigate('/dna/profile/edit')}>Complete profile</Button>
+              <Button size="sm" onClick={() => (window.location.href = '/app/profile/edit')}>Complete profile</Button>
               <Button size="sm" variant="outline" onClick={handleDismiss}>Not now</Button>
             </div>
           </div>

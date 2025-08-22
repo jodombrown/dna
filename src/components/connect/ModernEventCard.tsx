@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Event } from '@/types/eventTypes';
+import { Event } from '@/types/search';
 
 interface ModernEventCardProps {
   event: Event;

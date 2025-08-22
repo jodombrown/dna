@@ -4,7 +4,7 @@ import PopularEventsSection from '../PopularEventsSection';
 import EventCategoriesSection from '../EventCategoriesSection';
 import FeaturedCalendarsSection from '../FeaturedCalendarsSection';
 import LocalEventsSection from '../LocalEventsSection';
-import { Event } from '@/types/eventTypes';
+import { Event } from '@/types/search';
 
 interface ConnectEventsTabProps {
   events: Event[];

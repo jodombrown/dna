@@ -55,11 +55,10 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
     setChecking(true);
     
     try {
-      // Use case-insensitive check with the unique index
       const { data, error } = await supabase
         .from('profiles')
         .select('id')
-        .ilike('username', name)
+        .eq('username', name)
         .maybeSingle();
 
       if (error) {
@@ -178,8 +177,8 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
           )}
         </div>
 
-        {!canChangeUsername && changesLeft === 0 && (
-          <p className="text-sm text-amber-600">
+        {!canChangeUsername && (
+          <p className="text-sm text-red-500">
             You've used all your username changes. Contact support to request another change.
           </p>
         )}
@@ -195,7 +194,7 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
             
             {isAvailable === false && (
               <div className="space-y-2">
-                <p className="text-sm text-amber-600">This username is already taken. Try one of these suggestions:</p>
+                <p className="text-sm text-red-500">This username is taken. Try one of these:</p>
                 <div className="flex flex-wrap gap-2">
                   {suggestions.map((suggestion) => (
                     <Button
@@ -231,7 +230,7 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
       {username !== currentUsername && username.length >= 3 && (
         <Button
           onClick={saveUsername}
-          disabled={!isAvailable || saving || (changesLeft === 0)}
+          disabled={!isAvailable || saving || !canChangeUsername}
           className="w-full bg-dna-copper hover:bg-dna-gold text-white"
         >
           {saving ? (
@@ -239,8 +238,6 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               Saving...
             </>
-          ) : changesLeft === 0 ? (
-            'No Changes Left'
           ) : (
             'Save Username'
           )}

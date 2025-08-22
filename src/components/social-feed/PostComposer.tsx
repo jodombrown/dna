@@ -6,15 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, ImagePlus, X, Edit3, Loader2 } from 'lucide-react';
+import { Send, ImagePlus, X, Edit3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUploadPostMedia } from './useUploadPostMedia';
 import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
 import { EmbedPreview } from './EmbedPreview';
-import { MediaPreview } from './MediaPreview';
-import { usePostSubmission } from '@/hooks/usePostSubmission';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { useMobile } from '@/hooks/useMobile';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
@@ -44,7 +42,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   const manualTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
-  const { submitPost, isSubmitting } = usePostSubmission();
+  const { uploadMedia, uploading } = useUploadPostMedia();
   const { loading: embedLoading, embedData, handleContentChange: detectEmbeds, clearEmbedData } = useAutoEmbedDetection();
   const { isScrollingDown, isAtTop } = useScrollDirection(30);
   const { isMobile } = useMobile();
@@ -157,27 +155,101 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       return;
     }
 
-    const success = await submitPost({
-      content,
-      pillar,
-      type: postType,
-      file: selectedFile,
-      embedData,
-      pollOptions,
-      opportunityType,
-      opportunityLink
-    });
+    if (!content.trim() && !selectedFile && !embedData) {
+      toast({
+        title: "Content required",
+        description: "Add text, media, or a link",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    if (success) {
+    setIsPosting(true);
+
+    try {
+      let mediaUrl: string | null = null;
+
+      // Upload file if selected
+      if (selectedFile) {
+        mediaUrl = await uploadMedia(selectedFile);
+        if (!mediaUrl) {
+          setIsPosting(false);
+          return; // Upload failed, don't create post
+        }
+      }
+
+      // Determine final type
+      let finalType: PostType = postType;
+      if (selectedFile) {
+        finalType = selectedFile.type.startsWith('video/') ? 'video' : 'image';
+      } else if (embedData) {
+        finalType = 'link';
+      }
+
+      // Enforce admin-only spotlight
+      if (finalType === 'spotlight' && !isAdmin) {
+        finalType = 'text';
+      }
+
+      const finalStatus = finalType === 'spotlight' ? 'featured' : status;
+
+      // Build payload
+      const payload: any = {
+        content: content.trim(),
+        type: finalType,
+        pillar: pillar,
+        author_id: user.id,
+        user_id: user.id,
+        visibility: 'public',
+        status: finalStatus,
+        media_url: mediaUrl,
+      };
+
+      if (embedData) {
+        payload.embed_metadata = JSON.parse(JSON.stringify(embedData));
+        if (finalType === 'link') {
+          payload.link_url = embedData.url || null;
+          payload.link_metadata = JSON.parse(JSON.stringify(embedData));
+        }
+      }
+
+      if (finalType === 'poll') {
+        const options = pollOptions.map(o => o.trim()).filter(Boolean);
+        if (options.length < 2) {
+          toast({
+            title: "Add poll options",
+            description: "Provide at least 2 options for your poll",
+            variant: "destructive",
+          });
+          setIsPosting(false);
+          return;
+        }
+        payload.poll_options = { options };
+        payload.poll_expires_at = pollExpiresAt ? new Date(pollExpiresAt).toISOString() : null;
+      }
+
+      if (finalType === 'opportunity') {
+        payload.opportunity_type = opportunityType || null;
+        payload.opportunity_link = opportunityLink || null;
+      }
+
+      const { error } = await supabase
+        .from('posts')
+        .insert(payload);
+
+      if (error) throw error;
+
+      toast({
+        title: status === 'draft' ? "Draft saved!" : "Post created!",
+        description: status === 'draft' ? "Your draft has been saved." : "Your post has been shared successfully.",
+      });
+
       // Reset form
       setContent('');
       setPillar(defaultPillar);
       setPostType('text');
       removeFile();
       clearEmbedData();
-      setPollOptions(['', '']);
-      setOpportunityType('');
-      setOpportunityLink('');
       setIsExpanded(false);
       setIsUserInteracting(false);
       setIsManuallyExpanded(false);
@@ -188,6 +260,15 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       }
 
       onPostCreated?.();
+    } catch (error) {
+      console.error('Error creating post:', error);
+      toast({
+        title: "Error creating post",
+        description: "Failed to create your post. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsPosting(false);
     }
   };
 
@@ -219,14 +300,14 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   return (
     <div 
       ref={composerRef}
-      className={`w-full overflow-x-hidden ${isMobile ? '' : 'sticky top-0 z-40'} transition-all duration-300 ${
+      className={`${isMobile ? '' : 'sticky top-0 z-40'} transition-all duration-300 ${
         !isMobile && !isAtTop ? 'backdrop-blur-sm bg-background/95 border-b border-border' : ''
       }`}
     >
-      <Card className={`w-full ${isMobile ? 'bg-white border-border shadow-sm' : `bg-transparent border-transparent transition-all duration-300 ${
+      <Card className={`${isMobile ? 'bg-white border-border shadow-sm' : `bg-transparent border-transparent transition-all duration-300 ${
         isCollapsed ? 'shadow-none' : 'bg-background border-border'
       }`}`}>
-        <CardContent className={`w-full ${isMobile ? 'p-4' : `transition-all duration-300 ${isCollapsed ? 'p-3' : 'p-6'}`}`}>
+        <CardContent className={`${isMobile ? 'p-4' : `transition-all duration-300 ${isCollapsed ? 'p-3' : 'p-6'}`}`}>
           {!isMobile && isCollapsed ? (
             // Collapsed State
             <div 
@@ -319,13 +400,11 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 
                 {/* Link Preview */}
                 {embedData && (
-                  <div className="relative">
-                    <EmbedPreview
-                      embedData={embedData}
-                      onRemove={clearEmbedData}
-                      showRemoveButton={true}
-                    />
-                  </div>
+                  <EmbedPreview 
+                    embedData={embedData} 
+                    onRemove={clearEmbedData}
+                    showRemoveButton={true}
+                  />
                 )}
 
                 {/* Poll Builder */}
@@ -372,13 +451,32 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                   </div>
                 )}
 
-                {selectedFile && filePreview && (
-                  <MediaPreview
-                    file={selectedFile}
-                    preview={filePreview}
-                    onRemove={removeFile}
-                    uploading={isSubmitting}
-                  />
+                {filePreview && (
+                  <div className="relative rounded-lg overflow-hidden border">
+                    {selectedFile?.type.startsWith('video/') ? (
+                      <video 
+                        src={filePreview} 
+                        controls
+                        className="w-full h-auto max-h-96 object-cover"
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                    ) : (
+                      <img 
+                        src={filePreview} 
+                        alt="Upload preview" 
+                        className="w-full h-auto max-h-96 object-cover"
+                      />
+                    )}
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={removeFile}
+                      className="absolute top-2 right-2"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
                 )}
 
                 <div className="flex items-center justify-between pt-3 border-t">
@@ -390,21 +488,21 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                       onChange={handleFileSelect}
                       className="hidden"
                     />
-                     <Button
+                    <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => fileInputRef.current?.click()}
-                      disabled={isSubmitting || !!embedData}
+                      disabled={uploading || isPosting || !!embedData}
                       className={`text-muted-foreground hover:text-foreground ${embedData ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <ImagePlus className="h-4 w-4 mr-2" />
-                      Add Media
+                      {uploading ? 'Uploading...' : 'Add Media'}
                     </Button>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button 
                       onClick={() => handleSubmit('draft')}
-                      disabled={isSubmitting || embedLoading || !(content.trim() || embedData || selectedFile || (postType === 'poll' && pollOptions.some(o => o.trim())) || (postType === 'opportunity' && opportunityLink.trim()))}
+                      disabled={isPosting || embedLoading || uploading || !(content.trim() || embedData || selectedFile || (postType === 'poll' && pollOptions.some(o => o.trim())) || (postType === 'opportunity' && opportunityLink.trim()))}
                       variant="outline"
                       className="text-muted-foreground hover:text-foreground"
                     >
@@ -412,12 +510,12 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                     </Button>
                     <Button 
                       onClick={() => handleSubmit('published')}
-                      disabled={isSubmitting || embedLoading || !(content.trim() || embedData || selectedFile || (postType === 'poll' && pollOptions.some(o => o.trim())) || (postType === 'opportunity' && opportunityLink.trim()))}
+                      disabled={isPosting || embedLoading || uploading || !(content.trim() || embedData || selectedFile || (postType === 'poll' && pollOptions.some(o => o.trim())) || (postType === 'opportunity' && opportunityLink.trim()))}
                       className="bg-dna-forest hover:bg-dna-forest/90"
                     >
-                      {isSubmitting ? (
+                      {isPosting ? (
                         <div className="flex items-center gap-2">
-                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                           Posting...
                         </div>
                       ) : (

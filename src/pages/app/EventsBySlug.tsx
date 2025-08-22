@@ -3,8 +3,6 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Event } from '@/types/eventTypes';
 import { toast } from 'sonner';
-import { useMobile } from '@/hooks/useMobile';
-import { MobileEventView } from '@/components/mobile';
 
 // V1 Components
 import EventHero from '@/components/events/EventViewV2/EventHero';
@@ -20,15 +18,11 @@ import SocialProof from '@/components/events/EventViewV2/SocialProof';
 
 const EventsBySlug: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { isMobile, isTablet } = useMobile();
   const eventsV2 = true; // Default to V2; feature flag can be reintroduced if needed
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedTicketType, setSelectedTicketType] = useState<string>('');
   const [registrationStatus, setRegistrationStatus] = useState<'selecting' | 'going' | 'pending' | 'waitlist'>('selecting');
-  
-  // Force single column under 768px
-  const forceColumn = isMobile || isTablet || window.innerWidth < 768;
 
   useEffect(() => {
     if (slug) {
@@ -157,14 +151,9 @@ const EventsBySlug: React.FC = () => {
   }
 
   if (eventsV2) {
-    // Mobile-first responsive layout
-    if (forceColumn) {
-      return <MobileEventView event={event} />;
-    }
-    
     // V2 Layout with flag-aware renderer
     return (
-      <div className="min-h-screen bg-background overflow-x-hidden">
+      <div className="min-h-screen bg-background">
         <EventHeroV2 event={event} />
         
         <div className="container mx-auto px-4 py-8">

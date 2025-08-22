@@ -40,12 +40,12 @@ const DashboardNudges: React.FC = () => {
     },
     {
       id: 'select-pillars',
-      title: 'Customize Your DNA Experience',
-      description: 'Select the areas where you want to make an impact: Connect, Collaborate, or Contribute.',
+      title: 'Choose your DNA framework pillars',
+      description: 'Select the areas where you want to make an impact: Create, Connect, or Contribute.',
       category: 'profile',
       priority: 'high',
       icon: <Target className="w-4 h-4" />,
-      action: () => navigate('/settings/dna-experience'),
+      action: () => navigate('/settings/experience'),
       dismissible: true
     },
     {
@@ -68,17 +68,16 @@ const DashboardNudges: React.FC = () => {
       action: () => navigate('/settings/links'),
       dismissible: true
     },
-    // Temporarily disabled until platform goes live
-    // {
-    //   id: 'find-connections',
-    //   title: 'Discover your network',
-    //   description: 'Browse DNA members who share your interests and professional background.',
-    //   category: 'connect',
-    //   priority: 'medium',
-    //   icon: <Users className="w-4 h-4" />,
-    //   action: () => navigate('/app/connect'),
-    //   dismissible: true
-    // }
+    {
+      id: 'find-connections',
+      title: 'Discover your network',
+      description: 'Browse DNA members who share your interests and professional background.',
+      category: 'connect',
+      priority: 'medium',
+      icon: <Users className="w-4 h-4" />,
+      action: () => navigate('/app/connect'),
+      dismissible: true
+    }
   ];
 
   // Filter based on profile completeness and dismissed nudges
