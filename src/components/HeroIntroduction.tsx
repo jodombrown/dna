@@ -14,7 +14,7 @@ const HeroIntroduction = () => {
         >
           Jaune Odombrown
         </a>
-        , an ecosystem builder and entrepreneur committed to uniting visionary leaders, builders, and changemakers across the African diaspora. These are individuals driven by purpose, rich in talent, and ready to accelerate Africa's transformation.
+        {' '}and Patrick McHomels, ecosystem builders and entrepreneurs committed to uniting visionary leaders, builders, and changemakers across the African diaspora. These are individuals driven by purpose, rich in talent, and ready to accelerate Africa's transformation.
       </p>
       
       <p className="text-lg md:text-xl text-dna-forest leading-relaxed">
