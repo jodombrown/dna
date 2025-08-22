@@ -31,7 +31,7 @@ const presets: Preset[] = [
 
 const QuickStartPresets: React.FC<QuickStartPresetsProps> = ({ onApplyPreset }) => {
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto hidden sm:block">
       <div className="flex flex-wrap gap-2 items-center">
         {presets.map((p) => (
           <button
