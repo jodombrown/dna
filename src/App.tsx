@@ -55,6 +55,7 @@ import ExperienceSettings from "@/pages/settings/ExperienceSettings";
 import LinksSettings from "@/pages/settings/LinksSettings";
 import PrivacySettings from "@/pages/settings/PrivacySettings";
 import ConnectionDetailPage from "@/pages/app/ConnectionDetailPage";
+import CalculatorTestPage from "@/pages/CalculatorTestPage";
 
 const queryClient = new QueryClient();
 
@@ -125,6 +126,9 @@ function App() {
               <Route path="/settings/experience" element={<AppShell><ExperienceSettings /></AppShell>} />
               <Route path="/settings/links" element={<AppShell><LinksSettings /></AppShell>} />
               <Route path="/settings/privacy" element={<AppShell><PrivacySettings /></AppShell>} />
+
+              {/* Calculator Test Page */}
+              <Route path="/calc-test" element={<AppShell><CalculatorTestPage /></AppShell>} />
 
               {/* Me route */}
               <Route path="/me" element={<Navigate to="/app/profile" replace />} />
