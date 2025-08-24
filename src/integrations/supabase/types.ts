@@ -374,6 +374,71 @@ export type Database = {
         }
         Relationships: []
       }
+      beta_applications: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          impact_area: string | null
+          linkedin_url: string | null
+          location: string | null
+          magic_link_sent_at: string | null
+          motivation: string
+          profile_created_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          waitlist_signup_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          impact_area?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          magic_link_sent_at?: string | null
+          motivation: string
+          profile_created_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          waitlist_signup_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          impact_area?: string | null
+          linkedin_url?: string | null
+          location?: string | null
+          magic_link_sent_at?: string | null
+          motivation?: string
+          profile_created_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          waitlist_signup_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beta_applications_waitlist_signup_id_fkey"
+            columns: ["waitlist_signup_id"]
+            isOneToOne: false
+            referencedRelation: "waitlist_signups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       collaboration_memberships: {
         Row: {
           id: string
@@ -1903,6 +1968,47 @@ export type Database = {
         }
         Relationships: []
       }
+      magic_links: {
+        Row: {
+          beta_application_id: string | null
+          created_at: string
+          expires_at: string
+          full_name: string
+          id: string
+          token: string
+          used_at: string | null
+          user_email: string
+        }
+        Insert: {
+          beta_application_id?: string | null
+          created_at?: string
+          expires_at?: string
+          full_name: string
+          id?: string
+          token?: string
+          used_at?: string | null
+          user_email: string
+        }
+        Update: {
+          beta_application_id?: string | null
+          created_at?: string
+          expires_at?: string
+          full_name?: string
+          id?: string
+          token?: string
+          used_at?: string | null
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "magic_links_beta_application_id_fkey"
+            columns: ["beta_application_id"]
+            isOneToOne: false
+            referencedRelation: "beta_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_reactions: {
         Row: {
           created_at: string
@@ -2095,7 +2201,15 @@ export type Database = {
           updated_at?: string
           visibility?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "opportunities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       post_likes: {
         Row: {
@@ -2377,6 +2491,7 @@ export type Database = {
           intro_audio_url: string | null
           intro_text: string | null
           intro_video_url: string | null
+          is_admin: boolean | null
           is_beta_tester: boolean | null
           is_public: boolean | null
           last_name: string | null
@@ -2404,6 +2519,7 @@ export type Database = {
           referral_code: string | null
           referrer_id: string | null
           role: string | null
+          roles: string[] | null
           sdg_focus: string[] | null
           sectors: string[] | null
           selected_pillars: string[] | null
@@ -2417,6 +2533,7 @@ export type Database = {
           username_changes_left: number | null
           venture_name: string | null
           venture_stage: string | null
+          visibility: Json | null
           website_url: string | null
           what_to_give: string[] | null
           what_to_receive: string[] | null
@@ -2472,6 +2589,7 @@ export type Database = {
           intro_audio_url?: string | null
           intro_text?: string | null
           intro_video_url?: string | null
+          is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
           last_name?: string | null
@@ -2499,6 +2617,7 @@ export type Database = {
           referral_code?: string | null
           referrer_id?: string | null
           role?: string | null
+          roles?: string[] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
           selected_pillars?: string[] | null
@@ -2512,6 +2631,7 @@ export type Database = {
           username_changes_left?: number | null
           venture_name?: string | null
           venture_stage?: string | null
+          visibility?: Json | null
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
@@ -2567,6 +2687,7 @@ export type Database = {
           intro_audio_url?: string | null
           intro_text?: string | null
           intro_video_url?: string | null
+          is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
           last_name?: string | null
@@ -2594,6 +2715,7 @@ export type Database = {
           referral_code?: string | null
           referrer_id?: string | null
           role?: string | null
+          roles?: string[] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
           selected_pillars?: string[] | null
@@ -2607,6 +2729,7 @@ export type Database = {
           username_changes_left?: number | null
           venture_name?: string | null
           venture_stage?: string | null
+          visibility?: Json | null
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
@@ -2618,6 +2741,53 @@ export type Database = {
             columns: ["referrer_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_contributions: {
+        Row: {
+          contribution_type: string
+          contributor_id: string
+          created_at: string | null
+          funding_interest: number | null
+          id: string
+          message: string | null
+          project_id: string
+          skills_offered: string[] | null
+          status: string | null
+          time_commitment: string | null
+        }
+        Insert: {
+          contribution_type: string
+          contributor_id: string
+          created_at?: string | null
+          funding_interest?: number | null
+          id?: string
+          message?: string | null
+          project_id: string
+          skills_offered?: string[] | null
+          status?: string | null
+          time_commitment?: string | null
+        }
+        Update: {
+          contribution_type?: string
+          contributor_id?: string
+          created_at?: string | null
+          funding_interest?: number | null
+          id?: string
+          message?: string | null
+          project_id?: string
+          skills_offered?: string[] | null
+          status?: string | null
+          time_commitment?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_contributions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
@@ -2673,6 +2843,60 @@ export type Database = {
           id?: string
           post_id?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      skill_analytics: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          id: string
+          profile_updated_at: string | null
+          skill_name: string
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          id?: string
+          profile_updated_at?: string | null
+          skill_name: string
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          id?: string
+          profile_updated_at?: string | null
+          skill_name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      skill_connections: {
+        Row: {
+          connection_strength: number | null
+          created_at: string | null
+          id: string
+          shared_skills: string[]
+          user_a_id: string | null
+          user_b_id: string | null
+        }
+        Insert: {
+          connection_strength?: number | null
+          created_at?: string | null
+          id?: string
+          shared_skills: string[]
+          user_a_id?: string | null
+          user_b_id?: string | null
+        }
+        Update: {
+          connection_strength?: number | null
+          created_at?: string | null
+          id?: string
+          shared_skills?: string[]
+          user_a_id?: string | null
+          user_b_id?: string | null
         }
         Relationships: []
       }
@@ -3411,11 +3635,10 @@ export type Database = {
         Returns: undefined
       }
       approve_beta_application: {
-        Args: { admin_id: string; application_id: string }
-        Returns: {
-          expires_at: string
-          magic_link_token: string
-        }[]
+        Args:
+          | { admin_id: string; application_id: string }
+          | { p_admin_notes?: string; p_application_id: string }
+        Returns: string
       }
       are_users_connected: {
         Args: { u1: string; u2: string }
@@ -3562,6 +3785,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      generate_magic_link: {
+        Args: { p_application_id: string; p_email: string; p_full_name: string }
+        Returns: string
+      }
       generate_magic_link_token: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -3685,6 +3912,10 @@ export type Database = {
         Args: { new_user_id: string; referral_code_param: string }
         Returns: undefined
       }
+      is_admin_email: {
+        Args: { email_address: string }
+        Returns: boolean
+      }
       is_admin_user: {
         Args: { _user_id: string }
         Returns: boolean
@@ -3708,6 +3939,10 @@ export type Database = {
       }
       is_participant_of_connection: {
         Args: { p_connection: string; p_user: string }
+        Returns: boolean
+      }
+      is_prelaunch_locked: {
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
       is_user_admin: {
@@ -3735,6 +3970,10 @@ export type Database = {
         Args: { user_email: string }
         Returns: string
       }
+      notify_beta_status: {
+        Args: { p_data: Json; p_email: string; p_type: string }
+        Returns: undefined
+      }
       profile_meets_visibility_requirement: {
         Args: { min_score?: number; user_id_param: string }
         Returns: boolean
@@ -3754,6 +3993,10 @@ export type Database = {
       recent_engagement_score_for_user: {
         Args: { p_target_user: string }
         Returns: number
+      }
+      reject_beta_application: {
+        Args: { p_admin_notes: string; p_application_id: string }
+        Returns: undefined
       }
       reject_html: {
         Args: { _txt: string }
@@ -4089,6 +4332,10 @@ export type Database = {
       update_username: {
         Args: { new_username: string }
         Returns: undefined
+      }
+      validate_prelaunch_access: {
+        Args: { user_email: string }
+        Returns: boolean
       }
     }
     Enums: {
