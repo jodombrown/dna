@@ -1,7 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "https://ybhssuehmfnxrzneobok.supabase.co";
+const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+
+const supabaseAdmin = SERVICE_ROLE_KEY ? createClient(SUPABASE_URL, SERVICE_ROLE_KEY) : null;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,8 +16,9 @@ const corsHeaders = {
 
 interface MagicLinkRequest {
   email: string;
-  magicLink: string;
+  magicLink?: string;
   fullName?: string;
+  redirectTo?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -22,7 +28,35 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, magicLink, fullName }: MagicLinkRequest = await req.json();
+    const body: MagicLinkRequest = await req.json();
+    const email = (body.email || '').trim();
+    const fullName = body.fullName;
+    const redirectTo = body.redirectTo || 'https://diasporanetwork.africa/auth/callback';
+
+    if (!email) {
+      return new Response(JSON.stringify({ error: 'Email is required' }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    // Generate magic link if not provided
+    let magicLink = body.magicLink;
+    if (!magicLink) {
+      if (!supabaseAdmin) {
+        throw new Error('Service role not configured for magic link generation');
+      }
+      const { data, error } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+        options: { redirectTo }
+      });
+      if (error) throw error;
+      magicLink = (data as any)?.properties?.action_link || (data as any)?.properties?.email_otp_link;
+      if (!magicLink) {
+        throw new Error('Failed to generate magic link');
+      }
+    }
 
     const emailResponse = await resend.emails.send({
       from: "DNA Platform <noreply@diasporanetwork.africa>",

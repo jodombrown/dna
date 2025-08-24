@@ -321,15 +321,14 @@ const Auth = () => {
         return;
       }
       setIsAdminMagicSending(true);
-      const {
-        error
-      } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`
-        }
+      const { error: fnError } = await supabase.functions.invoke('send-magic-link', {
+        body: {
+          email,
+          fullName: formData.fullName || 'Admin',
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
-      if (error) throw error;
+      if (fnError) throw fnError;
       toast({
         title: 'Magic link sent',
         description: 'Check your email to open the Admin Console.'
