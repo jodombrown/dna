@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, MessageCircle, Users, Lightbulb } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
+import { FeedContainer } from '@/components/social-feed/FeedContainer';
 interface DashboardCenterColumnProps {
   profile: Profile;
   isOwnProfile: boolean;
@@ -88,44 +89,16 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
         </Card>
       )}
 
-      {/* Activity Feed Placeholder */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
-          {isOwnProfile && (
-            <RequireProfileScore min={50} featureName="Create Post" showToast showModal={false}>
-              <Button variant="outline" size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                Share Update
-              </Button>
-            </RequireProfileScore>
-          )}
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageCircle className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {isOwnProfile ? "Share your first update" : "No recent activity"}
-            </h3>
-            <p className="text-gray-500 text-sm max-w-sm mx-auto">
-              {isOwnProfile 
-                ? "Let the community know what you're working on, your latest achievements, or insights you'd like to share."
-                : `${profile.full_name?.split(' ')[0] || 'This user'} hasn't shared any updates yet.`
-              }
-            </p>
-            {isOwnProfile && (
-              <RequireProfileScore min={50} featureName="Create Post" showToast showModal={false}>
-                <Button className="mt-4" variant="default">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Post
-                </Button>
-              </RequireProfileScore>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Live Activity Feed */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Community Feed</h2>
+        </div>
+        <FeedContainer 
+          defaultPillar="feed"
+          showComposer={isOwnProfile}
+        />
+      </div>
 
       {/* Call to Action for incomplete profiles */}
       {isOwnProfile && (!profile.bio || !profile.skills?.length) && (
