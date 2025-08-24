@@ -591,7 +591,27 @@ const Auth = () => {
               </div>
 
               {/* Admin Quick Login */}
-              
+              {isLogin && formData.email && formData.email.toLowerCase().endsWith('@diasporanetwork.africa') && (
+                <div className="text-center border rounded-lg p-3 bg-dna-emerald/5">
+                  <p className="text-sm text-muted-foreground mb-2">Admin detected — use a secure magic link</p>
+                  <Button
+                    type="button"
+                    onClick={handleAdminMagicLink}
+                    disabled={isAdminMagicSending || isSubmitting || isGoogleLoading || isLinkedInLoading}
+                    className="w-full bg-dna-forest text-white hover:bg-dna-forest/90"
+                  >
+                    {isAdminMagicSending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Sending Magic Link…
+                      </>
+                    ) : (
+                      'Send Admin Magic Link'
+                    )}
+                  </Button>
+                  <p className="mt-2 text-xs text-muted-foreground">We’ll email a one-time link to {formData.email}</p>
+                </div>
+              )}
 
               {/* Privacy Policy and Terms */}
               <div className="text-center text-xs text-gray-500 leading-relaxed">
