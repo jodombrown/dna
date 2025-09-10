@@ -197,7 +197,7 @@ const MobileSettingsView = () => {
 
       {/* App Info */}
       <div className="p-4 text-center text-gray-500">
-        <p className="text-sm">DNA Platform v1.0.0</p>
+        <p className="text-sm">DNA Platform</p>
         <p className="text-xs mt-1">© 2024 Diaspora Network of Africa</p>
       </div>
 

@@ -14,7 +14,7 @@ export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = (
   const { completenessScore } = useProfileAccess();
   const [dismissed, setDismissed] = useState(false);
 
-  const storageKey = user ? `dna_profile_banner_dismissed_${user.id}_v1` : 'dna_profile_banner_dismissed';
+  const storageKey = user ? `dna_profile_banner_dismissed_${user.id}` : 'dna_profile_banner_dismissed';
 
   useEffect(() => {
     try {

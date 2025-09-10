@@ -113,14 +113,14 @@ const UnifiedHeader = () => {
   };
 
   const handleAuthNavigation = (view: string) => {
-    // Check if we're in the v1 dashboard context
+    // Check if we're in the app dashboard context
     if (location.pathname.startsWith('/app/dashboard') || 
         location.pathname.startsWith('/app/search') ||
         location.pathname.startsWith('/app/connect') ||
         location.pathname.startsWith('/app/messages') ||
         location.pathname.startsWith('/app/events') ||
         location.pathname.startsWith('/app/communities')) {
-      // Navigate within v1 dashboard context
+      // Navigate within app dashboard context
       const viewRouteMap: { [key: string]: string } = {
         'dashboard': '/app/dashboard',
         'search': '/app/search', 

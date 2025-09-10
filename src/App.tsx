@@ -103,9 +103,6 @@ function App() {
               <Route path="/dna/me" element={<DnaMeRedirect />} />
               <Route path="/dna/:username" element={<UserDashboard />} />
               
-              {/* Dashboard V1 Archive Route - MUST come before /app/* */}
-              <Route path="/app/v1/*" element={<Navigate to="/app/dashboard" replace />} />
-              
         <Route path="/app/events" element={<AppShell><Events /></AppShell>} />
         <Route path="/app/events/new" element={<AppShell><Navigate to="/events/new" replace /></AppShell>} />
         <Route path="/app/events/:id" element={<AppShell><EventDetail /></AppShell>} />

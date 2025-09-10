@@ -4,21 +4,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { Event } from '@/types/eventTypes';
 import { toast } from 'sonner';
 
-// V1 Components
+// Event Components
 import EventHero from '@/components/events/EventViewV2/EventHero';
 import EventDetails from '@/components/events/EventViewV2/EventDetails';
-import EventTicketPicker from '@/components/events/EventViewV2/EventTicketPicker';
-import EventSocialProof from '@/components/events/EventViewV2/EventSocialProof';
-
-// V2 Components
-import EventHeroV2 from '@/components/events/EventViewV2/EventHero';
 import TicketTypePicker from '@/components/events/EventViewV2/TicketTypePicker';
 import RegistrationForm from '@/components/events/EventViewV2/RegistrationForm';
 import SocialProof from '@/components/events/EventViewV2/SocialProof';
 
 const EventsBySlug: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const eventsV2 = true; // Default to V2; feature flag can be reintroduced if needed
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedTicketType, setSelectedTicketType] = useState<string>('');
@@ -150,61 +144,6 @@ const EventsBySlug: React.FC = () => {
     );
   }
 
-  if (eventsV2) {
-    // V2 Layout with flag-aware renderer
-    return (
-      <div className="min-h-screen bg-background">
-        <EventHeroV2 event={event} />
-        
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-8">
-              <EventDetails event={event} />
-              <SocialProof event={event} />
-            </div>
-            
-            {/* Sidebar */}
-            <div className="lg:col-span-1 space-y-6">
-              <div className="sticky top-8 space-y-6">
-                {registrationStatus === 'selecting' && (
-                  <TicketTypePicker 
-                    event={event} 
-                    onTicketSelect={handleTicketSelect}
-                  />
-                )}
-                
-                {selectedTicketType && registrationStatus === 'selecting' && (
-                  <RegistrationForm
-                    event={event}
-                    ticketTypeId={selectedTicketType}
-                    onRegistrationComplete={handleRegistrationComplete}
-                  />
-                )}
-                
-                {registrationStatus !== 'selecting' && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <h3 className="font-medium text-green-800 mb-2">
-                      {registrationStatus === 'going' && 'Successfully Registered!'}
-                      {registrationStatus === 'pending' && 'Registration Pending'}
-                      {registrationStatus === 'waitlist' && 'Added to Waitlist'}
-                    </h3>
-                    <p className="text-sm text-green-700">
-                      {registrationStatus === 'going' && 'You\'re all set for this event. Check your email for details.'}
-                      {registrationStatus === 'pending' && 'Your registration is pending approval by the event organizer.'}
-                      {registrationStatus === 'waitlist' && 'You\'ll be notified if a spot becomes available.'}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // V1 Layout (fallback)
   return (
     <div className="min-h-screen bg-background">
       <EventHero event={event} />
@@ -214,13 +153,41 @@ const EventsBySlug: React.FC = () => {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             <EventDetails event={event} />
-            <EventSocialProof event={event} />
+            <SocialProof event={event} />
           </div>
           
           {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              <EventTicketPicker event={event} />
+          <div className="lg:col-span-1 space-y-6">
+            <div className="sticky top-8 space-y-6">
+              {registrationStatus === 'selecting' && (
+                <TicketTypePicker 
+                  event={event} 
+                  onTicketSelect={handleTicketSelect}
+                />
+              )}
+              
+              {selectedTicketType && registrationStatus === 'selecting' && (
+                <RegistrationForm
+                  event={event}
+                  ticketTypeId={selectedTicketType}
+                  onRegistrationComplete={handleRegistrationComplete}
+                />
+              )}
+              
+              {registrationStatus !== 'selecting' && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <h3 className="font-medium text-green-800 mb-2">
+                    {registrationStatus === 'going' && 'Successfully Registered!'}
+                    {registrationStatus === 'pending' && 'Registration Pending'}
+                    {registrationStatus === 'waitlist' && 'Added to Waitlist'}
+                  </h3>
+                  <p className="text-sm text-green-700">
+                    {registrationStatus === 'going' && 'You\'re all set for this event. Check your email for details.'}
+                    {registrationStatus === 'pending' && 'Your registration is pending approval by the event organizer.'}
+                    {registrationStatus === 'waitlist' && 'You\'ll be notified if a spot becomes available.'}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
