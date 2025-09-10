@@ -154,14 +154,6 @@ function App() {
               <Route path="/phase-5/beta-validation" element={<AuthGuard><BetaValidationPhase /></AuthGuard>} />
               <Route path="/phase-6/go-to-market" element={<AuthGuard><GoToMarketPhase /></AuthGuard>} />
 
-              {/* Redirects from short phase routes to canonical /phase-#/* */}
-              <Route path="/phase1" element={<Navigate to="/phase-1/market-research" replace />} />
-              <Route path="/phase2" element={<Navigate to="/phase-2/prototyping" replace />} />
-              <Route path="/phase3" element={<Navigate to="/phase-3/customer-discovery" replace />} />
-              <Route path="/phase4" element={<Navigate to="/phase-4/mvp" replace />} />
-              <Route path="/phase5" element={<Navigate to="/phase-5/beta-validation" replace />} />
-              <Route path="/phase6" element={<Navigate to="/phase-6/go-to-market" replace />} />
-              
               {/* Redirects from old /phase/* to new canonical /phase-#/* */}
               <Route path="/phase/market-research" element={<Navigate to="/phase-1/market-research" replace />} />
               <Route path="/phase/prototyping" element={<Navigate to="/phase-2/prototyping" replace />} />
