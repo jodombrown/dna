@@ -147,20 +147,6 @@ function App() {
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
               <Route path="/onboarding/reset-password-complete" element={<ResetPasswordComplete />} />
               
-              <Route path="/phase-1/market-research" element={<AuthGuard><MarketResearchPhase /></AuthGuard>} />
-              <Route path="/phase-2/prototyping" element={<AuthGuard><PrototypingPhase /></AuthGuard>} />
-              <Route path="/phase-3/customer-discovery" element={<AuthGuard><CustomerDiscoveryPhase /></AuthGuard>} />
-              <Route path="/phase-4/mvp" element={<AuthGuard><MvpPhase /></AuthGuard>} />
-              <Route path="/phase-5/beta-validation" element={<AuthGuard><BetaValidationPhase /></AuthGuard>} />
-              <Route path="/phase-6/go-to-market" element={<AuthGuard><GoToMarketPhase /></AuthGuard>} />
-
-              {/* Redirects from old /phase/* to new canonical /phase-#/* */}
-              <Route path="/phase/market-research" element={<Navigate to="/phase-1/market-research" replace />} />
-              <Route path="/phase/prototyping" element={<Navigate to="/phase-2/prototyping" replace />} />
-              <Route path="/phase/customer-discovery" element={<Navigate to="/phase-3/customer-discovery" replace />} />
-              <Route path="/phase/mvp" element={<Navigate to="/phase-4/mvp" replace />} />
-              <Route path="/phase/beta-validation" element={<Navigate to="/phase-5/beta-validation" replace />} />
-              <Route path="/phase/go-to-market" element={<Navigate to="/phase-6/go-to-market" replace />} />
 
 
               <Route path="*" element={<NotFound />} />
