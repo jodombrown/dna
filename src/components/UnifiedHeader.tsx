@@ -32,14 +32,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems } from './header/navigationConfig';
 import NotificationsBell from '@/components/notifications/NotificationsBell';
@@ -374,28 +366,6 @@ const UnifiedHeader = () => {
                           </>
                         )}
                         
-                        {/* Development Phases - show for all users */}
-                        <div className="border-t pt-4 mt-4">
-                          <p className="text-sm text-gray-600 mb-4">Development Phases</p>
-                          <div className="space-y-2">
-                            {phases.map((phase) => (
-                              <Button
-                                key={phase.path}
-                                variant="ghost"
-                                className="justify-start text-left w-full hover:bg-dna-mint/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                                onClick={() => {
-                                  navigate(phase.path);
-                                  setIsMobileMenuOpen(false);
-                                }}
-                              >
-                                <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-xs font-bold mr-2">
-                                  {phase.phase}
-                                </div>
-                                {phase.name}
-                              </Button>
-                            ))}
-                          </div>
-                        </div>
                       </nav>
                     </ScrollArea>
                   </div>
