@@ -33,7 +33,7 @@ const CTASection = () => {
               </CardContent>
             </Card>
 
-            <Card ref={card2Ref.elementRef} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/phase-1/market-research')}>
+            <Card ref={card2Ref.elementRef} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/about')}>
               <CardContent className="p-8 text-center">
                 <div className="w-16 h-16 bg-dna-emerald/10 rounded-xl flex items-center justify-center mx-auto mb-6">
                   <Eye className="w-8 h-8 text-dna-emerald" />
