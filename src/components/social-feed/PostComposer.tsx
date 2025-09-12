@@ -344,52 +344,94 @@ export const PostComposer: React.FC<PostComposerProps> = ({
               </Avatar>
               
               <div className="flex-1 space-y-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-sm font-medium">Share in:</span>
-                  <Select value={pillar} onValueChange={setPillar}>
-                    <SelectTrigger className="w-40">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="connect">Connect</SelectItem>
-                      <SelectItem value="collaborate">Collaborate</SelectItem>
-                      <SelectItem value="contribute">Contribute</SelectItem>
-                    </SelectContent>
-                  </Select>
-                   <Badge 
-                     variant="secondary" 
-                     className={`text-xs ${getPillarColor(pillar)}`}
-                   >
-                     {pillar.charAt(0).toUpperCase() + pillar.slice(1)}
-                   </Badge>
-                  {/* Post type selector */}
-                  <div className="ml-auto flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Type:</span>
-                    <Select value={postType} onValueChange={(v) => setPostType(v as PostType)}>
+                {/* Mobile: Stack layout */}
+                {isMobile ? (
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium whitespace-nowrap">Share in:</span>
+                      <Select value={pillar} onValueChange={setPillar}>
+                        <SelectTrigger className="flex-1 min-w-0">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="connect">Connect</SelectItem>
+                          <SelectItem value="collaborate">Collaborate</SelectItem>
+                          <SelectItem value="contribute">Contribute</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Badge 
+                        variant="secondary" 
+                        className={`text-xs whitespace-nowrap ${getPillarColor(pillar)}`}
+                      >
+                        {pillar.charAt(0).toUpperCase() + pillar.slice(1)}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground whitespace-nowrap">Type:</span>
+                      <Select value={postType} onValueChange={(v) => setPostType(v as PostType)}>
+                        <SelectTrigger className="flex-1 min-w-0">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="text">Text</SelectItem>
+                          <SelectItem value="link" disabled={!embedData}>Link</SelectItem>
+                          <SelectItem value="image" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('image/'))}>Image</SelectItem>
+                          <SelectItem value="video" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('video/'))}>Video</SelectItem>
+                          <SelectItem value="opportunity">Opportunity</SelectItem>
+                          {isAdmin && <SelectItem value="spotlight">Spotlight</SelectItem>}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                ) : (
+                  /* Desktop: Single row layout */
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm font-medium">Share in:</span>
+                    <Select value={pillar} onValueChange={setPillar}>
                       <SelectTrigger className="w-40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="text">Text</SelectItem>
-                        <SelectItem value="link" disabled={!embedData}>Link</SelectItem>
-                        <SelectItem value="image" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('image/'))}>Image</SelectItem>
-                        <SelectItem value="video" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('video/'))}>Video</SelectItem>
-                        <SelectItem value="opportunity">Opportunity</SelectItem>
-                        {isAdmin && <SelectItem value="spotlight">Spotlight</SelectItem>}
+                        <SelectItem value="connect">Connect</SelectItem>
+                        <SelectItem value="collaborate">Collaborate</SelectItem>
+                        <SelectItem value="contribute">Contribute</SelectItem>
                       </SelectContent>
                     </Select>
-                    {!isMobile && !isAtTop && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleCollapse}
-                        className="text-muted-foreground hover:text-foreground"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    )}
+                     <Badge 
+                       variant="secondary" 
+                       className={`text-xs ${getPillarColor(pillar)}`}
+                     >
+                       {pillar.charAt(0).toUpperCase() + pillar.slice(1)}
+                     </Badge>
+                    {/* Post type selector */}
+                    <div className="ml-auto flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Type:</span>
+                      <Select value={postType} onValueChange={(v) => setPostType(v as PostType)}>
+                        <SelectTrigger className="w-40">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="text">Text</SelectItem>
+                          <SelectItem value="link" disabled={!embedData}>Link</SelectItem>
+                          <SelectItem value="image" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('image/'))}>Image</SelectItem>
+                          <SelectItem value="video" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('video/'))}>Video</SelectItem>
+                          <SelectItem value="opportunity">Opportunity</SelectItem>
+                          {isAdmin && <SelectItem value="spotlight">Spotlight</SelectItem>}
+                        </SelectContent>
+                      </Select>
+                      {!isAtTop && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleCollapse}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <Textarea
                   placeholder="What's on your mind?"
