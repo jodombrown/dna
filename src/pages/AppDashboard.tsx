@@ -11,7 +11,7 @@ import Profile from './app/Profile';
 import ProfileEdit from './app/ProfileEdit';
 import AppSidebar from '@/components/AppSidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import ProfileCompletionBanner from '@/components/profile/ProfileCompletionBanner';
+
 
 const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
@@ -58,7 +58,6 @@ const AppDashboard = () => {
             </header>
 
             <main className="pt-10 lg:pt-12 pb-20 lg:pb-0">
-              <ProfileCompletionBanner />
               <Routes>
                 {/* Core networking features */}
                 <Route index element={<Dashboard />} />
