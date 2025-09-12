@@ -4230,6 +4230,21 @@ export type Database = {
       }
       rpc_create_post: {
         Args:
+          | {
+              content: string
+              embed_metadata?: Json
+              link_metadata?: Json
+              link_url?: string
+              media_url?: string
+              opportunity_link?: string
+              opportunity_type?: string
+              pillar?: string
+              poll_expires_at?: string
+              poll_options?: Json
+              status?: string
+              type?: string
+              visibility?: string
+            }
           | { p: Json }
           | { p_content: string; p_media_url?: string; p_pillar?: string }
         Returns: string
