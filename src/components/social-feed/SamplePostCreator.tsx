@@ -101,12 +101,12 @@ export const SamplePostCreator: React.FC = () => {
   };
 
   return (
-    <Card className="border-dashed border-2 border-gray-300">
-      <CardHeader>
-        <CardTitle className="text-center text-gray-600">Development Tool</CardTitle>
+    <Card className="border-dashed border-2 border-muted">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-center text-muted-foreground text-sm sm:text-base">Development Tool</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-sm text-gray-600 text-center">
+      <CardContent className="space-y-3 sm:space-y-4">
+        <p className="text-xs sm:text-sm text-muted-foreground text-center">
           Create sample posts to test the social feed functionality
         </p>
         <div className="text-center">
@@ -114,7 +114,8 @@ export const SamplePostCreator: React.FC = () => {
             onClick={createSamplePosts}
             disabled={isCreating}
             variant="outline"
-            className="w-full"
+            className="w-full text-xs sm:text-sm"
+            size="sm"
           >
             {isCreating ? (
               <>
