@@ -306,9 +306,9 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         !isMobile && !isAtTop ? 'backdrop-blur-sm bg-background/95 border-b border-border' : ''
       }`}
     >
-      <Card className={`${isMobile ? 'bg-white border-border shadow-sm' : `bg-transparent border-transparent transition-all duration-300 ${
+      <Card className={`${isMobile ? 'bg-white border-border shadow-sm overflow-hidden' : `bg-transparent border-transparent transition-all duration-300 ${
         isCollapsed ? 'shadow-none' : 'bg-background border-border'
-      }`}`}>
+      } overflow-hidden`}`}>
         <CardContent className={`${isMobile ? 'p-4' : `transition-all duration-300 ${isCollapsed ? 'p-3' : 'p-6'}`}`}>
           {!isMobile && isCollapsed ? (
             // Collapsed State
@@ -353,7 +353,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                         <SelectTrigger className="flex-1 min-w-0">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="z-50 bg-background">
                           <SelectItem value="connect">Connect</SelectItem>
                           <SelectItem value="collaborate">Collaborate</SelectItem>
                           <SelectItem value="contribute">Contribute</SelectItem>
@@ -372,7 +372,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                         <SelectTrigger className="flex-1 min-w-0">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="z-50 bg-background">
                           <SelectItem value="text">Text</SelectItem>
                           <SelectItem value="link" disabled={!embedData}>Link</SelectItem>
                           <SelectItem value="image" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('image/'))}>Image</SelectItem>
@@ -391,7 +391,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                       <SelectTrigger className="w-40">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="z-50 bg-background">
                         <SelectItem value="connect">Connect</SelectItem>
                         <SelectItem value="collaborate">Collaborate</SelectItem>
                         <SelectItem value="contribute">Contribute</SelectItem>
@@ -410,7 +410,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                         <SelectTrigger className="w-40">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="z-50 bg-background">
                           <SelectItem value="text">Text</SelectItem>
                           <SelectItem value="link" disabled={!embedData}>Link</SelectItem>
                           <SelectItem value="image" disabled={!selectedFile || (selectedFile && !selectedFile.type.startsWith('image/'))}>Image</SelectItem>
@@ -424,7 +424,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                           variant="ghost"
                           size="sm"
                           onClick={handleCollapse}
-                          className="text-muted-foreground hover:text-foreground"
+                          className="text-muted-foreground hover:text-foreground hidden sm:inline-flex"
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -523,7 +523,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-3 border-t">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-3 border-t">
                   <div className="flex items-center gap-2">
                     <input
                       ref={fileInputRef}
@@ -543,19 +543,19 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                       {uploading ? 'Uploading...' : 'Add Media'}
                     </Button>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
                     <Button 
                       onClick={() => handleSubmit('draft')}
                       disabled={isPosting || embedLoading || uploading || !(content.trim() || embedData || selectedFile || (postType === 'poll' && pollOptions.some(o => o.trim())) || (postType === 'opportunity' && opportunityLink.trim()))}
                       variant="outline"
-                      className="text-muted-foreground hover:text-foreground"
+                      className="text-muted-foreground hover:text-foreground whitespace-nowrap flex-1 sm:flex-none"
                     >
                       Save Draft
                     </Button>
                     <Button 
                       onClick={() => handleSubmit('published')}
                       disabled={isPosting || embedLoading || uploading || !(content.trim() || embedData || selectedFile || (postType === 'poll' && pollOptions.some(o => o.trim())) || (postType === 'opportunity' && opportunityLink.trim()))}
-                      className="bg-dna-forest hover:bg-dna-forest/90"
+                      className="bg-dna-forest hover:bg-dna-forest/90 whitespace-nowrap flex-1 sm:flex-none"
                     >
                       {isPosting ? (
                         <div className="flex items-center gap-2">
