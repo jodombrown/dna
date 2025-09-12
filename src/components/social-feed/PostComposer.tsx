@@ -193,13 +193,11 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 
       const finalStatus = finalType === 'spotlight' ? 'featured' : status;
 
-      // Build payload
+      // Build payload for RPC function
       const payload: any = {
         content: content.trim(),
         type: finalType,
         pillar: pillar,
-        author_id: user.id,
-        user_id: user.id,
         visibility: 'public',
         status: finalStatus,
         media_url: mediaUrl,
@@ -233,11 +231,15 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         payload.opportunity_link = opportunityLink || null;
       }
 
-      const { error } = await supabase
-        .from('posts')
-        .insert(payload);
+      // Use RPC function for proper post creation with validation
+      const { data: postId, error } = await supabase.rpc('rpc_create_post', payload);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Post creation error:', error);
+        throw error;
+      }
+
+      console.log('Post created successfully with ID:', postId);
 
       toast({
         title: status === 'draft' ? "Draft saved!" : "Post created!",

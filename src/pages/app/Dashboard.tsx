@@ -22,6 +22,7 @@ import ProgressStrip from '@/components/dashboard/ProgressStrip';
 import DashboardEventsView from '@/components/events/DashboardEventsView';
 import DashboardNudges from '@/components/dashboard/DashboardNudges';
 import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
+import { ProfessionalNetworkWidget } from '@/components/connections/ProfessionalNetworkWidget';
 const Dashboard = () => {
   const { activeView, setActiveView, activePillar, setActivePillar } = useDashboard();
 
@@ -110,6 +111,7 @@ const Dashboard = () => {
   const rightSidebar = (
     <div className="space-y-4">
       <ProfileCompletenessWidget />
+      <ProfessionalNetworkWidget />
       <RecommendationsWidget />
       <DiscoverySidebar activePillar={activePillar} />
     </div>

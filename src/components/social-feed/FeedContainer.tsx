@@ -15,6 +15,7 @@ import FeedModeTabs from './FeedModeTabs';
 import { supabase } from '@/integrations/supabase/client';
 import FloatingFeedbackWidget from '@/components/feedback/FloatingFeedbackWidget';
 import { useAuth } from '@/contexts/AuthContext';
+import { SamplePostCreator } from './SamplePostCreator';
 
 interface FeedContainerProps {
   defaultPillar?: string;
@@ -138,6 +139,11 @@ const FeedContainerInner: React.FC<FeedContainerProps> = ({
             onPostCreated={handlePostCreated}
           />
         </RequireProfileScore>
+      )}
+      
+      {/* Development tool - only show when no posts exist */}
+      {posts.length === 0 && !loading && (
+        <SamplePostCreator />
       )}
       
       <div className="flex items-center justify-between">
