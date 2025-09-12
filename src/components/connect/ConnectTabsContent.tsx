@@ -211,7 +211,7 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
               {visibleProfessionals.map((professional) => (
                 <ProfessionalCard
                   key={professional.id}
-                  professional={professional}
+                  professional={professional as any}
                   onConnect={() => onCreatorClick(professional.id)}
                   onMessage={() => onMessage(professional.id, professional.full_name)}
                   connectionStatus={getConnectionStatus(professional.id)}
