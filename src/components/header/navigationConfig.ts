@@ -15,7 +15,11 @@ export const mainNavItems = [
   { name: 'Notifications', path: '/notifications', icon: 'Bell' },
 ];
 
-export const phases = [] as const;
+export const phases = [
+  { name: 'Customer Discovery', path: '/phase-3/customer-discovery' },
+  { name: 'Beta Validation', path: '/phase-5/beta-validation' },
+  { name: 'Go-to-Market', path: '/phase-6/go-to-market' },
+] as const;
 
 // Example pages for landing page showcase
 export const examplePages = [
