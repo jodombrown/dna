@@ -32,9 +32,10 @@ const MobileNavigation = () => {
   }
 
   const navigationItems: NavigationItem[] = [
-    { title: 'Home', view: 'dashboard', icon: Home },
-    { title: 'Network', view: 'network', icon: Users },
-    { title: 'Messages', view: 'messaging', icon: MessageSquare },
+    { title: 'Dashboard', view: 'dashboard', icon: Home },
+    { title: 'Discover', view: 'search', icon: Search },
+    { title: 'Network', view: 'connect', icon: Users },
+    { title: 'Messages', view: 'messages', icon: MessageSquare },
     { title: 'Profile', view: 'profile', icon: User },
   ];
 
