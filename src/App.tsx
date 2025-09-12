@@ -6,22 +6,25 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 
-// Core pages for networking platform
+// Core pages
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Onboarding from "./pages/Onboarding";
-import AppDashboard from "./pages/AppDashboard";
-import Contact from "./pages/Contact";
-import About from "./pages/About";
-import NotFound from "./pages/NotFound";
-import InviteSignup from "./pages/InviteSignup";
 import ResetPassword from "./pages/ResetPassword";
-import ResetPasswordComplete from "./pages/ResetPasswordComplete";
+import InviteSignup from "./pages/InviteSignup";
+import UserDashboard from "./pages/UserDashboard";
+import AppDashboard from "./pages/AppDashboard";
+import NotFound from "./pages/NotFound";
+
+// Static pages  
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-import AuthCallback from "./pages/AuthCallback";
-import UserDashboard from "./pages/UserDashboard";
-import DnaMeRedirect from "./pages/DnaMeRedirect";
+
+// Example pages
+import ConnectExample from "./pages/ConnectExample";
+import CollaborationsExample from "./pages/CollaborationsExample";
+import ContributeExample from "./pages/ContributeExample";
 
 // Phase pages
 import MarketResearchPhase from "./pages/MarketResearchPhase";
@@ -30,17 +33,6 @@ import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
 import MvpPhase from "./pages/MvpPhase";
 import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
-
-// Main feature pages
-import ConnectExample from "./pages/ConnectExample";
-import CollaborationsExample from "./pages/CollaborationsExample";
-import ContributeExample from "./pages/ContributeExample";
-
-// Settings pages
-import ProfileSettings from "@/pages/settings/ProfileSettings";
-import ExperienceSettings from "@/pages/settings/ExperienceSettings";
-import LinksSettings from "@/pages/settings/LinksSettings";
-import PrivacySettings from "@/pages/settings/PrivacySettings";
 
 const queryClient = new QueryClient();
 
@@ -73,22 +65,14 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <Routes>
-              {/* Core authentication and onboarding */}
+              {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/onboarding" element={<AppShell><Onboarding /></AppShell>} />
+              <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
               
               {/* User profiles */}
-              <Route path="/dna/me" element={<DnaMeRedirect />} />
               <Route path="/dna/:username" element={<UserDashboard />} />
               
-              {/* Settings */}
-              <Route path="/settings/profile" element={<AppShell><ProfileSettings /></AppShell>} />
-              <Route path="/settings/experience" element={<AppShell><ExperienceSettings /></AppShell>} />
-              <Route path="/settings/links" element={<AppShell><LinksSettings /></AppShell>} />
-              <Route path="/settings/privacy" element={<AppShell><PrivacySettings /></AppShell>} />
-
               {/* Main app routes */}
               <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
               <Route path="/app/*" element={<AppDashboard />} />
@@ -114,8 +98,6 @@ function App() {
               
               {/* Authentication flows */}
               <Route path="/invite" element={<InviteSignup />} />
-              <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
-              <Route path="/onboarding/reset-password-complete" element={<ResetPasswordComplete />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
