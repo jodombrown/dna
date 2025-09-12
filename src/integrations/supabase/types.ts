@@ -2128,6 +2128,7 @@ export type Database = {
           created_at: string
           id: string
           is_read: boolean | null
+          payload: Json | null
           related_entity_id: string | null
           related_entity_type: string | null
           title: string
@@ -2140,6 +2141,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_read?: boolean | null
+          payload?: Json | null
           related_entity_id?: string | null
           related_entity_type?: string | null
           title: string
@@ -2152,6 +2154,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_read?: boolean | null
+          payload?: Json | null
           related_entity_id?: string | null
           related_entity_type?: string | null
           title?: string
