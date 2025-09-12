@@ -20,6 +20,11 @@ export const RequireProfileScore: React.FC<RequireProfileScoreProps> = ({
   showToast = false,
   showModal = true,
 }) => {
+  // DEVELOPMENT: Bypass all profile score requirements
+  return <>{children}</>;
+  
+  // Original logic commented out for development
+  /*
   const { meetsMinScore, completenessScore } = useProfileAccess();
   const [modalOpen, setModalOpen] = useState(false);
   const { toast } = useToast();
@@ -71,4 +76,5 @@ export const RequireProfileScore: React.FC<RequireProfileScoreProps> = ({
   }
 
   return <>{children}</>;
+  */
 };

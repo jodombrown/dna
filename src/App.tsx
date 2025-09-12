@@ -125,7 +125,7 @@ function App() {
               <Route path="/me" element={<Navigate to="/app/profile" replace />} />
 
               <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/app/*" element={<AppShell><AppDashboard /></AppShell>} />
+              <Route path="/app/*" element={<AppDashboard />} />
               <Route path="/contribute" element={<AppShell><ContributeExample /></AppShell>} />
               <Route path="/collaborate" element={<AppShell><CollaborationsExample /></AppShell>} />
               <Route path="/connect" element={<AppShell><ConnectExample /></AppShell>} />

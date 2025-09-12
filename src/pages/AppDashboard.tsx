@@ -24,14 +24,16 @@ import ProfileCompletionBanner from '@/components/profile/ProfileCompletionBanne
 const AppDashboard = () => {
   const { user, profile, loading } = useAuth();
   const navigate = useNavigate();
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        navigate('/auth');
-      }
-      // Allow dashboard access regardless of onboarding/profile completion
-    }
-  }, [user, loading, navigate]);
+  
+  // DEVELOPMENT: Skip authentication checks
+  // useEffect(() => {
+  //   if (!loading) {
+  //     if (!user) {
+  //       navigate('/auth');
+  //     }
+  //     // Allow dashboard access regardless of onboarding/profile completion
+  //   }
+  // }, [user, loading, navigate]);
 
   if (loading) {
     return (
@@ -44,9 +46,10 @@ const AppDashboard = () => {
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  // DEVELOPMENT: Allow access without user
+  // if (!user) {
+  //   return null;
+  // }
 
   return (
     <DashboardProvider>
