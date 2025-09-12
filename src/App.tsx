@@ -24,8 +24,10 @@ import UserDashboard from "./pages/UserDashboard";
 import DnaMeRedirect from "./pages/DnaMeRedirect";
 
 // Phase pages
-import BetaValidationPhase from "./pages/BetaValidationPhase";
+import MarketResearchPhase from "./pages/MarketResearchPhase";
+import PrototypingPhase from "./pages/PrototypingPhase";
 import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
+import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
 
 // Main feature pages
@@ -91,6 +93,8 @@ function App() {
               <Route path="/app/*" element={<AppDashboard />} />
               
               {/* Phase pages */}
+              <Route path="/phase-1/market-research" element={<MarketResearchPhase />} />
+              <Route path="/phase-2/prototyping" element={<PrototypingPhase />} />
               <Route path="/phase-3/customer-discovery" element={<CustomerDiscoveryPhase />} />
               <Route path="/phase-5/beta-validation" element={<BetaValidationPhase />} />
               <Route path="/phase-6/go-to-market" element={<GoToMarketPhase />} />
