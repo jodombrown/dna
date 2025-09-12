@@ -33,7 +33,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
-import { publicNavItems } from './header/navigationConfig';
+import { publicNavItems, phases } from './header/navigationConfig';
 import NotificationsBell from '@/components/notifications/NotificationsBell';
 
 const UnifiedHeader = () => {
@@ -217,6 +217,29 @@ const UnifiedHeader = () => {
                       </NavLink>
                     ))}
                     
+                    {/* Phases Dropdown */}
+                    {phases.length > 0 && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="text-gray-700 hover:text-dna-forest transition-colors font-medium">
+                            Phases
+                            <ChevronDown className="w-4 h-4 ml-1" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-56">
+                          {phases.map((phase) => (
+                            <DropdownMenuItem 
+                              key={phase.path}
+                              onClick={() => navigate(phase.path)}
+                              className="py-3 cursor-pointer"
+                            >
+                              <span className="text-base">{phase.name}</span>
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                    
                   </nav>
                   
                   {!isAuthenticated && (
@@ -348,6 +371,30 @@ const UnifiedHeader = () => {
                                 {item.name}
                               </Button>
                             ))}
+                            
+                            {/* Mobile Phases Menu */}
+                            {phases.length > 0 && (
+                              <>
+                                <div className="border-t pt-4 mt-4">
+                                  <p className="text-sm text-gray-600 mb-4">Development Phases</p>
+                                  <div className="space-y-2">
+                                    {phases.map((phase) => (
+                                      <Button
+                                        key={phase.path}
+                                        variant="ghost"
+                                        className="justify-start text-left w-full hover:bg-dna-mint/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                                        onClick={() => {
+                                          navigate(phase.path);
+                                          setIsMobileMenuOpen(false);
+                                        }}
+                                      >
+                                        {phase.name}
+                                      </Button>
+                                    ))}
+                                  </div>
+                                </div>
+                              </>
+                            )}
                             
                             <Button
                               className="justify-start text-left bg-dna-copper text-white hover:bg-dna-copper/90 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
