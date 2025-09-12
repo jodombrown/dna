@@ -18,6 +18,7 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
   const [isExpanded, setIsExpanded] = useState(true);
   const [isManuallyCollapsed, setIsManuallyCollapsed] = useState(false);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
+  const [isUserActive, setIsUserActive] = useState(false);
   const lastActionRef = useRef<'expand' | 'collapse' | null>(null);
   const manualTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { isScrollingDown, isAtTop, scrollY } = useScrollDirection();
@@ -27,9 +28,9 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
   const COLLAPSE_THRESHOLD = 150; // Collapse when scrolling down past 150px
   const EXPAND_THRESHOLD = 50;    // Expand when scrolling up above 50px
 
-  // Auto-collapse/expand logic with proper hysteresis
+  // Auto-collapse/expand logic with proper hysteresis - but NOT when user is actively using composer
   useEffect(() => {
-    if (isManuallyCollapsed || isManuallyExpanded) return;
+    if (isManuallyCollapsed || isManuallyExpanded || isUserActive) return;
     
     const shouldExpand = isAtTop || (!isScrollingDown && scrollY <= EXPAND_THRESHOLD && lastActionRef.current !== 'expand');
     const shouldCollapse = isScrollingDown && scrollY >= COLLAPSE_THRESHOLD && lastActionRef.current !== 'collapse';
@@ -41,7 +42,7 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
       setIsExpanded(false);
       lastActionRef.current = 'collapse';
     }
-  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed, isManuallyExpanded]);
+  }, [isScrollingDown, isAtTop, scrollY, isManuallyCollapsed, isManuallyExpanded, isUserActive]);
 
   const handleExpand = useCallback(() => {
     // Clear any existing timeout
@@ -72,10 +73,11 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
       clearTimeout(manualTimeoutRef.current);
     }
     
-    // Collapse after posting
+    // Reset all states after posting
     setIsExpanded(false);
     setIsManuallyCollapsed(true);
     setIsManuallyExpanded(false);
+    setIsUserActive(false);
     onPostCreated?.();
     
     // Reset manual collapse after a delay
@@ -83,6 +85,11 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
       setIsManuallyCollapsed(false);
     }, 2000);
   }, [onPostCreated]);
+
+  // Callback to track when user is actively using the composer
+  const handleUserActivity = useCallback((isActive: boolean) => {
+    setIsUserActive(isActive);
+  }, []);
 
   return (
     <div 
@@ -104,6 +111,7 @@ export const FloatingPostComposer: React.FC<FloatingPostComposerProps> = ({
             <PostComposer 
               defaultPillar={defaultPillar}
               onPostCreated={handlePostCreated}
+              onUserActivity={handleUserActivity}
             />
             {/* Collapse button - only show when scrolled */}
             {!isAtTop && (

@@ -20,13 +20,15 @@ import { useIsAdmin } from '@/hooks/useIsAdmin';
 interface PostComposerProps {
   defaultPillar?: string;
   onPostCreated?: () => void;
+  onUserActivity?: (isActive: boolean) => void;
 }
 
 type PostType = 'text' | 'image' | 'video' | 'link' | 'poll' | 'opportunity' | 'question' | 'spotlight';
 
 export const PostComposer: React.FC<PostComposerProps> = ({ 
   defaultPillar = 'connect',
-  onPostCreated 
+  onPostCreated,
+  onUserActivity
 }) => {
   const [content, setContent] = useState('');
   const [pillar, setPillar] = useState(defaultPillar);
@@ -97,6 +99,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       clearEmbedData();
       setSelectedFile(file);
       setPostType(file.type.startsWith('video/') ? 'video' : 'image');
+      setIsUserInteracting(true);
+      onUserActivity?.(true); // Notify parent that user is active
       const reader = new FileReader();
       reader.onload = (e) => {
         setFilePreview(e.target?.result as string);
@@ -109,6 +113,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     const newContent = e.target.value;
     setContent(newContent);
     setIsUserInteracting(true);
+    onUserActivity?.(true); // Notify parent that user is active
     // Clear file when user adds embed-able content
     if (selectedFile) {
       removeFile();
@@ -142,6 +147,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     if (!content.trim() && !selectedFile && !embedData) {
       setIsExpanded(false);
       setIsUserInteracting(false);
+      onUserActivity?.(false); // Notify parent that user is inactive
     }
   };
 
@@ -255,6 +261,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       setIsExpanded(false);
       setIsUserInteracting(false);
       setIsManuallyExpanded(false);
+      onUserActivity?.(false); // Notify parent that user is inactive
 
       // Clear any manual timeouts
       if (manualTimeoutRef.current) {
@@ -437,7 +444,19 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                   placeholder="What's on your mind?"
                   value={content}
                   onChange={handleTextareaChange}
-                  onFocus={() => setIsUserInteracting(true)}
+                  onFocus={() => {
+                    setIsUserInteracting(true);
+                    onUserActivity?.(true);
+                  }}
+                  onBlur={() => {
+                    // Only mark as inactive if no content and after a delay
+                    setTimeout(() => {
+                      if (!content.trim() && !selectedFile && !embedData) {
+                        setIsUserInteracting(false);
+                        onUserActivity?.(false);
+                      }
+                    }, 500);
+                  }}
                   className="resize-none border-0 p-0 text-lg placeholder:text-muted-foreground focus-visible:ring-0"
                   rows={3}
                 />
