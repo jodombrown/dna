@@ -19,6 +19,7 @@ export const phases = [
   { name: 'Market Research', path: '/phase-1/market-research' },
   { name: 'Prototyping', path: '/phase-2/prototyping' },
   { name: 'Customer Discovery', path: '/phase-3/customer-discovery' },
+  { name: 'MVP Build', path: '/phase-4/mvp' },
   { name: 'Beta Validation', path: '/phase-5/beta-validation' },
   { name: 'Go-to-Market', path: '/phase-6/go-to-market' },
 ] as const;

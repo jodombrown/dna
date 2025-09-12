@@ -27,6 +27,7 @@ import DnaMeRedirect from "./pages/DnaMeRedirect";
 import MarketResearchPhase from "./pages/MarketResearchPhase";
 import PrototypingPhase from "./pages/PrototypingPhase";
 import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
+import MvpPhase from "./pages/MvpPhase";
 import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
 
@@ -96,6 +97,7 @@ function App() {
               <Route path="/phase-1/market-research" element={<MarketResearchPhase />} />
               <Route path="/phase-2/prototyping" element={<PrototypingPhase />} />
               <Route path="/phase-3/customer-discovery" element={<CustomerDiscoveryPhase />} />
+              <Route path="/phase-4/mvp" element={<MvpPhase />} />
               <Route path="/phase-5/beta-validation" element={<BetaValidationPhase />} />
               <Route path="/phase-6/go-to-market" element={<GoToMarketPhase />} />
               
