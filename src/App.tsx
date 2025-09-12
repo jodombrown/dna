@@ -23,6 +23,11 @@ import AuthCallback from "./pages/AuthCallback";
 import UserDashboard from "./pages/UserDashboard";
 import DnaMeRedirect from "./pages/DnaMeRedirect";
 
+// Phase pages
+import BetaValidationPhase from "./pages/BetaValidationPhase";
+import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
+import GoToMarketPhase from "./pages/GoToMarketPhase";
+
 // Settings pages
 import ProfileSettings from "@/pages/settings/ProfileSettings";
 import ExperienceSettings from "@/pages/settings/ExperienceSettings";
@@ -79,6 +84,11 @@ function App() {
               {/* Main app routes */}
               <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
               <Route path="/app/*" element={<AppDashboard />} />
+              
+              {/* Phase pages */}
+              <Route path="/phase-3/customer-discovery" element={<CustomerDiscoveryPhase />} />
+              <Route path="/phase-5/beta-validation" element={<BetaValidationPhase />} />
+              <Route path="/phase-6/go-to-market" element={<GoToMarketPhase />} />
               
               {/* Static pages */}
               <Route path="/contact" element={<Contact />} />
