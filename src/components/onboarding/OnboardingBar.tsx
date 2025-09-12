@@ -114,7 +114,7 @@ const OnboardingBar: React.FC = () => {
           <Button onClick={onSave} disabled={saving || !isValid}>
             {saving ? "Saving..." : "Save & Continue"}
           </Button>
-          <a href="/settings/profile" className="text-sm text-primary underline">Edit full profile in Settings</a>
+          <a href="/app/profile" className="text-sm text-primary underline">Edit full profile</a>
         </div>
       </div>
     </Card>

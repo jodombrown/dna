@@ -4,9 +4,9 @@ import { Bookmark, Users, Calendar } from 'lucide-react';
 
 const RecentActivity = () => {
   const menuItems = [
-    { icon: Users, label: 'Groups', href: '/app/communities' },
-    { icon: Calendar, label: 'Events', href: '/app/events' },
-    { icon: Bookmark, label: 'Saved', href: '/app/saved' },
+    { icon: Users, label: 'Network', href: '/app/connect' },
+    { icon: Calendar, label: 'Dashboard', href: '/app/dashboard' },
+    { icon: Bookmark, label: 'Home', href: '/app/dashboard' },
   ];
 
   return (

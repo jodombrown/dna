@@ -109,9 +109,7 @@ const UnifiedHeader = () => {
     if (location.pathname.startsWith('/app/dashboard') || 
         location.pathname.startsWith('/app/search') ||
         location.pathname.startsWith('/app/connect') ||
-        location.pathname.startsWith('/app/messages') ||
-        location.pathname.startsWith('/app/events') ||
-        location.pathname.startsWith('/app/communities')) {
+        location.pathname.startsWith('/app/messages')) {
       // Navigate within app dashboard context
       const viewRouteMap: { [key: string]: string } = {
         'dashboard': '/app/dashboard',
@@ -287,9 +285,6 @@ const UnifiedHeader = () => {
                       <User className="w-5 h-5 mr-3" />
                       <span className="text-base">View Profile</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/settings/privacy')} className="py-3">
-                      <span className="text-base">Settings & Privacy</span>
-                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut} className="text-red-600 py-3">
                       <LogOut className="w-5 h-5 mr-3" />
@@ -347,31 +342,6 @@ const UnifiedHeader = () => {
                               </Button>
                             ))}
                             
-                            <div className="border-t pt-4 mt-4">
-                              <p className="text-sm text-gray-600 mb-4">More</p>
-                              <div className="space-y-2">
-                                <Button
-                                  variant="ghost"
-                                  className="justify-start text-left w-full hover:bg-dna-mint/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                                  onClick={() => {
-                                    navigate('/app/events');
-                                    setIsMobileMenuOpen(false);
-                                  }}
-                                >
-                                  Events
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  className="justify-start text-left w-full hover:bg-dna-mint/20 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                                  onClick={() => {
-                                    navigate('/app/communities');
-                                    setIsMobileMenuOpen(false);
-                                  }}
-                                >
-                                  Communities
-                                </Button>
-                              </div>
-                            </div>
                           </>
                         ) : (
                           <>

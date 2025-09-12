@@ -41,7 +41,6 @@ const mainNavItems = [
 
 const bottomNavItems = [
   { title: 'Profile', url: '/app/profile', icon: User },
-  { title: 'Settings', url: '/settings/profile', icon: Settings },
 ];
 
 const AppSidebar = () => {

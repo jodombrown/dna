@@ -35,7 +35,7 @@ const DashboardNudges: React.FC = () => {
       category: 'profile',
       priority: 'high',
       icon: <Settings className="w-4 h-4" />,
-      action: () => navigate('/settings/profile'),
+      action: () => navigate('/app/profile'),
       dismissible: true
     },
     {
@@ -45,7 +45,7 @@ const DashboardNudges: React.FC = () => {
       category: 'profile',
       priority: 'high',
       icon: <Target className="w-4 h-4" />,
-      action: () => navigate('/settings/experience'),
+      action: () => navigate('/app/profile'),
       dismissible: true
     },
     {
@@ -55,7 +55,7 @@ const DashboardNudges: React.FC = () => {
       category: 'profile',
       priority: 'medium',
       icon: <Lightbulb className="w-4 h-4" />,
-      action: () => navigate('/settings/experience'),
+      action: () => navigate('/app/profile'),
       dismissible: true
     },
     {
@@ -65,7 +65,7 @@ const DashboardNudges: React.FC = () => {
       category: 'profile',
       priority: 'medium',
       icon: <Link className="w-4 h-4" />,
-      action: () => navigate('/settings/links'),
+      action: () => navigate('/app/profile'),
       dismissible: true
     },
     {
