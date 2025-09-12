@@ -1,196 +1,226 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, MessageSquare } from 'lucide-react';
-import { Professional } from '@/types/search';
-import ConnectDialogs from './ConnectDialogs';
-import { canView } from '@/utils/privacy';
+import { 
+  MapPin, 
+  Briefcase, 
+  MessageSquare, 
+  UserPlus, 
+  Globe,
+  Heart,
+  Star,
+  Users
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Profile } from '@/services/profilesService';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProfessionalCardProps {
-  professional: Professional;
-  onConnect: () => void;
-  onMessage: () => void;
-  connectionStatus: string | null;
-  isLoggedIn: boolean;
+  professional: Profile;
 }
 
-// Helper function to generate culturally appropriate profile images for African professionals
-const getProfileImage = (name: string, countryOfOrigin: string) => {
-  // Map of diverse African professional images - different image for each name
-  const imageMap: { [key: string]: string } = {
-    // African Women
-    'Amara Okafor': 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face',
-    'Zara Mbeki': 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
-    'Fatima Hassan': 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=150&h=150&fit=crop&crop=face',
-    'Sarah Mwangi': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face',
-    'Aisha Kone': 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=150&h=150&fit=crop&crop=face',
-    'Kemi Adebisi': 'https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=150&h=150&fit=crop&crop=face',
-    'Adaora Okafor': 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face',
-    'Dr. Fatima Al-Rashid': 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
+const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional }) => {
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const { toast } = useToast();
+
+  const handleConnect = async () => {
+    setIsConnecting(true);
     
-    // African Men
-    'Kwame Asante': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-    'Ibrahim Hassan': 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-    'Kofi Mensah': 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
-    'Sekou Traore': 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face',
-    'Emeka Okonkwo': 'https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=150&h=150&fit=crop&crop=face',
-    'Thierry Mukendi': 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=150&h=150&fit=crop&crop=face',
-    'Ahmed El-Rashid': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
-    'Moses Kiprotich': 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&h=150&fit=crop&crop=face',
-    'Omar Benali': 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face',
-    'Chidi Okwu': 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-    'Prof. Kwame Asante': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-    'Dr. Amara Okafor': 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face',
-    
-    // Additional diverse images
-    'Yasmin El-Sayed': 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=150&h=150&fit=crop&crop=face',
-    'Tariq Osman': 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=150&h=150&fit=crop&crop=face'
+    // Simulate connection request
+    setTimeout(() => {
+      setIsConnecting(false);
+      setIsConnected(true);
+      toast({
+        title: "Connection Request Sent",
+        description: `Your request to connect with ${professional.full_name || professional.username} has been sent.`,
+      });
+    }, 1000);
   };
 
-  // Return specific image for known names, or fallback to a default based on gender hints
-  if (imageMap[name]) {
-    return imageMap[name];
-  }
-
-  // Fallback based on name patterns for African names
-  const femaleNames = ['Amara', 'Zara', 'Fatima', 'Aisha', 'Ngozi', 'Yasmin', 'Kemi', 'Adaora', 'Safiya', 'Sarah'];
-  const isLikelyFemale = femaleNames.some(fname => name.includes(fname));
-  
-  if (isLikelyFemale) {
-    return 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop&crop=face';
-  } else {
-    return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face';
-  }
-};
-
-const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
-  professional,
-  onConnect,
-  onMessage,
-  connectionStatus,
-  isLoggedIn
-}) => {
-  const [isConnectDialogOpen, setIsConnectDialogOpen] = useState(false);
-  const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
-  const [isJoinCommunityDialogOpen, setIsJoinCommunityDialogOpen] = useState(false);
-  const [isRegisterEventDialogOpen, setIsRegisterEventDialogOpen] = useState(false);
-
-  const handleConnectClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onConnect();
+  const handleMessage = () => {
+    toast({
+      title: "Messaging Available Soon",
+      description: "Direct messaging will be available in the next release.",
+    });
   };
-
-  const handleMessageClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onMessage();
-  };
-
-  const visibility = (professional as any)?.visibility || {};
 
   return (
-    <>
-      <Card className="hover:shadow-lg transition-shadow">
-        <CardHeader>
-          <div className="flex items-start gap-4">
-            <Avatar className="w-12 h-12 sm:w-16 sm:h-16">
-              <AvatarImage 
-                src={getProfileImage(professional.full_name, professional.country_of_origin)} 
-                alt={professional.full_name}
-              />
-              <AvatarFallback className="bg-gradient-to-br from-dna-copper to-dna-emerald text-white">
-                {professional.full_name.split(' ').map(n => n[0]).join('')}
-              </AvatarFallback>
-            </Avatar>
+    <Card className="group hover:shadow-lg transition-all duration-300 border-l-4 border-l-transparent hover:border-l-dna-emerald overflow-hidden">
+      <CardContent className="p-0">
+        {/* Header with Avatar and Basic Info */}
+        <div className="p-4 pb-3">
+          <div className="flex items-start gap-3 mb-3">
+            <Link to={`/dna/${professional.username}`} className="flex-shrink-0">
+              <Avatar className="w-12 h-12 ring-2 ring-dna-emerald/20 group-hover:ring-dna-emerald/40 transition-all">
+                <AvatarImage 
+                  src={professional.avatar_url || ''} 
+                  alt={professional.full_name || professional.username || ''} 
+                />
+                <AvatarFallback className="bg-dna-forest text-white font-semibold">
+                  {(professional.full_name || professional.username || 'U').charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+            
             <div className="flex-1 min-w-0">
-              <CardTitle className="text-base sm:text-lg mb-1">{professional.full_name}</CardTitle>
-              <p className="text-dna-copper font-medium text-sm sm:text-base">{professional.profession}</p>
-              <p className="text-gray-600 text-xs sm:text-sm">{professional.company}</p>
+              <Link 
+                to={`/dna/${professional.username}`}
+                className="block group-hover:text-dna-emerald transition-colors"
+              >
+                <h3 className="font-semibold text-sm sm:text-base text-foreground truncate">
+                  {professional.full_name || professional.username}
+                </h3>
+              </Link>
+              
+              {professional.headline && (
+                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mt-1">
+                  {professional.headline}
+                </p>
+              )}
+              
+              {/* Location and Origin */}
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                {professional.location && (
+                  <Badge variant="outline" className="text-xs px-2 py-0.5">
+                    <MapPin className="w-3 h-3 mr-1" />
+                    {professional.location}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            
+            {/* Connection Status Indicator */}
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-2 h-2 bg-dna-emerald rounded-full animate-pulse"></div>
+              <span className="text-xs text-muted-foreground">Active</span>
             </div>
           </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          {canView(visibility, 'location', { isSelf: false, isConnection: false }) && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <MapPin className="w-4 h-4" />
-              <span className="truncate">{professional.location} • Originally from {professional.country_of_origin}</span>
+          
+          {/* Professional Info */}
+          {professional.profession && (
+            <div className="flex items-center gap-1 mb-3">
+              <Briefcase className="w-3 h-3 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">
+                {professional.profession}
+                {professional.company && ` at ${professional.company}`}
+              </span>
             </div>
           )}
           
-          {professional.expertise && (
-            <div>
-              <div className="text-sm font-medium text-gray-700 mb-2">Expertise</div>
+          {/* Bio Preview */}
+          {professional.bio && (
+            <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
+              {professional.bio}
+            </p>
+          )}
+          
+          {/* Skills */}
+          {professional.skills && professional.skills.length > 0 && (
+            <div className="mb-4">
               <div className="flex flex-wrap gap-1">
-                {professional.expertise.slice(0, 3).map((skill, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
+                {professional.skills.slice(0, 3).map((skill, index) => (
+                  <Badge 
+                    key={index} 
+                    variant="secondary" 
+                    className="text-xs px-2 py-0.5 bg-dna-copper/10 text-dna-copper border-dna-copper/20"
+                  >
                     {skill}
                   </Badge>
                 ))}
+                {professional.skills.length > 3 && (
+                  <Badge variant="outline" className="text-xs px-2 py-0.5">
+                    +{professional.skills.length - 3} more
+                  </Badge>
+                )}
               </div>
             </div>
           )}
-
-          {professional.availability_for && (
-            <div>
-              <div className="text-sm font-medium text-gray-700 mb-2">Available For</div>
+          
+          {/* Impact Areas */}
+          {professional.impact_areas && professional.impact_areas.length > 0 && (
+            <div className="mb-4">
+              <div className="flex items-center gap-1 mb-1">
+                <Heart className="w-3 h-3 text-dna-gold" />
+                <span className="text-xs font-medium text-dna-gold">Impact Areas</span>
+              </div>
               <div className="flex flex-wrap gap-1">
-                {professional.availability_for.map((service, index) => (
-                  <Badge key={index} className="text-xs bg-dna-emerald/20 text-dna-emerald">
-                    {service}
+                {professional.impact_areas.slice(0, 2).map((area, index) => (
+                  <Badge 
+                    key={index} 
+                    variant="secondary" 
+                    className="text-xs px-2 py-0.5 bg-dna-gold/10 text-dna-gold border-dna-gold/20"
+                  >
+                    {area}
                   </Badge>
                 ))}
               </div>
             </div>
           )}
-          
-          {professional.bio && (
-            <div className="bg-gray-50 rounded-lg p-3">
-              <div className="text-sm">{professional.bio.length > 100 ? `${professional.bio.substring(0, 100)}...` : professional.bio}</div>
-            </div>
-          )}
-          
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            {connectionStatus === 'accepted' ? (
-              <Badge className="bg-green-100 text-green-800">Connected</Badge>
-            ) : connectionStatus === 'pending' ? (
-              <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>
-            ) : (
-              <Button 
-                className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
-                onClick={handleConnectClick}
-              >
-                Connect
-              </Button>
-            )}
-            
-            <Button 
-              variant="outline"
-              onClick={handleMessageClick}
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="border-t bg-muted/30 p-3">
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              variant={isConnected ? "secondary" : "default"}
+              size="sm"
+              onClick={handleConnect}
+              disabled={isConnecting || isConnected}
+              className={`text-xs h-8 ${
+                isConnected 
+                  ? 'bg-dna-emerald/10 text-dna-emerald border-dna-emerald/20' 
+                  : 'bg-dna-emerald hover:bg-dna-emerald/90'
+              }`}
             >
-              <MessageSquare className="w-4 h-4 mr-2" />
+              {isConnecting ? (
+                <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin mr-1" />
+              ) : isConnected ? (
+                <Users className="w-3 h-3 mr-1" />
+              ) : (
+                <UserPlus className="w-3 h-3 mr-1" />
+              )}
+              {isConnected ? 'Connected' : 'Connect'}
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleMessage}
+              className="text-xs h-8 hover:bg-dna-copper/10 hover:border-dna-copper/30 hover:text-dna-copper"
+            >
+              <MessageSquare className="w-3 h-3 mr-1" />
               Message
             </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      <ConnectDialogs
-        isConnectDialogOpen={isConnectDialogOpen}
-        setIsConnectDialogOpen={setIsConnectDialogOpen}
-        isMessageDialogOpen={isMessageDialogOpen}
-        setIsMessageDialogOpen={setIsMessageDialogOpen}
-        isJoinCommunityDialogOpen={isJoinCommunityDialogOpen}
-        setIsJoinCommunityDialogOpen={setIsJoinCommunityDialogOpen}
-        isRegisterEventDialogOpen={isRegisterEventDialogOpen}
-        setIsRegisterEventDialogOpen={setIsRegisterEventDialogOpen}
-      />
-    </>
+          
+          {/* Quick Stats */}
+          <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Users className="w-3 h-3" />
+                <span>0 mutual</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Star className="w-3 h-3" />
+                <span>4.8 rating</span>
+              </div>
+            </div>
+            <Link 
+              to={`/dna/${professional.username}`}
+              className="text-xs text-dna-emerald hover:text-dna-emerald/80 font-medium"
+            >
+              View Profile →
+            </Link>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
 export default ProfessionalCard;
+
