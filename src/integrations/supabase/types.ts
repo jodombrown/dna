@@ -2038,9 +2038,12 @@ export type Database = {
           content: string
           conversation_id: string
           created_at: string
+          delivered_at: string | null
           id: string
           is_read: boolean | null
           message_type: string | null
+          metadata: Json | null
+          read_at: string | null
           read_by: string[] | null
           sender_id: string
           updated_at: string
@@ -2049,9 +2052,12 @@ export type Database = {
           content: string
           conversation_id: string
           created_at?: string
+          delivered_at?: string | null
           id?: string
           is_read?: boolean | null
           message_type?: string | null
+          metadata?: Json | null
+          read_at?: string | null
           read_by?: string[] | null
           sender_id: string
           updated_at?: string
@@ -2060,9 +2066,12 @@ export type Database = {
           content?: string
           conversation_id?: string
           created_at?: string
+          delivered_at?: string | null
           id?: string
           is_read?: boolean | null
           message_type?: string | null
+          metadata?: Json | null
+          read_at?: string | null
           read_by?: string[] | null
           sender_id?: string
           updated_at?: string
@@ -2207,6 +2216,54 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_analytics: {
+        Row: {
+          count: number
+          created_at: string
+          event_date: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          post_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          count?: number
+          created_at?: string
+          event_date?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          post_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          count?: number
+          created_at?: string
+          event_date?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          post_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_analytics_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_analytics_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "v_feed_ordered"
             referencedColumns: ["id"]
           },
         ]
@@ -2439,6 +2496,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profile_views: {
+        Row: {
+          id: string
+          metadata: Json | null
+          profile_id: string
+          view_type: string | null
+          viewed_at: string
+          viewer_id: string | null
+        }
+        Insert: {
+          id?: string
+          metadata?: Json | null
+          profile_id: string
+          view_type?: string | null
+          viewed_at?: string
+          viewer_id?: string | null
+        }
+        Update: {
+          id?: string
+          metadata?: Json | null
+          profile_id?: string
+          view_type?: string | null
+          viewed_at?: string
+          viewer_id?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -2842,6 +2926,33 @@ export type Database = {
           created_at?: string | null
           id?: string
           post_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      search_preferences: {
+        Row: {
+          created_at: string
+          default_filters: Json | null
+          id: string
+          saved_searches: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          default_filters?: Json | null
+          id?: string
+          saved_searches?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          default_filters?: Json | null
+          id?: string
+          saved_searches?: Json | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -3962,8 +4073,16 @@ export type Database = {
         }
         Returns: string
       }
+      log_post_event: {
+        Args: { p_event_type: string; p_metadata?: Json; p_post_id: string }
+        Returns: undefined
+      }
       log_post_view: {
         Args: { p_post_id: string }
+        Returns: undefined
+      }
+      log_profile_view: {
+        Args: { p_profile_id: string; p_view_type?: string }
         Returns: undefined
       }
       make_user_admin: {
