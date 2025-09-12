@@ -34,9 +34,8 @@ const MobileNavigation = () => {
   const navigationItems: NavigationItem[] = [
     { title: 'Home', view: 'dashboard', icon: Home },
     { title: 'Network', view: 'network', icon: Users },
-    { title: 'Messages', view: 'messaging', icon: MessageSquare, badge: 0 },
-    { title: 'Search', view: 'search', icon: Search },
-    { title: 'Settings', view: 'settings', icon: Settings },
+    { title: 'Messages', view: 'messaging', icon: MessageSquare },
+    { title: 'Profile', view: 'profile', icon: User },
   ];
 
   return (
@@ -44,7 +43,7 @@ const MobileNavigation = () => {
       <div className="flex items-center justify-around w-full max-w-full mx-auto px-2 py-1">
         {navigationItems.map((item) => {
           const isActive = (location.pathname === '/app' && activeView === item.view) || 
-                          (location.pathname.startsWith('/settings') && item.view === 'settings');
+                          (location.pathname.startsWith('/settings') && item.view === 'profile');
           const Icon = item.icon;
           
           return (
@@ -53,8 +52,8 @@ const MobileNavigation = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  if (item.view === 'settings') {
-                    window.location.href = '/settings/profile';
+                  if (item.view === 'profile') {
+                    window.location.href = '/app/profile';
                   } else {
                     setActiveView(item.view as any);
                   }

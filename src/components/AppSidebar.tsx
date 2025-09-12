@@ -33,19 +33,15 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
 
 const mainNavItems = [
-  { title: 'Home', url: '/app/dashboard', icon: Home },
-  { title: 'Search', url: '/app/search', icon: Search },
-  { title: 'Connect', url: '/app/connect', icon: Users },
-  { title: 'Spaces', url: '/app/spaces', icon: Square },
-  { title: 'Opportunities', url: '/app/opportunities', icon: Briefcase },
+  { title: 'Dashboard', url: '/app/dashboard', icon: Home },
+  { title: 'Discover', url: '/app/search', icon: Search },
+  { title: 'Network', url: '/app/connect', icon: Users },
   { title: 'Messages', url: '/app/messages', icon: MessageSquare },
-  { title: 'Events', url: '/app/events', icon: Calendar },
-  { title: 'Communities', url: '/app/communities', icon: BookOpen },
 ];
 
 const bottomNavItems = [
   { title: 'Profile', url: '/app/profile', icon: User },
-  { title: 'Settings', url: '/settings/privacy', icon: Settings },
+  { title: 'Settings', url: '/settings/profile', icon: Settings },
 ];
 
 const AppSidebar = () => {
