@@ -2,7 +2,8 @@ import React from 'react';
 import { Profile } from '@/services/profilesService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Search, MessageSquare, UserPlus, TrendingUp, MapPin } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Users, Search, MessageSquare, UserPlus, TrendingUp, MapPin, Globe, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface DashboardCenterColumnProps {
@@ -28,78 +29,134 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
     }
   };
 
+  const completionScore = profile.profile_completion_score || 0;
+
   return (
     <div className="space-y-6">
-      {/* Welcome Header */}
+      {/* LinkedIn-style Welcome Header */}
       <Card className="border-l-4 border-l-primary bg-gradient-to-r from-primary/5 to-primary/10">
         <CardContent className="p-6">
-          <h2 className="text-xl font-semibold mb-2">
-            {isOwnProfile 
-              ? `Welcome back, ${profile.full_name?.split(' ')[0] || 'Member'}!` 
-              : `${profile.full_name || profile.username}'s Profile`
-            }
-          </h2>
-          <p className="text-muted-foreground">
-            {isOwnProfile 
-              ? 'Build meaningful connections across the African diaspora professional network' 
-              : 'Connect with diaspora professionals and expand your network'
-            }
-          </p>
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h2 className="text-xl font-semibold mb-2">
+                {isOwnProfile 
+                  ? `Welcome back, ${profile.full_name?.split(' ')[0] || 'Professional'}!` 
+                  : `${profile.full_name || profile.username}'s Profile`
+                }
+              </h2>
+              <p className="text-muted-foreground mb-4">
+                {isOwnProfile 
+                  ? 'Connect with African diaspora professionals worldwide' 
+                  : 'Professional in the African diaspora network'
+                }
+              </p>
+              
+              {/* Professional Identity Badges */}
+              <div className="flex flex-wrap gap-2">
+                {profile.country_of_origin && (
+                  <Badge variant="secondary" className="gap-1">
+                    <Globe className="w-3 h-3" />
+                    {profile.country_of_origin}
+                  </Badge>
+                )}
+                {profile.profession && (
+                  <Badge variant="outline" className="gap-1">
+                    <Briefcase className="w-3 h-3" />
+                    {profile.profession}
+                  </Badge>
+                )}
+                {profile.location && (
+                  <Badge variant="outline" className="gap-1">
+                    <MapPin className="w-3 h-3" />
+                    {profile.location}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            
+            {/* Profile Completion Circle */}
+            {isOwnProfile && (
+              <div className="flex flex-col items-center">
+                <div className="relative w-16 h-16">
+                  <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeOpacity="0.1"
+                    />
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth="2"
+                      strokeDasharray={`${completionScore}, 100`}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-sm font-semibold">{completionScore}%</span>
+                  </div>
+                </div>
+                <span className="text-xs text-muted-foreground mt-1">Profile</span>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 
-      {/* Connection Actions */}
+      {/* LinkedIn-style Action Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleAction('discover')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-primary/20" onClick={() => handleAction('discover')}>
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
               <Search className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold">Discover People</h3>
-              <p className="text-sm text-muted-foreground">Find diaspora professionals</p>
+              <h3 className="font-semibold text-gray-900">Discover Professionals</h3>
+              <p className="text-sm text-muted-foreground">Find diaspora talent</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleAction('network')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-primary/20" onClick={() => handleAction('network')}>
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
               <Users className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold">My Network</h3>
-              <p className="text-sm text-muted-foreground">Manage your connections</p>
+              <h3 className="font-semibold text-gray-900">My Network</h3>
+              <p className="text-sm text-muted-foreground">Manage connections</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleAction('messages')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-primary/20" onClick={() => handleAction('messages')}>
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
               <MessageSquare className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold">Messages</h3>
-              <p className="text-sm text-muted-foreground">Connect with your network</p>
+              <h3 className="font-semibold text-gray-900">Messages</h3>
+              <p className="text-sm text-muted-foreground">Connect privately</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleAction('discover')}>
+        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-primary/20" onClick={() => handleAction('discover')}>
           <CardContent className="p-6 flex items-center gap-4">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
               <UserPlus className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold">Grow Network</h3>
-              <p className="text-sm text-muted-foreground">Get connection suggestions</p>
+              <h3 className="font-semibold text-gray-900">People You May Know</h3>
+              <p className="text-sm text-muted-foreground">Grow your network</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Profile Information */}
+      {/* Professional Summary */}
       {profile.bio && (
         <Card>
           <CardHeader>
@@ -107,6 +164,18 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground leading-relaxed">{profile.bio}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Diaspora Story */}
+      {profile.diaspora_story && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">My Diaspora Journey</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground leading-relaxed">{profile.diaspora_story}</p>
           </CardContent>
         </Card>
       )}
@@ -120,12 +189,13 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {profile.skills.map((skill, index) => (
-                <span
+                <Badge
                   key={index}
-                  className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                  variant="secondary"
+                  className="px-3 py-1 text-sm"
                 >
                   {skill}
-                </span>
+                </Badge>
               ))}
             </div>
           </CardContent>
@@ -133,23 +203,23 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
       )}
 
       {/* Profile Completion CTA */}
-      {isOwnProfile && (!profile.bio || !profile.skills?.length) && (
-        <Card className="border-orange-200 bg-orange-50/50">
+      {isOwnProfile && completionScore < 80 && (
+        <Card className="border-amber-200 bg-amber-50/50">
           <CardContent className="p-6">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                <UserPlus className="w-4 h-4 text-orange-600" />
+              <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                <UserPlus className="w-4 h-4 text-amber-600" />
               </div>
-              <h3 className="font-semibold text-orange-900">Complete Your Profile</h3>
+              <h3 className="font-semibold text-amber-900">Strengthen Your Profile</h3>
             </div>
-            <p className="text-orange-700 text-sm mb-4">
-              Complete your profile to get better connection recommendations and increase your visibility in the network.
+            <p className="text-amber-700 text-sm mb-4">
+              Complete your profile to attract better connections and opportunities in the diaspora network.
             </p>
-            <Link to="/settings/profile">
+            <Link to="/app/profile/edit">
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="border-orange-200 text-orange-700 hover:bg-orange-100"
+                className="border-amber-200 text-amber-700 hover:bg-amber-100"
               >
                 Complete Profile
               </Button>
@@ -158,7 +228,7 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
         </Card>
       )}
 
-      {/* Quick Network Stats */}
+      {/* Network Impact Stats */}
       {isOwnProfile && (
         <Card>
           <CardHeader>
@@ -170,17 +240,36 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
           <CardContent>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-primary">0</div>
+                <div className="text-2xl font-bold text-primary">{profile.connection_count || 0}</div>
                 <div className="text-sm text-muted-foreground">Connections</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-primary">0</div>
+                <div className="text-2xl font-bold text-primary">{profile.profile_views_count || 0}</div>
                 <div className="text-sm text-muted-foreground">Profile Views</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-primary">0</div>
-                <div className="text-sm text-muted-foreground">Messages Sent</div>
+                <div className="text-sm text-muted-foreground">Messages</div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Networking Goals */}
+      {profile.networking_goals && profile.networking_goals.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Networking Goals</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {profile.networking_goals.map((goal, index) => (
+                <div key={index} className="flex items-start gap-2">
+                  <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-sm text-muted-foreground">{goal}</span>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>

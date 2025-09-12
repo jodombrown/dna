@@ -2544,6 +2544,7 @@ export type Database = {
           bio: string | null
           collaboration_needs: string[] | null
           company: string | null
+          connection_count: number | null
           contribution_style: string | null
           country_of_origin: string | null
           country_origin: string | null
@@ -2556,6 +2557,7 @@ export type Database = {
           current_region: string | null
           dashboard_version: string | null
           diaspora_origin: string | null
+          diaspora_story: string | null
           display_name: string | null
           email: string | null
           email_notifications: boolean | null
@@ -2578,13 +2580,16 @@ export type Database = {
           is_admin: boolean | null
           is_beta_tester: boolean | null
           is_public: boolean | null
+          last_active: string | null
           last_name: string | null
           last_seen_at: string | null
           linkedin_url: string | null
           location: string | null
           mentorship_interest: string[] | null
+          mentorship_offering: boolean | null
           middle_initial: string | null
           needs: string[] | null
+          networking_goals: string[] | null
           newsletter_emails: boolean | null
           notification_preferences: Json | null
           offers: string[] | null
@@ -2592,13 +2597,17 @@ export type Database = {
           onboarding_progress: Json
           onboarding_recommendations_viewed: boolean | null
           onboarding_stage: string | null
+          open_to_opportunities: boolean | null
           origin_country_code: string | null
           origin_country_name: string | null
           preferred_contact: string | null
           profession: string | null
           professional_role: string | null
+          professional_summary: string | null
           profile_completeness_score: number | null
+          profile_completion_score: number | null
           profile_picture_url: string | null
+          profile_views_count: number | null
           recent_searches: string[] | null
           referral_code: string | null
           referrer_id: string | null
@@ -2606,6 +2615,7 @@ export type Database = {
           roles: string[] | null
           sdg_focus: string[] | null
           sectors: string[] | null
+          seeking_mentorship: boolean | null
           selected_pillars: string[] | null
           skills: string[] | null
           support_areas: string[] | null
@@ -2642,6 +2652,7 @@ export type Database = {
           bio?: string | null
           collaboration_needs?: string[] | null
           company?: string | null
+          connection_count?: number | null
           contribution_style?: string | null
           country_of_origin?: string | null
           country_origin?: string | null
@@ -2654,6 +2665,7 @@ export type Database = {
           current_region?: string | null
           dashboard_version?: string | null
           diaspora_origin?: string | null
+          diaspora_story?: string | null
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
@@ -2676,13 +2688,16 @@ export type Database = {
           is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          last_active?: string | null
           last_name?: string | null
           last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
           mentorship_interest?: string[] | null
+          mentorship_offering?: boolean | null
           middle_initial?: string | null
           needs?: string[] | null
+          networking_goals?: string[] | null
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
           offers?: string[] | null
@@ -2690,13 +2705,17 @@ export type Database = {
           onboarding_progress?: Json
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
+          open_to_opportunities?: boolean | null
           origin_country_code?: string | null
           origin_country_name?: string | null
           preferred_contact?: string | null
           profession?: string | null
           professional_role?: string | null
+          professional_summary?: string | null
           profile_completeness_score?: number | null
+          profile_completion_score?: number | null
           profile_picture_url?: string | null
+          profile_views_count?: number | null
           recent_searches?: string[] | null
           referral_code?: string | null
           referrer_id?: string | null
@@ -2704,6 +2723,7 @@ export type Database = {
           roles?: string[] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
+          seeking_mentorship?: boolean | null
           selected_pillars?: string[] | null
           skills?: string[] | null
           support_areas?: string[] | null
@@ -2740,6 +2760,7 @@ export type Database = {
           bio?: string | null
           collaboration_needs?: string[] | null
           company?: string | null
+          connection_count?: number | null
           contribution_style?: string | null
           country_of_origin?: string | null
           country_origin?: string | null
@@ -2752,6 +2773,7 @@ export type Database = {
           current_region?: string | null
           dashboard_version?: string | null
           diaspora_origin?: string | null
+          diaspora_story?: string | null
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
@@ -2774,13 +2796,16 @@ export type Database = {
           is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          last_active?: string | null
           last_name?: string | null
           last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
           mentorship_interest?: string[] | null
+          mentorship_offering?: boolean | null
           middle_initial?: string | null
           needs?: string[] | null
+          networking_goals?: string[] | null
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
           offers?: string[] | null
@@ -2788,13 +2813,17 @@ export type Database = {
           onboarding_progress?: Json
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
+          open_to_opportunities?: boolean | null
           origin_country_code?: string | null
           origin_country_name?: string | null
           preferred_contact?: string | null
           profession?: string | null
           professional_role?: string | null
+          professional_summary?: string | null
           profile_completeness_score?: number | null
+          profile_completion_score?: number | null
           profile_picture_url?: string | null
+          profile_views_count?: number | null
           recent_searches?: string[] | null
           referral_code?: string | null
           referrer_id?: string | null
@@ -2802,6 +2831,7 @@ export type Database = {
           roles?: string[] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
+          seeking_mentorship?: boolean | null
           selected_pillars?: string[] | null
           skills?: string[] | null
           support_areas?: string[] | null
@@ -3786,6 +3816,10 @@ export type Database = {
       }
       calculate_profile_completeness_score_new: {
         Args: { p_id: string }
+        Returns: number
+      }
+      calculate_profile_completion_score: {
+        Args: { profile_id: string }
         Returns: number
       }
       can_create_collaboration: {
