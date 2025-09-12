@@ -15,14 +15,24 @@ import {
   Users
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Profile } from '@/services/profilesService';
+import { Professional } from '@/types/search';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProfessionalCardProps {
-  professional: Profile;
+  professional: Professional;
+  onConnect?: () => void;
+  onMessage?: () => void;
+  connectionStatus?: any;
+  isLoggedIn?: boolean;
 }
 
-const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional }) => {
+const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ 
+  professional, 
+  onConnect, 
+  onMessage, 
+  connectionStatus, 
+  isLoggedIn 
+}) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const { toast } = useToast();
@@ -34,18 +44,23 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional }) => 
     setTimeout(() => {
       setIsConnecting(false);
       setIsConnected(true);
+      if (onConnect) onConnect();
       toast({
         title: "Connection Request Sent",
-        description: `Your request to connect with ${professional.full_name || professional.username} has been sent.`,
+        description: `Your request to connect with ${professional.full_name || professional.username || 'this professional'} has been sent.`,
       });
     }, 1000);
   };
 
   const handleMessage = () => {
-    toast({
-      title: "Messaging Available Soon",
-      description: "Direct messaging will be available in the next release.",
-    });
+    if (onMessage) {
+      onMessage();
+    } else {
+      toast({
+        title: "Messaging Available Soon",
+        description: "Direct messaging will be available in the next release.",
+      });
+    }
   };
 
   return (
@@ -54,7 +69,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional }) => 
         {/* Header with Avatar and Basic Info */}
         <div className="p-4 pb-3">
           <div className="flex items-start gap-3 mb-3">
-            <Link to={`/dna/${professional.username}`} className="flex-shrink-0">
+            <div className="flex-shrink-0">
               <Avatar className="w-12 h-12 ring-2 ring-dna-emerald/20 group-hover:ring-dna-emerald/40 transition-all">
                 <AvatarImage 
                   src={professional.avatar_url || ''} 
@@ -64,17 +79,14 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional }) => 
                   {(professional.full_name || professional.username || 'U').charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-            </Link>
+            </div>
             
             <div className="flex-1 min-w-0">
-              <Link 
-                to={`/dna/${professional.username}`}
-                className="block group-hover:text-dna-emerald transition-colors"
-              >
+              <div className="block group-hover:text-dna-emerald transition-colors">
                 <h3 className="font-semibold text-sm sm:text-base text-foreground truncate">
                   {professional.full_name || professional.username}
                 </h3>
-              </Link>
+              </div>
               
               {professional.headline && (
                 <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mt-1">
@@ -209,12 +221,9 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({ professional }) => 
                 <span>4.8 rating</span>
               </div>
             </div>
-            <Link 
-              to={`/dna/${professional.username}`}
-              className="text-xs text-dna-emerald hover:text-dna-emerald/80 font-medium"
-            >
+            <div className="text-xs text-dna-emerald hover:text-dna-emerald/80 font-medium cursor-pointer">
               View Profile →
-            </Link>
+            </div>
           </div>
         </div>
       </CardContent>
