@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import AdvancedSearch from '@/components/search/AdvancedSearch';
+import { AdvancedSearch } from '@/components/search/AdvancedSearch';
 import { SearchFilters } from '@/types/searchTypes';
+import { SearchFilters as AdvancedSearchFilters } from '@/components/search/AdvancedSearch';
 
 interface SearchSidebarProps {
   activeTab: string;
@@ -29,9 +30,21 @@ const SearchSidebar: React.FC<SearchSidebarProps> = ({
       </Tabs>
       
       <AdvancedSearch
-        onSearch={onSearch}
-        onClear={onClear}
-        loading={loading}
+        onSearch={(filters: AdvancedSearchFilters) => {
+          // Convert advanced search filters to basic search filters
+          const basicFilters: SearchFilters = {
+            searchTerm: filters.query,
+            profession: filters.industry,
+            location: filters.location,
+            skills: filters.skills,
+            experience: filters.experience.join('-'),
+            isMentor: filters.mentorshipAreas.length > 0,
+            isInvestor: filters.investorType !== '',
+            lookingForOpportunities: filters.availability.includes('opportunities'),
+            countryOfOrigin: filters.location
+          };
+          onSearch(basicFilters);
+        }}
       />
     </div>
   );
