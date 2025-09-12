@@ -26,6 +26,14 @@ import ConnectExample from "./pages/ConnectExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
 
+// Phase pages
+import MarketResearchPhase from "./pages/MarketResearchPhase";
+import PrototypingPhase from "./pages/PrototypingPhase";
+import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
+import MvpPhase from "./pages/MvpPhase";
+import BetaValidationPhase from "./pages/BetaValidationPhase";
+import GoToMarketPhase from "./pages/GoToMarketPhase";
+
 
 const queryClient = new QueryClient();
 
@@ -75,6 +83,16 @@ function App() {
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
+              
+              {/* Static pages */}
+              
+              {/* Phase pages */}
+              <Route path="/phase-1/market-research" element={<MarketResearchPhase />} />
+              <Route path="/phase-2/prototyping" element={<PrototypingPhase />} />
+              <Route path="/phase-3/customer-discovery" element={<CustomerDiscoveryPhase />} />
+              <Route path="/phase-4/mvp" element={<MvpPhase />} />
+              <Route path="/phase-5/beta-validation" element={<BetaValidationPhase />} />
+              <Route path="/phase-6/go-to-market" element={<GoToMarketPhase />} />
               
               {/* Static pages */}
               <Route path="/contact" element={<Contact />} />
