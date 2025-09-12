@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Users, Search, MessageSquare, UserPlus, TrendingUp, MapPin, Globe, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { DNAPillarNavigation } from '@/components/navigation/DNAPillarNavigation';
 
 interface DashboardCenterColumnProps {
   profile: Profile;
@@ -32,7 +33,10 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
   const completionScore = profile.profile_completion_score || 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
+      {/* DNA Pillar Navigation */}
+      <DNAPillarNavigation variant="horizontal" showDescriptions={true} />
+      
       {/* LinkedIn-style Welcome Header */}
       <Card className="border-l-4 border-l-primary bg-gradient-to-r from-primary/5 to-primary/10">
         <CardContent className="p-6">
@@ -105,52 +109,52 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
         </CardContent>
       </Card>
 
-      {/* LinkedIn-style Action Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-primary/20" onClick={() => handleAction('discover')}>
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-              <Search className="w-6 h-6 text-primary" />
+      {/* Connection-Focused Action Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-dna-emerald/30 border-l-4 border-l-dna-emerald" onClick={() => handleAction('discover')}>
+          <CardContent className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center">
+              <Search className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald" />
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900">Discover Professionals</h3>
-              <p className="text-sm text-muted-foreground">Find diaspora talent</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-primary/20" onClick={() => handleAction('network')}>
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-              <Users className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900">My Network</h3>
-              <p className="text-sm text-muted-foreground">Manage connections</p>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-foreground text-sm sm:text-base">Discover Professionals</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">Find diaspora talent to connect with</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-primary/20" onClick={() => handleAction('messages')}>
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-              <MessageSquare className="w-6 h-6 text-primary" />
+        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-dna-emerald/30 border-l-4 border-l-dna-emerald" onClick={() => handleAction('network')}>
+          <CardContent className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center">
+              <Users className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald" />
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900">Messages</h3>
-              <p className="text-sm text-muted-foreground">Connect privately</p>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-foreground text-sm sm:text-base">My Network</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">Manage your connections</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-primary/20" onClick={() => handleAction('discover')}>
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-              <UserPlus className="w-6 h-6 text-primary" />
+        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-dna-emerald/30 border-l-4 border-l-dna-emerald" onClick={() => handleAction('messages')}>
+          <CardContent className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center">
+              <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald" />
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900">People You May Know</h3>
-              <p className="text-sm text-muted-foreground">Grow your network</p>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-foreground text-sm sm:text-base">Messages</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">Connect privately with your network</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-dna-emerald/30 border-l-4 border-l-dna-emerald" onClick={() => handleAction('discover')}>
+          <CardContent className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center">
+              <UserPlus className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-foreground text-sm sm:text-base">People You May Know</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">AI-powered network expansion</p>
             </div>
           </CardContent>
         </Card>
