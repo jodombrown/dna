@@ -28,6 +28,11 @@ import BetaValidationPhase from "./pages/BetaValidationPhase";
 import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
 
+// Main feature pages
+import ConnectExample from "./pages/ConnectExample";
+import CollaborationsExample from "./pages/CollaborationsExample";
+import ContributeExample from "./pages/ContributeExample";
+
 // Settings pages
 import ProfileSettings from "@/pages/settings/ProfileSettings";
 import ExperienceSettings from "@/pages/settings/ExperienceSettings";
@@ -89,6 +94,11 @@ function App() {
               <Route path="/phase-3/customer-discovery" element={<CustomerDiscoveryPhase />} />
               <Route path="/phase-5/beta-validation" element={<BetaValidationPhase />} />
               <Route path="/phase-6/go-to-market" element={<GoToMarketPhase />} />
+              
+              {/* Main feature pages */}
+              <Route path="/connect" element={<ConnectExample />} />
+              <Route path="/collaborate" element={<CollaborationsExample />} />
+              <Route path="/contribute" element={<ContributeExample />} />
               
               {/* Static pages */}
               <Route path="/contact" element={<Contact />} />
