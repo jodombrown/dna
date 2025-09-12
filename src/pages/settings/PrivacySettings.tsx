@@ -5,7 +5,8 @@ import { useUpdateProfile } from "@/hooks/useProfiles";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ui/confirm-dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2 } from "lucide-react";
+import { Trash2, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import SettingsNav from "./SettingsNav";
 
 const opts = [
@@ -18,6 +19,7 @@ const PrivacySettings: React.FC = () => {
   const { user, signOut } = useAuth();
   const { data: profile, refetch } = useProfile();
   const { mutateAsync: updateProfile } = useUpdateProfile();
+  const navigate = useNavigate();
 
   const [visibility, setVisibility] = useState<any>({});
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -74,6 +76,17 @@ const PrivacySettings: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
+      <div className="flex items-center gap-4 mb-4">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => navigate('/app/dashboard')}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Dashboard
+        </Button>
+      </div>
       <h1 className="text-xl font-semibold">Privacy</h1>
       <SettingsNav active="privacy" />
       <p className="text-sm text-muted-foreground">Choose who can see each field. Public = visible to all; Connections = people you connect with; Private = only you.</p>

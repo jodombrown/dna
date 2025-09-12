@@ -26,8 +26,8 @@ const MobileNavigation = () => {
   const location = useLocation();
   const { isMobile } = useMobile();
 
-  // Only show on app routes and mobile devices
-  if (!isMobile || !location.pathname.startsWith('/app')) {
+  // Only show on app routes, settings routes, and mobile devices
+  if (!isMobile || (!location.pathname.startsWith('/app') && !location.pathname.startsWith('/settings'))) {
     return null;
   }
 
@@ -36,14 +36,15 @@ const MobileNavigation = () => {
     { title: 'Network', view: 'network', icon: Users },
     { title: 'Messages', view: 'messaging', icon: MessageSquare, badge: 0 },
     { title: 'Search', view: 'search', icon: Search },
-    { title: 'Profile', view: 'profile', icon: User },
+    { title: 'Settings', view: 'settings', icon: Settings },
   ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 z-50 safe-area-pb">
       <div className="flex items-center justify-around w-full max-w-full mx-auto px-2 py-1">
         {navigationItems.map((item) => {
-          const isActive = location.pathname === '/app' && activeView === item.view;
+          const isActive = (location.pathname === '/app' && activeView === item.view) || 
+                          (location.pathname.startsWith('/settings') && item.view === 'settings');
           const Icon = item.icon;
           
           return (
@@ -51,7 +52,13 @@ const MobileNavigation = () => {
               <MobileButton
                 variant="ghost"
                 size="sm"
-                onClick={() => setActiveView(item.view as any)}
+                onClick={() => {
+                  if (item.view === 'settings') {
+                    window.location.href = '/settings/profile';
+                  } else {
+                    setActiveView(item.view as any);
+                  }
+                }}
                 fullWidth
                 touchOptimized
                 className={`flex flex-col items-center gap-1 h-auto py-2 transition-colors ${

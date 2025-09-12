@@ -5,6 +5,8 @@ import { useUpdateProfile } from "@/hooks/useProfiles";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import SettingsNav from "./SettingsNav";
 
 const LinksSettings: React.FC = () => {
@@ -12,6 +14,7 @@ const LinksSettings: React.FC = () => {
   const { data: profile, refetch } = useProfile();
   const { mutateAsync: updateProfile } = useUpdateProfile();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [website, setWebsite] = useState("");
   const [twitter, setTwitter] = useState("");
@@ -62,6 +65,17 @@ const LinksSettings: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
+      <div className="flex items-center gap-4 mb-4">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => navigate('/app/dashboard')}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Dashboard
+        </Button>
+      </div>
       <h1 className="text-xl font-semibold">Links</h1>
       <SettingsNav active="links" />
       <div className="space-y-4">
