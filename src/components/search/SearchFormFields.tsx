@@ -69,7 +69,7 @@ const SearchFormFields: React.FC<SearchFormFieldsProps> = ({
             <SelectValue placeholder="Select experience" defaultValue={filters.experience} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Any</SelectItem>
+            <SelectItem value="any">Any</SelectItem>
             <SelectItem value="0-2">0-2 years</SelectItem>
             <SelectItem value="3-5">3-5 years</SelectItem>
             <SelectItem value="6-10">6-10 years</SelectItem>

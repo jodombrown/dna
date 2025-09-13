@@ -24,8 +24,8 @@ const PeopleDiscovery: React.FC<PeopleDiscoveryProps> = ({ onMessage }) => {
   // Update filters when search parameters change
   useEffect(() => {
     const newFilters: any = {};
-    if (locationFilter) newFilters.location = locationFilter;
-    if (professionFilter) newFilters.profession = professionFilter;
+    if (locationFilter && locationFilter !== 'all') newFilters.location = locationFilter;
+    if (professionFilter && professionFilter !== 'all') newFilters.profession = professionFilter;
     if (searchTerm) newFilters.searchTerm = searchTerm;
     setFilters(newFilters);
   }, [searchTerm, locationFilter, professionFilter]);
@@ -112,7 +112,7 @@ const PeopleDiscovery: React.FC<PeopleDiscoveryProps> = ({ onMessage }) => {
                 <SelectValue placeholder="Filter by location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Locations</SelectItem>
+                <SelectItem value="all">All Locations</SelectItem>
                 <SelectItem value="United States">United States</SelectItem>
                 <SelectItem value="United Kingdom">United Kingdom</SelectItem>
                 <SelectItem value="Canada">Canada</SelectItem>
@@ -127,7 +127,7 @@ const PeopleDiscovery: React.FC<PeopleDiscoveryProps> = ({ onMessage }) => {
                 <SelectValue placeholder="Filter by profession" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Professions</SelectItem>
+                <SelectItem value="all">All Professions</SelectItem>
                 <SelectItem value="Software Engineer">Software Engineer</SelectItem>
                 <SelectItem value="Data Scientist">Data Scientist</SelectItem>
                 <SelectItem value="Product Manager">Product Manager</SelectItem>
