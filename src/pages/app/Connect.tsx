@@ -5,8 +5,10 @@ import ConnectSearchFilters from '@/components/connect/ConnectSearchFilters';
 import ProfessionalCard from '@/components/connect/ProfessionalCard';
 import ConnectHeader from '@/components/connect/ConnectHeader';
 import ConnectStats from '@/components/connect/ConnectStats';
+import { SmartRecommendations } from '@/components/connect/SmartRecommendations';
 import { Card, CardContent } from '@/components/ui/card';
 import { Users, Search } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ConnectFilters {
   location: string;
@@ -16,6 +18,7 @@ interface ConnectFilters {
 }
 
 const Connect: React.FC = () => {
+  const { user } = useAuth();
   const [filters, setFilters] = useState<ConnectFilters>({
     location: '',
     profession: '',
@@ -56,11 +59,19 @@ const Connect: React.FC = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
           {/* Filters Sidebar */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <ConnectSearchFilters 
               filters={filters}
               onFiltersChange={setFilters}
             />
+            
+            {/* Smart Recommendations */}
+            {user && (
+              <SmartRecommendations
+                onConnect={(professionalId) => console.log('Connect with:', professionalId)}
+                onMessage={(professionalId, professionalName) => console.log('Message:', professionalName)}
+              />
+            )}
           </div>
           
           {/* Results Grid */}
