@@ -129,7 +129,7 @@ const ConnectSearchFilters: React.FC<ConnectSearchFiltersProps> = ({
                 <SelectValue placeholder="Select location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Locations</SelectItem>
+                <SelectItem value="all">All Locations</SelectItem>
                 {allLocations.map((location) => (
                   <SelectItem key={location} value={location}>
                     {location}
@@ -150,7 +150,7 @@ const ConnectSearchFilters: React.FC<ConnectSearchFiltersProps> = ({
                 <SelectValue placeholder="Select profession" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Professions</SelectItem>
+                <SelectItem value="all">All Professions</SelectItem>
                 {professions.map((profession) => (
                   <SelectItem key={profession} value={profession}>
                     {profession}
