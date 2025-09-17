@@ -26,6 +26,9 @@ import ConnectExample from "./pages/ConnectExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
 
+// Regional pages
+import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
+
 // Phase pages
 import MarketResearchPhase from "./pages/MarketResearchPhase";
 import PrototypingPhase from "./pages/PrototypingPhase";
@@ -83,6 +86,9 @@ function App() {
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
+              
+              {/* Regional landing pages */}
+              <Route path="/north-africa" element={<NorthAfricaLandingPage />} />
               
               {/* Static pages */}
               

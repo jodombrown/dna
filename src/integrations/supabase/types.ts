@@ -1120,6 +1120,30 @@ export type Database = {
           },
         ]
       }
+      continents: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contribution_cards: {
         Row: {
           amount_needed: number | null
@@ -1205,6 +1229,182 @@ export type Database = {
           user_2_id?: string
         }
         Relationships: []
+      }
+      countries: {
+        Row: {
+          capital: string | null
+          created_at: string
+          description: string | null
+          flag_url: string | null
+          id: string
+          iso_code: string | null
+          name: string
+          population: number | null
+          region_id: string
+          updated_at: string
+        }
+        Insert: {
+          capital?: string | null
+          created_at?: string
+          description?: string | null
+          flag_url?: string | null
+          id?: string
+          iso_code?: string | null
+          name: string
+          population?: number | null
+          region_id: string
+          updated_at?: string
+        }
+        Update: {
+          capital?: string | null
+          created_at?: string
+          description?: string | null
+          flag_url?: string | null
+          id?: string
+          iso_code?: string | null
+          name?: string
+          population?: number | null
+          region_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "countries_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      diaspora_data: {
+        Row: {
+          country_id: string | null
+          created_at: string
+          currency: string | null
+          diaspora_location: string | null
+          diaspora_name: string | null
+          featured: boolean | null
+          id: string
+          image_url: string | null
+          project_name: string | null
+          project_type: string | null
+          remittance_value: number | null
+          story_content: string | null
+          story_title: string | null
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          country_id?: string | null
+          created_at?: string
+          currency?: string | null
+          diaspora_location?: string | null
+          diaspora_name?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          project_name?: string | null
+          project_type?: string | null
+          remittance_value?: number | null
+          story_content?: string | null
+          story_title?: string | null
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          country_id?: string | null
+          created_at?: string
+          currency?: string | null
+          diaspora_location?: string | null
+          diaspora_name?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          project_name?: string | null
+          project_type?: string | null
+          remittance_value?: number | null
+          story_content?: string | null
+          story_title?: string | null
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "diaspora_data_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      economic_indicators: {
+        Row: {
+          country_id: string | null
+          created_at: string
+          id: string
+          indicator_type: string
+          month: number | null
+          province_id: string | null
+          region_id: string | null
+          source: string | null
+          unit: string | null
+          updated_at: string
+          value: number
+          year: number
+        }
+        Insert: {
+          country_id?: string | null
+          created_at?: string
+          id?: string
+          indicator_type: string
+          month?: number | null
+          province_id?: string | null
+          region_id?: string | null
+          source?: string | null
+          unit?: string | null
+          updated_at?: string
+          value: number
+          year: number
+        }
+        Update: {
+          country_id?: string | null
+          created_at?: string
+          id?: string
+          indicator_type?: string
+          month?: number | null
+          province_id?: string | null
+          region_id?: string | null
+          source?: string | null
+          unit?: string | null
+          updated_at?: string
+          value?: number
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "economic_indicators_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "economic_indicators_province_id_fkey"
+            columns: ["province_id"]
+            isOneToOne: false
+            referencedRelation: "provinces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "economic_indicators_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       error_logs: {
         Row: {
@@ -1929,6 +2129,75 @@ export type Database = {
         }
         Relationships: []
       }
+      innovation_data: {
+        Row: {
+          country_id: string | null
+          created_at: string
+          description: string | null
+          featured: boolean | null
+          founded_year: number | null
+          funding_amount: number | null
+          funding_currency: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          organization_type: string
+          province_id: string | null
+          sector: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          country_id?: string | null
+          created_at?: string
+          description?: string | null
+          featured?: boolean | null
+          founded_year?: number | null
+          funding_amount?: number | null
+          funding_currency?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          organization_type: string
+          province_id?: string | null
+          sector?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          country_id?: string | null
+          created_at?: string
+          description?: string | null
+          featured?: boolean | null
+          founded_year?: number | null
+          funding_amount?: number | null
+          funding_currency?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          organization_type?: string
+          province_id?: string | null
+          sector?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "innovation_data_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "innovation_data_province_id_fkey"
+            columns: ["province_id"]
+            isOneToOne: false
+            referencedRelation: "provinces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invites: {
         Row: {
           code: string
@@ -2122,6 +2391,116 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_reports: {
+        Row: {
+          country_id: string | null
+          created_at: string
+          diaspora_spotlight: string | null
+          economic_summary: string | null
+          featured_image_url: string | null
+          id: string
+          innovation_highlight: string | null
+          is_published: boolean | null
+          political_summary: string | null
+          published_at: string | null
+          region_id: string | null
+          report_month: number
+          report_year: number
+          updated_at: string
+        }
+        Insert: {
+          country_id?: string | null
+          created_at?: string
+          diaspora_spotlight?: string | null
+          economic_summary?: string | null
+          featured_image_url?: string | null
+          id?: string
+          innovation_highlight?: string | null
+          is_published?: boolean | null
+          political_summary?: string | null
+          published_at?: string | null
+          region_id?: string | null
+          report_month: number
+          report_year: number
+          updated_at?: string
+        }
+        Update: {
+          country_id?: string | null
+          created_at?: string
+          diaspora_spotlight?: string | null
+          economic_summary?: string | null
+          featured_image_url?: string | null
+          id?: string
+          innovation_highlight?: string | null
+          is_published?: boolean | null
+          political_summary?: string | null
+          published_at?: string | null
+          region_id?: string | null
+          report_month?: number
+          report_year?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_reports_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monthly_reports_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsletter_subscriptions: {
+        Row: {
+          country_interests: string[] | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          is_active: boolean | null
+          region_interest: string | null
+          subscription_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          country_interests?: string[] | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          region_interest?: string | null
+          subscription_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          country_interests?: string[] | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          region_interest?: string | null
+          subscription_type?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_subscriptions_region_interest_fkey"
+            columns: ["region_interest"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -2222,6 +2601,59 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      political_digest: {
+        Row: {
+          author: string | null
+          country_id: string
+          created_at: string
+          elections_upcoming: boolean | null
+          id: string
+          policy_changes: string | null
+          reforms_highlight: string | null
+          report_date: string
+          risk_level: string | null
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          country_id: string
+          created_at?: string
+          elections_upcoming?: boolean | null
+          id?: string
+          policy_changes?: string | null
+          reforms_highlight?: string | null
+          report_date: string
+          risk_level?: string | null
+          summary: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          country_id?: string
+          created_at?: string
+          elections_upcoming?: boolean | null
+          id?: string
+          policy_changes?: string | null
+          reforms_highlight?: string | null
+          report_date?: string
+          risk_level?: string | null
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "political_digest_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
             referencedColumns: ["id"]
           },
         ]
@@ -2944,6 +3376,82 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      provinces: {
+        Row: {
+          country_id: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          population: number | null
+          province_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          country_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          population?: number | null
+          province_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          country_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          population?: number | null
+          province_type?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provinces_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      regions: {
+        Row: {
+          continent_id: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          continent_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          continent_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regions_continent_id_fkey"
+            columns: ["continent_id"]
+            isOneToOne: false
+            referencedRelation: "continents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       saved_posts: {
         Row: {
@@ -3925,11 +4433,11 @@ export type Database = {
           | { match_threshold?: number; user_id: string }
           | { target_user_id: string }
         Returns: {
-          match_reason: string
           match_score: number
-          matched_user_id: string
-          shared_regions: string[]
-          shared_sectors: string[]
+          signal_created_at: string
+          signal_id: string
+          signal_title: string
+          signal_type: string
         }[]
       }
       generate_join_token: {
@@ -4292,7 +4800,7 @@ export type Database = {
             }
           | { p_answers?: Json; p_event: string; p_ticket_type?: string }
           | { p_event: string }
-        Returns: undefined
+        Returns: string
       }
       rpc_event_set_status: {
         Args: { p_event: string; p_status: string; p_user: string }
