@@ -142,8 +142,6 @@ const NorthAfricaLandingPage = () => {
           <div className="text-center mb-12">
             {/* DNA Brand Badge */}
             <div className="flex items-center justify-center gap-2 mb-6">
-              <div className="h-8 w-8 bg-dna-emerald rounded-full flex items-center justify-center">
-              </div>
               <Badge variant="secondary" className="bg-dna-forest/90 text-white border-dna-emerald">
                 DNA Regional Hub
               </Badge>
