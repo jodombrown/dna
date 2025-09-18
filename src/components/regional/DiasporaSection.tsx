@@ -183,7 +183,6 @@ const DiasporaSection: React.FC<DiasporaSectionProps> = ({ region }) => {
               <h3 className="text-2xl font-bold bg-gradient-to-r from-dna-forest to-dna-emerald bg-clip-text text-transparent">
                 Join the Diaspora Network
               </h3>
-              <Heart className="h-6 w-6 text-dna-copper" />
             </div>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
               Connect with fellow diaspora members, discover investment opportunities, 
