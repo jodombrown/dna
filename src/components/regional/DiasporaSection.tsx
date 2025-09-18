@@ -82,8 +82,7 @@ const DiasporaSection: React.FC<DiasporaSectionProps> = ({ region }) => {
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-12">
           <Badge variant="outline" className="mb-4 border-dna-emerald text-dna-emerald">
-            <Heart className="h-3 w-3 mr-1" />
-            Diaspora Impact
+            Impact
           </Badge>
           <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-dna-forest to-dna-emerald bg-clip-text text-transparent">
             Diaspora Network of North Africa
