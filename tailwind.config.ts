@@ -72,6 +72,39 @@ export default {
 					mint: '#abddd6',
 					crimson: '#cc0000',
 					gold: '#e6bc2e'
+				},
+				// North Africa Regional Colors
+				'north-africa': {
+					sand: 'hsl(var(--north-africa-sand))',
+					terracotta: 'hsl(var(--north-africa-terracotta))',
+					desert: 'hsl(var(--north-africa-desert))',
+					oasis: 'hsl(var(--north-africa-oasis))'
+				},
+				// Country Flag Colors
+				morocco: {
+					red: 'hsl(var(--morocco-red))',
+					green: 'hsl(var(--morocco-green))'
+				},
+				egypt: {
+					red: 'hsl(var(--egypt-red))',
+					white: 'hsl(var(--egypt-white))',
+					black: 'hsl(var(--egypt-black))'
+				},
+				algeria: {
+					green: 'hsl(var(--algeria-green))'
+				},
+				tunisia: {
+					red: 'hsl(var(--tunisia-red))'
+				},
+				libya: {
+					green: 'hsl(var(--libya-green))',
+					black: 'hsl(var(--libya-black))'
+				},
+				sudan: {
+					red: 'hsl(var(--sudan-red))',
+					white: 'hsl(var(--sudan-white))',
+					black: 'hsl(var(--sudan-black))',
+					green: 'hsl(var(--sudan-green))'
 				}
 			},
 			borderRadius: {
