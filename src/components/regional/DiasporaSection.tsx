@@ -180,7 +180,6 @@ const DiasporaSection: React.FC<DiasporaSectionProps> = ({ region }) => {
           <div className="absolute inset-0 bg-gradient-to-br from-transparent via-dna-emerald/5 to-dna-copper/5" />
           <CardContent className="p-8 text-center relative z-10">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Heart className="h-6 w-6 text-dna-emerald" />
               <h3 className="text-2xl font-bold bg-gradient-to-r from-dna-forest to-dna-emerald bg-clip-text text-transparent">
                 Join the Diaspora Network
               </h3>
