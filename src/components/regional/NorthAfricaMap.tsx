@@ -52,13 +52,12 @@ const NorthAfricaMap: React.FC<NorthAfricaMapProps> = ({ onCountrySelect, select
                 {/* Flag Color Strip */}
                 <div className={`absolute top-0 left-0 w-full h-1 ${country.flagColors}`} />
                 
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2">
                   <span className="text-lg">{country.flag}</span>
                   <div className="font-semibold text-sm text-dna-forest group-hover:text-dna-emerald transition-colors">
                     {country.name}
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground">{country.code}</div>
                 
                 {/* Hover Effect */}
                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity ${country.color} rounded-xl`} />
