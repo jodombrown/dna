@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowRight, TrendingUp, Users, MapPin, DollarSign, Building2, Zap, Globe, Star, Heart } from 'lucide-react';
+import { ArrowRight, TrendingUp, Users, MapPin, DollarSign, Building2, Globe, Star, Heart } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import NorthAfricaMap from '@/components/regional/NorthAfricaMap';
@@ -11,12 +11,14 @@ import CountryDashboard from '@/components/regional/CountryDashboard';
 import DiasporaSection from '@/components/regional/DiasporaSection';
 import MonthlyUpdateHub from '@/components/regional/MonthlyUpdateHub';
 import NewsletterSignup from '@/components/regional/NewsletterSignup';
+import IndustrySidebar from '@/components/regional/IndustrySidebar';
 import heroImage from '@/assets/north-africa-hero.jpg';
 import diasporaImage from '@/assets/diaspora-connection.jpg';
 import overviewImage from '@/assets/north-africa-overview.jpg';
 
 const NorthAfricaLandingPage = () => {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
 
   // Regional overview stats
   const regionalStats = [
@@ -245,9 +247,13 @@ const NorthAfricaLandingPage = () => {
                 <CardContent className="pt-6">
                   <div className="space-y-3">
                     {keyIndustries.map((industry, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-north-africa-sand/30 to-dna-mint/20 rounded-lg hover:from-dna-emerald/10 hover:to-dna-copper/10 transition-all duration-300 group">
+                      <div 
+                        key={index} 
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-north-africa-sand/30 to-dna-mint/20 rounded-lg hover:from-dna-emerald/10 hover:to-dna-copper/10 transition-all duration-300 group cursor-pointer hover:shadow-md"
+                        onClick={() => setSelectedIndustry(industry)}
+                      >
                         <span className="font-medium text-dna-forest group-hover:text-dna-emerald transition-colors">{industry}</span>
-                        <Zap className="h-4 w-4 text-dna-copper group-hover:text-dna-emerald transition-colors" />
+                        <ArrowRight className="h-4 w-4 text-dna-copper group-hover:text-dna-emerald transition-colors" />
                       </div>
                     ))}
                   </div>
@@ -328,6 +334,12 @@ const NorthAfricaLandingPage = () => {
 
       {/* Newsletter Signup */}
       <NewsletterSignup region="North Africa" />
+
+      {/* Industry Sidebar */}
+      <IndustrySidebar 
+        industry={selectedIndustry}
+        onClose={() => setSelectedIndustry(null)}
+      />
 
       <Footer />
     </div>
