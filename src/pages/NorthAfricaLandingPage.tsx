@@ -154,8 +154,8 @@ const NorthAfricaLandingPage = () => {
             </h1>
             
             <p className="text-xl text-white/90 max-w-3xl mx-auto mb-8 drop-shadow-lg">
-              Discover the economic landscape, innovation ecosystem, and diaspora contributions 
-              across North Africa's dynamic markets and emerging opportunities.
+              Explore dynamic markets, cutting-edge innovation ecosystems, and powerful diaspora contributions 
+              shaping the region's economic transformation and global opportunities.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
