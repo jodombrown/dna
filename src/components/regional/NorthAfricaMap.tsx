@@ -4,9 +4,16 @@ import { Card } from '@/components/ui/card';
 interface NorthAfricaMapProps {
   onCountrySelect: (country: string) => void;
   selectedCountry: string | null;
+  compareMode?: boolean;
+  selectedCountries?: string[];
 }
 
-const NorthAfricaMap: React.FC<NorthAfricaMapProps> = ({ onCountrySelect, selectedCountry }) => {
+const NorthAfricaMap: React.FC<NorthAfricaMapProps> = ({ 
+  onCountrySelect, 
+  selectedCountry, 
+  compareMode = false, 
+  selectedCountries = [] 
+}) => {
   const countries = [
     { name: 'Morocco', code: 'MA', color: 'hover:bg-morocco-red/20', flagColors: 'bg-gradient-to-r from-morocco-red to-morocco-green', flag: '🇲🇦' },
     { name: 'Algeria', code: 'DZ', color: 'hover:bg-algeria-green/20', flagColors: 'bg-gradient-to-r from-algeria-green to-white', flag: '🇩🇿' },
