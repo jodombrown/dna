@@ -16,18 +16,79 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* DNA Brand Colors */
-    --primary: 183 28% 28%; /* DNA Forest */
+    /* DNA Brand Identity Colors */
+    --primary: 183 28% 28%; /* DNA Forest - Primary brand color */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 69 71% 59%; /* DNA Emerald */
+    --secondary: 69 71% 59%; /* DNA Emerald - Growth & prosperity */
     --secondary-foreground: 183 28% 28%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 34 75% 56%; /* DNA Copper */
+    --accent: 34 75% 56%; /* DNA Copper - Innovation & warmth */
     --accent-foreground: 0 0% 100%;
+
+    /* DNA Core Brand Palette */
+    --dna-forest: 183 28% 28%; /* Deep forest green - Heritage & stability */
+    --dna-forest-light: 183 28% 35%;
+    --dna-forest-dark: 183 28% 20%;
+    
+    --dna-emerald: 145 71% 45%; /* Rich emerald - Growth & opportunity */
+    --dna-emerald-light: 145 71% 55%;
+    --dna-emerald-dark: 145 71% 35%;
+    
+    --dna-copper: 25 75% 56%; /* Warm copper - Innovation & connection */
+    --dna-copper-light: 25 75% 66%;
+    --dna-copper-dark: 25 75% 46%;
+    
+    --dna-gold: 45 85% 55%; /* Vibrant gold - Excellence & achievement */
+    --dna-gold-light: 45 85% 65%;
+    --dna-gold-dark: 45 85% 45%;
+    
+    --dna-mint: 170 45% 75%; /* Fresh mint - Collaboration & freshness */
+    --dna-mint-light: 170 45% 85%;
+    --dna-mint-dark: 170 45% 65%;
+    
+    --dna-crimson: 0 100% 40%; /* Bold crimson - Passion & urgency */
+    --dna-crimson-light: 0 100% 50%;
+    --dna-crimson-dark: 0 100% 30%;
+
+    /* DNA Extended Palette */
+    --dna-earth: 30 35% 45%; /* Earthy brown - Foundation & roots */
+    --dna-earth-light: 30 35% 55%;
+    --dna-earth-dark: 30 35% 35%;
+    
+    --dna-sand: 40 25% 78%; /* Warm sand - Accessibility & openness */
+    --dna-sand-light: 40 25% 85%;
+    --dna-sand-dark: 40 25% 70%;
+    
+    --dna-ocean: 200 50% 45%; /* Deep ocean blue - Depth & wisdom */
+    --dna-ocean-light: 200 50% 55%;
+    --dna-ocean-dark: 200 50% 35%;
+    
+    --dna-sunset: 15 80% 60%; /* Warm sunset orange - Energy & warmth */
+    --dna-sunset-light: 15 80% 70%;
+    --dna-sunset-dark: 15 80% 50%;
+
+    /* DNA Neutral Tones */
+    --dna-slate: 210 15% 25%; /* Professional slate - Business & formality */
+    --dna-slate-light: 210 15% 35%;
+    --dna-slate-dark: 210 15% 15%;
+    
+    --dna-pearl: 0 0% 95%; /* Soft pearl - Elegance & clarity */
+    --dna-pearl-light: 0 0% 98%;
+    --dna-pearl-dark: 0 0% 90%;
+    
+    --dna-charcoal: 0 0% 15%; /* Rich charcoal - Strength & sophistication */
+    --dna-charcoal-light: 0 0% 25%;
+    --dna-charcoal-dark: 0 0% 10%;
+
+    /* DNA Semantic Colors */
+    --dna-success: 145 71% 45%; /* Emerald for success states */
+    --dna-warning: 45 85% 55%; /* Gold for warning states */
+    --dna-error: 0 100% 40%; /* Crimson for error states */
+    --dna-info: 200 50% 45%; /* Ocean for informational states */
 
     /* North Africa Regional Colors */
     --north-africa-sand: 35 52% 82%;
@@ -79,17 +140,25 @@
     --popover: 183 28% 12%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 69 71% 59%; /* DNA Emerald */
+    --primary: 145 71% 55%; /* DNA Emerald - Enhanced for dark mode */
     --primary-foreground: 183 28% 8%;
 
     --secondary: 183 28% 20%;
-    --secondary-foreground: 69 71% 59%;
+    --secondary-foreground: 145 71% 55%;
 
     --muted: 183 28% 15%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 34 75% 56%; /* DNA Copper */
+    --accent: 25 75% 66%; /* DNA Copper - Enhanced for dark mode */
     --accent-foreground: 183 28% 8%;
+
+    /* Dark mode DNA brand colors (enhanced visibility) */
+    --dna-forest: 183 28% 35%; /* Lighter forest for dark mode */
+    --dna-emerald: 145 71% 55%; /* Brighter emerald for dark mode */
+    --dna-copper: 25 75% 66%; /* Warmer copper for dark mode */
+    --dna-gold: 45 85% 65%; /* Brighter gold for dark mode */
+    --dna-mint: 170 45% 80%; /* Lighter mint for dark mode */
+    --dna-crimson: 0 100% 50%; /* Brighter crimson for dark mode */
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;

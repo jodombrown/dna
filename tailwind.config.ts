@@ -63,15 +63,83 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// DNA Brand Colors
+				// DNA Brand Identity Colors
 				dna: {
-					white: '#ffffff',
-					forest: '#183c2e',
-					copper: '#d88d4e',
-					emerald: '#459c71',
-					mint: '#abddd6',
-					crimson: '#cc0000',
-					gold: '#e6bc2e'
+					// Core Brand Colors
+					forest: {
+						DEFAULT: 'hsl(var(--dna-forest))',
+						light: 'hsl(var(--dna-forest-light))',
+						dark: 'hsl(var(--dna-forest-dark))'
+					},
+					emerald: {
+						DEFAULT: 'hsl(var(--dna-emerald))',
+						light: 'hsl(var(--dna-emerald-light))',
+						dark: 'hsl(var(--dna-emerald-dark))'
+					},
+					copper: {
+						DEFAULT: 'hsl(var(--dna-copper))',
+						light: 'hsl(var(--dna-copper-light))',
+						dark: 'hsl(var(--dna-copper-dark))'
+					},
+					gold: {
+						DEFAULT: 'hsl(var(--dna-gold))',
+						light: 'hsl(var(--dna-gold-light))',
+						dark: 'hsl(var(--dna-gold-dark))'
+					},
+					mint: {
+						DEFAULT: 'hsl(var(--dna-mint))',
+						light: 'hsl(var(--dna-mint-light))',
+						dark: 'hsl(var(--dna-mint-dark))'
+					},
+					crimson: {
+						DEFAULT: 'hsl(var(--dna-crimson))',
+						light: 'hsl(var(--dna-crimson-light))',
+						dark: 'hsl(var(--dna-crimson-dark))'
+					},
+					// Extended Palette
+					earth: {
+						DEFAULT: 'hsl(var(--dna-earth))',
+						light: 'hsl(var(--dna-earth-light))',
+						dark: 'hsl(var(--dna-earth-dark))'
+					},
+					sand: {
+						DEFAULT: 'hsl(var(--dna-sand))',
+						light: 'hsl(var(--dna-sand-light))',
+						dark: 'hsl(var(--dna-sand-dark))'
+					},
+					ocean: {
+						DEFAULT: 'hsl(var(--dna-ocean))',
+						light: 'hsl(var(--dna-ocean-light))',
+						dark: 'hsl(var(--dna-ocean-dark))'
+					},
+					sunset: {
+						DEFAULT: 'hsl(var(--dna-sunset))',
+						light: 'hsl(var(--dna-sunset-light))',
+						dark: 'hsl(var(--dna-sunset-dark))'
+					},
+					// Neutral Tones
+					slate: {
+						DEFAULT: 'hsl(var(--dna-slate))',
+						light: 'hsl(var(--dna-slate-light))',
+						dark: 'hsl(var(--dna-slate-dark))'
+					},
+					pearl: {
+						DEFAULT: 'hsl(var(--dna-pearl))',
+						light: 'hsl(var(--dna-pearl-light))',
+						dark: 'hsl(var(--dna-pearl-dark))'
+					},
+					charcoal: {
+						DEFAULT: 'hsl(var(--dna-charcoal))',
+						light: 'hsl(var(--dna-charcoal-light))',
+						dark: 'hsl(var(--dna-charcoal-dark))'
+					},
+					// Semantic Colors
+					success: 'hsl(var(--dna-success))',
+					warning: 'hsl(var(--dna-warning))',
+					error: 'hsl(var(--dna-error))',
+					info: 'hsl(var(--dna-info))',
+					// Legacy support (keep for backward compatibility)
+					white: '#ffffff'
 				},
 				// North Africa Regional Colors
 				'north-africa': {
