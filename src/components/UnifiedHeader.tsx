@@ -26,6 +26,12 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -84,9 +90,9 @@ const UnifiedHeader = () => {
     setIsBetaSignupOpen(true);
   };
 
-  const handleSignInClick = () => {
+  const handlePreBetaSignInClick = () => {
     setIsMobileMenuOpen(false);
-    navigate('/auth');
+    setIsBetaSignupOpen(true);
   };
 
   const handleNavClick = (item: { name: string; path: string }) => {
@@ -255,13 +261,25 @@ const UnifiedHeader = () => {
                   </nav>
                   
                   {!isAuthenticated && (
-                    <Button
-                      variant="default"
-                      onClick={handleSignInClick}
-                      className="hidden md:inline-flex bg-dna-copper text-white hover:bg-primary"
-                    >
-                      Sign In
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="default"
+                            onClick={handlePreBetaSignInClick}
+                            className="hidden md:inline-flex bg-dna-copper text-white hover:bg-dna-gold transition-all duration-200"
+                          >
+                            Sign In
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p className="text-sm">
+                            We're in pre-beta! Authentication will be available in the next 30 days. 
+                            Join our waitlist to be notified when we launch.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   )}
                 </>
               )}
@@ -403,9 +421,9 @@ const UnifiedHeader = () => {
                             <Button
                               variant="default"
                               className="justify-start text-left transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                              onClick={handleSignInClick}
+                              onClick={handlePreBetaSignInClick}
                             >
-                              Sign In
+                              Sign In (Coming Soon)
                             </Button>
                           </>
                         )}
