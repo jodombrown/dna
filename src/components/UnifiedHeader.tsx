@@ -411,12 +411,6 @@ const UnifiedHeader = () => {
                               </>
                             )}
                             
-                            <Button
-                              className="justify-start text-left bg-dna-copper text-white hover:bg-dna-copper/90 transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                              onClick={handleBetaSignup}
-                            >
-                              Join Beta
-                            </Button>
                             
                             <Button
                               variant="default"
