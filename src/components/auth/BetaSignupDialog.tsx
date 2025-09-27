@@ -155,7 +155,7 @@ export const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onCl
               <SelectTrigger>
                 <SelectValue placeholder="Select your experience level" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background border border-border shadow-lg z-50">
                 <SelectItem value="student">Student/Recent Graduate</SelectItem>
                 <SelectItem value="early">Early Career (0-3 years)</SelectItem>
                 <SelectItem value="mid">Mid-Level (4-8 years)</SelectItem>
