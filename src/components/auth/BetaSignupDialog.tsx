@@ -20,6 +20,7 @@ interface WaitlistFormData {
   company: string;
   role: string;
   experience: string;
+  experienceOther: string;
   motivation: string;
   linkedin_url: string;
 }
@@ -33,6 +34,7 @@ export const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onCl
     company: '',
     role: '',
     experience: '',
+    experienceOther: '',
     motivation: '',
     linkedin_url: ''
   });
@@ -77,6 +79,7 @@ export const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onCl
         company: '',
         role: '',
         experience: '',
+        experienceOther: '',
         motivation: '',
         linkedin_url: ''
       });
@@ -171,6 +174,18 @@ export const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onCl
               </SelectContent>
             </Select>
           </div>
+
+          {formData.experience === 'other' && (
+            <div>
+              <Label htmlFor="experienceOther">Please specify</Label>
+              <Input
+                id="experienceOther"
+                value={formData.experienceOther}
+                onChange={(e) => handleInputChange('experienceOther', e.target.value)}
+                placeholder="Describe your diaspora identity"
+              />
+            </div>
+          )}
 
           <div>
             <Label htmlFor="linkedin">LinkedIn Profile (Optional)</Label>
