@@ -60,7 +60,7 @@ export const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onCl
     try {
       const { error } = await supabase.functions.invoke('send-universal-email', {
         body: {
-          formType: 'waitlist',
+          formType: 'waitlist_signup',
           formData,
           userEmail: formData.email
         }
