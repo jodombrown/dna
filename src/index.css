@@ -34,9 +34,9 @@
     --dna-forest-light: 183 28% 35%;
     --dna-forest-dark: 183 28% 20%;
     
-    --dna-emerald: 145 71% 45%; /* Rich emerald - Growth & opportunity */
-    --dna-emerald-light: 145 71% 55%;
-    --dna-emerald-dark: 145 71% 35%;
+    --dna-emerald: 160 35% 45%; /* Sage green from DNA logo - Growth & opportunity */
+    --dna-emerald-light: 160 35% 55%;
+    --dna-emerald-dark: 160 35% 35%;
     
     --dna-copper: 25 75% 56%; /* Warm copper - Innovation & connection */
     --dna-copper-light: 25 75% 66%;
@@ -85,7 +85,7 @@
     --dna-charcoal-dark: 0 0% 10%;
 
     /* DNA Semantic Colors */
-    --dna-success: 145 71% 45%; /* Emerald for success states */
+    --dna-success: 160 35% 45%; /* Sage emerald for success states */
     --dna-warning: 45 85% 55%; /* Gold for warning states */
     --dna-error: 0 100% 40%; /* Crimson for error states */
     --dna-info: 200 50% 45%; /* Ocean for informational states */
@@ -140,11 +140,11 @@
     --popover: 183 28% 12%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 145 71% 55%; /* DNA Emerald - Enhanced for dark mode */
+    --primary: 160 35% 55%; /* DNA Sage Green - Enhanced for dark mode */
     --primary-foreground: 183 28% 8%;
 
     --secondary: 183 28% 20%;
-    --secondary-foreground: 145 71% 55%;
+    --secondary-foreground: 160 35% 55%;
 
     --muted: 183 28% 15%;
     --muted-foreground: 215 20.2% 65.1%;
@@ -154,7 +154,7 @@
 
     /* Dark mode DNA brand colors (enhanced visibility) */
     --dna-forest: 183 28% 35%; /* Lighter forest for dark mode */
-    --dna-emerald: 145 71% 55%; /* Brighter emerald for dark mode */
+    --dna-emerald: 160 35% 55%; /* Brighter sage green for dark mode */
     --dna-copper: 25 75% 66%; /* Warmer copper for dark mode */
     --dna-gold: 45 85% 65%; /* Brighter gold for dark mode */
     --dna-mint: 170 45% 80%; /* Lighter mint for dark mode */
