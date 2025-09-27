@@ -150,18 +150,24 @@ export const BetaSignupDialog: React.FC<BetaSignupDialogProps> = ({ isOpen, onCl
           </div>
 
           <div>
-            <Label htmlFor="experience">Experience Level</Label>
+            <Label htmlFor="experience">I identify as</Label>
             <Select value={formData.experience} onValueChange={(value) => handleInputChange('experience', value)}>
               <SelectTrigger>
-                <SelectValue placeholder="Select your experience level" />
+                <SelectValue placeholder="Select your diaspora identity" />
               </SelectTrigger>
               <SelectContent className="bg-background border border-border shadow-lg">
-                <SelectItem value="student">Student/Recent Graduate</SelectItem>
-                <SelectItem value="early">Early Career (0-3 years)</SelectItem>
-                <SelectItem value="mid">Mid-Level (4-8 years)</SelectItem>
-                <SelectItem value="senior">Senior (9+ years)</SelectItem>
-                <SelectItem value="executive">Executive/Leadership</SelectItem>
                 <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
+                <SelectItem value="investor">Investor</SelectItem>
+                <SelectItem value="researcher">Researcher</SelectItem>
+                <SelectItem value="professional">Professional</SelectItem>
+                <SelectItem value="student">Student</SelectItem>
+                <SelectItem value="artist">Artist/Creative</SelectItem>
+                <SelectItem value="tech">Tech Innovator</SelectItem>
+                <SelectItem value="consultant">Consultant</SelectItem>
+                <SelectItem value="nonprofit">Nonprofit Leader</SelectItem>
+                <SelectItem value="academic">Academic</SelectItem>
+                <SelectItem value="mentor">Mentor</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>
