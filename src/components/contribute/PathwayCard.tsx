@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface PathwayCardProps {
   icon: React.ElementType;
@@ -24,18 +25,21 @@ const PathwayCard: React.FC<PathwayCardProps> = ({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <div
-      className="perspective group focus:outline-none"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      tabIndex={0}
-      style={{
-        maxWidth: "100%",
-        minWidth: 0,
-        minHeight: 230,
-        height: "100%",
-      }}
-    >
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            className="perspective group focus:outline-none cursor-pointer hover:scale-[1.02] transition-all duration-300"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            tabIndex={0}
+            style={{
+              maxWidth: "100%",
+              minWidth: 0,
+              minHeight: 230,
+              height: "100%",
+            }}
+          >
       <div
         className={`relative w-full h-full transition-transform duration-700 ease-in-out [transform-style:preserve-3d] ${
           hovered ? "[transform:rotateY(180deg)]" : ""
@@ -114,6 +118,15 @@ const PathwayCard: React.FC<PathwayCardProps> = ({
         }
       `}</style>
     </div>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs">
+          <div className="text-center">
+            <p className="font-medium text-sm mb-1">{title}</p>
+            <p className="text-xs opacity-90">Hover to see why this matters</p>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
