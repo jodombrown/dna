@@ -56,10 +56,10 @@ const HeroSection = () => {
                   <Button 
                     variant="outline" 
                     size="lg"
-                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full flex items-center gap-2"
+                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full whitespace-nowrap"
                     onClick={scrollToDNAFramework}
                   >
-                    <Play className="w-4 h-4" />
+                    <Play className="w-4 h-4 mr-2" />
                     See How It Works
                   </Button>
                 </div>
