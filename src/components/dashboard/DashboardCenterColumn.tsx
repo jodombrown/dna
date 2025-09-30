@@ -19,13 +19,13 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
   const handleAction = (action: string) => {
     switch(action) {
       case 'discover':
-        window.location.href = '/app/search';
+        window.location.href = '/connect';
         break;
       case 'network':
-        window.location.href = '/app/connect';
+        window.location.href = '/connect';
         break;
       case 'messages':
-        window.location.href = '/app/messages';
+        window.location.href = '/collaborate';
         break;
     }
   };

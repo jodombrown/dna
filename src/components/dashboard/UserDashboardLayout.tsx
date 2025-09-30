@@ -3,7 +3,7 @@ import { User } from '@supabase/supabase-js';
 import { Profile } from '@/services/profilesService';
 import { useMobile } from '@/hooks/useMobile';
 import UnifiedHeader from '@/components/UnifiedHeader';
-import { MobileNavigation } from '@/components/mobile';
+
 import DashboardLeftColumn from './DashboardLeftColumn';
 import DashboardCenterColumn from './DashboardCenterColumn';
 import DashboardRightColumn from './DashboardRightColumn';
@@ -55,7 +55,7 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
         </div>
       </main>
       
-      {isMobile && <MobileNavigation />}
+      
     </div>
   );
 };

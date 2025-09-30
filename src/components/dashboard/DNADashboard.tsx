@@ -57,7 +57,7 @@ const DNADashboard: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Link to="/app/profile/edit">
+              <Link to="/dna/:username">{/* Profile edit removed */}
                 <Button variant="outline" size="sm">
                   <Plus className="w-4 h-4 mr-2" />
                   Complete Profile
@@ -154,7 +154,7 @@ const DNADashboard: React.FC = () => {
             
             {/* DNA Pillars Navigation */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <Link to="/app/connect">
+              <Link to="/connect">
                 <Card className="cursor-pointer hover:shadow-md transition-all border-l-4 border-l-dna-emerald hover:border-l-dna-emerald/80">
                   <CardContent className="p-4 text-center">
                     <div className="w-12 h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -166,7 +166,7 @@ const DNADashboard: React.FC = () => {
                 </Card>
               </Link>
 
-              <Link to="/app/collaborate">
+              <Link to="/collaborate">
                 <Card className="cursor-pointer hover:shadow-md transition-all border-l-4 border-l-dna-copper hover:border-l-dna-copper/80">
                   <CardContent className="p-4 text-center">
                     <div className="w-12 h-12 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -178,7 +178,7 @@ const DNADashboard: React.FC = () => {
                 </Card>
               </Link>
 
-              <Link to="/app/contribute">
+              <Link to="/contribute">
                 <Card className="cursor-pointer hover:shadow-md transition-all border-l-4 border-l-dna-gold hover:border-l-dna-gold/80">
                   <CardContent className="p-4 text-center">
                     <div className="w-12 h-12 bg-dna-gold/10 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -190,7 +190,7 @@ const DNADashboard: React.FC = () => {
                 </Card>
               </Link>
 
-              <Link to="/app/discover">
+              <Link to="/connect">{/* Search/Discover redirects to Connect */}
                 <Card className="cursor-pointer hover:shadow-md transition-all border-l-4 border-l-dna-mint hover:border-l-dna-mint/80">
                   <CardContent className="p-4 text-center">
                     <div className="w-12 h-12 bg-dna-mint/10 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -230,7 +230,7 @@ const DNADashboard: React.FC = () => {
                   
                   <div className="text-center py-8">
                     <p className="text-sm text-muted-foreground">Start connecting to see activity here</p>
-                    <Link to="/app/connect">
+                    <Link to="/connect">
                       <Button variant="outline" size="sm" className="mt-3">
                         Find Connections
                       </Button>
@@ -278,7 +278,7 @@ const DNADashboard: React.FC = () => {
                     <p className="text-sm text-muted-foreground mb-3">
                       We'll suggest connections based on your profile and network
                     </p>
-                    <Link to="/app/connect">
+                    <Link to="/connect">
                       <Button variant="outline" size="sm">
                         Explore Network
                       </Button>
@@ -317,7 +317,7 @@ const DNADashboard: React.FC = () => {
                   <p className="text-sm text-muted-foreground mb-3">
                     Find meaningful ways to give back to the community
                   </p>
-                  <Link to="/app/contribute">
+                  <Link to="/contribute">
                     <Button variant="outline" size="sm">
                       Explore Opportunities
                     </Button>

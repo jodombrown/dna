@@ -131,7 +131,7 @@ const BetaProgressTracker: React.FC = () => {
             <Button 
               size="sm" 
               className="bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={() => window.location.href = '/app'}
+              onClick={() => window.location.href = '/'}
             >
               Continue Testing
             </Button>
