@@ -12,7 +12,6 @@ import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import InviteSignup from "./pages/InviteSignup";
 import UserDashboard from "./pages/UserDashboard";
-import AppDashboard from "./pages/AppDashboard";
 import NotFound from "./pages/NotFound";
 
 // Static pages  
@@ -48,7 +47,7 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
   
   // Only redirect authenticated users if this is an auth-specific page
   if (user && redirectAuth) {
-    return <Navigate to="/app/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
   
   return <>{children}</>;
@@ -77,9 +76,6 @@ function App() {
               {/* User profiles */}
               <Route path="/dna/:username" element={<UserDashboard />} />
               
-              {/* Main app routes */}
-              <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
-              <Route path="/app/*" element={<AppDashboard />} />
               
               
               {/* Main feature pages */}
