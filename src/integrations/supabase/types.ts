@@ -197,182 +197,6 @@ export type Database = {
           },
         ]
       }
-      admin_logs: {
-        Row: {
-          action: string
-          admin_id: string | null
-          created_at: string
-          details: Json | null
-          id: string
-          ip_address: unknown | null
-          resource_id: string | null
-          resource_type: string
-          status: string | null
-          user_agent: string | null
-        }
-        Insert: {
-          action: string
-          admin_id?: string | null
-          created_at?: string
-          details?: Json | null
-          id?: string
-          ip_address?: unknown | null
-          resource_id?: string | null
-          resource_type: string
-          status?: string | null
-          user_agent?: string | null
-        }
-        Update: {
-          action?: string
-          admin_id?: string | null
-          created_at?: string
-          details?: Json | null
-          id?: string
-          ip_address?: unknown | null
-          resource_id?: string | null
-          resource_type?: string
-          status?: string | null
-          user_agent?: string | null
-        }
-        Relationships: []
-      }
-      admin_notifications: {
-        Row: {
-          admin_id: string
-          created_at: string
-          id: string
-          is_read: boolean | null
-          message: string
-          read_at: string | null
-          related_resource_id: string | null
-          related_resource_type: string | null
-          severity: string | null
-          title: string
-          type: string
-        }
-        Insert: {
-          admin_id: string
-          created_at?: string
-          id?: string
-          is_read?: boolean | null
-          message: string
-          read_at?: string | null
-          related_resource_id?: string | null
-          related_resource_type?: string | null
-          severity?: string | null
-          title: string
-          type: string
-        }
-        Update: {
-          admin_id?: string
-          created_at?: string
-          id?: string
-          is_read?: boolean | null
-          message?: string
-          read_at?: string | null
-          related_resource_id?: string | null
-          related_resource_type?: string | null
-          severity?: string | null
-          title?: string
-          type?: string
-        }
-        Relationships: []
-      }
-      admin_users: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          id: string
-          is_active: boolean | null
-          role: Database["public"]["Enums"]["admin_role"]
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          is_active?: boolean | null
-          role?: Database["public"]["Enums"]["admin_role"]
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          is_active?: boolean | null
-          role?: Database["public"]["Enums"]["admin_role"]
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      beta_applications: {
-        Row: {
-          admin_notes: string | null
-          created_at: string
-          email: string
-          full_name: string
-          id: string
-          impact_area: string | null
-          linkedin_url: string | null
-          location: string | null
-          magic_link_sent_at: string | null
-          motivation: string
-          profile_created_at: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: string
-          updated_at: string
-          waitlist_signup_id: string | null
-        }
-        Insert: {
-          admin_notes?: string | null
-          created_at?: string
-          email: string
-          full_name: string
-          id?: string
-          impact_area?: string | null
-          linkedin_url?: string | null
-          location?: string | null
-          magic_link_sent_at?: string | null
-          motivation: string
-          profile_created_at?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          updated_at?: string
-          waitlist_signup_id?: string | null
-        }
-        Update: {
-          admin_notes?: string | null
-          created_at?: string
-          email?: string
-          full_name?: string
-          id?: string
-          impact_area?: string | null
-          linkedin_url?: string | null
-          location?: string | null
-          magic_link_sent_at?: string | null
-          motivation?: string
-          profile_created_at?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          updated_at?: string
-          waitlist_signup_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "beta_applications_waitlist_signup_id_fkey"
-            columns: ["waitlist_signup_id"]
-            isOneToOne: false
-            referencedRelation: "waitlist_signups"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       collaboration_memberships: {
         Row: {
           id: string
@@ -986,33 +810,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      conversations: {
-        Row: {
-          created_at: string
-          id: string
-          last_message_at: string | null
-          updated_at: string
-          user_1_id: string
-          user_2_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          last_message_at?: string | null
-          updated_at?: string
-          user_1_id: string
-          user_2_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          last_message_at?: string | null
-          updated_at?: string
-          user_1_id?: string
-          user_2_id?: string
-        }
-        Relationships: []
       }
       countries: {
         Row: {
@@ -2014,47 +1811,6 @@ export type Database = {
         }
         Relationships: []
       }
-      magic_links: {
-        Row: {
-          beta_application_id: string | null
-          created_at: string
-          expires_at: string
-          full_name: string
-          id: string
-          token: string
-          used_at: string | null
-          user_email: string
-        }
-        Insert: {
-          beta_application_id?: string | null
-          created_at?: string
-          expires_at?: string
-          full_name: string
-          id?: string
-          token?: string
-          used_at?: string | null
-          user_email: string
-        }
-        Update: {
-          beta_application_id?: string | null
-          created_at?: string
-          expires_at?: string
-          full_name?: string
-          id?: string
-          token?: string
-          used_at?: string | null
-          user_email?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "magic_links_beta_application_id_fkey"
-            columns: ["beta_application_id"]
-            isOneToOne: false
-            referencedRelation: "beta_applications"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       message_reactions: {
         Row: {
           created_at: string
@@ -2078,59 +1834,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-      }
-      messages: {
-        Row: {
-          content: string
-          conversation_id: string
-          created_at: string
-          delivered_at: string | null
-          id: string
-          is_read: boolean | null
-          message_type: string | null
-          metadata: Json | null
-          read_at: string | null
-          read_by: string[] | null
-          sender_id: string
-          updated_at: string
-        }
-        Insert: {
-          content: string
-          conversation_id: string
-          created_at?: string
-          delivered_at?: string | null
-          id?: string
-          is_read?: boolean | null
-          message_type?: string | null
-          metadata?: Json | null
-          read_at?: string | null
-          read_by?: string[] | null
-          sender_id: string
-          updated_at?: string
-        }
-        Update: {
-          content?: string
-          conversation_id?: string
-          created_at?: string
-          delivered_at?: string | null
-          id?: string
-          is_read?: boolean | null
-          message_type?: string | null
-          metadata?: Json | null
-          read_at?: string | null
-          read_by?: string[] | null
-          sender_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "messages_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       milestones: {
         Row: {
@@ -2277,51 +1980,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      notifications: {
-        Row: {
-          body: string | null
-          created_at: string
-          id: string
-          is_read: boolean | null
-          payload: Json | null
-          read: boolean | null
-          related_entity_id: string | null
-          related_entity_type: string | null
-          title: string
-          type: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          body?: string | null
-          created_at?: string
-          id?: string
-          is_read?: boolean | null
-          payload?: Json | null
-          read?: boolean | null
-          related_entity_id?: string | null
-          related_entity_type?: string | null
-          title: string
-          type: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          body?: string | null
-          created_at?: string
-          id?: string
-          is_read?: boolean | null
-          payload?: Json | null
-          read?: boolean | null
-          related_entity_id?: string | null
-          related_entity_type?: string | null
-          title?: string
-          type?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       opportunities: {
         Row: {
@@ -3457,39 +3115,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_badges: {
-        Row: {
-          badge_name: string
-          badge_type: string
-          description: string | null
-          icon: string | null
-          id: string
-          metadata: Json | null
-          unlocked_at: string
-          user_id: string
-        }
-        Insert: {
-          badge_name: string
-          badge_type: string
-          description?: string | null
-          icon?: string | null
-          id?: string
-          metadata?: Json | null
-          unlocked_at?: string
-          user_id: string
-        }
-        Update: {
-          badge_name?: string
-          badge_type?: string
-          description?: string | null
-          icon?: string | null
-          id?: string
-          metadata?: Json | null
-          unlocked_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       user_communities: {
         Row: {
           avatar_url: string | null
@@ -3554,47 +3179,6 @@ export type Database = {
           id?: string
         }
         Relationships: []
-      }
-      user_contributions: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          id: string
-          region: string | null
-          sector: string | null
-          target_id: string | null
-          type: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          region?: string | null
-          sector?: string | null
-          target_id?: string | null
-          type: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          region?: string | null
-          sector?: string | null
-          target_id?: string | null
-          type?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_contributions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       user_dna_points: {
         Row: {
@@ -4018,23 +3602,6 @@ export type Database = {
           },
         ]
       }
-      view_public_contributions: {
-        Row: {
-          created_at: string | null
-          target_id: string | null
-          type: string | null
-          user_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_contributions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Functions: {
       _log_contrib_fixed: {
@@ -4056,34 +3623,15 @@ export type Database = {
         Args: { p_message_id: string; p_reaction: string; p_user_id: string }
         Returns: undefined
       }
-      add_notification: {
-        Args: {
-          p_body: string
-          p_meta: Json
-          p_title: string
-          p_type: string
-          p_user: string
-        }
-        Returns: undefined
-      }
       approve_beta_application: {
-        Args:
-          | { admin_id: string; application_id: string }
-          | { p_admin_notes?: string; p_application_id: string }
-        Returns: string
+        Args: { admin_id: string; application_id: string }
+        Returns: {
+          expires_at: string
+          magic_link_token: string
+        }[]
       }
       are_users_connected: {
         Args: { u1: string; u2: string }
-        Returns: boolean
-      }
-      award_badge_if_missing: {
-        Args: {
-          p_desc?: string
-          p_icon?: string
-          p_key: string
-          p_name: string
-          p_user: string
-        }
         Returns: boolean
       }
       calculate_impact_score: {
@@ -4156,10 +3704,6 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: number
       }
-      count_contrib: {
-        Args: { p_type: string; p_user: string }
-        Returns: number
-      }
       create_admin_notification: {
         Args: {
           p_admin_id: string
@@ -4221,10 +3765,6 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      generate_magic_link: {
-        Args: { p_application_id: string; p_email: string; p_full_name: string }
-        Returns: string
-      }
       generate_magic_link_token: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -4240,10 +3780,6 @@ export type Database = {
       get_active_users_this_week: {
         Args: Record<PropertyKey, never>
         Returns: number
-      }
-      get_admin_role: {
-        Args: { _user_id: string }
-        Returns: Database["public"]["Enums"]["admin_role"]
       }
       get_current_user_profile: {
         Args: Record<PropertyKey, never>
@@ -4410,10 +3946,6 @@ export type Database = {
         Args: { user_email: string }
         Returns: string
       }
-      notify_beta_status: {
-        Args: { p_data: Json; p_email: string; p_type: string }
-        Returns: undefined
-      }
       profile_meets_visibility_requirement: {
         Args: { min_score?: number; user_id_param: string }
         Returns: boolean
@@ -4433,10 +3965,6 @@ export type Database = {
       recent_engagement_score_for_user: {
         Args: { p_target_user: string }
         Returns: number
-      }
-      reject_beta_application: {
-        Args: { p_admin_notes: string; p_application_id: string }
-        Returns: undefined
       }
       reject_html: {
         Args: { _txt: string }
@@ -4794,7 +4322,7 @@ export type Database = {
       }
     }
     Enums: {
-      admin_role: "admin" | "superadmin" | "moderator"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4921,8 +4449,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      admin_role: ["admin", "superadmin", "moderator"],
-    },
+    Enums: {},
   },
 } as const
