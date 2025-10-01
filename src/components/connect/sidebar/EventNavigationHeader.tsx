@@ -106,16 +106,6 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
           <ExternalLink className="h-3 w-3" />
         </Button>
       </div>
-
-      {/* Close button - Right side */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8 rounded-full hover:bg-gray-100 transition-colors"
-        onClick={onClose}
-      >
-        <X className="h-4 w-4 text-gray-600" />
-      </Button>
     </div>
   );
 };
