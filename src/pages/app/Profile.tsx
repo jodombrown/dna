@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import BadgeWidget from '@/components/profile/BadgeWidget';
+// BadgeWidget removed - user_badges table dropped
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Edit, Eye, Users, Star } from 'lucide-react';
@@ -183,8 +183,7 @@ const Profile = () => {
           </CardContent>
         </Card>
 
-        {/* Badges Section */}
-        {user?.id && <BadgeWidget userId={user.id} />}
+        {/* Badges section removed - user_badges table dropped */}
       </div>
     </div>
   );

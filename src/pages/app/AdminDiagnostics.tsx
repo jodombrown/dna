@@ -65,11 +65,10 @@ export default function AdminDiagnostics() {
       results.realtime_error = String(e?.message || e);
     }
 
-    // Probe 2: can current user read own notifications (RLS)
+    // Probe 2: notifications table dropped - skipping check
     try {
-      const r = await supabase.from('notifications').select('id').limit(1);
-      results.notifications_select_allowed = !r.error;
-      if (r.error) results.notifications_select_error = r.error.message;
+      results.notifications_select_allowed = false;
+      results.notifications_select_error = 'notifications table was dropped';
     } catch (e: any) {
       results.notifications_select_allowed = false;
       results.notifications_select_error = String(e?.message || e);

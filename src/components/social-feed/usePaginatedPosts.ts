@@ -51,13 +51,15 @@ export const usePaginatedPosts = ({
       
       // Optionally scope to relevant authors (connections + collaborators + self)
       let authorIds: string[] | null = null;
+      // Connections lookup disabled - contact_requests table dropped
+      // Using connections table as fallback
       if (relevantOnly && user?.id) {
         const [connectionsRes, mySpacesRes] = await Promise.all([
           supabase
-            .from('contact_requests')
-            .select('sender_id, receiver_id')
+            .from('connections')
+            .select('a, b')
             .eq('status', 'accepted')
-            .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`),
+            .or(`a.eq.${user.id},b.eq.${user.id}`),
           supabase
             .from('collaboration_memberships')
             .select('space_id')
@@ -79,7 +81,7 @@ export const usePaginatedPosts = ({
         }
 
         const connections: string[] = (connectionsRes.data || [])
-          .map((r: any) => (r.sender_id === user.id ? r.receiver_id : r.sender_id))
+          .map((r: any) => (r.a === user.id ? r.b : r.a))
           .filter((id: string | null) => !!id && id !== user.id);
 
         authorIds = Array.from(new Set<string>([user.id, ...connections, ...collaborators]));

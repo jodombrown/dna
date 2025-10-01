@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, UserCheck, TrendingUp, Signal, Trophy, MessageSquare, Flag, Settings, Activity } from 'lucide-react';
 import { Loader } from '@/components/ui/loader';
-import UserManagementTable from '@/components/admin/UserManagementTable';
+// UserManagementTable removed - admin_users table dropped
 import AdinProfileControls from '@/components/admin/AdinProfileControls';
 import ContributionModerationQueue from '@/components/admin/ContributionModerationQueue';
 import SignalAnalyticsDashboard from '@/components/admin/SignalAnalyticsDashboard';
@@ -60,7 +60,7 @@ const Admin = () => {
   }
 
   const adminSections = [
-    { id: 'users', label: 'Users', icon: Users, component: UserManagementTable },
+    // { id: 'users', label: 'Users', icon: Users, component: UserManagementTable }, // Removed - admin_users table dropped
     { id: 'adin', label: 'ADIN Profiles', icon: UserCheck, component: AdinProfileControls },
     { id: 'contributions', label: 'Contributions', icon: TrendingUp, component: ContributionModerationQueue },
     { id: 'signals', label: 'Signals', icon: Signal, component: SignalAnalyticsDashboard },

@@ -40,7 +40,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems, phases } from './header/navigationConfig';
-import NotificationsBell from '@/components/notifications/NotificationsBell';
+// Notifications removed - backend tables dropped
 
 const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();

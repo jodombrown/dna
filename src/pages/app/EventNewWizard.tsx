@@ -27,13 +27,9 @@ const EventNewWizard: React.FC = () => {
         const user = data?.user;
         if (!user) { setAllowed(false); return; }
         let isAdmin = false;
-        try {
-          const { data: role } = await supabase.rpc('get_admin_role', { _user_id: user.id });
-          if (role) isAdmin = true;
-        } catch (_e) {
-          const email = (user as any).email ?? (user.user_metadata?.email as string | undefined);
-          if (email && email.endsWith('@diasporanetwork.africa')) isAdmin = true;
-        }
+        // get_admin_role RPC dropped - using email check only
+        const email = (user as any).email ?? (user.user_metadata?.email as string | undefined);
+        if (email && email.endsWith('@diasporanetwork.africa')) isAdmin = true;
         setAllowed(isAdmin);
       } finally {
         setChecking(false);
