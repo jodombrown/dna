@@ -24,6 +24,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ConnectExample from "./pages/ConnectExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
+import EventCategoryPage from "./pages/app/EventCategoryPage";
 
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
@@ -82,6 +83,9 @@ function App() {
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
+              
+              {/* Event category pages */}
+              <Route path="/events/category/:slug" element={<EventCategoryPage />} />
               
               {/* Regional landing pages */}
               <Route path="/north-africa" element={<NorthAfricaLandingPage />} />

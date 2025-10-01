@@ -54,8 +54,8 @@ const EventCategoriesSection: React.FC = () => {
                         </CardContent>
                       </Card>
                     </TooltipTrigger>
-                    <TooltipContent className="max-w-xs p-3">
-                      <p className="text-sm">{category.description}</p>
+                    <TooltipContent className="max-w-xs p-3 bg-dna-forest text-white border-dna-emerald">
+                      <p className="text-sm font-medium">{category.description}</p>
                     </TooltipContent>
                   </Tooltip>
                 </CarouselItem>
