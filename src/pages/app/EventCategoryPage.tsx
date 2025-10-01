@@ -7,6 +7,7 @@ import { eventCategories, additionalEvents } from '@/components/connect/eventDat
 import { Event } from '@/types/search';
 import { toast } from 'sonner';
 import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
+import { ChevronLeft } from 'lucide-react';
 const EventCategoryPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -53,6 +54,15 @@ const EventCategoryPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      <Button
+        variant="ghost"
+        onClick={() => navigate(-1)}
+        className="mb-4 -ml-2 hover:bg-dna-emerald/10 hover:text-dna-forest"
+      >
+        <ChevronLeft className="h-4 w-4 mr-1" />
+        Back
+      </Button>
+      
       <header className="mb-8">
         <h1 className="text-3xl font-bold">{category.icon} {category.name} Events</h1>
         <p className="text-muted-foreground mt-2">{category.description}</p>
