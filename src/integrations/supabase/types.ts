@@ -14,72 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      adin_connection_matches: {
-        Row: {
-          created_at: string | null
-          id: string
-          match_reason: string | null
-          match_score: number | null
-          matched_user_id: string
-          shared_regions: string[] | null
-          shared_sectors: string[] | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          match_reason?: string | null
-          match_score?: number | null
-          matched_user_id: string
-          shared_regions?: string[] | null
-          shared_sectors?: string[] | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          match_reason?: string | null
-          match_score?: number | null
-          matched_user_id?: string
-          shared_regions?: string[] | null
-          shared_sectors?: string[] | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      adin_connection_signals: {
-        Row: {
-          context: Json | null
-          created_at: string
-          id: string
-          reason: string
-          score: number
-          source_user: string
-          target_user: string
-          timestamp: string
-        }
-        Insert: {
-          context?: Json | null
-          created_at?: string
-          id?: string
-          reason: string
-          score?: number
-          source_user: string
-          target_user: string
-          timestamp?: string
-        }
-        Update: {
-          context?: Json | null
-          created_at?: string
-          id?: string
-          reason?: string
-          score?: number
-          source_user?: string
-          target_user?: string
-          timestamp?: string
-        }
-        Relationships: []
-      }
       adin_contributor_requests: {
         Row: {
           admin_notes: string | null
@@ -842,123 +776,6 @@ export type Database = {
           },
         ]
       }
-      connection_events: {
-        Row: {
-          actor: string | null
-          connection_id: string
-          created_at: string
-          event_type: string
-          id: string
-          payload: Json | null
-        }
-        Insert: {
-          actor?: string | null
-          connection_id: string
-          created_at?: string
-          event_type: string
-          id?: string
-          payload?: Json | null
-        }
-        Update: {
-          actor?: string | null
-          connection_id?: string
-          created_at?: string
-          event_type?: string
-          id?: string
-          payload?: Json | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "connection_events_connection_id_fkey"
-            columns: ["connection_id"]
-            isOneToOne: false
-            referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      connection_intentions: {
-        Row: {
-          by_user: string
-          connection_id: string
-          created_at: string
-          id: string
-          notes: string | null
-          target_outcome: string | null
-          type: string
-          visibility: string
-        }
-        Insert: {
-          by_user: string
-          connection_id: string
-          created_at?: string
-          id?: string
-          notes?: string | null
-          target_outcome?: string | null
-          type: string
-          visibility?: string
-        }
-        Update: {
-          by_user?: string
-          connection_id?: string
-          created_at?: string
-          id?: string
-          notes?: string | null
-          target_outcome?: string | null
-          type?: string
-          visibility?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "connection_intentions_connection_id_fkey"
-            columns: ["connection_id"]
-            isOneToOne: false
-            referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      connection_preferences: {
-        Row: {
-          channels: string[] | null
-          connection_id: string
-          created_at: string
-          id: string
-          next_review_at: string | null
-          nudge_cadence: string
-          snoozed_until: string | null
-          user_id: string
-        }
-        Insert: {
-          channels?: string[] | null
-          connection_id: string
-          created_at?: string
-          id?: string
-          next_review_at?: string | null
-          nudge_cadence?: string
-          snoozed_until?: string | null
-          user_id: string
-        }
-        Update: {
-          channels?: string[] | null
-          connection_id?: string
-          created_at?: string
-          id?: string
-          next_review_at?: string | null
-          nudge_cadence?: string
-          snoozed_until?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "connection_preferences_connection_id_fkey"
-            columns: ["connection_id"]
-            isOneToOne: false
-            referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       connections: {
         Row: {
           a: string
@@ -989,39 +806,6 @@ export type Database = {
           id?: string
           last_interaction_at?: string | null
           status?: string
-        }
-        Relationships: []
-      }
-      contact_requests: {
-        Row: {
-          created_at: string
-          id: string
-          message: string | null
-          purpose: string
-          receiver_id: string
-          sender_id: string
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          message?: string | null
-          purpose: string
-          receiver_id: string
-          sender_id: string
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          message?: string | null
-          purpose?: string
-          receiver_id?: string
-          sender_id?: string
-          status?: string
-          updated_at?: string
         }
         Relationships: []
       }
@@ -2010,13 +1794,6 @@ export type Database = {
             columns: ["connection_id"]
             isOneToOne: false
             referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "impact_attributions_source_event_id_fkey"
-            columns: ["source_event_id"]
-            isOneToOne: false
-            referencedRelation: "connection_events"
             referencedColumns: ["id"]
           },
         ]
@@ -4594,10 +4371,6 @@ export type Database = {
           _space: string
           _user: string
         }
-        Returns: boolean
-      }
-      is_participant_of_connection: {
-        Args: { p_connection: string; p_user: string }
         Returns: boolean
       }
       is_prelaunch_locked: {
