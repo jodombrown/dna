@@ -16,7 +16,7 @@ const EventSocialSection: React.FC<EventSocialSectionProps> = ({ event }) => {
         <Button 
           variant="outline" 
           size="icon" 
-          className="hover:bg-pink-50 hover:border-pink-200"
+          className="hover:bg-dna-emerald/10 hover:border-dna-emerald hover:text-dna-forest transition-colors"
           onClick={() => window.open('https://www.instagram.com/diasporanetwork.africa', '_blank')}
         >
           <Instagram className="w-4 h-4" />
@@ -24,7 +24,7 @@ const EventSocialSection: React.FC<EventSocialSectionProps> = ({ event }) => {
         <Button 
           variant="outline" 
           size="icon" 
-          className="hover:bg-blue-50 hover:border-blue-200"
+          className="hover:bg-dna-emerald/10 hover:border-dna-emerald hover:text-dna-forest transition-colors"
           onClick={() => window.open('https://www.linkedin.com/company/diasporanetworkafrica', '_blank')}
         >
           <Linkedin className="w-4 h-4" />
@@ -32,7 +32,7 @@ const EventSocialSection: React.FC<EventSocialSectionProps> = ({ event }) => {
         <Button 
           variant="outline" 
           size="icon" 
-          className="hover:bg-orange-50 hover:border-orange-200"
+          className="hover:bg-dna-emerald/10 hover:border-dna-emerald hover:text-dna-forest transition-colors"
           onClick={() => window.open('https://www.reddit.com/r/diasporanetworkafrica/', '_blank')}
         >
           <div className="w-4 h-4 flex items-center justify-center">
@@ -44,7 +44,7 @@ const EventSocialSection: React.FC<EventSocialSectionProps> = ({ event }) => {
         <Button 
           variant="outline" 
           size="icon" 
-          className="hover:bg-green-50 hover:border-green-200"
+          className="hover:bg-dna-emerald/10 hover:border-dna-emerald hover:text-dna-forest transition-colors"
           onClick={() => window.open('https://wa.me/message/XXXXXXXXXX', '_blank')}
         >
           <MessageSquare className="w-4 h-4" />
@@ -52,7 +52,7 @@ const EventSocialSection: React.FC<EventSocialSectionProps> = ({ event }) => {
         <Button 
           variant="outline" 
           size="icon" 
-          className="hover:bg-gray-50"
+          className="hover:bg-dna-emerald/10 hover:border-dna-emerald hover:text-dna-forest transition-colors"
           onClick={() => window.open('https://diasporanetworkafrica.com', '_blank')}
         >
           <Link className="w-4 h-4" />
