@@ -142,7 +142,12 @@ const Contribute = () => {
               </TabsList>
 
               <TabsContent value="opportunities" className="space-y-6">
-                <OpportunityList searchQuery={searchQuery} filters={filters} />
+                <OpportunityList 
+                  searchQuery={searchQuery} 
+                  filters={filters}
+                  allSkills={skills || []}
+                  allCauses={causes || []}
+                />
               </TabsContent>
 
               <TabsContent value="organizations" className="space-y-6">

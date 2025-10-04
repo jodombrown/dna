@@ -9,10 +9,22 @@ import OpportunityDetailsDialog from './OpportunityDetailsDialog';
 
 interface OpportunityCardProps {
   opportunity: any;
+  allSkills?: Array<{ id: string; name: string }>;
+  allCauses?: Array<{ id: string; name: string }>;
 }
 
-const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity }) => {
+const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity, allSkills = [], allCauses = [] }) => {
   const [showDetails, setShowDetails] = useState(false);
+
+  // Map skill IDs to names
+  const skillNames = opportunity.skills_needed
+    ?.map((id: string) => allSkills.find(s => s.id === id)?.name)
+    .filter(Boolean) || [];
+  
+  // Map cause IDs to names
+  const causeNames = opportunity.causes
+    ?.map((id: string) => allCauses.find(c => c.id === id)?.name)
+    .filter(Boolean) || [];
 
   const typeColors = {
     investment: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
@@ -52,18 +64,30 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity }) => {
             </div>
           )}
 
-          <div className="flex flex-wrap gap-2">
-            {opportunity.skills?.slice(0, 3).map((skill: any) => (
-              <Badge key={skill.id} variant="outline" className="text-xs">
-                {skill.name}
-              </Badge>
-            ))}
-            {(opportunity.skills?.length || 0) > 3 && (
-              <Badge variant="outline" className="text-xs">
-                +{opportunity.skills.length - 3} more
-              </Badge>
-            )}
-          </div>
+          {skillNames.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {skillNames.slice(0, 3).map((name: string, idx: number) => (
+                <Badge key={idx} variant="secondary" className="text-xs">
+                  {name}
+                </Badge>
+              ))}
+              {skillNames.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{skillNames.length - 3} more
+                </Badge>
+              )}
+            </div>
+          )}
+          
+          {causeNames.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {causeNames.slice(0, 2).map((name: string, idx: number) => (
+                <Badge key={idx} variant="outline" className="text-xs">
+                  {name}
+                </Badge>
+              ))}
+            </div>
+          )}
         </CardContent>
 
         <CardFooter className="flex items-center justify-between text-xs text-muted-foreground">

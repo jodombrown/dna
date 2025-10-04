@@ -8,9 +8,11 @@ import type { FilterState } from './OpportunityFilters';
 interface OpportunityListProps {
   searchQuery?: string;
   filters: FilterState;
+  allSkills?: Array<{ id: string; name: string }>;
+  allCauses?: Array<{ id: string; name: string }>;
 }
 
-const OpportunityList: React.FC<OpportunityListProps> = ({ searchQuery = '', filters }) => {
+const OpportunityList: React.FC<OpportunityListProps> = ({ searchQuery = '', filters, allSkills = [], allCauses = [] }) => {
   const { data: opportunities, isLoading } = useQuery({
     queryKey: ['opportunities', searchQuery, filters],
     queryFn: async () => {
@@ -18,9 +20,7 @@ const OpportunityList: React.FC<OpportunityListProps> = ({ searchQuery = '', fil
         .from('opportunities')
         .select(`
           *,
-          organization:organizations(id, name, logo_url),
-          skills(*),
-          causes(*)
+          organizations!inner(id, name, logo_url, verified)
         `)
         .eq('status', 'active');
 
@@ -34,10 +34,14 @@ const OpportunityList: React.FC<OpportunityListProps> = ({ searchQuery = '', fil
         query = query.in('type', filters.type);
       }
 
-      // Skills filter (simplified - requires junction table for proper implementation)
-      // Causes filter
+      // Skills filter - check if any selected skill is in the array
+      if (filters.skills.length > 0) {
+        query = query.overlaps('skills_needed', filters.skills);
+      }
+
+      // Causes filter - check if any selected cause is in the array
       if (filters.causes.length > 0) {
-        query = query.in('cause_id', filters.causes);
+        query = query.overlaps('causes', filters.causes);
       }
 
       // Sort
@@ -76,7 +80,12 @@ const OpportunityList: React.FC<OpportunityListProps> = ({ searchQuery = '', fil
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {opportunities.map((opportunity) => (
-        <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+        <OpportunityCard 
+          key={opportunity.id} 
+          opportunity={opportunity}
+          allSkills={allSkills}
+          allCauses={allCauses}
+        />
       ))}
     </div>
   );

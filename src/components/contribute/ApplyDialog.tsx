@@ -1,12 +1,12 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface ApplyDialogProps {
   opportunity: any;
@@ -18,14 +18,33 @@ const ApplyDialog: React.FC<ApplyDialogProps> = ({ opportunity, open, onOpenChan
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [message, setMessage] = React.useState('');
+  const [coverLetter, setCoverLetter] = React.useState('');
+
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from('profiles')
+        .select('*')
+        .eq('id', user?.id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
 
   const applyMutation = useMutation({
     mutationFn: async () => {
+      if (!user?.id) throw new Error('Must be logged in');
+      if (!profile?.onboarding_completed_at) {
+        throw new Error('Please complete your profile first');
+      }
+
       const { error } = await supabase.from('opportunity_applications').insert({
         opportunity_id: opportunity.id,
         applicant_id: user?.id,
-        cover_letter: message.trim(),
+        cover_letter: coverLetter.trim(),
         proposed_contribution_type: 'time',
         status: 'pending',
       });
@@ -38,7 +57,7 @@ const ApplyDialog: React.FC<ApplyDialogProps> = ({ opportunity, open, onOpenChan
       });
       queryClient.invalidateQueries({ queryKey: ['applications'] });
       onOpenChange(false);
-      setMessage('');
+      setCoverLetter('');
     },
     onError: (error: any) => {
       toast({
@@ -49,6 +68,36 @@ const ApplyDialog: React.FC<ApplyDialogProps> = ({ opportunity, open, onOpenChan
     },
   });
 
+  if (profileLoading) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <div className="flex justify-center py-8">
+            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  if (!profile?.onboarding_completed_at) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Complete Your Profile</DialogTitle>
+            <DialogDescription>
+              Please complete your profile before applying to opportunities.
+            </DialogDescription>
+          </DialogHeader>
+          <Button onClick={() => window.location.href = '/onboarding'}>
+            Complete Profile
+          </Button>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
@@ -58,12 +107,19 @@ const ApplyDialog: React.FC<ApplyDialogProps> = ({ opportunity, open, onOpenChan
 
         <div className="space-y-4">
           <div>
-            <Label htmlFor="message">Why are you interested in this opportunity?</Label>
+            <Label>Your Profile</Label>
+            <div className="text-sm text-muted-foreground">
+              {profile.full_name} • {profile.headline || 'No headline'}
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="coverLetter">Cover Letter *</Label>
             <Textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Share your motivation, relevant experience, and what you hope to contribute..."
+              id="coverLetter"
+              value={coverLetter}
+              onChange={(e) => setCoverLetter(e.target.value)}
+              placeholder="Why are you interested in this opportunity? What relevant experience do you have?"
               className="mt-2 min-h-[200px]"
             />
           </div>
@@ -74,7 +130,7 @@ const ApplyDialog: React.FC<ApplyDialogProps> = ({ opportunity, open, onOpenChan
             </Button>
             <Button
               onClick={() => applyMutation.mutate()}
-              disabled={!message.trim() || applyMutation.isPending}
+              disabled={!coverLetter.trim() || applyMutation.isPending}
             >
               {applyMutation.isPending ? 'Submitting...' : 'Submit Application'}
             </Button>

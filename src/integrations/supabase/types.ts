@@ -2607,6 +2607,72 @@ export type Database = {
           },
         ]
       }
+      profile_causes: {
+        Row: {
+          cause_id: string
+          created_at: string | null
+          profile_id: string
+        }
+        Insert: {
+          cause_id: string
+          created_at?: string | null
+          profile_id: string
+        }
+        Update: {
+          cause_id?: string
+          created_at?: string | null
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_causes_cause_id_fkey"
+            columns: ["cause_id"]
+            isOneToOne: false
+            referencedRelation: "causes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_causes_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_skills: {
+        Row: {
+          created_at: string | null
+          profile_id: string
+          skill_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          profile_id: string
+          skill_id: string
+        }
+        Update: {
+          created_at?: string | null
+          profile_id?: string
+          skill_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_skills_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_skills_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "skills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_views: {
         Row: {
           id: string
@@ -2641,6 +2707,8 @@ export type Database = {
           adin_prompt_status: string | null
           advocacy_interests: string[] | null
           agrees_to_values: boolean | null
+          availability_hours_per_month: number | null
+          availability_visible: boolean | null
           available_for: string[] | null
           available_hours_per_month: number | null
           avatar_url: string | null
@@ -2656,32 +2724,39 @@ export type Database = {
           company: string | null
           connection_count: number | null
           contribution_style: string | null
+          contribution_types: string[] | null
           country_of_origin: string | null
+          country_of_origin_id: string | null
           country_origin: string | null
           created_at: string
           current_city: string | null
           current_country: string | null
           current_country_code: string | null
+          current_country_id: string | null
           current_country_name: string | null
           current_location: string | null
           current_region: string | null
           dashboard_version: string | null
+          deleted_at: string | null
           diaspora_origin: string | null
           diaspora_story: string | null
           display_name: string | null
           email: string | null
           email_notifications: boolean | null
+          email_visible: boolean | null
           first_action_completed: boolean | null
           first_action_type: string | null
           first_name: string | null
           full_name: string | null
           fundraising_status: string | null
+          github_url: string | null
           headline: string | null
           id: string
           impact_areas: string[] | null
           impact_goals: string[] | null
           impact_regions: string[] | null
           industry: string | null
+          industry_sectors: string[] | null
           interest_tags: string[] | null
           interests: string[] | null
           intro_audio_url: string | null
@@ -2690,11 +2765,14 @@ export type Database = {
           is_admin: boolean | null
           is_beta_tester: boolean | null
           is_public: boolean | null
+          languages: string[] | null
           last_active: string | null
+          last_active_at: string | null
           last_name: string | null
           last_seen_at: string | null
           linkedin_url: string | null
           location: string | null
+          location_preference: string | null
           mentorship_interest: string[] | null
           mentorship_offering: boolean | null
           middle_initial: string | null
@@ -2729,19 +2807,25 @@ export type Database = {
           selected_pillars: string[] | null
           skills: string[] | null
           support_areas: string[] | null
+          twitter_handle: string | null
           twitter_url: string | null
           updated_at: string
           user_type: string | null
-          username: string | null
+          username: string
           username_changes: number | null
           username_changes_left: number | null
           venture_name: string | null
           venture_stage: string | null
+          verification_method: string | null
+          verified: boolean | null
+          verified_at: string | null
           visibility: Json | null
           website_url: string | null
           what_to_give: string[] | null
           what_to_receive: string[] | null
           years_experience: number | null
+          years_in_diaspora: number | null
+          years_of_experience: number | null
         }
         Insert: {
           account_visibility?: string | null
@@ -2749,6 +2833,8 @@ export type Database = {
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           agrees_to_values?: boolean | null
+          availability_hours_per_month?: number | null
+          availability_visible?: boolean | null
           available_for?: string[] | null
           available_hours_per_month?: number | null
           avatar_url?: string | null
@@ -2764,32 +2850,39 @@ export type Database = {
           company?: string | null
           connection_count?: number | null
           contribution_style?: string | null
+          contribution_types?: string[] | null
           country_of_origin?: string | null
+          country_of_origin_id?: string | null
           country_origin?: string | null
           created_at?: string
           current_city?: string | null
           current_country?: string | null
           current_country_code?: string | null
+          current_country_id?: string | null
           current_country_name?: string | null
           current_location?: string | null
           current_region?: string | null
           dashboard_version?: string | null
+          deleted_at?: string | null
           diaspora_origin?: string | null
           diaspora_story?: string | null
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
+          email_visible?: boolean | null
           first_action_completed?: boolean | null
           first_action_type?: string | null
           first_name?: string | null
           full_name?: string | null
           fundraising_status?: string | null
+          github_url?: string | null
           headline?: string | null
           id: string
           impact_areas?: string[] | null
           impact_goals?: string[] | null
           impact_regions?: string[] | null
           industry?: string | null
+          industry_sectors?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
           intro_audio_url?: string | null
@@ -2798,11 +2891,14 @@ export type Database = {
           is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          languages?: string[] | null
           last_active?: string | null
+          last_active_at?: string | null
           last_name?: string | null
           last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
+          location_preference?: string | null
           mentorship_interest?: string[] | null
           mentorship_offering?: boolean | null
           middle_initial?: string | null
@@ -2837,19 +2933,25 @@ export type Database = {
           selected_pillars?: string[] | null
           skills?: string[] | null
           support_areas?: string[] | null
+          twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
           user_type?: string | null
-          username?: string | null
+          username: string
           username_changes?: number | null
           username_changes_left?: number | null
           venture_name?: string | null
           venture_stage?: string | null
+          verification_method?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
           visibility?: Json | null
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
           years_experience?: number | null
+          years_in_diaspora?: number | null
+          years_of_experience?: number | null
         }
         Update: {
           account_visibility?: string | null
@@ -2857,6 +2959,8 @@ export type Database = {
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           agrees_to_values?: boolean | null
+          availability_hours_per_month?: number | null
+          availability_visible?: boolean | null
           available_for?: string[] | null
           available_hours_per_month?: number | null
           avatar_url?: string | null
@@ -2872,32 +2976,39 @@ export type Database = {
           company?: string | null
           connection_count?: number | null
           contribution_style?: string | null
+          contribution_types?: string[] | null
           country_of_origin?: string | null
+          country_of_origin_id?: string | null
           country_origin?: string | null
           created_at?: string
           current_city?: string | null
           current_country?: string | null
           current_country_code?: string | null
+          current_country_id?: string | null
           current_country_name?: string | null
           current_location?: string | null
           current_region?: string | null
           dashboard_version?: string | null
+          deleted_at?: string | null
           diaspora_origin?: string | null
           diaspora_story?: string | null
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
+          email_visible?: boolean | null
           first_action_completed?: boolean | null
           first_action_type?: string | null
           first_name?: string | null
           full_name?: string | null
           fundraising_status?: string | null
+          github_url?: string | null
           headline?: string | null
           id?: string
           impact_areas?: string[] | null
           impact_goals?: string[] | null
           impact_regions?: string[] | null
           industry?: string | null
+          industry_sectors?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
           intro_audio_url?: string | null
@@ -2906,11 +3017,14 @@ export type Database = {
           is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          languages?: string[] | null
           last_active?: string | null
+          last_active_at?: string | null
           last_name?: string | null
           last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
+          location_preference?: string | null
           mentorship_interest?: string[] | null
           mentorship_offering?: boolean | null
           middle_initial?: string | null
@@ -2945,21 +3059,41 @@ export type Database = {
           selected_pillars?: string[] | null
           skills?: string[] | null
           support_areas?: string[] | null
+          twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
           user_type?: string | null
-          username?: string | null
+          username?: string
           username_changes?: number | null
           username_changes_left?: number | null
           venture_name?: string | null
           venture_stage?: string | null
+          verification_method?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
           visibility?: Json | null
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
           years_experience?: number | null
+          years_in_diaspora?: number | null
+          years_of_experience?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_country_of_origin_id_fkey"
+            columns: ["country_of_origin_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_current_country_id_fkey"
+            columns: ["current_country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profiles_referrer_id_fkey"
             columns: ["referrer_id"]
@@ -4068,6 +4202,10 @@ export type Database = {
       }
       generate_referral_code: {
         Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_username: {
+        Args: { _full_name: string }
         Returns: string
       }
       generate_username_from_name: {

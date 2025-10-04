@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,6 +28,10 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
     location: '',
     external_link: '',
     org_id: '',
+    skills_needed: [] as string[],
+    causes: [] as string[],
+    time_commitment_hours: 0,
+    duration_months: 0,
   });
 
   const { data: organizations } = useQuery({
@@ -42,6 +47,42 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
     enabled: !!user,
   });
 
+  const { data: skills = [] } = useQuery({
+    queryKey: ['skills'],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from('skills').select('id, name');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const { data: causes = [] } = useQuery({
+    queryKey: ['causes'],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from('causes').select('id, name');
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const toggleSkill = (skillId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      skills_needed: prev.skills_needed.includes(skillId)
+        ? prev.skills_needed.filter(id => id !== skillId)
+        : [...prev.skills_needed, skillId]
+    }));
+  };
+
+  const toggleCause = (causeId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      causes: prev.causes.includes(causeId)
+        ? prev.causes.filter(id => id !== causeId)
+        : [...prev.causes, causeId]
+    }));
+  };
+
   const createMutation = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from('opportunities').insert({
@@ -52,6 +93,10 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
         location: formData.location || null,
         external_link: formData.external_link || null,
         org_id: formData.org_id || null,
+        skills_needed: formData.skills_needed.length > 0 ? formData.skills_needed : null,
+        causes: formData.causes.length > 0 ? formData.causes : null,
+        time_commitment_hours: formData.time_commitment_hours || null,
+        duration_months: formData.duration_months || null,
         created_by: user?.id,
         status: 'active',
       });
@@ -72,6 +117,10 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
         location: '',
         external_link: '',
         org_id: '',
+        skills_needed: [],
+        causes: [],
+        time_commitment_hours: 0,
+        duration_months: 0,
       });
     },
     onError: (error: any) => {
@@ -146,6 +195,38 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
           </div>
 
           <div>
+            <Label>Required Skills</Label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {skills.map((skill: any) => (
+                <Badge
+                  key={skill.id}
+                  variant={formData.skills_needed.includes(skill.id) ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => toggleSkill(skill.id)}
+                >
+                  {skill.name}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <Label>Impact Areas</Label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {causes.map((cause: any) => (
+                <Badge
+                  key={cause.id}
+                  variant={formData.causes.includes(cause.id) ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => toggleCause(cause.id)}
+                >
+                  {cause.name}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          <div>
             <Label htmlFor="requirements">Requirements</Label>
             <Textarea
               id="requirements"
@@ -154,6 +235,31 @@ const CreateOpportunityDialog: React.FC<CreateOpportunityDialogProps> = ({ open,
               placeholder="Skills, qualifications, or resources needed"
               className="min-h-[80px]"
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="time_commitment">Time Commitment (hours/week)</Label>
+              <Input
+                id="time_commitment"
+                type="number"
+                min="0"
+                value={formData.time_commitment_hours}
+                onChange={(e) => setFormData({ ...formData, time_commitment_hours: parseInt(e.target.value) || 0 })}
+                placeholder="10"
+              />
+            </div>
+            <div>
+              <Label htmlFor="duration">Duration (months)</Label>
+              <Input
+                id="duration"
+                type="number"
+                min="0"
+                value={formData.duration_months}
+                onChange={(e) => setFormData({ ...formData, duration_months: parseInt(e.target.value) || 0 })}
+                placeholder="6"
+              />
+            </div>
           </div>
 
           <div>

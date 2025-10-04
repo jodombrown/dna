@@ -72,7 +72,7 @@ const Onboarding = () => {
         updated_at: new Date().toISOString()
       };
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('profiles')
         .upsert(profileData, { onConflict: 'id' });
 
