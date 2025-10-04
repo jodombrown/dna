@@ -24,6 +24,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ConnectExample from "./pages/ConnectExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
+import Contribute from "./pages/Contribute";
 import EventCategoryPage from "./pages/app/EventCategoryPage";
 
 // Regional pages
@@ -82,7 +83,8 @@ function App() {
               {/* Main feature pages */}
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
-              <Route path="/contribute" element={<ContributeExample />} />
+              <Route path="/contribute-old" element={<ContributeExample />} />
+              <Route path="/contribute" element={<Contribute />} />
               
               {/* Event category pages */}
               <Route path="/events/category/:slug" element={<EventCategoryPage />} />
