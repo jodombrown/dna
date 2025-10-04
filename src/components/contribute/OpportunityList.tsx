@@ -3,16 +3,18 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import OpportunityCard from './OpportunityCard';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { FilterState } from './OpportunityFilters';
 
 interface OpportunityListProps {
   searchQuery?: string;
+  filters: FilterState;
 }
 
-const OpportunityList: React.FC<OpportunityListProps> = ({ searchQuery = '' }) => {
+const OpportunityList: React.FC<OpportunityListProps> = ({ searchQuery = '', filters }) => {
   const { data: opportunities, isLoading } = useQuery({
-    queryKey: ['opportunities', searchQuery],
+    queryKey: ['opportunities', searchQuery, filters],
     queryFn: async () => {
-      let query = supabase
+      let query = (supabase as any)
         .from('opportunities')
         .select(`
           *,
@@ -20,11 +22,29 @@ const OpportunityList: React.FC<OpportunityListProps> = ({ searchQuery = '' }) =
           skills(*),
           causes(*)
         `)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false });
+        .eq('status', 'active');
 
+      // Search filter
       if (searchQuery) {
         query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+      }
+
+      // Type filter
+      if (filters.type.length > 0) {
+        query = query.in('type', filters.type);
+      }
+
+      // Skills filter (simplified - requires junction table for proper implementation)
+      // Causes filter
+      if (filters.causes.length > 0) {
+        query = query.in('cause_id', filters.causes);
+      }
+
+      // Sort
+      if (filters.sort === 'oldest') {
+        query = query.order('created_at', { ascending: true });
+      } else {
+        query = query.order('created_at', { ascending: false });
       }
 
       const { data, error } = await query;

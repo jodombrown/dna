@@ -25,6 +25,7 @@ import ConnectExample from "./pages/ConnectExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
 import Contribute from "./pages/Contribute";
+import OrganizationDetail from "./pages/OrganizationDetail";
 import EventCategoryPage from "./pages/app/EventCategoryPage";
 
 // Regional pages
@@ -85,6 +86,7 @@ function App() {
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute-old" element={<ContributeExample />} />
               <Route path="/contribute" element={<Contribute />} />
+              <Route path="/org/:slug" element={<OrganizationDetail />} />
               
               {/* Event category pages */}
               <Route path="/events/category/:slug" element={<EventCategoryPage />} />

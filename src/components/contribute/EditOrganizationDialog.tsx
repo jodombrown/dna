@@ -6,50 +6,64 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-interface CreateOrganizationDialogProps {
+interface EditOrganizationDialogProps {
+  organization: any;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ open, onOpenChange }) => {
-  const { user } = useAuth();
+const EditOrganizationDialog: React.FC<EditOrganizationDialogProps> = ({
+  organization,
+  open,
+  onOpenChange,
+}) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [formData, setFormData] = React.useState({
-    name: '',
-    description: '',
-    website: '',
+    name: organization?.name || '',
+    description: organization?.description || '',
+    website: organization?.website || '',
   });
 
-  const createMutation = useMutation({
+  React.useEffect(() => {
+    if (organization) {
+      setFormData({
+        name: organization.name || '',
+        description: organization.description || '',
+        website: organization.website || '',
+      });
+    }
+  }, [organization]);
+
+  const updateMutation = useMutation({
     mutationFn: async () => {
       const slug = formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-      const { error } = await supabase.from('organizations').insert({
-        name: formData.name,
-        description: formData.description,
-        slug,
-        owner_user_id: user?.id,
-        website: formData.website || null,
-      });
+      const { error } = await supabase
+        .from('organizations')
+        .update({
+          name: formData.name,
+          description: formData.description,
+          slug,
+          website: formData.website || null,
+        })
+        .eq('id', organization.id);
       if (error) throw error;
     },
     onSuccess: () => {
       toast({
-        title: 'Organization created!',
-        description: 'You can now start posting opportunities.',
+        title: 'Organization updated!',
+        description: 'Your changes have been saved.',
       });
+      queryClient.invalidateQueries({ queryKey: ['organization'] });
       queryClient.invalidateQueries({ queryKey: ['organizations'] });
       onOpenChange(false);
-      setFormData({ name: '', description: '', website: '' });
     },
     onError: (error: any) => {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to create organization',
+        description: error.message || 'Failed to update organization',
         variant: 'destructive',
       });
     },
@@ -59,7 +73,7 @@ const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ ope
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create Organization</DialogTitle>
+          <DialogTitle>Edit Organization</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -72,7 +86,6 @@ const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ ope
               placeholder="Enter organization name"
             />
           </div>
-
 
           <div>
             <Label htmlFor="description">Description *</Label>
@@ -101,10 +114,10 @@ const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ ope
               Cancel
             </Button>
             <Button
-              onClick={() => createMutation.mutate()}
-              disabled={!formData.name.trim() || !formData.description.trim() || createMutation.isPending}
+              onClick={() => updateMutation.mutate()}
+              disabled={!formData.name.trim() || !formData.description.trim() || updateMutation.isPending}
             >
-              {createMutation.isPending ? 'Creating...' : 'Create Organization'}
+              {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </div>
@@ -113,4 +126,4 @@ const CreateOrganizationDialog: React.FC<CreateOrganizationDialogProps> = ({ ope
   );
 };
 
-export default CreateOrganizationDialog;
+export default EditOrganizationDialog;

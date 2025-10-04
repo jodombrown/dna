@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -9,8 +10,12 @@ interface OrganizationCardProps {
 }
 
 const OrganizationCard: React.FC<OrganizationCardProps> = ({ organization }) => {
+  const navigate = useNavigate();
   return (
-    <Card className="group hover:shadow-lg transition-all duration-200">
+    <Card 
+      className="group hover:shadow-lg transition-all duration-200 cursor-pointer"
+      onClick={() => navigate(`/org/${organization.slug}`)}
+    >
       <CardHeader className="space-y-4">
         <div className="flex items-start gap-4">
           <Avatar className="h-16 w-16">
@@ -36,12 +41,6 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ organization }) => 
         </p>
 
         <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-          {organization.location && (
-            <span className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              {organization.location}
-            </span>
-          )}
           {organization.website && (
             <a
               href={organization.website}
@@ -55,16 +54,6 @@ const OrganizationCard: React.FC<OrganizationCardProps> = ({ organization }) => 
             </a>
           )}
         </div>
-
-        {organization.impact_areas && organization.impact_areas.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {organization.impact_areas.slice(0, 3).map((area: string) => (
-              <Badge key={area} variant="outline" className="text-xs">
-                {area}
-              </Badge>
-            ))}
-          </div>
-        )}
       </CardContent>
     </Card>
   );
