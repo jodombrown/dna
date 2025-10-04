@@ -197,6 +197,30 @@ export type Database = {
           },
         ]
       }
+      causes: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       collaboration_memberships: {
         Row: {
           id: string
@@ -2040,6 +2064,219 @@ export type Database = {
           },
         ]
       }
+      opportunity_applications: {
+        Row: {
+          applicant_id: string
+          cover_letter: string | null
+          created_at: string | null
+          id: string
+          opportunity_id: string
+          proposed_contribution_type: Database["public"]["Enums"]["contribution_type"]
+          proposed_hours_per_month: number | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["application_status"] | null
+          updated_at: string | null
+          withdrawn_at: string | null
+        }
+        Insert: {
+          applicant_id: string
+          cover_letter?: string | null
+          created_at?: string | null
+          id?: string
+          opportunity_id: string
+          proposed_contribution_type: Database["public"]["Enums"]["contribution_type"]
+          proposed_hours_per_month?: number | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["application_status"] | null
+          updated_at?: string | null
+          withdrawn_at?: string | null
+        }
+        Update: {
+          applicant_id?: string
+          cover_letter?: string | null
+          created_at?: string | null
+          id?: string
+          opportunity_id?: string
+          proposed_contribution_type?: Database["public"]["Enums"]["contribution_type"]
+          proposed_hours_per_month?: number | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["application_status"] | null
+          updated_at?: string | null
+          withdrawn_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_applications_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_applications_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_applications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunity_contributions: {
+        Row: {
+          application_id: string | null
+          completed_at: string | null
+          contribution_type: Database["public"]["Enums"]["contribution_type"]
+          contributor_id: string
+          created_at: string | null
+          description: string | null
+          hours_contributed: number | null
+          id: string
+          opportunity_id: string
+          started_at: string | null
+          updated_at: string | null
+          verification_notes: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          application_id?: string | null
+          completed_at?: string | null
+          contribution_type: Database["public"]["Enums"]["contribution_type"]
+          contributor_id: string
+          created_at?: string | null
+          description?: string | null
+          hours_contributed?: number | null
+          id?: string
+          opportunity_id: string
+          started_at?: string | null
+          updated_at?: string | null
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          application_id?: string | null
+          completed_at?: string | null
+          contribution_type?: Database["public"]["Enums"]["contribution_type"]
+          contributor_id?: string
+          created_at?: string | null
+          description?: string | null
+          hours_contributed?: number | null
+          id?: string
+          opportunity_id?: string
+          started_at?: string | null
+          updated_at?: string | null
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_contributions_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "opportunity_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_contributions_contributor_id_fkey"
+            columns: ["contributor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_contributions_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_contributions_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          country_id: string | null
+          created_at: string | null
+          deleted_at: string | null
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          owner_user_id: string
+          slug: string
+          updated_at: string | null
+          verified: boolean | null
+          verified_at: string | null
+          website: string | null
+        }
+        Insert: {
+          country_id?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          owner_user_id: string
+          slug: string
+          updated_at?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          country_id?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_user_id?: string
+          slug?: string
+          updated_at?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_owner_user_id_fkey"
+            columns: ["owner_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       political_digest: {
         Row: {
           author: string | null
@@ -2990,6 +3227,27 @@ export type Database = {
         }
         Relationships: []
       }
+      skills: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       task_comments: {
         Row: {
           author_id: string
@@ -3354,6 +3612,45 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_recommendations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          granted_at: string | null
+          granted_by: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_granted_by_fkey"
+            columns: ["granted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -3884,6 +4181,13 @@ export type Database = {
         Args: { new_user_id: string; referral_code_param: string }
         Returns: undefined
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_admin_email: {
         Args: { email_address: string }
         Returns: boolean
@@ -3945,6 +4249,10 @@ export type Database = {
       make_user_admin: {
         Args: { user_email: string }
         Returns: string
+      }
+      owns_organization: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
       }
       profile_meets_visibility_requirement: {
         Args: { min_score?: number; user_id_param: string }
@@ -4322,7 +4630,16 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "moderator" | "admin"
+      application_status:
+        | "pending"
+        | "reviewing"
+        | "accepted"
+        | "rejected"
+        | "withdrawn"
+      contribution_type: "time" | "expertise" | "network" | "capital"
+      opportunity_status: "draft" | "active" | "paused" | "closed" | "archived"
+      opportunity_visibility: "public" | "network_only" | "private"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4449,6 +4766,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "moderator", "admin"],
+      application_status: [
+        "pending",
+        "reviewing",
+        "accepted",
+        "rejected",
+        "withdrawn",
+      ],
+      contribution_type: ["time", "expertise", "network", "capital"],
+      opportunity_status: ["draft", "active", "paused", "closed", "archived"],
+      opportunity_visibility: ["public", "network_only", "private"],
+    },
   },
 } as const
