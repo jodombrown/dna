@@ -13,6 +13,7 @@ import ResetPassword from "./pages/ResetPassword";
 import InviteSignup from "./pages/InviteSignup";
 import UserDashboard from "./pages/UserDashboard";
 import NotFound from "./pages/NotFound";
+import Onboarding from "./pages/Onboarding";
 
 // Static pages  
 import About from "./pages/About";
@@ -75,6 +76,7 @@ function App() {
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
+              <Route path="/onboarding" element={<Onboarding />} />
               
               {/* User profiles */}
               <Route path="/dna/:username" element={<UserDashboard />} />
