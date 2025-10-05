@@ -16,6 +16,8 @@ import InviteSignup from "./pages/InviteSignup";
 import UserDashboard from "./pages/UserDashboard";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
+import ProfilePage from "./pages/ProfilePage";
+import ProfileEdit from "./pages/ProfileEdit";
 
 // Static pages  
 import About from "./pages/About";
@@ -86,6 +88,8 @@ function App() {
               
               {/* User profiles */}
               <Route path="/dna/:username" element={<OnboardingGuard><UserDashboard /></OnboardingGuard>} />
+              <Route path="/profile/:username" element={<OnboardingGuard><ProfilePage /></OnboardingGuard>} />
+              <Route path="/profile/:username/edit" element={<OnboardingGuard><ProfileEdit /></OnboardingGuard>} />
               
               {/* Main feature pages */}
               <Route path="/connect" element={<OnboardingGuard><ConnectExample /></OnboardingGuard>} />
