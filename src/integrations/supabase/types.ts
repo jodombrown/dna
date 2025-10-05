@@ -2823,6 +2823,7 @@ export type Database = {
           website_url: string | null
           what_to_give: string[] | null
           what_to_receive: string[] | null
+          why_contribute: string | null
           years_experience: number | null
           years_in_diaspora: number | null
           years_in_diaspora_text: string | null
@@ -2950,6 +2951,7 @@ export type Database = {
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
+          why_contribute?: string | null
           years_experience?: number | null
           years_in_diaspora?: number | null
           years_in_diaspora_text?: string | null
@@ -3077,6 +3079,7 @@ export type Database = {
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
+          why_contribute?: string | null
           years_experience?: number | null
           years_in_diaspora?: number | null
           years_in_diaspora_text?: string | null
