@@ -2,6 +2,7 @@ import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import LocationAutocomplete from '@/components/ui/location-autocomplete';
 import { LanguageAutocomplete } from '@/components/onboarding/LanguageAutocomplete';
 
@@ -12,8 +13,14 @@ interface Step1Props {
 }
 
 export const Step1DiasporaIdentity: React.FC<Step1Props> = ({ data, onChange, onNext }) => {
-  const canProceed = data.country_of_origin && data.current_country && 
-                     data.diaspora_story?.length >= 50;
+  const canProceed =
+    data.first_name?.trim() &&
+    data.last_name?.trim() &&
+    data.country_of_origin &&
+    data.current_country &&
+    data.origin_country_code &&
+    data.current_country_code &&
+    data.diaspora_story?.length >= 50;
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
@@ -25,12 +32,32 @@ export const Step1DiasporaIdentity: React.FC<Step1Props> = ({ data, onChange, on
       </div>
 
       <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <Label>First name *</Label>
+            <Input
+              value={data.first_name || ''}
+              onChange={(e) => onChange({ ...data, first_name: e.target.value })}
+              placeholder="e.g., Ama"
+            />
+          </div>
+          <div>
+            <Label>Last name *</Label>
+            <Input
+              value={data.last_name || ''}
+              onChange={(e) => onChange({ ...data, last_name: e.target.value })}
+              placeholder="e.g., Mensah"
+            />
+          </div>
+        </div>
+
         <LocationAutocomplete
           label="Country of Origin"
           value={data.country_of_origin || ''}
           onSelect={(loc) => onChange({ 
             ...data, 
             country_of_origin: loc.countryName,
+            origin_country_code: loc.countryCode,
             country_of_origin_id: null 
           })}
           placeholder="Start typing your country of origin..."
@@ -43,6 +70,7 @@ export const Step1DiasporaIdentity: React.FC<Step1Props> = ({ data, onChange, on
           onSelect={(loc) => onChange({ 
             ...data, 
             current_country: loc.countryName,
+            current_country_code: loc.countryCode,
             current_country_id: null 
           })}
           placeholder="Start typing where you currently reside..."

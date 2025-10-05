@@ -4,9 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface OnboardingData {
   // Step 1: Diaspora Identity
+  first_name: string;
+  last_name: string;
   country_of_origin?: string;
+  origin_country_code?: string;
   country_of_origin_id?: string | null;
   current_country?: string;
+  current_country_code?: string;
   current_country_id?: string | null;
   current_city: string;
   languages: string[];
@@ -24,6 +28,7 @@ interface OnboardingData {
   
   // Step 3: Causes
   selected_causes: string[]; // cause IDs
+  why_contribute?: string;
   
   // Step 4: Availability
   availability_hours_per_month: number;
@@ -35,9 +40,13 @@ export const useOnboarding = () => {
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<OnboardingData>({
+    first_name: '',
+    last_name: '',
     country_of_origin: '',
+    origin_country_code: '',
     country_of_origin_id: null,
     current_country: '',
+    current_country_code: '',
     current_country_id: null,
     current_city: '',
     languages: [],
@@ -69,9 +78,13 @@ export const useOnboarding = () => {
       
       if (profile) {
         setFormData({
+          first_name: profile.first_name || '',
+          last_name: profile.last_name || '',
           country_of_origin: profile.country_of_origin || '',
+          origin_country_code: profile.origin_country_code || '',
           country_of_origin_id: profile.country_of_origin_id || null,
           current_country: profile.current_country || '',
+          current_country_code: profile.current_country_code || '',
           current_country_id: profile.current_country_id || null,
           current_city: profile.current_city || '',
           languages: profile.languages || [],
@@ -151,35 +164,61 @@ export const useOnboarding = () => {
 
   const completeOnboarding = async () => {
     if (!user?.id) return null;
-    
-    // Generate username if not set
+
+    // Fetch current required fields
     const { data: profile } = await (supabase as any)
       .from('profiles')
-      .select('username, full_name')
+      .select('username, full_name, first_name, last_name, origin_country_code, current_country_code, current_city')
       .eq('id', user.id)
       .maybeSingle();
-    
-    const updates: any = {
-      onboarding_completed_at: new Date().toISOString()
-    };
-    
+
+    // Consolidate with local form state as fallbacks
+    const firstName = (profile?.first_name || formData.first_name || '').trim();
+    const lastName = (profile?.last_name || formData.last_name || '').trim();
+    const originCode = (profile?.origin_country_code || formData.origin_country_code || '').trim();
+    const currentCode = (profile?.current_country_code || formData.current_country_code || '').trim();
+    const currentCity = (profile?.current_city || formData.current_city || '').trim();
+
+    const missing: string[] = [];
+    if (!firstName) missing.push('first name');
+    if (!lastName) missing.push('last name');
+    if (!originCode || originCode.length !== 2) missing.push('country of origin');
+    if (!currentCode || currentCode.length !== 2) missing.push('country of residence');
+    if (!currentCity) missing.push('current city');
+
+    if (missing.length) {
+      throw new Error(`Please complete the following before finishing: ${missing.join(', ')}`);
+    }
+
+    // Prepare username if missing
     let finalUsername = profile?.username;
-    
-    if (!profile?.username) {
-      // Call username generation function
+    const fullNameForUsername = (profile?.full_name && profile.full_name.trim().length > 0)
+      ? profile.full_name
+      : `${firstName} ${lastName}`.trim();
+
+    const updates: any = {
+      first_name: firstName,
+      last_name: lastName,
+      origin_country_code: originCode,
+      current_country_code: currentCode,
+      current_city: currentCity,
+      onboarding_completed_at: new Date().toISOString(),
+    };
+
+    if (!finalUsername) {
       const { data: usernameData } = await (supabase as any)
-        .rpc('generate_username', { _full_name: profile?.full_name || 'user' });
+        .rpc('generate_username', { _full_name: fullNameForUsername || 'user' });
       updates.username = usernameData;
       finalUsername = usernameData;
     }
-    
+
     const { error } = await (supabase as any)
       .from('profiles')
       .update(updates)
       .eq('id', user.id);
-    
+
     if (error) throw error;
-    
+
     return finalUsername;
   };
 
