@@ -64,10 +64,10 @@ const Auth = () => {
         
         if (!profile?.onboarding_completed_at) {
           console.log('Auth.tsx: Onboarding incomplete, redirecting to /onboarding');
-          navigate('/onboarding');
+          navigate('/onboarding', { replace: true });
         } else {
           console.log('Auth.tsx: Onboarding complete, redirecting to /contribute');
-          navigate('/contribute');
+          navigate('/contribute', { replace: true });
         }
       }
     };

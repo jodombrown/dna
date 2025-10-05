@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
+import { OnboardingGuard } from '@/components/auth/OnboardingGuard';
 
 // Core pages
 import Index from "./pages/Index";
@@ -72,48 +73,44 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <Routes>
-              {/* Core authentication */}
-              <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
+              {/* Public auth routes - no guard */}
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
               <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/invite" element={<InviteSignup />} />
+              
+              {/* Protected routes - ALL wrapped with OnboardingGuard */}
+              <Route path="/" element={<OnboardingGuard><Index /></OnboardingGuard>} />
               
               {/* User profiles */}
-              <Route path="/dna/:username" element={<UserDashboard />} />
-              
-              
+              <Route path="/dna/:username" element={<OnboardingGuard><UserDashboard /></OnboardingGuard>} />
               
               {/* Main feature pages */}
-              <Route path="/connect" element={<ConnectExample />} />
-              <Route path="/collaborate" element={<CollaborationsExample />} />
-              <Route path="/contribute-old" element={<ContributeExample />} />
-              <Route path="/contribute" element={<Contribute />} />
-              <Route path="/org/:slug" element={<OrganizationDetail />} />
+              <Route path="/connect" element={<OnboardingGuard><ConnectExample /></OnboardingGuard>} />
+              <Route path="/collaborate" element={<OnboardingGuard><CollaborationsExample /></OnboardingGuard>} />
+              <Route path="/contribute-old" element={<OnboardingGuard><ContributeExample /></OnboardingGuard>} />
+              <Route path="/contribute" element={<OnboardingGuard><Contribute /></OnboardingGuard>} />
+              <Route path="/org/:slug" element={<OnboardingGuard><OrganizationDetail /></OnboardingGuard>} />
               
               {/* Event category pages */}
-              <Route path="/events/category/:slug" element={<EventCategoryPage />} />
+              <Route path="/events/category/:slug" element={<OnboardingGuard><EventCategoryPage /></OnboardingGuard>} />
               
               {/* Regional landing pages */}
-              <Route path="/north-africa" element={<NorthAfricaLandingPage />} />
-              
-              {/* Static pages */}
+              <Route path="/north-africa" element={<OnboardingGuard><NorthAfricaLandingPage /></OnboardingGuard>} />
               
               {/* Phase pages */}
-              <Route path="/phase-1/market-research" element={<MarketResearchPhase />} />
-              <Route path="/phase-2/prototyping" element={<PrototypingPhase />} />
-              <Route path="/phase-3/customer-discovery" element={<CustomerDiscoveryPhase />} />
-              <Route path="/phase-4/mvp" element={<MvpPhase />} />
-              <Route path="/phase-5/beta-validation" element={<BetaValidationPhase />} />
-              <Route path="/phase-6/go-to-market" element={<GoToMarketPhase />} />
+              <Route path="/phase-1/market-research" element={<OnboardingGuard><MarketResearchPhase /></OnboardingGuard>} />
+              <Route path="/phase-2/prototyping" element={<OnboardingGuard><PrototypingPhase /></OnboardingGuard>} />
+              <Route path="/phase-3/customer-discovery" element={<OnboardingGuard><CustomerDiscoveryPhase /></OnboardingGuard>} />
+              <Route path="/phase-4/mvp" element={<OnboardingGuard><MvpPhase /></OnboardingGuard>} />
+              <Route path="/phase-5/beta-validation" element={<OnboardingGuard><BetaValidationPhase /></OnboardingGuard>} />
+              <Route path="/phase-6/go-to-market" element={<OnboardingGuard><GoToMarketPhase /></OnboardingGuard>} />
               
-              {/* Static pages */}
+              {/* Static pages - public access */}
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              
-              {/* Authentication flows */}
-              <Route path="/invite" element={<InviteSignup />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
