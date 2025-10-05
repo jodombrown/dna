@@ -49,30 +49,9 @@ const Auth = () => {
 
   // Redirect if already authenticated
   useEffect(() => {
-    const checkOnboardingAndRedirect = async () => {
-      if (user && !loading && !isResetMode) {
-        console.log('Auth.tsx: User authenticated, checking onboarding status...', user.id);
-        
-        // Check if onboarding is complete
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('onboarding_completed_at')
-          .eq('id', user.id)
-          .maybeSingle();
-        
-        console.log('Auth.tsx: Profile query result:', { profile, error });
-        
-        if (!profile?.onboarding_completed_at) {
-          console.log('Auth.tsx: Onboarding incomplete, redirecting to /onboarding');
-          navigate('/onboarding', { replace: true });
-        } else {
-          console.log('Auth.tsx: Onboarding complete, redirecting to /contribute');
-          navigate('/contribute', { replace: true });
-        }
-      }
-    };
-    
-    checkOnboardingAndRedirect();
+    if (user && !loading && !isResetMode) {
+      navigate('/app/dashboard');
+    }
   }, [user, loading, navigate, isResetMode]);
 
   // Detect password recovery callback from Supabase

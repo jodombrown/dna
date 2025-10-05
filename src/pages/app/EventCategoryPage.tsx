@@ -56,7 +56,7 @@ const EventCategoryPage: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <Button
         variant="ghost"
-        onClick={() => navigate('/connect?tab=events')}
+        onClick={() => navigate('/connect')}
         className="mb-4 -ml-2 hover:bg-dna-emerald/10 hover:text-dna-forest"
       >
         <ChevronLeft className="h-4 w-4 mr-1" />

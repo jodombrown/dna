@@ -91,7 +91,7 @@ const UnifiedHeader = () => {
 
   const handlePreBetaSignInClick = () => {
     setIsMobileMenuOpen(false);
-    navigate('/auth');
+    setIsBetaSignupOpen(true);
   };
 
   const handleNavClick = (item: { name: string; path: string }) => {
@@ -146,20 +146,7 @@ const UnifiedHeader = () => {
 
             {/* Right section - Navigation and Profile */}
             <div className="flex items-center space-x-4">
-              {/* Desktop Navigation - Authenticated */}
-              {isAuthenticated && profile?.username && (
-                <nav className="hidden md:flex items-center space-x-4">
-                  <Button
-                    variant="ghost"
-                    onClick={() => navigate(`/profile/${profile.username}`)}
-                  >
-                    <User className="w-4 h-4 mr-2" />
-                    My Profile
-                  </Button>
-                </nav>
-              )}
-
-              {/* Desktop Navigation - Public */}
+              {/* Desktop Navigation */}
               {!isAuthenticated && (
                 <>
                   <nav className="hidden md:flex items-center space-x-6">
@@ -213,13 +200,25 @@ const UnifiedHeader = () => {
                   </nav>
                   
                   {!isAuthenticated && (
-                    <Button
-                      variant="default"
-                      onClick={handlePreBetaSignInClick}
-                      className="hidden md:inline-flex bg-dna-copper text-white hover:bg-dna-gold transition-all duration-200"
-                    >
-                      Sign In
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="default"
+                            onClick={handlePreBetaSignInClick}
+                            className="hidden md:inline-flex bg-dna-copper text-white hover:bg-dna-gold transition-all duration-200"
+                          >
+                            Sign In
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p className="text-sm">
+                            We're in pre-beta! Authentication will be available in the next 30 days. 
+                            Join our waitlist to be notified when we launch.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   )}
                 </>
               )}
@@ -308,10 +307,10 @@ const UnifiedHeader = () => {
                             
                             <Button
                               variant="default"
-                              className="justify-start text-left transition-all duration-200 focus:ring-0 focus:ring-offset-0 bg-dna-copper text-white hover:bg-dna-gold"
+                              className="justify-start text-left transition-all duration-200 focus:ring-0 focus:ring-offset-0"
                               onClick={handlePreBetaSignInClick}
                             >
-                              Sign In / Sign Up
+                              Sign In (Coming Soon)
                             </Button>
                           </>
                         ) : null}

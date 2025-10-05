@@ -16,13 +16,13 @@ export const handleProfileSubmission = async (
     years_in_diaspora: formData.years_in_diaspora ? parseInt(formData.years_in_diaspora) : null,
   };
 
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('profiles')
     .upsert({
       id: userId,
       ...processedData,
       avatar_url: avatarUrl,
-      banner_url: bannerUrl,
+      banner_image_url: bannerUrl,
       skills: arrayStates.skills,
       interests: arrayStates.interests,
       impact_areas: arrayStates.impactAreas,
@@ -34,7 +34,7 @@ export const handleProfileSubmission = async (
       diaspora_networks: arrayStates.diasporaNetworks,
       mentorship_areas: arrayStates.mentorshipAreas,
       updated_at: new Date().toISOString(),
-    }, { onConflict: 'id' });
+    });
 
   if (error) throw error;
 };
