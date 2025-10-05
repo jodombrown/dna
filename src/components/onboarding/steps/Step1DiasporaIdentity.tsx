@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CountryAutocomplete } from '@/components/onboarding/CountryAutocomplete';
-import LocationTypeahead from '@/components/location/LocationTypeahead';
+import LocationAutocomplete from '@/components/ui/location-autocomplete';
 import { LanguageAutocomplete } from '@/components/onboarding/LanguageAutocomplete';
 
 interface Step1Props {
@@ -60,9 +60,9 @@ export const Step1DiasporaIdentity: React.FC<Step1Props> = ({ data, onChange, on
 
         <div>
           <Label>Current City/Province/District</Label>
-          <LocationTypeahead
+          <LocationAutocomplete
             value={data.current_city || ''}
-            onChange={(value) => onChange({ ...data, current_city: value })}
+            onSelect={(loc) => onChange({ ...data, current_city: loc.label })}
             placeholder="Start typing your city, province, or district..."
           />
         </div>

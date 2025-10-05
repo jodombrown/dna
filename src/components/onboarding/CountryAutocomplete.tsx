@@ -34,18 +34,27 @@ export const CountryAutocomplete = ({
     }
   }, [value, countries]);
 
-  // Filter countries based on search term
+  // Utility: normalize strings for flexible matching (diacritics-insensitive)
+  const normalize = (s: string) =>
+    (s || '')
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
+
+  // Filter countries based on search term (robust matching)
   useEffect(() => {
-    if (!searchTerm) {
+    const s = normalize(searchTerm);
+    if (!s) {
       setFilteredCountries([]);
       return;
     }
 
     const filtered = countries
-      .filter(country => 
-        country.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .slice(0, 10);
+      .map((country) => ({ country, norm: normalize(country.name) }))
+      .filter(({ norm }) => norm.includes(s) || s.includes(norm))
+      .slice(0, 20)
+      .map(({ country }) => country);
 
     setFilteredCountries(filtered);
   }, [searchTerm, countries]);
