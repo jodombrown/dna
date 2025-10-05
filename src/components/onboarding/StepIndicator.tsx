@@ -8,7 +8,7 @@ interface StepIndicatorProps {
 const steps = [
   { number: 1, title: 'Identity', description: 'Your diaspora story' },
   { number: 2, title: 'Professional', description: 'Skills & experience' },
-  { number: 3, title: 'Causes', description: 'Impact areas' },
+  { number: 3, title: 'Impact', description: 'Contribution pathways' },
   { number: 4, title: 'Availability', description: 'How you contribute' },
 ];
 

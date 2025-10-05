@@ -78,7 +78,7 @@ export const Step2Professional: React.FC<Step2Props> = ({ data, onChange, onNext
           Back
         </Button>
         <Button onClick={onNext} disabled={!canProceed} className="flex-1">
-          Continue to Causes
+          Continue to Impact
         </Button>
       </div>
     </div>

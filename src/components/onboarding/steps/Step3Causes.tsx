@@ -40,11 +40,11 @@ export const Step3Causes: React.FC<Step3Props> = ({ data, onChange, onNext, onBa
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="text-center space-y-3">
-        <p className="text-lg italic text-muted-foreground">
+        <p className="text-lg italic text-muted-foreground animate-fade-in opacity-0 [animation-delay:200ms] [animation-fill-mode:forwards]">
           "Every member of the Diaspora carries a piece of Africa's progress within them."
         </p>
-        <h2 className="text-2xl font-bold">Your Contribution Pathways</h2>
-        <p className="text-muted-foreground">
+        <h2 className="text-2xl font-bold animate-fade-in opacity-0 [animation-delay:400ms] [animation-fill-mode:forwards]">Your Contribution Pathways</h2>
+        <p className="text-muted-foreground animate-fade-in opacity-0 [animation-delay:600ms] [animation-fill-mode:forwards]">
           Which of these ways feels most natural for you to give back or get involved?<br />
           <span className="text-sm">(Select all that apply)</span>
         </p>
