@@ -2825,6 +2825,7 @@ export type Database = {
           what_to_receive: string[] | null
           years_experience: number | null
           years_in_diaspora: number | null
+          years_in_diaspora_text: string | null
           years_of_experience: number | null
         }
         Insert: {
@@ -2951,6 +2952,7 @@ export type Database = {
           what_to_receive?: string[] | null
           years_experience?: number | null
           years_in_diaspora?: number | null
+          years_in_diaspora_text?: string | null
           years_of_experience?: number | null
         }
         Update: {
@@ -3077,6 +3079,7 @@ export type Database = {
           what_to_receive?: string[] | null
           years_experience?: number | null
           years_in_diaspora?: number | null
+          years_in_diaspora_text?: string | null
           years_of_experience?: number | null
         }
         Relationships: [
