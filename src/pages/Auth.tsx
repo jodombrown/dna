@@ -49,9 +49,24 @@ const Auth = () => {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (user && !loading && !isResetMode) {
-      navigate('/app/dashboard');
-    }
+    const checkOnboardingAndRedirect = async () => {
+      if (user && !loading && !isResetMode) {
+        // Check if onboarding is complete
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('onboarding_completed_at')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (!profile?.onboarding_completed_at) {
+          navigate('/onboarding');
+        } else {
+          navigate('/contribute');
+        }
+      }
+    };
+    
+    checkOnboardingAndRedirect();
   }, [user, loading, navigate, isResetMode]);
 
   // Detect password recovery callback from Supabase
