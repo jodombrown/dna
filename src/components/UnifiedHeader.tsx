@@ -91,7 +91,7 @@ const UnifiedHeader = () => {
 
   const handlePreBetaSignInClick = () => {
     setIsMobileMenuOpen(false);
-    setIsBetaSignupOpen(true);
+    navigate('/auth');
   };
 
   const handleNavClick = (item: { name: string; path: string }) => {
@@ -200,25 +200,13 @@ const UnifiedHeader = () => {
                   </nav>
                   
                   {!isAuthenticated && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="default"
-                            onClick={handlePreBetaSignInClick}
-                            className="hidden md:inline-flex bg-dna-copper text-white hover:bg-dna-gold transition-all duration-200"
-                          >
-                            Sign In
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p className="text-sm">
-                            We're in pre-beta! Authentication will be available in the next 30 days. 
-                            Join our waitlist to be notified when we launch.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <Button
+                      variant="default"
+                      onClick={handlePreBetaSignInClick}
+                      className="hidden md:inline-flex bg-dna-copper text-white hover:bg-dna-gold transition-all duration-200"
+                    >
+                      Sign In
+                    </Button>
                   )}
                 </>
               )}
@@ -307,10 +295,10 @@ const UnifiedHeader = () => {
                             
                             <Button
                               variant="default"
-                              className="justify-start text-left transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                              className="justify-start text-left transition-all duration-200 focus:ring-0 focus:ring-offset-0 bg-dna-copper text-white hover:bg-dna-gold"
                               onClick={handlePreBetaSignInClick}
                             >
-                              Sign In (Coming Soon)
+                              Sign In / Sign Up
                             </Button>
                           </>
                         ) : null}
