@@ -11,7 +11,6 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import InviteSignup from "./pages/InviteSignup";
-import UserDashboard from "./pages/UserDashboard";
 import DnaMe from "./pages/dna/Me";
 import DnaUserDashboard from "./pages/dna/Username";
 import NotFound from "./pages/NotFound";
@@ -26,7 +25,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ConnectExample from "./pages/ConnectExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
-import EventCategoryPage from "./pages/app/EventCategoryPage";
 
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
@@ -80,15 +78,10 @@ function App() {
               <Route path="/dna/me" element={<DnaMe />} />
               <Route path="/dna/:username" element={<DnaUserDashboard />} />
               
-              
-              
               {/* Main feature pages */}
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
-              
-              {/* Event category pages */}
-              <Route path="/events/category/:slug" element={<EventCategoryPage />} />
               
               {/* Regional landing pages */}
               <Route path="/north-africa" element={<NorthAfricaLandingPage />} />
