@@ -19,6 +19,8 @@ import Onboarding from "./pages/Onboarding";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileEdit from "./pages/ProfileEdit";
 import TestProfileChecklist from "./pages/TestProfileChecklist";
+import VerifyOrganization from "./pages/VerifyOrganization";
+import AdminVerifications from "./pages/AdminVerifications";
 
 // Static pages  
 import About from "./pages/About";
@@ -99,6 +101,10 @@ function App() {
               <Route path="/contribute-old" element={<OnboardingGuard><ContributeExample /></OnboardingGuard>} />
               <Route path="/contribute" element={<OnboardingGuard><Contribute /></OnboardingGuard>} />
               <Route path="/org/:slug" element={<OnboardingGuard><OrganizationDetail /></OnboardingGuard>} />
+              <Route path="/org/:slug/verify" element={<OnboardingGuard><VerifyOrganization /></OnboardingGuard>} />
+              
+              {/* Admin pages */}
+              <Route path="/admin/verifications" element={<OnboardingGuard><AdminVerifications /></OnboardingGuard>} />
               
               {/* Event category pages */}
               <Route path="/events/category/:slug" element={<OnboardingGuard><EventCategoryPage /></OnboardingGuard>} />

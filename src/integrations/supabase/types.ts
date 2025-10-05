@@ -197,6 +197,59 @@ export type Database = {
           },
         ]
       }
+      billing_transactions: {
+        Row: {
+          amount_cents: number
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          id: string
+          metadata: Json | null
+          organization_id: string
+          status: string | null
+          stripe_invoice_id: string | null
+          stripe_payment_intent_id: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id: string
+          status?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id?: string
+          status?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_transactions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       causes: {
         Row: {
           created_at: string | null
@@ -2214,8 +2267,96 @@ export type Database = {
           },
         ]
       }
+      organization_verification_requests: {
+        Row: {
+          annual_budget_usd: number | null
+          created_at: string | null
+          description_of_work: string | null
+          financial_document_url: string | null
+          id: string
+          organization_id: string
+          proof_of_activity_url: string | null
+          reference_1_email: string | null
+          reference_1_name: string | null
+          reference_1_relationship: string | null
+          reference_2_email: string | null
+          reference_2_name: string | null
+          reference_2_relationship: string | null
+          registration_document_url: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_notes: string | null
+          social_media_links: string[] | null
+          status: string | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          annual_budget_usd?: number | null
+          created_at?: string | null
+          description_of_work?: string | null
+          financial_document_url?: string | null
+          id?: string
+          organization_id: string
+          proof_of_activity_url?: string | null
+          reference_1_email?: string | null
+          reference_1_name?: string | null
+          reference_1_relationship?: string | null
+          reference_2_email?: string | null
+          reference_2_name?: string | null
+          reference_2_relationship?: string | null
+          registration_document_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          social_media_links?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          annual_budget_usd?: number | null
+          created_at?: string | null
+          description_of_work?: string | null
+          financial_document_url?: string | null
+          id?: string
+          organization_id?: string
+          proof_of_activity_url?: string | null
+          reference_1_email?: string | null
+          reference_1_name?: string | null
+          reference_1_relationship?: string | null
+          reference_2_email?: string | null
+          reference_2_name?: string | null
+          reference_2_relationship?: string | null
+          registration_document_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          social_media_links?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_verification_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_verification_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
+          annual_budget_usd: number | null
           country_id: string | null
           created_at: string | null
           deleted_at: string | null
@@ -2223,14 +2364,30 @@ export type Database = {
           id: string
           logo_url: string | null
           name: string
+          opportunities_posted_this_year: number | null
           owner_user_id: string
           slug: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_ends_at: string | null
+          subscription_started_at: string | null
+          subscription_status: string | null
+          subscription_tier: string | null
           updated_at: string | null
+          verification_approved_at: string | null
+          verification_documents_url: string | null
+          verification_fee_paid: boolean | null
+          verification_notes: string | null
+          verification_rejected_at: string | null
+          verification_status: string | null
+          verification_submitted_at: string | null
           verified: boolean | null
           verified_at: string | null
           website: string | null
+          year_reset_at: string | null
         }
         Insert: {
+          annual_budget_usd?: number | null
           country_id?: string | null
           created_at?: string | null
           deleted_at?: string | null
@@ -2238,14 +2395,30 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name: string
+          opportunities_posted_this_year?: number | null
           owner_user_id: string
           slug: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_ends_at?: string | null
+          subscription_started_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
           updated_at?: string | null
+          verification_approved_at?: string | null
+          verification_documents_url?: string | null
+          verification_fee_paid?: boolean | null
+          verification_notes?: string | null
+          verification_rejected_at?: string | null
+          verification_status?: string | null
+          verification_submitted_at?: string | null
           verified?: boolean | null
           verified_at?: string | null
           website?: string | null
+          year_reset_at?: string | null
         }
         Update: {
+          annual_budget_usd?: number | null
           country_id?: string | null
           created_at?: string | null
           deleted_at?: string | null
@@ -2253,12 +2426,27 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name?: string
+          opportunities_posted_this_year?: number | null
           owner_user_id?: string
           slug?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_ends_at?: string | null
+          subscription_started_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
           updated_at?: string | null
+          verification_approved_at?: string | null
+          verification_documents_url?: string | null
+          verification_fee_paid?: boolean | null
+          verification_notes?: string | null
+          verification_rejected_at?: string | null
+          verification_status?: string | null
+          verification_submitted_at?: string | null
           verified?: boolean | null
           verified_at?: string | null
           website?: string | null
+          year_reset_at?: string | null
         }
         Relationships: [
           {
@@ -4100,6 +4288,10 @@ export type Database = {
       }
       can_create_collaboration: {
         Args: { user_id_param: string }
+        Returns: boolean
+      }
+      can_post_opportunity: {
+        Args: { _org_id: string }
         Returns: boolean
       }
       can_send_messages: {
