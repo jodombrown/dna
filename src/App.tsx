@@ -10,6 +10,7 @@ import { OnboardingGuard } from '@/components/auth/OnboardingGuard';
 // Core pages
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import AuthCallback from "./pages/AuthCallback";
 import ResetPassword from "./pages/ResetPassword";
 import InviteSignup from "./pages/InviteSignup";
 import UserDashboard from "./pages/UserDashboard";
@@ -75,6 +76,7 @@ function App() {
             <Routes>
               {/* Public auth routes - no guard */}
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/invite" element={<InviteSignup />} />
