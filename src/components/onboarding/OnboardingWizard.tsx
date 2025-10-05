@@ -45,14 +45,18 @@ export const OnboardingWizard = () => {
     setIsSubmitting(true);
     try {
       await saveStepData(formData);
-      await completeOnboarding();
+      const username = await completeOnboarding();
       
       toast({
         title: 'Profile complete!',
-        description: 'Welcome to DNA Platform. Start exploring opportunities.',
+        description: 'Welcome to DNA Platform. View your profile.',
       });
       
-      navigate('/contribute');
+      if (username) {
+        navigate(`/profile/${username}`);
+      } else {
+        navigate('/contribute');
+      }
     } catch (error: any) {
       toast({
         title: 'Error completing profile',

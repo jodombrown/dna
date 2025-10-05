@@ -150,7 +150,7 @@ export const useOnboarding = () => {
   };
 
   const completeOnboarding = async () => {
-    if (!user?.id) return;
+    if (!user?.id) return null;
     
     // Generate username if not set
     const { data: profile } = await (supabase as any)
@@ -163,11 +163,14 @@ export const useOnboarding = () => {
       onboarding_completed_at: new Date().toISOString()
     };
     
+    let finalUsername = profile?.username;
+    
     if (!profile?.username) {
       // Call username generation function
       const { data: usernameData } = await (supabase as any)
         .rpc('generate_username', { _full_name: profile?.full_name || 'user' });
       updates.username = usernameData;
+      finalUsername = usernameData;
     }
     
     const { error } = await (supabase as any)
@@ -176,6 +179,8 @@ export const useOnboarding = () => {
       .eq('id', user.id);
     
     if (error) throw error;
+    
+    return finalUsername;
   };
 
   return {
