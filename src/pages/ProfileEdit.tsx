@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Save } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 
@@ -37,7 +38,12 @@ const ProfileEdit = () => {
     location_preference: 'remote' as 'remote' | 'onsite' | 'hybrid',
     email_visible: false,
     availability_visible: true,
+    languages: [] as string[],
+    industry_sectors: [] as string[],
   });
+
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [selectedCauses, setSelectedCauses] = useState<string[]>([]);
 
   // Fetch profile
   const { data: profile, isLoading } = useQuery({
@@ -52,6 +58,62 @@ const ProfileEdit = () => {
       if (error) throw error;
       return data;
     },
+  });
+
+  // Fetch all skills
+  const { data: allSkills = [] } = useQuery({
+    queryKey: ['skills'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('skills')
+        .select('*')
+        .order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch user's skills
+  const { data: userSkills = [] } = useQuery({
+    queryKey: ['user-skills', profile?.id],
+    queryFn: async () => {
+      if (!profile?.id) return [];
+      const { data, error } = await supabase
+        .from('profile_skills')
+        .select('skill_id')
+        .eq('profile_id', profile.id);
+      if (error) throw error;
+      return data.map((ps: any) => ps.skill_id);
+    },
+    enabled: !!profile?.id,
+  });
+
+  // Fetch all causes
+  const { data: allCauses = [] } = useQuery({
+    queryKey: ['causes'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('causes')
+        .select('*')
+        .order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch user's causes
+  const { data: userCauses = [] } = useQuery({
+    queryKey: ['user-causes', profile?.id],
+    queryFn: async () => {
+      if (!profile?.id) return [];
+      const { data, error } = await supabase
+        .from('profile_causes')
+        .select('cause_id')
+        .eq('profile_id', profile.id);
+      if (error) throw error;
+      return data.map((pc: any) => pc.cause_id);
+    },
+    enabled: !!profile?.id,
   });
 
   // Check authorization
@@ -85,18 +147,65 @@ const ProfileEdit = () => {
         location_preference: (profile.location_preference as 'remote' | 'onsite' | 'hybrid') || 'remote',
         email_visible: profile.email_visible || false,
         availability_visible: profile.availability_visible ?? true,
+        languages: profile.languages || [],
+        industry_sectors: profile.industry_sectors || [],
       });
     }
   }, [profile]);
 
+  // Populate skills and causes
+  useEffect(() => {
+    setSelectedSkills(userSkills);
+  }, [userSkills]);
+
+  useEffect(() => {
+    setSelectedCauses(userCauses);
+  }, [userCauses]);
+
   const updateMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase
+      // Update profile fields
+      const { error: profileError } = await supabase
         .from('profiles')
         .update(formData)
         .eq('id', user?.id);
+      if (profileError) throw profileError;
 
-      if (error) throw error;
+      // Update skills junction table
+      await supabase
+        .from('profile_skills')
+        .delete()
+        .eq('profile_id', user?.id);
+      
+      if (selectedSkills.length > 0) {
+        const { error: skillsError } = await supabase
+          .from('profile_skills')
+          .insert(
+            selectedSkills.map(skill_id => ({
+              profile_id: user?.id,
+              skill_id
+            }))
+          );
+        if (skillsError) throw skillsError;
+      }
+
+      // Update causes junction table
+      await supabase
+        .from('profile_causes')
+        .delete()
+        .eq('profile_id', user?.id);
+      
+      if (selectedCauses.length > 0) {
+        const { error: causesError } = await supabase
+          .from('profile_causes')
+          .insert(
+            selectedCauses.map(cause_id => ({
+              profile_id: user?.id,
+              cause_id
+            }))
+          );
+        if (causesError) throw causesError;
+      }
     },
     onSuccess: () => {
       toast({
@@ -104,6 +213,8 @@ const ProfileEdit = () => {
         description: 'Your changes have been saved',
       });
       queryClient.invalidateQueries({ queryKey: ['profile', username] });
+      queryClient.invalidateQueries({ queryKey: ['profile-skills'] });
+      queryClient.invalidateQueries({ queryKey: ['profile-causes'] });
       navigate(`/profile/${username}`);
     },
     onError: (error: any) => {
@@ -114,6 +225,28 @@ const ProfileEdit = () => {
       });
     },
   });
+
+  const toggleSkill = (skillId: string) => {
+    setSelectedSkills(prev =>
+      prev.includes(skillId)
+        ? prev.filter(id => id !== skillId)
+        : [...prev, skillId]
+    );
+  };
+
+  const toggleCause = (causeId: string) => {
+    setSelectedCauses(prev =>
+      prev.includes(causeId)
+        ? prev.filter(id => id !== causeId)
+        : [...prev, causeId]
+    );
+  };
+
+  const sectors = [
+    'Technology', 'Finance', 'Healthcare', 'Education',
+    'Agriculture', 'Energy', 'Manufacturing', 'Consulting',
+    'Media', 'Arts & Culture', 'Government', 'Non-Profit'
+  ];
 
   if (isLoading) {
     return (
@@ -228,6 +361,89 @@ const ProfileEdit = () => {
                   value={formData.years_of_experience}
                   onChange={(e) => setFormData({ ...formData, years_of_experience: parseInt(e.target.value) || 0 })}
                 />
+              </div>
+
+              <div>
+                <Label>Languages (comma-separated)</Label>
+                <Input
+                  value={formData.languages?.join(', ') || ''}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    languages: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                  })}
+                  placeholder="English, French, Yoruba"
+                />
+              </div>
+
+              <div>
+                <Label>Industry Sectors</Label>
+                <div className="border rounded-lg p-4">
+                  <div className="flex flex-wrap gap-2">
+                    {sectors.map((sector) => (
+                      <Badge
+                        key={sector}
+                        variant={formData.industry_sectors?.includes(sector) ? 'default' : 'outline'}
+                        className="cursor-pointer"
+                        onClick={() => {
+                          const current = formData.industry_sectors || [];
+                          setFormData({
+                            ...formData,
+                            industry_sectors: current.includes(sector)
+                              ? current.filter(s => s !== sector)
+                              : [...current, sector]
+                          });
+                        }}
+                      >
+                        {sector}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {formData.industry_sectors?.length || 0} sectors selected
+                </p>
+              </div>
+
+              <div>
+                <Label>Skills</Label>
+                <div className="border rounded-lg p-4 max-h-60 overflow-y-auto">
+                  <div className="flex flex-wrap gap-2">
+                    {allSkills.map((skill: any) => (
+                      <Badge
+                        key={skill.id}
+                        variant={selectedSkills.includes(skill.id) ? 'default' : 'outline'}
+                        className="cursor-pointer"
+                        onClick={() => toggleSkill(skill.id)}
+                      >
+                        {skill.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {selectedSkills.length} skills selected
+                </p>
+              </div>
+
+              <div>
+                <Label>Causes & Impact Areas</Label>
+                <div className="border rounded-lg p-4 max-h-60 overflow-y-auto">
+                  <div className="flex flex-wrap gap-2">
+                    {allCauses.map((cause: any) => (
+                      <Badge
+                        key={cause.id}
+                        variant={selectedCauses.includes(cause.id) ? 'default' : 'outline'}
+                        className="cursor-pointer"
+                        onClick={() => toggleCause(cause.id)}
+                      >
+                        {cause.icon} {cause.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {selectedCauses.length} causes selected
+                </p>
               </div>
 
               <div>

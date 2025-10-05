@@ -178,7 +178,7 @@ const ProfilePage = () => {
                 </div>
 
                 {/* Quick Info */}
-                <div className="flex flex-wrap gap-4 mt-4 text-sm text-muted-foreground">
+                <div className="flex flex-wrap gap-2 sm:gap-4 mt-4 text-sm text-muted-foreground">
                   {profile.location && (
                     <div className="flex items-center gap-1">
                       <MapPin className="w-4 h-4" />
@@ -210,40 +210,49 @@ const ProfilePage = () => {
                   </div>
                 )}
 
-                {/* Social Links */}
-                <div className="flex gap-2 mt-4">
+                {/* Social Links as Icon Buttons */}
+                <div className="flex flex-wrap gap-2 mt-4">
                   {profile.website_url && (
                     <Button variant="outline" size="sm" asChild>
                       <a href={profile.website_url} target="_blank" rel="noopener noreferrer">
-                        <Globe className="w-4 h-4" />
+                        <Globe className="w-4 h-4 mr-2" />
+                        Website
                       </a>
                     </Button>
                   )}
                   {profile.linkedin_url && (
                     <Button variant="outline" size="sm" asChild>
                       <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer">
-                        <Linkedin className="w-4 h-4" />
+                        <Linkedin className="w-4 h-4 mr-2" />
+                        LinkedIn
                       </a>
                     </Button>
                   )}
                   {profile.github_url && (
                     <Button variant="outline" size="sm" asChild>
                       <a href={profile.github_url} target="_blank" rel="noopener noreferrer">
-                        <Github className="w-4 h-4" />
+                        <Github className="w-4 h-4 mr-2" />
+                        GitHub
                       </a>
                     </Button>
                   )}
                   {profile.twitter_handle && (
                     <Button variant="outline" size="sm" asChild>
-                      <a href={`https://twitter.com/${profile.twitter_handle.replace('@', '')}`} target="_blank" rel="noopener noreferrer">
-                        <Twitter className="w-4 h-4" />
+                      <a 
+                        href={`https://twitter.com/${profile.twitter_handle.replace('@', '')}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        <Twitter className="w-4 h-4 mr-2" />
+                        Twitter
                       </a>
                     </Button>
                   )}
                   {profile.email_visible && profile.email && (
                     <Button variant="outline" size="sm" asChild>
                       <a href={`mailto:${profile.email}`}>
-                        <Mail className="w-4 h-4" />
+                        <Mail className="w-4 h-4 mr-2" />
+                        Email
                       </a>
                     </Button>
                   )}
@@ -253,27 +262,49 @@ const ProfilePage = () => {
           </CardContent>
         </Card>
 
-        {/* Diaspora Story */}
+        {/* Enhanced Diaspora Story */}
         {profile.diaspora_story && (
-          <Card className="mt-6">
+          <Card className="mt-6 border-l-4 border-l-primary">
             <CardHeader>
-              <h2 className="text-xl font-semibold">Diaspora Story</h2>
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <Globe className="w-5 h-5" />
+                Diaspora Story
+              </h2>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground whitespace-pre-wrap">
+            <CardContent className="space-y-4">
+              <p className="text-base leading-relaxed whitespace-pre-wrap">
                 {profile.diaspora_story}
               </p>
-              {(profile.country_of_origin || profile.years_in_diaspora) && (
-                <div className="flex items-center gap-2 mt-4 text-sm">
-                  <MapPin className="w-4 h-4 text-muted-foreground" />
-                  <span>
-                    {profile.country_of_origin && `From ${profile.country_of_origin}`}
-                    {profile.years_in_diaspora && 
-                      ` • ${profile.years_in_diaspora} years in diaspora`
-                    }
-                  </span>
-                </div>
-              )}
+              
+              <div className="flex flex-wrap gap-4 pt-4 border-t text-sm">
+                {profile.country_of_origin && (
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    <span>
+                      <span className="text-muted-foreground">From</span>{' '}
+                      <span className="font-medium">{profile.country_of_origin}</span>
+                    </span>
+                  </div>
+                )}
+                {profile.years_in_diaspora && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                    <span>
+                      <span className="font-medium">{profile.years_in_diaspora}</span>{' '}
+                      <span className="text-muted-foreground">years in diaspora</span>
+                    </span>
+                  </div>
+                )}
+                {profile.current_country && (
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                    <span>
+                      <span className="text-muted-foreground">Based in</span>{' '}
+                      <span className="font-medium">{profile.current_country}</span>
+                    </span>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
         )}
@@ -312,12 +343,28 @@ const ProfilePage = () => {
 
               {profileSkills && profileSkills.length > 0 && (
                 <div>
-                  <h3 className="font-medium mb-2">Skills</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {profileSkills.map((ps: any) => (
-                      <Badge key={ps.skill.id}>
-                        {ps.skill.name}
-                      </Badge>
+                  <h3 className="font-medium mb-3">Skills & Expertise</h3>
+                  <div className="space-y-3">
+                    {Object.entries(
+                      profileSkills.reduce((acc: any, ps: any) => {
+                        const category = ps.skill.category || 'other';
+                        if (!acc[category]) acc[category] = [];
+                        acc[category].push(ps.skill);
+                        return acc;
+                      }, {})
+                    ).map(([category, skills]: [string, any]) => (
+                      <div key={category}>
+                        <div className="text-xs text-muted-foreground uppercase mb-2">
+                          {category}
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {skills.map((skill: any) => (
+                            <Badge key={skill.id} variant="default">
+                              {skill.name}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -326,23 +373,23 @@ const ProfilePage = () => {
           </Card>
         )}
 
-        {/* Causes & Impact */}
+        {/* Causes Grid with Icons */}
         {profileCauses && profileCauses.length > 0 && (
           <Card className="mt-6">
             <CardHeader>
-              <h2 className="text-xl font-semibold">Contribution Pathways</h2>
+              <h2 className="text-xl font-semibold">Impact Areas</h2>
             </CardHeader>
             <CardContent>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {profileCauses.map((pc: any) => (
                   <div 
                     key={pc.cause.id}
-                    className="p-4 border rounded-lg"
+                    className="p-4 border rounded-lg hover:border-primary/50 transition-colors"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="text-2xl">{pc.cause.icon}</div>
-                      <div>
-                        <h3 className="font-medium">{pc.cause.name}</h3>
+                      <div className="text-3xl">{pc.cause.icon}</div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold">{pc.cause.name}</h3>
                         <p className="text-sm text-muted-foreground mt-1">
                           {pc.cause.description}
                         </p>
@@ -396,7 +443,7 @@ const ProfilePage = () => {
             <CardContent>
               <div className="space-y-4">
                 {contributions.map((contrib: any) => (
-                  <div key={contrib.id} className="flex gap-4 p-4 border rounded-lg">
+                  <div key={contrib.id} className="flex gap-4 p-4 border rounded-lg hover:bg-accent/50 transition-colors">
                     {contrib.opportunity?.organization?.logo_url && (
                       <Avatar className="w-12 h-12">
                         <AvatarImage src={contrib.opportunity.organization.logo_url} />
@@ -416,7 +463,10 @@ const ProfilePage = () => {
                       <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          {new Date(contrib.started_at).toLocaleDateString()}
+                          {new Date(contrib.started_at).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            year: 'numeric' 
+                          })}
                         </div>
                         {contrib.hours_contributed > 0 && (
                           <div className="flex items-center gap-1">

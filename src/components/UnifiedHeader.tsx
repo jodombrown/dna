@@ -146,7 +146,20 @@ const UnifiedHeader = () => {
 
             {/* Right section - Navigation and Profile */}
             <div className="flex items-center space-x-4">
-              {/* Desktop Navigation */}
+              {/* Desktop Navigation - Authenticated */}
+              {isAuthenticated && profile?.username && (
+                <nav className="hidden md:flex items-center space-x-4">
+                  <Button
+                    variant="ghost"
+                    onClick={() => navigate(`/profile/${profile.username}`)}
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    My Profile
+                  </Button>
+                </nav>
+              )}
+
+              {/* Desktop Navigation - Public */}
               {!isAuthenticated && (
                 <>
                   <nav className="hidden md:flex items-center space-x-6">
