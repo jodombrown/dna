@@ -32,7 +32,7 @@ const Onboarding = () => {
   // If profile already exists and basic info is complete, redirect to dashboard
   useEffect(() => {
     if (profile && profile.first_name && profile.avatar_url) {
-      navigate('/app/dashboard');
+      navigate('/dna/me');
     }
   }, [profile, navigate]);
 
@@ -87,7 +87,7 @@ const Onboarding = () => {
       });
 
       // Redirect to dashboard
-      navigate('/app/dashboard');
+      navigate('/dna/me');
     } catch (error) {
       console.error('Error creating profile:', error);
       toast({
