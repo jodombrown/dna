@@ -12,6 +12,8 @@ import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import InviteSignup from "./pages/InviteSignup";
 import UserDashboard from "./pages/UserDashboard";
+import DnaMe from "./pages/dna/Me";
+import DnaUserDashboard from "./pages/dna/Username";
 import NotFound from "./pages/NotFound";
 
 // Static pages  
@@ -74,8 +76,9 @@ function App() {
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
               
-              {/* User profiles */}
-              <Route path="/dna/:username" element={<UserDashboard />} />
+              {/* DNA Dashboard Routes */}
+              <Route path="/dna/me" element={<DnaMe />} />
+              <Route path="/dna/:username" element={<DnaUserDashboard />} />
               
               
               
