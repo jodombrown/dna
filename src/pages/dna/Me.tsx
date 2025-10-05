@@ -1,12 +1,10 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import UserDashboardLayout from '@/components/dashboard/UserDashboardLayout';
 
 const DnaMe = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ['current-user-profile', user?.id],
@@ -14,25 +12,14 @@ const DnaMe = () => {
       if (!user?.id) return null;
       const { data, error } = await supabase
         .from('profiles')
-        .select('username')
+        .select('*')
         .eq('id', user.id)
-        .maybeSingle();
+        .single();
       if (error) throw error;
       return data;
     },
     enabled: !!user?.id,
   });
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-
-    if (profile?.username) {
-      navigate(`/dna/${profile.username}`, { replace: true });
-    }
-  }, [user, profile, navigate]);
 
   if (isLoading) {
     return (
@@ -42,7 +29,11 @@ const DnaMe = () => {
     );
   }
 
-  return null;
+  if (!user || !profile) {
+    return null;
+  }
+
+  return <UserDashboardLayout profile={profile} currentUser={user} />;
 };
 
 export default DnaMe;
