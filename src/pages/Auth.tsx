@@ -51,16 +51,22 @@ const Auth = () => {
   useEffect(() => {
     const checkOnboardingAndRedirect = async () => {
       if (user && !loading && !isResetMode) {
+        console.log('Auth.tsx: User authenticated, checking onboarding status...', user.id);
+        
         // Check if onboarding is complete
-        const { data: profile } = await supabase
+        const { data: profile, error } = await supabase
           .from('profiles')
           .select('onboarding_completed_at')
           .eq('id', user.id)
           .maybeSingle();
         
+        console.log('Auth.tsx: Profile query result:', { profile, error });
+        
         if (!profile?.onboarding_completed_at) {
+          console.log('Auth.tsx: Onboarding incomplete, redirecting to /onboarding');
           navigate('/onboarding');
         } else {
+          console.log('Auth.tsx: Onboarding complete, redirecting to /contribute');
           navigate('/contribute');
         }
       }
