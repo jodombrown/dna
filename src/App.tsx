@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
 import ProfilePage from "./pages/ProfilePage";
 import ProfileEdit from "./pages/ProfileEdit";
+import TestProfileChecklist from "./pages/TestProfileChecklist";
 
 // Static pages  
 import About from "./pages/About";
@@ -90,6 +91,7 @@ function App() {
               <Route path="/dna/:username" element={<OnboardingGuard><UserDashboard /></OnboardingGuard>} />
               <Route path="/profile/:username" element={<OnboardingGuard><ProfilePage /></OnboardingGuard>} />
               <Route path="/profile/:username/edit" element={<OnboardingGuard><ProfileEdit /></OnboardingGuard>} />
+              <Route path="/test-profile-checklist" element={<OnboardingGuard><TestProfileChecklist /></OnboardingGuard>} />
               
               {/* Main feature pages */}
               <Route path="/connect" element={<OnboardingGuard><ConnectExample /></OnboardingGuard>} />
