@@ -15,7 +15,7 @@ const Onboarding = () => {
       if (!user?.id) return null;
       const { data } = await supabase
         .from('profiles')
-        .select('onboarding_completed_at')
+        .select('onboarding_completed_at, username')
         .eq('id', user.id)
         .maybeSingle();
       return data;
@@ -25,9 +25,13 @@ const Onboarding = () => {
 
   useEffect(() => {
     if (profile?.onboarding_completed_at) {
-      // Already completed - redirect to main app
-      console.log('Onboarding already complete, redirecting to /contribute');
-      navigate('/contribute', { replace: true });
+      // Already completed - redirect to profile if username exists
+      if ((profile as any).username) {
+        console.log('Onboarding complete, redirecting to /profile/' + (profile as any).username);
+        navigate(`/profile/${(profile as any).username}`, { replace: true });
+      } else {
+        navigate('/contribute', { replace: true });
+      }
     }
   }, [profile, navigate]);
 
