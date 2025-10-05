@@ -23,13 +23,17 @@ const AuthCallback = () => {
         }
 
         // Check if user has completed onboarding and get username
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('onboarding_completed_at, username')
           .eq('id', session.user.id)
           .maybeSingle();
 
+        console.log('AuthCallback - Profile data:', profile);
+        console.log('AuthCallback - Profile error:', profileError);
+
         if (profile?.onboarding_completed_at) {
+          console.log('Onboarding completed, redirecting to profile:', profile.username);
           if (profile.username) {
             navigate(`/profile/${profile.username}`, { replace: true });
           } else {
@@ -40,17 +44,20 @@ const AuthCallback = () => {
 
         // If onboarding not completed but username exists, finalize and redirect
         if (profile?.username) {
+          console.log('Username exists but onboarding not marked complete, finalizing...');
           const { error: updateErr } = await supabase
             .from('profiles')
             .update({ onboarding_completed_at: new Date().toISOString() })
             .eq('id', session.user.id);
 
           if (!updateErr) {
+            console.log('Successfully marked onboarding complete, redirecting to profile');
             navigate(`/profile/${profile.username}`, { replace: true });
             return;
           }
         }
 
+        console.log('No profile or username found, redirecting to onboarding');
         navigate('/onboarding', { replace: true });
       } catch (error) {
         console.error('Error in auth callback:', error);
