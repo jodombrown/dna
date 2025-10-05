@@ -9,6 +9,7 @@ interface OnboardingData {
   current_city: string;
   languages: string[];
   years_in_diaspora: number | null;
+  years_in_diaspora_text?: string;
   diaspora_story: string;
   
   // Step 2: Professional
@@ -21,7 +22,6 @@ interface OnboardingData {
   
   // Step 3: Causes
   selected_causes: string[]; // cause IDs
-  why_contribute: string;
   
   // Step 4: Availability
   availability_hours_per_month: number;
@@ -38,6 +38,7 @@ export const useOnboarding = () => {
     current_city: '',
     languages: [],
     years_in_diaspora: null,
+    years_in_diaspora_text: '',
     diaspora_story: '',
     profession: '',
     industry_sectors: [],
@@ -46,7 +47,6 @@ export const useOnboarding = () => {
     website_url: '',
     selected_skills: [],
     selected_causes: [],
-    why_contribute: '',
     availability_hours_per_month: 0,
     contribution_types: [],
     location_preference: 'remote',
@@ -70,6 +70,7 @@ export const useOnboarding = () => {
           current_city: profile.current_city || '',
           languages: profile.languages || [],
           years_in_diaspora: profile.years_in_diaspora,
+          years_in_diaspora_text: profile.years_in_diaspora_text || '',
           diaspora_story: profile.diaspora_story || '',
           profession: profile.profession || '',
           industry_sectors: profile.industry_sectors || [],
@@ -78,7 +79,6 @@ export const useOnboarding = () => {
           website_url: profile.website_url || '',
           selected_skills: profile.profile_skills?.map((ps: any) => ps.skill_id) || [],
           selected_causes: profile.profile_causes?.map((pc: any) => pc.cause_id) || [],
-          why_contribute: '',
           availability_hours_per_month: profile.availability_hours_per_month || 0,
           contribution_types: profile.contribution_types || [],
           location_preference: profile.location_preference || 'remote',
