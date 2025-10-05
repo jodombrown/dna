@@ -2,9 +2,8 @@ import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import IndustryAutocomplete from '@/components/onboarding/IndustryAutocomplete';
+import SkillsAutocomplete from '@/components/onboarding/SkillsAutocomplete';
 
 interface Step2Props {
   data: any;
@@ -13,45 +12,7 @@ interface Step2Props {
   onBack: () => void;
 }
 
-const industries = [
-  'Technology', 'Finance', 'Healthcare', 'Education',
-  'Agriculture', 'Energy', 'Manufacturing', 'Consulting',
-  'Media', 'Arts & Culture', 'Government', 'Non-Profit'
-];
-
 export const Step2Professional: React.FC<Step2Props> = ({ data, onChange, onNext, onBack }) => {
-  const { data: skills = [] } = useQuery({
-    queryKey: ['skills'],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from('skills')
-        .select('*')
-        .order('name');
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const toggleSkill = (skillId: string) => {
-    const current = data.selected_skills || [];
-    onChange({
-      ...data,
-      selected_skills: current.includes(skillId)
-        ? current.filter((id: string) => id !== skillId)
-        : [...current, skillId]
-    });
-  };
-
-  const toggleIndustry = (industry: string) => {
-    const current = data.industry_sectors || [];
-    onChange({
-      ...data,
-      industry_sectors: current.includes(industry)
-        ? current.filter((i: string) => i !== industry)
-        : [...current, industry]
-    });
-  };
-
   const canProceed = data.profession && data.selected_skills?.length >= 3;
 
   return (
@@ -83,40 +44,15 @@ export const Step2Professional: React.FC<Step2Props> = ({ data, onChange, onNext
           />
         </div>
 
-        <div>
-          <Label>Industry Sectors</Label>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {industries.map((industry) => (
-              <Badge
-                key={industry}
-                variant={data.industry_sectors?.includes(industry) ? 'default' : 'outline'}
-                className="cursor-pointer"
-                onClick={() => toggleIndustry(industry)}
-              >
-                {industry}
-              </Badge>
-            ))}
-          </div>
-        </div>
+        <IndustryAutocomplete
+          selectedIndustries={data.industry_sectors || []}
+          onChange={(industries) => onChange({ ...data, industry_sectors: industries })}
+        />
 
-        <div>
-          <Label>Your Skills * (select at least 3)</Label>
-          <div className="flex flex-wrap gap-2 mt-2 max-h-60 overflow-y-auto p-2 border rounded">
-            {skills.map((skill: any) => (
-              <Badge
-                key={skill.id}
-                variant={data.selected_skills?.includes(skill.id) ? 'default' : 'outline'}
-                className="cursor-pointer"
-                onClick={() => toggleSkill(skill.id)}
-              >
-                {skill.name}
-              </Badge>
-            ))}
-          </div>
-          <div className="text-xs text-muted-foreground mt-1">
-            {data.selected_skills?.length || 0} skills selected
-          </div>
-        </div>
+        <SkillsAutocomplete
+          selectedSkillIds={data.selected_skills || []}
+          onChange={(skillIds) => onChange({ ...data, selected_skills: skillIds })}
+        />
 
         <div>
           <Label>LinkedIn Profile</Label>
