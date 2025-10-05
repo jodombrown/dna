@@ -38,31 +38,34 @@ export const Step3Causes: React.FC<Step3Props> = ({ data, onChange, onNext, onBa
   const canProceed = data.selected_causes?.length >= 1 && data.why_contribute?.length >= 50;
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
-      <div>
-        <h2 className="text-2xl font-bold">Causes you care about</h2>
-        <p className="text-muted-foreground mt-2">
-          Select the impact areas where you want to make a difference
+    <div className="space-y-6 max-w-4xl mx-auto">
+      <div className="text-center space-y-3">
+        <p className="text-lg italic text-muted-foreground">
+          "Every member of the Diaspora carries a piece of Africa's progress within them."
+        </p>
+        <h2 className="text-2xl font-bold">Your Contribution Pathways</h2>
+        <p className="text-muted-foreground">
+          Which of these ways feels most natural for you to give back or get involved?<br />
+          <span className="text-sm">(Select all that apply)</span>
         </p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <Label>Impact Areas * (select at least 1)</Label>
-          <div className="grid grid-cols-2 gap-3 mt-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
             {causes.map((cause: any) => (
               <div
                 key={cause.id}
                 onClick={() => toggleCause(cause.id)}
-                className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                className={`p-5 border-2 rounded-xl cursor-pointer transition-all ${
                   data.selected_causes?.includes(cause.id)
-                    ? 'border-primary bg-primary/5'
-                    : 'border-border hover:border-primary/50'
+                    ? 'border-primary bg-primary/10 shadow-md scale-105'
+                    : 'border-border hover:border-primary/50 hover:shadow-sm'
                 }`}
               >
-                <div className="text-2xl mb-2">{cause.icon}</div>
-                <div className="font-medium">{cause.name}</div>
-                <div className="text-xs text-muted-foreground mt-1">
+                <div className="text-4xl mb-3">{cause.icon}</div>
+                <div className="font-bold text-lg mb-2">{cause.name}</div>
+                <div className="text-sm text-muted-foreground italic">
                   {cause.description}
                 </div>
               </div>
@@ -70,13 +73,13 @@ export const Step3Causes: React.FC<Step3Props> = ({ data, onChange, onNext, onBa
           </div>
         </div>
 
-        <div>
+        <div className="pt-4">
           <Label>Why do you want to contribute? * (min 50 characters)</Label>
           <Textarea
             value={data.why_contribute || ''}
             onChange={(e) => onChange({ ...data, why_contribute: e.target.value })}
-            placeholder="Share your motivation... What drives your passion for these causes? What impact do you hope to make?"
-            className="min-h-[100px]"
+            placeholder="Share your motivation... What drives your passion for contributing? What impact do you hope to make through these pathways?"
+            className="min-h-[120px] mt-2"
           />
           <div className="text-xs text-muted-foreground mt-1">
             {data.why_contribute?.length || 0} / 50 characters
