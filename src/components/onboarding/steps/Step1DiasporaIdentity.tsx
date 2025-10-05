@@ -2,9 +2,6 @@ import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { CountryAutocomplete } from '@/components/onboarding/CountryAutocomplete';
 import LocationAutocomplete from '@/components/ui/location-autocomplete';
 import { LanguageAutocomplete } from '@/components/onboarding/LanguageAutocomplete';
 
@@ -15,19 +12,7 @@ interface Step1Props {
 }
 
 export const Step1DiasporaIdentity: React.FC<Step1Props> = ({ data, onChange, onNext }) => {
-  const { data: countries = [] } = useQuery({
-    queryKey: ['countries'],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from('countries')
-        .select('*')
-        .order('name');
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const canProceed = data.country_of_origin_id && data.current_country_id && 
+  const canProceed = data.country_of_origin && data.current_country && 
                      data.diaspora_story?.length >= 50;
 
   return (
@@ -40,22 +25,28 @@ export const Step1DiasporaIdentity: React.FC<Step1Props> = ({ data, onChange, on
       </div>
 
       <div className="space-y-4">
-        <CountryAutocomplete
+        <LocationAutocomplete
           label="Country of Origin"
-          value={data.country_of_origin_id}
-          onChange={(countryId) => onChange({ ...data, country_of_origin_id: countryId })}
+          value={data.country_of_origin || ''}
+          onSelect={(loc) => onChange({ 
+            ...data, 
+            country_of_origin: loc.countryName,
+            country_of_origin_id: null 
+          })}
           placeholder="Start typing your country of origin..."
           required
-          countries={countries}
         />
 
-        <CountryAutocomplete
+        <LocationAutocomplete
           label="Country of Residence"
-          value={data.current_country_id}
-          onChange={(countryId) => onChange({ ...data, current_country_id: countryId })}
+          value={data.current_country || ''}
+          onSelect={(loc) => onChange({ 
+            ...data, 
+            current_country: loc.countryName,
+            current_country_id: null 
+          })}
           placeholder="Start typing where you currently reside..."
           required
-          countries={countries}
         />
 
         <div>

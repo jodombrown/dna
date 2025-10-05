@@ -4,8 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface OnboardingData {
   // Step 1: Diaspora Identity
-  country_of_origin_id: string;
-  current_country_id: string;
+  country_of_origin?: string;
+  country_of_origin_id?: string | null;
+  current_country?: string;
+  current_country_id?: string | null;
   current_city: string;
   languages: string[];
   years_in_diaspora: number | null;
@@ -33,8 +35,10 @@ export const useOnboarding = () => {
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<OnboardingData>({
-    country_of_origin_id: '',
-    current_country_id: '',
+    country_of_origin: '',
+    country_of_origin_id: null,
+    current_country: '',
+    current_country_id: null,
     current_city: '',
     languages: [],
     years_in_diaspora: null,
@@ -65,8 +69,10 @@ export const useOnboarding = () => {
       
       if (profile) {
         setFormData({
-          country_of_origin_id: profile.country_of_origin_id || '',
-          current_country_id: profile.current_country_id || '',
+          country_of_origin: profile.country_of_origin || '',
+          country_of_origin_id: profile.country_of_origin_id || null,
+          current_country: profile.current_country || '',
+          current_country_id: profile.current_country_id || null,
           current_city: profile.current_city || '',
           languages: profile.languages || [],
           years_in_diaspora: profile.years_in_diaspora,
