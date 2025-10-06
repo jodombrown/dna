@@ -35,6 +35,7 @@ import MyApplications from "./pages/MyApplications";
 import CollaborationSpaces from "./pages/CollaborationSpaces";
 import SpaceDetail from "./pages/SpaceDetail";
 import Discover from "./pages/Discover";
+import Network from "./pages/Network";
 
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
@@ -109,6 +110,7 @@ function App() {
             <Route path="/spaces" element={<CollaborationSpaces />} />
             <Route path="/spaces/:id" element={<SpaceDetail />} />
             <Route path="/discover" element={<Discover />} />
+            <Route path="/network" element={<Network />} />
               
               {/* Regional landing pages */}
               <Route path="/north-africa" element={<NorthAfricaLandingPage />} />
