@@ -46,31 +46,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       if (!data) {
-        // Auto-create a minimal profile on first auth to avoid gate bypasses
-        try {
-          const { data: u } = await supabase.auth.getUser();
-          const minimal: any = {
-            id: userId,
-            email: u.user?.email || null,
-            full_name: u.user?.user_metadata?.full_name || null,
-            is_public: false,
-          };
-          const { error: insertError } = await supabase.from('profiles').insert(minimal);
-          if (insertError) {
-            console.error('Error creating minimal profile:', insertError);
-          }
-          // Refetch to get DB defaults
-          const { data: created } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .maybeSingle();
-          setProfile(created || minimal);
-          return;
-        } catch (createErr) {
-          console.error('Auto-create profile failed:', createErr);
+        // Profile should have been created by trigger, but if not, wait a bit longer
+        // Give the database trigger more time to complete (increased from 100ms)
+        console.log('Profile not found, waiting for trigger to complete...');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Try one more time
+        const { data: retryData, error: retryError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .maybeSingle();
+        
+        if (retryError) {
+          console.error('Error on retry fetch:', retryError);
           return;
         }
+        
+        if (retryData) {
+          setProfile(retryData);
+          return;
+        }
+        
+        // If still no profile, the trigger failed - log error but don't try to create manually
+        // The user will need to contact support or the trigger needs to be fixed
+        console.error('Profile creation trigger failed for user:', userId);
+        console.error('Please check database triggers and RLS policies');
+        return;
       }
       
       setProfile(data);
@@ -97,10 +99,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Fetch profile after a short delay to allow database trigger to complete
+          // Fetch profile after a delay to allow database trigger to complete
+          // Increased timeout to ensure trigger has time to run
           setTimeout(() => {
             fetchProfile(session.user.id);
-          }, 100);
+          }, 500);
         } else {
           setProfile(null);
         }
