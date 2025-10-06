@@ -75,6 +75,7 @@ const UnifiedHeader = () => {
   const authNavigationItems = [
     { title: 'Home', view: 'dashboard', icon: Home },
     { title: 'Connect', view: 'network', icon: Users },
+    { title: 'Network', view: 'connections', icon: Users2 },
     { title: 'Collaborate', view: 'messaging', icon: MessageSquare },
     { title: 'Opportunities', view: 'opportunities', icon: Bell },
   ];
@@ -114,6 +115,7 @@ const UnifiedHeader = () => {
     const viewRouteMap: { [key: string]: string } = {
       'dashboard': '/',
       'network': '/connect',
+      'connections': '/network',
       'messaging': '/collaborate', 
       'opportunities': '/opportunities'
     };
