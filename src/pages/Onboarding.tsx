@@ -88,6 +88,9 @@ const Onboarding = () => {
 
       if (error) throw error;
 
+      // Wait a moment for DB to commit
+      await new Promise(resolve => setTimeout(resolve, 200));
+
       // Refresh the profile to get the updated data
       await refreshProfile();
 
@@ -96,8 +99,10 @@ const Onboarding = () => {
         description: "Your profile has been created successfully.",
       });
 
-      // Redirect to dashboard
-      navigate('/dna/me');
+      // Small delay before redirect to ensure profile is updated
+      setTimeout(() => {
+        navigate('/dna/me');
+      }, 100);
     } catch (error) {
       console.error('Error creating profile:', error);
       toast({
