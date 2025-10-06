@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send, ImagePlus, X, Edit3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { createPost } from '@/services/postsService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUploadPostMedia } from './useUploadPostMedia';
 import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
@@ -192,64 +192,43 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         finalType = 'link';
       }
 
-      // Enforce admin-only spotlight
-      if (finalType === 'spotlight' && !isAdmin) {
-        finalType = 'text';
-      }
-
-      const finalStatus = finalType === 'spotlight' ? 'featured' : status;
-
-      // Build payload for RPC function
-      const payload: any = {
-        content: content.trim(),
-        type: finalType,
+      // Build metadata
+      const metadata: any = {
         pillar: pillar,
-        visibility: 'public',
-        status: finalStatus,
-        media_url: mediaUrl,
       };
 
-      if (embedData) {
-        payload.embed_metadata = JSON.parse(JSON.stringify(embedData));
-        if (finalType === 'link') {
-          payload.link_url = embedData.url || null;
-          payload.link_metadata = JSON.parse(JSON.stringify(embedData));
-        }
+      if (mediaUrl) {
+        metadata.media_url = mediaUrl;
+        metadata.media_type = selectedFile?.type.startsWith('video/') ? 'video' : 'image';
       }
 
-      if (finalType === 'poll') {
+      if (embedData) {
+        metadata.embed_metadata = embedData;
+        metadata.link_url = embedData.url;
+      }
+
+      if (finalType === 'poll' && pollOptions.length >= 2) {
         const options = pollOptions.map(o => o.trim()).filter(Boolean);
-        if (options.length < 2) {
-          toast({
-            title: "Add poll options",
-            description: "Provide at least 2 options for your poll",
-            variant: "destructive",
-          });
-          setIsPosting(false);
-          return;
-        }
-        payload.poll_options = { options };
-        payload.poll_expires_at = pollExpiresAt ? new Date(pollExpiresAt).toISOString() : null;
+        metadata.poll_options = { options };
+        metadata.poll_expires_at = pollExpiresAt;
       }
 
       if (finalType === 'opportunity') {
-        payload.opportunity_type = opportunityType || null;
-        payload.opportunity_link = opportunityLink || null;
+        metadata.opportunity_type = opportunityType;
+        metadata.opportunity_link = opportunityLink;
       }
 
-      // Use RPC function for proper post creation with validation
-      const { data: postId, error } = await supabase.rpc('rpc_create_post', payload);
-
-      if (error) {
-        console.error('Post creation error:', error);
-        throw error;
-      }
-
-      console.log('Post created successfully with ID:', postId);
+      // Create post using service
+      await createPost({
+        content: content.trim(),
+        post_type: finalType,
+        visibility: 'public',
+        metadata,
+      });
 
       toast({
-        title: status === 'draft' ? "Draft saved!" : "Post created!",
-        description: status === 'draft' ? "Your draft has been saved." : "Your post has been shared successfully.",
+        title: "Post created!",
+        description: "Your post has been shared successfully.",
       });
 
       // Reset form
@@ -261,7 +240,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       setIsExpanded(false);
       setIsUserInteracting(false);
       setIsManuallyExpanded(false);
-      onUserActivity?.(false); // Notify parent that user is inactive
+      onUserActivity?.(false);
 
       // Clear any manual timeouts
       if (manualTimeoutRef.current) {
@@ -273,7 +252,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       console.error('Error creating post:', error);
       toast({
         title: "Error creating post",
-        description: "Failed to create your post. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create your post. Please try again.",
         variant: "destructive",
       });
     } finally {
