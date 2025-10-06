@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDashboard } from '@/contexts/DashboardContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 import { 
   Home,
@@ -20,7 +22,8 @@ import {
   Lightbulb,
   TestTube,
   Rocket,
-  Briefcase
+  Briefcase,
+  Shield
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -64,6 +67,27 @@ const UnifiedHeader = () => {
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
+
+  // Query admin status
+  const { data: isAdmin } = useQuery({
+    queryKey: ['is-admin'],
+    queryFn: async () => {
+      if (!user) return false;
+
+      const { data, error } = await supabase.rpc('has_role', {
+        _user_id: user.id,
+        _role: 'admin'
+      });
+
+      if (error) {
+        console.error('Error checking admin role:', error);
+        return false;
+      }
+
+      return data || false;
+    },
+    enabled: !!user
+  });
 
   // Don't render anything while loading
   if (loading) {
@@ -181,6 +205,30 @@ const UnifiedHeader = () => {
                       </TooltipProvider>
                     );
                   })}
+                  
+                  {/* Admin Link - Only for admin users */}
+                  {isAdmin && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => navigate('/app/admin')}
+                            className={`flex items-center gap-2 ${
+                              location.pathname.startsWith('/app/admin') ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:text-primary'
+                            }`}
+                          >
+                            <Shield className="w-5 h-5" />
+                            <span className="text-sm font-medium">Admin</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Admin Dashboard</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
                   
                   {/* User Profile Dropdown */}
                   {profile && (
