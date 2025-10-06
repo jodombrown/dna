@@ -172,3 +172,24 @@ export async function deletePost(postId: string): Promise<void> {
 
   if (error) throw error;
 }
+
+/**
+ * Create a comment on a post
+ */
+export async function createComment(postId: string, content: string): Promise<any> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data, error } = await supabase
+    .from('comments')
+    .insert({
+      post_id: postId,
+      author_id: user.id,
+      content,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}

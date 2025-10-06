@@ -3,12 +3,13 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Heart, MessageCircle, Share } from 'lucide-react';
+import { Heart, MessageCircle, Share, Trash2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { EmbedPreview } from '@/components/social-feed/EmbedPreview';
 import { usePostViewTracker } from '@/hooks/usePostViewTracker';
+import { likePost, unlikePost, deletePost } from '@/services/postsService';
+import { formatDistanceToNow } from 'date-fns';
 
 interface Post {
   id: string;
@@ -88,24 +89,11 @@ export const PostCard: React.FC<PostCardProps> = ({
 
     try {
       if (isLiked) {
-        // Remove like
-        await supabase
-          .from('post_likes')
-          .delete()
-          .eq('post_id', post.id)
-          .eq('user_id', user.id);
-        
+        await unlikePost(post.id);
         setIsLiked(false);
         setLikeCount(prev => Math.max(0, prev - 1));
       } else {
-        // Add like
-        await supabase
-          .from('post_likes')
-          .insert({
-            post_id: post.id,
-            user_id: user.id
-          });
-        
+        await likePost(post.id);
         setIsLiked(true);
         setLikeCount(prev => prev + 1);
       }
@@ -120,6 +108,33 @@ export const PostCard: React.FC<PostCardProps> = ({
       });
     } finally {
       setIsLiking(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!user || user.id !== post.profiles.id) {
+      return;
+    }
+
+    if (!confirm('Are you sure you want to delete this post?')) {
+      return;
+    }
+
+    try {
+      await deletePost(post.id);
+      toast({
+        title: "Post deleted",
+        description: "Your post has been removed.",
+      });
+      // Optionally trigger a refresh
+      window.location.reload();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete post. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -184,7 +199,7 @@ export const PostCard: React.FC<PostCardProps> = ({
             )}
             
             <time className="text-xs text-muted-foreground">
-              {new Date(post.created_at).toLocaleDateString()}
+              {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
             </time>
           </div>
         </div>
@@ -257,15 +272,29 @@ export const PostCard: React.FC<PostCardProps> = ({
               </Button>
             </div>
 
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleShare}
-              className="gap-2 text-muted-foreground hover:text-foreground"
-            >
-              <Share className="h-4 w-4" />
-              Share
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleShare}
+                className="gap-2 text-muted-foreground hover:text-foreground"
+              >
+                <Share className="h-4 w-4" />
+                Share
+              </Button>
+
+              {user && user.id === post.profiles.id && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDelete}
+                  className="gap-2 text-muted-foreground hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>
