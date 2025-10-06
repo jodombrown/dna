@@ -24,35 +24,33 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
     <div className="min-h-screen bg-background">
       <UnifiedHeader />
       
-      <main className="pt-16 pb-20 lg:pb-0">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="pt-16 pb-20 lg:pb-0 overflow-hidden">
+        <div className="max-w-[1600px] mx-auto h-[calc(100vh-4rem)]">
           {isMobile ? (
             // Mobile: Single column layout, stacked
-            <div className="space-y-6 py-6">
+            <div className="space-y-6 py-6 px-4 overflow-y-auto h-full">
               <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
               <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
               <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
             </div>
           ) : (
-            // Desktop: 3-column layout (25%-50%-25%)
-            <div className="grid grid-cols-12 gap-6 py-6">
-              {/* Left Column - 25% (3/12) */}
-              <div className="col-span-3">
-                <div className="sticky top-6">
-                  <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
+            // Desktop: 3-column layout with independent scrolling and margins
+            <div className="flex h-full">
+              {/* Left Column - 25% margin from left + column */}
+              <div className="w-[25%] flex-shrink-0 overflow-y-auto border-r border-border px-6 py-6">
+                <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
+              </div>
+              
+              {/* Center Column - 50% with margins */}
+              <div className="flex-1 overflow-y-auto px-6 py-6">
+                <div className="max-w-2xl mx-auto">
+                  <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
                 </div>
               </div>
               
-              {/* Center Column - 50% (6/12) */}
-              <div className="col-span-6">
-                <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
-              </div>
-              
-              {/* Right Column - 25% (3/12) */}
-              <div className="col-span-3">
-                <div className="sticky top-6">
-                  <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
-                </div>
+              {/* Right Column - 25% margin from right + column */}
+              <div className="w-[25%] flex-shrink-0 overflow-y-auto border-l border-border px-6 py-6">
+                <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
             </div>
           )}

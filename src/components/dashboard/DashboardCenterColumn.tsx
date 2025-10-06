@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Profile } from '@/services/profilesService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, Search, MessageSquare, UserPlus, TrendingUp, MapPin, Globe, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DNAPillarNavigation } from '@/components/navigation/DNAPillarNavigation';
+import DashboardCenterOpportunities from './DashboardCenterOpportunities';
 
 interface DashboardCenterColumnProps {
   profile: Profile;
@@ -159,6 +161,46 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
           </CardContent>
         </Card>
       </div>
+
+      {/* Feed Tabs */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg font-semibold text-dna-forest">Your Feed</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="opportunities" className="w-full">
+            <TabsList className="w-full grid grid-cols-2 mb-4">
+              <TabsTrigger value="opportunities" className="data-[state=active]:bg-dna-emerald data-[state=active]:text-white">
+                Opportunities
+              </TabsTrigger>
+              <TabsTrigger value="following" className="data-[state=active]:bg-dna-emerald data-[state=active]:text-white">
+                Following
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="opportunities">
+              <DashboardCenterOpportunities profile={profile} />
+            </TabsContent>
+            
+            <TabsContent value="following">
+              <div className="py-12 text-center">
+                <Users className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                <h3 className="font-semibold text-lg text-dna-forest mb-2">No updates yet</h3>
+                <p className="text-sm text-muted-foreground max-w-md mx-auto mb-4">
+                  Start following people and organizations to see their updates here
+                </p>
+                <Button 
+                  variant="outline"
+                  className="border-dna-emerald text-dna-forest hover:bg-dna-emerald/10"
+                  onClick={() => handleAction('discover')}
+                >
+                  Discover People
+                </Button>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
 
       {/* Professional Summary */}
       {profile.bio && (

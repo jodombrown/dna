@@ -4,7 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Users, Lightbulb, ArrowRight, Heart } from 'lucide-react';
+import { Calendar, Users, Plus, ArrowRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
+import { useLiveEvents } from '@/hooks/useLiveEvents';
 
 interface DashboardRightColumnProps {
   profile: Profile;
@@ -15,207 +19,206 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
   profile,
   isOwnProfile
 }) => {
-  // Mock data for suggestions - in real implementation, these would come from API
-  const suggestedConnections = [
-    {
-      id: '1',
-      name: 'Amara Okafor',
-      title: 'Tech Entrepreneur',
-      location: 'Lagos, Nigeria',
-      avatar: null,
-      commonInterests: ['Tech', 'Startups']
+  const navigate = useNavigate();
+  
+  // Fetch suggested users (people not yet connected)
+  const { data: suggestedUsers = [], isLoading: suggestionsLoading } = useQuery({
+    queryKey: ['suggested-connections', profile?.id],
+    queryFn: async () => {
+      if (!profile?.id) return [];
+      
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, username, full_name, headline, avatar_url, verified')
+        .neq('id', profile.id)
+        .not('onboarding_completed_at', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      if (error) {
+        console.error('Error fetching suggestions:', error);
+        return [];
+      }
+      return data || [];
     },
-    {
-      id: '2', 
-      name: 'Kwame Asante',
-      title: 'Social Impact Investor',
-      location: 'Accra, Ghana',
-      avatar: null,
-      commonInterests: ['Impact Investing', 'Education']
-    }
-  ];
+    enabled: !!profile?.id,
+  });
 
-  const upcomingEvents = [
-    {
-      id: '1',
-      title: 'African Tech Summit',
-      date: '2024-08-15',
-      location: 'Virtual',
-      attendees: 247
-    },
-    {
-      id: '2',
-      title: 'Diaspora Investment Forum',
-      date: '2024-08-22',
-      location: 'New York',
-      attendees: 156
-    }
-  ];
-
-  const contributionOpportunities = [
-    {
-      id: '1',
-      title: 'EdTech for Rural Schools',
-      type: 'Project',
-      needType: 'Technical Skills',
-      urgency: 'High'
-    },
-    {
-      id: '2',
-      title: 'Renewable Energy Initiative',
-      type: 'Investment',
-      needType: 'Funding',
-      urgency: 'Medium'
-    }
-  ];
+  // Fetch upcoming events
+  const { events: upcomingEvents = [], loading: eventsLoading } = useLiveEvents(3);
 
   return (
     <div className="space-y-6">
-      {/* Suggested Connections */}
+      {/* People You May Know */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-700 flex items-center">
-            <Users className="w-4 h-4 mr-2" />
-            People You May Know
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-medium text-dna-forest flex items-center">
+              <Users className="w-4 h-4 mr-2 text-dna-copper" />
+              People You May Know
+            </CardTitle>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {suggestedConnections.map((person) => (
-              <div key={person.id} className="flex items-start space-x-3">
-                <Avatar className="w-10 h-10">
-                  <AvatarImage src={person.avatar || ''} alt={person.name} />
-                  <AvatarFallback className="bg-dna-copper text-white text-sm">
-                    {person.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {person.name}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {person.title}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {person.location}
-                  </p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {person.commonInterests.slice(0, 2).map((interest, idx) => (
-                      <Badge key={idx} variant="secondary" className="text-xs">
-                        {interest}
-                      </Badge>
-                    ))}
+          {suggestionsLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-dna-copper mx-auto"></div>
+            </div>
+          ) : suggestedUsers && suggestedUsers.length > 0 ? (
+            <div className="space-y-4">
+              {suggestedUsers.map((user: any) => (
+                <div key={user.id} className="flex items-start gap-3">
+                  <Avatar className="w-10 h-10 flex-shrink-0">
+                    <AvatarImage src={user.avatar_url} />
+                    <AvatarFallback className="bg-dna-copper text-white text-sm">
+                      {user.full_name?.split(' ').map((n: string) => n[0]).join('') || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1">
+                      <p className="text-sm font-medium text-dna-forest truncate">
+                        {user.full_name || user.username}
+                      </p>
+                      {user.verified && (
+                        <Badge variant="secondary" className="text-xs px-1 py-0">✓</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {user.headline || 'DNA Community Member'}
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="mt-2 w-full border-dna-emerald text-dna-forest hover:bg-dna-emerald/10"
+                      onClick={() => navigate(`/dna/${user.username}`)}
+                    >
+                      <Plus className="w-3 h-3 mr-1" />
+                      Connect
+                    </Button>
                   </div>
                 </div>
-              </div>
-            ))}
-            
-            <Button variant="ghost" size="sm" className="w-full text-dna-copper">
-              View All Suggestions
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
+              ))}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="w-full text-dna-copper hover:bg-dna-emerald/10"
+                onClick={() => navigate('/connect')}
+              >
+                Show more
+                <ArrowRight className="w-3 h-3 ml-1" />
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Users className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground mb-4">
+                No suggestions yet
+              </p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate('/connect')}
+              >
+                Explore Network
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
       {/* Upcoming Events */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-700 flex items-center">
-            <Calendar className="w-4 h-4 mr-2" />
+          <CardTitle className="text-sm font-medium text-dna-forest flex items-center">
+            <Calendar className="w-4 h-4 mr-2 text-dna-copper" />
             Upcoming Events
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {upcomingEvents.map((event) => (
-              <div key={event.id} className="border-l-4 border-dna-mint pl-3">
-                <h4 className="text-sm font-medium text-gray-900">
-                  {event.title}
-                </h4>
-                <p className="text-xs text-gray-500">
-                  {new Date(event.date).toLocaleDateString()} • {event.location}
-                </p>
-                <p className="text-xs text-gray-400">
-                  {event.attendees} attending
-                </p>
-              </div>
-            ))}
-            
-            <Button variant="ghost" size="sm" className="w-full text-dna-copper">
-              View All Events
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Contribution Opportunities */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-700 flex items-center">
-            <Heart className="w-4 h-4 mr-2" />
-            Ways to Contribute
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {contributionOpportunities.map((opportunity) => (
-              <div key={opportunity.id} className="p-3 border border-gray-200 rounded-lg">
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="text-sm font-medium text-gray-900">
-                    {opportunity.title}
-                  </h4>
-                  <Badge 
-                    variant={opportunity.urgency === 'High' ? 'destructive' : 'secondary'}
-                    className="text-xs"
-                  >
-                    {opportunity.urgency}
-                  </Badge>
+          {eventsLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-dna-copper mx-auto"></div>
+            </div>
+          ) : upcomingEvents && upcomingEvents.length > 0 ? (
+            <div className="space-y-4">
+              {upcomingEvents.map((event: any) => (
+                <div key={event.id} className="p-3 rounded-lg border border-dna-emerald/20 hover:bg-dna-emerald/5 transition-colors cursor-pointer">
+                  <h4 className="font-medium text-sm text-dna-forest mb-1">{event.title}</h4>
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    {event.date_time && (
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(event.date_time).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </div>
+                    )}
+                    {event.location && (
+                      <div className="text-xs">{event.location}</div>
+                    )}
+                    {event.attendee_count !== undefined && (
+                      <div className="text-xs text-dna-copper">
+                        {event.attendee_count} attending
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500 mb-2">
-                  {opportunity.type} • Needs: {opportunity.needType}
-                </p>
-                <Button variant="outline" size="sm" className="w-full text-xs">
-                  Learn More
-                </Button>
-              </div>
-            ))}
-            
-            <Button variant="ghost" size="sm" className="w-full text-dna-copper">
-              View All Opportunities
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
+              ))}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="w-full text-dna-copper hover:bg-dna-emerald/10"
+                onClick={() => navigate('/events')}
+              >
+                View all events
+                <ArrowRight className="w-3 h-3 ml-1" />
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Calendar className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground mb-4">
+                No upcoming events
+              </p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate('/events')}
+              >
+                Explore Events
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Community Insights */}
+      {/* DNA News / Updates */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-gray-700 flex items-center">
-            <Lightbulb className="w-4 h-4 mr-2" />
-            Community Insights
-          </CardTitle>
+          <CardTitle className="text-sm font-medium text-dna-forest">DNA Updates</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Active Members</span>
-              <span className="font-medium">2,847</span>
+            <div className="pb-3 border-b border-border">
+              <div className="font-medium text-dna-forest mb-1">Platform Launch</div>
+              <p className="text-xs text-muted-foreground">
+                Welcome to the DNA Community! Connect with diaspora professionals worldwide.
+              </p>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">This Week's Connections</span>
-              <span className="font-medium text-dna-emerald">+127</span>
+            <div className="pb-3 border-b border-border">
+              <div className="font-medium text-dna-forest mb-1">New Features</div>
+              <p className="text-xs text-muted-foreground">
+                Explore collaboration spaces and contribution opportunities.
+              </p>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">New Projects</span>
-              <span className="font-medium text-dna-copper">23</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Impact Score</span>
-              <span className="font-medium text-dna-gold">8.4/10</span>
+            <div>
+              <div className="font-medium text-dna-forest mb-1">Community Growth</div>
+              <p className="text-xs text-muted-foreground">
+                Join a growing network of African diaspora changemakers.
+              </p>
             </div>
           </div>
         </CardContent>
