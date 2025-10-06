@@ -2199,6 +2199,48 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          link_url: string | null
+          message: string
+          payload: Json | null
+          read: boolean
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link_url?: string | null
+          message: string
+          payload?: Json | null
+          read?: boolean
+          title: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link_url?: string | null
+          message?: string
+          payload?: Json | null
+          read?: boolean
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       opportunities: {
         Row: {
           created_at: string
@@ -4226,6 +4268,17 @@ export type Database = {
       add_message_reaction: {
         Args: { p_message_id: string; p_reaction: string; p_user_id: string }
         Returns: undefined
+      }
+      add_notification: {
+        Args: {
+          p_link_url?: string
+          p_message: string
+          p_payload?: Json
+          p_title: string
+          p_type: string
+          p_user_id: string
+        }
+        Returns: string
       }
       approve_beta_application: {
         Args: { admin_id: string; application_id: string }

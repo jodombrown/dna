@@ -4,6 +4,7 @@ import { useDashboard } from '@/contexts/DashboardContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { NotificationsDropdown } from '@/components/notifications/NotificationsDropdown';
 
 import { 
   Home,
@@ -67,6 +68,7 @@ const UnifiedHeader = () => {
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Query admin status
   const { data: isAdmin } = useQuery({
@@ -87,6 +89,29 @@ const UnifiedHeader = () => {
       return data || false;
     },
     enabled: !!user
+  });
+
+  // Query unread notification count
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ['notifications-unread-count'],
+    queryFn: async () => {
+      if (!user) return 0;
+      
+      const { count, error } = await supabase
+        .from('notifications')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('read', false);
+      
+      if (error) {
+        console.error('Error fetching unread count:', error);
+        return 0;
+      }
+      
+      return count || 0;
+    },
+    enabled: !!user,
+    refetchInterval: 30000 // Refetch every 30 seconds
   });
 
   // Don't render anything while loading
@@ -228,6 +253,29 @@ const UnifiedHeader = () => {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
+                  )}
+                  
+                  {/* Notifications Bell */}
+                  {user && (
+                    <div className="relative">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowNotifications(!showNotifications)}
+                        className="relative p-2"
+                      >
+                        <Bell className="h-5 w-5" />
+                        {unreadCount > 0 && (
+                          <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                            {unreadCount > 9 ? '9+' : unreadCount}
+                          </span>
+                        )}
+                      </Button>
+
+                      {showNotifications && (
+                        <NotificationsDropdown onClose={() => setShowNotifications(false)} />
+                      )}
+                    </div>
                   )}
                   
                   {/* User Profile Dropdown */}

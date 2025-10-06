@@ -4,6 +4,20 @@ import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
 import { X, Check } from 'lucide-react';
 
+interface Notification {
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  message: string;
+  link_url?: string | null;
+  read: boolean;
+  is_read: boolean;
+  payload: any;
+  created_at: string;
+  updated_at: string;
+}
+
 interface NotificationsDropdownProps {
   onClose: () => void;
 }
@@ -26,7 +40,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
         .limit(20);
       
       if (error) throw error;
-      return data || [];
+      return (data as Notification[]) || [];
     }
   });
 
