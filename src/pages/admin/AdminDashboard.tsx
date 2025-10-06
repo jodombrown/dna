@@ -1,70 +1,80 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Users, Briefcase, MessageSquare, Folder, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, MessageSquare, Building } from 'lucide-react';
 
 export default function AdminDashboard() {
-  const { data: stats } = useQuery({
+  // Fetch platform stats
+  const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
-      const [usersResult, postsResult, spacesResult] = await Promise.all([
+      const [users, posts, spaces, opportunities] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('posts').select('id', { count: 'exact', head: true }),
-        supabase.from('collaboration_spaces').select('id', { count: 'exact', head: true })
+        supabase.from('collaboration_spaces').select('id', { count: 'exact', head: true }),
+        supabase.from('opportunities').select('id', { count: 'exact', head: true })
       ]);
 
       return {
-        users: usersResult.count || 0,
-        posts: postsResult.count || 0,
-        spaces: spacesResult.count || 0
+        users: users.count || 0,
+        posts: posts.count || 0,
+        spaces: spaces.count || 0,
+        opportunities: opportunities.count || 0
       };
     }
   });
 
+  const statCards = [
+    { label: 'Total Users', value: stats?.users || 0, icon: Users, color: 'bg-blue-500' },
+    { label: 'Total Posts', value: stats?.posts || 0, icon: MessageSquare, color: 'bg-emerald-500' },
+    { label: 'Active Spaces', value: stats?.spaces || 0, icon: Folder, color: 'bg-purple-500' },
+    { label: 'Opportunities', value: stats?.opportunities || 0, icon: Briefcase, color: 'bg-orange-500' }
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6 text-foreground">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8 text-foreground">Admin Dashboard</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.users || 0}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Spaces</CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.spaces || 0}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.posts || 0}</div>
-          </CardContent>
-        </Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {statCards.map((stat) => (
+          <Card key={stat.label}>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className={`${stat.color} p-3 rounded-lg`}>
+                  <stat.icon className="h-6 w-6 text-white" />
+                </div>
+              </div>
+              <h3 className="text-muted-foreground text-sm font-medium mb-1">{stat.label}</h3>
+              <p className="text-3xl font-bold text-foreground">{stat.value}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
+      {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>Admin Tools</CardTitle>
+          <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">
-            Use the navigation above to access different admin tools including engagement analytics and signal management.
-          </p>
+          <div className="space-y-3">
+            <p className="text-muted-foreground">
+              Use the navigation above to access different admin tools:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-foreground">
+              <li><strong>Engagement:</strong> View user engagement metrics and analytics</li>
+              <li><strong>Signals:</strong> Monitor ADIN signals and connection health</li>
+            </ul>
+          </div>
         </CardContent>
       </Card>
     </div>
