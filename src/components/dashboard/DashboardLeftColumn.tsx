@@ -188,7 +188,7 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
                   Network
                 </Button>
               </Link>
-              <Link to="/contribute" className="block">
+              <Link to="/opportunities" className="block">
                 <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-dna-forest hover:bg-dna-emerald/10">
                   Explore Opportunities
                 </Button>

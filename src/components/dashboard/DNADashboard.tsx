@@ -178,14 +178,14 @@ const DNADashboard: React.FC = () => {
                 </Card>
               </Link>
 
-              <Link to="/contribute">
+              <Link to="/opportunities">
                 <Card className="cursor-pointer hover:shadow-md transition-all border-l-4 border-l-dna-gold hover:border-l-dna-gold/80">
                   <CardContent className="p-4 text-center">
                     <div className="w-12 h-12 bg-dna-gold/10 rounded-full flex items-center justify-center mx-auto mb-3">
                       <Heart className="w-6 h-6 text-dna-gold" />
                     </div>
-                    <h3 className="font-semibold text-sm">Contribute</h3>
-                    <p className="text-xs text-muted-foreground mt-1">Give back</p>
+                    <h3 className="font-semibold text-sm">Opportunities</h3>
+                    <p className="text-xs text-muted-foreground mt-1">Find ways to contribute</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -317,7 +317,7 @@ const DNADashboard: React.FC = () => {
                   <p className="text-sm text-muted-foreground mb-3">
                     Find meaningful ways to give back to the community
                   </p>
-                  <Link to="/contribute">
+                  <Link to="/opportunities">
                     <Button variant="outline" size="sm">
                       Explore Opportunities
                     </Button>

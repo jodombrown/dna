@@ -76,7 +76,7 @@ const UnifiedHeader = () => {
     { title: 'Home', view: 'dashboard', icon: Home },
     { title: 'Connect', view: 'network', icon: Users },
     { title: 'Collaborate', view: 'messaging', icon: MessageSquare },
-    { title: 'Contribute', view: 'notifications', icon: Bell },
+    { title: 'Opportunities', view: 'opportunities', icon: Bell },
   ];
 
   const handleSignOut = () => {
@@ -115,7 +115,7 @@ const UnifiedHeader = () => {
       'dashboard': '/',
       'network': '/connect',
       'messaging': '/collaborate', 
-      'notifications': '/contribute'
+      'opportunities': '/opportunities'
     };
     navigate(viewRouteMap[view] || '/');
   };
