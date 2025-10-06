@@ -2987,7 +2987,6 @@ export type Database = {
           recent_searches: string[] | null
           referral_code: string | null
           referrer_id: string | null
-          role: string | null
           roles: string[] | null
           sdg_focus: string[] | null
           sectors: string[] | null
@@ -3115,7 +3114,6 @@ export type Database = {
           recent_searches?: string[] | null
           referral_code?: string | null
           referrer_id?: string | null
-          role?: string | null
           roles?: string[] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
@@ -3243,7 +3241,6 @@ export type Database = {
           recent_searches?: string[] | null
           referral_code?: string | null
           referrer_id?: string | null
-          role?: string | null
           roles?: string[] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
@@ -4553,10 +4550,6 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
-      is_user_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
       log_connection_event: {
         Args: { p_connection: string; p_event_type: string; p_payload?: Json }
         Returns: string
@@ -4959,6 +4952,10 @@ export type Database = {
       update_username: {
         Args: { new_username: string }
         Returns: undefined
+      }
+      validate_invite_code: {
+        Args: { invite_code: string }
+        Returns: Json
       }
       validate_prelaunch_access: {
         Args: { user_email: string }
