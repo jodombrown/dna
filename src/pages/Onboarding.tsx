@@ -57,24 +57,34 @@ const Onboarding = () => {
     setIsSubmitting(true);
     
     try {
+      // Generate username from full name
+      const fullName = `${formData.first_name.trim()} ${formData.last_name.trim()}`.trim();
+      const baseUsername = fullName
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .trim();
+
       // Create or update profile with minimal required data
       const profileData = {
         id: user.id,
         email: user.email,
-        full_name: `${formData.first_name.trim()} ${formData.last_name.trim()}`.trim(),
+        full_name: fullName,
         first_name: formData.first_name,
         last_name: formData.last_name,
+        username: baseUsername,
         current_country: formData.current_country,
         avatar_url: formData.avatar_url,
         professional_sectors: formData.professional_sectors,
         interests: formData.interests,
         is_public: true,
+        onboarding_completed_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
 
       const { error } = await supabase
         .from('profiles')
-        .upsert(profileData, { onConflict: 'id' });
+        .upsert([profileData], { onConflict: 'id' });
 
       if (error) throw error;
 

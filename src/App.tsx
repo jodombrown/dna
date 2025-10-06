@@ -11,9 +11,11 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import InviteSignup from "./pages/InviteSignup";
+import Onboarding from "./pages/Onboarding";
 import DnaMe from "./pages/dna/Me";
 import DnaUserDashboard from "./pages/dna/Username";
 import NotFound from "./pages/NotFound";
+import { OnboardingGuard } from "./components/auth/OnboardingGuard";
 
 // Static pages  
 import About from "./pages/About";
@@ -74,9 +76,20 @@ function App() {
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
               
-              {/* DNA Dashboard Routes */}
-              <Route path="/dna/me" element={<DnaMe />} />
-              <Route path="/dna/:username" element={<DnaUserDashboard />} />
+              {/* Onboarding - NOT wrapped with OnboardingGuard */}
+              <Route path="/onboarding" element={<Onboarding />} />
+              
+              {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
+              <Route path="/dna/me" element={
+                <OnboardingGuard>
+                  <DnaMe />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/:username" element={
+                <OnboardingGuard>
+                  <DnaUserDashboard />
+                </OnboardingGuard>
+              } />
               
               {/* Main feature pages */}
               <Route path="/connect" element={<ConnectExample />} />

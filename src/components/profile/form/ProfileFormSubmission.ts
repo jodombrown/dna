@@ -18,11 +18,9 @@ export const handleProfileSubmission = async (
 
   const { error } = await supabase
     .from('profiles')
-    .upsert({
-      id: userId,
+    .update({
       ...processedData,
       avatar_url: avatarUrl,
-      banner_image_url: bannerUrl,
       skills: arrayStates.skills,
       interests: arrayStates.interests,
       impact_areas: arrayStates.impactAreas,
@@ -34,7 +32,8 @@ export const handleProfileSubmission = async (
       diaspora_networks: arrayStates.diasporaNetworks,
       mentorship_areas: arrayStates.mentorshipAreas,
       updated_at: new Date().toISOString(),
-    });
+    } as any)
+    .eq('id', userId);
 
   if (error) throw error;
 };

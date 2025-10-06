@@ -197,6 +197,83 @@ export type Database = {
           },
         ]
       }
+      billing_transactions: {
+        Row: {
+          amount_cents: number
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          id: string
+          metadata: Json | null
+          organization_id: string
+          status: string | null
+          stripe_invoice_id: string | null
+          stripe_payment_intent_id: string | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id: string
+          status?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id?: string
+          status?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_transactions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      causes: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       collaboration_memberships: {
         Row: {
           id: string
@@ -2040,6 +2117,354 @@ export type Database = {
           },
         ]
       }
+      opportunity_applications: {
+        Row: {
+          applicant_id: string
+          cover_letter: string | null
+          created_at: string | null
+          id: string
+          opportunity_id: string
+          proposed_contribution_type: Database["public"]["Enums"]["contribution_type"]
+          proposed_hours_per_month: number | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["application_status"] | null
+          updated_at: string | null
+          withdrawn_at: string | null
+        }
+        Insert: {
+          applicant_id: string
+          cover_letter?: string | null
+          created_at?: string | null
+          id?: string
+          opportunity_id: string
+          proposed_contribution_type: Database["public"]["Enums"]["contribution_type"]
+          proposed_hours_per_month?: number | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["application_status"] | null
+          updated_at?: string | null
+          withdrawn_at?: string | null
+        }
+        Update: {
+          applicant_id?: string
+          cover_letter?: string | null
+          created_at?: string | null
+          id?: string
+          opportunity_id?: string
+          proposed_contribution_type?: Database["public"]["Enums"]["contribution_type"]
+          proposed_hours_per_month?: number | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["application_status"] | null
+          updated_at?: string | null
+          withdrawn_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_applications_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_applications_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_applications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunity_contributions: {
+        Row: {
+          application_id: string | null
+          completed_at: string | null
+          contribution_type: Database["public"]["Enums"]["contribution_type"]
+          contributor_id: string
+          created_at: string | null
+          description: string | null
+          hours_contributed: number | null
+          id: string
+          opportunity_id: string
+          started_at: string | null
+          updated_at: string | null
+          verification_notes: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          application_id?: string | null
+          completed_at?: string | null
+          contribution_type: Database["public"]["Enums"]["contribution_type"]
+          contributor_id: string
+          created_at?: string | null
+          description?: string | null
+          hours_contributed?: number | null
+          id?: string
+          opportunity_id: string
+          started_at?: string | null
+          updated_at?: string | null
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          application_id?: string | null
+          completed_at?: string | null
+          contribution_type?: Database["public"]["Enums"]["contribution_type"]
+          contributor_id?: string
+          created_at?: string | null
+          description?: string | null
+          hours_contributed?: number | null
+          id?: string
+          opportunity_id?: string
+          started_at?: string | null
+          updated_at?: string | null
+          verification_notes?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunity_contributions_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "opportunity_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_contributions_contributor_id_fkey"
+            columns: ["contributor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_contributions_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_contributions_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_verification_requests: {
+        Row: {
+          annual_budget_usd: number | null
+          created_at: string | null
+          description_of_work: string | null
+          financial_document_url: string | null
+          id: string
+          organization_id: string
+          proof_of_activity_url: string | null
+          reference_1_email: string | null
+          reference_1_name: string | null
+          reference_1_relationship: string | null
+          reference_2_email: string | null
+          reference_2_name: string | null
+          reference_2_relationship: string | null
+          registration_document_url: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_notes: string | null
+          social_media_links: string[] | null
+          status: string | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          annual_budget_usd?: number | null
+          created_at?: string | null
+          description_of_work?: string | null
+          financial_document_url?: string | null
+          id?: string
+          organization_id: string
+          proof_of_activity_url?: string | null
+          reference_1_email?: string | null
+          reference_1_name?: string | null
+          reference_1_relationship?: string | null
+          reference_2_email?: string | null
+          reference_2_name?: string | null
+          reference_2_relationship?: string | null
+          registration_document_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          social_media_links?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          annual_budget_usd?: number | null
+          created_at?: string | null
+          description_of_work?: string | null
+          financial_document_url?: string | null
+          id?: string
+          organization_id?: string
+          proof_of_activity_url?: string | null
+          reference_1_email?: string | null
+          reference_1_name?: string | null
+          reference_1_relationship?: string | null
+          reference_2_email?: string | null
+          reference_2_name?: string | null
+          reference_2_relationship?: string | null
+          registration_document_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          social_media_links?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_verification_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_verification_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          annual_budget_usd: number | null
+          country_id: string | null
+          created_at: string | null
+          deleted_at: string | null
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          opportunities_posted_this_year: number | null
+          owner_user_id: string
+          slug: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_ends_at: string | null
+          subscription_started_at: string | null
+          subscription_status: string | null
+          subscription_tier: string | null
+          updated_at: string | null
+          verification_approved_at: string | null
+          verification_documents_url: string | null
+          verification_fee_paid: boolean | null
+          verification_notes: string | null
+          verification_rejected_at: string | null
+          verification_status: string | null
+          verification_submitted_at: string | null
+          verified: boolean | null
+          verified_at: string | null
+          website: string | null
+          year_reset_at: string | null
+        }
+        Insert: {
+          annual_budget_usd?: number | null
+          country_id?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          opportunities_posted_this_year?: number | null
+          owner_user_id: string
+          slug: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_ends_at?: string | null
+          subscription_started_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          updated_at?: string | null
+          verification_approved_at?: string | null
+          verification_documents_url?: string | null
+          verification_fee_paid?: boolean | null
+          verification_notes?: string | null
+          verification_rejected_at?: string | null
+          verification_status?: string | null
+          verification_submitted_at?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          website?: string | null
+          year_reset_at?: string | null
+        }
+        Update: {
+          annual_budget_usd?: number | null
+          country_id?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          opportunities_posted_this_year?: number | null
+          owner_user_id?: string
+          slug?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_ends_at?: string | null
+          subscription_started_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          updated_at?: string | null
+          verification_approved_at?: string | null
+          verification_documents_url?: string | null
+          verification_fee_paid?: boolean | null
+          verification_notes?: string | null
+          verification_rejected_at?: string | null
+          verification_status?: string | null
+          verification_submitted_at?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          website?: string | null
+          year_reset_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_owner_user_id_fkey"
+            columns: ["owner_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       political_digest: {
         Row: {
           author: string | null
@@ -2370,6 +2795,72 @@ export type Database = {
           },
         ]
       }
+      profile_causes: {
+        Row: {
+          cause_id: string
+          created_at: string | null
+          profile_id: string
+        }
+        Insert: {
+          cause_id: string
+          created_at?: string | null
+          profile_id: string
+        }
+        Update: {
+          cause_id?: string
+          created_at?: string | null
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_causes_cause_id_fkey"
+            columns: ["cause_id"]
+            isOneToOne: false
+            referencedRelation: "causes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_causes_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_skills: {
+        Row: {
+          created_at: string | null
+          profile_id: string
+          skill_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          profile_id: string
+          skill_id: string
+        }
+        Update: {
+          created_at?: string | null
+          profile_id?: string
+          skill_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_skills_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_skills_skill_id_fkey"
+            columns: ["skill_id"]
+            isOneToOne: false
+            referencedRelation: "skills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_views: {
         Row: {
           id: string
@@ -2404,6 +2895,8 @@ export type Database = {
           adin_prompt_status: string | null
           advocacy_interests: string[] | null
           agrees_to_values: boolean | null
+          availability_hours_per_month: number | null
+          availability_visible: boolean | null
           available_for: string[] | null
           available_hours_per_month: number | null
           avatar_url: string | null
@@ -2419,32 +2912,39 @@ export type Database = {
           company: string | null
           connection_count: number | null
           contribution_style: string | null
+          contribution_types: string[] | null
           country_of_origin: string | null
+          country_of_origin_id: string | null
           country_origin: string | null
           created_at: string
           current_city: string | null
           current_country: string | null
           current_country_code: string | null
+          current_country_id: string | null
           current_country_name: string | null
           current_location: string | null
           current_region: string | null
           dashboard_version: string | null
+          deleted_at: string | null
           diaspora_origin: string | null
           diaspora_story: string | null
           display_name: string | null
           email: string | null
           email_notifications: boolean | null
+          email_visible: boolean | null
           first_action_completed: boolean | null
           first_action_type: string | null
           first_name: string | null
           full_name: string | null
           fundraising_status: string | null
+          github_url: string | null
           headline: string | null
           id: string
           impact_areas: string[] | null
           impact_goals: string[] | null
           impact_regions: string[] | null
           industry: string | null
+          industry_sectors: string[] | null
           interest_tags: string[] | null
           interests: string[] | null
           intro_audio_url: string | null
@@ -2453,11 +2953,14 @@ export type Database = {
           is_admin: boolean | null
           is_beta_tester: boolean | null
           is_public: boolean | null
+          languages: string[] | null
           last_active: string | null
+          last_active_at: string | null
           last_name: string | null
           last_seen_at: string | null
           linkedin_url: string | null
           location: string | null
+          location_preference: string | null
           mentorship_interest: string[] | null
           mentorship_offering: boolean | null
           middle_initial: string | null
@@ -2492,19 +2995,27 @@ export type Database = {
           selected_pillars: string[] | null
           skills: string[] | null
           support_areas: string[] | null
+          twitter_handle: string | null
           twitter_url: string | null
           updated_at: string
           user_type: string | null
-          username: string | null
+          username: string
           username_changes: number | null
           username_changes_left: number | null
           venture_name: string | null
           venture_stage: string | null
+          verification_method: string | null
+          verified: boolean | null
+          verified_at: string | null
           visibility: Json | null
           website_url: string | null
           what_to_give: string[] | null
           what_to_receive: string[] | null
+          why_contribute: string | null
           years_experience: number | null
+          years_in_diaspora: number | null
+          years_in_diaspora_text: string | null
+          years_of_experience: number | null
         }
         Insert: {
           account_visibility?: string | null
@@ -2512,6 +3023,8 @@ export type Database = {
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           agrees_to_values?: boolean | null
+          availability_hours_per_month?: number | null
+          availability_visible?: boolean | null
           available_for?: string[] | null
           available_hours_per_month?: number | null
           avatar_url?: string | null
@@ -2527,32 +3040,39 @@ export type Database = {
           company?: string | null
           connection_count?: number | null
           contribution_style?: string | null
+          contribution_types?: string[] | null
           country_of_origin?: string | null
+          country_of_origin_id?: string | null
           country_origin?: string | null
           created_at?: string
           current_city?: string | null
           current_country?: string | null
           current_country_code?: string | null
+          current_country_id?: string | null
           current_country_name?: string | null
           current_location?: string | null
           current_region?: string | null
           dashboard_version?: string | null
+          deleted_at?: string | null
           diaspora_origin?: string | null
           diaspora_story?: string | null
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
+          email_visible?: boolean | null
           first_action_completed?: boolean | null
           first_action_type?: string | null
           first_name?: string | null
           full_name?: string | null
           fundraising_status?: string | null
+          github_url?: string | null
           headline?: string | null
           id: string
           impact_areas?: string[] | null
           impact_goals?: string[] | null
           impact_regions?: string[] | null
           industry?: string | null
+          industry_sectors?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
           intro_audio_url?: string | null
@@ -2561,11 +3081,14 @@ export type Database = {
           is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          languages?: string[] | null
           last_active?: string | null
+          last_active_at?: string | null
           last_name?: string | null
           last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
+          location_preference?: string | null
           mentorship_interest?: string[] | null
           mentorship_offering?: boolean | null
           middle_initial?: string | null
@@ -2600,19 +3123,27 @@ export type Database = {
           selected_pillars?: string[] | null
           skills?: string[] | null
           support_areas?: string[] | null
+          twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
           user_type?: string | null
-          username?: string | null
+          username: string
           username_changes?: number | null
           username_changes_left?: number | null
           venture_name?: string | null
           venture_stage?: string | null
+          verification_method?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
           visibility?: Json | null
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
+          why_contribute?: string | null
           years_experience?: number | null
+          years_in_diaspora?: number | null
+          years_in_diaspora_text?: string | null
+          years_of_experience?: number | null
         }
         Update: {
           account_visibility?: string | null
@@ -2620,6 +3151,8 @@ export type Database = {
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           agrees_to_values?: boolean | null
+          availability_hours_per_month?: number | null
+          availability_visible?: boolean | null
           available_for?: string[] | null
           available_hours_per_month?: number | null
           avatar_url?: string | null
@@ -2635,32 +3168,39 @@ export type Database = {
           company?: string | null
           connection_count?: number | null
           contribution_style?: string | null
+          contribution_types?: string[] | null
           country_of_origin?: string | null
+          country_of_origin_id?: string | null
           country_origin?: string | null
           created_at?: string
           current_city?: string | null
           current_country?: string | null
           current_country_code?: string | null
+          current_country_id?: string | null
           current_country_name?: string | null
           current_location?: string | null
           current_region?: string | null
           dashboard_version?: string | null
+          deleted_at?: string | null
           diaspora_origin?: string | null
           diaspora_story?: string | null
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
+          email_visible?: boolean | null
           first_action_completed?: boolean | null
           first_action_type?: string | null
           first_name?: string | null
           full_name?: string | null
           fundraising_status?: string | null
+          github_url?: string | null
           headline?: string | null
           id?: string
           impact_areas?: string[] | null
           impact_goals?: string[] | null
           impact_regions?: string[] | null
           industry?: string | null
+          industry_sectors?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
           intro_audio_url?: string | null
@@ -2669,11 +3209,14 @@ export type Database = {
           is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          languages?: string[] | null
           last_active?: string | null
+          last_active_at?: string | null
           last_name?: string | null
           last_seen_at?: string | null
           linkedin_url?: string | null
           location?: string | null
+          location_preference?: string | null
           mentorship_interest?: string[] | null
           mentorship_offering?: boolean | null
           middle_initial?: string | null
@@ -2708,21 +3251,43 @@ export type Database = {
           selected_pillars?: string[] | null
           skills?: string[] | null
           support_areas?: string[] | null
+          twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
           user_type?: string | null
-          username?: string | null
+          username?: string
           username_changes?: number | null
           username_changes_left?: number | null
           venture_name?: string | null
           venture_stage?: string | null
+          verification_method?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
           visibility?: Json | null
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
+          why_contribute?: string | null
           years_experience?: number | null
+          years_in_diaspora?: number | null
+          years_in_diaspora_text?: string | null
+          years_of_experience?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_country_of_origin_id_fkey"
+            columns: ["country_of_origin_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_current_country_id_fkey"
+            columns: ["current_country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profiles_referrer_id_fkey"
             columns: ["referrer_id"]
@@ -2987,6 +3552,27 @@ export type Database = {
           shared_skills?: string[]
           user_a_id?: string | null
           user_b_id?: string | null
+        }
+        Relationships: []
+      }
+      skills: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
         }
         Relationships: []
       }
@@ -3361,6 +3947,45 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          granted_at: string | null
+          granted_by: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_granted_by_fkey"
+            columns: ["granted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           avatar_url: string | null
@@ -3665,6 +4290,10 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: boolean
       }
+      can_post_opportunity: {
+        Args: { _org_id: string }
+        Returns: boolean
+      }
       can_send_messages: {
         Args: { user_id_param: string }
         Returns: boolean
@@ -3771,6 +4400,10 @@ export type Database = {
       }
       generate_referral_code: {
         Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_username: {
+        Args: { _full_name: string }
         Returns: string
       }
       generate_username_from_name: {
@@ -3884,6 +4517,13 @@ export type Database = {
         Args: { new_user_id: string; referral_code_param: string }
         Returns: undefined
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       is_admin_email: {
         Args: { email_address: string }
         Returns: boolean
@@ -3945,6 +4585,10 @@ export type Database = {
       make_user_admin: {
         Args: { user_email: string }
         Returns: string
+      }
+      owns_organization: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
       }
       profile_meets_visibility_requirement: {
         Args: { min_score?: number; user_id_param: string }
@@ -4322,7 +4966,16 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "moderator" | "admin"
+      application_status:
+        | "pending"
+        | "reviewing"
+        | "accepted"
+        | "rejected"
+        | "withdrawn"
+      contribution_type: "time" | "expertise" | "network" | "capital"
+      opportunity_status: "draft" | "active" | "paused" | "closed" | "archived"
+      opportunity_visibility: "public" | "network_only" | "private"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4449,6 +5102,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "moderator", "admin"],
+      application_status: [
+        "pending",
+        "reviewing",
+        "accepted",
+        "rejected",
+        "withdrawn",
+      ],
+      contribution_type: ["time", "expertise", "network", "capital"],
+      opportunity_status: ["draft", "active", "paused", "closed", "archived"],
+      opportunity_visibility: ["public", "network_only", "private"],
+    },
   },
 } as const
