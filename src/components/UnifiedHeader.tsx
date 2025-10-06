@@ -7,6 +7,7 @@ import {
   Home,
   Users, 
   MessageSquare, 
+  MessageCircle,
   Bell,
   Search,
   User,
@@ -76,6 +77,7 @@ const UnifiedHeader = () => {
     { title: 'Home', view: 'dashboard', icon: Home },
     { title: 'Connect', view: 'network', icon: Users },
     { title: 'Network', view: 'connections', icon: Users2 },
+    { title: 'Messages', view: 'messages', icon: MessageCircle },
     { title: 'Collaborate', view: 'messaging', icon: MessageSquare },
     { title: 'Opportunities', view: 'opportunities', icon: Bell },
   ];
@@ -116,6 +118,7 @@ const UnifiedHeader = () => {
       'dashboard': '/',
       'network': '/connect',
       'connections': '/network',
+      'messages': '/messages',
       'messaging': '/collaborate', 
       'opportunities': '/opportunities'
     };
