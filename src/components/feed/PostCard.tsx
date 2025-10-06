@@ -10,6 +10,7 @@ import { EmbedPreview } from '@/components/social-feed/EmbedPreview';
 import { usePostViewTracker } from '@/hooks/usePostViewTracker';
 import { likePost, unlikePost, deletePost } from '@/services/postsService';
 import { formatDistanceToNow } from 'date-fns';
+import { PostComments } from '@/components/feed/PostComments';
 
 interface Post {
   id: string;
@@ -46,6 +47,7 @@ export const PostCard: React.FC<PostCardProps> = ({
 }) => {
   const [isLiked, setIsLiked] = useState(post.user_has_liked || false);
   const [likeCount, setLikeCount] = useState(post.like_count || 0);
+  const [commentCount, setCommentCount] = useState(post.comment_count || 0);
   const [isLiking, setIsLiking] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -268,7 +270,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                 className="gap-2 text-muted-foreground hover:text-foreground"
               >
                 <MessageCircle className="h-4 w-4" />
-                <span>{post.comment_count || 0}</span>
+                <span>{commentCount}</span>
               </Button>
             </div>
 
@@ -297,6 +299,13 @@ export const PostCard: React.FC<PostCardProps> = ({
             </div>
           </div>
         </div>
+        
+        {/* Comments Section */}
+        <PostComments 
+          postId={post.id} 
+          initialCount={commentCount}
+          onCommentCountChange={setCommentCount}
+        />
       </CardContent>
     </Card>
   );
