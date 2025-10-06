@@ -5,6 +5,7 @@ export type Profile = Tables<'profiles'>;
 
 export const profilesService = {
   // Get all public profiles with optional filtering
+  // Only returns non-sensitive fields (no email, phone, private contact info)
   async getPublicProfiles(filters?: {
     location?: string;
     skills?: string[];
@@ -23,7 +24,8 @@ export const profilesService = {
     return data;
   },
 
-  // Get profile by ID
+  // Get profile by ID - respects privacy settings
+  // Only returns non-sensitive fields for public viewing
   async getProfileById(id: string) {
     const { data, error } = await supabase
       .rpc('rpc_public_profile_by_id', { p_id: id })
@@ -51,6 +53,18 @@ export const profilesService = {
       .update(updates)
       .eq('id', id)
       .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
+  },
+
+  // Get own full profile with all fields (including private ones)
+  async getOwnProfile(userId: string) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
       .single();
     
     if (error) throw error;
