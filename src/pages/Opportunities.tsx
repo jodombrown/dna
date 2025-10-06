@@ -28,14 +28,6 @@ const Opportunities: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleApply = (id: string) => {
-    // Navigate to application page or open dialog
-    toast({
-      title: "Application Started",
-      description: "Opening application form...",
-    });
-  };
-
   const handleBookmark = (id: string) => {
     toggleBookmark(id);
   };
@@ -128,7 +120,6 @@ const Opportunities: React.FC = () => {
                   <OpportunityCard
                     key={opportunity.id}
                     opportunity={opportunity}
-                    onApply={handleApply}
                     onBookmark={handleBookmark}
                     isBookmarked={bookmarkedIds.has(opportunity.id)}
                   />

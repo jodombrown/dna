@@ -30,6 +30,8 @@ import ContributeExample from "./pages/ContributeExample";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
+import OpportunityDetail from "./pages/OpportunityDetail";
+import MyApplications from "./pages/MyApplications";
 
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
@@ -98,7 +100,9 @@ function App() {
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
-              <Route path="/opportunities" element={<Opportunities />} />
+            <Route path="/opportunities" element={<Opportunities />} />
+            <Route path="/opportunities/:id" element={<OpportunityDetail />} />
+            <Route path="/dna/applications" element={<MyApplications />} />
               
               {/* Regional landing pages */}
               <Route path="/north-africa" element={<NorthAfricaLandingPage />} />

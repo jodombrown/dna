@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, Clock, Bookmark, DollarSign, Users } from 'lucide-react';
 import { Opportunity } from '@/types/opportunityTypes';
 import { impactAreas } from '@/components/collaborations/filters/filterData';
+import { useNavigate } from 'react-router-dom';
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -20,12 +21,17 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
   onBookmark,
   isBookmarked = false,
 }) => {
+  const navigate = useNavigate();
+  
   const getImpactIcon = (area: string) => {
     return impactAreas.find(a => a.value === area)?.icon || '📍';
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all border-dna-emerald/20 hover:border-dna-emerald/40">
+    <Card 
+      className="hover:shadow-lg transition-all border-dna-emerald/20 hover:border-dna-emerald/40 cursor-pointer"
+      onClick={() => navigate(`/opportunities/${opportunity.id}`)}
+    >
       <CardContent className="pt-6">
         <div className="flex gap-4">
           {/* Creator Avatar */}
@@ -58,7 +64,10 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
                 variant="ghost" 
                 size="sm" 
                 className={`hover:bg-dna-emerald/10 ${isBookmarked ? 'text-dna-copper' : ''}`}
-                onClick={() => onBookmark?.(opportunity.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onBookmark?.(opportunity.id);
+                }}
               >
                 <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
               </Button>
@@ -105,16 +114,12 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
               <Button 
                 size="sm" 
                 className="bg-dna-copper hover:bg-dna-copper/90 text-white"
-                onClick={() => onApply?.(opportunity.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/opportunities/${opportunity.id}`);
+                }}
               >
-                Apply Now
-              </Button>
-              <Button 
-                size="sm" 
-                variant="outline"
-                className="border-dna-emerald text-dna-forest hover:bg-dna-emerald/10"
-              >
-                Learn More
+                View Details
               </Button>
             </div>
 
