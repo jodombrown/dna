@@ -7,6 +7,7 @@ import { fetchPosts } from '@/services/postsService';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 
 interface Post {
   id: string;
@@ -34,6 +35,7 @@ const ActivityFeed = () => {
   const { toast } = useToast();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'following'>('all');
 
   const loadPosts = async () => {
     try {
@@ -54,9 +56,9 @@ const ActivityFeed = () => {
   useEffect(() => {
     loadPosts();
 
-    // Set up real-time subscription
+    // Set up real-time subscriptions for posts, likes, and comments
     const channel = supabase
-      .channel('posts-changes')
+      .channel('activity-feed-updates')
       .on(
         'postgres_changes',
         {
@@ -66,7 +68,30 @@ const ActivityFeed = () => {
         },
         (payload) => {
           console.log('Post change received:', payload);
-          // Reload posts when changes occur
+          loadPosts();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'post_likes',
+        },
+        (payload) => {
+          console.log('Like change received:', payload);
+          loadPosts();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'comments',
+        },
+        (payload) => {
+          console.log('Comment change received:', payload);
           loadPosts();
         }
       )
@@ -78,7 +103,6 @@ const ActivityFeed = () => {
   }, []);
 
   const handlePostCreated = () => {
-    // Reload posts after new post created
     loadPosts();
   };
 
@@ -87,6 +111,24 @@ const ActivityFeed = () => {
       <UnifiedHeader />
       
       <div className="max-w-2xl mx-auto py-8 px-4">
+        {/* Filter Buttons */}
+        <div className="flex gap-2 mb-6">
+          <Button
+            onClick={() => setFilter('all')}
+            variant={filter === 'all' ? 'default' : 'outline'}
+            size="sm"
+          >
+            All Posts
+          </Button>
+          <Button
+            onClick={() => setFilter('following')}
+            variant={filter === 'following' ? 'default' : 'outline'}
+            size="sm"
+          >
+            Following
+          </Button>
+        </div>
+
         {/* Post Composer */}
         <div className="mb-6">
           <PostComposer onPostCreated={handlePostCreated} />
@@ -125,6 +167,8 @@ const ActivityFeed = () => {
                   comment_count: post.comments_count,
                   user_has_liked: post.user_has_liked,
                 }}
+                onLike={handlePostCreated}
+                onComment={handlePostCreated}
               />
             ))}
           </div>
