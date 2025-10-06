@@ -212,18 +212,19 @@ const UnifiedHeader = () => {
               )}
 
 
-              {/* Mobile Menu */}
-              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-                <SheetTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="p-2 md:hidden"
-                    aria-label="Open menu"
-                  >
-                    <Menu className="w-6 h-6" />
-                  </Button>
-                </SheetTrigger>
+              {/* Mobile Menu - Show only when not authenticated */}
+              {!isAuthenticated && (
+                <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                  <SheetTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="p-2 md:hidden"
+                      aria-label="Open menu"
+                    >
+                      <Menu className="w-6 h-6" />
+                    </Button>
+                  </SheetTrigger>
                 <SheetContent
                   side="left" 
                   className="w-[85vw] max-w-sm p-0 [&>*]:!hidden [&>div]:!block"
@@ -308,6 +309,7 @@ const UnifiedHeader = () => {
                   </div>
                 </SheetContent>
               </Sheet>
+              )}
             </div>
           </div>
         </div>
