@@ -80,7 +80,7 @@ export default function SpaceDetail() {
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <Button
           variant="ghost"
-          onClick={() => navigate('/spaces')}
+          onClick={() => navigate('/dna/spaces')}
           className="mb-6"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />

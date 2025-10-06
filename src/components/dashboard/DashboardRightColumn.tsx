@@ -103,7 +103,7 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
                 variant="ghost" 
                 size="sm" 
                 className="w-full text-dna-copper hover:bg-dna-emerald/10"
-                onClick={() => navigate('/connect')}
+                onClick={() => navigate('/dna/connect')}
               >
                 Show more
                 <ArrowRight className="w-3 h-3 ml-1" />
@@ -118,7 +118,7 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => navigate('/connect')}
+                onClick={() => navigate('/dna/connect')}
               >
                 Explore Network
               </Button>

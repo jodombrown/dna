@@ -107,24 +107,27 @@ function App() {
               } />
               
               {/* Activity Feed */}
-              <Route path="/feed" element={
+              <Route path="/dna/feed" element={
                 <OnboardingGuard>
                   <ActivityFeed />
                 </OnboardingGuard>
               } />
               
-              {/* Main feature pages */}
+              {/* Main feature pages under /dna namespace */}
+              <Route path="/dna/connect" element={<ConnectExample />} />
+              <Route path="/dna/impact" element={<Opportunities />} />
+              <Route path="/dna/impact/:id" element={<OpportunityDetail />} />
+              <Route path="/dna/applications" element={<MyApplications />} />
+              <Route path="/dna/spaces" element={<CollaborationSpaces />} />
+              <Route path="/dna/spaces/:id" element={<SpaceDetail />} />
+              <Route path="/dna/discover" element={<Discover />} />
+              <Route path="/dna/network" element={<Network />} />
+              <Route path="/dna/messages" element={<Messages />} />
+              
+              {/* Legacy example pages - keep for landing page */}
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
-            <Route path="/opportunities" element={<Opportunities />} />
-            <Route path="/opportunities/:id" element={<OpportunityDetail />} />
-            <Route path="/dna/applications" element={<MyApplications />} />
-            <Route path="/spaces" element={<CollaborationSpaces />} />
-            <Route path="/spaces/:id" element={<SpaceDetail />} />
-            <Route path="/discover" element={<Discover />} />
-            <Route path="/network" element={<Network />} />
-            <Route path="/messages" element={<Messages />} />
               
               {/* Admin routes */}
               <Route path="/app/admin" element={<AdminLayout />}>

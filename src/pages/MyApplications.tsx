@@ -88,7 +88,7 @@ export default function MyApplications() {
               <p className="text-muted-foreground mb-4">
                 You haven't applied to any opportunities yet
               </p>
-              <Button onClick={() => navigate('/opportunities')}>
+              <Button onClick={() => navigate('/dna/impact')}>
                 Browse Opportunities
               </Button>
             </CardContent>

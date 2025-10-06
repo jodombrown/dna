@@ -237,7 +237,7 @@ export default function Discover() {
                 Projects that match your expertise
               </p>
             </div>
-            <Button variant="outline" onClick={() => navigate('/spaces')}>
+            <Button variant="outline" onClick={() => navigate('/dna/spaces')}>
               View All
             </Button>
           </div>
@@ -296,7 +296,7 @@ export default function Discover() {
                 Contributions aligned with your skills
               </p>
             </div>
-            <Button variant="outline" onClick={() => navigate('/opportunities')}>
+            <Button variant="outline" onClick={() => navigate('/dna/impact')}>
               View All
             </Button>
           </div>

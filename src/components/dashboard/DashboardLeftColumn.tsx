@@ -178,17 +178,17 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Link to="/connect" className="block">
+              <Link to="/dna/connect" className="block">
                 <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-dna-forest hover:bg-dna-emerald/10">
                   Find Connections
                 </Button>
               </Link>
-              <Link to="/network" className="block">
+              <Link to="/dna/network" className="block">
                 <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-dna-forest hover:bg-dna-emerald/10">
                   Network
                 </Button>
               </Link>
-              <Link to="/opportunities" className="block">
+              <Link to="/dna/impact" className="block">
                 <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-dna-forest hover:bg-dna-emerald/10">
                   Explore Opportunities
                 </Button>

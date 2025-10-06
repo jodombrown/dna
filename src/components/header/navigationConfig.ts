@@ -9,12 +9,12 @@ export const publicNavItems = [
 
 // Main navigation for authenticated users (feed-focused like LinkedIn)
 export const mainNavItems = [
-  { name: 'Feed', path: '/feed', icon: 'Home' },
+  { name: 'Feed', path: '/dna/feed', icon: 'Home' },
   { name: 'My DNA', path: '/dna/me', icon: 'User' },
-  { name: 'Connect', path: '/connect', icon: 'Users' },
-  { name: 'Network', path: '/network', icon: 'Users2' },
-  { name: 'Messages', path: '/messages', icon: 'MessageCircle' },
-  { name: 'Opportunities', path: '/opportunities', icon: 'Briefcase' },
+  { name: 'Connect', path: '/dna/connect', icon: 'Users' },
+  { name: 'Network', path: '/dna/network', icon: 'Users2' },
+  { name: 'Messages', path: '/dna/messages', icon: 'MessageCircle' },
+  { name: 'Impact', path: '/dna/impact', icon: 'Briefcase' },
 ];
 
 export const phases = [
