@@ -16,6 +16,10 @@ import DnaMe from "./pages/dna/Me";
 import DnaUserDashboard from "./pages/dna/Username";
 import ActivityFeed from "./pages/ActivityFeed";
 import NotFound from "./pages/NotFound";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminEngagement from "./pages/admin/AdminEngagement";
+import AdminSignals from "./pages/admin/AdminSignals";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
 
 // Static pages  
@@ -121,6 +125,13 @@ function App() {
             <Route path="/discover" element={<Discover />} />
             <Route path="/network" element={<Network />} />
             <Route path="/messages" element={<Messages />} />
+              
+              {/* Admin routes */}
+              <Route path="/app/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="engagement" element={<AdminEngagement />} />
+                <Route path="signals" element={<AdminSignals />} />
+              </Route>
               
               {/* Regional landing pages */}
               <Route path="/north-africa" element={<NorthAfricaLandingPage />} />
