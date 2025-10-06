@@ -186,7 +186,7 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => navigate('/events')}
+                onClick={() => navigate('/dna/events')}
               >
                 Explore Events
               </Button>
