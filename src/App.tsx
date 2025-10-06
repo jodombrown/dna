@@ -50,7 +50,7 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
   
   // Only redirect authenticated users if this is an auth-specific page
   if (user && redirectAuth) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dna/me" replace />;
   }
   
   return <>{children}</>;
