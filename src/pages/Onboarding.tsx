@@ -65,7 +65,7 @@ const Onboarding = () => {
         .replace(/\s+/g, '-')
         .trim();
 
-      // Create or update profile with minimal required data
+      // Create or update profile with minimal required data (only columns that exist)
       const profileData = {
         id: user.id,
         email: user.email,
@@ -75,8 +75,6 @@ const Onboarding = () => {
         username: baseUsername,
         current_country: formData.current_country,
         avatar_url: formData.avatar_url,
-        professional_sectors: formData.professional_sectors,
-        interests: formData.interests,
         is_public: true,
         onboarding_completed_at: new Date().toISOString(),
         updated_at: new Date().toISOString()

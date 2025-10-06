@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocationSearch } from '@/hooks/useLocationSearch';
 import { LocalProvider } from '@/lib/location/provider';
 
@@ -17,8 +17,17 @@ export default function LocationTypeahead({
 }: LocationTypeaheadProps) {
   const [q, setQ] = useState(value);
   const [open, setOpen] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const { results, loading } = useLocationSearch(LocalProvider, q, 250);
+
+  useEffect(() => {
+    if (focused && q.trim() && results.length > 0) {
+      setOpen(true);
+    } else if (!results.length) {
+      setOpen(false);
+    }
+  }, [focused, q, results]);
 
   const pick = (label: string) => {
     setQ(label);
@@ -33,19 +42,24 @@ export default function LocationTypeahead({
         value={q}
         placeholder={placeholder}
         onChange={(e) => {
-          setQ(e.target.value);
-          onChange(e.target.value);
+          const v = e.target.value;
+          setQ(v);
+          onChange(v);
+          if (v.trim()) setOpen(true);
         }}
-        onFocus={() => results.length && setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        onFocus={() => { setFocused(true); if (results.length) setOpen(true); }}
+        onBlur={() => { setFocused(false); setTimeout(() => setOpen(false), 150); }}
+        role="combobox"
         aria-autocomplete="list"
         aria-expanded={open}
+        aria-controls="location-typeahead-list"
       />
       {open && results.length > 0 && (
-        <div className="absolute z-20 mt-1 w-full rounded border bg-background shadow">
+        <div id="location-typeahead-list" role="listbox" className="absolute z-20 mt-1 w-full rounded border bg-background shadow">
           {results.map((opt) => (
             <button
               key={opt.id}
+              role="option"
               className="block w-full text-left px-3 py-2 hover:bg-muted"
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => pick(opt.label)}

@@ -100,7 +100,7 @@ const MinimalProfileStep: React.FC<MinimalProfileStepProps> = ({ data, updateDat
       <CardContent className="space-y-6">
         {/* Avatar */}
         <div className="flex flex-col items-center space-y-2">
-          <Label>Profile Photo</Label>
+          <Label className="text-dna-forest">Profile Photo</Label>
           <AvatarUploader
             value={data.avatar_url}
             onUploaded={(url) => updateData({ avatar_url: url })}
@@ -110,7 +110,7 @@ const MinimalProfileStep: React.FC<MinimalProfileStepProps> = ({ data, updateDat
         {/* Name */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="first_name">First Name</Label>
+            <Label htmlFor="first_name" className="text-dna-forest">First Name</Label>
             <Input
               id="first_name"
               value={data.first_name}
@@ -119,7 +119,7 @@ const MinimalProfileStep: React.FC<MinimalProfileStepProps> = ({ data, updateDat
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="last_name">Last Name</Label>
+            <Label htmlFor="last_name" className="text-dna-forest">Last Name</Label>
             <Input
               id="last_name"
               value={data.last_name}
@@ -131,7 +131,7 @@ const MinimalProfileStep: React.FC<MinimalProfileStepProps> = ({ data, updateDat
 
         {/* Country/Region */}
         <div className="space-y-2">
-          <Label>Current Country/Region</Label>
+          <Label className="text-dna-forest">Current Country/Region</Label>
           <LocationTypeahead
             value={data.current_country}
             onChange={(value) => updateData({ current_country: value })}
@@ -140,7 +140,7 @@ const MinimalProfileStep: React.FC<MinimalProfileStepProps> = ({ data, updateDat
 
         {/* Professional Sectors */}
         <div className="space-y-2">
-          <Label>Professional Sectors (Select up to 3)</Label>
+          <Label className="text-dna-forest">Professional Sectors (Select up to 3)</Label>
           <div className="flex gap-2">
             <Select value={newSector} onValueChange={setNewSector}>
               <SelectTrigger className="flex-1">
@@ -167,7 +167,7 @@ const MinimalProfileStep: React.FC<MinimalProfileStepProps> = ({ data, updateDat
           {data.professional_sectors.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {data.professional_sectors.map((sector) => (
-                <Badge key={sector} variant="secondary" className="flex items-center gap-1">
+                <Badge key={sector} variant="outline" className="flex items-center gap-1 bg-dna-emerald/10 text-dna-forest border-dna-emerald">
                   {sector}
                   <X
                     className="w-3 h-3 cursor-pointer"
@@ -181,7 +181,7 @@ const MinimalProfileStep: React.FC<MinimalProfileStepProps> = ({ data, updateDat
 
         {/* Interests */}
         <div className="space-y-2">
-          <Label>Interests (Select up to 5)</Label>
+          <Label className="text-dna-forest">Interests (Select up to 5)</Label>
           <div className="flex gap-2">
             <Select value={newInterest} onValueChange={setNewInterest}>
               <SelectTrigger className="flex-1">
@@ -208,7 +208,7 @@ const MinimalProfileStep: React.FC<MinimalProfileStepProps> = ({ data, updateDat
           {data.interests.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {data.interests.map((interest) => (
-                <Badge key={interest} variant="secondary" className="flex items-center gap-1">
+                <Badge key={interest} variant="outline" className="flex items-center gap-1 bg-dna-emerald/10 text-dna-forest border-dna-emerald">
                   {interest}
                   <X
                     className="w-3 h-3 cursor-pointer"
