@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { PostComposer } from '@/components/social-feed/PostComposer';
-import PostCard from '@/components/feed/PostCard';
+import { PostCard } from '@/components/feed/PostCard';
 import { fetchPosts } from '@/services/postsService';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
@@ -110,18 +110,20 @@ const ActivityFeed = () => {
                   id: post.id,
                   content: post.content,
                   created_at: post.created_at,
-                  user_id: post.author.id,
-                  username: post.author.username,
-                  full_name: post.author.full_name,
-                  avatar_url: post.author.avatar_url,
-                  profession: post.author.profession,
-                  location: post.author.location,
-                  likes_count: post.likes_count,
-                  comments_count: post.comments_count,
-                  user_has_liked: post.user_has_liked,
-                  media_url: post.metadata?.media_url,
-                  media_type: post.metadata?.media_type,
+                  type: post.post_type,
                   pillar: post.metadata?.pillar || 'connect',
+                  media_url: post.metadata?.media_url,
+                  embed_metadata: post.metadata?.embed_metadata,
+                  profiles: {
+                    id: post.author.id,
+                    full_name: post.author.full_name,
+                    avatar_url: post.author.avatar_url,
+                    location: post.author.location,
+                    professional_role: post.author.profession,
+                  },
+                  like_count: post.likes_count,
+                  comment_count: post.comments_count,
+                  user_has_liked: post.user_has_liked,
                 }}
               />
             ))}
