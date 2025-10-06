@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { OpportunityFilters, Opportunity } from '@/types/opportunityTypes';
@@ -10,9 +10,12 @@ const defaultFilters: OpportunityFilters = {
   type: [],
 };
 
+export type SortOption = 'newest' | 'oldest' | 'title-asc' | 'title-desc';
+
 export const useOpportunityFilters = () => {
   const [filters, setFilters] = useState<OpportunityFilters>(defaultFilters);
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [sortBy, setSortBy] = useState<SortOption>('newest');
 
   // Debounce search
   useEffect(() => {
@@ -76,6 +79,25 @@ export const useOpportunityFilters = () => {
     },
   });
 
+  // Sort opportunities
+  const sortedOpportunities = useMemo(() => {
+    if (!opportunities) return [];
+    
+    const sorted = [...opportunities];
+    
+    switch (sortBy) {
+      case 'oldest':
+        return sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      case 'title-asc':
+        return sorted.sort((a, b) => a.title.localeCompare(b.title));
+      case 'title-desc':
+        return sorted.sort((a, b) => b.title.localeCompare(a.title));
+      case 'newest':
+      default:
+        return sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+  }, [opportunities, sortBy]);
+
   const updateFilters = (key: keyof OpportunityFilters, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
@@ -95,11 +117,13 @@ export const useOpportunityFilters = () => {
 
   return {
     filters,
-    opportunities,
+    opportunities: sortedOpportunities,
     isLoading,
     updateFilters,
     clearFilters,
     hasActiveFilters: hasActiveFilters(),
-    resultCount: opportunities.length,
+    resultCount: sortedOpportunities.length,
+    sortBy,
+    setSortBy,
   };
 };

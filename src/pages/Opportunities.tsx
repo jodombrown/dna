@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { useOpportunityFilters } from '@/hooks/useOpportunityFilters';
+import { useOpportunityBookmark } from '@/hooks/useOpportunityBookmark';
 import OpportunityFilters from '@/components/opportunities/OpportunityFilters';
 import OpportunityCard from '@/components/opportunities/OpportunityCard';
+import OpportunityControls from '@/components/opportunities/OpportunityControls';
 import { Button } from '@/components/ui/button';
 import { Briefcase, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Opportunities: React.FC = () => {
   const {
@@ -16,11 +19,17 @@ const Opportunities: React.FC = () => {
     clearFilters,
     hasActiveFilters,
     resultCount,
+    sortBy,
+    setSortBy,
   } = useOpportunityFilters();
   
+  const { bookmarkedIds, toggleBookmark } = useOpportunityBookmark();
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleApply = (id: string) => {
+    // Navigate to application page or open dialog
     toast({
       title: "Application Started",
       description: "Opening application form...",
@@ -28,10 +37,7 @@ const Opportunities: React.FC = () => {
   };
 
   const handleBookmark = (id: string) => {
-    toast({
-      title: "Bookmarked",
-      description: "This opportunity has been saved to your bookmarks.",
-    });
+    toggleBookmark(id);
   };
 
   return (
@@ -78,6 +84,17 @@ const Opportunities: React.FC = () => {
 
           {/* Opportunities List */}
           <div className="lg:col-span-3">
+            {/* Controls */}
+            {!isLoading && opportunities.length > 0 && (
+              <OpportunityControls
+                sortBy={sortBy}
+                onSortChange={(value) => setSortBy(value)}
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+                resultCount={resultCount}
+              />
+            )}
+
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-dna-copper mb-4"></div>
@@ -106,13 +123,14 @@ const Opportunities: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'space-y-4'}>
                 {opportunities.map((opportunity) => (
                   <OpportunityCard
                     key={opportunity.id}
                     opportunity={opportunity}
                     onApply={handleApply}
                     onBookmark={handleBookmark}
+                    isBookmarked={bookmarkedIds.has(opportunity.id)}
                   />
                 ))}
               </div>

@@ -11,12 +11,14 @@ interface OpportunityCardProps {
   opportunity: Opportunity;
   onApply?: (id: string) => void;
   onBookmark?: (id: string) => void;
+  isBookmarked?: boolean;
 }
 
 const OpportunityCard: React.FC<OpportunityCardProps> = ({ 
   opportunity, 
   onApply,
-  onBookmark 
+  onBookmark,
+  isBookmarked = false,
 }) => {
   const getImpactIcon = (area: string) => {
     return impactAreas.find(a => a.value === area)?.icon || '📍';
@@ -55,10 +57,10 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="hover:bg-dna-emerald/10"
+                className={`hover:bg-dna-emerald/10 ${isBookmarked ? 'text-dna-copper' : ''}`}
                 onClick={() => onBookmark?.(opportunity.id)}
               >
-                <Bookmark className="w-4 h-4 text-dna-copper" />
+                <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
               </Button>
             </div>
 
