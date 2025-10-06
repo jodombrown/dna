@@ -19,7 +19,8 @@ import {
   Users2,
   Lightbulb,
   TestTube,
-  Rocket
+  Rocket,
+  Briefcase
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -74,12 +75,12 @@ const UnifiedHeader = () => {
 
   // Navigation items for authenticated users
   const authNavigationItems = [
-    { title: 'Home', view: 'dashboard', icon: Home },
-    { title: 'Connect', view: 'network', icon: Users },
-    { title: 'Network', view: 'connections', icon: Users2 },
-    { title: 'Messages', view: 'messages', icon: MessageCircle },
-    { title: 'Collaborate', view: 'messaging', icon: MessageSquare },
-    { title: 'Opportunities', view: 'opportunities', icon: Bell },
+    { title: 'Feed', view: 'feed', icon: Home, path: '/feed' },
+    { title: 'My DNA', view: 'dna', icon: User, path: '/dna/me' },
+    { title: 'Connect', view: 'network', icon: Users, path: '/connect' },
+    { title: 'Network', view: 'connections', icon: Users2, path: '/network' },
+    { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/messages' },
+    { title: 'Opportunities', view: 'opportunities', icon: Briefcase, path: '/opportunities' },
   ];
 
   const handleSignOut = () => {
@@ -151,7 +152,66 @@ const UnifiedHeader = () => {
 
             {/* Right section - Navigation and Profile */}
             <div className="flex items-center space-x-4">
-              {/* Desktop Navigation */}
+              {/* Desktop Navigation - Authenticated Users */}
+              {isAuthenticated && (
+                <nav className="hidden md:flex items-center space-x-1">
+                  {authNavigationItems.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = location.pathname === item.path;
+                    return (
+                      <TooltipProvider key={item.view}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => navigate(item.path)}
+                              className={`flex items-center gap-2 ${
+                                isActive ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:text-primary'
+                              }`}
+                            >
+                              <Icon className="w-5 h-5" />
+                              <span className="text-sm font-medium">{item.title}</span>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{item.title}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    );
+                  })}
+                  
+                  {/* User Profile Dropdown */}
+                  {profile && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="ml-2">
+                          <Avatar className="w-8 h-8">
+                            <AvatarImage src={profile.avatar_url || undefined} />
+                            <AvatarFallback>
+                              {profile.full_name?.charAt(0) || profile.username?.charAt(0) || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => navigate('/dna/me')}>
+                          <User className="w-4 h-4 mr-2" />
+                          Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleSignOut}>
+                          <LogOut className="w-4 h-4 mr-2" />
+                          Sign Out
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </nav>
+              )}
+              
+              {/* Desktop Navigation - Public */}
               {!isAuthenticated && (
                 <>
                   <nav className="hidden md:flex items-center space-x-6">

@@ -14,6 +14,7 @@ import InviteSignup from "./pages/InviteSignup";
 import Onboarding from "./pages/Onboarding";
 import DnaMe from "./pages/dna/Me";
 import DnaUserDashboard from "./pages/dna/Username";
+import ActivityFeed from "./pages/ActivityFeed";
 import NotFound from "./pages/NotFound";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
 
@@ -98,6 +99,13 @@ function App() {
               <Route path="/dna/:username" element={
                 <OnboardingGuard>
                   <DnaUserDashboard />
+                </OnboardingGuard>
+              } />
+              
+              {/* Activity Feed */}
+              <Route path="/feed" element={
+                <OnboardingGuard>
+                  <ActivityFeed />
                 </OnboardingGuard>
               } />
               
