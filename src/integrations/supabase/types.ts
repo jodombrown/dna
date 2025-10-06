@@ -437,20 +437,6 @@ export type Database = {
             referencedRelation: "comments"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "comments_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "v_feed_ordered"
-            referencedColumns: ["id"]
-          },
         ]
       }
       communities: {
@@ -2740,22 +2726,7 @@ export type Database = {
           post_id?: string | null
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "post_analytics_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_analytics_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "v_feed_ordered"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       post_comments: {
         Row: {
@@ -2784,20 +2755,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "post_comments_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_comments_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "v_feed_ordered"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "post_comments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -2810,21 +2767,18 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          is_seeded: boolean | null
           post_id: string
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          is_seeded?: boolean | null
           post_id: string
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          is_seeded?: boolean | null
           post_id?: string
           user_id?: string
         }
@@ -2834,20 +2788,6 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_likes_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "v_feed_ordered"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_likes_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -2874,22 +2814,7 @@ export type Database = {
           post_id?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "post_reactions_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_reactions_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "v_feed_ordered"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       post_views: {
         Row: {
@@ -2912,20 +2837,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "post_views_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_views_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "v_feed_ordered"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "post_views_viewer_id_fkey"
             columns: ["viewer_id"]
             isOneToOne: false
@@ -2937,103 +2848,35 @@ export type Database = {
       posts: {
         Row: {
           author_id: string
-          content: string | null
-          created_at: string | null
-          embed_metadata: Json | null
-          hashtags: string[] | null
+          content: string
+          created_at: string
           id: string
-          link_metadata: Json | null
-          link_url: string | null
-          media_url: string | null
-          opportunity_link: string | null
-          opportunity_type: string | null
-          pillar: string
-          poll_expires_at: string | null
-          poll_options: Json | null
-          shared_post_id: string | null
-          spotlight: boolean
-          status: string | null
-          type: string | null
-          updated_at: string | null
-          user_id: string
-          visibility: string | null
+          metadata: Json | null
+          post_type: string
+          updated_at: string
+          visibility: string
         }
         Insert: {
           author_id: string
-          content?: string | null
-          created_at?: string | null
-          embed_metadata?: Json | null
-          hashtags?: string[] | null
+          content: string
+          created_at?: string
           id?: string
-          link_metadata?: Json | null
-          link_url?: string | null
-          media_url?: string | null
-          opportunity_link?: string | null
-          opportunity_type?: string | null
-          pillar: string
-          poll_expires_at?: string | null
-          poll_options?: Json | null
-          shared_post_id?: string | null
-          spotlight?: boolean
-          status?: string | null
-          type?: string | null
-          updated_at?: string | null
-          user_id: string
-          visibility?: string | null
+          metadata?: Json | null
+          post_type?: string
+          updated_at?: string
+          visibility?: string
         }
         Update: {
           author_id?: string
-          content?: string | null
-          created_at?: string | null
-          embed_metadata?: Json | null
-          hashtags?: string[] | null
+          content?: string
+          created_at?: string
           id?: string
-          link_metadata?: Json | null
-          link_url?: string | null
-          media_url?: string | null
-          opportunity_link?: string | null
-          opportunity_type?: string | null
-          pillar?: string
-          poll_expires_at?: string | null
-          poll_options?: Json | null
-          shared_post_id?: string | null
-          spotlight?: boolean
-          status?: string | null
-          type?: string | null
-          updated_at?: string | null
-          user_id?: string
-          visibility?: string | null
+          metadata?: Json | null
+          post_type?: string
+          updated_at?: string
+          visibility?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "posts_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "posts_shared_post_id_fkey"
-            columns: ["shared_post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "posts_shared_post_id_fkey"
-            columns: ["shared_post_id"]
-            isOneToOne: false
-            referencedRelation: "v_feed_ordered"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profile_causes: {
         Row: {
@@ -4362,107 +4205,6 @@ export type Database = {
           user_id: string | null
         }
         Relationships: []
-      }
-      v_feed_ordered: {
-        Row: {
-          author_id: string | null
-          content: string | null
-          created_at: string | null
-          embed_metadata: Json | null
-          hashtags: string[] | null
-          id: string | null
-          link_metadata: Json | null
-          link_url: string | null
-          media_url: string | null
-          opportunity_link: string | null
-          opportunity_type: string | null
-          pillar: string | null
-          poll_expires_at: string | null
-          poll_options: Json | null
-          shared_post_id: string | null
-          spotlight: boolean | null
-          status: string | null
-          type: string | null
-          updated_at: string | null
-          user_id: string | null
-          visibility: string | null
-        }
-        Insert: {
-          author_id?: string | null
-          content?: string | null
-          created_at?: string | null
-          embed_metadata?: Json | null
-          hashtags?: string[] | null
-          id?: string | null
-          link_metadata?: Json | null
-          link_url?: string | null
-          media_url?: string | null
-          opportunity_link?: string | null
-          opportunity_type?: string | null
-          pillar?: string | null
-          poll_expires_at?: string | null
-          poll_options?: Json | null
-          shared_post_id?: string | null
-          spotlight?: boolean | null
-          status?: string | null
-          type?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          visibility?: string | null
-        }
-        Update: {
-          author_id?: string | null
-          content?: string | null
-          created_at?: string | null
-          embed_metadata?: Json | null
-          hashtags?: string[] | null
-          id?: string | null
-          link_metadata?: Json | null
-          link_url?: string | null
-          media_url?: string | null
-          opportunity_link?: string | null
-          opportunity_type?: string | null
-          pillar?: string | null
-          poll_expires_at?: string | null
-          poll_options?: Json | null
-          shared_post_id?: string | null
-          spotlight?: boolean | null
-          status?: string | null
-          type?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          visibility?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "posts_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "posts_shared_post_id_fkey"
-            columns: ["shared_post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "posts_shared_post_id_fkey"
-            columns: ["shared_post_id"]
-            isOneToOne: false
-            referencedRelation: "v_feed_ordered"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "posts_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Functions: {
