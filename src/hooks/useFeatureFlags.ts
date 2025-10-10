@@ -3,10 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface FeatureFlags {
   DNA_EVENTS_V2: boolean;
+  REGISTRATION_ENABLED: boolean;
 }
 
 const DEFAULT_FLAGS: FeatureFlags = {
   DNA_EVENTS_V2: import.meta.env.VITE_DNA_EVENTS_V2 === 'true',
+  REGISTRATION_ENABLED: false, // Default to locked during beta
 };
 
 export const useFeatureFlags = () => {
@@ -48,6 +50,7 @@ export const useFeatureFlags = () => {
   // Return simplified interface as requested
   return { 
     eventsV2: flags.DNA_EVENTS_V2,
+    registrationEnabled: flags.REGISTRATION_ENABLED,
     loading 
   };
 };

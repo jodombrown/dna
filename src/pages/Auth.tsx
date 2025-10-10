@@ -11,6 +11,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import PasswordStrength from '@/components/auth/PasswordStrength';
+import { useFeatureFlags } from '@/hooks/useFeatureFlags';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { LockKeyhole } from 'lucide-react';
+
 const Auth = () => {
   useScrollToTop();
   const navigate = useNavigate();
@@ -24,6 +28,7 @@ const Auth = () => {
     loading,
     updatePassword
   } = useAuth();
+  const { registrationEnabled, loading: flagsLoading } = useFeatureFlags();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -192,6 +197,17 @@ const Auth = () => {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if registration is enabled for signup
+    if (!isLogin && !registrationEnabled) {
+      toast({
+        title: "Registration Closed",
+        description: "We're currently in private beta. Please contact us for early access.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
@@ -264,6 +280,16 @@ const Auth = () => {
     });
   };
   const handleOAuthSignIn = async (provider: 'google' | 'linkedin_oidc') => {
+    // Check if registration is enabled for OAuth signup
+    if (!isLogin && !registrationEnabled) {
+      toast({
+        title: "Registration Closed",
+        description: "We're currently in private beta. Please contact us for early access.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     if (provider === 'google') setIsGoogleLoading(true);
     if (provider === 'linkedin_oidc') setIsLinkedInLoading(true);
     try {
@@ -485,6 +511,22 @@ const Auth = () => {
                 </div>
               </div>
             </div>
+
+            {/* Beta Access Notice */}
+            {!flagsLoading && !registrationEnabled && !isLogin && (
+              <Alert className="mb-6 border-dna-copper/30 bg-dna-copper/5">
+                <LockKeyhole className="h-4 w-4 text-dna-copper" />
+                <AlertDescription className="text-sm text-gray-700">
+                  <strong>Beta Access Only</strong>
+                  <br />
+                  We're currently in private beta. New registrations are temporarily paused.
+                  <br />
+                  <a href="mailto:hello@diasporanetwork.africa" className="text-dna-copper hover:text-dna-gold underline font-medium">
+                    Contact us for early access
+                  </a>
+                </AlertDescription>
+              </Alert>
+            )}
 
             {isResetMode ? <form onSubmit={handleResetSubmit} className="space-y-4">
                 <div>
