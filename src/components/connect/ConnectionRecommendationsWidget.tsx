@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +8,7 @@ import { Globe, MapPin, Lightbulb, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { ConnectionRequestModal } from './ConnectionRequestModal';
 
 interface AfricaFocusArea {
   geography: string;
@@ -35,7 +36,10 @@ interface ScoredProfile extends Profile {
 export const ConnectionRecommendationsWidget = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [connectingTo, setConnectingTo] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
 
   // Fetch current user profile
   const { data: currentUser } = useQuery({
@@ -170,34 +174,44 @@ export const ConnectionRecommendationsWidget = () => {
     enabled: !!currentUser && !!existingConnections && !!pendingRequests,
   });
 
-  const handleConnect = async (targetUserId: string) => {
-    setConnectingTo(targetUserId);
+  const handleConnect = (profile: Profile) => {
+    setSelectedUser(profile);
+    setModalOpen(true);
+  };
+
+  const handleSendRequest = async (note: string) => {
+    if (!selectedUser) return;
+    
+    setConnectingTo(selectedUser.id);
     
     try {
       const { error } = await supabase
         .from('connection_requests')
         .insert({
           sender_id: user!.id,
-          receiver_id: targetUserId,
+          receiver_id: selectedUser.id,
           status: 'pending',
-          message: '' // Empty note for now - we'll add note modal in Task 5
+          message: note || null,
         });
 
       if (error) throw error;
 
       toast({
         title: 'Connection request sent!',
-        description: 'You will be notified when they respond.',
+        description: 'You\'ll be notified when they respond.',
       });
-
-      // Refresh recommendations (will exclude newly requested user)
-      // This happens automatically via query invalidation
+      
+      // Invalidate queries to refresh recommendations
+      queryClient.invalidateQueries({ queryKey: ['connection-recommendations'] });
+      queryClient.invalidateQueries({ queryKey: ['pending-requests'] });
+      
     } catch (error: any) {
       toast({
         title: 'Failed to send request',
         description: error.message,
         variant: 'destructive',
       });
+      throw error; // Re-throw so modal knows to stay open
     } finally {
       setConnectingTo(null);
     }
@@ -282,7 +296,7 @@ export const ConnectionRecommendationsWidget = () => {
 
             <Button
               size="sm"
-              onClick={() => handleConnect(profile.id)}
+              onClick={() => handleConnect(profile)}
               disabled={connectingTo === profile.id}
               className="shrink-0"
             >
@@ -303,6 +317,16 @@ export const ConnectionRecommendationsWidget = () => {
           See all suggestions &rarr;
         </Button>
       </CardContent>
+
+      <ConnectionRequestModal
+        isOpen={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedUser(null);
+        }}
+        onSend={handleSendRequest}
+        targetUser={selectedUser}
+      />
     </Card>
   );
 };

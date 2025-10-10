@@ -174,9 +174,9 @@ const Network: React.FC = () => {
                           </Badge>
                         )}
                         {request.message && (
-                          <p className="text-sm text-gray-600 mt-3 p-3 bg-gray-50 rounded">
-                            "{request.message}"
-                          </p>
+                          <div className="mt-3 p-3 bg-muted rounded-md border-l-4 border-dna-copper">
+                            <p className="text-sm italic text-foreground">"{request.message}"</p>
+                          </div>
                         )}
                         <div className="flex gap-2 mt-4">
                           <Button

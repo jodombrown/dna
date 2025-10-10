@@ -1,11 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Sparkles, TrendingUp, Users, Target } from 'lucide-react';
+import { Sparkles, TrendingUp, Users, Target, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { toast } from '@/hooks/use-toast';
+import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
 
 interface Recommendation {
   id: string;
@@ -17,6 +20,10 @@ interface Recommendation {
 
 export default function Discover() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [connectingTo, setConnectingTo] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
 
   const { data: profile } = useQuery({
     queryKey: ['current-profile'],
@@ -213,6 +220,48 @@ export default function Discover() {
     enabled: !!profile,
   });
 
+  const handleConnect = (user: any) => {
+    setSelectedUser(user);
+    setModalOpen(true);
+  };
+
+  const handleSendRequest = async (note: string) => {
+    if (!selectedUser || !profile) return;
+    
+    setConnectingTo(selectedUser.id);
+    
+    try {
+      const { error } = await supabase
+        .from('connection_requests')
+        .insert({
+          sender_id: profile.id,
+          receiver_id: selectedUser.id,
+          status: 'pending',
+          message: note || null,
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Connection request sent!',
+        description: 'You\'ll be notified when they respond.',
+      });
+      
+      // Invalidate queries to refresh recommendations
+      queryClient.invalidateQueries({ queryKey: ['connection-suggestions'] });
+      
+    } catch (error: any) {
+      toast({
+        title: 'Failed to send request',
+        description: error.message,
+        variant: 'destructive',
+      });
+      throw error;
+    } finally {
+      setConnectingTo(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -397,8 +446,18 @@ export default function Discover() {
                         <Sparkles className="h-3 w-3" />
                         <span className="line-clamp-1">{reason}</span>
                       </div>
-                      <Button size="sm" className="w-full" variant="outline">
-                        Connect
+                      <Button 
+                        size="sm" 
+                        className="w-full" 
+                        variant="outline"
+                        onClick={() => handleConnect(user)}
+                        disabled={connectingTo === user.id}
+                      >
+                        {connectingTo === user.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          'Connect'
+                        )}
                       </Button>
                     </CardContent>
                   </Card>
@@ -407,6 +466,16 @@ export default function Discover() {
           )}
         </section>
       </div>
+
+      <ConnectionRequestModal
+        isOpen={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedUser(null);
+        }}
+        onSend={handleSendRequest}
+        targetUser={selectedUser}
+      />
     </div>
   );
 }
