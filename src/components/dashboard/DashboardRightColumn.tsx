@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Profile } from '@/services/profilesService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Users, Plus, ArrowRight } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { useLiveEvents } from '@/hooks/useLiveEvents';
 import { ConnectionRecommendationsWidget } from '@/components/connect/ConnectionRecommendationsWidget';
 import { ProfileCompletionWidget } from '@/components/connect/ProfileCompletionWidget';
+import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
+import { useToast } from '@/components/ui/use-toast';
 
 interface DashboardRightColumnProps {
   profile: Profile;
@@ -22,6 +24,10 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
   isOwnProfile
 }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   
   // Fetch suggested users (people not yet connected)
   const { data: suggestedUsers = [], isLoading: suggestionsLoading } = useQuery({
@@ -48,6 +54,43 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
 
   // Fetch upcoming events
   const { events: upcomingEvents = [], loading: eventsLoading } = useLiveEvents(3);
+
+  const handleConnectClick = (user: any) => {
+    setSelectedUser(user);
+    setModalOpen(true);
+  };
+
+  const handleSendRequest = async (note: string) => {
+    if (!selectedUser || !profile?.id) return;
+    
+    try {
+      const { error } = await supabase
+        .from('connection_requests')
+        .insert({
+          sender_id: profile.id,
+          receiver_id: selectedUser.id,
+          status: 'pending',
+          message: note || null,
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: 'Connection request sent!',
+        description: "You'll be notified when they respond.",
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ['suggested-connections'] });
+      
+    } catch (error: any) {
+      toast({
+        title: 'Failed to send request',
+        description: error.message,
+        variant: 'destructive',
+      });
+      throw error;
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -99,7 +142,7 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
                       variant="outline" 
                       size="sm" 
                       className="mt-2 w-full border-dna-emerald text-dna-forest hover:bg-dna-emerald/10"
-                      onClick={() => navigate(`/dna/${user.username}`)}
+                      onClick={() => handleConnectClick(user)}
                     >
                       <Plus className="w-3 h-3 mr-1" />
                       Connect
@@ -231,6 +274,17 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      {/* Connection Request Modal */}
+      <ConnectionRequestModal
+        isOpen={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedUser(null);
+        }}
+        onSend={handleSendRequest}
+        targetUser={selectedUser}
+      />
     </div>
   );
 };
