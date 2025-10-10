@@ -371,34 +371,38 @@ export default function Discover() {
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {connectionSuggestions.map(({ user, score, reason }) => (
-                <Card key={user.id} className="hover:shadow-lg transition-shadow">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={user.avatar_url || undefined} />
-                        <AvatarFallback>{user.full_name?.[0] || 'U'}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold truncate">{user.full_name}</p>
-                        <p className="text-sm text-muted-foreground truncate">
-                          {user.headline || user.profession}
-                        </p>
+              {connectionSuggestions
+                .filter(item => item && item.user && item.user.id) // Extra safety check
+                .map(({ user, score, reason }) => (
+                  <Card key={user.id} className="hover:shadow-lg transition-shadow">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={user.avatar_url || undefined} />
+                          <AvatarFallback>
+                            {user.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold truncate">{user.full_name || 'Unknown'}</p>
+                          <p className="text-sm text-muted-foreground truncate">
+                            {user.headline || user.profession || ''}
+                          </p>
+                        </div>
+                        <Badge variant="secondary">
+                          {score}%
+                        </Badge>
                       </div>
-                      <Badge variant="secondary">
-                        {score}%
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-dna-copper mb-3">
-                      <Sparkles className="h-3 w-3" />
-                      <span className="line-clamp-1">{reason}</span>
-                    </div>
-                    <Button size="sm" className="w-full" variant="outline">
-                      Connect
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                      <div className="flex items-center gap-2 text-xs text-dna-copper mb-3">
+                        <Sparkles className="h-3 w-3" />
+                        <span className="line-clamp-1">{reason}</span>
+                      </div>
+                      <Button size="sm" className="w-full" variant="outline">
+                        Connect
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
             </div>
           )}
         </section>
