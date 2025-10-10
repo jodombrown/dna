@@ -65,6 +65,27 @@ const Onboarding = () => {
         .replace(/\s+/g, '-')
         .trim();
 
+      // Check if username exists and generate unique one if needed
+      let uniqueUsername = baseUsername;
+      let attempt = 0;
+      let usernameExists = true;
+      
+      while (usernameExists && attempt < 10) {
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('username', uniqueUsername)
+          .neq('id', user.id) // Don't count our own profile
+          .maybeSingle();
+        
+        if (!existingProfile) {
+          usernameExists = false;
+        } else {
+          attempt++;
+          uniqueUsername = `${baseUsername}-${attempt}`;
+        }
+      }
+
       // Create or update profile with minimal required data (only columns that exist)
       const profileData = {
         id: user.id,
@@ -72,7 +93,7 @@ const Onboarding = () => {
         full_name: fullName,
         first_name: formData.first_name,
         last_name: formData.last_name,
-        username: baseUsername,
+        username: uniqueUsername,
         current_country: formData.current_country,
         avatar_url: formData.avatar_url,
         is_public: true,
