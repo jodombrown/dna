@@ -19,7 +19,8 @@ import {
   Clock,
   CheckCircle2,
   Edit,
-  User
+  User,
+  ArrowLeft
 } from 'lucide-react';
 
 const DnaUserDashboard = () => {
@@ -94,6 +95,17 @@ const DnaUserDashboard = () => {
       )}
 
       <div className="container max-w-6xl mx-auto px-4 pb-16">
+        {!isOwnProfile && (
+          <Button
+            variant="ghost"
+            onClick={() => navigate(-1)}
+            className="mt-4 mb-2"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+        )}
+        
         {/* Header Card */}
         <Card className={profile.banner_url ? '-mt-16 relative' : 'mt-8'}>
           <CardContent className="pt-6">

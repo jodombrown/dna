@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Sparkles, TrendingUp, Users, Target, Loader2 } from 'lucide-react';
+import { Sparkles, TrendingUp, Users, Target, Loader2, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
@@ -266,6 +266,14 @@ export default function Discover() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/dna/me')}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Dashboard
+          </Button>
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="h-8 w-8 text-dna-copper" />
             <h1 className="text-4xl font-bold">Discover</h1>

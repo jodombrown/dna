@@ -13,6 +13,7 @@ export const mainNavItems = [
   { name: 'My DNA', path: '/dna/me', icon: 'User' },
   { name: 'Connect', path: '/dna/connect', icon: 'Users' },
   { name: 'Network', path: '/dna/network', icon: 'Users2' },
+  { name: 'Events', path: '/dna/events', icon: 'Calendar' },
   { name: 'Messages', path: '/dna/messages', icon: 'MessageCircle' },
   { name: 'Impact', path: '/dna/impact', icon: 'Briefcase' },
 ];

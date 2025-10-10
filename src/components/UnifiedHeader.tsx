@@ -24,7 +24,8 @@ import {
   TestTube,
   Rocket,
   Briefcase,
-  Shield
+  Shield,
+  Calendar
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -128,6 +129,7 @@ const UnifiedHeader = () => {
     { title: 'My DNA', view: 'dna', icon: User, path: '/dna/me' },
     { title: 'Connect', view: 'network', icon: Users, path: '/connect' },
     { title: 'Network', view: 'connections', icon: Users2, path: '/network' },
+    { title: 'Events', view: 'events', icon: Calendar, path: '/dna/events' },
     { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/messages' },
     { title: 'Opportunities', view: 'opportunities', icon: Briefcase, path: '/opportunities' },
   ];
