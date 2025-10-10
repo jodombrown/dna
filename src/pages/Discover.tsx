@@ -171,6 +171,7 @@ export default function Discover() {
       const userImpactAreas = profile.impact_areas || [];
 
       const scoredUsers = similarUsers
+        .filter(otherUser => otherUser && otherUser.id) // Filter out null/undefined users
         .map(otherUser => {
           let score = 0;
           const reasons = [];
