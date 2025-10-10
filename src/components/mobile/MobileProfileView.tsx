@@ -12,12 +12,18 @@ import {
   Edit3,
   Settings,
   Share2,
-  ExternalLink
+  ExternalLink,
+  LogOut
 } from 'lucide-react';
 
 const MobileProfileView = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -188,6 +194,14 @@ const MobileProfileView = () => {
           <Button variant="outline" className="w-full justify-start">
             <ExternalLink className="w-4 h-4 mr-3" />
             Public Profile
+          </Button>
+          <Button 
+            variant="outline" 
+            className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
+            onClick={handleSignOut}
+          >
+            <LogOut className="w-4 h-4 mr-3" />
+            Sign Out
           </Button>
         </CardContent>
       </Card>
