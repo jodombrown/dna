@@ -42,6 +42,7 @@ import SpaceDetail from "./pages/SpaceDetail";
 import Discover from "./pages/Discover";
 import Network from "./pages/Network";
 import Messages from "./pages/Messages";
+import ProfileEdit from "./pages/ProfileEdit";
 
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
@@ -123,6 +124,11 @@ function App() {
               <Route path="/dna/discover" element={<Discover />} />
               <Route path="/dna/network" element={<Network />} />
               <Route path="/dna/messages" element={<Messages />} />
+              <Route path="/app/profile/edit" element={
+                <OnboardingGuard>
+                  <ProfileEdit />
+                </OnboardingGuard>
+              } />
               
               {/* Legacy example pages - keep for landing page */}
               <Route path="/connect" element={<ConnectExample />} />
