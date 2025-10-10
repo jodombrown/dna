@@ -765,6 +765,7 @@ export type Database = {
           adin_health: number
           adin_health_reason: string | null
           b: string
+          connection_note: string | null
           created_at: string
           id: string
           last_interaction_at: string | null
@@ -775,6 +776,7 @@ export type Database = {
           adin_health?: number
           adin_health_reason?: string | null
           b: string
+          connection_note?: string | null
           created_at?: string
           id?: string
           last_interaction_at?: string | null
@@ -785,6 +787,7 @@ export type Database = {
           adin_health?: number
           adin_health_reason?: string | null
           b?: string
+          connection_note?: string | null
           created_at?: string
           id?: string
           last_interaction_at?: string | null
@@ -1649,6 +1652,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      events_log: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       feature_flags: {
         Row: {
@@ -3019,6 +3046,7 @@ export type Database = {
           adin_mode: string | null
           adin_prompt_status: string | null
           advocacy_interests: string[] | null
+          africa_focus_areas: string[] | null
           agrees_to_values: boolean | null
           availability_hours_per_month: number | null
           availability_visible: boolean | null
@@ -3052,6 +3080,7 @@ export type Database = {
           dashboard_version: string | null
           deleted_at: string | null
           diaspora_origin: string | null
+          diaspora_status: string | null
           diaspora_story: string | null
           display_name: string | null
           email: string | null
@@ -3070,6 +3099,7 @@ export type Database = {
           impact_regions: string[] | null
           industry: string | null
           industry_sectors: string[] | null
+          intentions: string[] | null
           interest_tags: string[] | null
           interests: string[] | null
           intro_audio_url: string | null
@@ -3094,6 +3124,7 @@ export type Database = {
           newsletter_emails: boolean | null
           notification_preferences: Json | null
           offers: string[] | null
+          onboarding_completed: boolean | null
           onboarding_completed_at: string | null
           onboarding_progress: Json
           onboarding_recommendations_viewed: boolean | null
@@ -3106,6 +3137,7 @@ export type Database = {
           professional_role: string | null
           professional_summary: string | null
           profile_completeness_score: number | null
+          profile_completion_percentage: number | null
           profile_completion_score: number | null
           profile_picture_url: string | null
           profile_views_count: number | null
@@ -3146,6 +3178,7 @@ export type Database = {
           adin_mode?: string | null
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
+          africa_focus_areas?: string[] | null
           agrees_to_values?: boolean | null
           availability_hours_per_month?: number | null
           availability_visible?: boolean | null
@@ -3179,6 +3212,7 @@ export type Database = {
           dashboard_version?: string | null
           deleted_at?: string | null
           diaspora_origin?: string | null
+          diaspora_status?: string | null
           diaspora_story?: string | null
           display_name?: string | null
           email?: string | null
@@ -3197,6 +3231,7 @@ export type Database = {
           impact_regions?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
+          intentions?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
           intro_audio_url?: string | null
@@ -3221,6 +3256,7 @@ export type Database = {
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
           offers?: string[] | null
+          onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
           onboarding_progress?: Json
           onboarding_recommendations_viewed?: boolean | null
@@ -3233,6 +3269,7 @@ export type Database = {
           professional_role?: string | null
           professional_summary?: string | null
           profile_completeness_score?: number | null
+          profile_completion_percentage?: number | null
           profile_completion_score?: number | null
           profile_picture_url?: string | null
           profile_views_count?: number | null
@@ -3273,6 +3310,7 @@ export type Database = {
           adin_mode?: string | null
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
+          africa_focus_areas?: string[] | null
           agrees_to_values?: boolean | null
           availability_hours_per_month?: number | null
           availability_visible?: boolean | null
@@ -3306,6 +3344,7 @@ export type Database = {
           dashboard_version?: string | null
           deleted_at?: string | null
           diaspora_origin?: string | null
+          diaspora_status?: string | null
           diaspora_story?: string | null
           display_name?: string | null
           email?: string | null
@@ -3324,6 +3363,7 @@ export type Database = {
           impact_regions?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
+          intentions?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
           intro_audio_url?: string | null
@@ -3348,6 +3388,7 @@ export type Database = {
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
           offers?: string[] | null
+          onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
           onboarding_progress?: Json
           onboarding_recommendations_viewed?: boolean | null
@@ -3360,6 +3401,7 @@ export type Database = {
           professional_role?: string | null
           professional_summary?: string | null
           profile_completeness_score?: number | null
+          profile_completion_percentage?: number | null
           profile_completion_score?: number | null
           profile_picture_url?: string | null
           profile_views_count?: number | null
@@ -4312,6 +4354,10 @@ export type Database = {
       }
       calculate_profile_completeness_score_new: {
         Args: { p_id: string }
+        Returns: number
+      }
+      calculate_profile_completion_percentage: {
+        Args: { profile_id: string }
         Returns: number
       }
       calculate_profile_completion_score: {
