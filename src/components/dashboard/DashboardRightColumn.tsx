@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLiveEvents } from '@/hooks/useLiveEvents';
 import { ConnectionRecommendationsWidget } from '@/components/connect/ConnectionRecommendationsWidget';
 import { ProfileCompletionWidget } from '@/components/connect/ProfileCompletionWidget';
+import { EventRecommendationsWidget } from '@/components/convene/EventRecommendationsWidget';
 import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -96,6 +97,9 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
     <div className="space-y-6">
       {/* Profile Completion Widget */}
       {isOwnProfile && <ProfileCompletionWidget />}
+      
+      {/* Events Widget */}
+      {isOwnProfile && <EventRecommendationsWidget />}
       
       {/* Connection Recommendations Widget */}
       {isOwnProfile && <ConnectionRecommendationsWidget />}
