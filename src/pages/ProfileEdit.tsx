@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { X, Plus, ArrowLeft, Save, Loader2 } from 'lucide-react';
+import { X, Plus, ArrowLeft, Save, Loader2, LogOut } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 
 // African countries list for dropdowns
@@ -55,10 +55,15 @@ interface AfricaFocusArea {
 }
 
 const ProfileEdit = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   // Fetch current profile
   const { data: profile, isLoading } = useQuery({
@@ -619,31 +624,42 @@ const ProfileEdit = () => {
           </Card>
 
           {/* Submit Button */}
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate('/dna/me')}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={updateMutation.isPending}
+                className="flex-1"
+              >
+                {updateMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Profile
+                  </>
+                )}
+              </Button>
+            </div>
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate('/dna/me')}
-              className="flex-1"
+              onClick={handleSignOut}
+              className="w-full text-destructive hover:bg-destructive/10 hover:text-destructive"
             >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={updateMutation.isPending}
-              className="flex-1"
-            >
-              {updateMutation.isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Save Profile
-                </>
-              )}
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
             </Button>
           </div>
         </form>
