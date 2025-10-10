@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Calendar, MapPin, Users, DollarSign } from 'lucide-react';
+import { Calendar, MapPin, Users, Image as ImageIcon, Upload } from 'lucide-react';
 
 interface CreateEventModalProps {
   open: boolean;
@@ -19,6 +19,8 @@ interface CreateEventModalProps {
 export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const bannerInputRef = useRef<HTMLInputElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -32,22 +34,98 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
     event_type: 'conference',
   });
 
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string>('');
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string>('');
+
+  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Banner image must be less than 5MB');
+        return;
+      }
+      setBannerFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBannerPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Logo image must be less than 2MB');
+        return;
+      }
+      setLogoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadImage = async (file: File, folder: string): Promise<string | null> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user!.id}/${folder}/${Date.now()}.${fileExt}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('event-images')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      return null;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('event-images')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
+  };
+
   const createEventMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
+      // Upload images first
+      let bannerUrl = null;
+      let logoUrl = null;
+
+      if (bannerFile) {
+        bannerUrl = await uploadImage(bannerFile, 'banners');
+        if (!bannerUrl) {
+          throw new Error('Failed to upload banner image');
+        }
+      }
+
+      if (logoFile) {
+        logoUrl = await uploadImage(logoFile, 'logos');
+        if (!logoUrl) {
+          throw new Error('Failed to upload logo image');
+        }
+      }
+
       const { data: event, error } = await supabase
         .from('events')
         .insert({
           title: data.title,
           description: data.description,
-          start_time: data.start_time,
-          end_time: data.end_time,
+          date_time: data.start_time,
           location: data.location,
           is_virtual: data.is_virtual,
-          max_attendees: data.max_attendees ? parseInt(data.max_attendees) : null,
-          registration_required: data.registration_required,
-          event_type: data.event_type,
+          capacity: data.max_attendees ? parseInt(data.max_attendees) : null,
           created_by: user!.id,
-          status: 'draft',
+          banner_url: bannerUrl,
+          image_url: logoUrl,
         })
         .select()
         .single();
@@ -71,6 +149,10 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
         registration_required: true,
         event_type: 'conference',
       });
+      setBannerFile(null);
+      setBannerPreview('');
+      setLogoFile(null);
+      setLogoPreview('');
     },
     onError: (error) => {
       toast.error('Failed to create event');
@@ -97,6 +179,102 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Event Images */}
+          <div className="space-y-4">
+            <div>
+              <Label className="flex items-center gap-2 mb-2">
+                <ImageIcon className="h-4 w-4" />
+                Event Banner (Recommended: 1200x400px)
+              </Label>
+              <div className="space-y-2">
+                {bannerPreview ? (
+                  <div className="relative">
+                    <img 
+                      src={bannerPreview} 
+                      alt="Banner preview" 
+                      className="w-full h-32 object-cover rounded-lg border"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="destructive"
+                      className="absolute top-2 right-2"
+                      onClick={() => {
+                        setBannerFile(null);
+                        setBannerPreview('');
+                        if (bannerInputRef.current) bannerInputRef.current.value = '';
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ) : (
+                  <div 
+                    className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-dna-emerald transition-colors"
+                    onClick={() => bannerInputRef.current?.click()}
+                  >
+                    <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">Click to upload banner image</p>
+                    <p className="text-xs text-muted-foreground mt-1">Max 5MB - JPG, PNG, WebP</p>
+                  </div>
+                )}
+                <input
+                  ref={bannerInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleBannerChange}
+                  className="hidden"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="flex items-center gap-2 mb-2">
+                <ImageIcon className="h-4 w-4" />
+                Event Logo (Recommended: 400x400px)
+              </Label>
+              <div className="space-y-2">
+                {logoPreview ? (
+                  <div className="relative inline-block">
+                    <img 
+                      src={logoPreview} 
+                      alt="Logo preview" 
+                      className="w-24 h-24 object-cover rounded-lg border"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="destructive"
+                      className="absolute -top-2 -right-2"
+                      onClick={() => {
+                        setLogoFile(null);
+                        setLogoPreview('');
+                        if (logoInputRef.current) logoInputRef.current.value = '';
+                      }}
+                    >
+                      ×
+                    </Button>
+                  </div>
+                ) : (
+                  <div 
+                    className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-dna-emerald transition-colors inline-flex flex-col items-center w-24"
+                    onClick={() => logoInputRef.current?.click()}
+                  >
+                    <Upload className="h-6 w-6 mb-1 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground">Upload logo</p>
+                  </div>
+                )}
+                <input
+                  ref={logoInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoChange}
+                  className="hidden"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Basic Information */}
           <div className="space-y-4">
             <div>
