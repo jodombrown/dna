@@ -36,20 +36,20 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
           ) : (
             // Desktop: 3-column layout with independent scrolling and margins
             <div className="flex h-full">
-              {/* Left Column - 25% margin from left + column */}
-              <div className="w-[25%] flex-shrink-0 overflow-y-auto border-r border-border px-6 py-6">
+              {/* Left Column - 15% */}
+              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-r border-border px-6 py-6">
                 <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
               
-              {/* Center Column - 50% with margins */}
-              <div className="flex-1 overflow-y-auto px-6 py-6">
+              {/* Center Column - 70% */}
+              <div className="w-[70%] flex-shrink-0 overflow-y-auto px-6 py-6">
                 <div className="max-w-2xl mx-auto">
                   <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
                 </div>
               </div>
               
-              {/* Right Column - 25% margin from right + column */}
-              <div className="w-[25%] flex-shrink-0 overflow-y-auto border-l border-border px-6 py-6">
+              {/* Right Column - 15% */}
+              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-l border-border px-6 py-6">
                 <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
             </div>
