@@ -26,7 +26,7 @@ export const ProfileCompletionWidget = () => {
 
   if (!profile) return null;
 
-  const completion = profile.profile_completion_percentage || 0;
+  const completion = 30; // TEMP: Testing locked state
 
   // Don't show widget if 100% complete
   if (completion >= 100) return null;
