@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { useLiveEvents } from '@/hooks/useLiveEvents';
+import { ConnectionRecommendationsWidget } from '@/components/connect/ConnectionRecommendationsWidget';
+import { ProfileCompletionWidget } from '@/components/connect/ProfileCompletionWidget';
 
 interface DashboardRightColumnProps {
   profile: Profile;
@@ -49,6 +51,12 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Profile Completion Widget */}
+      {isOwnProfile && <ProfileCompletionWidget />}
+      
+      {/* Connection Recommendations Widget */}
+      {isOwnProfile && <ConnectionRecommendationsWidget />}
+      
       {/* People You May Know */}
       <Card>
         <CardHeader className="pb-3">
