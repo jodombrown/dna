@@ -8,8 +8,6 @@ import { MapPin, Briefcase, Users, Eye, Settings } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { ProfileCompletionWidget } from '@/components/connect/ProfileCompletionWidget';
-
 interface DashboardLeftColumnProps {
   profile: Profile;
   isOwnProfile: boolean;
@@ -64,9 +62,6 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Profile Completion Widget - Only for own profile */}
-      {isOwnProfile && <ProfileCompletionWidget />}
-
       {/* Profile Preview Card */}
       <Card className="overflow-hidden">
         <CardContent className="p-6">
