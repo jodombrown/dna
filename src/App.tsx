@@ -43,6 +43,7 @@ import Discover from "./pages/Discover";
 import Network from "./pages/Network";
 import Messages from "./pages/Messages";
 import ProfileEdit from "./pages/ProfileEdit";
+import EventsPage from "./pages/EventsPage";
 
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
@@ -116,6 +117,8 @@ function App() {
               
               {/* Main feature pages under /dna namespace */}
               <Route path="/dna/connect" element={<ConnectExample />} />
+              <Route path="/dna/events" element={<EventsPage />} />
+              <Route path="/events" element={<EventsPage />} />
               <Route path="/dna/impact" element={<Opportunities />} />
               <Route path="/dna/impact/:id" element={<OpportunityDetail />} />
               <Route path="/dna/applications" element={<MyApplications />} />
