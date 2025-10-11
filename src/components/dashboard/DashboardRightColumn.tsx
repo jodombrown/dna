@@ -94,7 +94,7 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 md:space-y-4">
       {/* Profile Completion Widget */}
       {isOwnProfile && <ProfileCompletionWidget />}
       
@@ -105,14 +105,14 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
       {isOwnProfile && <ConnectionRecommendationsWidget />}
 
       {/* Upcoming Events */}
-      <Card>
-        <CardHeader className="pb-3">
+      <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
+        <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-dna-forest flex items-center">
             <Calendar className="w-4 h-4 mr-2 text-dna-copper" />
             Upcoming Events
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-0">
           {eventsLoading ? (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-dna-copper mx-auto"></div>
@@ -173,11 +173,11 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
       </Card>
 
       {/* DNA News / Updates */}
-      <Card>
-        <CardHeader className="pb-3">
+      <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
+        <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-dna-forest">DNA Updates</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-0">
           <div className="space-y-3 text-sm">
             <div className="pb-3 border-b border-border">
               <div className="font-medium text-dna-forest mb-1">Platform Launch</div>

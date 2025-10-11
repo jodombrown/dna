@@ -7,6 +7,7 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import DashboardLeftColumn from './DashboardLeftColumn';
 import DashboardCenterColumn from './DashboardCenterColumn';
 import DashboardRightColumn from './DashboardRightColumn';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 interface UserDashboardLayoutProps {
   profile: Profile;
@@ -27,35 +28,38 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       <main className="pt-16 pb-20 lg:pb-0 overflow-hidden">
         <div className="max-w-[1600px] mx-auto h-[calc(100vh-4rem)]">
           {isMobile ? (
-            // Mobile: Single column layout, stacked
-            <div className="space-y-6 py-6 px-4 overflow-y-auto h-full">
+            // Mobile: Single column layout, stacked - optimized spacing
+            <div className="space-y-3 py-3 px-3 overflow-y-auto h-full">
               <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
               <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
               <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
             </div>
           ) : (
-            // Desktop: 3-column layout with independent scrolling and margins
+            // Desktop: 3-column layout with independent scrolling - reduced padding
             <div className="flex h-full">
               {/* Left Column - 15% */}
-              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-r border-border px-6 py-6">
+              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-r border-border px-4 py-4">
                 <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
               
               {/* Center Column - 70% */}
-              <div className="w-[70%] flex-shrink-0 overflow-y-auto px-6 py-6">
+              <div className="w-[70%] flex-shrink-0 overflow-y-auto px-4 py-4">
                 <div className="max-w-2xl mx-auto">
                   <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
                 </div>
               </div>
               
               {/* Right Column - 15% */}
-              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-l border-border px-6 py-6">
+              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-l border-border px-4 py-4">
                 <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
             </div>
           )}
         </div>
       </main>
+      
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav />
     </div>
   );
 };

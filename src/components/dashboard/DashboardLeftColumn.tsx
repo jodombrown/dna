@@ -61,10 +61,10 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
   const profileViews = 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3 md:space-y-4">
       {/* Profile Preview Card */}
-      <Card className="overflow-hidden">
-        <CardContent className="p-6">
+      <Card className="overflow-hidden transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
+        <CardContent className="p-3 sm:p-4 md:p-5">
           <div className="text-center">
             <Avatar className="w-20 h-20 mx-auto mb-4">
               <AvatarImage src={profile.avatar_url || ''} alt={profile.full_name || ''} />
@@ -109,11 +109,11 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
 
       {/* Impact Areas */}
       {profile.impact_areas && profile.impact_areas.length > 0 && (
-        <Card>
-          <CardHeader className="pb-3">
+        <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-dna-forest">Impact Areas</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <div className="flex flex-wrap gap-2">
               {profile.impact_areas.map((area, index) => (
                 <Badge 
@@ -130,12 +130,12 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
       )}
 
       {/* Quick Stats */}
-      <Card>
-        <CardHeader className="pb-3">
+      <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
+        <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-dna-forest">Community Stats</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
+        <CardContent className="pt-0">
+          <div className="space-y-1">
             <div 
               className="flex justify-between hover:bg-dna-emerald/5 p-2 rounded cursor-pointer transition-colors"
               onClick={() => navigate(`/dna/${profile.username}?tab=connections`)}
@@ -171,12 +171,12 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
 
       {/* Quick Links */}
       {isOwnProfile && (
-        <Card>
-          <CardHeader className="pb-3">
+        <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-dna-forest">Quick Links</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
+          <CardContent className="pt-0">
+            <div className="space-y-1">
               <Link to="/dna/connect" className="block">
                 <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-dna-forest hover:bg-dna-emerald/10">
                   Find Connections

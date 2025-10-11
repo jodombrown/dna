@@ -35,13 +35,13 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
   const completionScore = profile.profile_completion_percentage || 0;
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-3 md:space-y-4">
       {/* DNA Pillar Navigation */}
       <DNAPillarNavigation variant="horizontal" showDescriptions={true} />
       
       {/* LinkedIn-style Welcome Header */}
-      <Card className="border-l-4 border-l-primary bg-gradient-to-r from-primary/5 to-primary/10">
-        <CardContent className="p-6">
+      <Card className="border-l-4 border-l-primary bg-gradient-to-r from-primary/5 to-primary/10 transition-all duration-150 hover:shadow-lg">
+        <CardContent className="p-3 sm:p-4 md:p-5">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h2 className="text-xl font-semibold mb-2">
@@ -112,9 +112,9 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
       </Card>
 
       {/* Connection-Focused Action Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-dna-emerald/30 border-l-4 border-l-dna-emerald" onClick={() => handleAction('discover')}>
-          <CardContent className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+        <Card className="cursor-pointer hover:shadow-lg transition-all duration-150 hover:border-dna-emerald/30 hover:-translate-y-1 hover:scale-[1.02] border-l-4 border-l-dna-emerald" onClick={() => handleAction('discover')}>
+          <CardContent className="p-3 sm:p-4 flex items-center gap-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center">
               <Search className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald" />
             </div>
@@ -125,8 +125,8 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-dna-emerald/30 border-l-4 border-l-dna-emerald" onClick={() => handleAction('network')}>
-          <CardContent className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4">
+        <Card className="cursor-pointer hover:shadow-lg transition-all duration-150 hover:border-dna-emerald/30 hover:-translate-y-1 hover:scale-[1.02] border-l-4 border-l-dna-emerald" onClick={() => handleAction('network')}>
+          <CardContent className="p-3 sm:p-4 flex items-center gap-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center">
               <Users className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald" />
             </div>
@@ -137,8 +137,8 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-dna-emerald/30 border-l-4 border-l-dna-emerald" onClick={() => handleAction('messages')}>
-          <CardContent className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4">
+        <Card className="cursor-pointer hover:shadow-lg transition-all duration-150 hover:border-dna-emerald/30 hover:-translate-y-1 hover:scale-[1.02] border-l-4 border-l-dna-emerald" onClick={() => handleAction('messages')}>
+          <CardContent className="p-3 sm:p-4 flex items-center gap-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center">
               <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald" />
             </div>
@@ -149,8 +149,8 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
           </CardContent>
         </Card>
 
-        <Card className="cursor-pointer hover:shadow-md transition-all hover:border-dna-emerald/30 border-l-4 border-l-dna-emerald" onClick={() => handleAction('discover')}>
-          <CardContent className="p-4 sm:p-6 flex items-center gap-3 sm:gap-4">
+        <Card className="cursor-pointer hover:shadow-lg transition-all duration-150 hover:border-dna-emerald/30 hover:-translate-y-1 hover:scale-[1.02] border-l-4 border-l-dna-emerald" onClick={() => handleAction('discover')}>
+          <CardContent className="p-3 sm:p-4 flex items-center gap-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center">
               <UserPlus className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald" />
             </div>
@@ -163,11 +163,11 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
       </div>
 
       {/* Feed Tabs */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold text-dna-forest">Your Feed</CardTitle>
+      <Card className="transition-all duration-150 hover:shadow-lg">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base md:text-lg font-semibold text-dna-forest">Your Feed</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-0">
           <Tabs defaultValue="opportunities" className="w-full">
             <TabsList className="w-full grid grid-cols-2 mb-4">
               <TabsTrigger value="opportunities" className="data-[state=active]:bg-dna-emerald data-[state=active]:text-white">
@@ -204,11 +204,11 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
 
       {/* Professional Summary */}
       {profile.bio && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">About</CardTitle>
+        <Card className="transition-all duration-150 hover:shadow-lg">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base md:text-lg font-semibold">About</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <p className="text-muted-foreground leading-relaxed">{profile.bio}</p>
           </CardContent>
         </Card>
