@@ -521,7 +521,7 @@ const Auth = () => {
                   <br />
                   We're currently in private beta. New registrations are temporarily paused.
                   <br />
-                  <a href="mailto:hello@diasporanetwork.africa" className="text-dna-copper hover:text-dna-gold underline font-medium">
+                  <a href="mailto:aweh@diasporanetwork.africa" className="text-dna-copper hover:text-dna-gold underline font-medium">
                     Contact us for early access
                   </a>
                 </AlertDescription>
