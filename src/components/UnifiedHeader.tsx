@@ -125,13 +125,13 @@ const UnifiedHeader = () => {
 
   // Navigation items for authenticated users
   const authNavigationItems = [
-    { title: 'Feed', view: 'feed', icon: Home, path: '/feed' },
+    { title: 'Feed', view: 'feed', icon: Home, path: '/dna/feed' },
     { title: 'My DNA', view: 'dna', icon: User, path: '/dna/me' },
-    { title: 'Connect', view: 'network', icon: Users, path: '/connect' },
-    { title: 'Network', view: 'connections', icon: Users2, path: '/network' },
+    { title: 'Discover', view: 'discover', icon: Users, path: '/dna/discover' },
+    { title: 'Network', view: 'network', icon: Users2, path: '/dna/network' },
     { title: 'Events', view: 'events', icon: Calendar, path: '/dna/events' },
-    { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/messages' },
-    { title: 'Opportunities', view: 'opportunities', icon: Briefcase, path: '/opportunities' },
+    { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/dna/messages' },
+    { title: 'Opportunities', view: 'opportunities', icon: Briefcase, path: '/dna/impact' },
   ];
 
   const handleSignOut = () => {
