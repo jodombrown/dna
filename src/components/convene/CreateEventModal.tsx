@@ -72,8 +72,13 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
   };
 
   const uploadImage = async (file: File, folder: string): Promise<string | null> => {
+    if (!user) {
+      console.error('User not authenticated');
+      return null;
+    }
+    
     const fileExt = file.name.split('.').pop();
-    const fileName = `${user!.id}/${folder}/${Date.now()}.${fileExt}`;
+    const fileName = `${user.id}/${folder}/${Date.now()}.${fileExt}`;
     
     const { error: uploadError } = await supabase.storage
       .from('event-images')
@@ -96,20 +101,24 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
 
   const createEventMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
+      if (!user) {
+        throw new Error('You must be logged in to create an event');
+      }
+
       // Upload images first
       let bannerUrl = null;
       let logoUrl = null;
 
       if (bannerFile) {
         bannerUrl = await uploadImage(bannerFile, 'banners');
-        if (!bannerUrl) {
+        if (!bannerUrl && bannerFile) {
           throw new Error('Failed to upload banner image');
         }
       }
 
       if (logoFile) {
         logoUrl = await uploadImage(logoFile, 'logos');
-        if (!logoUrl) {
+        if (!logoUrl && logoFile) {
           throw new Error('Failed to upload logo image');
         }
       }
@@ -123,7 +132,7 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
           location: data.location,
           is_virtual: data.is_virtual,
           capacity: data.max_attendees ? parseInt(data.max_attendees) : null,
-          created_by: user!.id,
+          created_by: user.id,
           banner_url: bannerUrl,
           image_url: logoUrl,
         })
@@ -163,6 +172,11 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast.error('You must be logged in to create an event');
+      return;
+    }
+
     if (!formData.title || !formData.start_time) {
       toast.error('Please fill in required fields');
       return;
