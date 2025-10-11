@@ -3156,8 +3156,10 @@ export type Database = {
           updated_at: string
           user_type: string | null
           username: string
+          username_change_count: number | null
           username_changes: number | null
           username_changes_left: number | null
+          username_history: Json | null
           venture_name: string | null
           venture_stage: string | null
           verification_method: string | null
@@ -3288,8 +3290,10 @@ export type Database = {
           updated_at?: string
           user_type?: string | null
           username: string
+          username_change_count?: number | null
           username_changes?: number | null
           username_changes_left?: number | null
+          username_history?: Json | null
           venture_name?: string | null
           venture_stage?: string | null
           verification_method?: string | null
@@ -3420,8 +3424,10 @@ export type Database = {
           updated_at?: string
           user_type?: string | null
           username?: string
+          username_change_count?: number | null
           username_changes?: number | null
           username_changes_left?: number | null
+          username_history?: Json | null
           venture_name?: string | null
           venture_stage?: string | null
           verification_method?: string | null
@@ -4405,6 +4411,10 @@ export type Database = {
           p_user: string
           p_window_seconds: number
         }
+        Returns: boolean
+      }
+      check_username_available: {
+        Args: { p_user_id?: string; p_username: string }
         Returns: boolean
       }
       compute_influence_score: {

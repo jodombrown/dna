@@ -8,6 +8,7 @@ import { Users, Search, MessageSquare, UserPlus, TrendingUp, MapPin, Globe, Brie
 import { Link } from 'react-router-dom';
 import { DNAPillarNavigation } from '@/components/navigation/DNAPillarNavigation';
 import DashboardCenterOpportunities from './DashboardCenterOpportunities';
+import { EngagementPrompt } from '@/components/connect/EngagementPrompt';
 
 interface DashboardCenterColumnProps {
   profile: Profile;
@@ -46,7 +47,7 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
             <div className="flex-1">
               <h2 className="text-xl font-semibold mb-2">
                 {isOwnProfile 
-                  ? `Welcome back, ${profile.full_name?.split(' ')[0] || 'Professional'}!` 
+                  ? `Welcome back, ${profile.username ? `@${profile.username}` : profile.full_name?.split(' ')[0] || 'Professional'}!`
                   : `${profile.full_name || profile.username}'s Profile`
                 }
               </h2>
@@ -161,6 +162,14 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
           </CardContent>
         </Card>
       </div>
+
+      {/* Engagement Prompt */}
+      {isOwnProfile && completionScore < 90 && (
+        <EngagementPrompt 
+          type="profile_completion"
+          profileCompletion={completionScore}
+        />
+      )}
 
       {/* Feed Tabs */}
       <Card className="transition-all duration-150 hover:shadow-lg">

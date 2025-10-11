@@ -4,12 +4,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Globe, MapPin, Lightbulb, Loader2, Sparkles } from 'lucide-react';
+import { Globe, MapPin, Lightbulb, Loader2, Sparkles, UserPlus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { ConnectionRequestModal } from './ConnectionRequestModal';
+import { ActivityIndicator } from '@/components/profile/ActivityIndicator';
+import { SocialProofBadge } from '@/components/profile/SocialProofBadge';
 
 interface AfricaFocusArea {
   geography: string;
@@ -332,6 +334,11 @@ export const ConnectionRecommendationsWidget = () => {
             <div className="flex-1 min-w-0">
               <h4 className="font-semibold text-sm truncate">
                 {profile.full_name}
+                {profile.username && (
+                  <span className="text-xs text-muted-foreground ml-1">
+                    @{profile.username}
+                  </span>
+                )}
               </h4>
               {profile.headline && (
                 <p className="text-xs text-muted-foreground truncate">
@@ -345,6 +352,13 @@ export const ConnectionRecommendationsWidget = () => {
                   <span className="text-xs text-muted-foreground">{profile.location}</span>
                 </div>
               )}
+              
+              {/* Activity Indicator */}
+              <ActivityIndicator 
+                lastSeen={profile.last_seen_at} 
+                className="mt-1"
+              />
+              
               <div className="flex items-center gap-2 mt-2">
                 <Badge variant={profile.matchPercentage && profile.matchPercentage >= 70 ? 'default' : 'secondary'} className="text-xs">
                   {profile.matchPercentage || profile.score}% match
@@ -360,12 +374,12 @@ export const ConnectionRecommendationsWidget = () => {
               size="sm"
               onClick={() => handleConnect(profile)}
               disabled={connectingTo === profile.id}
-              className="shrink-0"
+              className="shrink-0 min-w-[44px] min-h-[44px] transition-all duration-150 hover:scale-105"
             >
               {connectingTo === profile.id ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
               ) : (
-                'Connect'
+                <><UserPlus className="h-3 w-3 mr-1" /> Connect</>
               )}
             </Button>
           </div>
