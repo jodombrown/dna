@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "13.0.5"
   }
   public: {
     Tables: {
@@ -4461,11 +4461,11 @@ export type Database = {
           | { match_threshold?: number; user_id: string }
           | { target_user_id: string }
         Returns: {
+          match_reason: string
           match_score: number
-          signal_created_at: string
-          signal_id: string
-          signal_title: string
-          signal_type: string
+          matched_user_id: string
+          shared_regions: string[]
+          shared_sectors: string[]
         }[]
       }
       generate_join_token: {
@@ -4703,24 +4703,21 @@ export type Database = {
       rpc_adin_recommend_opportunities: {
         Args: Record<PropertyKey, never> | { p_limit?: number }
         Returns: {
-          description: string
-          id: string
-          link: string
-          location: string
-          score: number
-          tags: string[]
-          title: string
-          type: string
+          match_score: number
+          signal_created_at: string
+          signal_id: string
+          signal_title: string
+          signal_type: string
         }[]
       }
       rpc_adin_recommend_people: {
         Args: Record<PropertyKey, never> | { p_limit?: number }
         Returns: {
-          full_name: string
-          headline: string
-          score: number
-          user_id: string
-          username: string
+          match_reason: string
+          match_score: number
+          matched_user_id: string
+          shared_regions: string[]
+          shared_sectors: string[]
         }[]
       }
       rpc_adin_recommend_spaces: {
@@ -4819,7 +4816,7 @@ export type Database = {
             }
           | { p_answers?: Json; p_event: string; p_ticket_type?: string }
           | { p_event: string }
-        Returns: string
+        Returns: undefined
       }
       rpc_event_set_status: {
         Args: { p_event: string; p_status: string; p_user: string }
