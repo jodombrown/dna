@@ -1,0 +1,23 @@
+-- Remove additional unused indexes
+
+DROP INDEX IF EXISTS idx_connections_a;
+DROP INDEX IF EXISTS idx_connections_b;
+DROP INDEX IF EXISTS idx_notifications_user_id;
+DROP INDEX IF EXISTS idx_community_events_community_id;
+DROP INDEX IF EXISTS idx_community_events_created_by;
+DROP INDEX IF EXISTS idx_community_memberships_approved_by;
+DROP INDEX IF EXISTS idx_community_memberships_community_id;
+DROP INDEX IF EXISTS idx_community_memberships_user_id;
+DROP INDEX IF EXISTS idx_community_posts_author_id;
+DROP INDEX IF EXISTS idx_community_posts_community_id;
+DROP INDEX IF EXISTS idx_community_posts_created_at;
+DROP INDEX IF EXISTS idx_connection_requests_receiver_id;
+DROP INDEX IF EXISTS idx_connection_requests_sender_id;
+DROP INDEX IF EXISTS idx_connection_requests_status;
+DROP INDEX IF EXISTS idx_connections_pair;
+DROP INDEX IF EXISTS idx_content_flags_created_at;
+DROP INDEX IF EXISTS idx_content_flags_flagged_by;
+DROP INDEX IF EXISTS idx_content_flags_resolved_by;
+DROP INDEX IF EXISTS idx_content_moderation_moderator_id;
+DROP INDEX IF EXISTS idx_contribution_cards_created_by;
+DROP INDEX IF EXISTS idx_conversations_last_message;
