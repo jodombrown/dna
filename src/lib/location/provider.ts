@@ -1,4 +1,11 @@
-export type LocationOption = { id: string; label: string };
+export type LocationTier = 'local' | 'regional' | 'international' | 'global';
+
+export type LocationOption = { 
+  id: string; 
+  label: string;
+  tier: LocationTier;
+  category?: string;
+};
 
 export interface LocationProvider {
   search(
@@ -7,23 +14,94 @@ export interface LocationProvider {
   ): Promise<LocationOption[]>;
 }
 
-// Local fallback provider (works offline)
-const BASE: string[] = [
-  'Lagos, Nigeria','Nairobi, Kenya','Accra, Ghana','Johannesburg, South Africa',
-  'Cairo, Egypt','Addis Ababa, Ethiopia','Kigali, Rwanda','Abuja, Nigeria',
-  'London, United Kingdom','Toronto, Canada','New York, USA','Los Angeles, USA'
+// Comprehensive location database with tier categorization
+const LOCATION_DATABASE: Array<{ label: string; tier: LocationTier; category?: string }> = [
+  // Global
+  { label: 'Global', tier: 'global', category: 'Worldwide' },
+  { label: 'Africa', tier: 'global', category: 'Continent' },
+  { label: 'North America', tier: 'global', category: 'Continent' },
+  { label: 'Europe', tier: 'global', category: 'Continent' },
+  { label: 'Asia', tier: 'global', category: 'Continent' },
+  
+  // International - Countries
+  { label: 'Nigeria', tier: 'international', category: 'Country' },
+  { label: 'Kenya', tier: 'international', category: 'Country' },
+  { label: 'Ghana', tier: 'international', category: 'Country' },
+  { label: 'South Africa', tier: 'international', category: 'Country' },
+  { label: 'Egypt', tier: 'international', category: 'Country' },
+  { label: 'Ethiopia', tier: 'international', category: 'Country' },
+  { label: 'United States', tier: 'international', category: 'Country' },
+  { label: 'United Kingdom', tier: 'international', category: 'Country' },
+  { label: 'Canada', tier: 'international', category: 'Country' },
+  { label: 'France', tier: 'international', category: 'Country' },
+  { label: 'Germany', tier: 'international', category: 'Country' },
+  
+  // Regional - States/Provinces
+  { label: 'California', tier: 'regional', category: 'State' },
+  { label: 'New York', tier: 'regional', category: 'State' },
+  { label: 'Texas', tier: 'regional', category: 'State' },
+  { label: 'Lagos State', tier: 'regional', category: 'State' },
+  { label: 'Nairobi County', tier: 'regional', category: 'County' },
+  { label: 'Greater Accra', tier: 'regional', category: 'Region' },
+  { label: 'Gauteng', tier: 'regional', category: 'Province' },
+  { label: 'Ontario', tier: 'regional', category: 'Province' },
+  
+  // Local - Cities
+  { label: 'Lagos', tier: 'local', category: 'City' },
+  { label: 'Nairobi', tier: 'local', category: 'City' },
+  { label: 'Accra', tier: 'local', category: 'City' },
+  { label: 'Johannesburg', tier: 'local', category: 'City' },
+  { label: 'Cairo', tier: 'local', category: 'City' },
+  { label: 'Addis Ababa', tier: 'local', category: 'City' },
+  { label: 'Kigali', tier: 'local', category: 'City' },
+  { label: 'Abuja', tier: 'local', category: 'City' },
+  { label: 'London', tier: 'local', category: 'City' },
+  { label: 'Toronto', tier: 'local', category: 'City' },
+  { label: 'New York City', tier: 'local', category: 'City' },
+  { label: 'Los Angeles', tier: 'local', category: 'City' },
+  { label: 'San Francisco', tier: 'local', category: 'City' },
+  { label: 'San Diego', tier: 'local', category: 'City' },
+  { label: 'San Jose', tier: 'local', category: 'City' },
+  { label: 'San Bernardino', tier: 'local', category: 'City' },
+  { label: 'Paris', tier: 'local', category: 'City' },
+  { label: 'Berlin', tier: 'local', category: 'City' },
+  { label: 'Amsterdam', tier: 'local', category: 'City' },
 ];
 
 export const LocalProvider: LocationProvider = {
-  async search(q, { limit = 5 } = {}) {
+  async search(q, { limit = 10 } = {}) {
     const s = (q || '').trim().toLowerCase();
     if (!s) return [];
-    const scored = BASE
-      .map(label => ({ label, score: label.toLowerCase().indexOf(s) }))
-      .filter(x => x.score >= 0)
-      .sort((a, b) => a.score - b.score)
+    
+    // Score and filter matches
+    const scored = LOCATION_DATABASE
+      .map(loc => {
+        const lowerLabel = loc.label.toLowerCase();
+        const index = lowerLabel.indexOf(s);
+        
+        // Boost exact matches and matches at the start
+        let score = index;
+        if (index === 0) score -= 1000; // Start match
+        if (lowerLabel === s) score -= 2000; // Exact match
+        
+        return { ...loc, score, index };
+      })
+      .filter(x => x.index >= 0)
+      .sort((a, b) => {
+        // First sort by score
+        if (a.score !== b.score) return a.score - b.score;
+        // Then by tier priority (local > regional > international > global)
+        const tierOrder = { local: 0, regional: 1, international: 2, global: 3 };
+        return tierOrder[a.tier] - tierOrder[b.tier];
+      })
       .slice(0, limit)
-      .map((x, i) => ({ id: `${x.label}-${i}`, label: x.label }));
+      .map((x, i) => ({ 
+        id: `${x.tier}-${x.label}-${i}`, 
+        label: x.label,
+        tier: x.tier,
+        category: x.category
+      }));
+    
     return scored;
   }
 };
