@@ -3,9 +3,26 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, ExternalLink } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Calendar, MapPin, ExternalLink, Sparkles, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
+
+interface ScoredEvent {
+  id: string;
+  title: string;
+  description?: string;
+  type?: string;
+  location?: string;
+  is_virtual?: boolean;
+  date_time: string;
+  attendee_count?: number;
+  created_by?: string;
+  score: number;
+  matchReason: string;
+  attendingFriends?: number;
+}
 
 export const EventRecommendationsWidget = () => {
   const { user } = useAuth();
@@ -25,20 +42,203 @@ export const EventRecommendationsWidget = () => {
     enabled: !!user?.id,
   });
 
-  // Fetch upcoming events
-  const { data: events, isLoading } = useQuery({
-    queryKey: ['recommended-events', profile?.id],
+  // Fetch user's connections
+  const { data: connections } = useQuery({
+    queryKey: ['user-connections', user?.id],
     queryFn: async () => {
       const { data } = await supabase
+        .from('connections')
+        .select('b')
+        .eq('a', user!.id)
+        .eq('status', 'accepted');
+      return data?.map(c => c.b) || [];
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch user's registrations
+  const { data: registrations } = useQuery({
+    queryKey: ['user-event-registrations', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('event_registrations')
+        .select('event_id')
+        .eq('user_id', user!.id);
+      return data?.map(r => r.event_id) || [];
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch and score events
+  const { data: events, isLoading } = useQuery({
+    queryKey: ['recommended-events', profile?.id, connections, registrations],
+    queryFn: async () => {
+      if (!profile) return [];
+
+      // Fetch upcoming events (exclude already registered)
+      const { data: upcomingEvents } = await supabase
         .from('events')
         .select('*')
         .gte('date_time', new Date().toISOString())
         .order('date_time', { ascending: true })
-        .limit(3);
-      
-      return data || [];
+        .limit(20);
+
+      if (!upcomingEvents) return [];
+
+      // Filter out already registered events
+      const candidates = upcomingEvents.filter(
+        event => !(registrations || []).includes(event.id)
+      );
+
+      // Fetch event registrations for social proof
+      const { data: allRegistrations } = await supabase
+        .from('event_registrations')
+        .select('event_id, user_id')
+        .in('event_id', candidates.map(e => e.id));
+
+      // Score each event with multi-dimensional algorithm
+      const scored: ScoredEvent[] = candidates.map(event => {
+        let score = 0;
+        const reasons: string[] = [];
+
+        // A. GEOGRAPHIC RELEVANCE (30 points max)
+        const userCity = profile.location?.split(',')[0]?.trim().toLowerCase();
+        const eventCity = event.location?.split(',')[0]?.trim().toLowerCase();
+        const userCountry = profile.location?.toLowerCase() || '';
+        const eventLocation = event.location?.toLowerCase() || '';
+
+        if (event.is_virtual) {
+          score += 15;
+          reasons.push('Virtual - join from anywhere');
+        } else if (userCity && eventCity && userCity === eventCity) {
+          score += 30;
+          reasons.push('In your city');
+        } else if (userCountry && eventLocation.includes(userCountry.split(',')[0])) {
+          score += 20;
+        }
+
+        // Check country of origin match
+        if (profile.country_of_origin && eventLocation.includes(profile.country_of_origin.toLowerCase())) {
+          score += 25;
+          if (reasons.length === 0) {
+            reasons.push(`In ${profile.country_of_origin}`);
+          }
+        }
+
+        // B. AFRICA FOCUS ALIGNMENT (25 points max)
+        const userAreas = (profile.africa_focus_areas || []) as string[];
+        const eventDesc = (event.description || '').toLowerCase();
+        const eventTitle = event.title.toLowerCase();
+        
+        // Check if event keywords match user's focus areas
+        const focusMatches = userAreas.filter(area => 
+          eventDesc.includes(area.toLowerCase()) || eventTitle.includes(area.toLowerCase())
+        );
+        if (focusMatches.length > 0) {
+          score += 15;
+          if (reasons.length === 0) {
+            reasons.push(`Matches ${focusMatches[0]} interest`);
+          }
+        }
+
+        // C. PROFESSIONAL RELEVANCE (20 points max)
+        const userIntents = profile.intentions || [];
+        const eventType = event.type || '';
+
+        if (eventType === 'pitch_event' && userIntents.includes('invest')) {
+          score += 20;
+          if (reasons.length === 0) {
+            reasons.push('Perfect for investors');
+          }
+        } else if (eventType === 'workshop' && userIntents.includes('learn')) {
+          score += 20;
+          if (reasons.length === 0) {
+            reasons.push('Great learning opportunity');
+          }
+        } else if (eventType === 'networking') {
+          score += 10;
+        }
+
+        // Check skills overlap
+        const userSkills = (profile.skills || []) as string[];
+        const skillMatches = userSkills.filter(skill => 
+          eventDesc.includes(skill.toLowerCase()) || eventTitle.includes(skill.toLowerCase())
+        );
+        if (skillMatches.length > 0) {
+          score += 5;
+        }
+
+        // D. SOCIAL PROOF (15 points max)
+        const eventRegs = allRegistrations?.filter(r => r.event_id === event.id) || [];
+        const friendsAttending = eventRegs.filter(r => 
+          (connections || []).includes(r.user_id)
+        ).length;
+
+        if (friendsAttending > 0) {
+          score += Math.min(10, friendsAttending * 2);
+          reasons.push(`${friendsAttending} friend${friendsAttending > 1 ? 's' : ''} attending`);
+        }
+
+        if ((event.attendee_count || 0) > 50) {
+          score += 5;
+        }
+
+        // E. TIMING OPTIMIZATION (10 points max)
+        const daysUntil = differenceInDays(new Date(event.date_time), new Date());
+        if (daysUntil <= 7) {
+          score += 10;
+        } else if (daysUntil <= 30) {
+          score += 7;
+        } else if (daysUntil <= 90) {
+          score += 3;
+        }
+
+        return {
+          ...event,
+          score,
+          matchReason: reasons[0] || 'Recommended for you',
+          attendingFriends: friendsAttending
+        };
+      });
+
+      // Apply diversity rules
+      let diverse: ScoredEvent[] = [];
+      const typeCounts: Record<string, number> = {};
+      const hostCounts: Record<string, number> = {};
+      let hasVirtual = false;
+
+      for (const event of scored.sort((a, b) => b.score - a.score)) {
+        const eventType = event.type || 'other';
+        const typeCount = typeCounts[eventType] || 0;
+        const hostCount = hostCounts[event.created_by || ''] || 0;
+
+        // Ensure at least 1 virtual in top 3
+        if (!hasVirtual && event.is_virtual) {
+          hasVirtual = true;
+        }
+
+        // Max 2 of same type, max 1 per host
+        if (typeCount < 2 && hostCount < 1) {
+          diverse.push(event);
+          typeCounts[eventType] = typeCount + 1;
+          hostCounts[event.created_by || ''] = hostCount + 1;
+        }
+
+        if (diverse.length >= 3) break;
+      }
+
+      // If no virtual in top 3, try to add one
+      if (!hasVirtual && diverse.length < 3) {
+        const virtualEvent = scored.find(e => e.is_virtual && !diverse.includes(e));
+        if (virtualEvent) {
+          diverse[diverse.length - 1] = virtualEvent;
+        }
+      }
+
+      return diverse;
     },
-    enabled: !!profile,
+    enabled: !!profile && !!connections && !!registrations,
+    staleTime: 12 * 60 * 60 * 1000, // Cache for 12 hours
   });
 
   if (isLoading || !events || events.length === 0) {
@@ -50,7 +250,7 @@ export const EventRecommendationsWidget = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calendar className="h-5 w-5 text-copper-500" />
-          Upcoming Events
+          Recommended Events
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -61,9 +261,17 @@ export const EventRecommendationsWidget = () => {
             onClick={() => navigate('/dna/events')}
           >
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-sm truncate">
-                {event.title}
-              </h4>
+              <div className="flex items-start justify-between gap-2 mb-1">
+                <h4 className="font-semibold text-sm truncate">
+                  {event.title}
+                </h4>
+                {event.score >= 75 && (
+                  <Badge variant="default" className="shrink-0 text-xs">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    Hot match
+                  </Badge>
+                )}
+              </div>
               
               <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                 <Calendar className="h-3 w-3" />
@@ -78,6 +286,18 @@ export const EventRecommendationsWidget = () => {
                   <span className="truncate">{event.location}</span>
                 </div>
               )}
+
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                <Badge variant="secondary" className="text-xs">
+                  {event.matchReason}
+                </Badge>
+                {event.attendingFriends && event.attendingFriends > 0 && (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Users className="h-3 w-3" />
+                    <span>{event.attendingFriends} friend{event.attendingFriends > 1 ? 's' : ''}</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             <Button size="sm" variant="outline">

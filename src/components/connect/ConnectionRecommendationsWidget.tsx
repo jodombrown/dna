@@ -4,7 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Globe, MapPin, Lightbulb, Loader2 } from 'lucide-react';
+import { Globe, MapPin, Lightbulb, Loader2, Sparkles } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
@@ -30,6 +31,7 @@ interface Profile {
 
 interface ScoredProfile extends Profile {
   score: number;
+  matchPercentage?: number;
   reason: string;
 }
 
@@ -99,7 +101,7 @@ export const ConnectionRecommendationsWidget = () => {
     queryFn: async () => {
       if (!currentUser) return [];
 
-      // Fetch potential candidates (exclude self, existing connections, pending requests)
+      // Fetch potential candidates (exclude self, existing connections, pending requests, incomplete profiles)
       const excludedIds = [
         user!.id,
         ...(existingConnections || []),
@@ -110,68 +112,123 @@ export const ConnectionRecommendationsWidget = () => {
         .from('profiles')
         .select('*')
         .not('id', 'in', `(${excludedIds.join(',')})`)
-        .limit(50);
+        .gte('profile_completion_percentage', 40)
+        .limit(100); // Fetch more to apply diversity later
 
       if (!candidates) return [];
 
-      // Score each candidate
+      // Get viewed recommendations from localStorage for anti-staleness
+      const viewedKey = `recommendations_viewed_${user!.id}`;
+      const viewed = JSON.parse(localStorage.getItem(viewedKey) || '{}');
+      const now = Date.now();
+      const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+      // Score each candidate with multi-dimensional algorithm
       const scored: ScoredProfile[] = candidates.map(candidate => {
         let score = 0;
         const reasons: string[] = [];
 
-        // Same diaspora origin (+30 points)
+        // A. DIASPORA ALIGNMENT (30 points max)
         if (candidate.country_of_origin === currentUser.country_of_origin && candidate.country_of_origin) {
-          score += 30;
+          score += 20;
           reasons.push(`Both from ${currentUser.country_of_origin}`);
         }
-
-        // Overlapping intentions (+20 points each)
-        const sharedIntentions = (currentUser.intentions || []).filter(i =>
-          (candidate.intentions || []).includes(i)
-        );
-        score += sharedIntentions.length * 20;
-        if (sharedIntentions.length > 0 && reasons.length === 0) {
-          const intentionLabels: Record<string, string> = {
-            invest: 'investing',
-            mentor: 'mentoring',
-            build: 'building businesses',
-            learn: 'learning',
-            connect: 'connecting with community',
-            give_back: 'giving back'
-          };
-          reasons.push(`Both interested in ${intentionLabels[sharedIntentions[0]] || sharedIntentions[0]}`);
-        }
-
-        // Overlapping Africa focus geography (+15 points each)
-        const userGeos = currentUser.africa_focus_areas || [];
-        const candidateGeos = candidate.africa_focus_areas || [];
-        const sharedGeos = userGeos.filter(g => candidateGeos.includes(g));
-        score += sharedGeos.length * 15;
-        if (sharedGeos.length > 0 && reasons.length === 0) {
-          reasons.push(`Both focused on ${sharedGeos[0]}`);
-        }
-
-        // Same location (+10 points)
-        if (candidate.location === currentUser.location && candidate.location) {
+        if (candidate.diaspora_status === currentUser.diaspora_status && candidate.diaspora_status) {
           score += 10;
-          if (reasons.length === 0) {
-            reasons.push(`Both in ${currentUser.location}`);
+        }
+
+        // B. INTENTION COMPLEMENTARITY (25 points max)
+        const userIntents = currentUser.intentions || [];
+        const candIntents = candidate.intentions || [];
+        
+        // High synergy pairs
+        if ((userIntents.includes('invest') && candIntents.includes('build')) ||
+            (userIntents.includes('build') && candIntents.includes('invest'))) {
+          score += 25;
+          reasons.push('Investor seeking builders');
+        } else if ((userIntents.includes('mentor') && candIntents.includes('learn')) ||
+                   (userIntents.includes('learn') && candIntents.includes('mentor'))) {
+          score += 20;
+          reasons.push('Mentor-learner match');
+        } else if ((userIntents.includes('give_back') && candIntents.includes('build')) ||
+                   (userIntents.includes('build') && candIntents.includes('give_back'))) {
+          score += 15;
+        } else {
+          // Matching intentions
+          const sharedIntents = userIntents.filter(i => candIntents.includes(i));
+          if (sharedIntents.length > 0) {
+            score += Math.min(10, sharedIntents.length * 5);
           }
         }
+
+        // C. AFRICA FOCUS OVERLAP (20 points max)
+        const userAreas = currentUser.africa_focus_areas || [];
+        const candAreas = candidate.africa_focus_areas || [];
+        const sharedAreas = userAreas.filter(a => candAreas.includes(a));
+        
+        if (sharedAreas.length > 0) {
+          score += 15;
+          if (reasons.length === 0) {
+            reasons.push(`Both focused on ${sharedAreas[0]}`);
+          }
+          // Additional points for sector overlap (up to 5 more)
+          score += Math.min(5, sharedAreas.length - 1);
+        }
+
+        // D. SKILLS RELEVANCE (15 points max)
+        const userSkills = currentUser.skills || [];
+        const candSkills = candidate.skills || [];
+        const sharedSkills = userSkills.filter(s => candSkills.includes(s));
+        score += Math.min(15, sharedSkills.length * 3);
+
+        // E. NETWORK PROXIMITY (10 points max)
+        // For now, placeholder - would need connections graph query
+        // In future: query mutual connections via connections table
+
+        // Apply anti-staleness decay (10% if shown in last 7 days)
+        if (viewed[candidate.id] && viewed[candidate.id] > sevenDaysAgo) {
+          score = Math.floor(score * 0.9);
+        }
+
+        // Calculate match percentage
+        const matchPercentage = Math.min(100, Math.round(score));
 
         return {
           ...candidate,
           score,
+          matchPercentage,
           reason: reasons[0] || 'Recommended for you'
         };
       });
 
-      // Sort by score and return top 5
-      return scored
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 5);
+      // Apply diversity rules
+      let diverse: ScoredProfile[] = [];
+      const cityCounts: Record<string, number> = {};
+
+      for (const profile of scored.sort((a, b) => b.score - a.score)) {
+        const city = profile.location?.split(',')[0]?.trim() || 'Unknown';
+        const cityCount = cityCounts[city] || 0;
+
+        // Max 2 from same city in recommendations
+        if (cityCount < 2) {
+          diverse.push(profile);
+          cityCounts[city] = cityCount + 1;
+        }
+
+        if (diverse.length >= 5) break;
+      }
+
+      // Track viewed recommendations
+      const updatedViewed = { ...viewed };
+      diverse.forEach(p => {
+        updatedViewed[p.id] = now;
+      });
+      localStorage.setItem(viewedKey, JSON.stringify(updatedViewed));
+
+      return diverse;
     },
     enabled: !!currentUser && !!existingConnections && !!pendingRequests,
+    staleTime: 24 * 60 * 60 * 1000, // Cache for 24 hours
   });
 
   const handleConnect = (profile: Profile) => {
@@ -288,9 +345,14 @@ export const ConnectionRecommendationsWidget = () => {
                   <span className="text-xs text-muted-foreground">{profile.location}</span>
                 </div>
               )}
-              <div className="flex items-center gap-1 mt-2 text-xs text-copper-600">
-                <Lightbulb className="h-3 w-3" />
-                <span>{profile.reason}</span>
+              <div className="flex items-center gap-2 mt-2">
+                <Badge variant={profile.matchPercentage && profile.matchPercentage >= 70 ? 'default' : 'secondary'} className="text-xs">
+                  {profile.matchPercentage || profile.score}% match
+                </Badge>
+                <div className="flex items-center gap-1 text-xs text-copper-600">
+                  <Lightbulb className="h-3 w-3" />
+                  <span>{profile.reason}</span>
+                </div>
               </div>
             </div>
 
