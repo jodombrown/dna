@@ -8,6 +8,10 @@ export const getGenericErrorMessage = (error: any): string => {
     return 'Profile not found. Please try again.';
   }
   
+  if (error?.code === '23503') {
+    return 'User profile required. Please complete your profile first.';
+  }
+  
   if (error?.message?.includes('duplicate key')) {
     return 'This information is already in use. Please try different values.';
   }

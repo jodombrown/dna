@@ -163,8 +163,11 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
       setLogoFile(null);
       setLogoPreview('');
     },
-    onError: (error) => {
-      toast.error('Failed to create event');
+    onError: (error: any) => {
+      const friendlyMessage = error?.code === '23503' 
+        ? 'Please complete your profile before creating events'
+        : 'Failed to create event';
+      toast.error(friendlyMessage);
       console.error(error);
     },
   });
@@ -180,6 +183,16 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
     if (!formData.title || !formData.start_time) {
       toast.error('Please fill in required fields');
       return;
+    }
+
+    // Validate end_time is after start_time
+    if (formData.end_time && formData.start_time) {
+      const startDate = new Date(formData.start_time);
+      const endDate = new Date(formData.end_time);
+      if (endDate < startDate) {
+        toast.error('End time must be after start time');
+        return;
+      }
     }
 
     createEventMutation.mutate(formData);
