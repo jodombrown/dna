@@ -32,7 +32,7 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
     }
   };
 
-  const completionScore = profile.profile_completion_score || 0;
+  const completionScore = profile.profile_completion_percentage || 0;
 
   return (
     <div className="space-y-4 sm:space-y-6">
