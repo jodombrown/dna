@@ -29,7 +29,7 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
         <div className="max-w-[1600px] mx-auto h-[calc(100vh-4rem)]">
           {isMobile ? (
             // Mobile: Single column layout, stacked - optimized spacing
-            <div className="space-y-3 py-3 px-3 overflow-y-auto h-full">
+            <div className="space-y-3 pt-2 px-3 overflow-y-auto h-full">
               <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
               <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
               <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
@@ -38,17 +38,17 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
             // Desktop: 3-column layout with independent scrolling - reduced padding
             <div className="flex h-full">
               {/* Left Column - 15% */}
-              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-r border-border px-4 py-4">
+              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-r border-border px-4 pt-3 pb-4">
                 <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
               
               {/* Center Column - 70% */}
-              <div className="w-[70%] flex-shrink-0 overflow-y-auto px-6 py-4">
+              <div className="w-[70%] flex-shrink-0 overflow-y-auto px-6 pt-3 pb-4">
                 <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
               
               {/* Right Column - 15% */}
-              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-l border-border px-4 py-4">
+              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-l border-border px-4 pt-3 pb-4">
                 <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
             </div>
