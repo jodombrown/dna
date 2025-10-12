@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
+import { MessageProvider } from "@/contexts/MessageContext";
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import BaseLayout from "@/layouts/BaseLayout";
 
@@ -93,7 +94,8 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <ViewStateProvider>
-              <BaseLayout>
+              <MessageProvider>
+                <BaseLayout>
                 <Routes>
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
@@ -181,6 +183,7 @@ function App() {
                 </Routes>
                 <BadgeToastListener />
               </BaseLayout>
+              </MessageProvider>
             </ViewStateProvider>
           </AuthProvider>
         </BrowserRouter>

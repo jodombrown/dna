@@ -1,11 +1,14 @@
 import React from 'react';
-import { Calendar, MapPin, Users, Clock, Globe, ExternalLink } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Globe, ExternalLink, MessageCircle } from 'lucide-react';
 import { Event } from '@/types/search';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { TYPOGRAPHY } from '@/lib/typography.config';
 import { Separator } from '@/components/ui/separator';
+import { useMessage } from '@/contexts/MessageContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface EventDetailPanelProps {
   event: Event | null;
@@ -17,6 +20,13 @@ interface EventDetailPanelProps {
  * Shows detailed information about the selected event
  */
 const EventDetailPanel: React.FC<EventDetailPanelProps> = ({ event, onRegister }) => {
+  const { openMessageOverlay } = useMessage();
+  const { user } = useAuth();
+
+  const getInitials = (name: string) => {
+    return name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?';
+  };
+
   if (!event) {
     return (
       <Card className="h-full flex items-center justify-center bg-muted/30">
@@ -142,11 +152,33 @@ const EventDetailPanel: React.FC<EventDetailPanelProps> = ({ event, onRegister }
           </div>
         )}
 
-        {/* Host Info */}
-        {event.creator_profile?.full_name && (
+        {/* Host Info with Message Button */}
+        {event.creator_profile && (
           <div>
-            <h3 className={`${TYPOGRAPHY.h4} mb-2`}>Hosted by</h3>
-            <p className={TYPOGRAPHY.body}>{event.creator_profile.full_name}</p>
+            <h3 className={`${TYPOGRAPHY.h4} mb-3`}>Hosted by</h3>
+            <div className="flex items-center gap-3">
+              <Avatar className="w-12 h-12">
+                <AvatarImage src={event.creator_profile.avatar_url || ''} />
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {getInitials(event.creator_profile.full_name || '')}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <p className={`${TYPOGRAPHY.body} font-semibold`}>
+                  {event.creator_profile.full_name}
+                </p>
+              </div>
+              {user?.id !== event.creator_profile.id && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openMessageOverlay(event.creator_profile.id)}
+                >
+                  <MessageCircle className="w-4 h-4 mr-1" />
+                  Message
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </CardContent>

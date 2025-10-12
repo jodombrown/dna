@@ -3,8 +3,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MapPin, Building, ExternalLink, Users, Calendar, Heart } from 'lucide-react';
+import { MapPin, Building, ExternalLink, Users, Calendar, Heart, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useMessage } from '@/contexts/MessageContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProfileCardProps {
   profile: {
@@ -30,10 +32,17 @@ interface ProfileCardProps {
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
   const navigate = useNavigate();
+  const { openMessageOverlay } = useMessage();
+  const { user } = useAuth();
 
   const handleConnectClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigate(`/connect/${profile.id}`);
+  };
+
+  const handleMessageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    openMessageOverlay(profile.id);
   };
 
   // SAFELY HANDLE ARRAY OR STRING
@@ -176,15 +185,32 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
           )}
         </div>
         
-        <div className="flex items-center justify-between mt-auto">
-          <Button 
-            size="sm" 
-            className="bg-dna-emerald hover:bg-dna-forest text-white flex-1 mr-2"
-            onClick={handleConnectClick}
-          >
-            <Users className="w-4 h-4 mr-1" />
-            Connect
-          </Button>
+        {/* Action Buttons */}
+        <div className="flex gap-2 mt-auto">
+          {/* Only show Connect button if not viewing own profile */}
+          {user?.id !== profile.id && (
+            <Button 
+              size="sm" 
+              className="bg-dna-emerald hover:bg-dna-forest text-white flex-1"
+              onClick={handleConnectClick}
+            >
+              <Users className="w-4 h-4 mr-1" />
+              Connect
+            </Button>
+          )}
+          
+          {/* Only show Message button if not viewing own profile */}
+          {user?.id !== profile.id && (
+            <Button 
+              size="sm" 
+              variant="outline"
+              className="flex-1"
+              onClick={handleMessageClick}
+            >
+              <MessageCircle className="w-4 h-4 mr-1" />
+              Message
+            </Button>
+          )}
           
           <div className="flex gap-1">
             {profile.linkedin_url && (
