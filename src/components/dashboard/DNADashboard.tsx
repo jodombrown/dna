@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 import { 
   Users, 
   MessageSquare, 
@@ -48,10 +49,10 @@ const DNADashboard: React.FC = () => {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-xl font-semibold text-foreground">
+                <h1 className={TYPOGRAPHY.h3}>
                   Welcome back, {profile.full_name?.split(' ')[0] || 'Professional'}
                 </h1>
-                <p className="text-sm text-muted-foreground">
+                <p className={`${TYPOGRAPHY.body} text-muted-foreground`}>
                   Building bridges across the African diaspora
                 </p>
               </div>
@@ -82,9 +83,9 @@ const DNADashboard: React.FC = () => {
                       {profile.full_name?.charAt(0) || profile.username?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
-                  <h3 className="font-semibold text-lg">{profile.full_name || profile.username}</h3>
+                  <h3 className={TYPOGRAPHY.h4}>{profile.full_name || profile.username}</h3>
                   {profile.headline && (
-                    <p className="text-sm text-muted-foreground mt-1">{profile.headline}</p>
+                    <p className={`${TYPOGRAPHY.body} text-muted-foreground mt-1`}>{profile.headline}</p>
                   )}
                   
                   {/* Identity Badges */}
@@ -107,8 +108,8 @@ const DNADashboard: React.FC = () => {
                 {/* Profile Completion */}
                 <div className="border-t pt-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Profile Strength</span>
-                    <span className="text-sm text-muted-foreground">{completionScore}%</span>
+                    <span className={TYPOGRAPHY.body}>Profile Strength</span>
+                    <span className={`${TYPOGRAPHY.body} text-muted-foreground`}>{completionScore}%</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div 
@@ -117,7 +118,7 @@ const DNADashboard: React.FC = () => {
                     />
                   </div>
                   {completionScore < 80 && (
-                    <p className="text-xs text-muted-foreground mt-2">
+                    <p className={`${TYPOGRAPHY.caption} mt-2`}>
                       Strengthen your profile to attract better connections
                     </p>
                   )}
@@ -128,21 +129,21 @@ const DNADashboard: React.FC = () => {
             {/* Quick Stats */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">Your Network</CardTitle>
+                <CardTitle className={TYPOGRAPHY.h5}>Your Network</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Connections</span>
-                    <span className="font-semibold">{profile.connection_count || 0}</span>
+                    <span className={`${TYPOGRAPHY.body} text-muted-foreground`}>Connections</span>
+                    <span className={TYPOGRAPHY.statSmall}>{profile.connection_count || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Profile Views</span>
-                    <span className="font-semibold">{profile.profile_views_count || 0}</span>
+                    <span className={`${TYPOGRAPHY.body} text-muted-foreground`}>Profile Views</span>
+                    <span className={TYPOGRAPHY.statSmall}>{profile.profile_views_count || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Messages</span>
-                    <span className="font-semibold">0</span>
+                    <span className={`${TYPOGRAPHY.body} text-muted-foreground`}>Messages</span>
+                    <span className={TYPOGRAPHY.statSmall}>0</span>
                   </div>
                 </div>
               </CardContent>
@@ -160,8 +161,8 @@ const DNADashboard: React.FC = () => {
                     <div className="w-12 h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-3">
                       <Users className="w-6 h-6 text-dna-emerald" />
                     </div>
-                    <h3 className="font-semibold text-sm">Connect</h3>
-                    <p className="text-xs text-muted-foreground mt-1">Build your network</p>
+                    <h3 className={TYPOGRAPHY.h6}>Connect</h3>
+                    <p className={`${TYPOGRAPHY.caption} mt-1`}>Build your network</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -172,8 +173,8 @@ const DNADashboard: React.FC = () => {
                     <div className="w-12 h-12 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-3">
                       <Briefcase className="w-6 h-6 text-dna-copper" />
                     </div>
-                    <h3 className="font-semibold text-sm">Collaborate</h3>
-                    <p className="text-xs text-muted-foreground mt-1">Work together</p>
+                    <h3 className={TYPOGRAPHY.h6}>Collaborate</h3>
+                    <p className={`${TYPOGRAPHY.caption} mt-1`}>Work together</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -184,8 +185,8 @@ const DNADashboard: React.FC = () => {
                     <div className="w-12 h-12 bg-dna-gold/10 rounded-full flex items-center justify-center mx-auto mb-3">
                       <Heart className="w-6 h-6 text-dna-gold" />
                     </div>
-                    <h3 className="font-semibold text-sm">Opportunities</h3>
-                    <p className="text-xs text-muted-foreground mt-1">Find ways to contribute</p>
+                    <h3 className={TYPOGRAPHY.h6}>Opportunities</h3>
+                    <p className={`${TYPOGRAPHY.caption} mt-1`}>Find ways to contribute</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -196,8 +197,8 @@ const DNADashboard: React.FC = () => {
                     <div className="w-12 h-12 bg-dna-mint/10 rounded-full flex items-center justify-center mx-auto mb-3">
                       <TrendingUp className="w-6 h-6 text-dna-mint" />
                     </div>
-                    <h3 className="font-semibold text-sm">Discover</h3>
-                    <p className="text-xs text-muted-foreground mt-1">Explore opportunities</p>
+                    <h3 className={TYPOGRAPHY.h6}>Discover</h3>
+                    <p className={`${TYPOGRAPHY.caption} mt-1`}>Explore opportunities</p>
                   </CardContent>
                 </Card>
               </Link>
@@ -221,15 +222,15 @@ const DNADashboard: React.FC = () => {
                       <Users className="w-4 h-4 text-dna-emerald" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm">
+                      <p className={TYPOGRAPHY.body}>
                         <span className="font-medium">Welcome to DNA!</span> Complete your profile to start connecting with the diaspora community.
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">Just now</p>
+                      <p className={`${TYPOGRAPHY.caption} mt-1`}>Just now</p>
                     </div>
                   </div>
                   
                   <div className="text-center py-8">
-                    <p className="text-sm text-muted-foreground">Start connecting to see activity here</p>
+                    <p className={`${TYPOGRAPHY.body} text-muted-foreground`}>Start connecting to see activity here</p>
                     <Link to="/dna/connect">
                       <Button variant="outline" size="sm" className="mt-3">
                         Find Connections
@@ -249,15 +250,15 @@ const DNADashboard: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
                     <MessageSquare className="w-5 h-5" />
-                    <span className="text-sm">Start Conversation</span>
+                    <span className={TYPOGRAPHY.body}>Start Conversation</span>
                   </Button>
                   <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
                     <Calendar className="w-5 h-5" />
-                    <span className="text-sm">Create Event</span>
+                    <span className={TYPOGRAPHY.body}>Create Event</span>
                   </Button>
                   <Button variant="outline" className="h-auto p-4 flex flex-col items-center gap-2">
                     <Plus className="w-5 h-5" />
-                    <span className="text-sm">Share Update</span>
+                    <span className={TYPOGRAPHY.body}>Share Update</span>
                   </Button>
                 </div>
               </CardContent>
@@ -270,12 +271,12 @@ const DNADashboard: React.FC = () => {
             {/* People You May Know */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">People You May Know</CardTitle>
+                <CardTitle className={TYPOGRAPHY.h5}>People You May Know</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="text-center py-4">
-                    <p className="text-sm text-muted-foreground mb-3">
+                    <p className={`${TYPOGRAPHY.body} text-muted-foreground mb-3`}>
                       We'll suggest connections based on your profile and network
                     </p>
                     <Link to="/dna/connect">
@@ -291,12 +292,12 @@ const DNADashboard: React.FC = () => {
             {/* Upcoming Events */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">Upcoming Events</CardTitle>
+                <CardTitle className={TYPOGRAPHY.h5}>Upcoming Events</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-4">
                   <Calendar className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground mb-3">
+                  <p className={`${TYPOGRAPHY.body} text-muted-foreground mb-3`}>
                     Discover diaspora events and gatherings
                   </p>
                   <Button variant="outline" size="sm">
@@ -309,12 +310,12 @@ const DNADashboard: React.FC = () => {
             {/* Contribution Opportunities */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">Ways to Contribute</CardTitle>
+                <CardTitle className={TYPOGRAPHY.h5}>Ways to Contribute</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-4">
                   <Heart className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground mb-3">
+                  <p className={`${TYPOGRAPHY.body} text-muted-foreground mb-3`}>
                     Find meaningful ways to give back to the community
                   </p>
                   <Link to="/dna/impact">

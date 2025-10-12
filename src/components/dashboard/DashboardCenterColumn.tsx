@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 import { Users, Search, MessageSquare, UserPlus, TrendingUp, MapPin, Globe, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DNAPillarNavigation } from '@/components/navigation/DNAPillarNavigation';
@@ -45,13 +46,13 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
         <CardContent className="p-3 sm:p-4 md:p-5">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h2 className="text-xl font-semibold mb-2">
+              <h2 className={`${TYPOGRAPHY.h2} mb-2`}>
                 {isOwnProfile 
                   ? `Welcome back, ${profile.username ? `@${profile.username}` : profile.full_name?.split(' ')[0] || 'Professional'}!`
                   : `${profile.full_name || profile.username}'s Profile`
                 }
               </h2>
-              <p className="text-muted-foreground mb-4">
+              <p className={`${TYPOGRAPHY.body} text-muted-foreground mb-4`}>
                 {isOwnProfile 
                   ? 'Connect with African diaspora professionals worldwide' 
                   : 'Professional in the African diaspora network'
@@ -102,10 +103,10 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-sm font-semibold">{completionScore}%</span>
+                    <span className={TYPOGRAPHY.body}>{completionScore}%</span>
                   </div>
                 </div>
-                <span className="text-xs text-muted-foreground mt-1">Profile</span>
+                <span className={`${TYPOGRAPHY.caption} mt-1`}>Profile</span>
               </div>
             )}
           </div>
@@ -120,8 +121,8 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
               <Search className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground text-sm sm:text-base">Discover Professionals</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground">Find diaspora talent to connect with</p>
+              <h3 className={TYPOGRAPHY.h5}>Discover Professionals</h3>
+              <p className={`${TYPOGRAPHY.body} text-muted-foreground`}>Find diaspora talent to connect with</p>
             </div>
           </CardContent>
         </Card>
@@ -132,8 +133,8 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
               <Users className="w-5 h-5 sm:w-6 sm:h-6 text-dna-emerald" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground text-sm sm:text-base">My Network</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground">Manage your connections</p>
+              <h3 className={TYPOGRAPHY.h5}>My Network</h3>
+              <p className={`${TYPOGRAPHY.body} text-muted-foreground`}>Manage your connections</p>
             </div>
           </CardContent>
         </Card>

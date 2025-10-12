@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
-
+import { TYPOGRAPHY } from '@/lib/typography.config';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
 import { Play, Users } from 'lucide-react';
 
@@ -30,13 +29,13 @@ const HeroSection = () => {
             <div className="space-y-6">
               {/* Main Headline */}
               <div className="text-center lg:text-left">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-dna-forest mb-4">
+                <h1 className={`${TYPOGRAPHY.display} text-dna-forest mb-4`}>
                   Welcome to the
                   <br />
                   <span className="text-dna-copper">Diaspora Network of Africa</span>
                 </h1>
                 
-                <p className="text-xl md:text-2xl text-gray-700 mb-6 leading-relaxed">
+                <p className={`${TYPOGRAPHY.bodyLarge} text-gray-700 mb-6`}>
                   Connecting Africa's diaspora professionals for transformative global impact through 
                   <span className="font-semibold text-dna-emerald"> capacity building</span>, 
                   <span className="font-semibold text-dna-copper"> venture building</span>, and 
