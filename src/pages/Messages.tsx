@@ -10,6 +10,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Send, ArrowLeft, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
+import UnifiedHeader from '@/components/UnifiedHeader';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 const Messages: React.FC = () => {
   const { user } = useAuth();
@@ -92,11 +94,14 @@ const Messages: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-dna-forest mb-2">Messages</h1>
-        <p className="text-gray-600">Connect with your network</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <UnifiedHeader />
+      
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-dna-forest mb-2">Messages</h1>
+          <p className="text-gray-600">Connect with your network</p>
+        </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-250px)]">
         {/* Conversations List */}
@@ -264,6 +269,9 @@ const Messages: React.FC = () => {
           )}
         </Card>
       </div>
+      </div>
+      
+      <MobileBottomNav />
     </div>
   );
 };

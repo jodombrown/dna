@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, UserPlus, Clock, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import UnifiedHeader from '@/components/UnifiedHeader';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 const Network: React.FC = () => {
   const { toast } = useToast();
@@ -57,11 +59,14 @@ const Network: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-dna-forest mb-2">My Network</h1>
-        <p className="text-gray-600">Manage your connections and requests</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <UnifiedHeader />
+      
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-dna-forest mb-2">My Network</h1>
+          <p className="text-gray-600">Manage your connections and requests</p>
+        </div>
 
       <Tabs defaultValue="connections" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 max-w-md">
@@ -214,6 +219,9 @@ const Network: React.FC = () => {
           )}
         </TabsContent>
       </Tabs>
+      </div>
+      
+      <MobileBottomNav />
     </div>
   );
 };

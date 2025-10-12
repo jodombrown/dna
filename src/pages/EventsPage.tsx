@@ -11,6 +11,8 @@ import { Badge } from '@/components/ui/badge';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Event } from '@/types/search';
 import { TYPOGRAPHY } from '@/lib/typography.config';
+import UnifiedHeader from '@/components/UnifiedHeader';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 const EventsPage = () => {
   const { user } = useAuth();
@@ -38,6 +40,8 @@ const EventsPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <UnifiedHeader />
+      
       {/* Header */}
       <div className="border-b bg-card">
         <div className="container mx-auto px-4 py-6">
@@ -185,6 +189,8 @@ const EventsPage = () => {
           onRegister={() => {}}
         />
       )}
+      
+      <MobileBottomNav />
     </div>
   );
 };
