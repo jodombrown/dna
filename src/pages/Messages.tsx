@@ -1,97 +1,98 @@
-import React, { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { messagingService } from '@/services/messagingService';
-import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
+import { useMobile } from '@/hooks/useMobile';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import ConversationListPanel from '@/components/messaging/ConversationListPanel';
-import MessageThreadPanel from '@/components/messaging/MessageThreadPanel';
+import ConversationThread from '@/components/messaging/ConversationThread';
+import EmptyConversationState from '@/components/messaging/EmptyConversationState';
 import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
 
 /**
  * Messages Page - MESSAGES_MODE
  * 
  * Layout: TwoColumnLayout (35%-65%)
- * - Left: Conversation list with search
- * - Right: Active conversation thread with message input
+ * - Left: Conversation list with search/filters
+ * - Right: Active conversation thread or empty state
  * 
  * Features:
- * - Real-time message updates via Supabase Realtime
- * - Search conversations
- * - Mark messages as read
- * - Responsive mobile/desktop layout
+ * - Real-time message updates
+ * - Search and filter conversations
+ * - Mobile responsive (switches between list/thread)
+ * - Empty state when no conversation selected
  */
-const Messages: React.FC = () => {
-  const { user } = useAuth();
-  const { toast } = useToast();
+export default function MessagesPage() {
+  const { isMobile } = useMobile();
   const queryClient = useQueryClient();
   
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
-  const [messageInput, setMessageInput] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch conversations
-  const { data: conversations, isLoading: conversationsLoading } = useQuery({
+  const { data: conversations, isLoading } = useQuery({
     queryKey: ['conversations'],
     queryFn: messagingService.getConversations,
   });
 
-  // Fetch messages for selected conversation
-  const { data: messages, isLoading: messagesLoading } = useQuery({
-    queryKey: ['messages', selectedConversationId],
-    queryFn: () => selectedConversationId ? messagingService.getMessages(selectedConversationId) : null,
-    enabled: !!selectedConversationId,
-  });
-
-  // Send message mutation
-  const sendMessageMutation = useMutation({
-    mutationFn: ({ conversationId, content }: { conversationId: string; content: string }) =>
-      messagingService.sendMessage(conversationId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages', selectedConversationId] });
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
-      setMessageInput('');
-    },
-    onError: () => {
-      toast({ title: 'Failed to send message', variant: 'destructive' });
-    },
-  });
-
-  // Subscribe to real-time messages
-  useEffect(() => {
-    if (!selectedConversationId) return;
-
-    const channel = messagingService.subscribeToMessages(selectedConversationId, () => {
-      queryClient.invalidateQueries({ queryKey: ['messages', selectedConversationId] });
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
-    });
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [selectedConversationId, queryClient]);
-
-  // Mark as read when opening conversation
-  useEffect(() => {
-    if (selectedConversationId) {
-      messagingService.markAsRead(selectedConversationId);
-    }
-  }, [selectedConversationId]);
-
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!messageInput.trim() || !selectedConversationId) return;
-
-    sendMessageMutation.mutate({
-      conversationId: selectedConversationId,
-      content: messageInput.trim(),
-    });
-  };
-
   const selectedConversation = conversations?.find(c => c.id === selectedConversationId);
 
+  // Mobile: Show only conversation list or thread, not both
+  if (isMobile) {
+    if (selectedConversationId) {
+      return (
+        <div className="min-h-screen bg-background">
+          <UnifiedHeader />
+          
+          <div className="border-b bg-card">
+            <div className="container mx-auto px-4 py-3">
+              <MessagesBreadcrumb 
+                selectedConversation={selectedConversation}
+                onClearSelection={() => setSelectedConversationId(null)}
+              />
+            </div>
+          </div>
+
+          <div className="h-[calc(100vh-140px)]">
+            <ConversationThread 
+              conversationId={selectedConversationId}
+              onClose={() => setSelectedConversationId(null)}
+            />
+          </div>
+          
+          <MobileBottomNav />
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-background">
+        <UnifiedHeader />
+        
+        <div className="border-b bg-card">
+          <div className="container mx-auto px-4 py-3">
+            <MessagesBreadcrumb />
+          </div>
+        </div>
+
+        <div className="h-[calc(100vh-140px)]">
+          <ConversationListPanel
+            conversations={conversations}
+            isLoading={isLoading}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            selectedConversationId={selectedConversationId}
+            onSelectConversation={setSelectedConversationId}
+          />
+        </div>
+        
+        <MobileBottomNav />
+      </div>
+    );
+  }
+
+  // Desktop: Two-column layout
   return (
     <div className="min-h-screen bg-background">
       <UnifiedHeader />
@@ -113,7 +114,7 @@ const Messages: React.FC = () => {
         left={
           <ConversationListPanel
             conversations={conversations}
-            isLoading={conversationsLoading}
+            isLoading={isLoading}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             selectedConversationId={selectedConversationId}
@@ -121,22 +122,17 @@ const Messages: React.FC = () => {
           />
         }
         right={
-          <MessageThreadPanel
-            conversation={selectedConversation || null}
-            messages={messages || []}
-            isLoading={messagesLoading}
-            currentUserId={user?.id}
-            messageInput={messageInput}
-            onMessageInputChange={setMessageInput}
-            onSendMessage={handleSendMessage}
-            isSending={sendMessageMutation.isPending}
-          />
+          selectedConversationId ? (
+            <ConversationThread 
+              conversationId={selectedConversationId}
+            />
+          ) : (
+            <EmptyConversationState message="Select a conversation to start chatting" />
+          )
         }
       />
       
       <MobileBottomNav />
     </div>
   );
-};
-
-export default Messages;
+}
