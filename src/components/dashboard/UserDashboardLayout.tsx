@@ -26,7 +26,7 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       <UnifiedHeader />
       
       <main className="pt-5 pb-20 lg:pb-0 overflow-hidden">
-        <div className="max-w-[1600px] mx-auto h-[calc(100vh-5rem)]">
+        <div className="w-full h-[calc(100vh-5rem)]">
           {isMobile ? (
             // Mobile: Single column layout, stacked - optimized spacing
             <div className="space-y-3 pt-1 px-3 overflow-y-auto h-full">
