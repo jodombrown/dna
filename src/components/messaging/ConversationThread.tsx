@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { messagingService } from '@/services/messagingService';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,12 +50,8 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
 
   const conversation = conversations?.find(c => c.id === conversationId);
 
-  // Fetch messages
-  const { data: messages, isLoading } = useQuery({
-    queryKey: ['messages', conversationId],
-    queryFn: () => messagingService.getMessages(conversationId),
-    enabled: !!conversationId,
-  });
+  // Fetch messages with realtime updates
+  const { data: messages, isLoading } = useRealtimeMessages(conversationId);
 
   // Send message mutation
   const sendMessageMutation = useMutation({
@@ -69,19 +66,6 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
     },
   });
 
-  // Subscribe to real-time messages
-  useEffect(() => {
-    if (!conversationId) return;
-
-    const channel = messagingService.subscribeToMessages(conversationId, () => {
-      queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
-    });
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [conversationId, queryClient]);
 
   // Auto-scroll to bottom
   useEffect(() => {
