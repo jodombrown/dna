@@ -12,10 +12,10 @@ const PlatformBadges = () => {
       <Button 
         onClick={() => navigate('/phase-1/market-research')}
         variant="outline"
-        className="bg-blue-500/10 text-dna-forest border-blue-500 px-4 py-3 text-sm font-semibold 
+        className="bg-dna-purple/10 text-dna-forest border-dna-purple px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out 
-                   hover:bg-blue-500 hover:text-white hover:scale-105 hover:border-blue-500"
+                   hover:bg-dna-purple hover:text-white hover:scale-105 hover:border-dna-purple"
       >
         <Search className="w-4 h-4 mr-2" />
         Market Research
@@ -47,10 +47,10 @@ const PlatformBadges = () => {
       <Button 
         onClick={() => navigate('/phase-4/mvp')}
         variant="outline"
-        className="bg-dna-copper/10 text-dna-forest border-dna-copper px-4 py-3 text-sm font-semibold 
+        className="bg-dna-ochre/10 text-dna-forest border-dna-ochre px-4 py-3 text-sm font-semibold 
                    shadow-lg hover:shadow-xl hover:-translate-y-1 
                    transition-all duration-300 ease-out delay-225
-                   hover:bg-dna-copper hover:text-white hover:scale-105 hover:border-dna-copper
+                   hover:bg-dna-ochre hover:text-white hover:scale-105 hover:border-dna-ochre
                    hover:rotate-2"
       >
         <Target className="w-4 h-4 mr-2" />

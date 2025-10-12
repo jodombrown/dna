@@ -5,7 +5,7 @@ import { Card, CardContent } from './ui/card';
 
 const BuildingTogetherSection = () => {
   return (
-    <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-dna-mint/5">
+    <section className="py-16 bg-gradient-to-br from-dna-pearl-light via-white to-dna-terra-light/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h3 className="text-3xl md:text-4xl font-bold text-dna-forest mb-4">
@@ -22,15 +22,15 @@ const BuildingTogetherSection = () => {
           {/* Share Feedback Card */}
           <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 bg-white/80 backdrop-blur-sm">
             <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-dna-copper/20 transition-colors">
-                <MessageCircle className="w-8 h-8 text-dna-copper" />
+              <div className="w-16 h-16 bg-dna-ochre/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-dna-ochre/20 transition-colors">
+                <MessageCircle className="w-8 h-8 text-dna-ochre" />
               </div>
               <h3 className="text-2xl font-bold text-dna-forest mb-4">Share Feedback</h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Help us build better by sharing your thoughts and ideas
               </p>
               <Button 
-                className="bg-dna-copper hover:bg-dna-forest text-white rounded-full px-6 py-2 transition-all duration-300"
+                className="bg-dna-ochre hover:bg-dna-ochre-dark text-white rounded-full px-6 py-2 transition-all duration-300"
                 onClick={() => window.open('mailto:feedback@diasporanetwork.africa', '_blank')}
               >
                 Give Feedback

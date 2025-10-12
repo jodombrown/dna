@@ -55,15 +55,15 @@ const HeroTriangleSection = () => {
                 className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer transform hover:scale-105"
               >
                 <div className="flex justify-center mb-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-14 h-14 bg-gradient-to-br from-dna-ochre to-dna-sunset rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Handshake className="w-7 h-7 text-white" />
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-dna-copper mb-3">Collaborate</h3>
+                <h3 className="text-xl font-bold text-dna-ochre mb-3">Collaborate</h3>
                 <p className="text-gray-600 text-sm mb-4 leading-relaxed">
                   Transform shared vision into action through partnerships.
                 </p>
-                <div className="flex items-center justify-center text-dna-copper group-hover:text-dna-gold transition-colors">
+                <div className="flex items-center justify-center text-dna-ochre group-hover:text-dna-sunset transition-colors">
                   <span className="text-sm font-medium mr-2">Learn More</span>
                   <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
                 </div>

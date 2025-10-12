@@ -27,15 +27,15 @@ const ConnectSection = () => {
             </p>
             
             <div className="space-y-3 mb-8">
-              <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
+              <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg hover:bg-dna-emerald/15 transition-colors">
                 <Globe className="w-5 h-5 text-dna-emerald" />
                 <span className="font-medium">Global Network Access</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
+              <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg hover:bg-dna-emerald/15 transition-colors">
                 <Target className="w-5 h-5 text-dna-emerald" />
                 <span className="font-medium">Smart Opportunity Matching</span>
               </div>
-              <div className="flex items-center gap-3 p-4 bg-dna-mint/10 rounded-lg">
+              <div className="flex items-center gap-3 p-4 bg-dna-emerald/10 rounded-lg hover:bg-dna-emerald/15 transition-colors">
                 <Network className="w-5 h-5 text-dna-emerald" />
                 <span className="font-medium">Professional Communities</span>
               </div>
@@ -63,7 +63,7 @@ const ConnectSection = () => {
                 
                 <div className="p-6 space-y-4">
                   <div className="flex items-center gap-3 p-3 border rounded-lg">
-                    <div className="w-12 h-12 bg-dna-copper rounded-full"></div>
+                    <div className="w-12 h-12 bg-dna-ochre rounded-full"></div>
                     <div>
                       <p className="font-medium">Dr. Amara Okafor</p>
                       <p className="text-sm text-gray-600">FinTech • Lagos → London</p>
@@ -81,7 +81,7 @@ const ConnectSection = () => {
                   </div>
                   
                   <div className="flex items-center gap-3 p-3 border rounded-lg">
-                    <div className="w-12 h-12 bg-dna-gold rounded-full"></div>
+                    <div className="w-12 h-12 bg-dna-sunset rounded-full"></div>
                     <div>
                       <p className="font-medium">Prof. Kwame Asante</p>
                       <p className="text-sm text-gray-600">AgriTech • Accra → Toronto</p>

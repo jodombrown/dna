@@ -22,7 +22,7 @@ const HeroSection = () => {
   return (
     <>
       {/* Main Hero Section with reduced spacing */}
-      <section className="relative bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10 pt-2">
+      <section className="relative bg-gradient-to-br from-dna-terra-light/20 via-white to-dna-ochre-light/10 pt-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[60vh] py-6">
             
@@ -77,13 +77,13 @@ const HeroSection = () => {
 
         {/* Background Pattern */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-dna-mint/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-dna-copper/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-dna-sunset/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-dna-terra/10 rounded-full blur-3xl"></div>
         </div>
       </section>
 
       {/* Statistics Section */}
-      <section className="py-10 bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10">
+      <section className="py-10 bg-gradient-to-r from-dna-terra/10 to-dna-sunset/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <DiasporaStats />
         </div>
