@@ -13,6 +13,7 @@ import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestMo
 import { TYPOGRAPHY } from '@/lib/typography.config';
 import { connectionService } from '@/services/connectionService';
 import { getGenericErrorMessage } from '@/utils/errorHandling';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Recommendation {
   id: string;
