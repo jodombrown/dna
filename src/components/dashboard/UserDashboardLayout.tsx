@@ -18,8 +18,11 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
   profile,
   currentUser
 }) => {
-  const { isMobile } = useMobile();
+  const { isMobile, isTablet, isDesktop } = useMobile();
   const isOwnProfile = currentUser.id === profile.id;
+  
+  // Use stacked layout for mobile AND tablet
+  const useStackedLayout = isMobile || isTablet;
 
   return (
     <div className="min-h-screen bg-background">
@@ -27,8 +30,8 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       
       <main className="pt-5 pb-20 lg:pb-0 overflow-hidden">
         <div className="w-full h-[calc(100vh-5rem)]">
-          {isMobile ? (
-            // Mobile: Single column layout, stacked - optimized spacing
+          {useStackedLayout ? (
+            // Mobile & Tablet: Single column layout, stacked
             <div className="space-y-3 pt-1 px-3 overflow-y-auto h-full">
               <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
               <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
