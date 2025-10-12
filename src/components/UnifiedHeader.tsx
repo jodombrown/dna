@@ -47,6 +47,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems, phases } from './header/navigationConfig';
+import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 // Notifications removed - backend tables dropped
 
 const UnifiedHeader = () => {
@@ -115,6 +116,9 @@ const UnifiedHeader = () => {
     refetchInterval: 30000 // Refetch every 30 seconds
   });
 
+  // Query unread message count
+  const { data: unreadMessageCount = 0 } = useUnreadMessageCount();
+
   // Don't render anything while loading
   if (loading) {
     return null;
@@ -125,13 +129,13 @@ const UnifiedHeader = () => {
 
   // Navigation items for authenticated users
   const authNavigationItems = [
-    { title: 'Feed', view: 'feed', icon: Home, path: '/dna/feed' },
-    { title: 'My DNA', view: 'dna', icon: User, path: '/dna/me' },
-    { title: 'Discover', view: 'discover', icon: Users, path: '/dna/discover' },
-    { title: 'Network', view: 'network', icon: Users2, path: '/dna/network' },
-    { title: 'Events', view: 'events', icon: Calendar, path: '/dna/events' },
-    { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/dna/messages' },
-    { title: 'Opportunities', view: 'opportunities', icon: Briefcase, path: '/dna/impact' },
+    { title: 'Feed', view: 'feed', icon: Home, path: '/dna/feed', badge: 0 },
+    { title: 'My DNA', view: 'dna', icon: User, path: '/dna/me', badge: 0 },
+    { title: 'Discover', view: 'discover', icon: Users, path: '/dna/discover', badge: 0 },
+    { title: 'Network', view: 'network', icon: Users2, path: '/dna/network', badge: 0 },
+    { title: 'Events', view: 'events', icon: Calendar, path: '/dna/events', badge: 0 },
+    { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/dna/messages', badge: unreadMessageCount },
+    { title: 'Opportunities', view: 'opportunities', icon: Briefcase, path: '/dna/impact', badge: 0 },
   ];
 
   const handleSignOut = () => {
@@ -209,6 +213,7 @@ const UnifiedHeader = () => {
                   {authNavigationItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = location.pathname === item.path;
+                    const hasBadge = item.badge && item.badge > 0;
                     return (
                       <TooltipProvider key={item.view}>
                         <Tooltip>
@@ -217,12 +222,17 @@ const UnifiedHeader = () => {
                               variant="ghost"
                               size="sm"
                               onClick={() => navigate(item.path)}
-                              className={`flex items-center gap-2 ${
+                              className={`flex items-center gap-2 relative ${
                                 isActive ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:text-primary'
                               }`}
                             >
                               <Icon className="w-5 h-5" />
                               <span className="text-sm font-medium">{item.title}</span>
+                              {hasBadge && (
+                                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                                  {item.badge > 9 ? '9+' : item.badge}
+                                </span>
+                              )}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
