@@ -9,6 +9,7 @@ import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import EventListPanel from '@/components/events/EventListPanel';
 import EventDetailPanel from '@/components/events/EventDetailPanel';
+import EventsBreadcrumb from '@/components/events/EventsBreadcrumb';
 import { toast } from 'sonner';
 
 const EventsPage = () => {
@@ -53,6 +54,16 @@ const EventsPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <UnifiedHeader />
+      
+      {/* Breadcrumb Navigation */}
+      <div className="border-b bg-card">
+        <div className="container mx-auto px-4 py-3">
+          <EventsBreadcrumb 
+            selectedEvent={selectedEvent}
+            onClearSelection={() => setSelectedEvent(null)}
+          />
+        </div>
+      </div>
       
       {/* CONVENE_MODE: Two-column layout (60%-40%) */}
       <TwoColumnLayout
