@@ -448,7 +448,7 @@ export default function Discover() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {connectionSuggestions
-                .filter(item => item && item.user && item.user.id) // Extra safety check
+                .filter(item => item && item.user && item.user.id && item.breakdown) // Extra safety check
                 .map(({ user, score, reason, breakdown }) => (
                   <Card key={user.id} className="hover:shadow-lg transition-shadow">
                     <CardContent className="pt-6">
@@ -472,13 +472,13 @@ export default function Discover() {
                                 {score}% Match
                               </Badge>
                             </TooltipTrigger>
-                            <TooltipContent>
-                              <div className="text-sm">
-                                <p className="font-semibold mb-1">Match Score Breakdown:</p>
-                                {breakdown.skills > 0 && <p>• {breakdown.skills} shared skills</p>}
-                                {breakdown.interests > 0 && <p>• {breakdown.interests} shared interests</p>}
-                                {breakdown.impactAreas > 0 && <p>• {breakdown.impactAreas} aligned impact areas</p>}
-                                {breakdown.location && <p>• Same location</p>}
+                            <TooltipContent className="max-w-xs">
+                              <div className="text-sm space-y-1">
+                                <p className="font-semibold mb-2">Match Score Breakdown:</p>
+                                {breakdown?.skills > 0 && <p>• {breakdown.skills} shared skill{breakdown.skills > 1 ? 's' : ''}</p>}
+                                {breakdown?.interests > 0 && <p>• {breakdown.interests} shared interest{breakdown.interests > 1 ? 's' : ''}</p>}
+                                {breakdown?.impactAreas > 0 && <p>• {breakdown.impactAreas} aligned impact area{breakdown.impactAreas > 1 ? 's' : ''}</p>}
+                                {breakdown?.location && <p>• Same location</p>}
                               </div>
                             </TooltipContent>
                           </Tooltip>
