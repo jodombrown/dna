@@ -14,6 +14,7 @@ import { TYPOGRAPHY } from '@/lib/typography.config';
 import { connectionService } from '@/services/connectionService';
 import { getGenericErrorMessage } from '@/utils/errorHandling';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useBreathingAnimation } from '@/hooks/useBreathingAnimation';
 
 interface Recommendation {
   id: string;
@@ -29,6 +30,7 @@ export default function Discover() {
   const [connectingTo, setConnectingTo] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const { elementRef } = useBreathingAnimation();
 
   const { data: profile } = useQuery({
     queryKey: ['current-profile'],
@@ -468,7 +470,11 @@ export default function Discover() {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Badge variant="secondary" className="cursor-help">
+                              <Badge 
+                                ref={elementRef}
+                                variant="secondary" 
+                                className="cursor-help"
+                              >
                                 {score}% Match
                               </Badge>
                             </TooltipTrigger>
