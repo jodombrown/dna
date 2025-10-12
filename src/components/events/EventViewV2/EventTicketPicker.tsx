@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { TicketIcon, UsersIcon, ClockIcon } from 'lucide-react';
 import { Event } from '@/types/eventTypes';
 import { toast } from 'sonner';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 interface EventTicketPickerProps {
   event: Event;
@@ -120,22 +121,30 @@ const EventTicketPicker: React.FC<EventTicketPickerProps> = ({ event }) => {
         <div className="space-y-3">
           {isEventFull ? (
             <div className="space-y-2">
-              <Button className="w-full" disabled>
+              <Button variant="default" className="w-full min-h-[44px]" disabled>
                 Event Full
               </Button>
               {event.waitlist_enabled && (
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full min-h-[44px]">
                   Join Waitlist
                 </Button>
               )}
             </div>
           ) : (
             <Button
-              className="w-full"
+              variant="default"
+              className="w-full min-h-[44px] bg-dna-emerald hover:bg-dna-forest"
               onClick={handleRegister}
               disabled={!selectedTicket || registering}
             >
-              {registering ? 'Registering...' : 'Register Now'}
+              {registering ? (
+                <span className="flex items-center gap-2">
+                  <LoadingSpinner size="sm" />
+                  Registering...
+                </span>
+              ) : (
+                'Register Now'
+              )}
             </Button>
           )}
           

@@ -19,7 +19,7 @@ const ConnectPageHeader: React.FC<ConnectPageHeaderProps> = ({ totalCount }) => 
               <p className={`${TYPOGRAPHY.bodySmall} text-gray-600 hidden sm:block`}>Connect with diaspora professionals</p>
             </div>
           </div>
-          <Badge className="bg-dna-emerald text-white text-xs sm:text-sm">
+          <Badge variant="default" className="bg-dna-emerald text-white min-h-[32px]">
             {totalCount}+ Members
           </Badge>
         </div>

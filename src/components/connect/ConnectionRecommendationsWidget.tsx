@@ -4,7 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Globe, MapPin, Lightbulb, Loader2, Sparkles, UserPlus } from 'lucide-react';
+import { Globe, MapPin, Lightbulb, UserPlus } from 'lucide-react';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -287,7 +288,7 @@ export const ConnectionRecommendationsWidget = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <LoadingSpinner size="md" showText />
         </CardContent>
       </Card>
     );
@@ -372,13 +373,14 @@ export const ConnectionRecommendationsWidget = () => {
             </div>
 
             <Button
+              variant="default"
               size="sm"
               onClick={() => handleConnect(profile)}
               disabled={connectingTo === profile.id}
-              className="shrink-0 min-w-[44px] min-h-[44px] transition-all duration-150 hover:scale-105"
+              className="shrink-0 min-w-[44px] min-h-[44px] bg-dna-emerald hover:bg-dna-forest"
             >
               {connectingTo === profile.id ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
+                <LoadingSpinner size="sm" />
               ) : (
                 <><UserPlus className="h-3 w-3 mr-1" /> Connect</>
               )}

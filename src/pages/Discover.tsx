@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Sparkles, TrendingUp, Users, Target, Loader2, ArrowLeft } from 'lucide-react';
+import { Sparkles, TrendingUp, Users, Target, ArrowLeft } from 'lucide-react';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
@@ -456,14 +457,14 @@ export default function Discover() {
                         <span className="line-clamp-1">{reason}</span>
                       </div>
                       <Button 
-                        size="sm" 
-                        className="w-full" 
                         variant="outline"
+                        size="sm" 
+                        className="w-full min-h-[44px]" 
                         onClick={() => handleConnect(user)}
                         disabled={connectingTo === user.id}
                       >
                         {connectingTo === user.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <LoadingSpinner size="sm" />
                         ) : (
                           'Connect'
                         )}

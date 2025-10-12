@@ -1,22 +1,24 @@
 
 import React from 'react';
 import { TYPOGRAPHY } from '@/lib/typography.config';
+import { Button } from '@/components/ui/button';
 
 const EventPresenterSection: React.FC = () => {
   return (
     <div className="space-y-4">
       <h3 className={`${TYPOGRAPHY.h4} text-gray-900`}>Presented by</h3>
       <div className="flex items-center gap-3">
-        <button
+        <Button
+          variant="ghost"
+          className="p-0 h-auto min-w-[44px] min-h-[44px] hover:opacity-80"
           onClick={() => window.open('https://diasporanetworkafrica.com', '_blank')}
-          className="hover:opacity-80 transition-opacity"
         >
           <img 
             src="/lovable-uploads/c6f51307-c7df-4a26-a66e-b99e88b55c53.png" 
             alt="DNA Logo" 
             className="w-12 h-12 rounded-lg object-contain"
           />
-        </button>
+          </Button>
         <div>
           <div className={`${TYPOGRAPHY.h5} text-gray-900`}>Diaspora Network of Africa</div>
           <div className={`${TYPOGRAPHY.bodySmall} text-gray-600`}>#1 Professional Networking and Impact Investment Platform for the African Diaspora</div>

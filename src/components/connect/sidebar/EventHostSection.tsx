@@ -3,6 +3,8 @@ import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ExternalLink } from 'lucide-react';
 import { Event } from '@/types/search';
+import { TYPOGRAPHY } from '@/lib/typography.config';
+import { Button } from '@/components/ui/button';
 
 interface EventHostSectionProps {
   event: Event;
@@ -14,23 +16,26 @@ const EventHostSection: React.FC<EventHostSectionProps> = ({ event, onCreatorCli
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Hosted By</h3>
-      <div 
-        className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+      <h3 className={`${TYPOGRAPHY.h4} text-gray-900`}>Hosted By</h3>
+      <Button
+        variant="ghost"
+        className="w-full justify-start p-3 h-auto min-h-[44px] hover:bg-gray-50"
         onClick={() => onCreatorClick?.(event.creator_profile!.id)}
       >
-        <Avatar className="w-12 h-12">
-          <AvatarImage src={event.creator_profile.avatar_url} alt={event.creator_profile.full_name} />
-          <AvatarFallback className="bg-dna-copper text-white">
-            {event.creator_profile.full_name.split(' ').map(n => n[0]).join('')}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <div className="font-medium text-gray-900">{event.creator_profile.full_name}</div>
-          <div className="text-sm text-gray-600">Event Host</div>
+        <div className="flex items-center gap-3 w-full">
+          <Avatar className="w-12 h-12">
+            <AvatarImage src={event.creator_profile.avatar_url} alt={event.creator_profile.full_name} />
+            <AvatarFallback className="bg-dna-copper text-white">
+              {event.creator_profile.full_name.split(' ').map(n => n[0]).join('')}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 text-left">
+            <div className={`${TYPOGRAPHY.h5} text-gray-900`}>{event.creator_profile.full_name}</div>
+            <div className={`${TYPOGRAPHY.bodySmall} text-gray-600`}>Event Host</div>
+          </div>
+          <ExternalLink className="w-4 h-4 text-gray-400" />
         </div>
-        <ExternalLink className="w-4 h-4 text-gray-400" />
-      </div>
+      </Button>
     </div>
   );
 };

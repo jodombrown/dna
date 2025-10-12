@@ -52,9 +52,10 @@ const EventsPage = () => {
               </p>
             </div>
             <Button 
-              onClick={() => setShowCreateModal(true)} 
+              variant="default"
               size="lg"
-              className="bg-dna-emerald hover:bg-dna-forest text-white"
+              onClick={() => setShowCreateModal(true)}
+              className="bg-dna-emerald hover:bg-dna-forest text-white min-h-[44px]"
             >
               <Plus className="h-5 w-5 mr-2" />
               Host Event
@@ -157,7 +158,11 @@ const EventsPage = () => {
               <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className={`${TYPOGRAPHY.h4} mb-2`}>No upcoming events</h3>
               <p className={`${TYPOGRAPHY.body} text-muted-foreground mb-4`}>Be the first to host an event</p>
-              <Button onClick={() => setShowCreateModal(true)} className="bg-dna-emerald hover:bg-dna-forest text-white">
+              <Button 
+                variant="default"
+                onClick={() => setShowCreateModal(true)} 
+                className="bg-dna-emerald hover:bg-dna-forest text-white min-h-[44px]"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Host an Event
               </Button>
