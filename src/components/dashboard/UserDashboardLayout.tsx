@@ -35,10 +35,10 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
               <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
             </div>
           ) : (
-            // Desktop: 3-column layout with independent scrolling - minimal top padding
+            // Desktop: 3-column layout with independent scrolling - minimal padding
             <div className="flex h-full">
               {/* Left Column - 15% */}
-              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-r border-border px-4 pt-1 pb-4">
+              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-r border-border px-1.5 pt-1 pb-4">
                 <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
               
@@ -48,7 +48,7 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
               </div>
               
               {/* Right Column - 15% */}
-              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-l border-border px-4 pt-1 pb-4">
+              <div className="w-[15%] flex-shrink-0 overflow-y-auto border-l border-border px-1.5 pt-1 pb-4">
                 <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
             </div>
