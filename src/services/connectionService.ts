@@ -56,7 +56,7 @@ export const connectionService = {
       .insert({
         a: request.sender_id,
         b: request.receiver_id,
-        status: 'active',
+        status: 'accepted',
       });
 
     if (connError) throw connError;
@@ -97,7 +97,7 @@ export const connectionService = {
       .from('connections')
       .select('*')
       .or(`a.eq.${user.id},b.eq.${user.id}`)
-      .eq('status', 'active');
+      .eq('status', 'accepted');
 
     if (error) throw error;
     
