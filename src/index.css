@@ -29,7 +29,7 @@
     --accent: 34 75% 56%; /* DNA Copper - Innovation & warmth */
     --accent-foreground: 0 0% 100%;
 
-    /* DNA Core Brand Palette */
+    /* DNA Core Brand Palette (Primary - Green family for continuity) */
     --dna-forest: 183 28% 28%; /* Deep forest green - Heritage & stability */
     --dna-forest-light: 183 28% 35%;
     --dna-forest-dark: 183 28% 20%;
@@ -38,13 +38,31 @@
     --dna-emerald-light: 160 35% 55%;
     --dna-emerald-dark: 160 35% 35%;
     
-    --dna-copper: 25 75% 56%; /* Warm copper - Innovation & connection */
-    --dna-copper-light: 25 75% 66%;
-    --dna-copper-dark: 25 75% 46%;
+    /* Cultural Warm Tones (NEW - African Earth & Heritage) */
+    --dna-terra: 18 60% 55%; /* Terra cotta - Warm clay earth */
+    --dna-terra-light: 18 60% 70%;
+    --dna-terra-dark: 18 60% 35%;
     
-    --dna-gold: 45 85% 55%; /* Vibrant gold - Excellence & achievement */
+    --dna-ochre: 38 70% 50%; /* Ochre - Golden earth */
+    --dna-ochre-light: 38 70% 70%;
+    --dna-ochre-dark: 38 70% 40%;
+    
+    --dna-sunset: 25 85% 55%; /* Sunset orange - Vibrant warmth */
+    --dna-sunset-light: 25 85% 70%;
+    --dna-sunset-dark: 25 85% 40%;
+    
+    --dna-purple: 270 60% 55%; /* Royal purple - Heritage */
+    --dna-purple-light: 270 60% 70%;
+    --dna-purple-dark: 270 60% 35%;
+    
+    /* Updated Legacy Colors (WCAG AA Compliant) */
+    --dna-copper: 25 75% 46%; /* Warm copper - WCAG AA compliant (was 56%) */
+    --dna-copper-light: 25 75% 66%;
+    --dna-copper-dark: 25 75% 36%;
+    
+    --dna-gold: 45 85% 35%; /* Vibrant gold - WCAG AA compliant (was 55%) */
     --dna-gold-light: 45 85% 65%;
-    --dna-gold-dark: 45 85% 45%;
+    --dna-gold-dark: 45 85% 25%;
     
     --dna-mint: 170 45% 75%; /* Fresh mint - Collaboration & freshness */
     --dna-mint-light: 170 45% 85%;

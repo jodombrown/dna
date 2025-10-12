@@ -63,9 +63,9 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// DNA Brand Identity Colors
+				// DNA Brand Identity Colors (Updated with Cultural Palette)
 				dna: {
-					// Core Brand Colors
+					// Core Brand Colors (Primary - Green family for continuity)
 					forest: {
 						DEFAULT: 'hsl(var(--dna-forest))',
 						light: 'hsl(var(--dna-forest-light))',
@@ -76,13 +76,37 @@ export default {
 						light: 'hsl(var(--dna-emerald-light))',
 						dark: 'hsl(var(--dna-emerald-dark))'
 					},
+					
+					// Cultural Warm Tones (NEW - African Earth & Heritage)
+					terra: {
+						DEFAULT: 'hsl(var(--dna-terra))',
+						light: 'hsl(var(--dna-terra-light))',
+						dark: 'hsl(var(--dna-terra-dark))'
+					},
+					ochre: {
+						DEFAULT: 'hsl(var(--dna-ochre))',
+						light: 'hsl(var(--dna-ochre-light))',
+						dark: 'hsl(var(--dna-ochre-dark))'
+					},
+					sunset: {
+						DEFAULT: 'hsl(var(--dna-sunset))',
+						light: 'hsl(var(--dna-sunset-light))',
+						dark: 'hsl(var(--dna-sunset-dark))'
+					},
+					purple: {
+						DEFAULT: 'hsl(var(--dna-purple))',
+						light: 'hsl(var(--dna-purple-light))',
+						dark: 'hsl(var(--dna-purple-dark))'
+					},
+					
+					// Updated Legacy Colors (WCAG AA Compliant)
 					copper: {
-						DEFAULT: 'hsl(var(--dna-copper))',
+						DEFAULT: 'hsl(var(--dna-copper))',  // Now WCAG AA compliant
 						light: 'hsl(var(--dna-copper-light))',
 						dark: 'hsl(var(--dna-copper-dark))'
 					},
 					gold: {
-						DEFAULT: 'hsl(var(--dna-gold))',
+						DEFAULT: 'hsl(var(--dna-gold))',  // Now WCAG AA compliant
 						light: 'hsl(var(--dna-gold-light))',
 						dark: 'hsl(var(--dna-gold-dark))'
 					},
@@ -96,7 +120,8 @@ export default {
 						light: 'hsl(var(--dna-crimson-light))',
 						dark: 'hsl(var(--dna-crimson-dark))'
 					},
-					// Extended Palette
+					
+					// Extended Palette (Keep for backward compatibility)
 					earth: {
 						DEFAULT: 'hsl(var(--dna-earth))',
 						light: 'hsl(var(--dna-earth-light))',
@@ -112,12 +137,8 @@ export default {
 						light: 'hsl(var(--dna-ocean-light))',
 						dark: 'hsl(var(--dna-ocean-dark))'
 					},
-					sunset: {
-						DEFAULT: 'hsl(var(--dna-sunset))',
-						light: 'hsl(var(--dna-sunset-light))',
-						dark: 'hsl(var(--dna-sunset-dark))'
-					},
-					// Neutral Tones
+					
+					// Warm Neutral Tones (NEW - Replaces generic grays)
 					slate: {
 						DEFAULT: 'hsl(var(--dna-slate))',
 						light: 'hsl(var(--dna-slate-light))',
@@ -133,13 +154,12 @@ export default {
 						light: 'hsl(var(--dna-charcoal-light))',
 						dark: 'hsl(var(--dna-charcoal-dark))'
 					},
+					
 					// Semantic Colors
 					success: 'hsl(var(--dna-success))',
 					warning: 'hsl(var(--dna-warning))',
 					error: 'hsl(var(--dna-error))',
-					info: 'hsl(var(--dna-info))',
-					// Legacy support (keep for backward compatibility)
-					white: '#ffffff'
+					info: 'hsl(var(--dna-info))'
 				},
 				// North Africa Regional Colors
 				'north-africa': {
