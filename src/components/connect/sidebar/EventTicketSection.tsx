@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Clock } from 'lucide-react';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 
 interface EventTicketSectionProps {
   onRegister: () => void;

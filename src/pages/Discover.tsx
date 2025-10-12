@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 
 interface Recommendation {
   id: string;
@@ -276,9 +277,9 @@ export default function Discover() {
           </Button>
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="h-8 w-8 text-dna-copper" />
-            <h1 className="text-4xl font-bold">Discover</h1>
+            <h1 className={TYPOGRAPHY.h1}>Discover</h1>
           </div>
-          <p className="text-muted-foreground">
+          <p className={`${TYPOGRAPHY.body} text-muted-foreground`}>
             Personalized recommendations based on your skills, interests, and impact goals
           </p>
         </div>
@@ -287,11 +288,11 @@ export default function Discover() {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold flex items-center gap-2">
+              <h2 className={`${TYPOGRAPHY.h2} flex items-center gap-2`}>
                 <Users className="h-6 w-6" />
                 Recommended Spaces
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className={`${TYPOGRAPHY.bodySmall} text-muted-foreground`}>
                 Projects that match your expertise
               </p>
             </div>
@@ -346,11 +347,11 @@ export default function Discover() {
         <section className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold flex items-center gap-2">
+              <h2 className={`${TYPOGRAPHY.h2} flex items-center gap-2`}>
                 <Target className="h-6 w-6" />
                 Recommended Opportunities
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className={`${TYPOGRAPHY.bodySmall} text-muted-foreground`}>
                 Contributions aligned with your skills
               </p>
             </div>
@@ -406,11 +407,11 @@ export default function Discover() {
         <section>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold flex items-center gap-2">
+              <h2 className={`${TYPOGRAPHY.h2} flex items-center gap-2`}>
                 <Users className="h-6 w-6" />
                 Suggested Connections
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className={`${TYPOGRAPHY.bodySmall} text-muted-foreground`}>
                 DNA members with shared interests
               </p>
             </div>
@@ -441,8 +442,8 @@ export default function Discover() {
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold truncate">{user.full_name || 'Unknown'}</p>
-                          <p className="text-sm text-muted-foreground truncate">
+                          <p className={`${TYPOGRAPHY.h5} truncate`}>{user.full_name || 'Unknown'}</p>
+                          <p className={`${TYPOGRAPHY.bodySmall} text-muted-foreground truncate`}>
                             {user.headline || user.profession || ''}
                           </p>
                         </div>

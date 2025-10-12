@@ -12,6 +12,7 @@ import { toast } from '@/hooks/use-toast';
 import { ConnectionRequestModal } from './ConnectionRequestModal';
 import { ActivityIndicator } from '@/components/profile/ActivityIndicator';
 import { SocialProofBadge } from '@/components/profile/SocialProofBadge';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 
 interface AfricaFocusArea {
   geography: string;
@@ -332,16 +333,16 @@ export const ConnectionRecommendationsWidget = () => {
             </Avatar>
 
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-sm truncate">
+              <h4 className={`${TYPOGRAPHY.h5} truncate`}>
                 {profile.full_name}
                 {profile.username && (
-                  <span className="text-xs text-muted-foreground ml-1">
+                  <span className={`${TYPOGRAPHY.caption} ml-1`}>
                     @{profile.username}
                   </span>
                 )}
               </h4>
               {profile.headline && (
-                <p className="text-xs text-muted-foreground truncate">
+                <p className={`${TYPOGRAPHY.caption} truncate`}>
                   {profile.headline}
                   {profile.company && ` @ ${profile.company}`}
                 </p>
@@ -349,7 +350,7 @@ export const ConnectionRecommendationsWidget = () => {
               {profile.location && (
                 <div className="flex items-center gap-1 mt-1">
                   <MapPin className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">{profile.location}</span>
+                  <span className={TYPOGRAPHY.caption}>{profile.location}</span>
                 </div>
               )}
               

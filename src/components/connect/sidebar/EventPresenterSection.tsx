@@ -1,10 +1,11 @@
 
 import React from 'react';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 
 const EventPresenterSection: React.FC = () => {
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Presented by</h3>
+      <h3 className={`${TYPOGRAPHY.h4} text-gray-900`}>Presented by</h3>
       <div className="flex items-center gap-3">
         <button
           onClick={() => window.open('https://diasporanetworkafrica.com', '_blank')}
@@ -17,8 +18,8 @@ const EventPresenterSection: React.FC = () => {
           />
         </button>
         <div>
-          <div className="font-medium text-gray-900">Diaspora Network of Africa</div>
-          <div className="text-sm text-gray-600">#1 Professional Networking and Impact Investment Platform for the African Diaspora</div>
+          <div className={`${TYPOGRAPHY.h5} text-gray-900`}>Diaspora Network of Africa</div>
+          <div className={`${TYPOGRAPHY.bodySmall} text-gray-600`}>#1 Professional Networking and Impact Investment Platform for the African Diaspora</div>
         </div>
       </div>
     </div>

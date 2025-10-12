@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Event } from '@/types/search';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 
 const EventsPage = () => {
   const { user } = useAuth();
@@ -42,11 +43,11 @@ const EventsPage = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold flex items-center gap-2">
+              <h1 className={`${TYPOGRAPHY.h1} flex items-center gap-2`}>
                 <Calendar className="h-8 w-8 text-copper-500" />
                 Discover Events
               </h1>
-              <p className="text-muted-foreground mt-1">
+              <p className={`${TYPOGRAPHY.body} text-muted-foreground mt-1`}>
                 Explore upcoming events and connect with your community
               </p>
             </div>
@@ -67,10 +68,10 @@ const EventsPage = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-semibold">
+              <h3 className={TYPOGRAPHY.h3}>
                 Upcoming Events ({events?.length || 0})
               </h3>
-              <p className="text-sm text-muted-foreground">Discover and join events in your network</p>
+              <p className={`${TYPOGRAPHY.bodySmall} text-muted-foreground`}>Discover and join events in your network</p>
             </div>
           </div>
 
@@ -115,8 +116,8 @@ const EventsPage = () => {
                       <CardContent className="pt-8 pb-4">
                         <div className="space-y-3">
                           <div>
-                            <h4 className="font-semibold line-clamp-1">{event.title}</h4>
-                            <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{event.description}</p>
+                            <h4 className={`${TYPOGRAPHY.h4} line-clamp-1`}>{event.title}</h4>
+                            <p className={`${TYPOGRAPHY.bodySmall} text-muted-foreground line-clamp-2 mt-1`}>{event.description}</p>
                           </div>
                           
                           <div className="flex gap-2">
@@ -126,7 +127,7 @@ const EventsPage = () => {
                             )}
                           </div>
                           
-                          <div className="space-y-1 text-xs text-muted-foreground">
+                          <div className={`${TYPOGRAPHY.caption} space-y-1`}>
                             <div className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
                               <span>{new Date(event.date_time).toLocaleDateString()}</span>
@@ -154,8 +155,8 @@ const EventsPage = () => {
           ) : (
             <div className="text-center py-12 border rounded-lg">
               <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No upcoming events</h3>
-              <p className="text-muted-foreground mb-4">Be the first to host an event</p>
+              <h3 className={`${TYPOGRAPHY.h4} mb-2`}>No upcoming events</h3>
+              <p className={`${TYPOGRAPHY.body} text-muted-foreground mb-4`}>Be the first to host an event</p>
               <Button onClick={() => setShowCreateModal(true)} className="bg-dna-emerald hover:bg-dna-forest text-white">
                 <Plus className="h-4 w-4 mr-2" />
                 Host an Event
