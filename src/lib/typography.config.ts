@@ -11,29 +11,29 @@
 
 export const TYPOGRAPHY = {
   // Display (Hero moments only - landing pages, major announcements)
-  display: 'text-4xl md:text-5xl lg:text-6xl font-bold leading-tight',
+  display: 'font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-tight',
   
-  // Headings (Standard hierarchy)
-  h1: 'text-3xl md:text-4xl font-bold leading-tight',
-  h2: 'text-2xl md:text-3xl font-semibold leading-tight',
-  h3: 'text-xl md:text-2xl font-semibold leading-snug',
-  h4: 'text-lg md:text-xl font-semibold leading-snug',
-  h5: 'text-base md:text-lg font-semibold leading-normal',
-  h6: 'text-sm md:text-base font-semibold leading-normal',
+  // Headings (Standard hierarchy) - Serif for cultural warmth
+  h1: 'font-serif text-3xl md:text-4xl font-bold leading-tight',
+  h2: 'font-serif text-2xl md:text-3xl font-semibold leading-tight',
+  h3: 'font-serif text-xl md:text-2xl font-semibold leading-snug',
+  h4: 'font-serif text-lg md:text-xl font-semibold leading-snug',
+  h5: 'font-serif text-base md:text-lg font-semibold leading-normal',
+  h6: 'font-serif text-sm md:text-base font-semibold leading-normal',
   
-  // Body Text
-  bodyLarge: 'text-base md:text-lg font-normal leading-relaxed',
-  body: 'text-sm md:text-base font-normal leading-relaxed',
-  bodySmall: 'text-xs md:text-sm font-normal leading-relaxed',
+  // Body Text - Sans-serif for readability
+  bodyLarge: 'font-sans text-base md:text-lg font-normal leading-relaxed',
+  body: 'font-sans text-sm md:text-base font-normal leading-relaxed',
+  bodySmall: 'font-sans text-xs md:text-sm font-normal leading-relaxed',
   
   // Special Cases
-  caption: 'text-xs font-normal leading-normal text-muted-foreground',
-  overline: 'text-xs font-semibold uppercase tracking-wide',
+  caption: 'font-sans text-xs font-normal leading-normal text-muted-foreground',
+  overline: 'font-sans text-xs font-semibold uppercase tracking-wide',
   
   // Stats/Numbers (Large display numbers for dashboards)
-  statLarge: 'text-3xl md:text-4xl font-bold',
-  statMedium: 'text-2xl md:text-3xl font-bold',
-  statSmall: 'text-xl md:text-2xl font-bold',
+  statLarge: 'font-serif text-3xl md:text-4xl font-bold',
+  statMedium: 'font-serif text-2xl md:text-3xl font-bold',
+  statSmall: 'font-serif text-xl md:text-2xl font-bold',
 } as const;
 
 /**
