@@ -126,7 +126,7 @@ export const connectionService = {
       .from('connections')
       .select('*')
       .or(`and(a.eq.${user.id},b.eq.${userId}),and(a.eq.${userId},b.eq.${user.id})`)
-      .single();
+      .maybeSingle();
 
     if (connection) return { status: 'connected', connectionId: connection.id };
 
@@ -135,7 +135,7 @@ export const connectionService = {
       .from('connection_requests')
       .select('id, status, sender_id')
       .or(`and(sender_id.eq.${user.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${user.id})`)
-      .single();
+      .maybeSingle();
 
     if (request) {
       if (request.sender_id === user.id) {

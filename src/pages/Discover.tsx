@@ -11,6 +11,8 @@ import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { ConnectionRequestModal } from '@/components/connect/ConnectionRequestModal';
 import { TYPOGRAPHY } from '@/lib/typography.config';
+import { connectionService } from '@/services/connectionService';
+import { getGenericErrorMessage } from '@/utils/errorHandling';
 
 interface Recommendation {
   id: string;
@@ -233,32 +235,39 @@ export default function Discover() {
     setConnectingTo(selectedUser.id);
     
     try {
-      const { error } = await supabase
-        .from('connection_requests')
-        .insert({
-          sender_id: profile.id,
-          receiver_id: selectedUser.id,
-          status: 'pending',
-          message: note || null,
-        });
+      // Pre-check to prevent duplicate key errors
+      const status = await connectionService.getConnectionStatus(selectedUser.id);
+      if (status.status !== 'none') {
+        let description = 'You already have a connection in progress with this member.';
+        if (status.status === 'connected') description = 'You are already connected.';
+        if (status.status === 'pending_sent') description = 'Request already sent.';
+        if (status.status === 'pending_received') description = 'They have already sent you a request.';
+        toast({ title: 'Connection exists', description });
+        setModalOpen(false);
+        setSelectedUser(null);
+        return;
+      }
 
-      if (error) throw error;
+      await connectionService.sendConnectionRequest(selectedUser.id, note);
 
       toast({
         title: 'Connection request sent!',
-        description: 'You\'ll be notified when they respond.',
+        description: "You'll be notified when they respond.",
       });
       
       // Invalidate queries to refresh recommendations
-      queryClient.invalidateQueries({ queryKey: ['connection-suggestions'] });
+      queryClient.invalidateQueries({ queryKey: ['suggested-connections'] });
       
     } catch (error: any) {
-      toast({
-        title: 'Failed to send request',
-        description: error.message,
-        variant: 'destructive',
-      });
-      throw error;
+      const message = getGenericErrorMessage(error);
+      if (error?.code === '23505' || /already exists/i.test(error?.message || '')) {
+        toast({
+          title: 'Request already sent',
+          description: 'You have an active request with this member.',
+        });
+      } else {
+        toast({ title: 'Failed to send request', description: message, variant: 'destructive' });
+      }
     } finally {
       setConnectingTo(null);
     }
