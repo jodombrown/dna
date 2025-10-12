@@ -11,7 +11,7 @@ export const connectionService = {
       .from('connection_requests')
       .select('id, status')
       .or(`and(sender_id.eq.${user.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${user.id})`)
-      .single();
+      .maybeSingle();
 
     if (existing) {
       throw new Error('Connection request already exists');
