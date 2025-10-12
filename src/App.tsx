@@ -4,7 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { ViewStateProvider } from "@/contexts/ViewStateContext";
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
+import BaseLayout from "@/layouts/BaseLayout";
 
 // Core pages
 import Index from "./pages/Index";
@@ -90,7 +92,9 @@ function App() {
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            <Routes>
+            <ViewStateProvider>
+              <BaseLayout>
+                <Routes>
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
@@ -174,8 +178,10 @@ function App() {
               <Route path="/invite" element={<InviteSignup />} />
               
               <Route path="*" element={<NotFound />} />
-            </Routes>
-            <BadgeToastListener />
+                </Routes>
+                <BadgeToastListener />
+              </BaseLayout>
+            </ViewStateProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
