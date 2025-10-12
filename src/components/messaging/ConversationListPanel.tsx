@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Search } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, Search, Plus } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Conversation {
@@ -23,11 +25,20 @@ interface ConversationListPanelProps {
   onSearchChange: (term: string) => void;
   selectedConversationId: string | null;
   onSelectConversation: (id: string) => void;
+  onNewConversation?: () => void;
 }
+
+type FilterTab = 'all' | 'unread';
 
 /**
  * ConversationListPanel - Left panel (35%) for MESSAGES_MODE
  * Lists all user conversations with search/filter
+ * 
+ * Features:
+ * - Search conversations by name
+ * - Filter tabs (All/Unread)
+ * - Unread conversation badges
+ * - New conversation button
  */
 const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   conversations,
@@ -36,19 +47,37 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   onSearchChange,
   selectedConversationId,
   onSelectConversation,
+  onNewConversation,
 }) => {
+  const [filterTab, setFilterTab] = useState<FilterTab>('all');
+
   const getInitials = (name: string) => {
     return name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?';
   };
 
-  const filteredConversations = conversations?.filter(conv =>
+  // Filter by search term
+  let filteredConversations = conversations?.filter(conv =>
     conv.otherUser?.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Filter by tab (unread - placeholder for now, needs unread_count field)
+  if (filterTab === 'unread') {
+    filteredConversations = filteredConversations?.filter(conv => false); // TODO: Add unread logic
+  }
 
   return (
     <Card className="flex flex-col h-full">
       {/* Search Header */}
-      <div className="p-4 border-b">
+      <div className="p-4 border-b space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold">Messages</h2>
+          {onNewConversation && (
+            <Button variant="ghost" size="sm" onClick={onNewConversation}>
+              <Plus className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
+        
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
@@ -57,6 +86,26 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9"
           />
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="flex gap-2">
+          <Button
+            variant={filterTab === 'all' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setFilterTab('all')}
+            className="flex-1"
+          >
+            All
+          </Button>
+          <Button
+            variant={filterTab === 'unread' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setFilterTab('unread')}
+            className="flex-1"
+          >
+            Unread
+          </Button>
         </div>
       </div>
 
