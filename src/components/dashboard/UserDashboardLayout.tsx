@@ -43,10 +43,8 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
               </div>
               
               {/* Center Column - 70% */}
-              <div className="w-[70%] flex-shrink-0 overflow-y-auto px-4 py-4">
-                <div className="max-w-2xl mx-auto">
-                  <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
-                </div>
+              <div className="w-[70%] flex-shrink-0 overflow-y-auto px-6 py-4">
+                <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
               </div>
               
               {/* Right Column - 15% */}
