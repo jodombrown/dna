@@ -201,7 +201,8 @@ export default function Discover() {
           score += impactOverlap * 10;
 
           // Same location boost
-          if (profile.location && otherUser.location === profile.location) {
+          const locationMatch = profile.location && otherUser.location === profile.location;
+          if (locationMatch) {
             score += 15;
             reasons.push('Same location');
           }
@@ -213,7 +214,13 @@ export default function Discover() {
           return {
             user: otherUser,
             score,
-            reason: reasons.join(', ') || 'Part of DNA network'
+            reason: reasons.join(', ') || 'Part of DNA network',
+            breakdown: {
+              skills: skillOverlap,
+              interests: interestOverlap,
+              impactAreas: impactOverlap,
+              location: locationMatch
+            }
           };
         })
         .filter(item => item.score > 0)
@@ -442,7 +449,7 @@ export default function Discover() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {connectionSuggestions
                 .filter(item => item && item.user && item.user.id) // Extra safety check
-                .map(({ user, score, reason }) => (
+                .map(({ user, score, reason, breakdown }) => (
                   <Card key={user.id} className="hover:shadow-lg transition-shadow">
                     <CardContent className="pt-6">
                       <div className="flex items-center gap-3 mb-3">
@@ -458,9 +465,24 @@ export default function Discover() {
                             {user.headline || user.profession || ''}
                           </p>
                         </div>
-                        <Badge variant="secondary">
-                          {score}%
-                        </Badge>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Badge variant="secondary" className="cursor-help">
+                                {score}% Match
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <div className="text-sm">
+                                <p className="font-semibold mb-1">Match Score Breakdown:</p>
+                                {breakdown.skills > 0 && <p>• {breakdown.skills} shared skills</p>}
+                                {breakdown.interests > 0 && <p>• {breakdown.interests} shared interests</p>}
+                                {breakdown.impactAreas > 0 && <p>• {breakdown.impactAreas} aligned impact areas</p>}
+                                {breakdown.location && <p>• Same location</p>}
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-dna-copper mb-3">
                         <Sparkles className="h-3 w-3" />
