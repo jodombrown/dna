@@ -268,27 +268,7 @@ const DNADashboard: React.FC = () => {
 
           {/* Right Column - Recommendations */}
           <div className="lg:col-span-3 space-y-6">
-            
-            {/* People You May Know */}
-            <Card>
-              <CardHeader>
-                <CardTitle className={TYPOGRAPHY.h5}>People You May Know</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center py-4">
-                    <p className={`${TYPOGRAPHY.body} text-muted-foreground mb-3`}>
-                      We'll suggest connections based on your profile and network
-                    </p>
-                    <Link to="/dna/connect">
-                      <Button variant="outline" size="sm">
-                        Explore Network
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Removed duplicate "People You May Know" - using ConnectionRecommendationsWidget in DashboardRightColumn instead */}
 
             {/* Upcoming Events */}
             <Card>

@@ -78,33 +78,7 @@ const NetworkMainContent = () => {
           </CardContent>
         </Card>
 
-        {/* People You May Know */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg text-dna-forest">People You May Know</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {suggestions.map((person) => (
-              <div key={person.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <Avatar className="w-10 h-10">
-                    <AvatarFallback className="bg-dna-emerald text-white">
-                      {person.name.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium text-dna-forest">{person.name}</p>
-                    <p className="text-sm text-gray-600">{person.title}</p>
-                    <p className="text-xs text-gray-500">{person.mutual} mutual connections</p>
-                  </div>
-                </div>
-                <Button size="sm" variant="outline" className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white min-w-[70px]">
-                  Connect
-                </Button>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+        {/* People You May Know - Removed duplicate. Use ConnectionRecommendationsWidget instead */}
       </div>
     </div>
   );

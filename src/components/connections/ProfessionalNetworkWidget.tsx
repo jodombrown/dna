@@ -139,53 +139,7 @@ export const ProfessionalNetworkWidget: React.FC = () => {
           </div>
         </div>
 
-        {/* Network Suggestions */}
-        {suggestions.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm font-medium text-dna-forest">
-              <TrendingUp className="w-4 h-4" />
-              People you may know
-            </div>
-            
-            {suggestions.map((suggestion) => (
-              <div key={suggestion.id} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-                <Avatar className="w-10 h-10">
-                  <AvatarImage src={suggestion.avatar_url} />
-                  <AvatarFallback className="bg-dna-mint text-dna-forest text-sm">
-                    {suggestion.full_name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm text-gray-900 truncate">
-                    {suggestion.full_name}
-                  </div>
-                  <div className="text-xs text-gray-600 truncate">
-                    {suggestion.headline}
-                  </div>
-                  {suggestion.location && (
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <MapPin className="w-3 h-3" />
-                      {suggestion.location}
-                    </div>
-                  )}
-                </div>
-                
-                <ConnectionButton
-                  targetUserId={suggestion.id}
-                  targetUserName={suggestion.full_name}
-                  size="sm"
-                  variant="outline"
-                />
-              </div>
-            ))}
-            
-            <Button variant="outline" size="sm" className="w-full mt-3">
-              <Users className="w-4 h-4 mr-2" />
-              View All Suggestions
-            </Button>
-          </div>
-        )}
+        {/* Network Suggestions - Removed duplicate. Use ConnectionRecommendationsWidget instead */}
 
         {/* Professional Insights */}
         <div className="pt-3 border-t">
