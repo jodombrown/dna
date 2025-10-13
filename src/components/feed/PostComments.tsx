@@ -4,7 +4,7 @@ import { MessageCircle, Send } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -37,7 +37,6 @@ export const PostComments: React.FC<PostCommentsProps> = ({
   const [showComments, setShowComments] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
-  const { toast } = useToast();
 
   const fetchComments = async () => {
     if (!showComments) return;
@@ -64,11 +63,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({
       setComments(data || []);
     } catch (error) {
       console.error('Error fetching comments:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load comments. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to load comments. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -80,20 +75,12 @@ export const PostComments: React.FC<PostCommentsProps> = ({
 
   const handleSubmit = async () => {
     if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please log in to comment on posts",
-        variant: "destructive",
-      });
+      toast.error("Please log in to comment on posts");
       return;
     }
 
     if (!newComment.trim()) {
-      toast({
-        title: "Comment required",
-        description: "Please enter a comment",
-        variant: "destructive",
-      });
+      toast.error("Please enter a comment");
       return;
     }
 
@@ -126,17 +113,10 @@ export const PostComments: React.FC<PostCommentsProps> = ({
       setNewComment('');
       onCommentCountChange?.(comments.length + 1);
 
-      toast({
-        title: "Comment posted!",
-        description: "Your comment has been added successfully.",
-      });
+      toast.success("Comment posted successfully!");
     } catch (error) {
       console.error('Error posting comment:', error);
-      toast({
-        title: "Error",
-        description: "Failed to post comment. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to post comment. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

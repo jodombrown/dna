@@ -30,10 +30,109 @@ export interface Post {
 
 /**
  * Fetch posts with author profiles and engagement counts
+ * Filters posts like LinkedIn - shows posts from:
+ * 1. User's own posts
+ * 2. Posts from accepted connections
+ * 3. Public posts from non-connections (deprioritized)
  */
 export async function fetchPosts(): Promise<Post[]> {
   const { data: { user } } = await supabase.auth.getUser();
   
+  if (!user) {
+    // If not logged in, only show public posts
+    const { data: postsData, error: postsError } = await supabase
+      .from('posts')
+      .select(`
+        id,
+        content,
+        author_id,
+        created_at,
+        post_type,
+        visibility,
+        metadata
+      `)
+      .eq('visibility', 'public')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (postsError) throw postsError;
+    if (!postsData) return [];
+
+    // Continue with the rest of the logic below...
+    const authorIds = [...new Set(postsData.map(p => p.author_id))];
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url, profession, location')
+      .in('id', authorIds);
+
+    const profilesMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+    const postIds = postsData.map(p => p.id);
+    const { data: likesData } = await supabase
+      .from('post_likes')
+      .select('post_id, user_id')
+      .in('post_id', postIds);
+
+    const likesMap = new Map<string, { count: number; userLiked: boolean }>();
+    likesData?.forEach(like => {
+      const current = likesMap.get(like.post_id) || { count: 0, userLiked: false };
+      likesMap.set(like.post_id, {
+        count: current.count + 1,
+        userLiked: current.userLiked || like.user_id === user?.id,
+      });
+    });
+
+    const { data: commentsData } = await supabase
+      .from('comments')
+      .select('post_id')
+      .in('post_id', postIds);
+
+    const commentsMap = new Map<string, number>();
+    commentsData?.forEach(comment => {
+      const count = commentsMap.get(comment.post_id) || 0;
+      commentsMap.set(comment.post_id, count + 1);
+    });
+
+    return postsData.map(post => {
+      const author = profilesMap.get(post.author_id);
+      const likes = likesMap.get(post.id) || { count: 0, userLiked: false };
+      const commentsCount = commentsMap.get(post.id) || 0;
+
+      return {
+        ...post,
+        author: author || {
+          id: post.author_id,
+          username: 'unknown',
+          full_name: 'Unknown User',
+        },
+        likes_count: likes.count,
+        comments_count: commentsCount,
+        user_has_liked: likes.userLiked,
+      };
+    });
+  }
+
+  // Get user's connections first
+  const { data: connectionsData } = await supabase
+    .from('connections')
+    .select('a, b')
+    .eq('status', 'accepted')
+    .or(`a.eq.${user.id},b.eq.${user.id}`);
+
+  // Extract connected user IDs
+  const connectedUserIds = new Set<string>();
+  connectionsData?.forEach(conn => {
+    if (conn.a === user.id) {
+      connectedUserIds.add(conn.b);
+    } else {
+      connectedUserIds.add(conn.a);
+    }
+  });
+
+  // Fetch posts from:
+  // 1. User's own posts
+  // 2. Posts from connections
+  // 3. Public posts (will be deprioritized in ordering)
   const { data: postsData, error: postsError } = await supabase
     .from('posts')
     .select(`
@@ -46,7 +145,7 @@ export async function fetchPosts(): Promise<Post[]> {
       metadata
     `)
     .order('created_at', { ascending: false })
-    .limit(50);
+    .limit(100); // Fetch more initially to filter
 
   if (postsError) throw postsError;
   if (!postsData) return [];
@@ -88,8 +187,38 @@ export async function fetchPosts(): Promise<Post[]> {
     commentsMap.set(comment.post_id, count + 1);
   });
 
+  // Filter and prioritize posts
+  const filteredPosts = postsData
+    .filter(post => {
+      // Always show own posts
+      if (post.author_id === user.id) return true;
+      
+      // Show posts from connections
+      if (connectedUserIds.has(post.author_id)) return true;
+      
+      // Show public posts from non-connections (but these will be deprioritized)
+      if (post.visibility === 'public') return true;
+      
+      return false;
+    })
+    .sort((a, b) => {
+      // Prioritization logic (like LinkedIn):
+      // 1. Own posts and connection posts first (sorted by date)
+      // 2. Public posts from non-connections last (sorted by date)
+      
+      const aIsOwnOrConnection = a.author_id === user.id || connectedUserIds.has(a.author_id);
+      const bIsOwnOrConnection = b.author_id === user.id || connectedUserIds.has(b.author_id);
+      
+      if (aIsOwnOrConnection && !bIsOwnOrConnection) return -1;
+      if (!aIsOwnOrConnection && bIsOwnOrConnection) return 1;
+      
+      // Within same priority, sort by date (newest first)
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    })
+    .slice(0, 50); // Limit to 50 posts after filtering and sorting
+
   // Combine data
-  return postsData.map(post => {
+  return filteredPosts.map(post => {
     const author = profilesMap.get(post.author_id);
     const likes = likesMap.get(post.id) || { count: 0, userLiked: false };
     const commentsCount = commentsMap.get(post.id) || 0;
