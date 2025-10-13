@@ -17,8 +17,8 @@ const CallToActionSection: React.FC<CallToActionSectionProps> = ({ onFeedbackCli
         Help us build the ultimate networking experience for the African diaspora.
       </p>
       <Button 
+        variant="default"
         onClick={onFeedbackClick}
-        className="bg-dna-emerald hover:bg-dna-forest text-white"
       >
         <Users className="w-4 h-4 mr-2" />
         Share Your Connection Ideas

@@ -30,7 +30,7 @@ const BuildingTogetherSection = () => {
                 Help us build better by sharing your thoughts and ideas
               </p>
               <Button 
-                className="bg-dna-ochre hover:bg-dna-ochre-dark text-white rounded-full px-6 py-2 transition-all duration-300"
+                variant="default"
                 onClick={() => window.open('mailto:feedback@diasporanetwork.africa', '_blank')}
               >
                 Give Feedback
@@ -49,7 +49,7 @@ const BuildingTogetherSection = () => {
                 Follow our development journey phase by phase
               </p>
               <Button 
-                className="bg-dna-emerald hover:bg-dna-forest text-white rounded-full px-6 py-2 transition-all duration-300"
+                variant="default"
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               >
                 View Phases
@@ -68,7 +68,7 @@ const BuildingTogetherSection = () => {
                 Understand our mission, vision, and approach
               </p>
               <Button 
-                className="bg-dna-forest hover:bg-dna-emerald text-white rounded-full px-6 py-2 transition-all duration-300"
+                variant="default"
                 onClick={() => window.location.href = '/about'}
               >
                 Learn More

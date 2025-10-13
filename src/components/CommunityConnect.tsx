@@ -259,7 +259,7 @@ const CommunityConnect = () => {
                       </Badge>
                     ))}
                   </div>
-                  <Button className="w-full bg-dna-emerald hover:bg-dna-emerald/90">
+                  <Button variant="default" className="w-full">
                     Apply Now
                   </Button>
                 </CardContent>
@@ -313,7 +313,7 @@ const CommunityConnect = () => {
                       </Badge>
                     ))}
                   </div>
-                  <Button className="w-full bg-dna-emerald hover:bg-dna-emerald/90">
+                  <Button variant="default" className="w-full">
                     Register
                   </Button>
                 </CardContent>
@@ -359,7 +359,7 @@ const CommunityConnect = () => {
                       </Badge>
                     ))}
                   </div>
-                  <Button className="w-full bg-dna-emerald hover:bg-dna-emerald/90">
+                  <Button variant="default" className="w-full">
                     <Download className="w-4 h-4 mr-2" />
                     Download
                   </Button>
@@ -406,7 +406,7 @@ const CommunityConnect = () => {
                       </Badge>
                     ))}
                   </div>
-                  <Button className="w-full bg-dna-emerald hover:bg-dna-emerald/90">
+                  <Button variant="default" className="w-full">
                     <Play className="w-4 h-4 mr-2" />
                     Read Article
                   </Button>

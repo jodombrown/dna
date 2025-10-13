@@ -45,17 +45,16 @@ const HeroSection = () => {
                 {/* Primary CTA */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
                   <Button 
+                    variant="default"
                     size="lg" 
-                    className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-4 text-lg font-semibold rounded-full"
                     onClick={() => navigate('/about')}
                   >
                     <Users className="w-5 h-5 mr-2" />
                     Join Our Journey
                   </Button>
                   <Button 
-                    variant="outline" 
+                    variant="secondary" 
                     size="lg"
-                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white px-8 py-4 text-lg font-semibold rounded-full whitespace-nowrap"
                     onClick={scrollToDNAFramework}
                   >
                     <Play className="w-4 h-4 mr-2" />

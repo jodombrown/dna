@@ -19,8 +19,8 @@ const ContributeCallToAction: React.FC<ContributeCallToActionProps> = ({ onFeedb
           Help us expand our pathways to include more ways for the diaspora to create meaningful impact in Africa.
         </p>
         <Button 
+          variant="default"
           onClick={onFeedbackClick}
-          className="bg-dna-gold hover:bg-dna-copper text-white"
         >
           <HandHeart className="w-4 h-4 mr-2" />
           Share Your Pathway Ideas
