@@ -39,7 +39,7 @@ const DNADashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header with Ndebele pattern */}
-      <PatternBackground pattern="ndebele" intensity="subtle" className="border-b bg-gradient-to-r from-dna-sunset/5 to-dna-purple/5 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <PatternBackground pattern="ndebele" intensity="medium" className="border-b bg-gradient-to-r from-dna-sunset/10 to-dna-purple/10 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">

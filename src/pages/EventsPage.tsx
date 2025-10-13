@@ -11,6 +11,7 @@ import EventListPanel from '@/components/events/EventListPanel';
 import EventDetailPanel from '@/components/events/EventDetailPanel';
 import EventsBreadcrumb from '@/components/events/EventsBreadcrumb';
 import { toast } from 'sonner';
+import PatternBackground from '@/components/ui/PatternBackground';
 
 const EventsPage = () => {
   const { user } = useAuth();
@@ -55,15 +56,15 @@ const EventsPage = () => {
     <div className="min-h-screen bg-background">
       <UnifiedHeader />
       
-      {/* Breadcrumb Navigation */}
-      <div className="border-b bg-card">
+      {/* Breadcrumb Navigation with Kente pattern */}
+      <PatternBackground pattern="kente" intensity="medium" className="border-b bg-gradient-to-r from-dna-terra/5 to-dna-sunset/5">
         <div className="container mx-auto px-4 py-3">
           <EventsBreadcrumb 
             selectedEvent={selectedEvent}
             onClearSelection={() => setSelectedEvent(null)}
           />
         </div>
-      </div>
+      </PatternBackground>
       
       {/* CONVENE_MODE: Two-column layout (60%-40%) */}
       <TwoColumnLayout
