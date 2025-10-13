@@ -26,7 +26,7 @@ export const ProfileCompletenessWidget: React.FC<ProfileCompletenessWidgetProps>
   if (!profile) return null;
 
   // Use database-calculated completion score
-  const completenessScore = profile?.profile_completeness_score || 0;
+  const completenessScore = profile?.profile_completion_percentage || 0;
   const isProfileComplete = completenessScore >= 80;
 
   const getIncompleteItems = () => {

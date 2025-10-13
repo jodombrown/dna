@@ -34,7 +34,7 @@ const DNADashboard: React.FC = () => {
     );
   }
 
-  const completionScore = profile.profile_completion_score || 0;
+  const completionScore = profile.profile_completion_percentage || 0;
 
   return (
     <div className="min-h-screen bg-background">

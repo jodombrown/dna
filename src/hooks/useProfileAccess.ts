@@ -79,7 +79,7 @@ const ACCESS_LEVELS: ProfileAccessLevel[] = [
 export const useProfileAccess = () => {
   const { profile } = useAuth();
   
-  const completenessScore = profile?.profile_completeness_score || 0;
+  const completenessScore = profile?.profile_completion_percentage || 0;
   
   const getCurrentAccessLevel = (): ProfileAccessLevel => {
     return ACCESS_LEVELS.find(level => 
