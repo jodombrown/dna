@@ -5,7 +5,7 @@ import ProfessionalListItem from './ProfessionalListItem';
 import { usePublicProfiles } from '@/hooks/usePublicProfiles';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
-import { MockProfessional } from './ProfessionalsMockData';
+import { MockProfessional, mockProfessionals } from './ProfessionalsMockData';
 
 interface ProfessionalsTabProps {
   searchTerm: string;
@@ -18,8 +18,8 @@ const ProfessionalsTab: React.FC<ProfessionalsTabProps> = ({ searchTerm }) => {
     limit: 50,
   });
 
-  // Transform profiles to MockProfessional format and filter by search term
-  const transformedProfiles = profiles
+  // Use mock data if no profiles exist, otherwise transform real profiles
+  const realProfiles = profiles
     ?.filter(profile => profile.id !== user?.id)
     ?.map(profile => ({
       id: profile.id,
@@ -37,17 +37,22 @@ const ProfessionalsTab: React.FC<ProfessionalsTabProps> = ({ searchTerm }) => {
       recentActivity: 'Active on DNA',
       isOnline: false,
       mutualConnections: 0,
-    } as MockProfessional))
-    ?.filter(profile => {
-      if (!searchTerm) return true;
-      const search = searchTerm.toLowerCase();
-      return (
-        profile.name?.toLowerCase().includes(search) ||
-        profile.title?.toLowerCase().includes(search) ||
-        profile.bio?.toLowerCase().includes(search) ||
-        profile.location?.toLowerCase().includes(search)
-      );
-    });
+    } as MockProfessional));
+
+  // Use mock data as fallback if no real profiles
+  const allProfiles = (realProfiles && realProfiles.length > 0) ? realProfiles : mockProfessionals;
+
+  // Filter by search term
+  const transformedProfiles = allProfiles?.filter(profile => {
+    if (!searchTerm) return true;
+    const search = searchTerm.toLowerCase();
+    return (
+      profile.name?.toLowerCase().includes(search) ||
+      profile.title?.toLowerCase().includes(search) ||
+      profile.bio?.toLowerCase().includes(search) ||
+      profile.location?.toLowerCase().includes(search)
+    );
+  });
 
   if (isLoading) {
     return (
