@@ -2,10 +2,11 @@ import React from 'react';
 import { MessageCircle, Eye, BookOpen } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
+import PatternBackground from './ui/PatternBackground';
 
 const BuildingTogetherSection = () => {
   return (
-    <section className="py-16 bg-gradient-to-br from-dna-pearl-light via-white to-dna-terra-light/5">
+    <PatternBackground pattern="stripes" intensity="subtle" className="py-16 bg-gradient-to-br from-dna-pearl-light via-white to-dna-terra-light/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h3 className="text-3xl md:text-4xl font-bold text-dna-forest mb-4">
@@ -77,7 +78,7 @@ const BuildingTogetherSection = () => {
           </Card>
         </div>
       </div>
-    </section>
+    </PatternBackground>
   );
 };
 

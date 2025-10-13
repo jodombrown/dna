@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import PatternBackground from '@/components/ui/PatternBackground';
 import { Search, Palette, Users, Code, TestTube, Rocket } from 'lucide-react';
 
 const phases = [
@@ -73,7 +74,7 @@ const PhaseNavigation = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-16 bg-gray-50">
+    <PatternBackground pattern="mudcloth" intensity="subtle" className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Development Journey</h2>
@@ -121,7 +122,7 @@ const PhaseNavigation = () => {
           ))}
         </div>
       </div>
-    </section>
+    </PatternBackground>
   );
 };
 
