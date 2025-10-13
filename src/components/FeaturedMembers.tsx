@@ -70,7 +70,7 @@ const FeaturedMembers = () => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white w-full"
+                    className="w-full"
                   >
                     Connect
                   </Button>
@@ -82,8 +82,8 @@ const FeaturedMembers = () => {
 
         <div className="text-center">
           <Button 
-            size="lg" 
-            className="bg-dna-copper hover:bg-dna-gold text-white"
+            variant="default"
+            size="lg"
           >
             View All Members
           </Button>

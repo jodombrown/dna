@@ -93,7 +93,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ profile, onEdit }) =>
         {!profile.bio && (!profile.interests || profile.interests.length === 0) && (
           <div className="text-center py-8">
             <p className="text-gray-500 mb-4">Your profile is looking a bit empty!</p>
-            <Button onClick={onEdit} className="bg-dna-copper hover:bg-dna-gold text-white">
+            <Button variant="default" onClick={onEdit}>
               Complete Your Profile
             </Button>
           </div>

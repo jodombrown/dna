@@ -58,7 +58,7 @@ const CommunityJoinDialog: React.FC<CommunityJoinDialogProps> = ({
           <div className="rounded-md border border-dna-emerald/30 bg-dna-emerald/5 p-3 text-sm">
             You need to sign in to continue.
             <div className="mt-2">
-              <Button size="sm" className="bg-dna-emerald hover:bg-dna-forest text-white" onClick={onOpenLogin}>
+              <Button variant="default" size="sm" onClick={onOpenLogin}>
                 Sign in to continue
               </Button>
             </div>

@@ -557,7 +557,7 @@ const Auth = () => {
                   {capsLockOnConfirm && <p className="mt-1 text-xs text-gray-500">Caps Lock is on</p>}
                 </div>
 
-                <Button type="submit" disabled={isResetSubmitting} className="w-full bg-dna-copper hover:bg-dna-gold text-white">
+                <Button type="submit" variant="default" disabled={isResetSubmitting} className="w-full">
                   {isResetSubmitting ? <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Resetting...
@@ -611,7 +611,7 @@ const Auth = () => {
                     </div>
                   </div>}
 
-                <Button type="submit" disabled={isSubmitting || isGoogleLoading || isLinkedInLoading} className="w-full bg-dna-copper hover:bg-dna-gold text-white">
+                <Button type="submit" variant="default" disabled={isSubmitting || isGoogleLoading || isLinkedInLoading} className="w-full">
                   {isSubmitting ? <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       {isLogin ? 'Signing In...' : 'Creating Account...'}

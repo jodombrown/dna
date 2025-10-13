@@ -454,7 +454,7 @@ const CommunityConnect = () => {
                     ))}
                   </div>
                   <div className="flex gap-2">
-                    <Button className="flex-1 bg-dna-emerald hover:bg-dna-emerald/90">
+                    <Button variant="default" className="flex-1">
                       Get Quote
                     </Button>
                     <Button variant="outline" size="sm">
@@ -470,8 +470,7 @@ const CommunityConnect = () => {
         <div className="text-center">
           <Button 
             size="lg" 
-            variant="outline" 
-            className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
+            variant="secondary"
           >
             Explore All Community Connections
           </Button>

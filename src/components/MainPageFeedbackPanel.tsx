@@ -326,8 +326,9 @@ Feedback Type: ${formData.feedbackType || 'General'}
             <div className="flex gap-3 pt-4">
               <Button 
                 type="submit" 
+                variant="default"
                 disabled={isSubmitting}
-                className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
+                className="flex-1"
               >
                 {isSubmitting ? 'Sending Your Feedback...' : 'Share My Feedback'}
               </Button>

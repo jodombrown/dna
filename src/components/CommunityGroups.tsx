@@ -106,7 +106,8 @@ const CommunityGroups = () => {
                 </div>
                 
                 <Button 
-                  className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
+                  variant="default"
+                  className="w-full"
                 >
                   Join Group
                 </Button>
@@ -118,8 +119,7 @@ const CommunityGroups = () => {
         <div className="text-center">
           <Button 
             size="lg" 
-            variant="outline" 
-            className="border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
+            variant="secondary"
           >
             Explore All Communities
           </Button>

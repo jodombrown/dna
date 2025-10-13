@@ -77,7 +77,7 @@ const ConnectionRecommendations = () => {
                 <p className="text-xs text-dna-emerald">{person.reason}</p>
                 <p className="text-xs text-gray-500">{person.mutualConnections} mutual</p>
               </div>
-              <Button size="sm" className="bg-dna-emerald hover:bg-dna-forest text-white">
+              <Button variant="default" size="sm">
                 Connect
               </Button>
             </div>

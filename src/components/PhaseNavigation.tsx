@@ -107,11 +107,12 @@ const PhaseNavigation = () => {
               <CardContent>
                 <p className="text-gray-600 mb-4">{phase.description}</p>
                 <Button 
+                  variant="default"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(phase.path);
                   }}
-                  className="w-full bg-dna-emerald hover:bg-dna-forest text-white"
+                  className="w-full"
                 >
                   Learn More
                 </Button>

@@ -65,7 +65,7 @@ const DirectMessageDialog: React.FC<DirectMessageDialogProps> = ({ open, onOpenC
 
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-              <Button disabled={disabled} className="bg-dna-emerald hover:bg-dna-forest text-white" onClick={handleSend}>
+              <Button variant="default" disabled={disabled} onClick={handleSend}>
                 Send
               </Button>
             </div>

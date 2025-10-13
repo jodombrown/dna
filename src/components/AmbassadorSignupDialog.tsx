@@ -315,8 +315,9 @@ Availability: ${formData.availability || 'Not provided'}
             <div className="flex gap-3 pt-4">
               <Button 
                 type="submit" 
+                variant="default"
                 disabled={isSubmitting}
-                className="flex-1 bg-dna-emerald hover:bg-dna-forest text-white"
+                className="flex-1"
               >
                 {isSubmitting ? 'Submitting Application...' : 'Apply to be an Ambassador'}
               </Button>

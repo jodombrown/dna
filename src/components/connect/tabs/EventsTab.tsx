@@ -164,7 +164,7 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
             Explore events near you, browse by category, or check out featured calendars
           </p>
         </div>
-        <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
+        <Button variant="default">
           <Plus className="w-4 h-4 mr-2" />
           Create Event
         </Button>

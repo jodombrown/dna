@@ -141,7 +141,7 @@ const CommunitiesTab: React.FC<CommunitiesTabProps> = ({ searchTerm }) => {
         <p className="text-gray-600">
           Showing {communities.length} communities {searchTerm && `matching "${searchTerm}"`}
         </p>
-        <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
+        <Button variant="default">
           <Plus className="w-4 h-4 mr-2" />
           Create Community
         </Button>
@@ -168,7 +168,7 @@ const CommunitiesTab: React.FC<CommunitiesTabProps> = ({ searchTerm }) => {
                         <Badge className="bg-dna-gold text-white ml-2">Featured</Badge>
                       )}
                     </div>
-                    <Button className="bg-dna-emerald hover:bg-dna-forest text-white">
+                    <Button variant="default">
                       Join Community
                     </Button>
                   </div>
