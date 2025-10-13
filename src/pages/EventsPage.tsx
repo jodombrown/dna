@@ -43,8 +43,20 @@ const EventsPage = () => {
     }
 
     try {
-      // TODO: Implement actual registration logic
+      const { error } = await supabase
+        .from('event_registrations')
+        .insert({
+          user_id: user.id,
+          event_id: event.id,
+          status: 'going',
+        });
+
+      if (error) throw error;
+
       toast.success('Successfully registered for event!');
+      
+      // Refresh events to update attendee count
+      window.location.reload();
     } catch (error) {
       toast.error('Failed to register for event');
       console.error('Registration error:', error);

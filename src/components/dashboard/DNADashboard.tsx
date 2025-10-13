@@ -19,6 +19,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { MyEventsWidget } from '@/components/convene/MyEventsWidget';
+import { RegisteredEventsWidget } from '@/components/convene/RegisteredEventsWidget';
 
 const DNADashboard: React.FC = () => {
   const { profile } = useAuth();
@@ -270,23 +272,11 @@ const DNADashboard: React.FC = () => {
           <div className="lg:col-span-3 space-y-6">
             {/* Removed duplicate "People You May Know" - using ConnectionRecommendationsWidget in DashboardRightColumn instead */}
 
-            {/* Upcoming Events */}
-            <Card>
-              <CardHeader>
-                <CardTitle className={TYPOGRAPHY.h5}>Upcoming Events</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-4">
-                  <Calendar className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                  <p className={`${TYPOGRAPHY.body} text-muted-foreground mb-3`}>
-                    Discover diaspora events and gatherings
-                  </p>
-                  <Button variant="outline" size="sm">
-                    Browse Events
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            {/* My Events */}
+            <MyEventsWidget />
+            
+            {/* Registered Events */}
+            <RegisteredEventsWidget />
 
             {/* Contribution Opportunities */}
             <Card>
