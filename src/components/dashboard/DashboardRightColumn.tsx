@@ -148,7 +148,7 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
                 variant="ghost" 
                 size="sm" 
                 className="w-full text-dna-copper hover:bg-dna-emerald/10"
-                onClick={() => navigate('/events')}
+                onClick={() => navigate('/dna/events')}
               >
                 View all events
                 <ArrowRight className="w-3 h-3 ml-1" />

@@ -39,13 +39,14 @@ export const MyEventsWidget = () => {
             <Calendar className="h-5 w-5 text-copper-500" />
             My Events
           </span>
-          <Button 
+          {/* Phase 1.5: Event management dashboard */}
+          {/* <Button 
             size="sm" 
             variant="outline"
             onClick={() => navigate('/dna/events/manage')}
           >
             Manage
-          </Button>
+          </Button> */}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -70,7 +71,7 @@ export const MyEventsWidget = () => {
               <div
                 key={event.id}
                 className="flex gap-3 p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer"
-                onClick={() => navigate(`/dna/events/manage/${event.id}`)}
+                onClick={() => navigate('/dna/events')}
               >
                 <div className="flex-1 min-w-0">
                   <h4 className="font-semibold text-sm truncate">

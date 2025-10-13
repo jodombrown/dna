@@ -11,7 +11,8 @@ import { useNavigate } from 'react-router-dom';
 const EventCategoriesSection: React.FC = () => {
   const navigate = useNavigate();
   const handleCategoryClick = (category: any) => {
-    navigate(`/events/category/${category.id}`);
+    // Phase 1.5: Category filtering not yet implemented
+    navigate('/dna/events');
     toast.info(`${category.name} Events`, {
       description: category.description,
       duration: 3000,

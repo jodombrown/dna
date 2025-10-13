@@ -30,7 +30,8 @@ const DashboardEventsView: React.FC = () => {
   }, []);
 
 const handleEventClick = (event: Event) => {
-  navigate(`/app/events/${event.id}`);
+  // Phase 1.5: Navigate to main events page, select event in right panel
+  navigate('/dna/events');
 };
 
 const handleRegisterEvent = async (event: Event) => {
@@ -49,7 +50,7 @@ const handleRegisterEvent = async (event: Event) => {
   };
 
 const handleViewAll = () => {
-  navigate('/app/events');
+  navigate('/dna/events');
 };
 
   return (
@@ -58,7 +59,8 @@ const handleViewAll = () => {
         <h2 id="dashboard-events-heading" className="text-2xl font-bold">Events</h2>
         {/* Soft-gated create event button */}
         <RequireProfileScore min={50} featureName="Create Event" showToast showModal={false}>
-          <Button variant="dna" size="sm" aria-label="Create a new event" onClick={() => navigate('/events/new')}>Create event</Button>
+          {/* Phase 1.5: Event creation wizard not fully integrated */}
+          <Button variant="dna" size="sm" aria-label="Create a new event" onClick={() => navigate('/dna/events')}>Browse Events</Button>
         </RequireProfileScore>
       </header>
 

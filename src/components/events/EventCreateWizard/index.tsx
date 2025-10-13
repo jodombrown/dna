@@ -226,7 +226,8 @@ const EventCreateWizard: React.FC<EventCreateWizardProps> = ({ onNext }) => {
       }
 
       toast.success('Event created successfully!');
-      navigate(`/events/${eventData.slug}`);
+      // Phase 1.5: Navigate to events list instead of slug-based detail page
+      navigate('/dna/events');
     } catch (error) {
       console.error('Error finalizing event:', error);
       toast.error('Failed to create event');
@@ -292,7 +293,7 @@ const EventCreateWizard: React.FC<EventCreateWizardProps> = ({ onNext }) => {
             <div className="space-x-2">
               <Button
                 variant="outline"
-                onClick={() => navigate('/app/events')}
+                onClick={() => navigate('/dna/events')}
               >
                 Cancel
               </Button>

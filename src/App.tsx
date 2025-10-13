@@ -47,9 +47,10 @@ import Network from "./pages/Network";
 import Messages from "./pages/Messages";
 import ProfileEdit from "./pages/ProfileEdit";
 import EventsPage from "./pages/EventsPage";
-import EventDetailPage from "./pages/EventDetailPage";
-import EventManagementPage from "./pages/EventManagementPage";
-import EventEditPage from "./pages/EventEditPage";
+// Phase 1.5: Event detail pages (currently using TwoColumnLayout in EventsPage)
+// import EventDetailPage from "./pages/EventDetailPage";
+// import EventManagementPage from "./pages/EventManagementPage";
+// import EventEditPage from "./pages/EventEditPage";
 
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
@@ -127,9 +128,10 @@ function App() {
               {/* Main feature pages under /dna namespace */}
               <Route path="/dna/connect" element={<ConnectExample />} />
               <Route path="/dna/events" element={<EventsPage />} />
-              <Route path="/dna/events/:id" element={<EventDetailPage />} />
-              <Route path="/dna/events/manage" element={<EventManagementPage />} />
-              <Route path="/dna/events/manage/:id" element={<EventEditPage />} />
+              {/* Phase 1.5: Event detail routes deferred - EventsPage uses TwoColumnLayout for detail view */}
+              {/* <Route path="/dna/events/:id" element={<EventDetailPage />} /> */}
+              {/* <Route path="/dna/events/manage" element={<EventManagementPage />} /> */}
+              {/* <Route path="/dna/events/manage/:id" element={<EventEditPage />} /> */}
               <Route path="/events" element={<EventsPage />} />
               <Route path="/dna/impact" element={<Opportunities />} />
               <Route path="/dna/impact/:id" element={<OpportunityDetail />} />
