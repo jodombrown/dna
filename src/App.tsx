@@ -122,15 +122,10 @@ function App() {
               } />
               
               {/* Activity Feed */}
-              <Route path="/dna/feed" element={
-                <OnboardingGuard>
-                  <ActivityFeed />
-                </OnboardingGuard>
-              } />
+              <Route path="/dna/feed" element={<FeedComingSoon />} />
               
               {/* Main feature pages under /dna namespace */}
               <Route path="/dna/connect" element={<ConnectExample />} />
-              <Route path="/dna/feed" element={<FeedComingSoon />} />
               <Route path="/dna/events" element={<EventsPage />} />
               {/* Phase 1.5: Event detail routes deferred - EventsPage uses TwoColumnLayout for detail view */}
               {/* <Route path="/dna/events/:id" element={<EventDetailPage />} /> */}
