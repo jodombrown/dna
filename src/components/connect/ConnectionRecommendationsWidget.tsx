@@ -362,7 +362,10 @@ export const ConnectionRecommendationsWidget = () => {
               />
               
               <div className="flex items-center gap-2 mt-2">
-                <Badge variant={profile.matchPercentage && profile.matchPercentage >= 70 ? 'default' : 'secondary'} className="text-xs">
+                <Badge 
+                  variant={profile.matchPercentage && profile.matchPercentage >= 70 ? 'default' : 'secondary'} 
+                  className="text-xs animate-breathing-pulse shadow-md"
+                >
                   {profile.matchPercentage || profile.score}% match
                 </Badge>
                 <div className="flex items-center gap-1 text-xs text-copper-600">
