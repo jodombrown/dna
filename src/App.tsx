@@ -8,6 +8,7 @@ import { ViewStateProvider } from "@/contexts/ViewStateContext";
 import { MessageProvider } from "@/contexts/MessageContext";
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import BaseLayout from "@/layouts/BaseLayout";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Core pages
 import Index from "./pages/Index";
@@ -88,16 +89,17 @@ const AppShell = ({ children }: { children: React.ReactNode }) => (
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <ViewStateProvider>
-              <MessageProvider>
-                <BaseLayout>
-                <Routes>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <ViewStateProvider>
+                <MessageProvider>
+                  <BaseLayout>
+                  <Routes>
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
@@ -185,12 +187,13 @@ function App() {
                 </Routes>
                 <BadgeToastListener />
               </BaseLayout>
-              </MessageProvider>
-            </ViewStateProvider>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+                </MessageProvider>
+              </ViewStateProvider>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
