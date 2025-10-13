@@ -503,11 +503,11 @@
 @keyframes breathing-pulse {
   0%, 100% { 
     transform: scale(1);
-    box-shadow: 0 0 0 0 hsl(var(--secondary) / 0.2);
+    box-shadow: 0 0 0 0 hsl(var(--secondary) / 0.15);
   }
   50% { 
-    transform: scale(1.02);
-    box-shadow: 0 0 0 4px hsl(var(--secondary) / 0);
+    transform: scale(1.01);
+    box-shadow: 0 0 0 3px hsl(var(--secondary) / 0);
   }
 }
 
@@ -523,7 +523,7 @@
 }
 
 .animate-breathing-pulse {
-  animation: breathing-pulse 3s ease-in-out infinite;
+  animation: breathing-pulse 5s ease-in-out infinite;
 }
 
 /* Dynamic Bokeh Animation Classes */
