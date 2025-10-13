@@ -1701,6 +1701,71 @@ export type Database = {
         }
         Relationships: []
       }
+      feed_research_responses: {
+        Row: {
+          check_frequency: string
+          concerns: Json | null
+          content_to_see: Json | null
+          content_to_share: Json | null
+          created_at: string | null
+          differentiation_idea: string | null
+          dream_feature: string | null
+          early_access_email: string | null
+          feature_ratings: Json | null
+          id: string
+          post_frequency: string
+          updated_at: string | null
+          use_case: string | null
+          user_id: string
+          value_rating: string
+          wants_early_access: boolean | null
+        }
+        Insert: {
+          check_frequency: string
+          concerns?: Json | null
+          content_to_see?: Json | null
+          content_to_share?: Json | null
+          created_at?: string | null
+          differentiation_idea?: string | null
+          dream_feature?: string | null
+          early_access_email?: string | null
+          feature_ratings?: Json | null
+          id?: string
+          post_frequency: string
+          updated_at?: string | null
+          use_case?: string | null
+          user_id: string
+          value_rating: string
+          wants_early_access?: boolean | null
+        }
+        Update: {
+          check_frequency?: string
+          concerns?: Json | null
+          content_to_see?: Json | null
+          content_to_share?: Json | null
+          created_at?: string | null
+          differentiation_idea?: string | null
+          dream_feature?: string | null
+          early_access_email?: string | null
+          feature_ratings?: Json | null
+          id?: string
+          post_frequency?: string
+          updated_at?: string | null
+          use_case?: string | null
+          user_id?: string
+          value_rating?: string
+          wants_early_access?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_research_responses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_conversations: {
         Row: {
           created_at: string | null

@@ -25,6 +25,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminEngagement from "./pages/admin/AdminEngagement";
 import AdminSignals from "./pages/admin/AdminSignals";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
+import FeedComingSoon from "./pages/FeedComingSoon";
 
 // Static pages  
 import About from "./pages/About";
@@ -129,6 +130,7 @@ function App() {
               
               {/* Main feature pages under /dna namespace */}
               <Route path="/dna/connect" element={<ConnectExample />} />
+              <Route path="/dna/feed" element={<FeedComingSoon />} />
               <Route path="/dna/events" element={<EventsPage />} />
               {/* Phase 1.5: Event detail routes deferred - EventsPage uses TwoColumnLayout for detail view */}
               {/* <Route path="/dna/events/:id" element={<EventDetailPage />} /> */}
