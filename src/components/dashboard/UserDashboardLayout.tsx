@@ -8,7 +8,6 @@ import DashboardLeftColumn from './DashboardLeftColumn';
 import DashboardCenterColumn from './DashboardCenterColumn';
 import DashboardRightColumn from './DashboardRightColumn';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
-import PatternBackground from '@/components/ui/PatternBackground';
 
 interface UserDashboardLayoutProps {
   profile: Profile;
@@ -26,7 +25,7 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
   const useStackedLayout = isMobile || isTablet;
 
   return (
-    <PatternBackground pattern="mudcloth" intensity="subtle" className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       <UnifiedHeader />
       
       <main className="pt-5 pb-20 lg:pb-0 overflow-hidden">
@@ -62,7 +61,7 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav />
-    </PatternBackground>
+    </div>
   );
 };
 

@@ -14,7 +14,6 @@ import DiasporaPathways from '@/components/regional/DiasporaPathways';
 import RegionalDataHub from '@/components/regional/RegionalDataHub';
 import CulturalNarrative from '@/components/regional/CulturalNarrative';
 import heroImage from '@/assets/north-africa-hero.jpg';
-import PatternBackground from '@/components/ui/PatternBackground';
 
 const NorthAfricaLandingPage = () => {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
@@ -54,7 +53,7 @@ const NorthAfricaLandingPage = () => {
   ];
 
   return (
-    <PatternBackground pattern="adinkra" intensity="medium" className="min-h-screen bg-gradient-to-br from-background via-north-africa-sand/10 to-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-north-africa-sand/10 to-background">
       <UnifiedHeader />
       
       {/* Hero Section */}
@@ -169,7 +168,7 @@ const NorthAfricaLandingPage = () => {
       />
 
       <Footer />
-    </PatternBackground>
+    </div>
   );
 };
 

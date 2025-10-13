@@ -22,7 +22,7 @@ const HeroSection = () => {
   return (
     <>
       {/* Main Hero Section with Kente pattern */}
-      <PatternBackground pattern="kente" intensity="medium" className="relative bg-gradient-to-br from-dna-terra-light/20 via-white to-dna-ochre-light/10 pt-2">
+      <PatternBackground pattern="kente" intensity="subtle" className="relative bg-gradient-to-br from-dna-terra-light/20 via-white to-dna-ochre-light/10 pt-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[60vh] py-6">
             
@@ -82,7 +82,7 @@ const HeroSection = () => {
       </PatternBackground>
 
       {/* Statistics Section with Mudcloth pattern */}
-      <PatternBackground pattern="mudcloth" intensity="medium" className="py-10 bg-gradient-to-r from-dna-terra/10 to-dna-sunset/10">
+      <PatternBackground pattern="mudcloth" intensity="subtle" className="py-10 bg-gradient-to-r from-dna-terra/10 to-dna-sunset/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <DiasporaStats />
         </div>
