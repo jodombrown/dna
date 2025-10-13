@@ -119,12 +119,68 @@ const UnifiedHeader = () => {
   // Query unread message count
   const { data: unreadMessageCount = 0 } = useUnreadMessageCount();
 
-  // Don't render anything while loading
-  if (loading) {
-    return null;
-  }
-
   const isAuthenticated = !!user;
+  
+  // Show skeleton/minimal header during initial load to prevent flash
+  if (loading) {
+    return (
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <NavLink 
+                to="/" 
+                className="flex items-center hover:opacity-80 transition-opacity"
+              >
+                <img 
+                  src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                  alt="DNA Logo" 
+                  className="h-8 w-auto"
+                />
+              </NavLink>
+            </div>
+            <div className="flex items-center space-x-4">
+              {/* Show hamburger menu during loading for mobile */}
+              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="p-2 md:hidden"
+                    aria-label="Open menu"
+                  >
+                    <Menu className="w-6 h-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent
+                  side="left" 
+                  className="w-[85vw] max-w-sm p-0 [&>*]:!hidden [&>div]:!block"
+                  onPointerDownOutside={() => setIsMobileMenuOpen(false)}
+                >
+                  <div className="flex flex-col h-full max-h-screen">
+                    <div className="p-4 sm:p-6 border-b flex-shrink-0">
+                      <div className="flex items-center justify-end">
+                        <img 
+                          src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+                          alt="Logo" 
+                          className="h-6 sm:h-8 w-auto"
+                        />
+                      </div>
+                    </div>
+                    <ScrollArea className="flex-1 overflow-y-auto">
+                      <nav className="flex flex-col space-y-1 p-4 sm:p-6 pb-20">
+                        <div className="text-gray-500 text-sm">Loading...</div>
+                      </nav>
+                    </ScrollArea>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
   const currentPath = location.pathname;
 
   // Navigation items for authenticated users
