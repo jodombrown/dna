@@ -245,6 +245,36 @@ export type Database = {
           },
         ]
       }
+      beta_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          message: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          message?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          message?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       billing_transactions: {
         Row: {
           amount_cents: number

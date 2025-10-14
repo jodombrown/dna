@@ -14,6 +14,7 @@ import PasswordStrength from '@/components/auth/PasswordStrength';
 import { useFeatureFlags } from '@/hooks/useFeatureFlags';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LockKeyhole } from 'lucide-react';
+import { BetaWaitlist } from '@/components/auth/BetaWaitlist';
 
 const Auth = () => {
   useScrollToTop();
@@ -51,6 +52,7 @@ const Auth = () => {
   const [capsLockOnConfirm, setCapsLockOnConfirm] = useState(false);
   const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
   const [isAdminMagicSending, setIsAdminMagicSending] = useState(false);
+  const [showWaitlist, setShowWaitlist] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -271,7 +273,14 @@ const Auth = () => {
     }
   };
   const toggleMode = () => {
+    // If trying to switch to signup mode and registration is disabled, show waitlist
+    if (isLogin && !registrationEnabled) {
+      setShowWaitlist(true);
+      return;
+    }
+    
     setIsLogin(!isLogin);
+    setShowWaitlist(false);
     setFormData({
       fullName: '',
       email: '',
@@ -461,6 +470,14 @@ const Auth = () => {
       {/* Right Side - Auth Form */}
       <div className="lg:w-1/2 flex items-center justify-center p-4 pt-20 lg:pt-4">
         <div className="w-full max-w-md">
+          {/* Show waitlist form if registration is disabled and user wants to sign up */}
+          {showWaitlist ? (
+            <BetaWaitlist onBack={() => {
+              setShowWaitlist(false);
+              setIsLogin(true);
+            }} />
+          ) : (
+          <div>
           {/* Mobile Logo */}
           <div className="lg:hidden text-center mb-8">
             <div className="relative mx-auto mb-6 w-24 h-24">
@@ -668,6 +685,8 @@ const Auth = () => {
             </div>
           </CardContent>
           </Card>
+          </div>
+          )}
         </div>
       </div>
     </div>;
