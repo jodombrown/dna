@@ -266,19 +266,6 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
         )}
       </TabsContent>
 
-      <TabsContent value="events">
-        {events.length === 0 ? (
-          <EmptyState type="events" onRefresh={onRefresh} />
-        ) : (
-          <ConnectEventsTab
-            events={events}
-            onEventClick={onEventClick}
-            onRegisterEvent={onRegisterEvent}
-            onCreatorClick={onCreatorClick}
-            onViewAll={onViewAll}
-          />
-        )}
-      </TabsContent>
     </>
   );
 };

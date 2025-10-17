@@ -94,10 +94,9 @@ const SearchSection: React.FC<SearchSectionProps> = ({
       {/* Tabs Section */}
       {activeTab && onTabChange && resultCounts && (
         <div className="mb-2">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="professionals">Professionals ({resultCounts.professionals})</TabsTrigger>
             <TabsTrigger value="communities">Communities ({resultCounts.communities})</TabsTrigger>
-            <TabsTrigger value="events">Events ({resultCounts.events})</TabsTrigger>
           </TabsList>
         </div>
       )}
