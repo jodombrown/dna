@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 interface FeedbackPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  pageType: 'connect' | 'collaborate' | 'contribute';
+  pageType: 'connect' | 'collaborate' | 'contribute' | 'convene' | 'convey';
 }
 
 const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
@@ -62,6 +62,30 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
         'Share ideas for measuring and showcasing impact'
       ],
       icon: CheckCircle
+    },
+    convene: {
+      title: 'Propose a New Event or Gathering',
+      description: 'Help us create better diaspora gatherings and networking events',
+      guide: [
+        'Suggest event formats that foster meaningful connections',
+        'Identify topics or themes the diaspora cares about',
+        'Propose virtual, hybrid, or in-person event ideas',
+        'Share ideas for post-event engagement and follow-up',
+        'Recommend partnerships with event organizers or venues'
+      ],
+      icon: Users
+    },
+    convey: {
+      title: 'Propose a New Impact Story Format',
+      description: 'Help us better amplify and share diaspora success stories',
+      guide: [
+        'Suggest new ways to showcase diaspora achievements',
+        'Identify story formats that inspire action',
+        'Propose platforms or channels for wider distribution',
+        'Share ideas for measuring story impact and reach',
+        'Recommend ways to encourage more story submissions'
+      ],
+      icon: MessageSquare
     }
   };
 

@@ -12,7 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface PageSpecificSurveyProps {
   isOpen: boolean;
   onClose: () => void;
-  pageType: 'connect' | 'collaborate' | 'contribute';
+  pageType: 'connect' | 'collaborate' | 'contribute' | 'convene' | 'convey';
 }
 
 const PageSpecificSurvey: React.FC<PageSpecificSurveyProps> = ({ isOpen, onClose, pageType }) => {
@@ -84,6 +84,42 @@ const PageSpecificSurvey: React.FC<PageSpecificSurveyProps> = ({ isOpen, onClose
             ],
             interaction: 'What would motivate you to contribute more frequently?',
             missing: 'What contribution methods are missing from existing platforms?'
+          }
+        };
+      case 'convene':
+        return {
+          title: 'Convene Survey - Shape Our Events Platform',
+          description: 'Help us create the best diaspora gathering experiences.',
+          questions: {
+            experience: 'What types of diaspora events do you currently attend?',
+            features: [
+              'Virtual event hosting',
+              'Hybrid event support',
+              'Regional meetups',
+              'Industry conferences',
+              'Networking mixers',
+              'Cultural gatherings'
+            ],
+            interaction: 'What would make you more likely to attend or host events?',
+            missing: 'What event features are missing from existing platforms?'
+          }
+        };
+      case 'convey':
+        return {
+          title: 'Convey Survey - Enhance Our Storytelling Platform',
+          description: 'Help us amplify diaspora success stories and impact.',
+          questions: {
+            experience: 'How do you currently share or discover diaspora achievements?',
+            features: [
+              'Impact story showcase',
+              'Video testimonials',
+              'Project case studies',
+              'Achievement highlights',
+              'Community spotlights',
+              'Innovation updates'
+            ],
+            interaction: 'What would encourage you to share your own story?',
+            missing: 'What storytelling features are missing from existing platforms?'
           }
         };
     }
