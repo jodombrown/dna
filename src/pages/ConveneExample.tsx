@@ -1,105 +1,49 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, Users, Plus, ArrowRight, ChevronRight, Bell } from 'lucide-react';
+import { Calendar, MapPin, Users, Plus, ArrowRight, ChevronRight, Bell, Filter } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { EnhancedButton } from '@/components/ui/enhanced-button';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import FeedbackPanel from '@/components/FeedbackPanel';
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
+import { useConveneLogic } from '@/hooks/useConveneLogic';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const ConveneExample = () => {
   useScrollToTop();
-  const [isFeedbackPanelOpen, setIsFeedbackPanelOpen] = useState(false);
-  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
+  const {
+    upcomingEvents,
+    stats,
+    isFeedbackPanelOpen,
+    setIsFeedbackPanelOpen,
+    isRegisterDialogOpen,
+    setIsRegisterDialogOpen,
+    isCreateEventDialogOpen,
+    setIsCreateEventDialogOpen,
+    selectedEvent,
+    handleRegister,
+    filterType,
+    setFilterType,
+    filterCategory,
+    setFilterCategory
+  } = useConveneLogic();
 
-  // Popular/Featured Events
-  const popularEvents = [
-    {
-      id: '1',
-      title: 'African Tech Leaders Summit 2024',
-      description: 'Annual gathering of tech leaders driving innovation across Africa and the diaspora.',
-      type: 'Conference',
-      date: '2024-12-15',
-      time: '09:00',
-      location: 'Lagos, Nigeria',
-      isVirtual: false,
-      attendeeCount: 450,
-      isFeatured: true,
-      eventLogo: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=120&h=120&fit=crop',
-      bannerImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&h=200&fit=crop',
-      creatorName: 'Dr. Amina Hassan',
-      creatorImage: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face'
-    },
-    {
-      id: '2',
-      title: 'Diaspora Investment Forum',
-      description: 'Connecting diaspora investors with African startups and impact opportunities.',
-      type: 'Forum',
-      date: '2025-01-22',
-      time: '14:00',
-      location: 'Virtual Event',
-      isVirtual: true,
-      attendeeCount: 280,
-      isFeatured: true,
-      eventLogo: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=120&h=120&fit=crop',
-      bannerImage: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=500&h=200&fit=crop',
-      creatorName: 'Prof. Kwame Asante',
-      creatorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face'
-    },
-    {
-      id: '3',
-      title: 'Women in Finance Networking',
-      description: 'Professional networking and mentorship event for African women in financial services.',
-      type: 'Workshop',
-      date: '2024-12-28',
-      time: '18:00',
-      location: 'Toronto, Canada',
-      isVirtual: false,
-      attendeeCount: 120,
-      isFeatured: false,
-      eventLogo: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=120&h=120&fit=crop',
-      bannerImage: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=500&h=200&fit=crop',
-      creatorName: 'Ibrahim Diallo',
-      creatorImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&crop=face'
-    },
-    {
-      id: '4',
-      title: 'Sustainable Energy Meetup',
-      description: 'Dive deep into renewable energy projects and sustainability initiatives across Africa.',
-      type: 'Meetup',
-      date: '2025-02-05',
-      time: '12:00',
-      location: 'Berlin, Germany',
-      isVirtual: false,
-      attendeeCount: 65,
-      isFeatured: false,
-      eventLogo: 'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=120&h=120&fit=crop',
-      bannerImage: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&h=200&fit=crop',
-      creatorName: 'Sarah Mwangi',
-      creatorImage: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=80&h=80&fit=crop&crop=face'
-    },
-    {
-      id: '5',
-      title: 'HealthTech Innovation Forum',
-      description: 'Explore cutting-edge digital health solutions transforming African healthcare delivery.',
-      type: 'Forum',
-      date: '2025-02-10',
-      time: '14:00',
-      location: 'Virtual Event',
-      isVirtual: true,
-      attendeeCount: 350,
-      isFeatured: true,
-      eventLogo: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=120&h=120&fit=crop',
-      bannerImage: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&h=200&fit=crop',
-      creatorName: 'Fatima Al-Rashid',
-      creatorImage: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face'
-    }
-  ];
+  const [isSurveyOpen, setIsSurveyOpen] = useState(false);
 
   // Featured Calendars/Communities
   const featuredCalendars = [
@@ -204,18 +148,81 @@ const ConveneExample = () => {
       <UnifiedHeader />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Header with Create Event Button */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-16">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Discover Events</h1>
-            <p className="text-gray-600 mt-2">
-              Explore events near you, browse by category, or check out featured calendars
-            </p>
+        {/* Header with Stats */}
+        <div className="pt-16">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Discover Events</h1>
+              <p className="text-gray-600 mt-2">
+                Explore events near you, browse by category, or check out featured calendars
+              </p>
+            </div>
+            <EnhancedButton variant="dna" size="lg" onClick={() => setIsCreateEventDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Create Event
+            </EnhancedButton>
           </div>
-          <EnhancedButton variant="dna" size="lg">
-            <Plus className="w-4 h-4 mr-2" />
-            Create Event
-          </EnhancedButton>
+
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="text-3xl font-bold text-dna-emerald mb-1">{stats.totalEvents}</div>
+                <div className="text-sm text-muted-foreground">Total Events</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="text-3xl font-bold text-dna-copper mb-1">{stats.totalAttendees.toLocaleString()}</div>
+                <div className="text-sm text-muted-foreground">Attendees</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="text-3xl font-bold text-dna-forest mb-1">{stats.countriesReached}</div>
+                <div className="text-sm text-muted-foreground">Countries</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6 text-center">
+                <div className="text-3xl font-bold text-dna-gold mb-1">{stats.upcomingEvents}</div>
+                <div className="text-sm text-muted-foreground">Upcoming</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <div className="flex items-center gap-2">
+              <Filter className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm font-medium">Filter by:</span>
+            </div>
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Event Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="In-Person">In-Person</SelectItem>
+                <SelectItem value="Virtual">Virtual</SelectItem>
+                <SelectItem value="Hybrid">Hybrid</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filterCategory} onValueChange={setFilterCategory}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="Technology">Technology</SelectItem>
+                <SelectItem value="Finance">Finance</SelectItem>
+                <SelectItem value="Healthcare">Healthcare</SelectItem>
+                <SelectItem value="Agriculture">Agriculture</SelectItem>
+                <SelectItem value="Education">Education</SelectItem>
+                <SelectItem value="Energy">Energy</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Popular Events Section */}
@@ -223,7 +230,7 @@ const ConveneExample = () => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
-                Popular Events ({popularEvents.length})
+                Popular Events ({upcomingEvents.length})
               </h2>
               <p className="text-sm text-gray-600">Trending events in your network</p>
             </div>
@@ -234,7 +241,7 @@ const ConveneExample = () => {
 
           <Carousel className="w-full">
             <CarouselContent className="-ml-2 md:-ml-4">
-              {popularEvents.map((event) => (
+              {upcomingEvents.map((event) => (
                 <CarouselItem key={event.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
                   <Card className="hover:shadow-lg transition-shadow cursor-pointer group overflow-hidden">
                     <div className="relative">
@@ -299,7 +306,12 @@ const ConveneExample = () => {
                           </div>
                         </div>
                         
-                        <EnhancedButton variant="dna-outline" size="sm" className="w-full mt-2">
+                        <EnhancedButton 
+                          variant="default" 
+                          size="sm" 
+                          className="w-full mt-2"
+                          onClick={() => handleRegister(event)}
+                        >
                           Register for Event
                         </EnhancedButton>
                       </div>
@@ -454,6 +466,168 @@ const ConveneExample = () => {
       </main>
 
       <Footer />
+
+      {/* Registration Dialog */}
+      <Dialog open={isRegisterDialogOpen} onOpenChange={setIsRegisterDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{selectedEvent?.title}</DialogTitle>
+            <DialogDescription>
+              Complete your registration for this event
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4 text-sm p-4 bg-muted rounded-lg">
+              <div>
+                <p className="text-muted-foreground">Date</p>
+                <p className="font-medium">{selectedEvent?.date}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Time</p>
+                <p className="font-medium">{selectedEvent?.time}</p>
+              </div>
+              <div className="col-span-2">
+                <p className="text-muted-foreground">Location</p>
+                <p className="font-medium">{selectedEvent?.location}</p>
+              </div>
+              <div className="col-span-2">
+                <p className="text-muted-foreground">Type</p>
+                <Badge className={selectedEvent?.type === 'Virtual' ? 'bg-dna-emerald' : ''}>
+                  {selectedEvent?.type}
+                </Badge>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="name">Full Name</Label>
+                <Input id="name" placeholder="Enter your full name" />
+              </div>
+              <div>
+                <Label htmlFor="email">Email Address</Label>
+                <Input id="email" type="email" placeholder="your.email@example.com" />
+              </div>
+              <div>
+                <Label htmlFor="company">Company/Organization (Optional)</Label>
+                <Input id="company" placeholder="Your company name" />
+              </div>
+              <div>
+                <Label htmlFor="notes">Additional Notes (Optional)</Label>
+                <Textarea id="notes" placeholder="Any questions or special requirements?" rows={3} />
+              </div>
+            </div>
+            
+            <div className="pt-4 space-y-2">
+              <EnhancedButton className="w-full" size="lg">
+                Confirm Registration
+              </EnhancedButton>
+              <Button variant="outline" className="w-full" onClick={() => setIsRegisterDialogOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Event Dialog */}
+      <Dialog open={isCreateEventDialogOpen} onOpenChange={setIsCreateEventDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create New Event</DialogTitle>
+            <DialogDescription>
+              Organize a gathering to bring the diaspora together
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <Label htmlFor="event-title">Event Title</Label>
+                <Input id="event-title" placeholder="African Tech Summit 2025" />
+              </div>
+              
+              <div className="md:col-span-2">
+                <Label htmlFor="event-description">Description</Label>
+                <Textarea 
+                  id="event-description" 
+                  placeholder="Describe your event, its purpose, and what attendees can expect"
+                  rows={4}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="event-type">Event Type</Label>
+                <Select>
+                  <SelectTrigger id="event-type">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="conference">Conference</SelectItem>
+                    <SelectItem value="workshop">Workshop</SelectItem>
+                    <SelectItem value="meetup">Meetup</SelectItem>
+                    <SelectItem value="webinar">Webinar</SelectItem>
+                    <SelectItem value="forum">Forum</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="event-category">Category</Label>
+                <Select>
+                  <SelectTrigger id="event-category">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="technology">Technology</SelectItem>
+                    <SelectItem value="business">Business & Finance</SelectItem>
+                    <SelectItem value="health">Health & Wellness</SelectItem>
+                    <SelectItem value="education">Education</SelectItem>
+                    <SelectItem value="culture">Arts & Culture</SelectItem>
+                    <SelectItem value="climate">Climate & Environment</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="event-date">Date</Label>
+                <Input id="event-date" type="date" />
+              </div>
+              
+              <div>
+                <Label htmlFor="event-time">Time</Label>
+                <Input id="event-time" type="time" />
+              </div>
+              
+              <div>
+                <Label htmlFor="event-format">Format</Label>
+                <Select>
+                  <SelectTrigger id="event-format">
+                    <SelectValue placeholder="Select format" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="in-person">In-Person</SelectItem>
+                    <SelectItem value="virtual">Virtual</SelectItem>
+                    <SelectItem value="hybrid">Hybrid</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="event-location">Location/Platform</Label>
+                <Input id="event-location" placeholder="City, Country or Platform URL" />
+              </div>
+            </div>
+            
+            <div className="pt-4 flex gap-3">
+              <EnhancedButton className="flex-1" size="lg">
+                Create Event
+              </EnhancedButton>
+              <Button variant="outline" onClick={() => setIsCreateEventDialogOpen(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <FeedbackPanel 
         isOpen={isFeedbackPanelOpen}
