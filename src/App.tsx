@@ -35,8 +35,10 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 // Example pages
 import ConnectExample from "./pages/ConnectExample";
+import ConveneExample from "./pages/ConveneExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
+import ConveyExample from "./pages/ConveyExample";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -148,8 +150,10 @@ function App() {
               
               {/* Legacy example pages - keep for landing page */}
               <Route path="/connect" element={<ConnectExample />} />
+              <Route path="/convene" element={<ConveneExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
+              <Route path="/convey" element={<ConveyExample />} />
               
               {/* Admin routes */}
               <Route path="/app/admin" element={<AdminLayout />}>

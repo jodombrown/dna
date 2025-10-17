@@ -2,8 +2,10 @@
 export const publicNavItems = [
   { name: 'About Us', path: '/about' },
   { name: 'Connect', path: '/connect' },
+  { name: 'Convene', path: '/convene' },
   { name: 'Collaborate', path: '/collaborate' },
   { name: 'Contribute', path: '/contribute' },
+  { name: 'Convey', path: '/convey' },
   { name: 'Contact', path: '/contact' },
 ];
 
