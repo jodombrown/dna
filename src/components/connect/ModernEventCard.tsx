@@ -163,7 +163,7 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
             onRegisterEvent();
           }}
         >
-          Register for Event
+          Click to Learn More
         </Button>
       </CardContent>
     </Card>
