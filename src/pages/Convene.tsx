@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import ConnectEventsTab from '@/components/connect/tabs/ConnectEventsTab';
+import EventRegistrationSidebar from '@/components/connect/EventRegistrationSidebar';
 import { Event } from '@/types/search';
 import { useLiveEvents } from '@/hooks/useLiveEvents';
 import { useToast } from '@/hooks/use-toast';
@@ -14,12 +15,17 @@ const Convene = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { events, loading } = useLiveEvents(50);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleEventClick = (event: Event) => {
-    navigate('/dna/events');
+    setSelectedEvent(event);
+    setSidebarOpen(true);
   };
 
-  const handleRegisterEvent = async (event: Event) => {
+  const handleRegisterEvent = async () => {
+    if (!selectedEvent) return;
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
@@ -36,7 +42,7 @@ const Convene = () => {
       const { error } = await supabase
         .from('event_registrations')
         .insert({
-          event_id: event.id,
+          event_id: selectedEvent.id,
           user_id: user.id,
           status: 'going'
         });
@@ -45,8 +51,10 @@ const Convene = () => {
 
       toast({
         title: "Registration Successful!",
-        description: `You're registered for ${event.title}`,
+        description: `You're registered for ${selectedEvent.title}`,
       });
+      
+      setSidebarOpen(false);
     } catch (error: any) {
       toast({
         title: "Registration Failed",
@@ -67,6 +75,23 @@ const Convene = () => {
     navigate('/dna/events');
   };
 
+  // Navigation between events in sidebar
+  const currentEventIndex = selectedEvent 
+    ? events.findIndex(e => e.id === selectedEvent.id)
+    : -1;
+
+  const handlePreviousEvent = () => {
+    if (currentEventIndex > 0) {
+      setSelectedEvent(events[currentEventIndex - 1] as Event);
+    }
+  };
+
+  const handleNextEvent = () => {
+    if (currentEventIndex < events.length - 1) {
+      setSelectedEvent(events[currentEventIndex + 1] as Event);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <UnifiedHeader />
@@ -80,12 +105,24 @@ const Convene = () => {
           <ConnectEventsTab
             events={events as Event[]}
             onEventClick={handleEventClick}
-            onRegisterEvent={handleRegisterEvent}
+            onRegisterEvent={handleEventClick}
             onCreatorClick={handleCreatorClick}
             onViewAll={handleViewAll}
           />
         )}
       </main>
+
+      <EventRegistrationSidebar
+        open={sidebarOpen}
+        onOpenChange={setSidebarOpen}
+        event={selectedEvent}
+        onRegister={handleRegisterEvent}
+        onCreatorClick={handleCreatorClick}
+        onPreviousEvent={handlePreviousEvent}
+        onNextEvent={handleNextEvent}
+        hasPreviousEvent={currentEventIndex > 0}
+        hasNextEvent={currentEventIndex < events.length - 1}
+      />
 
       <Footer />
     </div>
