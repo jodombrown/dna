@@ -39,6 +39,7 @@ import ConveneExample from "./pages/ConveneExample";
 import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
 import ConveyExample from "./pages/ConveyExample";
+import Convene from "./pages/Convene";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -128,6 +129,7 @@ function App() {
               
               {/* Main feature pages under /dna namespace */}
               <Route path="/dna/connect" element={<ConnectExample />} />
+              <Route path="/dna/convene" element={<Convene />} />
               <Route path="/dna/events" element={<EventsPage />} />
               {/* Phase 1.5: Event detail routes deferred - EventsPage uses TwoColumnLayout for detail view */}
               {/* <Route path="/dna/events/:id" element={<EventDetailPage />} /> */}
@@ -150,7 +152,8 @@ function App() {
               
               {/* Legacy example pages - keep for landing page */}
               <Route path="/connect" element={<ConnectExample />} />
-              <Route path="/convene" element={<ConveneExample />} />
+              <Route path="/convene" element={<Convene />} />
+              <Route path="/convene-example" element={<ConveneExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
               <Route path="/convey" element={<ConveyExample />} />

@@ -265,7 +265,6 @@ const ConnectTabsContent: React.FC<ConnectTabsContentProps> = ({
           </div>
         )}
       </TabsContent>
-
     </>
   );
 };
