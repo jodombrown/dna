@@ -1451,6 +1451,64 @@ export type Database = {
           },
         ]
       }
+      event_reports: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          event_id: string
+          id: string
+          reason: string
+          reported_by: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          event_id: string
+          id?: string
+          reason: string
+          reported_by: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          event_id?: string
+          id?: string
+          reason?: string
+          reported_by?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_reports_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_reports_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_ticket_holds: {
         Row: {
           created_at: string
@@ -3181,6 +3239,7 @@ export type Database = {
           email: string | null
           email_notifications: boolean | null
           email_visible: boolean | null
+          facebook_url: string | null
           first_action_completed: boolean | null
           first_action_type: string | null
           first_name: string | null
@@ -3194,6 +3253,7 @@ export type Database = {
           impact_regions: string[] | null
           industry: string | null
           industry_sectors: string[] | null
+          instagram_url: string | null
           intentions: string[] | null
           interest_tags: string[] | null
           interests: string[] | null
@@ -3315,6 +3375,7 @@ export type Database = {
           email?: string | null
           email_notifications?: boolean | null
           email_visible?: boolean | null
+          facebook_url?: string | null
           first_action_completed?: boolean | null
           first_action_type?: string | null
           first_name?: string | null
@@ -3328,6 +3389,7 @@ export type Database = {
           impact_regions?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
+          instagram_url?: string | null
           intentions?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
@@ -3449,6 +3511,7 @@ export type Database = {
           email?: string | null
           email_notifications?: boolean | null
           email_visible?: boolean | null
+          facebook_url?: string | null
           first_action_completed?: boolean | null
           first_action_type?: string | null
           first_name?: string | null
@@ -3462,6 +3525,7 @@ export type Database = {
           impact_regions?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
+          instagram_url?: string | null
           intentions?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
