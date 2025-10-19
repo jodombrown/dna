@@ -3,6 +3,9 @@ import React from 'react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import HeroSection from '@/components/HeroSection';
 import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
+import ConnectSection from '@/components/platform/ConnectSection';
+import ConveneSection from '@/components/platform/ConveneSection';
+import ConveySection from '@/components/platform/ConveySection';
 import BuildingTogetherSection from '@/components/BuildingTogetherSection';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -27,6 +30,15 @@ const Index = () => {
 
       {/* Platform Feature Showcase */}
       <PlatformFeatureShowcase />
+
+      {/* Connect Section */}
+      <ConnectSection />
+
+      {/* Convene Section */}
+      <ConveneSection />
+
+      {/* Convey Section */}
+      <ConveySection />
 
       {/* Building Together Section */}
       <BuildingTogetherSection />
