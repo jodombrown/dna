@@ -15,10 +15,10 @@ const ConveySection = () => {
           <div className="order-2 md:order-1 relative">
             <div 
               ref={cardRef.elementRef}
-              className="bg-gray-900 rounded-3xl p-6 shadow-2xl cursor-pointer hover:shadow-3xl transition-shadow"
+              className="bg-gradient-to-br from-dna-ochre to-dna-gold rounded-3xl p-1.5 shadow-2xl cursor-pointer hover:shadow-3xl transition-all hover:scale-[1.02]"
               onClick={() => navigate('/convey')}
             >
-              <div className="bg-white rounded-2xl overflow-hidden">
+              <div className="bg-white rounded-[22px] overflow-hidden p-5">
                 <div className="bg-dna-ochre text-white p-4 text-center">
                   <h3 className="font-semibold">Diaspora Impact Stories</h3>
                 </div>

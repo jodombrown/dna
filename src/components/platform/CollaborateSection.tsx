@@ -54,12 +54,13 @@ const CollaborateSection = () => {
           <div className="md:order-1">
             <div 
               ref={cardRef.elementRef}
-              className="bg-white rounded-3xl shadow-2xl overflow-hidden cursor-pointer hover:shadow-3xl transition-shadow"
+              className="bg-gradient-to-br from-dna-copper to-dna-gold rounded-3xl p-1.5 shadow-2xl cursor-pointer hover:shadow-3xl transition-all hover:scale-[1.02]"
               onClick={() => navigate('/collaborate')}
             >
-              <div className="bg-dna-copper text-white p-4">
-                <h3 className="font-semibold">Active Collaborations</h3>
-              </div>
+              <div className="bg-white rounded-[22px] overflow-hidden">
+                <div className="bg-dna-copper text-white p-4">
+                  <h3 className="font-semibold">Active Collaborations</h3>
+                </div>
               
               <div className="p-6 space-y-4">
                 <div className="border rounded-lg p-4">
@@ -91,6 +92,7 @@ const CollaborateSection = () => {
                     <div className="w-6 h-6 bg-dna-forest rounded-full -ml-2 animate-heartbeat-delayed cursor-pointer"></div>
                     <span className="text-xs text-gray-500 ml-2">+6 more</span>
                   </div>
+                </div>
                 </div>
               </div>
             </div>

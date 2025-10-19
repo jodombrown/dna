@@ -59,9 +59,10 @@ const ContributeSection = () => {
           <div className="relative md:order-1">
             <div 
               ref={cardRef.elementRef}
-              className="bg-white rounded-3xl shadow-2xl p-8 cursor-pointer hover:shadow-3xl transition-shadow"
+              className="bg-gradient-to-br from-dna-mint to-dna-emerald rounded-3xl p-1.5 shadow-2xl cursor-pointer hover:shadow-3xl transition-all hover:scale-[1.02]"
               onClick={() => navigate('/contribute')}
             >
+              <div className="bg-white rounded-[22px] p-8">
               <h3 className="text-xl font-semibold mb-6 text-center">Your Impact Dashboard</h3>
               
               <div className="space-y-6">
@@ -89,6 +90,7 @@ const ContributeSection = () => {
                   <div className="text-sm font-bold text-dna-forest">$15,000 invested</div>
                   <div className="text-xs text-dna-emerald">+12% projected impact ROI</div>
                 </div>
+              </div>
               </div>
             </div>
           </div>
