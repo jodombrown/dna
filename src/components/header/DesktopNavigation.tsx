@@ -12,7 +12,7 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
-import { publicNavItems } from './navigationConfig';
+import { publicNavItems, aboutUsDropdown } from './navigationConfig';
 
 const DesktopNavigation = () => {
   const navigate = useNavigate();
@@ -34,6 +34,31 @@ const DesktopNavigation = () => {
   return (
     <>
       <nav className="hidden md:flex items-center space-x-8">
+        {/* About Us Dropdown */}
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="text-dna-forest hover:bg-dna-mint/30 hover:text-dna-forest">
+                About Us
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="w-48 p-2">
+                  {aboutUsDropdown.map((item) => (
+                    <li key={item.name}>
+                      <NavigationMenuLink
+                        onClick={() => handleNavClick(item)}
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-dna-mint/30 hover:text-dna-forest focus:bg-dna-mint/30 focus:text-dna-forest cursor-pointer"
+                      >
+                        <div className="text-sm font-medium leading-none">{item.name}</div>
+                      </NavigationMenuLink>
+                    </li>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+
         {filteredNavItems.map((item) => (
           <Button
             key={item.name}

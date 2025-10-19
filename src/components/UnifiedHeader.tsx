@@ -46,7 +46,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
-import { publicNavItems, phases } from './header/navigationConfig';
+import { publicNavItems, phases, aboutUsDropdown } from './header/navigationConfig';
 import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 // Notifications removed - backend tables dropped
 
@@ -379,6 +379,27 @@ const UnifiedHeader = () => {
               {!isAuthenticated && (
                 <>
                   <nav className="hidden md:flex items-center space-x-6">
+                    {/* About Us Dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="text-gray-700 hover:text-dna-forest transition-colors font-medium">
+                          About Us
+                          <ChevronDown className="w-4 h-4 ml-1" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="w-48">
+                        {aboutUsDropdown.map((item) => (
+                          <DropdownMenuItem
+                            key={item.name}
+                            onClick={() => navigate(item.path)}
+                            className="cursor-pointer"
+                          >
+                            {item.name}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+
                     {publicNavItems.filter(item => item.path !== currentPath).map((item) => (
                       <NavLink
                         key={item.name}
@@ -474,6 +495,21 @@ const UnifiedHeader = () => {
                       <nav className="flex flex-col space-y-1 p-4 sm:p-6 pb-20">
                         {!isAuthenticated ? (
                           <>
+                            {/* About Us Section with submenu */}
+                            <div className="border-b pb-4 mb-4">
+                              <p className="text-sm text-gray-600 mb-2 font-medium px-4">About</p>
+                              {aboutUsDropdown.map((item) => (
+                                <Button
+                                  key={item.name}
+                                  variant="ghost"
+                                  className="justify-start text-left w-full hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                                  onClick={() => handleNavClick(item)}
+                                >
+                                  {item.name}
+                                </Button>
+                              ))}
+                            </div>
+
                             {filteredNavItems.map((item) => (
                               <Button
                                 key={item.name}
