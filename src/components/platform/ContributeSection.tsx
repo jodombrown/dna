@@ -18,7 +18,7 @@ const ContributeSection = () => {
     <section id="contribute-section" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-16 items-center">
-          <div>
+          <div className="md:order-2">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-xl flex items-center justify-center">
                 <HandHeart className="w-6 h-6 text-white" />
@@ -56,7 +56,7 @@ const ContributeSection = () => {
             </Button>
           </div>
           
-          <div className="relative">
+          <div className="relative md:order-1">
             <div 
               ref={cardRef.elementRef}
               className="bg-white rounded-3xl shadow-2xl p-8 cursor-pointer hover:shadow-3xl transition-shadow"

@@ -12,7 +12,7 @@ const ConveneSection = () => {
     <section id="convene-section" className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
+          <div className="md:order-2">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-sunset to-dna-copper rounded-xl flex items-center justify-center">
                 <Calendar className="w-6 h-6 text-white" />
@@ -50,7 +50,7 @@ const ConveneSection = () => {
             </Button>
           </div>
           
-          <div className="relative">
+          <div className="relative md:order-1">
             <div 
               ref={cardRef.elementRef}
               className="bg-gray-900 rounded-3xl p-6 shadow-2xl cursor-pointer hover:shadow-3xl transition-shadow"
