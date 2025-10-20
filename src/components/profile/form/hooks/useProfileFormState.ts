@@ -72,6 +72,10 @@ export const useProfileFormState = ({ profile, user }: UseProfileFormStateProps)
     professionalSectors: profile?.professional_sectors ? (Array.isArray(profile.professional_sectors) ? profile.professional_sectors : []) : [],
     diasporaNetworks: profile?.diaspora_networks ? (Array.isArray(profile.diaspora_networks) ? profile.diaspora_networks : []) : [],
     mentorshipAreas: profile?.mentorship_areas ? (Array.isArray(profile.mentorship_areas) ? profile.mentorship_areas : []) : [],
+    // NEW: Discovery tags
+    focusAreas: profile?.focus_areas ? (Array.isArray(profile.focus_areas) ? profile.focus_areas : []) : [],
+    regionalExpertise: profile?.regional_expertise ? (Array.isArray(profile.regional_expertise) ? profile.regional_expertise : []) : [],
+    industries: profile?.industries ? (Array.isArray(profile.industries) ? profile.industries : []) : [],
   }));
 
   // Initialize helper states

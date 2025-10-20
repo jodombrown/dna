@@ -5,13 +5,15 @@ import { Progress } from "@/components/ui/progress";
 const PROFILE_FIELDS = [
   "full_name",
   "headline",
-  "city",
-  "location",
   "bio",
-  "my_dna_statement",
-  "impact_areas",
-  "engagement_intentions",
-  "available_for",
+  "profession",
+  "company",
+  "skills", // array - needs 3+
+  "focus_areas", // array - needs 2+
+  "regional_expertise", // array - needs 1+
+  "industries", // array - needs 2+
+  "country_of_origin",
+  "languages_spoken", // array - needs 1+
   "linkedin_url",
   "website_url"
 ];
@@ -22,16 +24,34 @@ interface ProfileCompletionBarProps {
 
 export function calculateProfileCompletion(profile: any): number {
   if (!profile) return 0;
-  let completed = 0;
-  PROFILE_FIELDS.forEach((field) => {
-    if (
-      Array.isArray(profile[field]) ? profile[field]?.length > 0
-      : profile[field]
-    ) {
-      completed += 1;
-    }
-  });
-  return Math.round((completed / PROFILE_FIELDS.length) * 100);
+  let score = 0;
+  
+  // Basic Info (30 points)
+  if (profile.avatar_url) score += 10;
+  if (profile.full_name?.length > 0) score += 5;
+  if (profile.username?.length > 0) score += 5;
+  if (profile.headline?.length > 0) score += 5;
+  if (profile.bio?.length > 50) score += 5;
+  
+  // Professional Info (20 points)
+  if (profile.profession?.length > 0) score += 5;
+  if (profile.company?.length > 0) score += 5;
+  if (profile.skills?.length >= 3) score += 10;
+  
+  // Discovery Tags (30 points) - CRITICAL FOR FINDABILITY
+  if (profile.focus_areas?.length >= 2) score += 10;
+  if (profile.regional_expertise?.length >= 1) score += 10;
+  if (profile.industries?.length >= 2) score += 10;
+  
+  // Heritage & Identity (10 points)
+  if (profile.country_of_origin?.length > 0) score += 5;
+  if (profile.languages_spoken?.length >= 1) score += 5;
+  
+  // Engagement Flags (10 points)
+  if (profile.availability_for_mentoring === true) score += 5;
+  if (profile.looking_for_opportunities === true) score += 5;
+  
+  return score;
 }
 
 const ProfileCompletionBar: React.FC<ProfileCompletionBarProps> = ({ profile }) => {

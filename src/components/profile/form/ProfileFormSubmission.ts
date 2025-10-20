@@ -31,6 +31,10 @@ export const handleProfileSubmission = async (
       professional_sectors: arrayStates.professionalSectors,
       diaspora_networks: arrayStates.diasporaNetworks,
       mentorship_areas: arrayStates.mentorshipAreas,
+      // NEW: Discovery tags
+      focus_areas: arrayStates.focusAreas,
+      regional_expertise: arrayStates.regionalExpertise,
+      industries: arrayStates.industries,
       updated_at: new Date().toISOString(),
     } as any)
     .eq('id', userId);

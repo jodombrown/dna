@@ -3243,6 +3243,7 @@ export type Database = {
           first_action_completed: boolean | null
           first_action_type: string | null
           first_name: string | null
+          focus_areas: string[] | null
           full_name: string | null
           fundraising_status: string | null
           github_url: string | null
@@ -3251,6 +3252,7 @@ export type Database = {
           impact_areas: string[] | null
           impact_goals: string[] | null
           impact_regions: string[] | null
+          industries: string[] | null
           industry: string | null
           industry_sectors: string[] | null
           instagram_url: string | null
@@ -3299,6 +3301,7 @@ export type Database = {
           recent_searches: string[] | null
           referral_code: string | null
           referrer_id: string | null
+          regional_expertise: string[] | null
           roles: string[] | null
           sdg_focus: string[] | null
           sectors: string[] | null
@@ -3313,6 +3316,7 @@ export type Database = {
           username: string
           username_change_count: number | null
           username_changes: number | null
+          username_changes_count: number | null
           username_changes_left: number | null
           username_history: Json | null
           venture_name: string | null
@@ -3379,6 +3383,7 @@ export type Database = {
           first_action_completed?: boolean | null
           first_action_type?: string | null
           first_name?: string | null
+          focus_areas?: string[] | null
           full_name?: string | null
           fundraising_status?: string | null
           github_url?: string | null
@@ -3387,6 +3392,7 @@ export type Database = {
           impact_areas?: string[] | null
           impact_goals?: string[] | null
           impact_regions?: string[] | null
+          industries?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
           instagram_url?: string | null
@@ -3435,6 +3441,7 @@ export type Database = {
           recent_searches?: string[] | null
           referral_code?: string | null
           referrer_id?: string | null
+          regional_expertise?: string[] | null
           roles?: string[] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
@@ -3449,6 +3456,7 @@ export type Database = {
           username: string
           username_change_count?: number | null
           username_changes?: number | null
+          username_changes_count?: number | null
           username_changes_left?: number | null
           username_history?: Json | null
           venture_name?: string | null
@@ -3515,6 +3523,7 @@ export type Database = {
           first_action_completed?: boolean | null
           first_action_type?: string | null
           first_name?: string | null
+          focus_areas?: string[] | null
           full_name?: string | null
           fundraising_status?: string | null
           github_url?: string | null
@@ -3523,6 +3532,7 @@ export type Database = {
           impact_areas?: string[] | null
           impact_goals?: string[] | null
           impact_regions?: string[] | null
+          industries?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
           instagram_url?: string | null
@@ -3571,6 +3581,7 @@ export type Database = {
           recent_searches?: string[] | null
           referral_code?: string | null
           referrer_id?: string | null
+          regional_expertise?: string[] | null
           roles?: string[] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
@@ -3585,6 +3596,7 @@ export type Database = {
           username?: string
           username_change_count?: number | null
           username_changes?: number | null
+          username_changes_count?: number | null
           username_changes_left?: number | null
           username_history?: Json | null
           venture_name?: string | null
@@ -4308,6 +4320,38 @@ export type Database = {
           },
           {
             foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      username_history: {
+        Row: {
+          changed_at: string
+          id: string
+          new_username: string
+          old_username: string
+          user_id: string
+        }
+        Insert: {
+          changed_at?: string
+          id?: string
+          new_username: string
+          old_username: string
+          user_id: string
+        }
+        Update: {
+          changed_at?: string
+          id?: string
+          new_username?: string
+          old_username?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "username_history_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -5198,7 +5242,7 @@ export type Database = {
       }
       update_username: {
         Args: { new_username: string }
-        Returns: undefined
+        Returns: Json
       }
       validate_invite_code: {
         Args: { invite_code: string }

@@ -6,7 +6,7 @@ export const useUpdateUsername = () => {
 
   const updateUsername = async (newUsername: string) => {
     try {
-      const { error } = await supabase.rpc('update_username', {
+      const { data, error } = await supabase.rpc('update_username', {
         new_username: newUsername,
       });
 
@@ -14,12 +14,21 @@ export const useUpdateUsername = () => {
         throw error;
       }
 
+      // Handle response from the RPC function
+      const result = data as any;
+      if (result && !result.success) {
+        throw new Error(result.error || 'Failed to update username');
+      }
+
       toast({
         title: "Username updated",
-        description: `Your username has been changed to @${newUsername}`,
+        description: `Your username has been changed to @${newUsername}. ${result.changes_remaining} change(s) remaining.`,
       });
 
-      return { success: true };
+      return { 
+        success: true, 
+        changesRemaining: result.changes_remaining 
+      };
     } catch (error: any) {
       const errorMessage = error.message || 'Failed to update username';
       
@@ -29,7 +38,7 @@ export const useUpdateUsername = () => {
         variant: "destructive"
       });
 
-      throw error;
+      return { success: false, error: errorMessage };
     }
   };
 

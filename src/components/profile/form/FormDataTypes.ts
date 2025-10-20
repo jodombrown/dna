@@ -61,6 +61,10 @@ export interface ArrayStates {
   professionalSectors: string[];
   diasporaNetworks: string[];
   mentorshipAreas: string[];
+  // NEW: Discovery tags
+  focusAreas: string[];
+  regionalExpertise: string[];
+  industries: string[];
 }
 
 export interface HelperStates {
