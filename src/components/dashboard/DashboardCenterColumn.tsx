@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { DNAPillarNavigation } from '@/components/navigation/DNAPillarNavigation';
 import DashboardCenterOpportunities from './DashboardCenterOpportunities';
 import { EngagementPrompt } from '@/components/connect/EngagementPrompt';
+import { ProfileDiscoveryTags } from '@/components/profile/ProfileDiscoveryTags';
 
 interface DashboardCenterColumnProps {
   profile: Profile;
@@ -236,27 +237,18 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
         </Card>
       )}
 
-      {/* Skills & Expertise */}
-      {profile.skills && profile.skills.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Skills & Expertise</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {profile.skills.map((skill, index) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="px-3 py-1 text-sm"
-                >
-                  {skill}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Discovery Tags & Expertise */}
+      <Card>
+        <CardContent className="pt-6">
+          <ProfileDiscoveryTags
+            focusAreas={profile.focus_areas}
+            regionalExpertise={profile.regional_expertise}
+            industries={profile.industries}
+            skills={profile.skills}
+            interests={profile.interests}
+          />
+        </CardContent>
+      </Card>
 
       {/* Profile Completion CTA */}
       {isOwnProfile && completionScore < 80 && (

@@ -15,6 +15,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { X, Plus, ArrowLeft, Save, Loader2, LogOut } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
+import { ProfileDiscoverySection } from '@/components/profile/ProfileDiscoverySection';
 
 // African countries list for dropdowns
 const AFRICAN_COUNTRIES = [
@@ -87,6 +88,11 @@ const ProfileEdit = () => {
   const [newInterest, setNewInterest] = useState('');
   const [selectedIntentions, setSelectedIntentions] = useState<string[]>([]);
   const [africaFocusAreas, setAfricaFocusAreas] = useState<AfricaFocusArea[]>([]);
+  
+  // Discovery tags state
+  const [focusAreas, setFocusAreas] = useState<string[]>([]);
+  const [regionalExpertise, setRegionalExpertise] = useState<string[]>([]);
+  const [industries, setIndustries] = useState<string[]>([]);
 
   // Initialize form data when profile loads
   useEffect(() => {
@@ -113,9 +119,9 @@ const ProfileEdit = () => {
       setSelectedIntentions(Array.isArray(profile.intentions) ? profile.intentions : []);
       
       // Ensure africa_focus_areas is properly typed
-      const focusAreas: any = profile.africa_focus_areas || [];
-      const typedFocusAreas: AfricaFocusArea[] = Array.isArray(focusAreas)
-        ? (focusAreas as any[]).filter((area: any) => 
+      const focusAreasData: any = profile.africa_focus_areas || [];
+      const typedFocusAreas: AfricaFocusArea[] = Array.isArray(focusAreasData)
+        ? (focusAreasData as any[]).filter((area: any) => 
             typeof area === 'object' && 
             area !== null &&
             'geography' in area && 
@@ -127,6 +133,11 @@ const ProfileEdit = () => {
           }))
         : [];
       setAfricaFocusAreas(typedFocusAreas);
+      
+      // Initialize discovery tags
+      setFocusAreas(Array.isArray(profile.focus_areas) ? profile.focus_areas : []);
+      setRegionalExpertise(Array.isArray(profile.regional_expertise) ? profile.regional_expertise : []);
+      setIndustries(Array.isArray(profile.industries) ? profile.industries : []);
     }
   }, [profile]);
 
@@ -172,6 +183,9 @@ const ProfileEdit = () => {
       interests: formData.interests,
       intentions: selectedIntentions,
       africa_focus_areas: africaFocusAreas,
+      focus_areas: focusAreas,
+      regional_expertise: regionalExpertise,
+      industries: industries,
       updated_at: new Date().toISOString(),
     };
     
@@ -457,6 +471,23 @@ const ProfileEdit = () => {
                 <Plus className="w-4 h-4 mr-2" />
                 Add Focus Area
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* Discovery & Matching Section */}
+          <Card className="border-l-4 border-l-dna-emerald">
+            <CardHeader>
+              <CardTitle>Discovery & Matching</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProfileDiscoverySection
+                focusAreas={focusAreas}
+                regionalExpertise={regionalExpertise}
+                industries={industries}
+                onFocusAreasChange={setFocusAreas}
+                onRegionalExpertiseChange={setRegionalExpertise}
+                onIndustriesChange={setIndustries}
+              />
             </CardContent>
           </Card>
 
