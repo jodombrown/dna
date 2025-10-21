@@ -12,7 +12,7 @@ const ConveySection = () => {
     <section id="convey-section" className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="order-1 md:order-1">
+          <div className="order-2 md:order-1 relative">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-ochre to-dna-gold rounded-xl flex items-center justify-center">
                 <Newspaper className="w-6 h-6 text-white" />
@@ -50,7 +50,7 @@ const ConveySection = () => {
             </Button>
           </div>
 
-          <div className="order-2 md:order-2 relative">
+          <div className="order-1 md:order-2">
             <div 
               ref={cardRef.elementRef}
               className="bg-gradient-to-br from-dna-ochre to-dna-gold rounded-3xl p-1.5 shadow-2xl cursor-pointer hover:shadow-3xl transition-all hover:scale-[1.02]"
