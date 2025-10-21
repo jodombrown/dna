@@ -3205,7 +3205,11 @@ export type Database = {
           availability_visible: boolean | null
           available_for: string[] | null
           available_hours_per_month: number | null
+          avatar_position: Json | null
           avatar_url: string | null
+          banner_gradient: string | null
+          banner_overlay: boolean | null
+          banner_type: string | null
           banner_url: string | null
           beta_expires_at: string | null
           beta_features_tested: string[] | null
@@ -3345,7 +3349,11 @@ export type Database = {
           availability_visible?: boolean | null
           available_for?: string[] | null
           available_hours_per_month?: number | null
+          avatar_position?: Json | null
           avatar_url?: string | null
+          banner_gradient?: string | null
+          banner_overlay?: boolean | null
+          banner_type?: string | null
           banner_url?: string | null
           beta_expires_at?: string | null
           beta_features_tested?: string[] | null
@@ -3485,7 +3493,11 @@ export type Database = {
           availability_visible?: boolean | null
           available_for?: string[] | null
           available_hours_per_month?: number | null
+          avatar_position?: Json | null
           avatar_url?: string | null
+          banner_gradient?: string | null
+          banner_overlay?: boolean | null
+          banner_type?: string | null
           banner_url?: string | null
           beta_expires_at?: string | null
           beta_features_tested?: string[] | null
