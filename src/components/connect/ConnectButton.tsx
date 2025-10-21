@@ -40,8 +40,8 @@ export function ConnectButton({
 
       try {
         const { data, error } = await supabase.rpc('get_connection_status', {
-          p_user1_id: user.id,
-          p_user2_id: targetUserId
+          user1_id: user.id,
+          user2_id: targetUserId
         });
 
         if (error) throw error;
