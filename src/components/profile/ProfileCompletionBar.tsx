@@ -13,7 +13,6 @@ const PROFILE_FIELDS = [
   "regional_expertise", // array - needs 1+
   "industries", // array - needs 2+
   "country_of_origin",
-  "languages_spoken", // array - needs 1+
   "linkedin_url",
   "website_url"
 ];
@@ -45,7 +44,7 @@ export function calculateProfileCompletion(profile: any): number {
   
   // Heritage & Identity (10 points)
   if (profile.country_of_origin?.length > 0) score += 5;
-  if (profile.languages_spoken?.length >= 1) score += 5;
+  if (profile.current_country?.length > 0) score += 5;
   
   // Engagement Flags (10 points)
   if (profile.availability_for_mentoring === true) score += 5;
