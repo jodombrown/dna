@@ -12,7 +12,45 @@ const ConveySection = () => {
     <section id="convey-section" className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1 relative">
+          <div className="order-1 md:order-1">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-dna-ochre to-dna-gold rounded-xl flex items-center justify-center">
+                <Newspaper className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+                Convey
+              </h2>
+            </div>
+            <p className="text-xl text-gray-600 mb-6">
+              Stay connected to the stories that matter. Curated news, impact stories, 
+              and diaspora voices shaping Africa's future.
+            </p>
+            
+            <div className="space-y-3 mb-8">
+              <div className="flex items-center gap-3 p-4 bg-dna-ochre/10 rounded-lg hover:bg-dna-ochre/15 transition-colors">
+                <TrendingUp className="w-5 h-5 text-dna-ochre" />
+                <span className="font-medium">Curated Diaspora News</span>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-dna-ochre/10 rounded-lg hover:bg-dna-ochre/15 transition-colors">
+                <Heart className="w-5 h-5 text-dna-ochre" />
+                <span className="font-medium">Community Impact Stories</span>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-dna-ochre/10 rounded-lg hover:bg-dna-ochre/15 transition-colors">
+                <MessageSquare className="w-5 h-5 text-dna-ochre" />
+                <span className="font-medium">Authentic Diaspora Voices</span>
+              </div>
+            </div>
+
+            <Button 
+              onClick={() => navigate('/convey')}
+              className="bg-dna-ochre hover:bg-dna-gold text-white flex items-center gap-2"
+            >
+              Read Stories
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <div className="order-2 md:order-2 relative">
             <div 
               ref={cardRef.elementRef}
               className="bg-gradient-to-br from-dna-ochre to-dna-gold rounded-3xl p-1.5 shadow-2xl cursor-pointer hover:shadow-3xl transition-all hover:scale-[1.02]"
@@ -67,44 +105,6 @@ const ConveySection = () => {
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="order-1 md:order-2">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-dna-ochre to-dna-gold rounded-xl flex items-center justify-center">
-                <Newspaper className="w-6 h-6 text-white" />
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
-                Convey
-              </h2>
-            </div>
-            <p className="text-xl text-gray-600 mb-6">
-              Stay connected to the stories that matter. Curated news, impact stories, 
-              and diaspora voices shaping Africa's future.
-            </p>
-            
-            <div className="space-y-3 mb-8">
-              <div className="flex items-center gap-3 p-4 bg-dna-ochre/10 rounded-lg hover:bg-dna-ochre/15 transition-colors">
-                <TrendingUp className="w-5 h-5 text-dna-ochre" />
-                <span className="font-medium">Curated Diaspora News</span>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-dna-ochre/10 rounded-lg hover:bg-dna-ochre/15 transition-colors">
-                <Heart className="w-5 h-5 text-dna-ochre" />
-                <span className="font-medium">Community Impact Stories</span>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-dna-ochre/10 rounded-lg hover:bg-dna-ochre/15 transition-colors">
-                <MessageSquare className="w-5 h-5 text-dna-ochre" />
-                <span className="font-medium">Authentic Diaspora Voices</span>
-              </div>
-            </div>
-
-            <Button 
-              onClick={() => navigate('/convey')}
-              className="bg-dna-ochre hover:bg-dna-gold text-white flex items-center gap-2"
-            >
-              Read Stories
-              <ArrowRight className="w-4 h-4" />
-            </Button>
           </div>
         </div>
       </div>
