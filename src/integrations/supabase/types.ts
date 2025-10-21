@@ -4750,6 +4750,23 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      get_connection_requests: {
+        Args: { p_user_id: string }
+        Returns: {
+          connection_id: string
+          created_at: string
+          message: string
+          requester_avatar: string
+          requester_headline: string
+          requester_id: string
+          requester_name: string
+          requester_username: string
+        }[]
+      }
+      get_connection_status: {
+        Args: { p_user1_id: string; p_user2_id: string }
+        Returns: string
+      }
       get_current_user_profile: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -4785,6 +4802,16 @@ export type Database = {
           message_id: string
           reaction: string
           user_id: string
+        }[]
+      }
+      get_mutual_connections: {
+        Args: { p_user1_id: string; p_user2_id: string }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          headline: string
+          id: string
+          username: string
         }[]
       }
       get_newsletter_followers: {
@@ -4840,6 +4867,18 @@ export type Database = {
       get_user_cohort: {
         Args: { target_user_id: string }
         Returns: string
+      }
+      get_user_connections: {
+        Args: { p_limit?: number; p_offset?: number; p_user_id: string }
+        Returns: {
+          avatar_url: string
+          connected_at: string
+          full_name: string
+          headline: string
+          id: string
+          location: string
+          username: string
+        }[]
       }
       get_user_role: {
         Args: { user_id: string }
