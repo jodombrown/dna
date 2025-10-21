@@ -48,6 +48,7 @@ import MyApplications from "./pages/MyApplications";
 import CollaborationSpaces from "./pages/CollaborationSpaces";
 import SpaceDetail from "./pages/SpaceDetail";
 import Discover from "./pages/Discover";
+import DiscoverMembers from "./pages/DiscoverMembers";
 import Network from "./pages/Network";
 import Messages from "./pages/Messages";
 import ProfileEdit from "./pages/ProfileEdit";
@@ -142,6 +143,7 @@ function App() {
               <Route path="/dna/spaces" element={<CollaborationSpaces />} />
               <Route path="/dna/spaces/:id" element={<SpaceDetail />} />
               <Route path="/dna/discover" element={<Discover />} />
+              <Route path="/dna/discover/members" element={<DiscoverMembers />} />
               <Route path="/dna/network" element={<Network />} />
               <Route path="/dna/messages" element={<Messages />} />
               <Route path="/app/profile/edit" element={

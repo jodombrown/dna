@@ -15,7 +15,7 @@ export const aboutUsDropdown = [
 export const mainNavItems = [
   { name: 'Feed', path: '/dna/feed', icon: 'Home' },
   { name: 'My DNA', path: '/dna/me', icon: 'User' },
-  { name: 'Connect', path: '/dna/connect', icon: 'Users' },
+  { name: 'Discover', path: '/dna/discover/members', icon: 'Search' },
   { name: 'Network', path: '/dna/network', icon: 'Users2' },
   { name: 'Convene', path: '/dna/convene', icon: 'Calendar' },
   { name: 'Messages', path: '/dna/messages', icon: 'MessageCircle' },
