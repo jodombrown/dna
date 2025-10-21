@@ -96,6 +96,8 @@ const Onboarding = () => {
         username: uniqueUsername,
         current_country: formData.current_country,
         avatar_url: formData.avatar_url,
+        professional_sectors: formData.professional_sectors, // Array field
+        interests: formData.interests, // Array field
         is_public: true,
         onboarding_completed_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
