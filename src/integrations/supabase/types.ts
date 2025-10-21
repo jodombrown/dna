@@ -4764,7 +4764,7 @@ export type Database = {
         }[]
       }
       get_connection_status: {
-        Args: { p_user1_id: string; p_user2_id: string }
+        Args: { user1_id: string; user2_id: string }
         Returns: string
       }
       get_current_user_profile: {
@@ -4805,7 +4805,7 @@ export type Database = {
         }[]
       }
       get_mutual_connections: {
-        Args: { p_user1_id: string; p_user2_id: string }
+        Args: { user1_id: string; user2_id: string }
         Returns: {
           avatar_url: string
           full_name: string
