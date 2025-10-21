@@ -13,7 +13,7 @@ const CollaborateSection = () => {
     <section id="collaborate-section" className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="md:order-2">
+          <div className="order-2 md:order-2">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
                 <Handshake className="w-6 h-6 text-white" />
@@ -51,7 +51,7 @@ const CollaborateSection = () => {
             </Button>
           </div>
           
-          <div className="md:order-1">
+          <div className="order-1 md:order-1">
             <div 
               ref={cardRef.elementRef}
               className="bg-gradient-to-br from-dna-copper to-dna-gold rounded-3xl p-1.5 shadow-2xl cursor-pointer hover:shadow-3xl transition-all hover:scale-[1.02]"
