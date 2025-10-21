@@ -12,9 +12,9 @@ const PlatformFeatureShowcase = () => {
       <HeroTriangleSection />
       <ConnectSection />
       <ConveneSection />
-      <ConveySection />
-      <ContributeSection />
       <CollaborateSection />
+      <ContributeSection />
+      <ConveySection />
     </div>
   );
 };
