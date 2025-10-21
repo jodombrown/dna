@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Filter, ChevronDown, ChevronUp, Search, MapPin } from 'lucide-react';
+import LocationTypeahead from '@/components/location/LocationTypeahead';
+import { Filter, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -15,19 +15,6 @@ import {
 const SKILL_OPTIONS = [
   'Technology', 'Finance', 'Healthcare', 'Agriculture', 'Education',
   'Energy', 'Creative', 'Marketing', 'Consulting', 'Legal'
-];
-
-const LOCATION_OPTIONS = [
-  'London, UK', 'Toronto, Canada', 'Berlin, Germany', 'Paris, France', 
-  'Dubai, UAE', 'San Francisco, USA', 'New York, USA', 'Lagos, Nigeria',
-  'Accra, Ghana', 'Cape Town, South Africa', 'Nairobi, Kenya', 'Cairo, Egypt',
-  'Casablanca, Morocco', 'Atlanta, USA', 'Houston, USA', 'Chicago, USA',
-  'Washington DC, USA', 'Boston, USA', 'Los Angeles, USA'
-];
-
-const COUNTRIES = [
-  'United Kingdom', 'Canada', 'Germany', 'France', 'UAE', 'United States',
-  'Nigeria', 'Ghana', 'South Africa', 'Kenya', 'Egypt', 'Morocco'
 ];
 
 interface AdvancedFiltersProps {
@@ -51,7 +38,6 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   const [skillsOpen, setSkillsOpen] = useState(true);
   const [statusOpen, setStatusOpen] = useState(true);
   const [locationOpen, setLocationOpen] = useState(true);
-  const [locationSearch, setLocationSearch] = useState('');
 
   const updateFilters = (key: string, value: any) => {
     onFiltersChange({
@@ -86,16 +72,6 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
   const handleDone = () => {
     setIsOpen(false);
-  };
-
-  // Filter locations based on search
-  const filteredLocations = [...LOCATION_OPTIONS, ...COUNTRIES].filter(location =>
-    location.toLowerCase().includes(locationSearch.toLowerCase())
-  );
-
-  const handleLocationSelect = (location: string) => {
-    updateFilters('location', location);
-    setLocationSearch('');
   };
 
   return (
@@ -155,40 +131,12 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                   </div>
                 )}
                 
-                {/* Search Input */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search locations..."
-                    value={locationSearch}
-                    onChange={(e) => setLocationSearch(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                
-                {/* Location Options */}
-                <div className="max-h-40 overflow-y-auto border rounded-lg bg-gray-50">
-                  <div 
-                    className="p-2 hover:bg-gray-100 cursor-pointer text-sm border-b"
-                    onClick={() => handleLocationSelect('')}
-                  >
-                    All Locations
-                  </div>
-                  {filteredLocations.map((location, index) => (
-                    <div
-                      key={index}
-                      className="p-2 hover:bg-gray-100 cursor-pointer text-sm border-b last:border-b-0"
-                      onClick={() => handleLocationSelect(location)}
-                    >
-                      {location}
-                    </div>
-                  ))}
-                  {filteredLocations.length === 0 && locationSearch && (
-                    <div className="p-2 text-sm text-gray-500 italic">
-                      No locations found for "{locationSearch}"
-                    </div>
-                  )}
-                </div>
+                {/* Global Location Search */}
+                <LocationTypeahead
+                  value={filters.location}
+                  onChange={(location) => updateFilters('location', location)}
+                  placeholder="Search any location worldwide..."
+                />
               </div>
             )}
           </div>
