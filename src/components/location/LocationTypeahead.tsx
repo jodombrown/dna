@@ -1,26 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useLocationSearch } from '@/hooks/useLocationSearch';
-import { LocalProvider, LocationTier } from '@/lib/location/provider';
+import { GlobalProvider, LocationTier } from '@/lib/location/provider';
 import { MapPin, Globe, Map, Building2 } from 'lucide-react';
 
 export type LocationTypeaheadProps = {
   value?: string;
   onChange: (v: string) => void;
   placeholder?: string;
-  provider?: 'local'; // future: 'mapbox' | 'google'
+  provider?: 'global'; // Using global geocoding by default
 };
 
 export default function LocationTypeahead({
   value = '',
   onChange,
   placeholder = 'Current location',
-  provider = 'local',
+  provider = 'global',
 }: LocationTypeaheadProps) {
   const [q, setQ] = useState(value);
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
 
-  const { results, loading } = useLocationSearch(LocalProvider, q, 250);
+  const { results, loading } = useLocationSearch(GlobalProvider, q, 500);
 
   useEffect(() => {
     if (focused && q.trim() && results.length > 0) {

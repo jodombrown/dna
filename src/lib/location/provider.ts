@@ -14,7 +14,93 @@ export interface LocationProvider {
   ): Promise<LocationOption[]>;
 }
 
-// Comprehensive location database with tier categorization
+// Geocoding API provider using Nominatim (OpenStreetMap)
+export const GlobalProvider: LocationProvider = {
+  async search(q, { limit = 10 } = {}) {
+    const s = (q || '').trim();
+    if (!s || s.length < 2) return [];
+    
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?` +
+        new URLSearchParams({
+          q: s,
+          format: 'json',
+          addressdetails: '1',
+          limit: String(Math.min(limit, 20)),
+          'accept-language': 'en'
+        }),
+        {
+          headers: {
+            'User-Agent': 'DNA-Platform/1.0'
+          }
+        }
+      );
+      
+      if (!response.ok) return [];
+      
+      const data = await response.json();
+      
+      return data.map((item: any, idx: number) => {
+        const address = item.address || {};
+        const type = item.type || '';
+        const placeType = item.class || '';
+        
+        // Determine tier based on place type
+        let tier: LocationTier = 'local';
+        let category = 'Place';
+        
+        if (address.country && !address.state && !address.city) {
+          tier = 'international';
+          category = 'Country';
+        } else if (address.state && !address.city && !address.town && !address.village) {
+          tier = 'regional';
+          category = 'State/Region';
+        } else if (address.city || address.town || address.village) {
+          tier = 'local';
+          category = address.city ? 'City' : address.town ? 'Town' : 'Village';
+        } else if (placeType === 'boundary' && type === 'administrative') {
+          tier = 'regional';
+          category = 'Region';
+        }
+        
+        // Build a clean display name
+        let label = item.display_name;
+        
+        // Try to create a shorter, cleaner label
+        if (address.city || address.town || address.village) {
+          const place = address.city || address.town || address.village;
+          const state = address.state || '';
+          const country = address.country || '';
+          
+          if (state && country) {
+            label = `${place}, ${state}, ${country}`;
+          } else if (country) {
+            label = `${place}, ${country}`;
+          } else {
+            label = place;
+          }
+        } else if (address.state && address.country) {
+          label = `${address.state}, ${address.country}`;
+        } else if (address.country) {
+          label = address.country;
+        }
+        
+        return {
+          id: `geo-${item.place_id || idx}`,
+          label,
+          tier,
+          category
+        };
+      });
+    } catch (error) {
+      console.error('Geocoding search error:', error);
+      return [];
+    }
+  }
+};
+
+// Keep LocalProvider as fallback
 const LOCATION_DATABASE: Array<{ label: string; tier: LocationTier; category?: string }> = [
   // Global
   { label: 'Global', tier: 'global', category: 'Worldwide' },
