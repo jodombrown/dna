@@ -35,7 +35,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import {
@@ -271,56 +270,52 @@ const UnifiedHeader = () => {
                     const isActive = location.pathname === item.path;
                     const hasBadge = item.badge && item.badge > 0;
                     return (
-                      <TooltipProvider key={item.view}>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => navigate(item.path)}
-                              className={`flex items-center gap-2 relative ${
-                                isActive ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:text-primary'
-                              }`}
-                            >
-                              <Icon className="w-5 h-5" />
-                              <span className="text-sm font-medium">{item.title}</span>
-                              {hasBadge && (
-                                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                                  {item.badge > 9 ? '9+' : item.badge}
-                                </span>
-                              )}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{item.title}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <Tooltip key={item.view}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => navigate(item.path)}
+                            className={`flex items-center gap-2 relative ${
+                              isActive ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:text-primary'
+                            }`}
+                          >
+                            <Icon className="w-5 h-5" />
+                            <span className="text-sm font-medium">{item.title}</span>
+                            {hasBadge && (
+                              <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                                {item.badge > 9 ? '9+' : item.badge}
+                              </span>
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{item.title}</p>
+                        </TooltipContent>
+                      </Tooltip>
                     );
                   })}
                   
                   {/* Admin Link - Only for admin users */}
                   {isAdmin && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => navigate('/app/admin')}
-                            className={`flex items-center gap-2 ${
-                              location.pathname.startsWith('/app/admin') ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:text-primary'
-                            }`}
-                          >
-                            <Shield className="w-5 h-5" />
-                            <span className="text-sm font-medium">Admin</span>
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Admin Dashboard</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => navigate('/app/admin')}
+                          className={`flex items-center gap-2 ${
+                            location.pathname.startsWith('/app/admin') ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:text-primary'
+                          }`}
+                        >
+                          <Shield className="w-5 h-5" />
+                          <span className="text-sm font-medium">Admin</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Admin Dashboard</p>
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   
                   {/* Notifications Bell */}
