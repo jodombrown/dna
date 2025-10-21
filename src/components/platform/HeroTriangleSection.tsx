@@ -120,7 +120,7 @@ const HeroTriangleSection = () => {
                 </div>
                 <h3 className="text-xl font-bold text-dna-ochre mb-3">Convey</h3>
                 <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                  Share stories and amplify diaspora voices.
+                  Share stories and amplify diaspora voices across platforms.
                 </p>
                 <div className="flex items-center justify-center text-dna-ochre group-hover:text-dna-gold transition-colors">
                   <span className="text-sm font-medium mr-2">Learn More</span>
