@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import MessageBubble from './MessageBubble';
+import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
 
 interface ConversationThreadProps {
