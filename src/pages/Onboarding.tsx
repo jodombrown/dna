@@ -103,11 +103,24 @@ const Onboarding = () => {
         updated_at: new Date().toISOString()
       };
 
+      console.log('Attempting to upsert profile with data:', {
+        ...profileData,
+        email: '***',  // Hide email in logs
+      });
+
       const { error } = await supabase
         .from('profiles')
         .upsert([profileData], { onConflict: 'id' });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Detailed error from Supabase:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
+        throw error;
+      }
 
       // Wait a moment for DB to commit
       await new Promise(resolve => setTimeout(resolve, 200));
