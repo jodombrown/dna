@@ -17,22 +17,23 @@ const SuggestionsTab: React.FC = () => {
       // Get user's existing connections
       const { data: existingConnections } = await supabase
         .from('connections')
-        .select('a, b')
-        .or(`a.eq.${user.id},b.eq.${user.id}`)
+        .select('requester_id, recipient_id')
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
         .eq('status', 'accepted');
 
       const connectedUserIds = new Set(
-        existingConnections?.flatMap((c) => [c.a, c.b]).filter((id) => id !== user.id) || []
+        existingConnections?.flatMap((c) => [c.requester_id, c.recipient_id]).filter((id) => id !== user.id) || []
       );
 
-      // Get pending/declined requests
-      const { data: connectionRequests } = await supabase
-        .from('connection_requests')
-        .select('sender_id, receiver_id')
-        .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`);
+      // Get pending requests
+      const { data: pendingConnections } = await supabase
+        .from('connections')
+        .select('requester_id, recipient_id')
+        .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
+        .eq('status', 'pending');
 
       const requestedUserIds = new Set(
-        connectionRequests?.flatMap((r) => [r.sender_id, r.receiver_id]).filter((id) => id !== user.id) || []
+        pendingConnections?.flatMap((r) => [r.requester_id, r.recipient_id]).filter((id) => id !== user.id) || []
       );
 
       // Get high match score members

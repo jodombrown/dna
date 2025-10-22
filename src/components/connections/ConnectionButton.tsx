@@ -33,8 +33,8 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
       try {
         const { data, error } = await supabase
           .from('connections')
-          .select('status, a, b')
-          .or(`and(a.eq.${user.id},b.eq.${targetUserId}),and(a.eq.${targetUserId},b.eq.${user.id})`)
+          .select('status, requester_id, recipient_id')
+          .or(`and(requester_id.eq.${user.id},recipient_id.eq.${targetUserId}),and(requester_id.eq.${targetUserId},recipient_id.eq.${user.id})`)
           .maybeSingle();
 
         if (error) {
@@ -45,9 +45,9 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
         if (data) {
           if (data.status === 'accepted') {
             setConnectionStatus('accepted');
-          } else if (data.status === 'requested') {
+          } else if (data.status === 'pending') {
             // Check if current user sent or received the request
-            setConnectionStatus(data.a === user.id ? 'requested' : 'received');
+            setConnectionStatus(data.requester_id === user.id ? 'requested' : 'received');
           }
         }
       } catch (error) {
@@ -118,7 +118,7 @@ export const ConnectionButton: React.FC<ConnectionButtonProps> = ({
       const { error } = await supabase
         .from('connections')
         .update({ status: 'accepted' })
-        .or(`and(a.eq.${user.id},b.eq.${targetUserId}),and(a.eq.${targetUserId},b.eq.${user.id})`);
+        .or(`and(requester_id.eq.${user.id},recipient_id.eq.${targetUserId}),and(requester_id.eq.${targetUserId},recipient_id.eq.${user.id})`);
 
       if (error) throw error;
 

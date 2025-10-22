@@ -81,18 +81,18 @@ export function ConnectButton({
   const handleAcceptRequest = async () => {
     setIsLoading(true);
     try {
-      // Find the connection request
-      const { data: requests } = await supabase
-        .from('connection_requests')
+      // Find the connection
+      const { data: connection } = await supabase
+        .from('connections')
         .select('id')
-        .eq('sender_id', targetUserId)
-        .eq('receiver_id', user?.id)
+        .eq('requester_id', targetUserId)
+        .eq('recipient_id', user?.id)
         .eq('status', 'pending')
         .single();
 
-      if (!requests) throw new Error('Request not found');
+      if (!connection) throw new Error('Request not found');
 
-      await connectionService.acceptConnectionRequest(requests.id);
+      await connectionService.acceptConnectionRequest(connection.id);
       setStatus('accepted');
       
       toast({

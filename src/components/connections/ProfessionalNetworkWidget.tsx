@@ -39,7 +39,7 @@ export const ProfessionalNetworkWidget: React.FC = () => {
         const { data: connections } = await supabase
           .from('connections')
           .select('created_at')
-          .or(`a.eq.${user.id},b.eq.${user.id}`)
+          .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
           .eq('status', 'accepted');
 
         const weekAgo = new Date();
@@ -62,11 +62,11 @@ export const ProfessionalNetworkWidget: React.FC = () => {
           // Filter out already connected users and current user
           const { data: existingConnections } = await supabase
             .from('connections')
-            .select('a, b')
-            .or(`a.eq.${user.id},b.eq.${user.id}`);
+            .select('requester_id, recipient_id')
+            .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
 
           const connectedUserIds = new Set(
-            existingConnections?.flatMap(c => [c.a, c.b]).filter(id => id !== user.id) || []
+            existingConnections?.flatMap(c => [c.requester_id, c.recipient_id]).filter(id => id !== user.id) || []
           );
           connectedUserIds.add(user.id); // Exclude self
 

@@ -67,10 +67,10 @@ export const ConnectionRecommendationsWidget = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from('connections')
-        .select('b')
-        .eq('a', user!.id)
+        .select('requester_id, recipient_id')
+        .or(`requester_id.eq.${user!.id},recipient_id.eq.${user!.id}`)
         .eq('status', 'accepted');
-      return data?.map(c => c.b) || [];
+      return data?.flatMap(c => [c.requester_id, c.recipient_id]).filter(id => id !== user!.id) || [];
     },
     enabled: !!user?.id,
   });
@@ -79,22 +79,13 @@ export const ConnectionRecommendationsWidget = () => {
   const { data: pendingRequests } = useQuery({
     queryKey: ['pending-requests', user?.id],
     queryFn: async () => {
-      const { data: sent } = await supabase
-        .from('connection_requests')
-        .select('receiver_id')
-        .eq('sender_id', user!.id)
+      const { data } = await supabase
+        .from('connections')
+        .select('requester_id, recipient_id')
+        .or(`requester_id.eq.${user!.id},recipient_id.eq.${user!.id}`)
         .eq('status', 'pending');
       
-      const { data: received } = await supabase
-        .from('connection_requests')
-        .select('sender_id')
-        .eq('receiver_id', user!.id)
-        .eq('status', 'pending');
-      
-      return [
-        ...(sent?.map(r => r.receiver_id) || []),
-        ...(received?.map(r => r.sender_id) || [])
-      ];
+      return data?.flatMap(c => [c.requester_id, c.recipient_id]).filter(id => id !== user!.id) || [];
     },
     enabled: !!user?.id,
   });
@@ -247,10 +238,10 @@ export const ConnectionRecommendationsWidget = () => {
     
     try {
       const { error } = await supabase
-        .from('connection_requests')
+        .from('connections')
         .insert({
-          sender_id: user!.id,
-          receiver_id: selectedUser.id,
+          requester_id: user!.id,
+          recipient_id: selectedUser.id,
           status: 'pending',
           message: note || null,
         });
