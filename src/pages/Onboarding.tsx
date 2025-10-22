@@ -87,7 +87,7 @@ const Onboarding = () => {
       }
 
       // Create or update profile with minimal required data (only columns that exist)
-      const profileData = {
+      let profileData: any = {
         id: user.id,
         email: user.email,
         full_name: fullName,
@@ -96,7 +96,8 @@ const Onboarding = () => {
         username: uniqueUsername,
         current_country: formData.current_country,
         avatar_url: formData.avatar_url,
-        professional_sectors: formData.professional_sectors, // Array field
+        // Map to existing column name in DB
+        sectors: formData.professional_sectors, // Array field
         interests: formData.interests, // Array field
         is_public: true,
         onboarding_completed_at: new Date().toISOString(),
@@ -119,7 +120,35 @@ const Onboarding = () => {
           hint: error.hint,
           code: error.code,
         });
-        throw error;
+
+        // Handle duplicate username gracefully (unique constraint violation)
+        if (
+          error.code === '23505' && (
+            error.message?.includes('unique_username') ||
+            error.details?.includes('unique_username') ||
+            error.message?.toLowerCase().includes('duplicate key')
+          )
+        ) {
+          const fallbackUsername = `${baseUsername}-${Math.random().toString(36).slice(2,7)}`;
+          profileData.username = fallbackUsername;
+          console.warn('Retrying upsert with fallback username:', fallbackUsername);
+
+          const retry = await supabase
+            .from('profiles')
+            .upsert([profileData], { onConflict: 'id' });
+
+          if (retry.error) {
+            console.error('Retry failed:', {
+              message: retry.error.message,
+              details: retry.error.details,
+              hint: retry.error.hint,
+              code: retry.error.code,
+            });
+            throw retry.error;
+          }
+        } else {
+          throw error;
+        }
       }
 
       // Wait a moment for DB to commit
