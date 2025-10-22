@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MessageCircle, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface ConnectionCardProps {
   connection: {
@@ -20,6 +23,8 @@ interface ConnectionCardProps {
 
 const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, onMessage }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const getInitials = (name: string) => {
     return name
@@ -27,6 +32,28 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, onMessage }
       .map((n) => n[0])
       .join('')
       .toUpperCase() || '?';
+  };
+
+  const handleMessage = async () => {
+    if (!user) return;
+    
+    try {
+      const { data: conversationId, error } = await supabase.rpc('get_or_create_conversation', {
+        user1_id: user.id,
+        user2_id: connection.id,
+      });
+
+      if (error) throw error;
+      
+      navigate(`/dna/messages/${conversationId}`);
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to start conversation',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -63,16 +90,14 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, onMessage }
                 <User className="w-4 h-4 mr-2" />
                 View Profile
               </Button>
-              {onMessage && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onMessage(connection.id)}
-                >
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Message
-                </Button>
-              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleMessage}
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Message
+              </Button>
             </div>
           </div>
         </div>
