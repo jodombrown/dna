@@ -67,7 +67,21 @@ export const connectionService = {
     });
 
     if (error) throw error;
-    return (data || []) as ConnectionRequest[];
+    
+    // Map the RPC response to match ConnectionRequest interface
+    return (data || []).map((item: any) => ({
+      connection_id: item.connection_id,
+      id: item.requester_id,
+      requester_id: item.requester_id,
+      username: item.username,
+      full_name: item.full_name,
+      avatar_url: item.avatar_url,
+      headline: item.headline,
+      location: item.location,
+      professional_role: item.heritage_status, // Map heritage_status if needed
+      message: item.message,
+      created_at: item.created_at,
+    })) as ConnectionRequest[];
   },
 
   async getConnections(searchQuery?: string): Promise<ConnectionProfile[]> {

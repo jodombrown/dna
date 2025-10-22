@@ -167,12 +167,23 @@ const Network: React.FC = () => {
             <div className="space-y-4">
               {pendingRequests?.map((request) => (
                 <ConnectionRequestCard
-                  key={request.id}
-                  request={request}
+                  key={request.connection_id}
+                  request={{
+                    id: request.connection_id,
+                    sender: {
+                      id: request.requester_id,
+                      full_name: request.full_name,
+                      avatar_url: request.avatar_url,
+                      professional_role: request.headline,
+                      location: request.location,
+                    },
+                    message: request.message,
+                    created_at: request.created_at,
+                  }}
                   onAccept={acceptMutation.mutate}
                   onDecline={rejectMutation.mutate}
-                  isAccepting={acceptMutation.isPending && activeRequestId === request.id}
-                  isDeclining={rejectMutation.isPending && activeRequestId === request.id}
+                  isAccepting={acceptMutation.isPending && activeRequestId === request.connection_id}
+                  isDeclining={rejectMutation.isPending && activeRequestId === request.connection_id}
                 />
               ))}
             </div>
