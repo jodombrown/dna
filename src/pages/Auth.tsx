@@ -529,18 +529,24 @@ const Auth = () => {
               </div>
             </div>
 
-            {/* Beta Access Notice */}
+            {/* Beta Launch Notice */}
             {!flagsLoading && !registrationEnabled && !isLogin && (
-              <Alert className="mb-6 border-dna-copper/30 bg-dna-copper/5">
-                <LockKeyhole className="h-4 w-4 text-dna-copper" />
+              <Alert className="mb-6 border-dna-emerald/30 bg-gradient-to-br from-dna-emerald/10 to-dna-mint/10">
+                <LockKeyhole className="h-4 w-4 text-dna-emerald" />
                 <AlertDescription className="text-sm text-gray-700">
-                  <strong>Beta Access Only</strong>
+                  <strong className="text-dna-forest">🎉 Beta Launching November 1st!</strong>
                   <br />
-                  We're currently in private beta. New registrations are temporarily paused.
-                  <br />
-                  <a href="mailto:aweh@diasporanetwork.africa" className="text-dna-copper hover:text-dna-gold underline font-medium">
-                    Contact us for early access
-                  </a>
+                  <p className="mt-2 mb-3">
+                    We're preparing something special for the African Diaspora. Registration opens soon — be among the first to join our community-powered platform!
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowWaitlist(true)}
+                    className="w-full bg-dna-emerald/10 hover:bg-dna-emerald/20 text-dna-forest border-dna-emerald/30"
+                  >
+                    Join the Waitlist
+                  </Button>
                 </AlertDescription>
               </Alert>
             )}
