@@ -4651,6 +4651,16 @@ export type Database = {
           shared_sectors: string[]
         }[]
       }
+      find_orphaned_profiles: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          full_name: string
+          has_auth_user: boolean
+          profile_id: string
+          username: string
+        }[]
+      }
       generate_join_token: {
         Args: Record<PropertyKey, never>
         Returns: string
