@@ -1,4 +1,4 @@
-export type PostType = 'update' | 'article' | 'question' | 'celebration';
+export type PostType = 'update' | 'article' | 'question' | 'celebration' | 'text' | 'image' | 'video' | 'link' | 'poll' | 'opportunity' | 'spotlight';
 export type PrivacyLevel = 'public' | 'connections';
 
 export interface Post {

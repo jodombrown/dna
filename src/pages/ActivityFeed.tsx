@@ -4,36 +4,16 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import { PostComposer } from '@/components/social-feed/PostComposer';
 import { PostCard } from '@/components/feed/PostCard';
 import { fetchPosts } from '@/services/postsService';
+import type { PostWithAuthor } from '@/types/posts';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 
-interface Post {
-  id: string;
-  content: string;
-  author_id: string;
-  created_at: string;
-  post_type: string;
-  visibility: string;
-  metadata: any;
-  author: {
-    id: string;
-    username: string;
-    full_name: string;
-    avatar_url?: string;
-    profession?: string;
-    location?: string;
-  };
-  likes_count: number;
-  comments_count: number;
-  user_has_liked: boolean;
-}
-
 const ActivityFeed = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'following'>('all');
 
@@ -147,24 +127,28 @@ const ActivityFeed = () => {
           <div className="space-y-6">
             {posts.map((post) => (
               <PostCard
-                key={post.id}
+                key={post.post_id}
                 post={{
-                  id: post.id,
+                  id: post.post_id,
                   content: post.content,
                   created_at: post.created_at,
                   type: post.post_type,
-                  pillar: post.metadata?.pillar || 'connect',
-                  media_url: post.metadata?.media_url,
-                  embed_metadata: post.metadata?.embed_metadata,
+                  pillar: 'connect', // Default pillar
+                  media_url: post.image_url,
+                  embed_metadata: post.link_url ? {
+                    url: post.link_url,
+                    title: post.link_title || '',
+                    description_text: post.link_description || '',
+                  } : undefined,
                   profiles: {
-                    id: post.author.id,
-                    full_name: post.author.full_name,
-                    avatar_url: post.author.avatar_url,
-                    location: post.author.location,
-                    professional_role: post.author.profession,
+                    id: post.author_id,
+                    full_name: post.author_full_name,
+                    avatar_url: post.author_avatar_url,
+                    location: '', // Not included in PostWithAuthor
+                    professional_role: post.author_headline || '',
                   },
-                  like_count: post.likes_count,
-                  comment_count: post.comments_count,
+                  like_count: Number(post.likes_count),
+                  comment_count: Number(post.comments_count),
                   user_has_liked: post.user_has_liked,
                 }}
                 onLike={handlePostCreated}

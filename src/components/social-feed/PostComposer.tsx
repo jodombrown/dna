@@ -222,8 +222,11 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       await createPost({
         content: content.trim(),
         post_type: finalType,
-        visibility: 'public',
-        metadata,
+        privacy_level: 'public',
+        image_url: mediaUrl || undefined,
+        link_url: embedData?.url || undefined,
+        link_title: embedData?.title || undefined,
+        link_description: (embedData as any)?.description_text || (embedData as any)?.description || undefined,
       });
 
       toast({
