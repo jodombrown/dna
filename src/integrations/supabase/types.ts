@@ -93,15 +93,7 @@ export type Database = {
           status?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "adin_nudges_connection_id_fkey"
-            columns: ["connection_id"]
-            isOneToOne: false
-            referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       adin_recommendations: {
         Row: {
@@ -134,15 +126,7 @@ export type Database = {
           score?: number
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "adin_recommendations_for_connection_id_fkey"
-            columns: ["for_connection_id"]
-            isOneToOne: false
-            referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       adin_signals: {
         Row: {
@@ -744,13 +728,13 @@ export type Database = {
           },
         ]
       }
-      connection_requests: {
+      connections: {
         Row: {
           created_at: string
           id: string
           message: string | null
-          receiver_id: string
-          sender_id: string
+          recipient_id: string
+          requester_id: string
           status: string
           updated_at: string
         }
@@ -758,8 +742,8 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string | null
-          receiver_id: string
-          sender_id: string
+          recipient_id: string
+          requester_id: string
           status: string
           updated_at?: string
         }
@@ -767,61 +751,10 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string | null
-          receiver_id?: string
-          sender_id?: string
+          recipient_id?: string
+          requester_id?: string
           status?: string
           updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "connection_requests_receiver_id_fkey"
-            columns: ["receiver_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "connection_requests_sender_id_fkey"
-            columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      connections: {
-        Row: {
-          a: string
-          adin_health: number
-          adin_health_reason: string | null
-          b: string
-          connection_note: string | null
-          created_at: string
-          id: string
-          last_interaction_at: string | null
-          status: string
-        }
-        Insert: {
-          a: string
-          adin_health?: number
-          adin_health_reason?: string | null
-          b: string
-          connection_note?: string | null
-          created_at?: string
-          id?: string
-          last_interaction_at?: string | null
-          status: string
-        }
-        Update: {
-          a?: string
-          adin_health?: number
-          adin_health_reason?: string | null
-          b?: string
-          connection_note?: string | null
-          created_at?: string
-          id?: string
-          last_interaction_at?: string | null
-          status?: string
         }
         Relationships: []
       }
@@ -1948,15 +1881,7 @@ export type Database = {
           source_event_id?: string | null
           verified_by?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "impact_attributions_connection_id_fkey"
-            columns: ["connection_id"]
-            isOneToOne: false
-            referencedRelation: "connections"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       impact_badges: {
         Row: {
@@ -4751,16 +4676,18 @@ export type Database = {
         Returns: number
       }
       get_connection_requests: {
-        Args: { p_user_id: string }
+        Args: { user_id: string }
         Returns: {
+          avatar_url: string
           connection_id: string
           created_at: string
+          full_name: string
+          headline: string
+          location: string
           message: string
-          requester_avatar: string
-          requester_headline: string
+          professional_role: string
           requester_id: string
-          requester_name: string
-          requester_username: string
+          username: string
         }[]
       }
       get_connection_status: {
@@ -4869,7 +4796,14 @@ export type Database = {
         Returns: string
       }
       get_user_connections: {
-        Args: { p_limit?: number; p_offset?: number; p_user_id: string }
+        Args:
+          | {
+              limit_count?: number
+              offset_count?: number
+              search_query?: string
+              user_id: string
+            }
+          | { p_limit?: number; p_offset?: number; p_user_id: string }
         Returns: {
           avatar_url: string
           connected_at: string

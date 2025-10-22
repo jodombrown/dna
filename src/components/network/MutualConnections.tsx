@@ -23,8 +23,12 @@ const MutualConnections: React.FC<MutualConnectionsProps> = ({
   const navigate = useNavigate();
 
   const { data: mutualConnections, isLoading } = useQuery({
-    queryKey: ['mutual-connections', profileUserId, currentUserId],
+    queryKey: ['mutual-connections', currentUserId, profileUserId],
     queryFn: async () => {
+      if (!currentUserId || !profileUserId || currentUserId === profileUserId) {
+        return [];
+      }
+
       const { data, error } = await supabase.rpc('get_mutual_connections', {
         user1_id: currentUserId,
         user2_id: profileUserId,
@@ -33,7 +37,7 @@ const MutualConnections: React.FC<MutualConnectionsProps> = ({
       if (error) throw error;
       return (data || []) as MutualConnection[];
     },
-    enabled: !!profileUserId && !!currentUserId && profileUserId !== currentUserId,
+    enabled: !!currentUserId && !!profileUserId && currentUserId !== profileUserId,
   });
 
   if (isLoading || !mutualConnections || mutualConnections.length === 0) {

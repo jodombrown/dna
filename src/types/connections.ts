@@ -2,20 +2,8 @@ export type ConnectionStatus = 'none' | 'pending_sent' | 'pending_received' | 'a
 
 export interface Connection {
   id: string;
-  a: string;
-  b: string;
-  status: 'accepted';
-  created_at: string;
-  last_interaction_at?: string;
-  adin_health: number;
-  adin_health_reason?: string;
-  connection_note?: string;
-}
-
-export interface ConnectionRequest {
-  id: string;
-  sender_id: string;
-  receiver_id: string;
+  requester_id: string;
+  recipient_id: string;
   status: 'pending' | 'accepted' | 'declined';
   message?: string;
   created_at: string;
@@ -31,6 +19,13 @@ export interface ConnectionProfile {
   location?: string;
   professional_role?: string;
   connected_at?: string;
+}
+
+export interface ConnectionRequest extends ConnectionProfile {
+  connection_id: string;
+  requester_id: string;
+  message?: string;
+  created_at: string;
 }
 
 export interface MutualConnection {
