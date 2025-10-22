@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Edit, Award, MapPin, Globe, Briefcase, Camera } from "lucide-react";
+import { Edit, Award, MapPin, Globe, Briefcase, Camera, MessageCircle, UserPlus } from "lucide-react";
 import { BANNER_GRADIENTS, BannerGradientKey } from "@/lib/constants/bannerGradients";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileHeroSectionProps {
   profile: any;
@@ -27,6 +31,90 @@ const ProfileHeroSection = ({
   onEditBanner,
   onEditAvatar
 }: ProfileHeroSectionProps) => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
+  const [isLoadingStatus, setIsLoadingStatus] = useState(false);
+
+  useEffect(() => {
+    if (user && profile && user.id !== profile.id) {
+      fetchConnectionStatus();
+    }
+  }, [user, profile]);
+
+  const fetchConnectionStatus = async () => {
+    if (!user || !profile) return;
+    
+    setIsLoadingStatus(true);
+    try {
+      const { data, error } = await supabase
+        .from('connections')
+        .select('status')
+        .or(`and(requester_id.eq.${user.id},recipient_id.eq.${profile.id}),and(requester_id.eq.${profile.id},recipient_id.eq.${user.id})`)
+        .maybeSingle();
+
+      if (error) throw error;
+      setConnectionStatus(data?.status || null);
+    } catch (error) {
+      console.error('Error fetching connection status:', error);
+    } finally {
+      setIsLoadingStatus(false);
+    }
+  };
+
+  const handleMessage = async () => {
+    if (!user || !profile) return;
+    
+    try {
+      const { data: conversationId, error } = await supabase.rpc('get_or_create_conversation', {
+        user1_id: user.id,
+        user2_id: profile.id,
+      });
+
+      if (error) throw error;
+      
+      navigate(`/dna/messages/${conversationId}`);
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to start conversation',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleConnect = async () => {
+    if (!user || !profile) return;
+    
+    try {
+      const { error } = await supabase
+        .from('connections')
+        .insert({
+          requester_id: user.id,
+          recipient_id: profile.id,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+      
+      toast({
+        title: 'Connection request sent',
+        description: `Your request to connect with ${profile.full_name} has been sent.`,
+      });
+      
+      fetchConnectionStatus();
+    } catch (error) {
+      console.error('Error sending connection request:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to send connection request',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const getBannerStyle = () => {
     if (bannerType === 'image' && bannerUrl) {
       return { 
@@ -132,15 +220,38 @@ const ProfileHeroSection = ({
             </div>
           </div>
 
-          {/* Edit Profile Button */}
-          {isOwnProfile && onEdit && (
+          {/* Action Buttons */}
+          {isOwnProfile && onEdit ? (
             <Button
               onClick={onEdit}
-              className="bg-dna-emerald hover:bg-dna-forest text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               <Edit className="w-4 h-4 mr-2" />
               Edit Profile
             </Button>
+          ) : user && profile && user.id !== profile.id && !isLoadingStatus && (
+            <div className="flex gap-2">
+              {connectionStatus !== 'accepted' && (
+                <Button
+                  onClick={handleConnect}
+                  disabled={connectionStatus === 'pending'}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  {connectionStatus === 'pending' ? 'Request Pending' : 'Connect'}
+                </Button>
+              )}
+              {connectionStatus === 'accepted' && (
+                <Button
+                  onClick={handleMessage}
+                  variant="outline"
+                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Message
+                </Button>
+              )}
+            </div>
           )}
         </div>
       </div>
