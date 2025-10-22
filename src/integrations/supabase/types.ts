@@ -936,6 +936,38 @@ export type Database = {
           },
         ]
       }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          id: string
+          joined_at: string
+          last_read_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations_new"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
@@ -957,6 +989,27 @@ export type Database = {
           last_message_at?: string | null
           user_a?: string
           user_b?: string
+        }
+        Relationships: []
+      }
+      conversations_new: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -2154,6 +2207,44 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages_new: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          is_deleted: boolean
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_new_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations_new"
             referencedColumns: ["id"]
           },
         ]
@@ -4704,6 +4795,24 @@ export type Database = {
         Args: { user1_id: string; user2_id: string }
         Returns: string
       }
+      get_conversation_messages: {
+        Args: {
+          p_before_timestamp?: string
+          p_conversation_id: string
+          p_limit?: number
+          p_user_id: string
+        }
+        Returns: {
+          content: string
+          created_at: string
+          is_deleted: boolean
+          message_id: string
+          sender_avatar_url: string
+          sender_full_name: string
+          sender_id: string
+          sender_username: string
+        }[]
+      }
       get_current_user_profile: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -4759,6 +4868,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_or_create_conversation: {
+        Args: { user1_id: string; user2_id: string }
+        Returns: string
+      }
       get_pending_reminders: {
         Args: { batch_size?: number }
         Returns: {
@@ -4797,6 +4910,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      get_total_unread_count: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
       get_total_users: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -4822,6 +4939,21 @@ export type Database = {
           id: string
           location: string
           username: string
+        }[]
+      }
+      get_user_conversations: {
+        Args: { p_limit?: number; p_offset?: number; p_user_id: string }
+        Returns: {
+          conversation_id: string
+          last_message_at: string
+          last_message_content: string
+          last_message_sender_id: string
+          other_user_avatar_url: string
+          other_user_full_name: string
+          other_user_headline: string
+          other_user_id: string
+          other_user_username: string
+          unread_count: number
         }[]
       }
       get_user_role: {
@@ -4900,6 +5032,10 @@ export type Database = {
       make_user_admin: {
         Args: { user_email: string }
         Returns: string
+      }
+      mark_conversation_read: {
+        Args: { p_conversation_id: string; p_user_id: string }
+        Returns: undefined
       }
       owns_organization: {
         Args: { _org_id: string; _user_id: string }
