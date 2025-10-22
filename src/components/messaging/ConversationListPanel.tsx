@@ -7,19 +7,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Search, Plus } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-
-interface Conversation {
-  id: string;
-  last_message_at?: string;
-  otherUser?: {
-    full_name?: string;
-    avatar_url?: string;
-    headline?: string;
-  };
-}
+import { ConversationListItem } from '@/types/messaging';
 
 interface ConversationListPanelProps {
-  conversations?: Conversation[];
+  conversations?: ConversationListItem[];
   isLoading: boolean;
   searchTerm: string;
   onSearchChange: (term: string) => void;
@@ -57,12 +48,12 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
 
   // Filter by search term
   let filteredConversations = conversations?.filter(conv =>
-    conv.otherUser?.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    conv.other_user_full_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Filter by tab (unread - placeholder for now, needs unread_count field)
+  // Filter by tab (unread)
   if (filterTab === 'unread') {
-    filteredConversations = filteredConversations?.filter(conv => false); // TODO: Add unread logic
+    filteredConversations = filteredConversations?.filter(conv => conv.unread_count > 0);
   }
 
   return (
@@ -122,41 +113,57 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
           </div>
         ) : (
           <div className="divide-y">
-            {filteredConversations?.map((conversation) => (
-              <button
-                key={conversation.id}
-                onClick={() => onSelectConversation(conversation.id)}
-                className={`w-full p-4 hover:bg-accent transition-colors text-left ${
-                  selectedConversationId === conversation.id ? 'bg-accent' : ''
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={conversation.otherUser?.avatar_url || ''} />
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {getInitials(conversation.otherUser?.full_name || '')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="font-semibold text-sm truncate">
-                        {conversation.otherUser?.full_name}
-                      </p>
-                      {conversation.last_message_at && (
-                        <span className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
-                        </span>
+            {filteredConversations?.map((conversation) => {
+              const hasUnread = conversation.unread_count > 0;
+              
+              return (
+                <button
+                  key={conversation.conversation_id}
+                  onClick={() => onSelectConversation(conversation.conversation_id)}
+                  className={`w-full p-4 hover:bg-accent transition-colors text-left ${
+                    selectedConversationId === conversation.conversation_id ? 'bg-accent' : ''
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={conversation.other_user_avatar_url || ''} />
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        {getInitials(conversation.other_user_full_name || '')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className={`font-semibold text-sm truncate ${hasUnread ? 'text-primary' : ''}`}>
+                          {conversation.other_user_full_name}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          {conversation.last_message_at && (
+                            <span className="text-xs text-muted-foreground whitespace-nowrap">
+                              {formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
+                            </span>
+                          )}
+                          {hasUnread && (
+                            <Badge variant="default" className="rounded-full px-2 py-0 text-xs">
+                              {conversation.unread_count}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      {conversation.other_user_headline && (
+                        <p className="text-xs text-muted-foreground truncate mt-1">
+                          {conversation.other_user_headline}
+                        </p>
+                      )}
+                      {conversation.last_message_content && (
+                        <p className={`text-xs truncate mt-1 ${hasUnread ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
+                          {conversation.last_message_content}
+                        </p>
                       )}
                     </div>
-                    {conversation.otherUser?.headline && (
-                      <p className="text-xs text-muted-foreground truncate">
-                        {conversation.otherUser.headline}
-                      </p>
-                    )}
                   </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              );
+            })}
           </div>
         )}
       </ScrollArea>

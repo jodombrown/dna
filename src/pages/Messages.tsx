@@ -36,7 +36,7 @@ export default function MessagesPage() {
     queryFn: messagingService.getConversations,
   });
 
-  const selectedConversation = conversations?.find(c => c.id === selectedConversationId);
+  const selectedConversation = conversations?.find(c => c.conversation_id === selectedConversationId);
 
   // Mobile: Show only conversation list or thread, not both
   if (isMobile) {

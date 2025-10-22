@@ -1,87 +1,60 @@
 import { supabase } from '@/integrations/supabase/client';
+import { ConversationListItem, MessageWithSender } from '@/types/messaging';
 
 export const messagingService = {
-  // Get or create a conversation between two users
+  // Get or create a conversation between two users using the new RPC
   async getOrCreateConversation(otherUserId: string) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Check if conversation exists
-    const { data: existing } = await supabase
-      .from('conversations')
-      .select('*')
-      .or(`and(user_a.eq.${user.id},user_b.eq.${otherUserId}),and(user_a.eq.${otherUserId},user_b.eq.${user.id})`)
-      .single();
-
-    if (existing) return existing;
-
-    // Create new conversation
-    const { data, error } = await supabase
-      .from('conversations')
-      .insert({
-        user_a: user.id,
-        user_b: otherUserId,
-      })
-      .select()
-      .single();
+    const { data, error } = await supabase.rpc('get_or_create_conversation', {
+      user1_id: user.id,
+      user2_id: otherUserId,
+    });
 
     if (error) throw error;
-    return data;
+    return { id: data };
   },
 
-  // Get all conversations for current user
-  async getConversations() {
+  // Get all conversations for current user using the new RPC
+  async getConversations(): Promise<ConversationListItem[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const { data, error } = await supabase
-      .from('conversations')
-      .select('*')
-      .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
-      .order('last_message_at', { ascending: false, nullsFirst: false });
+    const { data, error } = await supabase.rpc('get_user_conversations', {
+      p_user_id: user.id,
+      p_limit: 50,
+      p_offset: 0,
+    });
 
     if (error) throw error;
-
-    // Fetch profiles for other users
-    const otherUserIds = data.map(conv => 
-      conv.user_a === user.id ? conv.user_b : conv.user_a
-    );
-
-    const { data: profiles, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, full_name, avatar_url, headline')
-      .in('id', otherUserIds);
-
-    if (profileError) throw profileError;
-
-    // Combine conversations with profile data
-    return data.map(conv => ({
-      ...conv,
-      otherUser: profiles?.find(p => 
-        p.id === (conv.user_a === user.id ? conv.user_b : conv.user_a)
-      ),
-    }));
+    return data || [];
   },
 
-  // Get messages for a conversation
-  async getMessages(conversationId: string) {
-    const { data, error } = await supabase
-      .from('messages')
-      .select('*, sender:profiles!messages_sender_id_fkey(id, full_name, avatar_url)')
-      .eq('conversation_id', conversationId)
-      .order('created_at', { ascending: true });
+  // Get messages for a conversation using the new RPC
+  async getMessages(conversationId: string): Promise<MessageWithSender[]> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('get_conversation_messages', {
+      p_conversation_id: conversationId,
+      p_user_id: user.id,
+      p_limit: 100,
+    });
 
     if (error) throw error;
-    return data;
+    
+    // Reverse to show oldest first
+    return (data || []).reverse();
   },
 
-  // Send a message
+  // Send a message to the new messages_new table
   async sendMessage(conversationId: string, content: string) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
     const { data, error } = await supabase
-      .from('messages')
+      .from('messages_new')
       .insert({
         conversation_id: conversationId,
         sender_id: user.id,
@@ -91,32 +64,40 @@ export const messagingService = {
       .single();
 
     if (error) throw error;
-
-    // Update conversation last_message_at
-    await supabase
-      .from('conversations')
-      .update({ last_message_at: new Date().toISOString() })
-      .eq('id', conversationId);
-
     return data;
   },
 
-  // Mark conversation as read
+  // Mark conversation as read using the new RPC
   async markAsRead(conversationId: string) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const { error } = await supabase
-      .from('messages')
-      .update({ read: true })
-      .eq('conversation_id', conversationId)
-      .neq('sender_id', user.id)
-      .eq('read', false);
+    const { error } = await supabase.rpc('mark_conversation_read', {
+      p_conversation_id: conversationId,
+      p_user_id: user.id,
+    });
 
     if (error) throw error;
   },
 
-  // Subscribe to new messages in a conversation
+  // Get total unread count using the new RPC
+  async getTotalUnreadCount(): Promise<number> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return 0;
+
+    const { data, error } = await supabase.rpc('get_total_unread_count', {
+      p_user_id: user.id,
+    });
+
+    if (error) {
+      console.error('Error fetching unread count:', error);
+      return 0;
+    }
+
+    return data || 0;
+  },
+
+  // Subscribe to new messages in a conversation (updated for messages_new table)
   subscribeToMessages(conversationId: string, callback: (message: any) => void) {
     return supabase
       .channel(`messages:${conversationId}`)
@@ -125,7 +106,7 @@ export const messagingService = {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
+          table: 'messages_new',
           filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => callback(payload.new)

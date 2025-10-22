@@ -27,7 +27,6 @@ interface ConversationThreadProps {
  * - Typing indicators
  * - Message input with send
  * - Smart timestamp formatting
- * - Read receipts
  */
 const ConversationThread: React.FC<ConversationThreadProps> = ({
   conversationId,
@@ -48,7 +47,7 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
     queryFn: messagingService.getConversations,
   });
 
-  const conversation = conversations?.find(c => c.id === conversationId);
+  const conversation = conversations?.find(c => c.conversation_id === conversationId);
 
   // Fetch messages with realtime updates
   const { data: messages, isLoading } = useRealtimeMessages(conversationId);
@@ -65,7 +64,6 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
       toast({ title: 'Failed to send message', variant: 'destructive' });
     },
   });
-
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -116,15 +114,15 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
       {!isOverlay && (
         <div className="p-4 border-b flex items-center gap-3 bg-card">
           <Avatar className="w-10 h-10">
-            <AvatarImage src={conversation.otherUser?.avatar_url || ''} />
+            <AvatarImage src={conversation.other_user_avatar_url || ''} />
             <AvatarFallback className="bg-primary text-primary-foreground">
-              {getInitials(conversation.otherUser?.full_name || '')}
+              {getInitials(conversation.other_user_full_name || '')}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <p className="font-semibold">{conversation.otherUser?.full_name}</p>
-            {conversation.otherUser?.headline && (
-              <p className="text-xs text-muted-foreground">{conversation.otherUser.headline}</p>
+            <p className="font-semibold">{conversation.other_user_full_name}</p>
+            {conversation.other_user_headline && (
+              <p className="text-xs text-muted-foreground">{conversation.other_user_headline}</p>
             )}
           </div>
           {onClose && (
@@ -150,21 +148,16 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
           <div className="space-y-1">
             {messages?.map((message) => (
               <MessageBubble
-                key={message.id}
-                message={{
-                  ...message,
-                  sender: message.sender_id === user?.id 
-                    ? undefined 
-                    : conversation.otherUser,
-                }}
-                isMine={message.sender_id === user?.id}
+                key={message.message_id}
+                message={message}
+                isOwnMessage={message.sender_id === user?.id}
               />
             ))}
             {isTyping && (
               <TypingIndicator 
                 users={[{ 
-                  user_id: conversation.otherUser?.id || '', 
-                  display_name: conversation.otherUser?.full_name || 'User' 
+                  user_id: conversation.other_user_id || '', 
+                  display_name: conversation.other_user_full_name || 'User' 
                 }]} 
               />
             )}

@@ -8,13 +8,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { ConversationListItem } from '@/types/messaging';
 
 interface MessagesBreadcrumbProps {
-  selectedConversation?: {
-    otherUser?: {
-      full_name?: string;
-    };
-  } | null;
+  selectedConversation?: ConversationListItem | null;
   onClearSelection?: () => void;
 }
 
@@ -63,7 +60,7 @@ const MessagesBreadcrumb: React.FC<MessagesBreadcrumbProps> = ({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage className="line-clamp-1 max-w-[200px]">
-                {selectedConversation.otherUser?.full_name || 'Conversation'}
+                {selectedConversation.other_user_full_name || 'Conversation'}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </>
