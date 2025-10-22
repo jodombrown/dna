@@ -163,13 +163,15 @@ export default function Discover() {
     enabled: !!profile,
   });
 
-  const { data: connectionSuggestions, isLoading: loadingConnections } = useQuery({
+  const { data: connectionSuggestions, isLoading: loadingConnections, refetch: refetchConnections } = useQuery({
     queryKey: ['suggested-connections', profile?.id],
     queryFn: async () => {
       if (!profile) return [];
 
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
+
+      console.log('🔍 Fetching connection suggestions for user:', user.id);
 
       // Use discover_members RPC to get valid, existing users only
       const { data: similarUsers, error } = await supabase.rpc('discover_members', {
@@ -186,9 +188,13 @@ export default function Discover() {
       });
 
       if (error) {
-        console.error('Error fetching connection suggestions:', error);
+        console.error('❌ Error fetching connection suggestions:', error);
         return [];
       }
+      
+      console.log('✅ Received connection suggestions:', similarUsers?.length, 'users');
+      console.log('Users:', similarUsers?.map(u => ({ id: u.id, name: u.full_name })));
+      
       if (!similarUsers) return [];
 
       // discover_members already calculates match_score and filters valid users
@@ -231,6 +237,8 @@ export default function Discover() {
       return scoredUsers;
     },
     enabled: !!profile,
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 0, // Don't cache (TanStack Query v5)
   });
 
   const handleConnect = (user: any) => {
