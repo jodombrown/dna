@@ -5,10 +5,10 @@ import { supabase } from '@/integrations/supabase/client';
 /**
  * useUnreadMessageCount - Hook to fetch the count of unread messages
  * 
- * Counts messages in conversations where:
- * - User is a participant (user_a or user_b)
- * - Message is not from the current user
- * - Message is unread (read = false)
+ * Uses the get_total_unread_count RPC function which counts messages based on:
+ * - Messages created after user's last_read_at timestamp in conversation_participants
+ * - Messages not sent by the current user
+ * - Non-deleted messages
  * 
  * @returns Query result with unread message count
  */
@@ -20,37 +20,16 @@ export function useUnreadMessageCount() {
     queryFn: async () => {
       if (!user) return 0;
 
-      // Get all conversations where user is a participant
-      const { data: conversations, error: convError } = await supabase
-        .from('conversations')
-        .select('id')
-        .or(`user_a.eq.${user.id},user_b.eq.${user.id}`);
-
-      if (convError) {
-        console.error('Error fetching conversations:', convError);
-        return 0;
-      }
-
-      if (!conversations || conversations.length === 0) {
-        return 0;
-      }
-
-      const conversationIds = conversations.map(c => c.id);
-
-      // Count unread messages in these conversations
-      const { count, error } = await supabase
-        .from('messages')
-        .select('id', { count: 'exact', head: true })
-        .in('conversation_id', conversationIds)
-        .neq('sender_id', user.id)
-        .eq('read', false);
+      const { data, error } = await supabase.rpc('get_total_unread_count', {
+        p_user_id: user.id,
+      });
 
       if (error) {
-        console.error('Error counting unread messages:', error);
+        console.error('Error fetching unread count:', error);
         return 0;
       }
 
-      return count || 0;
+      return data || 0;
     },
     enabled: !!user,
     refetchInterval: 30000, // Refetch every 30 seconds
