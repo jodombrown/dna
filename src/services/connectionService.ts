@@ -11,10 +11,16 @@ export const connectionService = {
       .from('connections')
       .select('id, status')
       .or(`and(requester_id.eq.${user.id},recipient_id.eq.${receiverId}),and(requester_id.eq.${receiverId},recipient_id.eq.${user.id})`)
-      .single();
+      .maybeSingle();
 
     if (existing) {
-      throw new Error('Connection already exists');
+      if (existing.status === 'pending') {
+        throw new Error('Connection request already pending');
+      } else if (existing.status === 'accepted') {
+        throw new Error('Already connected');
+      } else if (existing.status === 'declined') {
+        throw new Error('Previous connection request was declined');
+      }
     }
 
     const { data, error } = await supabase
@@ -28,7 +34,18 @@ export const connectionService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Connection request error:', error);
+      if (error.code === '23505') {
+        throw new Error('Connection request already exists');
+      } else if (error.code === '42501') {
+        throw new Error('Permission denied. Please ensure you are logged in.');
+      } else if (error.code === '23503') {
+        throw new Error('User not found');
+      }
+      throw new Error(error.message || 'Failed to send connection request');
+    }
+    
     return data;
   },
 
