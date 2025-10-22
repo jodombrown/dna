@@ -171,57 +171,56 @@ export default function Discover() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
-      // Get users with similar skills/interests
-      const { data: similarUsers } = await supabase
-        .from('profiles')
-        .select('*')
-        .neq('id', user.id)
-        .limit(50);
+      // Use discover_members RPC to get valid, existing users only
+      const { data: similarUsers, error } = await supabase.rpc('discover_members', {
+        p_current_user_id: user.id,
+        p_focus_areas: null,
+        p_regional_expertise: null,
+        p_industries: null,
+        p_country_of_origin: null,
+        p_location_country: null,
+        p_search_query: null,
+        p_sort_by: 'match',
+        p_limit: 50,
+        p_offset: 0
+      });
 
+      if (error) {
+        console.error('Error fetching connection suggestions:', error);
+        return [];
+      }
       if (!similarUsers) return [];
 
-      const userSkills = profile.skills || [];
-      const userInterests = profile.interests || [];
-      const userImpactAreas = profile.impact_areas || [];
-
+      // discover_members already calculates match_score and filters valid users
       const scoredUsers = similarUsers
         .filter(otherUser => otherUser && otherUser.id) // Filter out null/undefined users
         .map(otherUser => {
-          let score = 0;
           const reasons = [];
+          const score = otherUser.match_score || 0;
 
-          const otherSkills = otherUser.skills || [];
-          const otherInterests = otherUser.interests || [];
-          const otherImpactAreas = otherUser.impact_areas || [];
-
-          const skillOverlap = userSkills.filter(s => otherSkills.includes(s)).length;
-          const interestOverlap = userInterests.filter(i => otherInterests.includes(i)).length;
-          const impactOverlap = userImpactAreas.filter(a => otherImpactAreas.includes(a)).length;
-
-          score += skillOverlap * 8;
-          score += interestOverlap * 6;
-          score += impactOverlap * 10;
-
-          // Same location boost
-          const locationMatch = profile.location && otherUser.location === profile.location;
-          if (locationMatch) {
-            score += 15;
+          // Build reason from available data
+          if (otherUser.focus_areas?.length > 0) {
+            reasons.push('Shared focus areas');
+          }
+          if (otherUser.regional_expertise?.length > 0) {
+            reasons.push('Regional expertise match');
+          }
+          if (otherUser.industries?.length > 0) {
+            reasons.push('Industry alignment');
+          }
+          if (profile.location && otherUser.location === profile.location) {
             reasons.push('Same location');
           }
-
-          if (skillOverlap > 0) reasons.push(`${skillOverlap} shared skills`);
-          if (interestOverlap > 0) reasons.push(`${interestOverlap} shared interests`);
-          if (impactOverlap > 0) reasons.push(`${impactOverlap} aligned impact areas`);
 
           return {
             user: otherUser,
             score,
             reason: reasons.join(', ') || 'Part of DNA network',
             breakdown: {
-              skills: skillOverlap,
-              interests: interestOverlap,
-              impactAreas: impactOverlap,
-              location: locationMatch
+              skills: otherUser.focus_areas?.length || 0,
+              interests: otherUser.regional_expertise?.length || 0,
+              impactAreas: otherUser.industries?.length || 0,
+              location: profile.location === otherUser.location
             }
           };
         })
