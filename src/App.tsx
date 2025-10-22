@@ -146,7 +146,7 @@ function App() {
               <Route path="/dna/discover" element={<Discover />} />
               <Route path="/dna/discover/members" element={<DiscoverMembers />} />
               <Route path="/dna/network" element={<Network />} />
-              <Route path="/dna/messages" element={<Messages />} />
+              <Route path="/dna/messages" element={<MessagesPage />} />
               <Route path="/dna/messages/:conversationId" element={<MessagesPage />} />
               <Route path="/app/profile/edit" element={
                 <OnboardingGuard>
