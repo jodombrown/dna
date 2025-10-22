@@ -2971,6 +2971,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          is_deleted: boolean
           post_id: string
           updated_at: string
           user_id: string
@@ -2979,6 +2980,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          is_deleted?: boolean
           post_id: string
           updated_at?: string
           user_id: string
@@ -2987,6 +2989,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          is_deleted?: boolean
           post_id?: string
           updated_at?: string
           user_id?: string
@@ -3089,30 +3092,45 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          image_url: string | null
+          is_deleted: boolean
+          link_description: string | null
+          link_title: string | null
+          link_url: string | null
           metadata: Json | null
           post_type: string
+          privacy_level: string
           updated_at: string
-          visibility: string
         }
         Insert: {
           author_id: string
           content: string
           created_at?: string
           id?: string
+          image_url?: string | null
+          is_deleted?: boolean
+          link_description?: string | null
+          link_title?: string | null
+          link_url?: string | null
           metadata?: Json | null
           post_type?: string
+          privacy_level?: string
           updated_at?: string
-          visibility?: string
         }
         Update: {
           author_id?: string
           content?: string
           created_at?: string
           id?: string
+          image_url?: string | null
+          is_deleted?: boolean
+          link_description?: string | null
+          link_title?: string | null
+          link_url?: string | null
           metadata?: Json | null
           post_type?: string
+          privacy_level?: string
           updated_at?: string
-          visibility?: string
         }
         Relationships: []
       }
@@ -4824,6 +4842,34 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      get_feed_posts: {
+        Args: {
+          p_feed_type?: string
+          p_limit?: number
+          p_offset?: number
+          p_user_id: string
+        }
+        Returns: {
+          author_avatar_url: string
+          author_full_name: string
+          author_headline: string
+          author_id: string
+          author_username: string
+          comments_count: number
+          content: string
+          created_at: string
+          image_url: string
+          is_connection: boolean
+          likes_count: number
+          link_description: string
+          link_title: string
+          link_url: string
+          post_id: string
+          post_type: string
+          privacy_level: string
+          user_has_liked: boolean
+        }[]
+      }
       get_leaderboard: {
         Args: {
           board_type?: string
@@ -4881,6 +4927,53 @@ export type Database = {
           reminder_type: string
           user_email: string
           user_id: string
+        }[]
+      }
+      get_post_comments: {
+        Args: { p_post_id: string; p_user_id: string }
+        Returns: {
+          author_avatar_url: string
+          author_full_name: string
+          author_id: string
+          author_username: string
+          comment_id: string
+          content: string
+          created_at: string
+          updated_at: string
+        }[]
+      }
+      get_post_details: {
+        Args: { p_post_id: string; p_user_id: string }
+        Returns: {
+          author_avatar_url: string
+          author_full_name: string
+          author_headline: string
+          author_id: string
+          author_username: string
+          comments_count: number
+          content: string
+          created_at: string
+          image_url: string
+          likes_count: number
+          link_description: string
+          link_title: string
+          link_url: string
+          post_id: string
+          post_type: string
+          privacy_level: string
+          updated_at: string
+          user_has_liked: boolean
+        }[]
+      }
+      get_post_likers: {
+        Args: { p_limit?: number; p_post_id: string }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          headline: string
+          liked_at: string
+          user_id: string
+          username: string
         }[]
       }
       get_public_profiles: {
