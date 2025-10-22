@@ -1,29 +1,29 @@
 import { supabase } from '@/integrations/supabase/client';
+import { ConnectionStatus, Connection, ConnectionRequest, ConnectionProfile } from '@/types/connections';
 
 export const connectionService = {
-  // Send a connection request
   async sendConnectionRequest(receiverId: string, message?: string) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Check if request already exists
+    // Check for existing connection
     const { data: existing } = await supabase
-      .from('connection_requests')
+      .from('connections')
       .select('id, status')
-      .or(`and(sender_id.eq.${user.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${user.id})`)
-      .maybeSingle();
+      .or(`and(requester_id.eq.${user.id},recipient_id.eq.${receiverId}),and(requester_id.eq.${receiverId},recipient_id.eq.${user.id})`)
+      .single();
 
     if (existing) {
-      throw new Error('Connection request already exists');
+      throw new Error('Connection already exists');
     }
 
     const { data, error } = await supabase
-      .from('connection_requests')
+      .from('connections')
       .insert({
-        sender_id: user.id,
-        receiver_id: receiverId,
+        requester_id: user.id,
+        recipient_id: receiverId,
         status: 'pending',
-        message: message || null,
+        message: message?.trim() || null,
       })
       .select()
       .single();
@@ -32,119 +32,73 @@ export const connectionService = {
     return data;
   },
 
-  // Accept a connection request
-  async acceptConnectionRequest(requestId: string) {
-    const { data: request, error: fetchError } = await supabase
-      .from('connection_requests')
-      .select('sender_id, receiver_id')
-      .eq('id', requestId)
-      .single();
-
-    if (fetchError) throw fetchError;
-
-    // Update request status
-    const { error: updateError } = await supabase
-      .from('connection_requests')
-      .update({ status: 'accepted', updated_at: new Date().toISOString() })
-      .eq('id', requestId);
-
-    if (updateError) throw updateError;
-
-    // Create connection
-    const { error: connError } = await supabase
-      .from('connections')
-      .insert({
-        a: request.sender_id,
-        b: request.receiver_id,
-        status: 'accepted',
-      });
-
-    if (connError) throw connError;
-  },
-
-  // Reject a connection request
-  async rejectConnectionRequest(requestId: string) {
-    const { error } = await supabase
-      .from('connection_requests')
-      .update({ status: 'rejected', updated_at: new Date().toISOString() })
-      .eq('id', requestId);
-
-    if (error) throw error;
-  },
-
-  // Get pending connection requests (received)
-  async getPendingRequests() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
-
+  async acceptConnectionRequest(connectionId: string) {
     const { data, error } = await supabase
-      .from('connection_requests')
-      .select('*, sender:profiles!connection_requests_sender_id_fkey(id, full_name, avatar_url, professional_role, location)')
-      .eq('receiver_id', user.id)
+      .from('connections')
+      .update({ status: 'accepted', updated_at: new Date().toISOString() })
+      .eq('id', connectionId)
       .eq('status', 'pending')
-      .order('created_at', { ascending: false });
+      .select()
+      .single();
 
     if (error) throw error;
     return data;
   },
 
-  // Get user's connections
-  async getConnections() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
-
+  async rejectConnectionRequest(connectionId: string) {
     const { data, error } = await supabase
       .from('connections')
-      .select('*')
-      .or(`a.eq.${user.id},b.eq.${user.id}`)
-      .eq('status', 'accepted');
+      .update({ status: 'declined', updated_at: new Date().toISOString() })
+      .eq('id', connectionId)
+      .eq('status', 'pending')
+      .select()
+      .single();
 
     if (error) throw error;
-    
-    // Fetch profiles for connected users
-    const connectionIds = data.map(conn => 
-      conn.a === user.id ? conn.b : conn.a
-    );
-
-    const { data: profiles, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, full_name, avatar_url, professional_role, location, headline')
-      .in('id', connectionIds);
-
-    if (profileError) throw profileError;
-
-    return profiles;
+    return data;
   },
 
-  // Check connection status with a user
-  async getConnectionStatus(userId: string) {
+  async getPendingRequests(): Promise<ConnectionRequest[]> {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+    if (!user) return [];
 
-    // Check for existing connection
-    const { data: connection } = await supabase
-      .from('connections')
-      .select('*')
-      .or(`and(a.eq.${user.id},b.eq.${userId}),and(a.eq.${userId},b.eq.${user.id})`)
-      .maybeSingle();
+    const { data, error } = await supabase.rpc('get_connection_requests', {
+      user_id: user.id,
+    });
 
-    if (connection) return { status: 'connected', connectionId: connection.id };
+    if (error) throw error;
+    return (data || []) as ConnectionRequest[];
+  },
 
-    // Check for pending request
-    const { data: request } = await supabase
-      .from('connection_requests')
-      .select('id, status, sender_id')
-      .or(`and(sender_id.eq.${user.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${user.id})`)
-      .maybeSingle();
+  async getConnections(searchQuery?: string): Promise<ConnectionProfile[]> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
 
-    if (request) {
-      if (request.sender_id === user.id) {
-        return { status: 'pending_sent', requestId: request.id };
-      } else {
-        return { status: 'pending_received', requestId: request.id };
-      }
+    const { data, error } = await supabase.rpc('get_user_connections', {
+      user_id: user.id,
+      search_query: searchQuery || null,
+      limit_count: 50,
+      offset_count: 0,
+    });
+
+    if (error) throw error;
+    return (data || []) as ConnectionProfile[];
+  },
+
+  async getConnectionStatus(userId: string): Promise<ConnectionStatus> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return 'none';
+
+    const { data, error } = await supabase.rpc('get_connection_status', {
+      user1_id: user.id,
+      user2_id: userId,
+    });
+
+    if (error) {
+      console.error('Error getting connection status:', error);
+      return 'none';
     }
 
-    return { status: 'none' };
+    return (data as ConnectionStatus) || 'none';
   },
 };

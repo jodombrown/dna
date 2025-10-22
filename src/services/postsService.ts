@@ -115,17 +115,17 @@ export async function fetchPosts(): Promise<Post[]> {
   // Get user's connections first
   const { data: connectionsData } = await supabase
     .from('connections')
-    .select('a, b')
+    .select('requester_id, recipient_id')
     .eq('status', 'accepted')
-    .or(`a.eq.${user.id},b.eq.${user.id}`);
+    .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
 
   // Extract connected user IDs
   const connectedUserIds = new Set<string>();
   connectionsData?.forEach(conn => {
-    if (conn.a === user.id) {
-      connectedUserIds.add(conn.b);
+    if (conn.requester_id === user.id) {
+      connectedUserIds.add(conn.recipient_id);
     } else {
-      connectedUserIds.add(conn.a);
+      connectedUserIds.add(conn.requester_id);
     }
   });
 

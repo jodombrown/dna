@@ -23,7 +23,7 @@ const Network: React.FC = () => {
 
   const { data: connections, isLoading: connectionsLoading } = useQuery({
     queryKey: ['connections'],
-    queryFn: connectionService.getConnections,
+    queryFn: () => connectionService.getConnections(),
   });
 
   const { data: pendingRequests, isLoading: requestsLoading } = useQuery({
@@ -54,10 +54,10 @@ const Network: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ['connections'] });
       queryClient.invalidateQueries({ queryKey: ['pending-requests'] });
       queryClient.invalidateQueries({ queryKey: ['network-suggestions'] });
-      const request = pendingRequests?.find(r => r.id === requestId);
+      const request = pendingRequests?.find(r => r.connection_id === requestId);
       toast({ 
         title: 'Connection accepted!',
-        description: request?.sender?.full_name ? `You're now connected with ${request.sender.full_name}` : undefined
+        description: request?.full_name ? `You're now connected with ${request.full_name}` : undefined
       });
     },
     onError: () => {

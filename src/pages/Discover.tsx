@@ -247,11 +247,11 @@ export default function Discover() {
     try {
       // Pre-check to prevent duplicate key errors
       const status = await connectionService.getConnectionStatus(selectedUser.id);
-      if (status.status !== 'none') {
+      if (status !== 'none') {
         let description = 'You already have a connection in progress with this member.';
-        if (status.status === 'connected') description = 'You are already connected.';
-        if (status.status === 'pending_sent') description = 'Request already sent.';
-        if (status.status === 'pending_received') description = 'They have already sent you a request.';
+        if (status === 'accepted') description = 'You are already connected.';
+        if (status === 'pending_sent') description = 'Request already sent.';
+        if (status === 'pending_received') description = 'They have already sent you a request.';
         toast({ title: 'Connection exists', description });
         setModalOpen(false);
         setSelectedUser(null);

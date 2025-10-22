@@ -74,8 +74,8 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
       );
     }
 
-    switch (connectionStatus?.status) {
-      case 'connected':
+    switch (connectionStatus) {
+      case 'accepted':
         return (
           <Button
             variant="outline"

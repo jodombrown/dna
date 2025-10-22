@@ -66,10 +66,10 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
     
     try {
       const { error } = await supabase
-        .from('connection_requests')
+        .from('connections')
         .insert({
-          sender_id: profile.id,
-          receiver_id: selectedUser.id,
+          requester_id: profile.id,
+          recipient_id: selectedUser.id,
           status: 'pending',
           message: note || null,
         });
@@ -82,6 +82,7 @@ const DashboardRightColumn: React.FC<DashboardRightColumnProps> = ({
       });
       
       queryClient.invalidateQueries({ queryKey: ['suggested-connections'] });
+      setModalOpen(false);
       
     } catch (error: any) {
       toast({

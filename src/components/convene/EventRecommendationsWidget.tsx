@@ -48,10 +48,10 @@ export const EventRecommendationsWidget = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from('connections')
-        .select('b')
-        .eq('a', user!.id)
+        .select('requester_id, recipient_id')
+        .or(`requester_id.eq.${user!.id},recipient_id.eq.${user!.id}`)
         .eq('status', 'accepted');
-      return data?.map(c => c.b) || [];
+      return data?.flatMap(c => [c.requester_id, c.recipient_id]).filter(id => id !== user!.id) || [];
     },
     enabled: !!user?.id,
   });
