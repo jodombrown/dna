@@ -19,7 +19,8 @@ import Onboarding from "./pages/Onboarding";
 import DnaMe from "./pages/dna/Me";
 import DnaUserDashboard from "./pages/dna/Username";
 import ActivityFeed from "./pages/ActivityFeed";
-import FeedPage from "./pages/FeedPage";
+import NetworkFeedPage from "./pages/NetworkFeedPage";
+import DiscoveryFeedPage from "./pages/DiscoveryFeedPage";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -127,10 +128,21 @@ function App() {
                 </OnboardingGuard>
               } />
               
-              {/* Activity Feed */}
+              {/* Feed Routes - Network and Discovery */}
+              <Route path="/dna/network" element={
+                <OnboardingGuard>
+                  <NetworkFeedPage />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/discover/posts" element={
+                <OnboardingGuard>
+                  <DiscoveryFeedPage />
+                </OnboardingGuard>
+              } />
+              {/* Redirect old feed route */}
               <Route path="/dna/feed" element={
                 <OnboardingGuard>
-                  <FeedPage />
+                  <NetworkFeedPage />
                 </OnboardingGuard>
               } />
               
