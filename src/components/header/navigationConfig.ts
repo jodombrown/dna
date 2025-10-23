@@ -13,7 +13,7 @@ export const aboutUsDropdown = [
 
 // Main navigation for authenticated users (feed-focused like LinkedIn)
 export const mainNavItems = [
-  { name: 'Network', path: '/dna/network', icon: 'Users2' },
+  { name: 'Network Feed', path: '/dna/network/feed', icon: 'Users2' },
   { name: 'My DNA', path: '/dna/me', icon: 'User' },
   { name: 'Discover', path: '/dna/discover/members', icon: 'Search' },
   { name: 'Convene', path: '/dna/convene', icon: 'Calendar' },

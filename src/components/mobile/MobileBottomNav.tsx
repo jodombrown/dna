@@ -17,7 +17,7 @@ const MobileBottomNav: React.FC = () => {
 
   const navItems = [
     { label: 'Home', icon: Home, path: '/dna/me' },
-    { label: 'Discover', icon: Users, path: '/dna/connect' },
+    { label: 'Network', icon: Users, path: '/dna/network/feed' },
     { label: 'Messages', icon: MessageCircle, path: '/dna/messages', badge: unreadCount },
     { label: 'Events', icon: Calendar, path: '/dna/events' },
   ];

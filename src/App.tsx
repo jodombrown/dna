@@ -129,22 +129,18 @@ function App() {
               } />
               
               {/* Feed Routes - Network and Discovery */}
-              <Route path="/dna/network" element={
+              <Route path="/dna/network/feed" element={
                 <OnboardingGuard>
                   <NetworkFeedPage />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/discover/posts" element={
+              <Route path="/dna/discover/feed" element={
                 <OnboardingGuard>
                   <DiscoveryFeedPage />
                 </OnboardingGuard>
               } />
               {/* Redirect old feed route */}
-              <Route path="/dna/feed" element={
-                <OnboardingGuard>
-                  <NetworkFeedPage />
-                </OnboardingGuard>
-              } />
+              <Route path="/dna/feed" element={<Navigate to="/dna/network/feed" replace />} />
               
               {/* Main feature pages under /dna namespace */}
               <Route path="/dna/connect" element={<ConnectExample />} />
