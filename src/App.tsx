@@ -19,6 +19,7 @@ import Onboarding from "./pages/Onboarding";
 import DnaMe from "./pages/dna/Me";
 import DnaUserDashboard from "./pages/dna/Username";
 import ActivityFeed from "./pages/ActivityFeed";
+import FeedPage from "./pages/FeedPage";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -127,7 +128,11 @@ function App() {
               } />
               
               {/* Activity Feed */}
-              <Route path="/dna/feed" element={<FeedComingSoon />} />
+              <Route path="/dna/feed" element={
+                <OnboardingGuard>
+                  <FeedPage />
+                </OnboardingGuard>
+              } />
               
               {/* Main feature pages under /dna namespace */}
               <Route path="/dna/connect" element={<ConnectExample />} />
