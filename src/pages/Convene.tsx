@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import ConnectEventsTab from '@/components/connect/tabs/ConnectEventsTab';
 import EventRegistrationSidebar from '@/components/connect/EventRegistrationSidebar';
 import { Event } from '@/types/search';
-import { useLiveEvents } from '@/hooks/useLiveEvents';
+import { sampleConveneEvents } from '@/data/sampleConveneEvents';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,7 +14,10 @@ const Convene = () => {
   useScrollToTop();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { events, loading } = useLiveEvents(50);
+  
+  // Use sample events for marketing page
+  const events = useMemo(() => sampleConveneEvents as Event[], []);
+  
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -97,19 +100,13 @@ const Convene = () => {
       <UnifiedHeader />
       
       <main className="container mx-auto px-4 py-8 pt-24">
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-dna-emerald"></div>
-          </div>
-        ) : (
-          <ConnectEventsTab
-            events={events as Event[]}
-            onEventClick={handleEventClick}
-            onRegisterEvent={handleEventClick}
-            onCreatorClick={handleCreatorClick}
-            onViewAll={handleViewAll}
-          />
-        )}
+        <ConnectEventsTab
+          events={events as Event[]}
+          onEventClick={handleEventClick}
+          onRegisterEvent={handleEventClick}
+          onCreatorClick={handleCreatorClick}
+          onViewAll={handleViewAll}
+        />
       </main>
 
       <EventRegistrationSidebar
