@@ -7,18 +7,17 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import { featuredCalendars } from './eventData';
-import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface FeaturedCalendarsSectionProps {
   onViewAll?: () => void;
 }
 
 const FeaturedCalendarsSection: React.FC<FeaturedCalendarsSectionProps> = ({ onViewAll }) => {
-  const handleSubscribe = (calendar: any) => {
-    toast({
-      title: "Subscription Process Preview",
-      description: `In the full platform, you would receive a confirmation email and be subscribed to ${calendar.name}'s calendar. You'd get notifications for their upcoming events and could manage preferences in your account settings.`,
-    });
+  const navigate = useNavigate();
+  
+  const handleViewAllCalendars = () => {
+    navigate('/convene/featured-calendars');
   };
 
   return (
@@ -31,7 +30,7 @@ const FeaturedCalendarsSection: React.FC<FeaturedCalendarsSectionProps> = ({ onV
         <Button 
           variant="ghost" 
           className="text-dna-emerald hover:text-dna-forest"
-          onClick={onViewAll}
+          onClick={handleViewAllCalendars}
         >
           View All <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
@@ -76,14 +75,14 @@ const FeaturedCalendarsSection: React.FC<FeaturedCalendarsSectionProps> = ({ onV
                             className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-lg mt-auto"
                              onClick={(e) => {
                                e.stopPropagation();
-                               handleSubscribe(calendar);
+                               handleViewAllCalendars();
                              }}
                           >
-                            Subscribe
+                            Learn More
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p className="text-sm">Get notified about new events from this calendar</p>
+                          <p className="text-sm">Discover how featured calendars work</p>
                         </TooltipContent>
                       </Tooltip>
                     </CardContent>
