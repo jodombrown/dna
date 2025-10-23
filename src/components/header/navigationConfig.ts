@@ -8,6 +8,7 @@ export const publicNavItems = [
 
 export const aboutUsDropdown = [
   { name: 'About Us', path: '/about' },
+  { name: 'Fact Sheet', path: '/dna/fact-sheet' },
   { name: 'Contact', path: '/contact' },
 ];
 
