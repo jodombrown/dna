@@ -6,14 +6,13 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import { MapPin, Calendar } from 'lucide-react';
 import { localEvents } from './eventData';
-import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const LocalEventsSection: React.FC = () => {
-  const handleCityClick = (location: any) => {
-    toast({
-      title: `${location.city} Events Discovery`,
-      description: `In the full platform, you'd see ${location.count} upcoming events in ${location.city} including networking meetups, cultural celebrations, professional conferences, and community gatherings. You could filter by date, category, and set location-based notifications.`,
-    });
+  const navigate = useNavigate();
+  
+  const handleCityClick = () => {
+    navigate('/convene/local-events');
   };
 
   return (
@@ -41,7 +40,7 @@ const LocalEventsSection: React.FC = () => {
                     <TooltipTrigger asChild>
                        <Card 
                          className="hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white shadow-md hover:shadow-xl h-full"
-                         onClick={() => handleCityClick(location)}
+                         onClick={handleCityClick}
                        >
                          <CardContent className="p-6 text-center">
                            <div className="flex flex-col items-center space-y-4">

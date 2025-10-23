@@ -44,6 +44,7 @@ import ConveyExample from "./pages/ConveyExample";
 import Convene from "./pages/Convene";
 import ConveneCategoryPage from "./pages/ConveneCategoryPage";
 import FeaturedCalendarsPage from "./pages/FeaturedCalendarsPage";
+import LocalEventsPage from "./pages/LocalEventsPage";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -174,6 +175,7 @@ function App() {
               <Route path="/convene" element={<Convene />} />
               <Route path="/convene/category/:category" element={<ConveneCategoryPage />} />
               <Route path="/convene/featured-calendars" element={<FeaturedCalendarsPage />} />
+              <Route path="/convene/local-events" element={<LocalEventsPage />} />
               <Route path="/convene-example" element={<ConveneExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
