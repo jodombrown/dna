@@ -102,7 +102,7 @@ const LocalEventsPage = () => {
                 className={`p-6 bg-gradient-to-br ${city.color} hover:scale-105 transition-transform cursor-pointer group`}
               >
                 <div className="text-5xl mb-3">{city.flag}</div>
-                <h3 className="text-2xl font-bold mb-1 text-white drop-shadow-lg">{city.city}</h3>
+                <h3 className="text-xl font-bold mb-1 text-white drop-shadow-lg">{city.city}</h3>
                 <p className="text-white drop-shadow-md text-sm mb-3 font-medium">{city.count} events nearby</p>
                 <Button 
                   size="sm" 
