@@ -75,7 +75,10 @@ const Convene = () => {
   };
 
   const handleViewAll = () => {
-    navigate('/dna/events');
+    toast({
+      title: "View All Events",
+      description: "In the full DNA platform, this feature lets you browse all upcoming diaspora events with advanced filtering by location, date, type, and interests.",
+    });
   };
 
   // Navigation between events in sidebar

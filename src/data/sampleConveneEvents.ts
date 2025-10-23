@@ -26,6 +26,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-01-10T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=400&fit=crop',
   },
   {
     id: '2',
@@ -39,6 +40,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-01-12T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&h=400&fit=crop',
   },
   {
     id: '3',
@@ -52,6 +54,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: true,
     created_at: '2025-01-15T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&h=400&fit=crop',
   },
   {
     id: '4',
@@ -65,6 +68,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: false,
     is_virtual: false,
     created_at: '2025-01-18T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop',
   },
   {
     id: '5',
@@ -78,6 +82,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-01-20T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&h=400&fit=crop',
   },
   {
     id: '6',
@@ -91,6 +96,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: false,
     is_virtual: false,
     created_at: '2025-01-22T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=800&h=400&fit=crop',
   },
   {
     id: '7',
@@ -104,6 +110,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-01-25T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=800&h=400&fit=crop',
   },
   {
     id: '8',
@@ -117,6 +124,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: true,
     created_at: '2025-01-28T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&h=400&fit=crop',
   },
   {
     id: '9',
@@ -130,6 +138,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-02-01T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1558769132-cb1aea66f99d?w=800&h=400&fit=crop',
   },
   {
     id: '10',
@@ -143,6 +152,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: false,
     is_virtual: false,
     created_at: '2025-02-03T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=400&fit=crop',
   },
   {
     id: '11',
@@ -156,6 +166,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-02-05T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&h=400&fit=crop',
   },
   {
     id: '12',
@@ -169,6 +180,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: false,
     is_virtual: true,
     created_at: '2025-02-08T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800&h=400&fit=crop',
   },
   {
     id: '13',
@@ -182,6 +194,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-02-10T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800&h=400&fit=crop',
   },
   {
     id: '14',
@@ -195,6 +208,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: false,
     is_virtual: false,
     created_at: '2025-02-12T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=400&fit=crop',
   },
   {
     id: '15',
@@ -208,6 +222,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-02-15T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop',
   },
   {
     id: '16',
@@ -221,6 +236,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: false,
     is_virtual: false,
     created_at: '2025-02-18T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=400&fit=crop',
   },
   {
     id: '17',
@@ -234,6 +250,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-02-20T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=800&h=400&fit=crop',
   },
   {
     id: '18',
@@ -247,6 +264,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: false,
     is_virtual: true,
     created_at: '2025-02-22T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=400&fit=crop',
   },
   {
     id: '19',
@@ -260,6 +278,7 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: true,
     is_virtual: false,
     created_at: '2025-02-25T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&h=400&fit=crop',
   },
   {
     id: '20',
@@ -273,5 +292,6 @@ export const sampleConveneEvents: SampleEvent[] = [
     is_featured: false,
     is_virtual: true,
     created_at: '2025-02-28T00:00:00Z',
+    banner_url: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&h=400&fit=crop',
   },
 ];
