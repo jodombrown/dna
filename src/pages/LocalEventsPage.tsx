@@ -99,15 +99,14 @@ const LocalEventsPage = () => {
             {sampleCities.map((city, index) => (
               <Card 
                 key={index} 
-                className={`p-6 bg-gradient-to-br ${city.color} text-white hover:scale-105 transition-transform cursor-pointer group`}
+                className={`p-6 bg-gradient-to-br ${city.color} hover:scale-105 transition-transform cursor-pointer group`}
               >
                 <div className="text-5xl mb-3">{city.flag}</div>
-                <h3 className="text-2xl font-bold mb-1">{city.city}</h3>
-                <p className="text-white/90 text-sm mb-3">{city.count} events nearby</p>
+                <h3 className="text-2xl font-bold mb-1 text-white drop-shadow-lg">{city.city}</h3>
+                <p className="text-white drop-shadow-md text-sm mb-3 font-medium">{city.count} events nearby</p>
                 <Button 
                   size="sm" 
-                  variant="secondary" 
-                  className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30"
+                  className="w-full bg-white/90 hover:bg-white text-gray-900 border-0 font-semibold shadow-md"
                 >
                   Explore Events
                 </Button>
