@@ -69,10 +69,10 @@ const FactSheetPage = () => {
           </h2>
           <div className="space-y-4 text-lg text-foreground/90">
             <p>
-              The <strong>Diaspora Network of Africa (DNA)</strong> is a transformative platform designed to unite visionary leaders, builders, and changemakers across the African diaspora. We are creating the infrastructure for actionable, systemic change by mobilizing talent, capital, and expertise.
+              The Global African Diaspora holds extraordinary power - skills honed across continents, networks spanning the globe, knowledge bridging cultures, resources waiting to be channeled, and capital seeking meaningful impact. Yet this power remains <strong>scattered, underutilized, disconnected</strong> from the continent's urgent needs and boundless potential.
             </p>
             <p>
-              Founded by <a href="https://www.linkedin.com/in/jaunelamarr/" target="_blank" rel="noopener noreferrer" className="text-dna-copper hover:text-dna-gold underline font-semibold">Jaune Odombrown</a>, an ecosystem builder and entrepreneur, DNA transforms collective ambition into coordinated efforts that reshape systems, unlock opportunity, and drive sustainable development across Africa.
+              The <strong>Diaspora Network of Africa (DNA)</strong> exists to change this. Founded by <a href="https://www.linkedin.com/in/jaunelamarr/" target="_blank" rel="noopener noreferrer" className="text-dna-copper hover:text-dna-gold underline font-semibold">Jaune Odombrown</a>, an ecosystem builder and entrepreneur, we are building the digital mobilization engine that transforms scattered strength into collective power.
             </p>
           </div>
         </Card>
@@ -87,13 +87,13 @@ const FactSheetPage = () => {
             <Card className="p-6 bg-card/50">
               <h3 className="text-xl font-bold mb-3 text-dna-forest">Our Mission</h3>
               <p className="text-foreground/80">
-                To empower the African diaspora by creating a unified platform that connects talent, amplifies impact, and accelerates Africa's transformation through innovation and entrepreneurship.
+                To mobilize the Global African Diaspora's collective power—skills, networks, knowledge, resources, and capital—into coordinated action that accelerates Africa's progress and prosperity.
               </p>
             </Card>
             <Card className="p-6 bg-card/50">
               <h3 className="text-xl font-bold mb-3 text-dna-forest">Our Vision</h3>
               <p className="text-foreground/80">
-                A thriving, interconnected African diaspora ecosystem where every member can discover opportunities, build meaningful collaborations, and contribute to Africa's sustainable development.
+                A world where the African Diaspora operates as Africa's most powerful distributed asset—seamlessly connected, purposefully convened, actively collaborating, meaningfully contributing, and amplifying impact that transforms the continent and uplifts our global community.
               </p>
             </Card>
           </div>
@@ -120,48 +120,80 @@ const FactSheetPage = () => {
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Target className="h-8 w-8 text-dna-copper" />
-            What We Do: The 5 Cs Framework
+            Our Methodology: The 5 Cs Cycle
           </h2>
-          <p className="text-lg text-muted-foreground mb-6">
-            Our platform is built on five interconnected pillars that enable diasporans to drive meaningful change:
+          <p className="text-lg text-foreground/90 mb-8">
+            This is not a linear process. It's a <strong>living, breathing ecosystem</strong> where each action amplifies the next, creating an upward spiral of impact:
           </p>
           
-          <div className="space-y-4">
-            <Card className="p-6 border-l-4 border-l-dna-emerald">
-              <h3 className="text-2xl font-bold mb-2 text-dna-forest">🤝 Connect</h3>
-              <p className="text-foreground/80">
-                Discover and network with African diaspora professionals, entrepreneurs, and changemakers worldwide. Build meaningful relationships based on shared interests, skills, and goals.
+          <div className="space-y-6">
+            <Card className="p-6 border-l-4 border-l-dna-emerald bg-gradient-to-r from-dna-emerald/5 to-transparent">
+              <h3 className="text-2xl font-bold mb-3 text-dna-forest">1. CONNECT - Building the Network of Possibility</h3>
+              <p className="text-foreground/80 leading-relaxed">
+                We start by linking diaspora members to each other and to opportunities across Africa. Every entrepreneur in Atlanta is connected to an innovator in Lagos. Every investor in London is linked to a project in Accra. Every technologist in Toronto finds their counterpart in Nairobi. <strong>Connection is our foundation</strong> - the threads that weave our scattered strength into collective power.
               </p>
             </Card>
 
-            <Card className="p-6 border-l-4 border-l-dna-copper">
-              <h3 className="text-2xl font-bold mb-2 text-dna-forest">📅 Convene</h3>
-              <p className="text-foreground/80">
-                Participate in events, summits, and gatherings that bring the diaspora together. From virtual meetups to in-person conferences, we create spaces for collaboration and learning.
+            <Card className="p-6 border-l-4 border-l-dna-copper bg-gradient-to-r from-dna-copper/5 to-transparent">
+              <h3 className="text-2xl font-bold mb-3 text-dna-forest">2. CONVENE - Gathering Around Shared Purpose</h3>
+              <p className="text-foreground/80 leading-relaxed">
+                From individual connections, we create intentional gatherings - digital and physical spaces where the diaspora comes together around Africa's priorities. We convene around sectors (tech, agriculture, healthcare), around challenges (infrastructure, education, climate), and around opportunities (market entry, investment, innovation). <strong>Purpose transforms strangers into collaborators.</strong>
               </p>
             </Card>
 
-            <Card className="p-6 border-l-4 border-l-dna-gold">
-              <h3 className="text-2xl font-bold mb-2 text-dna-forest">🚀 Collaborate</h3>
-              <p className="text-foreground/80">
-                Join or create project spaces for innovation. Work together on startups, social enterprises, research initiatives, and development projects that drive Africa forward.
+            <Card className="p-6 border-l-4 border-l-dna-gold bg-gradient-to-r from-dna-gold/5 to-transparent">
+              <h3 className="text-2xl font-bold mb-3 text-dna-forest">3. COLLABORATE - Co-Creating Solutions</h3>
+              <p className="text-foreground/80 leading-relaxed">
+                When we gather with purpose, collaboration ignites. Diaspora expertise merges with continental insight. Resources meet needs. Ideas become strategies. This is where the architect in Canada designs with the builder in Rwanda. Where the investor in Dubai funds the entrepreneur in Kampala. <strong>Where collective intelligence surpasses what any individual could achieve alone.</strong>
               </p>
             </Card>
 
-            <Card className="p-6 border-l-4 border-l-dna-emerald">
-              <h3 className="text-2xl font-bold mb-2 text-dna-forest">💡 Contribute</h3>
-              <p className="text-foreground/80">
-                Access and create opportunities including jobs, grants, partnerships, and investment opportunities. Make tangible contributions to Africa's development through your expertise and resources.
+            <Card className="p-6 border-l-4 border-l-dna-emerald bg-gradient-to-r from-dna-emerald/5 to-transparent">
+              <h3 className="text-2xl font-bold mb-3 text-dna-forest">4. CONTRIBUTE - Mobilizing Our Assets</h3>
+              <p className="text-foreground/80 leading-relaxed">
+                Collaboration unlocks contribution. Each person brings their unique value - a skill shared, knowledge transferred, a network opened, capital deployed, time invested. <strong>Contributions aren't charity; they're investments in our collective future.</strong> Every contribution strengthens the whole, proving that Africa's progress is the diaspora's progress.
               </p>
             </Card>
 
-            <Card className="p-6 border-l-4 border-l-dna-copper">
-              <h3 className="text-2xl font-bold mb-2 text-dna-forest">📣 Convey</h3>
-              <p className="text-foreground/80">
-                Share your story, insights, and impact through our social feed. Amplify successes, celebrate milestones, and inspire others with your journey and achievements.
+            <Card className="p-6 border-l-4 border-l-dna-copper bg-gradient-to-r from-dna-copper/5 to-transparent">
+              <h3 className="text-2xl font-bold mb-3 text-dna-forest">5. CONVEY - Amplifying Impact and Inspiring Action</h3>
+              <p className="text-foreground/80 leading-relaxed">
+                We share our stories, broadcast our successes, communicate our learnings, and showcase our impact. When we convey what we've built together, we inspire others to join. Each story shared creates new connections. Every success broadcast brings new collaborators. <strong>The cycle begins again - stronger, wider, deeper.</strong>
               </p>
             </Card>
           </div>
+
+          {/* The Spiral Effect */}
+          <Card className="p-8 mt-8 bg-gradient-to-br from-dna-forest/10 via-dna-emerald/10 to-dna-copper/10 border-2 border-dna-copper/30">
+            <h3 className="text-2xl font-bold mb-4 text-dna-forest flex items-center gap-2">
+              <Sparkles className="h-7 w-7 text-dna-copper" />
+              The Spiral Effect
+            </h3>
+            <p className="text-lg text-foreground/90 mb-4">
+              This isn't a one-time journey from Connect to Convey. It's a <strong>perpetual spiral</strong>:
+            </p>
+            <ul className="space-y-2 text-foreground/80 ml-4">
+              <li className="flex items-start gap-2">
+                <span className="text-dna-copper mt-1">•</span>
+                <span>Every story conveyed creates new connections</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-dna-copper mt-1">•</span>
+                <span>Every contribution strengthens collaboration</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-dna-copper mt-1">•</span>
+                <span>Every collaboration makes convenings more powerful</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-dna-copper mt-1">•</span>
+                <span>Every convening deepens our connections</span>
+              </li>
+            </ul>
+            <p className="text-lg text-foreground/90 mt-6 font-semibold">
+              With each revolution, we grow stronger. More connected. More capable. More impactful.
+            </p>
+          </Card>
         </section>
 
         <Separator className="mb-12" />
@@ -243,9 +275,12 @@ const FactSheetPage = () => {
           </div>
 
           <Card className="p-6 mt-6 bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 border-2 border-dna-copper/20">
-            <h3 className="text-xl font-bold mb-3 text-dna-forest">Market Position</h3>
+            <h3 className="text-xl font-bold mb-3 text-dna-forest">Our Promise</h3>
+            <p className="text-foreground/90 mb-3">
+              We are not building a database. <strong>We are building a movement with a digital mobilization engine.</strong> We are not creating a network. We are mobilizing a force for transformation.
+            </p>
             <p className="text-foreground/90">
-              DNA occupies a unique space at the intersection of <strong>professional networking</strong> (LinkedIn), <strong>community building</strong> (Facebook Groups), <strong>opportunity platforms</strong> (AngelList), and <strong>impact tracking</strong> (Benevity). We're the only platform purpose-built for diaspora-driven African development.
+              DNA will make connection frictionless, convening purposeful, collaboration productive, contribution meaningful, and impact visible.
             </p>
           </Card>
         </section>
