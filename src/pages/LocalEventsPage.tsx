@@ -36,7 +36,7 @@ const LocalEventsPage = () => {
     { city: 'London', count: '320+', flag: '🇬🇧', color: 'from-dna-copper to-dna-gold' },
     { city: 'Lagos', count: '280+', flag: '🇳🇬', color: 'from-dna-emerald to-dna-mint' },
     { city: 'Toronto', count: '190+', flag: '🇨🇦', color: 'from-dna-copper to-cultural-sunset' },
-    { city: 'Johannesburg', count: '240+', flag: '🇿🇦', color: 'from-cultural-purple to-dna-copper' },
+    { city: 'Johannesburg', count: '240+', flag: '🇿🇦', color: 'from-dna-terra to-dna-sunset' },
     { city: 'Paris', count: '210+', flag: '🇫🇷', color: 'from-dna-forest to-cultural-purple' }
   ];
 
