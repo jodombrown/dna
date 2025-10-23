@@ -32,12 +32,12 @@ const LocalEventsPage = () => {
   const [activeRadius, setActiveRadius] = useState('city');
 
   const sampleCities = [
-    { city: 'New York', count: '450+', flag: '🇺🇸', color: 'from-blue-500 to-indigo-600' },
-    { city: 'London', count: '320+', flag: '🇬🇧', color: 'from-red-500 to-pink-600' },
-    { city: 'Lagos', count: '280+', flag: '🇳🇬', color: 'from-green-500 to-emerald-600' },
-    { city: 'Toronto', count: '190+', flag: '🇨🇦', color: 'from-red-600 to-orange-600' },
-    { city: 'Johannesburg', count: '240+', flag: '🇿🇦', color: 'from-yellow-500 to-amber-600' },
-    { city: 'Paris', count: '210+', flag: '🇫🇷', color: 'from-blue-600 to-purple-600' }
+    { city: 'New York', count: '450+', flag: '🇺🇸', color: 'from-dna-emerald to-dna-forest' },
+    { city: 'London', count: '320+', flag: '🇬🇧', color: 'from-dna-copper to-dna-gold' },
+    { city: 'Lagos', count: '280+', flag: '🇳🇬', color: 'from-dna-emerald to-dna-mint' },
+    { city: 'Toronto', count: '190+', flag: '🇨🇦', color: 'from-dna-copper to-cultural-sunset' },
+    { city: 'Johannesburg', count: '240+', flag: '🇿🇦', color: 'from-cultural-ochre to-dna-gold' },
+    { city: 'Paris', count: '210+', flag: '🇫🇷', color: 'from-dna-forest to-cultural-purple' }
   ];
 
   return (
@@ -200,21 +200,21 @@ const LocalEventsPage = () => {
 
           <Tabs value={activeRadius} onValueChange={setActiveRadius} className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-8 h-auto p-2">
-              <TabsTrigger value="hyper" className="py-4 data-[state=active]:bg-green-500 data-[state=active]:text-white">
+              <TabsTrigger value="hyper" className="py-4 data-[state=active]:bg-dna-emerald data-[state=active]:text-white">
                 <Home className="h-5 w-5 mr-2" />
                 <div className="text-left">
                   <p className="font-bold">Hyper-Local</p>
                   <p className="text-xs opacity-70">Within 5 miles</p>
                 </div>
               </TabsTrigger>
-              <TabsTrigger value="city" className="py-4 data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+              <TabsTrigger value="city" className="py-4 data-[state=active]:bg-dna-forest data-[state=active]:text-white">
                 <Map className="h-5 w-5 mr-2" />
                 <div className="text-left">
                   <p className="font-bold">City-Wide</p>
                   <p className="text-xs opacity-70">Within 20 miles</p>
                 </div>
               </TabsTrigger>
-              <TabsTrigger value="metro" className="py-4 data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+              <TabsTrigger value="metro" className="py-4 data-[state=active]:bg-cultural-purple data-[state=active]:text-white">
                 <Globe2 className="h-5 w-5 mr-2" />
                 <div className="text-left">
                   <p className="font-bold">Metro Area</p>
@@ -224,9 +224,9 @@ const LocalEventsPage = () => {
             </TabsList>
 
             <TabsContent value="hyper" className="mt-0">
-              <Card className="p-8 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+              <Card className="p-8 bg-gradient-to-br from-dna-mint/30 to-dna-emerald/20 border-dna-emerald/30">
                 <div className="flex items-start gap-6">
-                  <div className="w-20 h-20 bg-green-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-20 h-20 bg-dna-emerald rounded-2xl flex items-center justify-center flex-shrink-0">
                     <Home className="h-10 w-10 text-white" />
                   </div>
                   <div className="flex-1">
@@ -237,19 +237,19 @@ const LocalEventsPage = () => {
                     </p>
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <CheckCircle2 className="h-4 w-4 text-dna-emerald" />
                         <span>Neighborhood meetups</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <CheckCircle2 className="h-4 w-4 text-dna-emerald" />
                         <span>Local coffee gatherings</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <CheckCircle2 className="h-4 w-4 text-dna-emerald" />
                         <span>Community board meetings</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <CheckCircle2 className="h-4 w-4 text-dna-emerald" />
                         <span>Walking-distance events</span>
                       </div>
                     </div>
@@ -259,9 +259,9 @@ const LocalEventsPage = () => {
             </TabsContent>
 
             <TabsContent value="city" className="mt-0">
-              <Card className="p-8 bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
+              <Card className="p-8 bg-gradient-to-br from-dna-forest/10 to-dna-emerald/10 border-dna-forest/30">
                 <div className="flex items-start gap-6">
-                  <div className="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-20 h-20 bg-dna-forest rounded-2xl flex items-center justify-center flex-shrink-0">
                     <Map className="h-10 w-10 text-white" />
                   </div>
                   <div className="flex-1">
@@ -272,19 +272,19 @@ const LocalEventsPage = () => {
                     </p>
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                        <CheckCircle2 className="h-4 w-4 text-dna-forest" />
                         <span>City festivals & celebrations</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                        <CheckCircle2 className="h-4 w-4 text-dna-forest" />
                         <span>Professional networking</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                        <CheckCircle2 className="h-4 w-4 text-dna-forest" />
                         <span>Cultural performances</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                        <CheckCircle2 className="h-4 w-4 text-dna-forest" />
                         <span>Workshops & classes</span>
                       </div>
                     </div>
@@ -294,9 +294,9 @@ const LocalEventsPage = () => {
             </TabsContent>
 
             <TabsContent value="metro" className="mt-0">
-              <Card className="p-8 bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+              <Card className="p-8 bg-gradient-to-br from-cultural-purple/10 to-dna-copper/10 border-cultural-purple/30">
                 <div className="flex items-start gap-6">
-                  <div className="w-20 h-20 bg-purple-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-20 h-20 bg-cultural-purple rounded-2xl flex items-center justify-center flex-shrink-0">
                     <Globe2 className="h-10 w-10 text-white" />
                   </div>
                   <div className="flex-1">
@@ -307,19 +307,19 @@ const LocalEventsPage = () => {
                     </p>
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-purple-600" />
+                        <CheckCircle2 className="h-4 w-4 text-cultural-purple" />
                         <span>Regional conferences</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-purple-600" />
+                        <CheckCircle2 className="h-4 w-4 text-cultural-purple" />
                         <span>Major cultural events</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-purple-600" />
+                        <CheckCircle2 className="h-4 w-4 text-cultural-purple" />
                         <span>Large-scale gatherings</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-purple-600" />
+                        <CheckCircle2 className="h-4 w-4 text-cultural-purple" />
                         <span>Special celebrations</span>
                       </div>
                     </div>
@@ -411,7 +411,7 @@ const LocalEventsPage = () => {
           
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="p-0 overflow-hidden group hover:shadow-2xl transition-all">
-              <div className="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+              <div className="h-48 bg-gradient-to-br from-dna-emerald to-dna-mint flex items-center justify-center">
                 <TrendingUp className="h-20 w-20 text-white" />
               </div>
               <div className="p-6">
@@ -426,7 +426,7 @@ const LocalEventsPage = () => {
             </Card>
 
             <Card className="p-0 overflow-hidden group hover:shadow-2xl transition-all">
-              <div className="h-48 bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center">
+              <div className="h-48 bg-gradient-to-br from-dna-copper to-cultural-sunset flex items-center justify-center">
                 <Heart className="h-20 w-20 text-white" />
               </div>
               <div className="p-6">
@@ -441,7 +441,7 @@ const LocalEventsPage = () => {
             </Card>
 
             <Card className="p-0 overflow-hidden group hover:shadow-2xl transition-all">
-              <div className="h-48 bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
+              <div className="h-48 bg-gradient-to-br from-dna-forest to-dna-emerald flex items-center justify-center">
                 <Users className="h-20 w-20 text-white" />
               </div>
               <div className="p-6">
@@ -456,7 +456,7 @@ const LocalEventsPage = () => {
             </Card>
 
             <Card className="p-0 overflow-hidden group hover:shadow-2xl transition-all">
-              <div className="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+              <div className="h-48 bg-gradient-to-br from-cultural-purple to-dna-copper flex items-center justify-center">
                 <Sparkles className="h-20 w-20 text-white" />
               </div>
               <div className="p-6">
