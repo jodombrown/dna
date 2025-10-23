@@ -85,7 +85,9 @@ const handler = async (req: Request): Promise<Response> => {
       role: sanitizeInput(formData.role || ''),
       experience: sanitizeInput(formData.experience || ''),
       motivation: sanitizeInput(formData.motivation || ''),
-      linkedin_url: sanitizeInput(formData.linkedin_url || '')
+      linkedin_url: sanitizeInput(formData.linkedin_url || ''),
+      organization: sanitizeInput(formData.organization || ''),
+      stakeholderType: sanitizeInput(formData.stakeholderType || '')
     };
     
     // Initialize email service

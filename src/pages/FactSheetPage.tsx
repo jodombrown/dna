@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Download, Share2, Users, Target, Sparkles, TrendingUp, Globe, Heart } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const FactSheetPage = () => {
+  const { toast } = useToast();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [stakeholderType, setStakeholderType] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    organization: '',
+    message: ''
+  });
+
   const handlePrint = () => {
     window.print();
   };
@@ -21,6 +37,52 @@ const FactSheetPage = () => {
       } catch (err) {
         console.log('Share failed:', err);
       }
+    }
+  };
+
+  const openStakeholderDialog = (type: string) => {
+    setStakeholderType(type);
+    setDialogOpen(true);
+    setFormData({ name: '', email: '', organization: '', message: '' });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase.functions.invoke('send-universal-email', {
+        body: {
+          formType: 'fact-sheet-stakeholder',
+          formData: {
+            stakeholderType,
+            ...formData
+          },
+          userEmail: formData.email
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Message sent successfully!",
+        description: "We'll be in touch soon.",
+      });
+      setDialogOpen(false);
+      setFormData({ name: '', email: '', organization: '', message: '' });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Failed to send message",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -303,7 +365,7 @@ const FactSheetPage = () => {
               <p className="text-sm text-muted-foreground mb-4">
                 Join thousands of diasporans building Africa's future
               </p>
-              <Button className="w-full" variant="default">
+              <Button className="w-full" variant="default" onClick={() => openStakeholderDialog('User')}>
                 Sign Up Today
               </Button>
             </Card>
@@ -316,7 +378,7 @@ const FactSheetPage = () => {
               <p className="text-sm text-muted-foreground mb-4">
                 Collaborate with us to amplify your impact
               </p>
-              <Button className="w-full" variant="secondary">
+              <Button className="w-full" variant="secondary" onClick={() => openStakeholderDialog('Partner')}>
                 Explore Partnership
               </Button>
             </Card>
@@ -329,7 +391,7 @@ const FactSheetPage = () => {
               <p className="text-sm text-muted-foreground mb-4">
                 Support the platform enabling diaspora-driven change
               </p>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full" variant="outline" onClick={() => openStakeholderDialog('Investor')}>
                 Learn More
               </Button>
             </Card>
@@ -346,6 +408,80 @@ const FactSheetPage = () => {
           </p>
         </div>
       </div>
+
+      {/* Stakeholder Contact Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-dna-forest">
+              {stakeholderType === 'User' && 'Join DNA as a User'}
+              {stakeholderType === 'Partner' && 'Partner with DNA'}
+              {stakeholderType === 'Investor' && 'Invest in DNA'}
+            </DialogTitle>
+            <DialogDescription>
+              {stakeholderType === 'User' && 'Share your details and we\'ll help you get started on your diaspora journey.'}
+              {stakeholderType === 'Partner' && 'Tell us about your organization and how we can collaborate.'}
+              {stakeholderType === 'Investor' && 'Learn more about investment opportunities and our vision.'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            <div>
+              <Input
+                type="text"
+                name="name"
+                placeholder="Your Name *"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+                className="w-full"
+              />
+            </div>
+            
+            <div>
+              <Input
+                type="email"
+                name="email"
+                placeholder="Your Email *"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+                className="w-full"
+              />
+            </div>
+            
+            <div>
+              <Input
+                type="text"
+                name="organization"
+                placeholder={stakeholderType === 'User' ? 'Your Professional Background' : 'Organization Name'}
+                value={formData.organization}
+                onChange={handleInputChange}
+                className="w-full"
+              />
+            </div>
+            
+            <div>
+              <Textarea
+                name="message"
+                placeholder="Tell us more about your interest..."
+                value={formData.message}
+                onChange={handleInputChange}
+                rows={4}
+                className="w-full resize-none"
+              />
+            </div>
+            
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Sending...' : 'Submit'}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

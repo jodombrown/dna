@@ -378,6 +378,114 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         `
       };
     
+    case 'fact-sheet-stakeholder':
+      return {
+        subject: `DNA Fact Sheet - ${formData.stakeholderType} Inquiry from ${formData.name}`,
+        adminHtml: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #1a4d2e 0%, #2d7a4f 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+                .field { margin-bottom: 20px; }
+                .label { font-weight: bold; color: #1a4d2e; margin-bottom: 5px; }
+                .value { background: white; padding: 12px; border-radius: 4px; border-left: 3px solid #d4af37; }
+                .stakeholder-badge { display: inline-block; background: #d4af37; color: white; padding: 6px 12px; border-radius: 4px; font-weight: bold; margin-top: 10px; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1 style="margin: 0;">DNA Fact Sheet Inquiry</h1>
+                  <span class="stakeholder-badge">${formData.stakeholderType.toUpperCase()}</span>
+                </div>
+                <div class="content">
+                  <div class="field">
+                    <div class="label">Stakeholder Type:</div>
+                    <div class="value">${formData.stakeholderType}</div>
+                  </div>
+                  <div class="field">
+                    <div class="label">Name:</div>
+                    <div class="value">${formData.name}</div>
+                  </div>
+                  <div class="field">
+                    <div class="label">Email:</div>
+                    <div class="value">${formData.email}</div>
+                  </div>
+                  ${formData.organization ? `
+                  <div class="field">
+                    <div class="label">${formData.stakeholderType === 'User' ? 'Professional Background' : 'Organization'}:</div>
+                    <div class="value">${formData.organization}</div>
+                  </div>
+                  ` : ''}
+                  ${formData.message ? `
+                  <div class="field">
+                    <div class="label">Message:</div>
+                    <div class="value">${formData.message}</div>
+                  </div>
+                  ` : ''}
+                  <div class="field" style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #2d7a4f;">
+                    <div class="label">Next Steps:</div>
+                    <div class="value">
+                      ${formData.stakeholderType === 'User' ? 'Review profile and send onboarding instructions' : ''}
+                      ${formData.stakeholderType === 'Partner' ? 'Schedule partnership exploration call' : ''}
+                      ${formData.stakeholderType === 'Investor' ? 'Send investment deck and schedule investor briefing' : ''}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </body>
+          </html>
+        `,
+        userSubject: `Thank you for your interest in DNA - ${formData.stakeholderType}`,
+        userHtml: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #1a4d2e 0%, #2d7a4f 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+                .greeting { font-size: 18px; margin-bottom: 20px; }
+                .message { background: white; padding: 20px; border-radius: 4px; margin: 20px 0; border-left: 3px solid #d4af37; }
+                .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #2d7a4f; color: #666; }
+                .cta { background: #d4af37; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 20px 0; font-weight: bold; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1 style="margin: 0;">Diaspora Network of Africa</h1>
+                  <p style="margin: 10px 0 0 0; opacity: 0.9;">Building Africa's Future Together</p>
+                </div>
+                <div class="content">
+                  <div class="greeting">Asé ${formData.name},</div>
+                  <div class="message">
+                    <p><strong>Thank you for your interest in the Diaspora Network of Africa!</strong></p>
+                    <p>We received your inquiry as a potential <strong>${formData.stakeholderType}</strong> and are excited about the possibility of working together.</p>
+                    ${formData.stakeholderType === 'User' ? '<p>We\'re building a powerful platform to connect diasporans like you with opportunities across Africa. Our team will review your information and reach out with next steps for getting started.</p>' : ''}
+                    ${formData.stakeholderType === 'Partner' ? '<p>We believe in the power of strategic partnerships to amplify our collective impact. Our team will review your organization\'s potential for collaboration and be in touch soon to explore synergies.</p>' : ''}
+                    ${formData.stakeholderType === 'Investor' ? '<p>We\'re building the infrastructure for diaspora-driven transformation. Our team will send you our investment materials and schedule a time to discuss how you can be part of this movement.</p>' : ''}
+                    <p><em>The diaspora is ready. Africa is calling. The time is now.</em></p>
+                  </div>
+                  <div class="footer">
+                    <p><strong>Diaspora Network of Africa</strong></p>
+                    <p style="font-size: 12px;">Ubuntu | Sankofa | Excellence</p>
+                    <p style="font-size: 12px; margin-top: 10px;">
+                      Contact: aweh@diasporanetwork.africa
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </body>
+          </html>
+        `,
+      };
+
     default:
       throw new Error(`Unknown form type: ${formType}`);
   }
