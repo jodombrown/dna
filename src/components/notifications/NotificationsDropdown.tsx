@@ -1,22 +1,11 @@
 import { useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
-import { X, Check } from 'lucide-react';
-
-interface Notification {
-  id: string;
-  user_id: string;
-  type: string;
-  title: string;
-  message: string;
-  link_url?: string | null;
-  read: boolean;
-  is_read: boolean;
-  payload: any;
-  created_at: string;
-  updated_at: string;
-}
+import { X, Check, User } from 'lucide-react';
+import { useNotifications } from '@/hooks/useNotifications';
+import { useAuth } from '@/contexts/AuthContext';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface NotificationsDropdownProps {
   onClose: () => void;
@@ -24,105 +13,48 @@ interface NotificationsDropdownProps {
 
 export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
   const queryClient = useQueryClient();
-
-  // Fetch recent notifications
-  const { data: notifications, isLoading } = useQuery({
-    queryKey: ['notifications'],
-    queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return [];
-      
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20);
-      
-      if (error) throw error;
-      return (data as Notification[]) || [];
-    }
-  });
-
-  // Mark as read mutation
-  const markAsRead = useMutation({
-    mutationFn: async (notificationId: string) => {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ read: true, is_read: true })
-        .eq('id', notificationId);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
-    }
-  });
-
-  // Mark all as read
-  const markAllAsRead = useMutation({
-    mutationFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      
-      const { error } = await supabase
-        .from('notifications')
-        .update({ read: true, is_read: true })
-        .eq('user_id', user.id)
-        .eq('read', false);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
-    }
-  });
+  const { user } = useAuth();
+  
+  const { data: notifications, isLoading, markAsRead, markAllAsRead } = useNotifications();
 
   // Real-time subscription
   useEffect(() => {
-    const setupRealtime = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+    if (!user) return;
 
-      const channel = supabase
-        .channel('user-notifications')
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'notifications',
-            filter: `user_id=eq.${user.id}`
-          },
-          () => {
-            queryClient.invalidateQueries({ queryKey: ['notifications'] });
-            queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
-          }
-        )
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'notifications',
-            filter: `user_id=eq.${user.id}`
-          },
-          () => {
-            queryClient.invalidateQueries({ queryKey: ['notifications'] });
-            queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
-          }
-        )
-        .subscribe();
+    const channel = supabase
+      .channel('user-notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `recipient_id=eq.${user.id}`
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['notifications'] });
+          queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `recipient_id=eq.${user.id}`
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['notifications'] });
+          queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+        }
+      )
+      .subscribe();
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
+    return () => {
+      supabase.removeChannel(channel);
     };
-
-    setupRealtime();
-  }, [queryClient]);
+  }, [queryClient, user]);
 
   return (
     <div className="absolute right-0 mt-2 w-96 bg-background rounded-lg shadow-lg border border-border z-50 max-h-[600px] flex flex-col">
@@ -130,7 +62,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
       <div className="flex items-center justify-between p-4 border-b border-border">
         <h3 className="font-semibold text-foreground">Notifications</h3>
         <div className="flex items-center gap-2">
-          {notifications && notifications.some(n => !n.read) && (
+          {notifications && notifications.some(n => !n.is_read) && (
             <button
               onClick={() => markAllAsRead.mutate()}
               disabled={markAllAsRead.isPending}
@@ -159,18 +91,26 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
         ) : (
           notifications?.map(notification => (
             <div
-              key={notification.id}
+              key={notification.notification_id}
               className={`p-4 border-b border-border hover:bg-accent cursor-pointer ${
-                !notification.read ? 'bg-primary/10' : ''
+                !notification.is_read ? 'bg-primary/10' : ''
               }`}
               onClick={() => {
-                markAsRead.mutate(notification.id);
-                if (notification.link_url) {
-                  window.location.href = notification.link_url;
+                markAsRead.mutate(notification.notification_id);
+                if (notification.action_url) {
+                  window.location.href = notification.action_url;
                 }
               }}
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3">
+                {notification.actor_id && (
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={notification.actor_avatar_url || undefined} />
+                    <AvatarFallback>
+                      <User className="h-4 w-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                )}
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm text-foreground">{notification.title}</p>
                   <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
@@ -182,13 +122,13 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
                     })}
                   </p>
                 </div>
-                {!notification.read && (
+                {!notification.is_read && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      markAsRead.mutate(notification.id);
+                      markAsRead.mutate(notification.notification_id);
                     }}
-                    className="ml-2 text-primary hover:text-primary/80"
+                    className="ml-2 text-primary hover:text-primary/80 flex-shrink-0"
                   >
                     <Check className="h-4 w-4" />
                   </button>
