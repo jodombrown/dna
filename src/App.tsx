@@ -121,7 +121,7 @@ function App() {
               <Route path="/onboarding" element={<Onboarding />} />
               
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
-              <Route path="/dna/fact-sheet" element={<FactSheetPage />} />
+              <Route path="/fact-sheet" element={<FactSheetPage />} />
               <Route path="/dna/me" element={
                 <OnboardingGuard>
                   <DnaMe />
