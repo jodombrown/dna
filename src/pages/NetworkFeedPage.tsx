@@ -135,18 +135,11 @@ export default function NetworkFeedPage() {
                   ? "You haven't posted anything yet"
                   : 'No updates from your network'}
               </h3>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-muted-foreground">
                 {activeTab === 'my_posts'
-                  ? 'Share your first update with your connections'
+                  ? 'Use the "Share Update" button above to create your first post'
                   : "Your connections haven't posted yet. Check back soon!"}
               </p>
-              <Button
-                onClick={() => setShowCreateDialog(true)}
-                className="bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90"
-              >
-                <PenSquare className="h-4 w-4 mr-2" />
-                Create Your First Post
-              </Button>
             </div>
           ) : (
             posts?.map((post) => (
