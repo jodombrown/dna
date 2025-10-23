@@ -42,6 +42,7 @@ import CollaborationsExample from "./pages/CollaborationsExample";
 import ContributeExample from "./pages/ContributeExample";
 import ConveyExample from "./pages/ConveyExample";
 import Convene from "./pages/Convene";
+import ConveneCategoryPage from "./pages/ConveneCategoryPage";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -170,6 +171,7 @@ function App() {
               {/* Legacy example pages - keep for landing page */}
               <Route path="/connect" element={<ConnectExample />} />
               <Route path="/convene" element={<Convene />} />
+              <Route path="/convene/category/:category" element={<ConveneCategoryPage />} />
               <Route path="/convene-example" element={<ConveneExample />} />
               <Route path="/collaborate" element={<CollaborationsExample />} />
               <Route path="/contribute" element={<ContributeExample />} />

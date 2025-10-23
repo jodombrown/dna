@@ -10,13 +10,11 @@ import { useNavigate } from 'react-router-dom';
 
 const EventCategoriesSection: React.FC = () => {
   const navigate = useNavigate();
+  
   const handleCategoryClick = (category: any) => {
-    // Phase 1.5: Category filtering not yet implemented
-    navigate('/dna/events');
-    toast.info(`${category.name} Events`, {
-      description: category.description,
-      duration: 3000,
-    });
+    // Navigate to category preview page for marketing
+    const categorySlug = category.id.toLowerCase();
+    navigate(`/convene/category/${categorySlug}`);
   };
 
   return (
