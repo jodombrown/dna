@@ -4558,10 +4558,7 @@ export type Database = {
         }
         Returns: undefined
       }
-      accept_connection: {
-        Args: { p_connection: string }
-        Returns: undefined
-      }
+      accept_connection: { Args: { p_connection: string }; Returns: undefined }
       add_message_reaction: {
         Args: { p_message_id: string; p_reaction: string; p_user_id: string }
         Returns: undefined
@@ -4592,17 +4589,17 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: number
       }
-      calculate_match_score: {
-        Args:
-          | { profile_id: string; signal_id: string }
-          | {
+      calculate_match_score:
+        | {
+            Args: {
               user1_regions: string[]
               user1_sectors: string[]
               user2_regions: string[]
               user2_sectors: string[]
             }
-        Returns: number
-      }
+            Returns: number
+          }
+        | { Args: { profile_id: string; signal_id: string }; Returns: number }
       calculate_profile_completeness: {
         Args: { target_user_id: string }
         Returns: number
@@ -4623,14 +4620,8 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: boolean
       }
-      can_post_opportunity: {
-        Args: { _org_id: string }
-        Returns: boolean
-      }
-      can_send_messages: {
-        Args: { user_id_param: string }
-        Returns: boolean
-      }
+      can_post_opportunity: { Args: { _org_id: string }; Returns: boolean }
+      can_send_messages: { Args: { user_id_param: string }; Returns: boolean }
       can_view_field: {
         Args: {
           p_field: string
@@ -4695,10 +4686,7 @@ export type Database = {
         }
         Returns: string
       }
-      cron_overdue_task_reminders: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cron_overdue_task_reminders: { Args: never; Returns: undefined }
       discover_members: {
         Args: {
           p_country_of_origin?: string
@@ -4732,36 +4720,36 @@ export type Database = {
           username: string
         }[]
       }
-      enqueue_reminders_for_all_users: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      ensure_connection: {
-        Args: { u1: string; u2: string }
-        Returns: string
-      }
+      enqueue_reminders_for_all_users: { Args: never; Returns: number }
+      ensure_connection: { Args: { u1: string; u2: string }; Returns: string }
       ensure_profile_for_user: {
         Args: { p_email?: string; p_user: string }
         Returns: undefined
       }
-      event_owner_id: {
-        Args: { p_event: string }
-        Returns: string
-      }
-      find_adin_matches: {
-        Args:
-          | { match_threshold?: number; user_id: string }
-          | { target_user_id: string }
-        Returns: {
-          match_reason: string
-          match_score: number
-          matched_user_id: string
-          shared_regions: string[]
-          shared_sectors: string[]
-        }[]
-      }
+      event_owner_id: { Args: { p_event: string }; Returns: string }
+      find_adin_matches:
+        | {
+            Args: { target_user_id: string }
+            Returns: {
+              match_reason: string
+              match_score: number
+              matched_user_id: string
+              shared_regions: string[]
+              shared_sectors: string[]
+            }[]
+          }
+        | {
+            Args: { match_threshold?: number; user_id: string }
+            Returns: {
+              match_score: number
+              signal_created_at: string
+              signal_id: string
+              signal_title: string
+              signal_type: string
+            }[]
+          }
       find_orphaned_profiles: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           created_at: string
           full_name: string
@@ -4770,30 +4758,15 @@ export type Database = {
           username: string
         }[]
       }
-      generate_join_token: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_magic_link_token: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_referral_code: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_username: {
-        Args: { _full_name: string }
-        Returns: string
-      }
+      generate_join_token: { Args: never; Returns: string }
+      generate_magic_link_token: { Args: never; Returns: string }
+      generate_referral_code: { Args: never; Returns: string }
+      generate_username: { Args: { _full_name: string }; Returns: string }
       generate_username_from_name: {
         Args: { full_name: string }
         Returns: string
       }
-      get_active_users_this_week: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      get_active_users_this_week: { Args: never; Returns: number }
       get_connection_requests: {
         Args: { user_id: string }
         Returns: {
@@ -4832,19 +4805,16 @@ export type Database = {
         }[]
       }
       get_current_user_profile: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           is_public: boolean
           user_id: string
         }[]
       }
-      get_engagement_rate: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      get_engagement_rate: { Args: never; Returns: number }
       get_feed_posts: {
         Args: {
-          p_feed_type?: string
+          p_feed_type: string
           p_limit?: number
           p_offset?: number
           p_user_id: string
@@ -4991,49 +4961,43 @@ export type Database = {
           username: string
         }[]
       }
-      get_total_connections: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      get_total_events: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      get_total_posts: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      get_total_unread_count: {
-        Args: { p_user_id: string }
-        Returns: number
-      }
-      get_total_users: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      get_user_cohort: {
-        Args: { target_user_id: string }
-        Returns: string
-      }
-      get_user_connections: {
-        Args:
-          | {
+      get_total_connections: { Args: never; Returns: number }
+      get_total_events: { Args: never; Returns: number }
+      get_total_posts: { Args: never; Returns: number }
+      get_total_unread_count: { Args: { p_user_id: string }; Returns: number }
+      get_total_users: { Args: never; Returns: number }
+      get_user_cohort: { Args: { target_user_id: string }; Returns: string }
+      get_user_connections:
+        | {
+            Args: { p_limit?: number; p_offset?: number; p_user_id: string }
+            Returns: {
+              avatar_url: string
+              connected_at: string
+              full_name: string
+              headline: string
+              id: string
+              location: string
+              username: string
+            }[]
+          }
+        | {
+            Args: {
               limit_count?: number
               offset_count?: number
               search_query?: string
               user_id: string
             }
-          | { p_limit?: number; p_offset?: number; p_user_id: string }
-        Returns: {
-          avatar_url: string
-          connected_at: string
-          full_name: string
-          headline: string
-          id: string
-          location: string
-          username: string
-        }[]
-      }
+            Returns: {
+              avatar_url: string
+              connected_at: string
+              full_name: string
+              headline: string
+              id: string
+              location: string
+              professional_role: string
+              username: string
+            }[]
+          }
       get_user_conversations: {
         Args: { p_limit?: number; p_offset?: number; p_user_id: string }
         Returns: {
@@ -5049,10 +5013,7 @@ export type Database = {
           unread_count: number
         }[]
       }
-      get_user_role: {
-        Args: { user_id: string }
-        Returns: string
-      }
+      get_user_role: { Args: { user_id: string }; Returns: string }
       get_user_verification_status: {
         Args: { target_user_id: string }
         Returns: Json
@@ -5068,14 +5029,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin_email: {
-        Args: { email_address: string }
-        Returns: boolean
-      }
-      is_admin_user: {
-        Args: { _user_id: string }
-        Returns: boolean
-      }
+      is_admin_email: { Args: { email_address: string }; Returns: boolean }
+      is_admin_user: { Args: { _user_id: string }; Returns: boolean }
       is_connection_participant: {
         Args: { p_connection: string }
         Returns: boolean
@@ -5093,10 +5048,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_prelaunch_locked: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_prelaunch_locked: { Args: never; Returns: boolean }
       log_connection_event: {
         Args: { p_connection: string; p_event_type: string; p_payload?: Json }
         Returns: string
@@ -5114,18 +5066,12 @@ export type Database = {
         Args: { p_event_type: string; p_metadata?: Json; p_post_id: string }
         Returns: undefined
       }
-      log_post_view: {
-        Args: { p_post_id: string }
-        Returns: undefined
-      }
+      log_post_view: { Args: { p_post_id: string }; Returns: undefined }
       log_profile_view: {
         Args: { p_profile_id: string; p_view_type?: string }
         Returns: undefined
       }
-      make_user_admin: {
-        Args: { user_email: string }
-        Returns: string
-      }
+      make_user_admin: { Args: { user_email: string }; Returns: string }
       mark_conversation_read: {
         Args: { p_conversation_id: string; p_user_id: string }
         Returns: undefined
@@ -5138,10 +5084,7 @@ export type Database = {
         Args: { min_score?: number; user_id_param: string }
         Returns: boolean
       }
-      promote_from_waitlist: {
-        Args: { p_event: string }
-        Returns: string
-      }
+      promote_from_waitlist: { Args: { p_event: string }; Returns: string }
       recent_engagement_score_for_opportunity: {
         Args: { p_op: string }
         Returns: number
@@ -5154,50 +5097,81 @@ export type Database = {
         Args: { p_target_user: string }
         Returns: number
       }
-      reject_html: {
-        Args: { _txt: string }
-        Returns: boolean
-      }
+      reject_html: { Args: { _txt: string }; Returns: boolean }
       remove_message_reaction: {
         Args: { p_message_id: string; p_reaction: string; p_user_id: string }
         Returns: undefined
       }
-      reset_seeded_data: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      reset_seeded_data: { Args: never; Returns: undefined }
       resolve_nudge: {
         Args: { p_nudge: string; p_snooze_until?: string; p_status: string }
         Returns: undefined
       }
-      rpc_adin_recommend_opportunities: {
-        Args: Record<PropertyKey, never> | { p_limit?: number }
-        Returns: {
-          match_score: number
-          signal_created_at: string
-          signal_id: string
-          signal_title: string
-          signal_type: string
-        }[]
-      }
-      rpc_adin_recommend_people: {
-        Args: Record<PropertyKey, never> | { p_limit?: number }
-        Returns: {
-          match_reason: string
-          match_score: number
-          matched_user_id: string
-          shared_regions: string[]
-          shared_sectors: string[]
-        }[]
-      }
-      rpc_adin_recommend_spaces: {
-        Args: Record<PropertyKey, never> | { p_limit?: number }
-        Returns: {
-          match_score: number
-          space_id: string
-          space_name: string
-        }[]
-      }
+      rpc_adin_recommend_opportunities:
+        | {
+            Args: never
+            Returns: {
+              match_score: number
+              signal_created_at: string
+              signal_id: string
+              signal_title: string
+              signal_type: string
+            }[]
+          }
+        | {
+            Args: { p_limit?: number }
+            Returns: {
+              description: string
+              id: string
+              link: string
+              location: string
+              score: number
+              tags: string[]
+              title: string
+              type: string
+            }[]
+          }
+      rpc_adin_recommend_people:
+        | {
+            Args: never
+            Returns: {
+              match_reason: string
+              match_score: number
+              matched_user_id: string
+              shared_regions: string[]
+              shared_sectors: string[]
+            }[]
+          }
+        | {
+            Args: { p_limit?: number }
+            Returns: {
+              full_name: string
+              headline: string
+              score: number
+              user_id: string
+              username: string
+            }[]
+          }
+      rpc_adin_recommend_spaces:
+        | {
+            Args: never
+            Returns: {
+              match_score: number
+              space_id: string
+              space_name: string
+            }[]
+          }
+        | {
+            Args: { p_limit?: number }
+            Returns: {
+              description: string
+              id: string
+              score: number
+              tags: string[]
+              title: string
+              visibility: string
+            }[]
+          }
       rpc_adin_recommendations_opportunities: {
         Args: { p_limit?: number; p_threshold?: number; p_user_id: string }
         Returns: {
@@ -5222,9 +5196,14 @@ export type Database = {
         Args: { p_event: string; p_token: string }
         Returns: Json
       }
-      rpc_create_post: {
-        Args:
-          | {
+      rpc_create_post:
+        | {
+            Args: { p_content: string; p_media_url?: string; p_pillar?: string }
+            Returns: string
+          }
+        | { Args: { p: Json }; Returns: string }
+        | {
+            Args: {
               content: string
               embed_metadata?: Json
               link_metadata?: Json
@@ -5239,22 +5218,14 @@ export type Database = {
               type?: string
               visibility?: string
             }
-          | { p: Json }
-          | { p_content: string; p_media_url?: string; p_pillar?: string }
-        Returns: string
-      }
-      rpc_dashboard_counts: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
+            Returns: string
+          }
+      rpc_dashboard_counts: { Args: never; Returns: Json }
       rpc_event_approve: {
         Args: { p_registration: string }
         Returns: undefined
       }
-      rpc_event_attendee_count: {
-        Args: { p_event: string }
-        Returns: number
-      }
+      rpc_event_attendee_count: { Args: { p_event: string }; Returns: number }
       rpc_event_attendees: {
         Args: { p_event: string }
         Returns: {
@@ -5268,59 +5239,53 @@ export type Database = {
         Args: { p_registration: string }
         Returns: undefined
       }
-      rpc_event_join_link: {
-        Args: { p_token: string }
-        Returns: string
-      }
-      rpc_event_join_waitlist: {
-        Args: { p_event: string }
-        Returns: number
-      }
-      rpc_event_register: {
-        Args:
-          | {
+      rpc_event_join_link: { Args: { p_token: string }; Returns: string }
+      rpc_event_join_waitlist: { Args: { p_event: string }; Returns: number }
+      rpc_event_register:
+        | { Args: { p_event: string }; Returns: undefined }
+        | {
+            Args: { p_answers?: Json; p_event: string; p_ticket_type?: string }
+            Returns: undefined
+          }
+        | {
+            Args: {
               p_answers?: Json
               p_event: string
               p_profile: string
               p_ticket: string
             }
-          | { p_answers?: Json; p_event: string; p_ticket_type?: string }
-          | { p_event: string }
-        Returns: undefined
-      }
+            Returns: string
+          }
       rpc_event_set_status: {
         Args: { p_event: string; p_status: string; p_user: string }
         Returns: undefined
       }
-      rpc_event_unregister: {
-        Args: { p_event: string }
-        Returns: undefined
-      }
+      rpc_event_unregister: { Args: { p_event: string }; Returns: undefined }
       rpc_event_waitlist_promote: {
         Args: { p_event: string; p_user?: string }
         Returns: string
       }
-      rpc_health_snapshot: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      rpc_log_contribution: {
-        Args:
-          | {
+      rpc_health_snapshot: { Args: never; Returns: Json }
+      rpc_log_contribution:
+        | {
+            Args: {
               p_description?: string
               p_region?: string
               p_sector?: string
               p_target_id: string
               p_type: string
             }
-          | {
+            Returns: undefined
+          }
+        | {
+            Args: {
               p_metadata?: Json
               p_target_id: string
               p_target_title?: string
               p_type: string
             }
-        Returns: undefined
-      }
+            Returns: undefined
+          }
       rpc_membership_approve: {
         Args: { p_space: string; p_user: string }
         Returns: undefined
@@ -5340,18 +5305,12 @@ export type Database = {
           title: string
         }[]
       }
-      rpc_notifications_mark_all_read: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      rpc_notifications_mark_all_read: { Args: never; Returns: number }
       rpc_notifications_mark_read: {
         Args: { p_ids: string[] }
         Returns: number
       }
-      rpc_public_profile_bundle: {
-        Args: { p_username: string }
-        Returns: Json
-      }
+      rpc_public_profile_bundle: { Args: { p_username: string }; Returns: Json }
       rpc_public_profile_by_id: {
         Args: { p_id: string }
         Returns: {
@@ -5393,26 +5352,14 @@ export type Database = {
           username: string
         }[]
       }
-      rpc_request_join_space: {
-        Args: { p_space: string }
-        Returns: undefined
-      }
-      rpc_run_cron_overdue_task_reminders: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      rpc_save_opportunity: {
-        Args: { p_op: string }
-        Returns: undefined
-      }
+      rpc_request_join_space: { Args: { p_space: string }; Returns: undefined }
+      rpc_run_cron_overdue_task_reminders: { Args: never; Returns: undefined }
+      rpc_save_opportunity: { Args: { p_op: string }; Returns: undefined }
       rpc_seed_reco_demo: {
         Args: { p_opps?: number; p_people?: number; p_spaces?: number }
         Returns: Json
       }
-      rpc_seed_verified_contributor: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      rpc_seed_verified_contributor: { Args: never; Returns: undefined }
       rpc_task_assign: {
         Args: { p_assignee: string; p_task: string }
         Returns: undefined
@@ -5477,10 +5424,7 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: undefined
       }
-      update_all_influence_scores: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      update_all_influence_scores: { Args: never; Returns: undefined }
       update_dna_points: {
         Args: { pillar: string; points?: number; target_user_id: string }
         Returns: undefined
@@ -5497,14 +5441,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      update_username: {
-        Args: { new_username: string }
-        Returns: Json
-      }
-      validate_invite_code: {
-        Args: { invite_code: string }
-        Returns: Json
-      }
+      update_username: { Args: { new_username: string }; Returns: Json }
+      validate_invite_code: { Args: { invite_code: string }; Returns: Json }
       validate_prelaunch_access: {
         Args: { user_email: string }
         Returns: boolean
