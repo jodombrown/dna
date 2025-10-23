@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   ArrowLeft, 
   MapPin,
@@ -18,120 +19,25 @@ import {
   Globe2,
   TrendingUp,
   Heart,
-  Home
+  Home,
+  CheckCircle2,
+  XCircle,
+  Sparkles
 } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const LocalEventsPage = () => {
   useScrollToTop();
   const navigate = useNavigate();
-
-  const benefits = [
-    {
-      icon: MapPin,
-      title: 'Find Events Near You',
-      description: 'Automatically discover events happening in your neighborhood, city, and surrounding areas based on your current location'
-    },
-    {
-      icon: Clock,
-      title: 'Save Time & Energy',
-      description: 'No more endless scrolling through irrelevant events. See only what\'s happening close to you, making it easy to attend in person'
-    },
-    {
-      icon: Users,
-      title: 'Build Local Connections',
-      description: 'Meet diaspora community members who live nearby. Build meaningful relationships with people you can actually connect with regularly'
-    },
-    {
-      icon: Home,
-      title: 'Support Your Community',
-      description: 'Discover and support local organizers, small businesses, and community initiatives happening right in your area'
-    },
-    {
-      icon: Navigation,
-      title: 'Smart Distance Filtering',
-      description: 'Set your preferred travel radius - see events within 5 miles, 20 miles, or expand to your whole metro area'
-    },
-    {
-      icon: Bell,
-      title: 'Location-Based Alerts',
-      description: 'Get notified when new events are added in your area so you never miss local opportunities to connect'
-    }
-  ];
-
-  const howItWorks = [
-    {
-      step: '1',
-      title: 'Set Your Location',
-      description: 'Share your location or manually enter your city. Your privacy is protected - we only use it to show nearby events.',
-      icon: MapPin
-    },
-    {
-      step: '2',
-      title: 'Choose Your Radius',
-      description: 'Select how far you\'re willing to travel - from your immediate neighborhood to your entire metro region.',
-      icon: Navigation
-    },
-    {
-      step: '3',
-      title: 'Browse Local Events',
-      description: 'See events organized by distance, with the closest ones first. Filter by date, type, and your interests.',
-      icon: Search
-    },
-    {
-      step: '4',
-      title: 'Connect & Attend',
-      description: 'RSVP to events, coordinate with other local attendees, and build your community network.',
-      icon: Users
-    }
-  ];
-
-  const locationLevels = [
-    {
-      title: 'Hyper-Local',
-      distance: 'Within 5 miles',
-      icon: Home,
-      examples: [
-        'Neighborhood meetups',
-        'Local coffee shop gatherings',
-        'Community board meetings',
-        'Walking-distance events'
-      ],
-      color: 'from-green-500 to-emerald-600'
-    },
-    {
-      title: 'City-Wide',
-      distance: 'Within 20 miles',
-      icon: Map,
-      examples: [
-        'City festivals and celebrations',
-        'Professional networking events',
-        'Cultural performances',
-        'Workshops and classes'
-      ],
-      color: 'from-blue-500 to-cyan-600'
-    },
-    {
-      title: 'Metro Area',
-      distance: 'Within 50+ miles',
-      icon: Globe2,
-      examples: [
-        'Regional conferences',
-        'Major cultural events',
-        'Large-scale gatherings',
-        'Special occasion celebrations'
-      ],
-      color: 'from-purple-500 to-pink-600'
-    }
-  ];
+  const [activeRadius, setActiveRadius] = useState('city');
 
   const sampleCities = [
-    { city: 'New York', count: '450+', flag: '🇺🇸' },
-    { city: 'London', count: '320+', flag: '🇬🇧' },
-    { city: 'Lagos', count: '280+', flag: '🇳🇬' },
-    { city: 'Toronto', count: '190+', flag: '🇨🇦' },
-    { city: 'Johannesburg', count: '240+', flag: '🇿🇦' },
-    { city: 'Paris', count: '210+', flag: '🇫🇷' }
+    { city: 'New York', count: '450+', flag: '🇺🇸', color: 'from-blue-500 to-indigo-600' },
+    { city: 'London', count: '320+', flag: '🇬🇧', color: 'from-red-500 to-pink-600' },
+    { city: 'Lagos', count: '280+', flag: '🇳🇬', color: 'from-green-500 to-emerald-600' },
+    { city: 'Toronto', count: '190+', flag: '🇨🇦', color: 'from-red-600 to-orange-600' },
+    { city: 'Johannesburg', count: '240+', flag: '🇿🇦', color: 'from-yellow-500 to-amber-600' },
+    { city: 'Paris', count: '210+', flag: '🇫🇷', color: 'from-blue-600 to-purple-600' }
   ];
 
   return (
@@ -139,7 +45,6 @@ const LocalEventsPage = () => {
       <UnifiedHeader />
       
       <main className="container mx-auto px-4 py-8 pt-24">
-        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate('/convene')}
@@ -149,276 +54,520 @@ const LocalEventsPage = () => {
           Back to Events
         </Button>
 
-        {/* Hero Section */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary/90 to-primary/70 p-12 md:p-16 text-white mb-12">
-          <div className="relative z-10 max-w-4xl">
-            <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 mb-6 text-base px-4 py-2">
+        {/* Split Hero Section - Different from Featured Calendars */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-16">
+          <div className="flex flex-col justify-center space-y-6">
+            <Badge className="w-fit bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-4 py-2">
               <MapPin className="h-4 w-4 mr-2" />
-              Local Events Discovery
+              Location-Based Discovery
             </Badge>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Your Community.<br />Right Where You Are.
+            <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+              Your Community.<br />
+              <span className="text-primary">Right Where You Are.</span>
             </h1>
-            <p className="text-xl md:text-2xl opacity-95 mb-8 leading-relaxed">
-              Stop missing out on amazing events happening just around the corner. 
-              Discover diaspora gatherings in your neighborhood, city, and region - all automatically filtered by distance from you.
+            <p className="text-xl text-muted-foreground leading-relaxed">
+              Stop scrolling through events happening across the world. Discover diaspora gatherings 
+              in your neighborhood, city, and region - all automatically filtered by distance from you.
             </p>
-            <div className="flex flex-wrap gap-8 text-lg">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-6 w-6" />
-                <span className="font-semibold">200+ Cities</span>
+            <div className="flex flex-wrap gap-4">
+              <div className="flex items-center gap-2 bg-muted px-4 py-3 rounded-lg">
+                <MapPin className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="font-bold">200+</p>
+                  <p className="text-xs text-muted-foreground">Cities</p>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-6 w-6" />
-                <span className="font-semibold">5,000+ Local Events</span>
+              <div className="flex items-center gap-2 bg-muted px-4 py-3 rounded-lg">
+                <Calendar className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="font-bold">5,000+</p>
+                  <p className="text-xs text-muted-foreground">Local Events</p>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Users className="h-6 w-6" />
-                <span className="font-semibold">Built for Community</span>
+              <div className="flex items-center gap-2 bg-muted px-4 py-3 rounded-lg">
+                <Users className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="font-bold">Built for</p>
+                  <p className="text-xs text-muted-foreground">Community</p>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Visual Cities Grid */}
+          <div className="grid grid-cols-2 gap-4">
+            {sampleCities.map((city, index) => (
+              <Card 
+                key={index} 
+                className={`p-6 bg-gradient-to-br ${city.color} text-white hover:scale-105 transition-transform cursor-pointer group`}
+              >
+                <div className="text-5xl mb-3">{city.flag}</div>
+                <h3 className="text-2xl font-bold mb-1">{city.city}</h3>
+                <p className="text-white/90 text-sm mb-3">{city.count} events nearby</p>
+                <Button 
+                  size="sm" 
+                  variant="secondary" 
+                  className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30"
+                >
+                  Explore Events
+                </Button>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Problem vs Solution - Alternating Layout */}
+        <div className="mb-16 bg-muted/30 rounded-3xl p-8 md:p-12">
+          <h2 className="text-4xl font-bold mb-12 text-center">Why Local Discovery Changes Everything</h2>
           
-          {/* Decorative elements */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -z-0" />
-          <div className="absolute bottom-0 left-1/3 w-72 h-72 bg-white/5 rounded-full blur-3xl -z-0" />
-        </div>
-
-        {/* The Problem */}
-        <Card className="p-8 md:p-12 mb-12 bg-gradient-to-br from-muted/50 to-muted/30">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Why Local Matters</h2>
           <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4 text-destructive">The Problem</h3>
-              <ul className="space-y-3 text-muted-foreground">
-                <li className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-destructive rounded-full mt-2 flex-shrink-0" />
-                  <span>You see events happening across the world, but nothing in your own city</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-destructive rounded-full mt-2 flex-shrink-0" />
-                  <span>Scrolling through hundreds of irrelevant events wastes your time</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-destructive rounded-full mt-2 flex-shrink-0" />
-                  <span>You miss community gatherings because you didn't know they existed</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-destructive rounded-full mt-2 flex-shrink-0" />
-                  <span>Hard to find diaspora events specific to your local area</span>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-4 text-primary">The Solution</h3>
-              <ul className="space-y-3 text-muted-foreground">
-                <li className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                  <span>Automatically see events near you first, organized by distance</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                  <span>Set your preferred travel radius to only see what's convenient</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                  <span>Get alerts when new local events are added to the platform</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                  <span>Connect with diaspora community members who live nearby</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </Card>
-
-        {/* Benefits Grid */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-8">Why You'll Love Local Events</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {benefits.map((benefit, index) => (
-              <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <benefit.icon className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{benefit.description}</p>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Location Levels */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-3 text-center">Choose Your Discovery Radius</h2>
-          <p className="text-center text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-            Control how far you want to explore. Switch between hyper-local, city-wide, or metro area views anytime.
-          </p>
-          <div className="grid md:grid-cols-3 gap-6">
-            {locationLevels.map((level, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-xl transition-all group">
-                <div className={`h-32 bg-gradient-to-br ${level.color} p-6 text-white flex items-center justify-center`}>
-                  <level.icon className="h-16 w-16" />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
-                    {level.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 font-semibold">
-                    {level.distance}
+            {/* Problems */}
+            <div className="space-y-6">
+              <div className="flex items-start gap-4 p-6 bg-destructive/5 rounded-xl border border-destructive/20">
+                <XCircle className="h-6 w-6 text-destructive mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-bold mb-2">Scrolling Through Noise</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Seeing hundreds of events across the world while missing the amazing gathering happening just 3 miles away.
                   </p>
-                  <p className="text-muted-foreground mb-4">Perfect for:</p>
-                  <ul className="space-y-2">
-                    {level.examples.map((example, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1.5 flex-shrink-0" />
-                        <span>{example}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
-              </Card>
-            ))}
+              </div>
+              
+              <div className="flex items-start gap-4 p-6 bg-destructive/5 rounded-xl border border-destructive/20">
+                <XCircle className="h-6 w-6 text-destructive mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-bold mb-2">Wasting Precious Time</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Hours spent filtering through irrelevant events in cities you'll never visit.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4 p-6 bg-destructive/5 rounded-xl border border-destructive/20">
+                <XCircle className="h-6 w-6 text-destructive mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-bold mb-2">Missing Your Community</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Diaspora members living nearby who you never meet because you can't find local events.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Solutions */}
+            <div className="space-y-6">
+              <div className="flex items-start gap-4 p-6 bg-primary/5 rounded-xl border border-primary/20">
+                <CheckCircle2 className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-bold mb-2">Location-First Discovery</h3>
+                  <p className="text-muted-foreground text-sm">
+                    See events sorted by distance. The closest opportunities always appear first.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4 p-6 bg-primary/5 rounded-xl border border-primary/20">
+                <CheckCircle2 className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-bold mb-2">Custom Travel Radius</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Set how far you're willing to go - 5 miles, 20 miles, or your whole metro area.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4 p-6 bg-primary/5 rounded-xl border border-primary/20">
+                <CheckCircle2 className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
+                <div>
+                  <h3 className="font-bold mb-2">Instant Local Alerts</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Get notified when events are added in your area. Never miss local connections again.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* How It Works */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-3 text-center">How It Works</h2>
+        {/* Interactive Radius Selector - Tabs Layout */}
+        <div className="mb-16">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl font-bold mb-4">Choose Your Discovery Radius</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Control exactly how far you want to explore. Switch between views instantly to find the perfect balance.
+            </p>
+          </div>
+
+          <Tabs value={activeRadius} onValueChange={setActiveRadius} className="w-full">
+            <TabsList className="grid w-full grid-cols-3 mb-8 h-auto p-2">
+              <TabsTrigger value="hyper" className="py-4 data-[state=active]:bg-green-500 data-[state=active]:text-white">
+                <Home className="h-5 w-5 mr-2" />
+                <div className="text-left">
+                  <p className="font-bold">Hyper-Local</p>
+                  <p className="text-xs opacity-70">Within 5 miles</p>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger value="city" className="py-4 data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+                <Map className="h-5 w-5 mr-2" />
+                <div className="text-left">
+                  <p className="font-bold">City-Wide</p>
+                  <p className="text-xs opacity-70">Within 20 miles</p>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger value="metro" className="py-4 data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+                <Globe2 className="h-5 w-5 mr-2" />
+                <div className="text-left">
+                  <p className="font-bold">Metro Area</p>
+                  <p className="text-xs opacity-70">Within 50+ miles</p>
+                </div>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="hyper" className="mt-0">
+              <Card className="p-8 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                <div className="flex items-start gap-6">
+                  <div className="w-20 h-20 bg-green-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Home className="h-10 w-10 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold mb-3">Walking Distance Events</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Perfect for busy schedules. Discover gatherings you can walk or bike to - neighborhood meetups, 
+                      coffee shop conversations, and community activities right in your area.
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <span>Neighborhood meetups</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <span>Local coffee gatherings</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <span>Community board meetings</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <span>Walking-distance events</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="city" className="mt-0">
+              <Card className="p-8 bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
+                <div className="flex items-start gap-6">
+                  <div className="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Map className="h-10 w-10 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold mb-3">Explore Your City</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Venture across town for worthwhile experiences. Find festivals, professional networking, 
+                      cultural performances, and workshops happening throughout your city.
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                        <span>City festivals & celebrations</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                        <span>Professional networking</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                        <span>Cultural performances</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                        <span>Workshops & classes</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="metro" className="mt-0">
+              <Card className="p-8 bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+                <div className="flex items-start gap-6">
+                  <div className="w-20 h-20 bg-purple-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Globe2 className="h-10 w-10 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold mb-3">Regional Connections</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Expand your reach for major events. Discover conferences, large-scale cultural gatherings, 
+                      and special celebrations happening across your metro region.
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-purple-600" />
+                        <span>Regional conferences</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-purple-600" />
+                        <span>Major cultural events</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-purple-600" />
+                        <span>Large-scale gatherings</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-purple-600" />
+                        <span>Special celebrations</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* How It Works - Horizontal Timeline */}
+        <div className="mb-16 bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl p-8 md:p-12">
+          <h2 className="text-4xl font-bold mb-4 text-center">How It Works</h2>
           <p className="text-center text-muted-foreground text-lg mb-12 max-w-2xl mx-auto">
             Four simple steps to start discovering events in your area
           </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {howItWorks.map((step, index) => (
-              <div key={index} className="relative">
-                <Card className="p-6 h-full hover:shadow-lg transition-shadow">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white text-xl font-bold">
-                      {step.step}
-                    </div>
-                    <step.icon className="h-8 w-8 text-primary" />
+          
+          <div className="relative">
+            {/* Connection Line */}
+            <div className="hidden lg:block absolute top-16 left-0 right-0 h-1 bg-primary/20" />
+            
+            <div className="grid lg:grid-cols-4 gap-8 relative">
+              <div className="text-center space-y-4">
+                <div className="relative inline-flex items-center justify-center">
+                  <div className="w-32 h-32 bg-primary rounded-full flex items-center justify-center mx-auto relative z-10">
+                    <MapPin className="h-16 w-16 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3">{step.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{step.description}</p>
-                </Card>
-                {index < howItWorks.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-0.5 bg-primary/30" />
-                )}
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center border-4 border-primary font-bold text-primary">
+                    1
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold">Set Your Location</h3>
+                <p className="text-muted-foreground text-sm">
+                  Share your location or manually enter your city. Your privacy is protected.
+                </p>
               </div>
-            ))}
+
+              <div className="text-center space-y-4">
+                <div className="relative inline-flex items-center justify-center">
+                  <div className="w-32 h-32 bg-primary rounded-full flex items-center justify-center mx-auto relative z-10">
+                    <Navigation className="h-16 w-16 text-white" />
+                  </div>
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center border-4 border-primary font-bold text-primary">
+                    2
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold">Choose Your Radius</h3>
+                <p className="text-muted-foreground text-sm">
+                  Select how far you're willing to travel - from your immediate neighborhood to metro region.
+                </p>
+              </div>
+
+              <div className="text-center space-y-4">
+                <div className="relative inline-flex items-center justify-center">
+                  <div className="w-32 h-32 bg-primary rounded-full flex items-center justify-center mx-auto relative z-10">
+                    <Search className="h-16 w-16 text-white" />
+                  </div>
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center border-4 border-primary font-bold text-primary">
+                    3
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold">Browse Local Events</h3>
+                <p className="text-muted-foreground text-sm">
+                  See events organized by distance. Filter by date, type, and your interests.
+                </p>
+              </div>
+
+              <div className="text-center space-y-4">
+                <div className="relative inline-flex items-center justify-center">
+                  <div className="w-32 h-32 bg-primary rounded-full flex items-center justify-center mx-auto relative z-10">
+                    <Users className="h-16 w-16 text-white" />
+                  </div>
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-white rounded-full flex items-center justify-center border-4 border-primary font-bold text-primary">
+                    4
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold">Connect & Attend</h3>
+                <p className="text-muted-foreground text-sm">
+                  RSVP to events, coordinate with other local attendees, and build your network.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Sample Cities */}
-        <Card className="p-8 md:p-12 mb-12 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-          <h2 className="text-3xl font-bold mb-3 text-center">Events in Major Cities</h2>
-          <p className="text-center text-muted-foreground text-lg mb-8">
-            The diaspora is everywhere. Here's a snapshot of events in some of our top cities:
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {sampleCities.map((city, index) => (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer group">
-                <div className="text-4xl mb-3">{city.flag}</div>
-                <h3 className="font-bold text-lg mb-1 group-hover:text-primary transition-colors">
-                  {city.city}
-                </h3>
-                <p className="text-sm text-muted-foreground font-semibold">{city.count} events</p>
-              </Card>
-            ))}
-          </div>
-          <p className="text-center text-muted-foreground mt-8">
-            + 194 more cities across 6 continents
-          </p>
-        </Card>
+        {/* Real Use Cases - Story Cards */}
+        <div className="mb-16">
+          <h2 className="text-4xl font-bold mb-12 text-center">Real Stories, Real Community</h2>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card className="p-0 overflow-hidden group hover:shadow-2xl transition-all">
+              <div className="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                <TrendingUp className="h-20 w-20 text-white" />
+              </div>
+              <div className="p-6">
+                <Badge className="mb-3">New to the City</Badge>
+                <h3 className="text-xl font-bold mb-3">Finding Home in Atlanta</h3>
+                <p className="text-muted-foreground italic mb-4">
+                  "I just moved here and wanted to meet other young professionals. Local events showed me 
+                  weekly meetups within walking distance. Now I have a whole community!"
+                </p>
+                <p className="text-sm text-muted-foreground">- Sarah, 28</p>
+              </div>
+            </Card>
 
-        {/* Real-World Use Cases */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-8 text-center">Real-World Scenarios</h2>
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg mb-2">New to the City</h3>
-                  <p className="text-muted-foreground">
-                    "I just moved to Atlanta and want to meet other young professionals from the diaspora. 
-                    Local events helped me find weekly meetups within walking distance of my apartment."
-                  </p>
-                </div>
+            <Card className="p-0 overflow-hidden group hover:shadow-2xl transition-all">
+              <div className="h-48 bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center">
+                <Heart className="h-20 w-20 text-white" />
+              </div>
+              <div className="p-6">
+                <Badge className="mb-3">Busy Parent</Badge>
+                <h3 className="text-xl font-bold mb-3">Quality Time, Close to Home</h3>
+                <p className="text-muted-foreground italic mb-4">
+                  "With two kids, I can't travel far. The local filter shows family-friendly cultural events 
+                  within 10 miles. We participate without the hassle."
+                </p>
+                <p className="text-sm text-muted-foreground">- Michael, 35</p>
               </div>
             </Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Heart className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg mb-2">Busy Parent</h3>
-                  <p className="text-muted-foreground">
-                    "With two kids, I can't travel far. The local filter shows me family-friendly cultural events 
-                    within 10 miles, so we can participate without the hassle."
-                  </p>
-                </div>
+
+            <Card className="p-0 overflow-hidden group hover:shadow-2xl transition-all">
+              <div className="h-48 bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
+                <Users className="h-20 w-20 text-white" />
+              </div>
+              <div className="p-6">
+                <Badge className="mb-3">Community Builder</Badge>
+                <h3 className="text-xl font-bold mb-3">Connecting the Dots</h3>
+                <p className="text-muted-foreground italic mb-4">
+                  "I organize neighborhood events and use local discovery to see what's happening nearby. 
+                  It helps me coordinate and avoid scheduling conflicts."
+                </p>
+                <p className="text-sm text-muted-foreground">- Amara, 42</p>
               </div>
             </Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Users className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg mb-2">Community Builder</h3>
-                  <p className="text-muted-foreground">
-                    "I organize neighborhood events and use local discovery to see what's already happening nearby. 
-                    It helps me coordinate and avoid scheduling conflicts."
-                  </p>
-                </div>
+
+            <Card className="p-0 overflow-hidden group hover:shadow-2xl transition-all">
+              <div className="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                <Sparkles className="h-20 w-20 text-white" />
               </div>
-            </Card>
-            <Card className="p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Calendar className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg mb-2">Weekend Explorer</h3>
-                  <p className="text-muted-foreground">
-                    "Every Friday I check what's happening this weekend within 30 miles. 
-                    I've discovered amazing festivals and gatherings I never would have found otherwise."
-                  </p>
-                </div>
+              <div className="p-6">
+                <Badge className="mb-3">Weekend Explorer</Badge>
+                <h3 className="text-xl font-bold mb-3">Adventure Every Weekend</h3>
+                <p className="text-muted-foreground italic mb-4">
+                  "Every Friday I check what's happening within 30 miles. I've discovered amazing festivals 
+                  and gatherings I never would have found otherwise."
+                </p>
+                <p className="text-sm text-muted-foreground">- James, 31</p>
               </div>
             </Card>
           </div>
         </div>
 
-        {/* CTA Section */}
-        <Card className="p-12 text-center bg-gradient-to-br from-primary to-primary/80 text-white">
-          <h2 className="text-4xl font-bold mb-4">Your Community Is Waiting</h2>
-          <p className="text-xl opacity-95 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Join the DNA platform when we launch and start discovering the vibrant diaspora 
-            community right in your neighborhood. Connection starts close to home.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              onClick={() => navigate('/convene')}
-              className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6"
-            >
-              Explore More Features
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white/10 text-lg px-8 py-6"
-            >
-              Join the Waitlist
-            </Button>
+        {/* Benefits - Icon Grid */}
+        <div className="mb-16">
+          <h2 className="text-4xl font-bold mb-12 text-center">Why You'll Love Local Discovery</h2>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card className="p-6 text-center hover:shadow-lg transition-all group">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <MapPin className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">Find Events Near You</h3>
+              <p className="text-sm text-muted-foreground">
+                Discover events in your neighborhood based on your current location
+              </p>
+            </Card>
+
+            <Card className="p-6 text-center hover:shadow-lg transition-all group">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Clock className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">Save Time & Energy</h3>
+              <p className="text-sm text-muted-foreground">
+                No endless scrolling. See only what's convenient to attend
+              </p>
+            </Card>
+
+            <Card className="p-6 text-center hover:shadow-lg transition-all group">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">Build Local Connections</h3>
+              <p className="text-sm text-muted-foreground">
+                Meet diaspora members who live nearby for lasting relationships
+              </p>
+            </Card>
+
+            <Card className="p-6 text-center hover:shadow-lg transition-all group">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Home className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">Support Your Community</h3>
+              <p className="text-sm text-muted-foreground">
+                Discover local organizers and community initiatives near you
+              </p>
+            </Card>
+
+            <Card className="p-6 text-center hover:shadow-lg transition-all group">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Navigation className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">Smart Distance Filtering</h3>
+              <p className="text-sm text-muted-foreground">
+                Set your preferred travel radius from 5 to 50+ miles
+              </p>
+            </Card>
+
+            <Card className="p-6 text-center hover:shadow-lg transition-all group">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                <Bell className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">Location-Based Alerts</h3>
+              <p className="text-sm text-muted-foreground">
+                Get notified when new events are added in your area
+              </p>
+            </Card>
           </div>
-        </Card>
+        </div>
+
+        {/* CTA - Full Width Banner Style */}
+        <div className="relative overflow-hidden rounded-3xl">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-primary/70" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20" />
+          
+          <div className="relative z-10 p-12 md:p-16 text-white text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Your Community Is Waiting</h2>
+            <p className="text-xl md:text-2xl opacity-95 mb-10 max-w-3xl mx-auto leading-relaxed">
+              Join the DNA platform when we launch and start discovering the vibrant diaspora 
+              community right in your neighborhood. Connection starts close to home.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                onClick={() => navigate('/convene')}
+                className="bg-white text-primary hover:bg-white/90 text-lg px-10 py-7 h-auto"
+              >
+                Explore More Features
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-2 border-white text-white hover:bg-white/10 text-lg px-10 py-7 h-auto"
+              >
+                Join the Waitlist
+              </Button>
+            </div>
+          </div>
+        </div>
       </main>
 
       <Footer />
