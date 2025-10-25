@@ -1,11 +1,18 @@
-import { useNavigate } from 'react-router-dom';
-import { formatDistanceToNow } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Notification } from '@/types/notifications';
+import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '@/hooks/useNotifications';
-import { Check, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  UserPlus,
+  Heart,
+  MessageCircle,
+  Mail,
+  Calendar,
+  Users,
+  Bell,
+} from 'lucide-react';
 
 interface NotificationItemProps {
   notification: Notification;
@@ -16,65 +23,87 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
   const navigate = useNavigate();
   const { markAsRead } = useNotifications();
 
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getIcon = () => {
+    switch (notification.type) {
+      case 'connection_request':
+      case 'connection_accepted':
+        return <UserPlus className="h-4 w-4" />;
+      case 'post_like':
+        return <Heart className="h-4 w-4" />;
+      case 'post_comment':
+      case 'comment_reply':
+        return <MessageCircle className="h-4 w-4" />;
+      case 'new_message':
+        return <Mail className="h-4 w-4" />;
+      case 'event_invite':
+      case 'event_reminder':
+        return <Calendar className="h-4 w-4" />;
+      case 'group_invite':
+        return <Users className="h-4 w-4" />;
+      default:
+        return <Bell className="h-4 w-4" />;
+    }
+  };
+
   const handleClick = () => {
     if (!notification.is_read) {
       markAsRead(notification.notification_id);
     }
-    
     if (notification.action_url) {
       navigate(notification.action_url);
-      onClose();
     }
+    onClose();
   };
 
-  const handleMarkAsRead = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    markAsRead(notification.notification_id);
-  };
+  const timeAgo = formatDistanceToNow(new Date(notification.created_at), {
+    addSuffix: true,
+  });
 
   return (
     <div
       onClick={handleClick}
       className={cn(
-        'p-4 hover:bg-accent cursor-pointer transition-colors',
+        'flex gap-3 p-4 hover:bg-accent cursor-pointer transition-colors',
         !notification.is_read && 'bg-primary/5'
       )}
     >
-      <div className="flex items-start gap-3">
-        {notification.actor_id && (
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={notification.actor_avatar_url || undefined} />
-            <AvatarFallback>
-              <User className="h-5 w-5" />
-            </AvatarFallback>
-          </Avatar>
-        )}
-        
-        <div className="flex-1 min-w-0">
-          <p className="font-medium text-sm text-foreground line-clamp-1">
-            {notification.title}
-          </p>
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-            {notification.message}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {formatDistanceToNow(new Date(notification.created_at), {
-              addSuffix: true
-            })}
-          </p>
+      {notification.actor_avatar_url ? (
+        <Avatar className="h-10 w-10 flex-shrink-0">
+          <AvatarImage
+            src={notification.actor_avatar_url}
+            alt={notification.actor_full_name || 'User'}
+          />
+          <AvatarFallback className="bg-primary text-primary-foreground">
+            {notification.actor_full_name
+              ? getInitials(notification.actor_full_name)
+              : <Bell className="h-5 w-5" />}
+          </AvatarFallback>
+        </Avatar>
+      ) : (
+        <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground flex-shrink-0">
+          {getIcon()}
         </div>
+      )}
 
-        {!notification.is_read && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleMarkAsRead}
-            className="h-8 w-8 text-primary hover:text-primary/80 flex-shrink-0"
-          >
-            <Check className="h-4 w-4" />
-          </Button>
-        )}
+      <div className="flex-1 min-w-0">
+        <p className={cn('text-sm', !notification.is_read && 'font-semibold')}>
+          {notification.message}
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">{timeAgo}</p>
       </div>
+
+      {!notification.is_read && (
+        <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-2" />
+      )}
     </div>
   );
 }
