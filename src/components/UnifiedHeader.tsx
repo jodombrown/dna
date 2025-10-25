@@ -4,7 +4,7 @@ import { useDashboard } from '@/contexts/DashboardContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { NotificationsDropdown } from '@/components/notifications/NotificationsDropdown';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 import { 
   Home,
@@ -47,7 +47,7 @@ import {
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems, phases, aboutUsDropdown } from './header/navigationConfig';
 import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
-// Notifications removed - backend tables dropped
+import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
 
 const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();
@@ -69,7 +69,6 @@ const UnifiedHeader = () => {
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
 
   // Query admin status
   const { data: isAdmin } = useQuery({
@@ -92,28 +91,8 @@ const UnifiedHeader = () => {
     enabled: !!user
   });
 
-  // Query unread notification count
-  const { data: unreadCount = 0 } = useQuery({
-    queryKey: ['notifications-unread-count'],
-    queryFn: async () => {
-      if (!user) return 0;
-      
-      const { count, error } = await supabase
-        .from('notifications')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('read', false);
-      
-      if (error) {
-        console.error('Error fetching unread count:', error);
-        return 0;
-      }
-      
-      return count || 0;
-    },
-    enabled: !!user,
-    refetchInterval: 30000 // Refetch every 30 seconds
-  });
+  // Use the unread notification count hook
+  const { data: unreadCount = 0 } = useUnreadNotificationCount();
 
   // Query unread message count
   const { data: unreadMessageCount = 0 } = useUnreadMessageCount();
@@ -319,27 +298,7 @@ const UnifiedHeader = () => {
                   )}
                   
                   {/* Notifications Bell */}
-                  {user && (
-                    <div className="relative">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowNotifications(!showNotifications)}
-                        className="relative p-2"
-                      >
-                        <Bell className="h-5 w-5" />
-                        {unreadCount > 0 && (
-                          <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                            {unreadCount > 9 ? '9+' : unreadCount}
-                          </span>
-                        )}
-                      </Button>
-
-                      {showNotifications && (
-                        <NotificationsDropdown onClose={() => setShowNotifications(false)} />
-                      )}
-                    </div>
-                  )}
+                  {user && <NotificationBell />}
                   
                   {/* User Profile Dropdown */}
                   {profile && (
