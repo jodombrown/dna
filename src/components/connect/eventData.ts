@@ -1,5 +1,5 @@
 
-import { Event } from '@/types/search';
+import { Event } from '@/types/eventTypes';
 
 export const sampleCreators = [
   {
@@ -32,19 +32,33 @@ export const sampleCreators = [
 export const additionalEvents: Event[] = [
   {
     id: "evt7",
+    organizer_id: "u1",
     title: "Climate Innovation Summit",
     description: "Exploring climate solutions and green technology innovations across Africa and the diaspora community.",
+    event_type: "conference",
+    format: "in_person",
+    start_time: "2024-08-15T14:00:00Z",
+    end_time: "2024-08-15T18:00:00Z",
+    location_name: "Accra International Conference Center",
+    location_city: "Accra",
+    location_country: "Ghana",
+    is_public: true,
+    requires_approval: false,
+    allow_guests: false,
+    is_cancelled: false,
+    created_at: "2024-07-01T00:00:00Z",
+    updated_at: "2024-07-01T00:00:00Z",
+    cover_image_url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=200&fit=crop",
+    // Legacy fields
     type: "Summit",
     date_time: "2024-08-15T14:00:00Z",
     location: "Accra, Ghana",
     is_virtual: false,
     attendee_count: 320,
     is_featured: false,
-    created_at: "2024-07-01T00:00:00Z",
-    updated_at: "2024-07-01T00:00:00Z",
     banner_url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=200&fit=crop",
     creator_profile: sampleCreators[0]
-  },
+  } as Event,
   {
     id: "evt8", 
     title: "Women in STEM Leadership Forum",

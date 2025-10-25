@@ -18,8 +18,8 @@ export const MyEventsWidget = () => {
       const { data } = await supabase
         .from('events')
         .select('*')
-        .eq('created_by', user!.id)
-        .order('date_time', { ascending: true })
+        .eq('organizer_id', user!.id)
+        .order('start_time', { ascending: true })
         .limit(3);
       
       return data || [];
@@ -81,20 +81,22 @@ export const MyEventsWidget = () => {
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Calendar className="h-3 w-3" />
                     <span>
-                      {format(new Date(event.date_time), 'MMM d, h:mm a')}
+                      {format(new Date(event.start_time), 'MMM d, h:mm a')}
                     </span>
                   </div>
 
-                  {event.location && (
+                  {(event.location_name || event.location_city) && (
                     <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                       <MapPin className="h-3 w-3" />
-                      <span className="truncate">{event.location}</span>
+                      <span className="truncate">
+                        {event.location_name || `${event.location_city}${event.location_country ? ', ' + event.location_country : ''}`}
+                      </span>
                     </div>
                   )}
 
                   <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                     <Users className="h-3 w-3" />
-                    <span>{event.attendee_count || 0} registered</span>
+                    <span>0 registered</span>
                   </div>
                 </div>
               </div>

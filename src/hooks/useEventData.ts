@@ -31,7 +31,7 @@ export const useEventData = (canManageEvents: boolean) => {
 
       console.log('Events fetched:', eventsData?.length || 0);
 
-      const creatorIds = eventsData?.map(event => event.created_by).filter(Boolean) || [];
+      const creatorIds = eventsData?.map(event => event.organizer_id).filter(Boolean) || [];
       
       let profilesData = [];
       if (creatorIds.length > 0) {
@@ -48,21 +48,39 @@ export const useEventData = (canManageEvents: boolean) => {
       }
 
       const transformedData: Event[] = (eventsData || []).map(event => {
-        const creatorProfile = profilesData.find(profile => profile.id === event.created_by);
+        const creatorProfile = profilesData.find(profile => profile.id === event.organizer_id);
+        const location = event.location_name || 
+                        (event.location_city && event.location_country 
+                          ? `${event.location_city}, ${event.location_country}`
+                          : event.location_city || event.location_country || '');
         
         return {
           id: event.id,
           title: event.title,
           description: event.description || '',
-          date_time: event.date_time || '',
-          location: event.location || '',
-          type: event.type || '',
-          attendee_count: event.attendee_count || 0,
+          organizer_id: event.organizer_id,
+          event_type: event.event_type as any,
+          format: event.format as any,
+          start_time: event.start_time,
+          end_time: event.end_time,
+          location_name: event.location_name,
+          location_city: event.location_city,
+          location_country: event.location_country,
+          cover_image_url: event.cover_image_url,
+          is_public: event.is_public,
+          requires_approval: event.requires_approval,
+          allow_guests: event.allow_guests,
+          is_cancelled: event.is_cancelled,
           max_attendees: event.max_attendees,
-          is_featured: event.is_featured || false,
-          is_virtual: event.is_virtual || false,
           created_at: event.created_at,
-          created_by: event.created_by || '',
+          updated_at: event.updated_at,
+          // Legacy compatibility
+          date_time: event.start_time,
+          location: location,
+          type: event.event_type,
+          is_virtual: event.format === 'virtual' || event.format === 'hybrid',
+          attendee_count: 0,
+          created_by: event.organizer_id || '',
           creator_profile: creatorProfile ? {
             full_name: creatorProfile.full_name || 'Unknown',
             email: creatorProfile.email || ''

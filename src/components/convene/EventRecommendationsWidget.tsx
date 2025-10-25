@@ -13,15 +13,22 @@ interface ScoredEvent {
   id: string;
   title: string;
   description?: string;
-  type?: string;
-  location?: string;
-  is_virtual?: boolean;
-  date_time: string;
-  attendee_count?: number;
-  created_by?: string;
+  event_type?: string;
+  format?: string;
+  location_name?: string;
+  location_city?: string;
+  start_time: string;
+  organizer_id?: string;
   score: number;
   matchReason: string;
   attendingFriends?: number;
+  // Legacy fields
+  type?: string;
+  location?: string;
+  is_virtual?: boolean;
+  date_time?: string;
+  attendee_count?: number;
+  created_by?: string;
 }
 
 export const EventRecommendationsWidget = () => {
@@ -79,8 +86,9 @@ export const EventRecommendationsWidget = () => {
       const { data: upcomingEvents } = await supabase
         .from('events')
         .select('*')
-        .gte('date_time', new Date().toISOString())
-        .order('date_time', { ascending: true })
+        .eq('is_cancelled', false)
+        .gte('start_time', new Date().toISOString())
+        .order('start_time', { ascending: true })
         .limit(20);
 
       if (!upcomingEvents) return [];
@@ -101,24 +109,27 @@ export const EventRecommendationsWidget = () => {
         let score = 0;
         const reasons: string[] = [];
 
+        const isVirtual = event.format === 'virtual' || event.format === 'hybrid';
+        const location = event.location_name || event.location_city || '';
+
         // A. GEOGRAPHIC RELEVANCE (30 points max)
         const userCity = profile.location?.split(',')[0]?.trim().toLowerCase();
-        const eventCity = event.location?.split(',')[0]?.trim().toLowerCase();
+        const eventCity = event.location_city?.toLowerCase() || '';
         const userCountry = profile.location?.toLowerCase() || '';
-        const eventLocation = event.location?.toLowerCase() || '';
+        const eventCountry = event.location_country?.toLowerCase() || '';
 
-        if (event.is_virtual) {
+        if (isVirtual) {
           score += 15;
           reasons.push('Virtual - join from anywhere');
         } else if (userCity && eventCity && userCity === eventCity) {
           score += 30;
           reasons.push('In your city');
-        } else if (userCountry && eventLocation.includes(userCountry.split(',')[0])) {
+        } else if (userCountry && eventCountry && userCountry.includes(eventCountry)) {
           score += 20;
         }
 
         // Check country of origin match
-        if (profile.country_of_origin && eventLocation.includes(profile.country_of_origin.toLowerCase())) {
+        if (profile.country_of_origin && eventCountry.includes(profile.country_of_origin.toLowerCase())) {
           score += 25;
           if (reasons.length === 0) {
             reasons.push(`In ${profile.country_of_origin}`);
@@ -143,9 +154,9 @@ export const EventRecommendationsWidget = () => {
 
         // C. PROFESSIONAL RELEVANCE (20 points max)
         const userIntents = profile.intentions || [];
-        const eventType = event.type || '';
+        const eventType = event.event_type || '';
 
-        if (eventType === 'pitch_event' && userIntents.includes('invest')) {
+        if (eventType === 'conference' && userIntents.includes('invest')) {
           score += 20;
           if (reasons.length === 0) {
             reasons.push('Perfect for investors');
@@ -179,12 +190,13 @@ export const EventRecommendationsWidget = () => {
           reasons.push(`${friendsAttending} friend${friendsAttending > 1 ? 's' : ''} attending`);
         }
 
-        if ((event.attendee_count || 0) > 50) {
+        const attendeeCount = eventRegs.length || 0;
+        if (attendeeCount > 50) {
           score += 5;
         }
 
         // E. TIMING OPTIMIZATION (10 points max)
-        const daysUntil = differenceInDays(new Date(event.date_time), new Date());
+        const daysUntil = differenceInDays(new Date(event.start_time), new Date());
         if (daysUntil <= 7) {
           score += 10;
         } else if (daysUntil <= 30) {
@@ -197,7 +209,14 @@ export const EventRecommendationsWidget = () => {
           ...event,
           score,
           matchReason: reasons[0] || 'Recommended for you',
-          attendingFriends: friendsAttending
+          attendingFriends: friendsAttending,
+          // Legacy compatibility
+          date_time: event.start_time,
+          type: event.event_type,
+          location: location,
+          is_virtual: isVirtual,
+          attendee_count: attendeeCount,
+          created_by: event.organizer_id
         };
       });
 
@@ -208,12 +227,12 @@ export const EventRecommendationsWidget = () => {
       let hasVirtual = false;
 
       for (const event of scored.sort((a, b) => b.score - a.score)) {
-        const eventType = event.type || 'other';
+        const eventType = event.event_type || event.type || 'other';
         const typeCount = typeCounts[eventType] || 0;
-        const hostCount = hostCounts[event.created_by || ''] || 0;
+        const hostCount = hostCounts[event.organizer_id || event.created_by || ''] || 0;
 
         // Ensure at least 1 virtual in top 3
-        if (!hasVirtual && event.is_virtual) {
+        if (!hasVirtual && (event.format === 'virtual' || event.is_virtual)) {
           hasVirtual = true;
         }
 
@@ -221,7 +240,7 @@ export const EventRecommendationsWidget = () => {
         if (typeCount < 2 && hostCount < 1) {
           diverse.push(event);
           typeCounts[eventType] = typeCount + 1;
-          hostCounts[event.created_by || ''] = hostCount + 1;
+          hostCounts[event.organizer_id || event.created_by || ''] = hostCount + 1;
         }
 
         if (diverse.length >= 3) break;
@@ -229,7 +248,7 @@ export const EventRecommendationsWidget = () => {
 
       // If no virtual in top 3, try to add one
       if (!hasVirtual && diverse.length < 3) {
-        const virtualEvent = scored.find(e => e.is_virtual && !diverse.includes(e));
+        const virtualEvent = scored.find(e => (e.format === 'virtual' || e.is_virtual) && !diverse.includes(e));
         if (virtualEvent) {
           diverse[diverse.length - 1] = virtualEvent;
         }

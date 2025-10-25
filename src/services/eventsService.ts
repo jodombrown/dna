@@ -5,26 +5,30 @@ import { Event } from '@/types/search';
 export const searchEvents = async (searchTerm: string = '', filters: any = {}): Promise<Event[]> => {
   console.log('Searching events with term:', searchTerm, 'and filters:', filters);
   
-  let query = supabase.from('events').select('*');
+  let query = supabase.from('events').select('*').eq('is_cancelled', false);
   
   if (searchTerm && searchTerm.trim()) {
     const term = searchTerm.trim();
-    query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,type.ilike.%${term}%,location.ilike.%${term}%`);
+    query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,event_type.ilike.%${term}%,location_name.ilike.%${term}%,location_city.ilike.%${term}%`);
   }
   
   if (filters.type) {
-    query = query.eq('type', filters.type);
+    query = query.eq('event_type', filters.type);
   }
   
   if (filters.is_virtual !== undefined) {
-    query = query.eq('is_virtual', filters.is_virtual);
+    if (filters.is_virtual) {
+      query = query.or('format.eq.virtual,format.eq.hybrid');
+    } else {
+      query = query.eq('format', 'in_person');
+    }
   }
   
   if (filters.upcoming_only) {
-    query = query.gte('date_time', new Date().toISOString());
+    query = query.gte('start_time', new Date().toISOString());
   }
   
-  const { data, error } = await query.order('date_time', { ascending: true });
+  const { data, error } = await query.order('start_time', { ascending: true });
   
   if (error) {
     console.error('Events search error:', error);

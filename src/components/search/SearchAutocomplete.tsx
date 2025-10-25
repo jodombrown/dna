@@ -101,9 +101,10 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
           
         supabase
           .from('events')
-          .select('id, title, type')
-          .or(`title.ilike.%${query}%,type.ilike.%${query}%`)
-          .gte('date_time', new Date().toISOString())
+          .select('id, title, event_type')
+          .or(`title.ilike.%${query}%,event_type.ilike.%${query}%`)
+          .eq('is_cancelled', false)
+          .gte('start_time', new Date().toISOString())
           .limit(3)
       ]);
 
@@ -156,7 +157,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
             text: event.title,
             type: 'event',
             icon: <Calendar className="w-4 h-4 text-purple-600" />,
-            subtitle: `${event.type} event`
+            subtitle: `${event.event_type} event`
           });
         });
       }

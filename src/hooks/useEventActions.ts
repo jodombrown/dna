@@ -28,20 +28,11 @@ export const useEventActions = (onEventUpdated: () => void) => {
           description: "The event has been permanently deleted.",
         });
       } else if (action === 'feature' || action === 'unfeature') {
-        console.log('Attempting to', action, 'event:', eventId);
-        const { error } = await supabase
-          .from('events')
-          .update({ is_featured: action === 'feature' })
-          .eq('id', eventId);
-        
-        if (error) {
-          console.error('Feature toggle error:', error);
-          throw error;
-        }
-        
+        // Note: is_featured is not in new schema yet, skip this for now
+        console.log('Feature/unfeature not implemented in new schema yet');
         toast({
-          title: action === 'feature' ? "Event Featured" : "Event Unfeatured",
-          description: `The event has been ${action === 'feature' ? 'featured' : 'unfeatured'}.`,
+          title: "Not Implemented",
+          description: "Featured events will be supported in a future update.",
         });
       } else if (action === 'edit') {
         // Edit action is handled by the component that calls this hook

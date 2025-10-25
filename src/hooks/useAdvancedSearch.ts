@@ -121,38 +121,46 @@ export const useAdvancedSearch = () => {
       let query = supabase
         .from('events')
         .select('*')
-        .gte('date_time', new Date().toISOString());
+        .eq('is_cancelled', false)
+        .gte('start_time', new Date().toISOString());
 
       if (searchTerm) {
-        query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,type.ilike.%${searchTerm}%`);
+        query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,event_type.ilike.%${searchTerm}%`);
       }
 
       if (filters.location) {
-        query = query.ilike('location', `%${filters.location}%`);
+        query = query.or(`location_name.ilike.%${filters.location}%,location_city.ilike.%${filters.location}%,location_country.ilike.%${filters.location}%`);
       }
 
       const { data, error } = await query.limit(20);
       if (error) throw error;
 
-      const transformedEvents: Event[] = (data || []).map(event => ({
-        id: event.id,
-        title: event.title,
-        description: event.description || 'No description available',
-        date: event.date_time,
-        date_time: event.date_time,
-        location: event.location || 'Location TBD',
-        attendeeCount: event.attendee_count || 0,
-        attendee_count: event.attendee_count || 0,
-        maxAttendees: event.max_attendees,
-        max_attendees: event.max_attendees,
-        type: event.type || 'event',
-        image: event.image_url || event.banner_url,
-        isRegistered: false,
-        is_virtual: event.is_virtual || false,
-        is_featured: event.is_featured || false,
-        created_at: event.created_at,
-        updated_at: event.updated_at
-      }));
+      const transformedEvents: Event[] = (data || []).map(event => {
+        const location = event.location_name || 
+                        (event.location_city && event.location_country 
+                          ? `${event.location_city}, ${event.location_country}`
+                          : event.location_city || event.location_country || 'Location TBD');
+        
+        return {
+          id: event.id,
+          title: event.title,
+          description: event.description || 'No description available',
+          date: event.start_time,
+          date_time: event.start_time,
+          location: location,
+          attendeeCount: 0,
+          attendee_count: 0,
+          maxAttendees: event.max_attendees,
+          max_attendees: event.max_attendees,
+          type: event.event_type || 'event',
+          image: event.cover_image_url,
+          isRegistered: false,
+          is_virtual: event.format === 'virtual' || event.format === 'hybrid',
+          is_featured: false,
+          created_at: event.created_at,
+          updated_at: event.updated_at
+        } as Event;
+      });
 
       setEvents(transformedEvents);
     } catch (error) {

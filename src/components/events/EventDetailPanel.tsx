@@ -137,11 +137,11 @@ const EventDetailPanel: React.FC<EventDetailPanelProps> = ({ event, onRegister }
         </div>
 
         {/* Additional Info */}
-        {event.registration_url && (
+        {(event.registration_url || event.meeting_url) && (
           <div>
             <h3 className={`${TYPOGRAPHY.h4} mb-2`}>Event Link</h3>
             <a 
-              href={event.registration_url} 
+              href={event.registration_url || event.meeting_url!} 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-dna-emerald hover:underline"

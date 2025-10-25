@@ -127,14 +127,19 @@ export const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
         .from('events')
         .insert({
           title: data.title,
-          description: data.description,
-          date_time: data.start_time,
-          location: data.location,
-          is_virtual: data.is_virtual,
-          capacity: data.max_attendees ? parseInt(data.max_attendees) : null,
-          created_by: user.id,
-          banner_url: bannerUrl,
-          image_url: logoUrl,
+          description: data.description || '',
+          organizer_id: user.id,
+          event_type: (data.event_type as any) || 'other',
+          format: data.is_virtual ? 'virtual' : 'in_person',
+          start_time: data.start_time,
+          end_time: data.end_time || data.start_time,
+          location_name: data.location || null,
+          meeting_url: data.is_virtual ? data.location : null,
+          max_attendees: data.max_attendees ? parseInt(data.max_attendees) : null,
+          cover_image_url: bannerUrl,
+          is_public: true,
+          requires_approval: data.registration_required,
+          allow_guests: false,
         })
         .select()
         .single();
