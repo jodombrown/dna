@@ -98,9 +98,20 @@ const EventCreateWizard: React.FC = () => {
       }
 
       const eventPayload = {
-        ...eventData,
-        created_by: user.user.id,
-        max_attendees: eventData.capacity,
+        title: eventData.title,
+        description: eventData.description,
+        organizer_id: user.user.id,
+        event_type: (eventData.type as 'conference' | 'workshop' | 'meetup' | 'webinar' | 'networking' | 'social' | 'other') || 'other',
+        format: (eventData.is_virtual ? 'virtual' : 'in_person') as 'in_person' | 'virtual' | 'hybrid',
+        start_time: eventData.date_time,
+        end_time: eventData.date_time, // Same as start for now
+        location_name: eventData.location,
+        meeting_url: eventData.is_virtual ? eventData.online_url : null,
+        max_attendees: eventData.capacity || null,
+        is_public: eventData.visibility === 'public',
+        requires_approval: false,
+        allow_guests: false,
+        timezone: 'UTC',
       };
 
       const { data: event, error } = await supabase

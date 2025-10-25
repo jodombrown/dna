@@ -71,11 +71,15 @@ const StepBasics: React.FC<StepBasicsProps> = ({ eventData, updateEventData, onN
         .insert({
           title: formData.title,
           description: formData.description,
-          date_time: formData.date_time,
-          type: formData.type,
-          visibility: 'draft',
-          created_by: user.user.id,
-          slug: generateSlug(formData.title),
+          organizer_id: user.user.id,
+          event_type: (formData.type as 'conference' | 'workshop' | 'meetup' | 'webinar' | 'networking' | 'social' | 'other') || 'other',
+          format: 'in_person' as 'in_person',
+          start_time: formData.date_time,
+          end_time: formData.date_time,
+          is_public: false,
+          requires_approval: false,
+          allow_guests: false,
+          timezone: 'UTC',
         })
         .select('id')
         .maybeSingle();

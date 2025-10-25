@@ -61,7 +61,7 @@ export const useRichContent = () => {
 
       // Get all unique user IDs for profile fetching
       const allUserIds = [
-        ...(eventsData || []).map(item => item.created_by).filter(Boolean),
+        ...(eventsData || []).map(item => item.organizer_id).filter(Boolean),
         ...(initiativesData || []).map(item => item.creator_id).filter(Boolean),
         ...(opportunitiesData || []).map(item => item.created_by).filter(Boolean),
       ];
@@ -91,12 +91,12 @@ export const useRichContent = () => {
           type: 'event' as const,
           title: event.title,
           created_at: event.created_at,
-          created_by: event.created_by,
+          created_by: event.organizer_id,
           data: event,
-          author: event.created_by && profilesMap[event.created_by] ? {
-            full_name: profilesMap[event.created_by].full_name || 'Unknown User',
-            avatar_url: profilesMap[event.created_by].avatar_url || undefined,
-            professional_role: profilesMap[event.created_by].professional_role || undefined
+          author: event.organizer_id && profilesMap[event.organizer_id] ? {
+            full_name: profilesMap[event.organizer_id].full_name || 'Unknown User',
+            avatar_url: profilesMap[event.organizer_id].avatar_url || undefined,
+            professional_role: profilesMap[event.organizer_id].professional_role || undefined
           } : undefined
         })),
         ...(initiativesData || []).map(initiative => ({

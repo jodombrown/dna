@@ -182,8 +182,9 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
   if (!filters?.types.length || filters.types.includes('event')) {
     const { data: events, error: eventsError } = await supabase
       .from('events')
-      .select('id, title, description, location, date_time, image_url, created_at, type')
-      .or(`title.ilike.${searchTerm},description.ilike.${searchTerm},location.ilike.${searchTerm}`)
+      .select('id, title, description, location_name, location_city, start_time, cover_image_url, created_at, event_type, is_cancelled')
+      .eq('is_cancelled', false)
+      .or(`title.ilike.${searchTerm},description.ilike.${searchTerm},location_name.ilike.${searchTerm},location_city.ilike.${searchTerm}`)
       .limit(10);
 
     if (!eventsError && events) {
@@ -191,13 +192,13 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
         id: event.id,
         type: 'event' as const,
         title: event.title,
-        description: event.description || `${event.type} event`,
-        image_url: event.image_url,
+        description: event.description || `${event.event_type} event`,
+        image_url: event.cover_image_url,
         created_at: event.created_at,
         metadata: {
-          location: event.location,
-          date_time: event.date_time,
-          event_type: event.type
+          location: event.location_name || event.location_city,
+          date_time: event.start_time,
+          event_type: event.event_type
         }
       })));
     }
