@@ -1258,6 +1258,50 @@ export type Database = {
             foreignKeyName: "event_analytics_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
+            referencedRelation: "events_old"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_attendees: {
+        Row: {
+          checked_in: boolean
+          checked_in_at: string | null
+          created_at: string
+          event_id: string
+          id: string
+          response_note: string | null
+          status: Database["public"]["Enums"]["rsvp_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          checked_in?: boolean
+          checked_in_at?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          response_note?: string | null
+          status?: Database["public"]["Enums"]["rsvp_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          checked_in?: boolean
+          checked_in_at?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          response_note?: string | null
+          status?: Database["public"]["Enums"]["rsvp_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
             referencedRelation: "events"
             referencedColumns: ["id"]
           },
@@ -1296,7 +1340,7 @@ export type Database = {
             foreignKeyName: "event_blasts_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events"
+            referencedRelation: "events_old"
             referencedColumns: ["id"]
           },
         ]
@@ -1326,6 +1370,44 @@ export type Database = {
             columns: ["registration_id"]
             isOneToOne: true
             referencedRelation: "event_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_comments: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          event_id: string
+          id: string
+          is_deleted: boolean
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          event_id: string
+          id?: string
+          is_deleted?: boolean
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          is_deleted?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_comments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -1366,7 +1448,7 @@ export type Database = {
             foreignKeyName: "event_registration_questions_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events"
+            referencedRelation: "events_old"
             referencedColumns: ["id"]
           },
         ]
@@ -1425,7 +1507,7 @@ export type Database = {
             foreignKeyName: "event_registrations_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events"
+            referencedRelation: "events_old"
             referencedColumns: ["id"]
           },
           {
@@ -1476,7 +1558,7 @@ export type Database = {
             foreignKeyName: "event_reports_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events"
+            referencedRelation: "events_old"
             referencedColumns: ["id"]
           },
           {
@@ -1528,7 +1610,7 @@ export type Database = {
             foreignKeyName: "event_ticket_holds_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events"
+            referencedRelation: "events_old"
             referencedColumns: ["id"]
           },
           {
@@ -1601,7 +1683,7 @@ export type Database = {
             foreignKeyName: "event_ticket_types_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events"
+            referencedRelation: "events_old"
             referencedColumns: ["id"]
           },
         ]
@@ -1633,12 +1715,123 @@ export type Database = {
             foreignKeyName: "event_waitlist_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events"
+            referencedRelation: "events_old"
             referencedColumns: ["id"]
           },
         ]
       }
       events: {
+        Row: {
+          allow_guests: boolean
+          cancellation_reason: string | null
+          cover_image_url: string | null
+          created_at: string
+          description: string
+          end_time: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          format: Database["public"]["Enums"]["event_format"]
+          id: string
+          is_cancelled: boolean
+          is_public: boolean
+          location_address: string | null
+          location_city: string | null
+          location_country: string | null
+          location_lat: number | null
+          location_lng: number | null
+          location_name: string | null
+          max_attendees: number | null
+          meeting_platform: string | null
+          meeting_url: string | null
+          organizer_id: string
+          requires_approval: boolean
+          start_time: string
+          timezone: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          allow_guests?: boolean
+          cancellation_reason?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          description: string
+          end_time: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          format: Database["public"]["Enums"]["event_format"]
+          id?: string
+          is_cancelled?: boolean
+          is_public?: boolean
+          location_address?: string | null
+          location_city?: string | null
+          location_country?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          location_name?: string | null
+          max_attendees?: number | null
+          meeting_platform?: string | null
+          meeting_url?: string | null
+          organizer_id: string
+          requires_approval?: boolean
+          start_time: string
+          timezone?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          allow_guests?: boolean
+          cancellation_reason?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string
+          end_time?: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          format?: Database["public"]["Enums"]["event_format"]
+          id?: string
+          is_cancelled?: boolean
+          is_public?: boolean
+          location_address?: string | null
+          location_city?: string | null
+          location_country?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          location_name?: string | null
+          max_attendees?: number | null
+          meeting_platform?: string | null
+          meeting_url?: string | null
+          organizer_id?: string
+          requires_approval?: boolean
+          start_time?: string
+          timezone?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      events_log: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      events_old: {
         Row: {
           attendee_count: number | null
           banner_url: string | null
@@ -1726,30 +1919,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      events_log: {
-        Row: {
-          created_at: string | null
-          event_type: string
-          id: string
-          payload: Json | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          event_type: string
-          id?: string
-          payload?: Json | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          event_type?: string
-          id?: string
-          payload?: Json | null
-          user_id?: string | null
-        }
-        Relationships: []
       }
       feature_flags: {
         Row: {
@@ -4812,6 +4981,103 @@ export type Database = {
         }[]
       }
       get_engagement_rate: { Args: never; Returns: number }
+      get_event_attendees: {
+        Args: {
+          p_event_id: string
+          p_status?: Database["public"]["Enums"]["rsvp_status"]
+        }
+        Returns: {
+          attendee_id: string
+          avatar_url: string
+          checked_in: boolean
+          created_at: string
+          full_name: string
+          headline: string
+          response_note: string
+          status: Database["public"]["Enums"]["rsvp_status"]
+          user_id: string
+          username: string
+        }[]
+      }
+      get_event_details: {
+        Args: { p_event_id: string; p_user_id: string }
+        Returns: {
+          allow_guests: boolean
+          attendee_count: number
+          can_edit: boolean
+          cancellation_reason: string
+          cover_image_url: string
+          created_at: string
+          description: string
+          end_time: string
+          event_id: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          format: Database["public"]["Enums"]["event_format"]
+          going_count: number
+          is_cancelled: boolean
+          is_organizer: boolean
+          is_public: boolean
+          location_address: string
+          location_city: string
+          location_country: string
+          location_lat: number
+          location_lng: number
+          location_name: string
+          max_attendees: number
+          maybe_count: number
+          meeting_platform: string
+          meeting_url: string
+          organizer_avatar_url: string
+          organizer_full_name: string
+          organizer_headline: string
+          organizer_id: string
+          organizer_username: string
+          requires_approval: boolean
+          start_time: string
+          timezone: string
+          title: string
+          updated_at: string
+          user_rsvp_status: Database["public"]["Enums"]["rsvp_status"]
+        }[]
+      }
+      get_events: {
+        Args: {
+          p_city?: string
+          p_country?: string
+          p_event_type?: Database["public"]["Enums"]["event_type"]
+          p_filter?: string
+          p_format?: Database["public"]["Enums"]["event_format"]
+          p_limit?: number
+          p_offset?: number
+          p_user_id: string
+        }
+        Returns: {
+          attendee_count: number
+          cover_image_url: string
+          created_at: string
+          description: string
+          end_time: string
+          event_id: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          format: Database["public"]["Enums"]["event_format"]
+          is_organizer: boolean
+          is_public: boolean
+          location_city: string
+          location_country: string
+          location_name: string
+          max_attendees: number
+          meeting_url: string
+          organizer_avatar_url: string
+          organizer_full_name: string
+          organizer_id: string
+          organizer_username: string
+          requires_approval: boolean
+          start_time: string
+          timezone: string
+          title: string
+          user_rsvp_status: Database["public"]["Enums"]["rsvp_status"]
+        }[]
+      }
       get_feed_posts: {
         Args: {
           p_feed_type: string
@@ -5457,8 +5723,18 @@ export type Database = {
         | "rejected"
         | "withdrawn"
       contribution_type: "time" | "expertise" | "network" | "capital"
+      event_format: "in_person" | "virtual" | "hybrid"
+      event_type:
+        | "conference"
+        | "workshop"
+        | "meetup"
+        | "webinar"
+        | "networking"
+        | "social"
+        | "other"
       opportunity_status: "draft" | "active" | "paused" | "closed" | "archived"
       opportunity_visibility: "public" | "network_only" | "private"
+      rsvp_status: "going" | "maybe" | "not_going" | "pending" | "waitlist"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -5595,8 +5871,19 @@ export const Constants = {
         "withdrawn",
       ],
       contribution_type: ["time", "expertise", "network", "capital"],
+      event_format: ["in_person", "virtual", "hybrid"],
+      event_type: [
+        "conference",
+        "workshop",
+        "meetup",
+        "webinar",
+        "networking",
+        "social",
+        "other",
+      ],
       opportunity_status: ["draft", "active", "paused", "closed", "archived"],
       opportunity_visibility: ["public", "network_only", "private"],
+      rsvp_status: ["going", "maybe", "not_going", "pending", "waitlist"],
     },
   },
 } as const
