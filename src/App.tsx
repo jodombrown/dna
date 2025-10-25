@@ -58,6 +58,7 @@ import DiscoverMembers from "./pages/DiscoverMembers";
 import Network from "./pages/Network";
 import Messages from "./pages/Messages";
 import MessagesPage from "./pages/MessagesPage";
+import NotificationsPage from "./pages/NotificationsPage";
 import ProfileEdit from "./pages/ProfileEdit";
 import EventsPage from "./pages/EventsPage";
 // Phase 1.5: Event detail pages (currently using TwoColumnLayout in EventsPage)
@@ -166,6 +167,11 @@ function App() {
               <Route path="/dna/network" element={<Network />} />
               <Route path="/dna/messages" element={<MessagesPage />} />
               <Route path="/dna/messages/:conversationId" element={<MessagesPage />} />
+              <Route path="/dna/notifications" element={
+                <OnboardingGuard>
+                  <NotificationsPage />
+                </OnboardingGuard>
+              } />
               <Route path="/app/profile/edit" element={
                 <OnboardingGuard>
                   <ProfileEdit />
