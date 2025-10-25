@@ -13,19 +13,19 @@ export type NotificationType =
 
 export interface Notification {
   notification_id: string;
-  actor_id: string | null;
-  actor_username: string | null;
-  actor_full_name: string | null;
-  actor_avatar_url: string | null;
+  actor_id?: string;
+  actor_username?: string;
+  actor_full_name?: string;
+  actor_avatar_url?: string;
   type: NotificationType;
   title: string;
   message: string;
-  action_url: string | null;
-  entity_type: string | null;
-  entity_id: string | null;
+  action_url?: string;
+  entity_type?: string;
+  entity_id?: string;
   is_read: boolean;
   created_at: string;
-  read_at: string | null;
+  read_at?: string;
 }
 
 export interface NotificationPreferences {
