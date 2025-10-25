@@ -15,7 +15,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   
-  const { data: notifications, isLoading, markAsRead, markAllAsRead } = useNotifications();
+  const { notifications, isLoading, markAsRead, markAllAsRead } = useNotifications();
 
   // Real-time subscription
   useEffect(() => {
@@ -64,8 +64,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
         <div className="flex items-center gap-2">
           {notifications && notifications.some(n => !n.is_read) && (
             <button
-              onClick={() => markAllAsRead.mutate()}
-              disabled={markAllAsRead.isPending}
+              onClick={() => markAllAsRead()}
               className="text-sm text-primary hover:underline"
             >
               Mark all read
@@ -96,7 +95,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
                 !notification.is_read ? 'bg-primary/10' : ''
               }`}
               onClick={() => {
-                markAsRead.mutate(notification.notification_id);
+                markAsRead(notification.notification_id);
                 if (notification.action_url) {
                   window.location.href = notification.action_url;
                 }
@@ -126,7 +125,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      markAsRead.mutate(notification.notification_id);
+                      markAsRead(notification.notification_id);
                     }}
                     className="ml-2 text-primary hover:text-primary/80 flex-shrink-0"
                   >
