@@ -63,9 +63,7 @@ import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import ProfileEdit from "./pages/ProfileEdit";
 import EventsPage from "./pages/EventsPage";
 import EventDetailsPage from "./pages/EventDetailsPage";
-// Phase 1.5: Event management pages (deferred)
-// import EventManagementPage from "./pages/EventManagementPage";
-// import EventEditPage from "./pages/EventEditPage";
+import EditEventPage from "./pages/EditEventPage";
 
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
@@ -164,9 +162,7 @@ function App() {
               {/* ========== CONVENE PILLAR ========== */}
               <Route path="/dna/convene/events" element={<EventsPage />} />
               <Route path="/dna/convene/events/:id" element={<EventDetailsPage />} />
-              {/* Phase 1.5: Event management routes deferred */}
-              {/* <Route path="/dna/convene/events/manage" element={<EventManagementPage />} /> */}
-              {/* <Route path="/dna/convene/events/manage/:id" element={<EventEditPage />} /> */}
+              <Route path="/dna/convene/events/:id/edit" element={<EditEventPage />} />
               {/* Legacy convene route redirects */}
               <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />
               <Route path="/events" element={<Navigate to="/dna/convene/events" replace />} />
