@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export const useProfileContent = (profileId: string | undefined) => {
-  const [userPosts, setUserPosts] = useState([]);
-  const [userEvents, setUserEvents] = useState([]);
-  const [userCommunities, setUserCommunities] = useState([]);
+  const [userPosts, setUserPosts] = useState<any[]>([]);
+  const [userEvents, setUserEvents] = useState<any[]>([]);
+  const [userCommunities, setUserCommunities] = useState<any[]>([]);
 
   useEffect(() => {
     if (profileId) {
@@ -33,7 +33,7 @@ export const useProfileContent = (profileId: string | undefined) => {
       const { data: events } = await supabase
         .from('events')
         .select('*')
-        .eq('created_by', profileId)
+        .eq('organizer_id', profileId)
         .limit(5);
 
       // Fetch user's communities
