@@ -203,7 +203,7 @@ export default function EventsPage() {
         currentUserId={user?.id || ''}
         onSuccess={(eventId) => {
           refetch();
-          navigate(`/dna/events/${eventId}`);
+          navigate(`/dna/convene/events/${eventId}`);
         }}
       />
       <MobileBottomNav />
