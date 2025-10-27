@@ -84,7 +84,7 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
   return (
     <Card 
       className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-      onClick={() => navigate(`/dna/events/${event.event_id}`)}
+      onClick={() => navigate(`/dna/convene/events/${event.event_id}`)}
     >
       {/* Cover Image */}
       {event.cover_image_url ? (
@@ -192,7 +192,7 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
               className="flex-1"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/dna/events/${event.event_id}`);
+                navigate(`/dna/convene/events/${event.event_id}`);
               }}
             >
               View Details
@@ -204,7 +204,7 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/dna/events/${event.event_id}/edit`);
+                navigate(`/dna/convene/events/${event.event_id}/edit`);
               }}
             >
               Manage
