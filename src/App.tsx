@@ -62,8 +62,8 @@ import NotificationsPage from "./pages/NotificationsPage";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import ProfileEdit from "./pages/ProfileEdit";
 import EventsPage from "./pages/EventsPage";
-// Phase 1.5: Event detail pages (currently using TwoColumnLayout in EventsPage)
-// import EventDetailPage from "./pages/EventDetailPage";
+import EventDetailsPage from "./pages/EventDetailsPage";
+// Phase 1.5: Event management pages (deferred)
 // import EventManagementPage from "./pages/EventManagementPage";
 // import EventEditPage from "./pages/EventEditPage";
 
@@ -163,8 +163,8 @@ function App() {
               
               {/* ========== CONVENE PILLAR ========== */}
               <Route path="/dna/convene/events" element={<EventsPage />} />
-              {/* Phase 1.5: Event detail routes deferred - EventsPage uses TwoColumnLayout for detail view */}
-              {/* <Route path="/dna/convene/events/:id" element={<EventDetailPage />} /> */}
+              <Route path="/dna/convene/events/:id" element={<EventDetailsPage />} />
+              {/* Phase 1.5: Event management routes deferred */}
               {/* <Route path="/dna/convene/events/manage" element={<EventManagementPage />} /> */}
               {/* <Route path="/dna/convene/events/manage/:id" element={<EventEditPage />} /> */}
               {/* Legacy convene route redirects */}
