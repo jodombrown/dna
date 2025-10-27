@@ -12,15 +12,55 @@ export const aboutUsDropdown = [
   { name: 'Contact', path: '/contact' },
 ];
 
-// Main navigation for authenticated users (feed-focused like LinkedIn)
+// Main navigation for authenticated users - Pillar-based structure (5 C's)
 export const mainNavItems = [
-  { name: 'Network Feed', path: '/dna/network/feed', icon: 'Users2' },
   { name: 'My DNA', path: '/dna/me', icon: 'User' },
   { name: 'Discover', path: '/dna/discover/members', icon: 'Search' },
-  { name: 'Convene', path: '/dna/convene', icon: 'Calendar' },
-  { name: 'Messages', path: '/dna/messages', icon: 'MessageCircle' },
+  { name: 'Connect', path: '/dna/connect/network', icon: 'Users2' },
+  { name: 'Convene', path: '/dna/convene/events', icon: 'Calendar' },
+  { name: 'Messages', path: '/dna/connect/messages', icon: 'MessageCircle' },
   { name: 'Impact', path: '/dna/impact', icon: 'Briefcase' },
 ];
+
+// Pillar-based navigation structure
+export const pillarNavigation = {
+  discover: {
+    label: 'Discover',
+    icon: 'Compass',
+    items: [
+      { name: 'Members', path: '/dna/discover/members' },
+      { name: 'Feed', path: '/dna/discover/feed' },
+    ],
+  },
+  connect: {
+    label: 'Connect',
+    icon: 'Users',
+    items: [
+      { name: 'Network', path: '/dna/connect/network' },
+      { name: 'Feed', path: '/dna/connect/feed' },
+      { name: 'Messages', path: '/dna/connect/messages' },
+    ],
+  },
+  convene: {
+    label: 'Convene',
+    icon: 'Calendar',
+    items: [
+      { name: 'Events', path: '/dna/convene/events' },
+    ],
+  },
+  contribute: {
+    label: 'Contribute',
+    icon: 'Heart',
+    items: [],
+    badge: 'Soon',
+  },
+  commerce: {
+    label: 'Commerce',
+    icon: 'ShoppingBag',
+    items: [],
+    badge: 'Soon',
+  },
+};
 
 export const phases = [
   { name: 'Market Research', path: '/phase-1/market-research' },

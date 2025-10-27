@@ -161,14 +161,14 @@ const UnifiedHeader = () => {
   }
   const currentPath = location.pathname;
 
-  // Navigation items for authenticated users
+  // Navigation items for authenticated users - Pillar-based (5 C's)
   const authNavigationItems = [
-    { title: 'Feed', view: 'feed', icon: Home, path: '/dna/feed', badge: 0 },
     { title: 'My DNA', view: 'dna', icon: User, path: '/dna/me', badge: 0 },
-    { title: 'Discover', view: 'discover', icon: Users, path: '/dna/discover', badge: 0 },
-    { title: 'Network', view: 'network', icon: Users2, path: '/dna/network', badge: 0 },
-    { title: 'Events', view: 'events', icon: Calendar, path: '/dna/events', badge: 0 },
-    { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/dna/messages', badge: unreadMessageCount },
+    { title: 'Discover', view: 'discover', icon: Users, path: '/dna/discover/members', badge: 0 },
+    { title: 'Connect', view: 'connect', icon: Users2, path: '/dna/connect/network', badge: 0 },
+    { title: 'Feed', view: 'feed', icon: Home, path: '/dna/connect/feed', badge: 0 },
+    { title: 'Events', view: 'events', icon: Calendar, path: '/dna/convene/events', badge: 0 },
+    { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/dna/connect/messages', badge: unreadMessageCount },
     { title: 'Opportunities', view: 'opportunities', icon: Briefcase, path: '/dna/impact', badge: 0 },
   ];
 

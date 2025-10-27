@@ -135,39 +135,52 @@ function App() {
                 </OnboardingGuard>
               } />
               
-              {/* Feed Routes - Network and Discovery */}
-              <Route path="/dna/network/feed" element={
-                <OnboardingGuard>
-                  <NetworkFeedPage />
-                </OnboardingGuard>
-              } />
+              {/* ========== DISCOVER PILLAR ========== */}
+              <Route path="/dna/discover/members" element={<DiscoverMembers />} />
               <Route path="/dna/discover/feed" element={
                 <OnboardingGuard>
                   <DiscoveryFeedPage />
                 </OnboardingGuard>
               } />
-              {/* Redirect old feed route */}
-              <Route path="/dna/feed" element={<Navigate to="/dna/network/feed" replace />} />
+              {/* Legacy discover route redirects */}
+              <Route path="/dna/discover" element={<Navigate to="/dna/discover/members" replace />} />
               
-              {/* Main feature pages under /dna namespace */}
-              <Route path="/dna/connect" element={<ConnectExample />} />
-              <Route path="/dna/convene" element={<Convene />} />
-              <Route path="/dna/events" element={<EventsPage />} />
+              {/* ========== CONNECT PILLAR ========== */}
+              <Route path="/dna/connect/network" element={<Network />} />
+              <Route path="/dna/connect/feed" element={
+                <OnboardingGuard>
+                  <NetworkFeedPage />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/connect/messages" element={<MessagesPage />} />
+              <Route path="/dna/connect/messages/:conversationId" element={<MessagesPage />} />
+              {/* Legacy connect route redirects */}
+              <Route path="/dna/network" element={<Navigate to="/dna/connect/network" replace />} />
+              <Route path="/dna/network/feed" element={<Navigate to="/dna/connect/feed" replace />} />
+              <Route path="/dna/feed" element={<Navigate to="/dna/connect/feed" replace />} />
+              <Route path="/dna/messages" element={<Navigate to="/dna/connect/messages" replace />} />
+              <Route path="/dna/messages/:conversationId" element={<Navigate to="/dna/connect/messages/$1" replace />} />
+              
+              {/* ========== CONVENE PILLAR ========== */}
+              <Route path="/dna/convene/events" element={<EventsPage />} />
               {/* Phase 1.5: Event detail routes deferred - EventsPage uses TwoColumnLayout for detail view */}
-              {/* <Route path="/dna/events/:id" element={<EventDetailPage />} /> */}
-              {/* <Route path="/dna/events/manage" element={<EventManagementPage />} /> */}
-              {/* <Route path="/dna/events/manage/:id" element={<EventEditPage />} /> */}
-              <Route path="/events" element={<EventsPage />} />
+              {/* <Route path="/dna/convene/events/:id" element={<EventDetailPage />} /> */}
+              {/* <Route path="/dna/convene/events/manage" element={<EventManagementPage />} /> */}
+              {/* <Route path="/dna/convene/events/manage/:id" element={<EventEditPage />} /> */}
+              {/* Legacy convene route redirects */}
+              <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />
+              <Route path="/events" element={<Navigate to="/dna/convene/events" replace />} />
+              
+              {/* ========== CONTRIBUTE PILLAR (Future) ========== */}
               <Route path="/dna/impact" element={<Opportunities />} />
               <Route path="/dna/impact/:id" element={<OpportunityDetail />} />
               <Route path="/dna/applications" element={<MyApplications />} />
               <Route path="/dna/spaces" element={<CollaborationSpaces />} />
               <Route path="/dna/spaces/:id" element={<SpaceDetail />} />
-              <Route path="/dna/discover" element={<Discover />} />
-              <Route path="/dna/discover/members" element={<DiscoverMembers />} />
-              <Route path="/dna/network" element={<Network />} />
-              <Route path="/dna/messages" element={<MessagesPage />} />
-              <Route path="/dna/messages/:conversationId" element={<MessagesPage />} />
+              
+              {/* ========== LEGACY ROUTES ========== */}
+              <Route path="/dna/connect" element={<Navigate to="/dna/connect/network" replace />} />
+              <Route path="/dna/convene" element={<Navigate to="/dna/convene/events" replace />} />
               <Route path="/dna/notifications" element={
                 <OnboardingGuard>
                   <NotificationsPage />
