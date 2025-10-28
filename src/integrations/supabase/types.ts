@@ -2033,6 +2033,94 @@ export type Database = {
         }
         Relationships: []
       }
+      group_join_requests: {
+        Row: {
+          created_at: string
+          group_id: string
+          id: string
+          message: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          group_id: string
+          id?: string
+          message?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          group_id?: string
+          id?: string
+          message?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_join_requests_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_members: {
+        Row: {
+          banned_at: string | null
+          banned_by: string | null
+          banned_reason: string | null
+          group_id: string
+          id: string
+          is_banned: boolean
+          joined_at: string
+          role: Database["public"]["Enums"]["group_member_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          banned_at?: string | null
+          banned_by?: string | null
+          banned_reason?: string | null
+          group_id: string
+          id?: string
+          is_banned?: boolean
+          joined_at?: string
+          role?: Database["public"]["Enums"]["group_member_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          banned_at?: string | null
+          banned_by?: string | null
+          banned_reason?: string | null
+          group_id?: string
+          id?: string
+          is_banned?: boolean
+          joined_at?: string
+          role?: Database["public"]["Enums"]["group_member_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_messages: {
         Row: {
           content: string | null
@@ -2074,6 +2162,186 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      group_post_comments: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+          is_deleted: boolean
+          post_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          post_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          post_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "group_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "group_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_posts: {
+        Row: {
+          author_id: string
+          comment_count: number
+          content: string
+          created_at: string
+          group_id: string
+          id: string
+          image_urls: string[] | null
+          is_deleted: boolean
+          is_pinned: boolean
+          like_count: number
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          comment_count?: number
+          content: string
+          created_at?: string
+          group_id: string
+          id?: string
+          image_urls?: string[] | null
+          is_deleted?: boolean
+          is_pinned?: boolean
+          like_count?: number
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          comment_count?: number
+          content?: string
+          created_at?: string
+          group_id?: string
+          id?: string
+          image_urls?: string[] | null
+          is_deleted?: boolean
+          is_pinned?: boolean
+          like_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_posts_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          avatar_url: string | null
+          category: string | null
+          cover_image_url: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_active: boolean
+          join_policy: Database["public"]["Enums"]["group_join_policy"]
+          location: string | null
+          member_count: number
+          name: string
+          post_count: number
+          privacy: Database["public"]["Enums"]["group_privacy"]
+          search_vector: unknown
+          slug: string
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          join_policy?: Database["public"]["Enums"]["group_join_policy"]
+          location?: string | null
+          member_count?: number
+          name: string
+          post_count?: number
+          privacy?: Database["public"]["Enums"]["group_privacy"]
+          search_vector?: unknown
+          slug: string
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          join_policy?: Database["public"]["Enums"]["group_join_policy"]
+          location?: string | null
+          member_count?: number
+          name?: string
+          post_count?: number
+          privacy?: Database["public"]["Enums"]["group_privacy"]
+          search_vector?: unknown
+          slug?: string
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       impact_attributions: {
         Row: {
@@ -5106,6 +5374,94 @@ export type Database = {
           user_has_liked: boolean
         }[]
       }
+      get_group_details: {
+        Args: { p_group_id: string; p_user_id: string }
+        Returns: {
+          avatar_url: string
+          can_post: boolean
+          category: string
+          cover_image_url: string
+          created_at: string
+          created_by: string
+          description: string
+          group_id: string
+          is_member: boolean
+          join_policy: Database["public"]["Enums"]["group_join_policy"]
+          location: string
+          member_count: number
+          name: string
+          post_count: number
+          privacy: Database["public"]["Enums"]["group_privacy"]
+          slug: string
+          tags: string[]
+          user_role: Database["public"]["Enums"]["group_member_role"]
+        }[]
+      }
+      get_group_members: {
+        Args: {
+          p_group_id: string
+          p_role?: Database["public"]["Enums"]["group_member_role"]
+        }
+        Returns: {
+          avatar_url: string
+          full_name: string
+          headline: string
+          joined_at: string
+          member_id: string
+          role: Database["public"]["Enums"]["group_member_role"]
+          user_id: string
+          username: string
+        }[]
+      }
+      get_group_posts: {
+        Args: {
+          p_group_id: string
+          p_limit?: number
+          p_offset?: number
+          p_user_id: string
+        }
+        Returns: {
+          author_avatar_url: string
+          author_full_name: string
+          author_id: string
+          author_username: string
+          comment_count: number
+          content: string
+          created_at: string
+          image_urls: string[]
+          is_pinned: boolean
+          like_count: number
+          post_id: string
+          user_has_liked: boolean
+        }[]
+      }
+      get_groups: {
+        Args: {
+          p_category?: string
+          p_filter?: string
+          p_limit?: number
+          p_offset?: number
+          p_search?: string
+          p_user_id: string
+        }
+        Returns: {
+          avatar_url: string
+          category: string
+          cover_image_url: string
+          created_at: string
+          description: string
+          group_id: string
+          is_member: boolean
+          join_policy: Database["public"]["Enums"]["group_join_policy"]
+          location: string
+          member_count: number
+          name: string
+          post_count: number
+          privacy: Database["public"]["Enums"]["group_privacy"]
+          slug: string
+          user_role: Database["public"]["Enums"]["group_member_role"]
+        }[]
+      }
       get_leaderboard: {
         Args: {
           board_type?: string
@@ -5732,6 +6088,9 @@ export type Database = {
         | "networking"
         | "social"
         | "other"
+      group_join_policy: "open" | "approval_required" | "invite_only"
+      group_member_role: "owner" | "admin" | "moderator" | "member"
+      group_privacy: "public" | "private" | "secret"
       opportunity_status: "draft" | "active" | "paused" | "closed" | "archived"
       opportunity_visibility: "public" | "network_only" | "private"
       rsvp_status: "going" | "maybe" | "not_going" | "pending" | "waitlist"
@@ -5881,6 +6240,9 @@ export const Constants = {
         "social",
         "other",
       ],
+      group_join_policy: ["open", "approval_required", "invite_only"],
+      group_member_role: ["owner", "admin", "moderator", "member"],
+      group_privacy: ["public", "private", "secret"],
       opportunity_status: ["draft", "active", "paused", "closed", "archived"],
       opportunity_visibility: ["public", "network_only", "private"],
       rsvp_status: ["going", "maybe", "not_going", "pending", "waitlist"],
