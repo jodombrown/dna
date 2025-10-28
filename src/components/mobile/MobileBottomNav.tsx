@@ -20,6 +20,7 @@ const MobileBottomNav: React.FC = () => {
     { label: 'Network', icon: Users, path: '/dna/connect/feed' },
     { label: 'Messages', icon: MessageCircle, path: '/dna/connect/messages', badge: unreadCount },
     { label: 'Events', icon: Calendar, path: '/dna/convene/events' },
+    { label: 'Groups', icon: Users, path: '/dna/convene/groups' },
   ];
 
   const isActive = (path: string) => {

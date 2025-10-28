@@ -168,6 +168,7 @@ const UnifiedHeader = () => {
     { title: 'Connect', view: 'connect', icon: Users2, path: '/dna/connect/network', badge: 0 },
     { title: 'Feed', view: 'feed', icon: Home, path: '/dna/connect/feed', badge: 0 },
     { title: 'Events', view: 'events', icon: Calendar, path: '/dna/convene/events', badge: 0 },
+    { title: 'Groups', view: 'groups', icon: Users, path: '/dna/convene/groups', badge: 0 },
     { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/dna/connect/messages', badge: unreadMessageCount },
     { title: 'Opportunities', view: 'opportunities', icon: Briefcase, path: '/dna/impact', badge: 0 },
   ];

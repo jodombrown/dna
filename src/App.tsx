@@ -64,6 +64,8 @@ import ProfileEdit from "./pages/ProfileEdit";
 import EventsPage from "./pages/EventsPage";
 import EventDetailsPage from "./pages/EventDetailsPage";
 import EditEventPage from "./pages/EditEventPage";
+import GroupsPage from "./pages/GroupsPage";
+import GroupDetailsPage from "./pages/GroupDetailsPage";
 
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
@@ -163,6 +165,8 @@ function App() {
               <Route path="/dna/convene/events" element={<EventsPage />} />
               <Route path="/dna/convene/events/:id" element={<EventDetailsPage />} />
               <Route path="/dna/convene/events/:id/edit" element={<EditEventPage />} />
+              <Route path="/dna/convene/groups" element={<GroupsPage />} />
+              <Route path="/dna/convene/groups/:slug" element={<GroupDetailsPage />} />
               {/* Legacy convene route redirects */}
               <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />
               <Route path="/events" element={<Navigate to="/dna/convene/events" replace />} />
