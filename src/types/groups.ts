@@ -39,7 +39,23 @@ export interface GroupListItem {
   user_role?: GroupMemberRole;
 }
 
-export interface GroupDetails extends Group {
+export interface GroupDetails {
+  group_id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  avatar_url?: string;
+  cover_image_url?: string;
+  privacy: GroupPrivacy;
+  join_policy: GroupJoinPolicy;
+  category?: string;
+  location?: string;
+  tags?: string[];
+  member_count: number;
+  post_count: number;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
   is_member: boolean;
   user_role?: GroupMemberRole;
   can_post: boolean;
