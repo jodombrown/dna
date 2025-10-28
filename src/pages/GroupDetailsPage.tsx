@@ -7,6 +7,12 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { GroupDetails, GroupMember, GroupPost } from '@/types/groups';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -25,6 +31,160 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
+interface CommentDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  postId: string;
+  postAuthor: string;
+}
+
+function CommentDialog({ isOpen, onClose, postId, postAuthor }: CommentDialogProps) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [commentContent, setCommentContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { data: comments, refetch } = useQuery({
+    queryKey: ['group-post-comments', postId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('group_post_comments')
+        .select(`
+          id,
+          content,
+          created_at,
+          author:profiles!author_id(
+            id,
+            username,
+            full_name,
+            avatar_url
+          )
+        `)
+        .eq('post_id', postId)
+        .eq('is_deleted', false)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: isOpen,
+  });
+
+  const handleSubmit = async () => {
+    if (!commentContent.trim() || !user) return;
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from('group_post_comments')
+        .insert({
+          post_id: postId,
+          author_id: user.id,
+          content: commentContent.trim(),
+        });
+
+      if (error) throw error;
+
+      setCommentContent('');
+      refetch();
+      toast({
+        title: 'Comment posted!',
+      });
+    } catch (error) {
+      console.error('Comment error:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to post comment',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[600px] max-h-[80vh]">
+        <DialogHeader>
+          <DialogTitle>Comments on {postAuthor}'s post</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          {/* Comments List */}
+          <div className="max-h-[400px] overflow-y-auto space-y-4">
+            {comments && comments.length > 0 ? (
+              comments.map((comment: any) => (
+                <div key={comment.id} className="flex gap-3">
+                  <Avatar className="h-8 w-8 flex-shrink-0">
+                    <AvatarImage src={comment.author.avatar_url} alt={comment.author.full_name} />
+                    <AvatarFallback className="bg-[hsl(151,75%,50%)] text-white text-xs">
+                      {getInitials(comment.author.full_name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <div className="bg-muted rounded-lg p-3">
+                      <p className="font-semibold text-sm">{comment.author.full_name}</p>
+                      <p className="text-sm mt-1">{comment.content}</p>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1 ml-3">
+                      {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-muted-foreground py-8">
+                No comments yet. Be the first to comment!
+              </p>
+            )}
+          </div>
+
+          {/* Comment Input */}
+          <div className="flex gap-3 pt-4 border-t">
+            <Avatar className="h-8 w-8 flex-shrink-0">
+              <AvatarImage src={user?.user_metadata?.avatar_url} />
+              <AvatarFallback className="bg-[hsl(151,75%,50%)] text-white text-xs">
+                {user?.user_metadata?.full_name
+                  ? getInitials(user.user_metadata.full_name)
+                  : 'U'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <Textarea
+                placeholder="Write a comment..."
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
+                rows={2}
+                maxLength={1000}
+              />
+              <div className="flex justify-end mt-2">
+                <Button
+                  size="sm"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || !commentContent.trim()}
+                  className="bg-[hsl(151,75%,50%)] hover:bg-[hsl(151,75%,40%)] text-white"
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  Comment
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function GroupDetailsPage() {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
@@ -33,6 +193,10 @@ export default function GroupDetailsPage() {
   const queryClient = useQueryClient();
   const [postContent, setPostContent] = useState('');
   const [isPostSubmitting, setIsPostSubmitting] = useState(false);
+  const [activeCommentDialog, setActiveCommentDialog] = useState<{
+    postId: string;
+    postAuthor: string;
+  } | null>(null);
 
   // Fetch group details
   const { data: group, isLoading } = useQuery({
@@ -506,7 +670,16 @@ export default function GroupDetailsPage() {
                             />
                             {post.like_count}
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              setActiveCommentDialog({
+                                postId: post.post_id,
+                                postAuthor: post.author_full_name,
+                              })
+                            }
+                          >
                             <MessageCircle className="h-4 w-4 mr-2" />
                             {post.comment_count}
                           </Button>
@@ -599,6 +772,16 @@ export default function GroupDetailsPage() {
           </Card>
         )}
       </div>
+
+      {/* Comment Dialog */}
+      {activeCommentDialog && (
+        <CommentDialog
+          isOpen={!!activeCommentDialog}
+          onClose={() => setActiveCommentDialog(null)}
+          postId={activeCommentDialog.postId}
+          postAuthor={activeCommentDialog.postAuthor}
+        />
+      )}
     </div>
   );
 }
