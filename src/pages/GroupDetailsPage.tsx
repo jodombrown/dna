@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -259,6 +259,55 @@ export default function GroupDetailsPage() {
     },
     enabled: !!group && !!user,
   });
+
+  // Real-time updates
+  useEffect(() => {
+    if (!group) return;
+
+    const channel = supabase
+      .channel(`group_${group.group_id}_updates`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'group_posts',
+          filter: `group_id=eq.${group.group_id}`,
+        },
+        () => {
+          refetchPosts();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'group_post_likes',
+        },
+        () => {
+          refetchPosts();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'group_members',
+          filter: `group_id=eq.${group.group_id}`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['group-members'] });
+          queryClient.invalidateQueries({ queryKey: ['group-details'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [group, refetchPosts, queryClient]);
 
   // Join group mutation
   const joinGroupMutation = useMutation({
