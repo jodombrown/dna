@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Megaphone, Share2, TrendingUp, Globe, Users, BarChart, Filter, Eye, Heart } from 'lucide-react';
+import { Megaphone, Share2, TrendingUp, Globe, Users, BarChart, Filter, Eye, Heart, Calendar, Clock, ArrowRight, Newspaper } from 'lucide-react';
 import { EnhancedCard, EnhancedCardContent, EnhancedCardHeader, EnhancedCardTitle } from '@/components/ui/enhanced-card';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import FeedbackPanel from '@/components/FeedbackPanel';
 import PageSpecificSurvey from '@/components/survey/PageSpecificSurvey';
 import { useConveyLogic } from '@/hooks/useConveyLogic';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { formatDistance } from 'date-fns';
 import {
   Dialog,
   DialogContent,
@@ -39,226 +40,282 @@ const ConveyExample = () => {
 
   const [isSurveyOpen, setIsSurveyOpen] = useState(false);
 
-  const features = [
-    {
-      icon: Megaphone,
-      title: 'Amplify Impact',
-      description: 'Share your success stories and innovations with the global diaspora'
-    },
-    {
-      icon: Share2,
-      title: 'Cross-Platform Reach',
-      description: 'Distribute your message across multiple channels and communities'
-    },
-    {
-      icon: TrendingUp,
-      title: 'Track Engagement',
-      description: 'Measure the reach and impact of your shared content'
-    },
-    {
-      icon: Globe,
-      title: 'Global Visibility',
-      description: 'Connect with diaspora communities worldwide'
-    }
-  ];
+  const featuredStory = impactStories.find(s => s.featured) || impactStories[0];
+  const topStories = impactStories.filter(s => s.featured).slice(0, 3);
+  const regularStories = impactStories.filter(s => !s.featured);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <UnifiedHeader />
       
-      {/* Hero Section */}
-      <section className="pt-24 pb-8 px-4 bg-gradient-to-br from-dna-copper/5 via-background to-dna-gold/5">
-        <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-12">
-            <Badge className="mb-4 bg-dna-copper text-white">
-              Convey
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-copper bg-clip-text text-transparent">
-              Share. Inspire. Transform.
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
-              Amplify Africa's success stories, innovations, and impact across the global diaspora. 
-              Your story can inspire thousands and catalyze change.
-            </p>
-          </div>
-
-          {/* Stats Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="text-3xl font-bold text-dna-copper mb-1">{stats.totalReach}</div>
-                <div className="text-sm text-muted-foreground">Total Reach</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="text-3xl font-bold text-dna-emerald mb-1">{stats.storiesShared}</div>
-                <div className="text-sm text-muted-foreground">Stories Shared</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="text-3xl font-bold text-dna-forest mb-1">{stats.totalEngagements}</div>
-                <div className="text-sm text-muted-foreground">Engagements</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <div className="text-3xl font-bold text-dna-gold mb-1">{stats.activeContributors}</div>
-                <div className="text-sm text-muted-foreground">Contributors</div>
-              </CardContent>
-            </Card>
+      {/* Masthead */}
+      <div className="border-b bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <Newspaper className="h-8 w-8 text-dna-copper" />
+                <h1 className="text-4xl md:text-5xl font-bold font-serif">DiasporaDaily</h1>
+              </div>
+              <p className="text-sm text-muted-foreground italic">Stories of Impact • Innovation • Transformation</p>
+            </div>
+            <div className="text-right hidden md:block">
+              <div className="text-sm text-muted-foreground">
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+
+      {/* Category Navigation */}
+      <div className="border-b bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-1 overflow-x-auto py-3 no-scrollbar">
+            <Button 
+              variant={filterCategory === 'all' ? 'default' : 'ghost'} 
+              size="sm"
+              onClick={() => setFilterCategory('all')}
+              className="whitespace-nowrap"
+            >
+              All Stories
+            </Button>
+            {['Energy', 'Education', 'Agriculture', 'Healthcare', 'Finance', 'Environment'].map(cat => (
+              <Button 
+                key={cat}
+                variant={filterCategory === cat ? 'default' : 'ghost'} 
+                size="sm"
+                onClick={() => setFilterCategory(cat)}
+                className="whitespace-nowrap"
+              >
+                {cat}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {features.map((feature, index) => (
-            <EnhancedCard key={index} hover className="border-dna-copper/20">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center text-center">
-                  <div className="p-3 bg-dna-copper/10 rounded-lg mb-4">
-                    <feature.icon className="h-6 w-6 text-dna-copper" />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        {/* Featured Story - Hero */}
+        {featuredStory && (
+          <div className="mb-16">
+            <div className="grid lg:grid-cols-2 gap-8 items-center">
+              <div className="order-2 lg:order-1 space-y-4">
+                <Badge className="bg-dna-copper text-white font-semibold">
+                  FEATURED STORY
+                </Badge>
+                <h2 className="text-4xl md:text-5xl font-bold font-serif leading-tight">
+                  {featuredStory.title}
+                </h2>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{featuredStory.author}</span>
+                  <span>•</span>
+                  <span>{featuredStory.authorTitle}</span>
+                  <span>•</span>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    {formatDistance(new Date(featuredStory.date), new Date(), { addSuffix: true })}
                   </div>
-                  <h3 className="font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
                 </div>
-              </CardContent>
-            </EnhancedCard>
-          ))}
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8 items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm font-medium">Filter by:</span>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  {featuredStory.content}
+                </p>
+                <div className="flex items-center gap-4 pt-2">
+                  <Badge variant="outline" className="text-xs">
+                    {featuredStory.category}
+                  </Badge>
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <span>{featuredStory.reach} readers</span>
+                    <span>•</span>
+                    <span>{featuredStory.engagement} interactions</span>
+                  </div>
+                </div>
+                <EnhancedButton 
+                  onClick={() => handleViewStory(featuredStory)}
+                  size="lg"
+                  className="mt-4"
+                >
+                  Read Full Story
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </EnhancedButton>
+              </div>
+              <div className="order-1 lg:order-2">
+                <div className="aspect-[4/3] bg-gradient-to-br from-dna-copper/20 via-dna-emerald/20 to-dna-forest/20 rounded-lg flex items-center justify-center">
+                  <div className="text-center p-8">
+                    <TrendingUp className="h-16 w-16 mx-auto mb-4 text-dna-copper" />
+                    <p className="text-lg font-semibold text-dna-forest">{featuredStory.impact}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <Select value={filterCategory} onValueChange={setFilterCategory}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="Energy">Energy</SelectItem>
-                <SelectItem value="Education">Education</SelectItem>
-                <SelectItem value="Agriculture">Agriculture</SelectItem>
-                <SelectItem value="Healthcare">Healthcare</SelectItem>
-                <SelectItem value="Finance">Finance</SelectItem>
-                <SelectItem value="Environment">Environment</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
-          <EnhancedButton 
-            variant="dna" 
-            onClick={() => setIsShareStoryDialogOpen(true)}
-          >
-            <Megaphone className="mr-2 h-4 w-4" />
-            Share Your Story
-          </EnhancedButton>
-        </div>
+        )}
 
-        {/* Impact Stories */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-8">Trending Impact Stories</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Top Stories Grid */}
+        {topStories.length > 0 && (
+          <div className="mb-16">
+            <div className="border-b-2 border-foreground mb-8">
+              <h3 className="text-2xl font-bold font-serif pb-2">Top Stories</h3>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {topStories.map((story) => (
+                <article key={story.id} className="group cursor-pointer" onClick={() => handleViewStory(story)}>
+                  <div className="aspect-[16/10] bg-gradient-to-br from-dna-copper/10 via-dna-emerald/10 to-dna-forest/10 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                    <Badge className="text-xs bg-dna-forest text-white">{story.category}</Badge>
+                  </div>
+                  <Badge variant="outline" className="text-xs mb-2">
+                    {story.category}
+                  </Badge>
+                  <h4 className="text-xl font-bold font-serif mb-2 group-hover:text-dna-copper transition-colors line-clamp-2">
+                    {story.title}
+                  </h4>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                    <span className="font-medium">{story.author}</span>
+                    <span>•</span>
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {formatDistance(new Date(story.date), new Date(), { addSuffix: true })}
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
+                    {story.content}
+                  </p>
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <span>{story.reach} readers</span>
+                    <span>•</span>
+                    <span>{story.engagement} interactions</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Latest Stories - List View */}
+        <div className="mb-16">
+          <div className="border-b-2 border-foreground mb-8 flex items-center justify-between">
+            <h3 className="text-2xl font-bold font-serif pb-2">Latest Stories</h3>
+            <EnhancedButton 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setIsShareStoryDialogOpen(true)}
+            >
+              <Megaphone className="mr-2 h-4 w-4" />
+              Submit Story
+            </EnhancedButton>
+          </div>
+          <div className="space-y-8">
             {impactStories.map((story) => (
-              <EnhancedCard key={story.id} hover>
-                {story.featured && (
-                  <div className="bg-gradient-to-r from-dna-gold to-dna-copper text-white text-xs font-bold py-1 px-3 text-center">
-                    FEATURED
+              <article 
+                key={story.id} 
+                className="group cursor-pointer border-b pb-8 last:border-0"
+                onClick={() => handleViewStory(story)}
+              >
+                <div className="grid md:grid-cols-4 gap-6">
+                  <div className="md:col-span-1">
+                    <div className="aspect-square bg-gradient-to-br from-dna-copper/10 via-dna-emerald/10 to-dna-forest/10 rounded-lg flex items-center justify-center">
+                      <Badge className="bg-dna-forest text-white">{story.category}</Badge>
+                    </div>
                   </div>
-                )}
-                <CardHeader>
-                  <div className="flex items-start justify-between mb-2">
-                    <Badge variant="secondary" className="bg-dna-forest text-white">
-                      {story.category}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-xl mb-1">{story.title}</CardTitle>
-                  <CardDescription className="text-sm">
-                    by {story.author}
-                    {story.authorTitle && (
-                      <span className="block text-xs mt-1">{story.authorTitle}</span>
-                    )}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div className="text-center p-3 bg-muted rounded-lg">
-                        <div className="text-2xl font-bold text-dna-copper">{story.reach}</div>
-                        <div className="text-xs text-muted-foreground">People Reached</div>
-                      </div>
-                      <div className="text-center p-3 bg-muted rounded-lg">
-                        <div className="text-2xl font-bold text-dna-emerald">{story.engagement}</div>
-                        <div className="text-xs text-muted-foreground">Engagements</div>
+                  <div className="md:col-span-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="outline" className="text-xs">{story.category}</Badge>
+                      {story.featured && (
+                        <Badge className="text-xs bg-dna-gold text-white">Featured</Badge>
+                      )}
+                    </div>
+                    <h4 className="text-2xl font-bold font-serif mb-2 group-hover:text-dna-copper transition-colors">
+                      {story.title}
+                    </h4>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
+                      <span className="font-medium text-foreground">{story.author}</span>
+                      {story.authorTitle && (
+                        <>
+                          <span>•</span>
+                          <span>{story.authorTitle}</span>
+                        </>
+                      )}
+                      <span>•</span>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {formatDistance(new Date(story.date), new Date(), { addSuffix: true })}
                       </div>
                     </div>
-                    <div className="p-3 bg-dna-emerald/10 rounded-lg">
-                      <div className="flex items-start gap-2">
-                        <TrendingUp className="h-4 w-4 text-dna-forest mt-0.5 flex-shrink-0" />
-                        <p className="text-sm font-medium text-dna-forest">{story.impact}</p>
+                    <p className="text-muted-foreground mb-4 line-clamp-2">
+                      {story.content}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Eye className="h-4 w-4" />
+                          {story.reach}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Heart className="h-4 w-4" />
+                          {story.engagement}
+                        </div>
                       </div>
+                      <Button variant="ghost" size="sm" className="group-hover:text-dna-copper">
+                        Read More
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
                     </div>
-                    <EnhancedButton 
-                      className="w-full" 
-                      variant="outline"
-                      onClick={() => handleViewStory(story)}
-                    >
-                      <Eye className="mr-2 h-4 w-4" />
-                      Read Full Story
-                    </EnhancedButton>
+                    <div className="mt-3 p-3 bg-dna-emerald/5 rounded border-l-4 border-dna-emerald">
+                      <p className="text-sm font-medium text-dna-forest">
+                        <TrendingUp className="inline h-4 w-4 mr-1" />
+                        Impact: {story.impact}
+                      </p>
+                    </div>
                   </div>
-                </CardContent>
-              </EnhancedCard>
+                </div>
+              </article>
             ))}
           </div>
         </div>
 
-        {/* Community Impact Stats */}
-        <Card className="mb-12 border-dna-copper/20">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Community Impact</CardTitle>
-            <CardDescription>Stories shared across the diaspora network</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-copper mb-2">{stats.totalReach}</div>
-                <div className="text-sm text-muted-foreground">Combined Reach</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-emerald mb-2">{stats.storiesShared}</div>
-                <div className="text-sm text-muted-foreground">Stories Published</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-dna-forest mb-2">{stats.totalEngagements}</div>
-                <div className="text-sm text-muted-foreground">Total Engagement</div>
-              </div>
+        {/* Newsletter Signup */}
+        <div className="bg-foreground text-background rounded-lg p-8 mb-12">
+          <div className="max-w-2xl mx-auto text-center">
+            <Newspaper className="h-12 w-12 mx-auto mb-4 opacity-90" />
+            <h3 className="text-2xl font-bold font-serif mb-3">
+              Stay Informed with DiasporaDaily
+            </h3>
+            <p className="text-background/80 mb-6">
+              Get the latest stories of impact, innovation, and transformation delivered to your inbox.
+            </p>
+            <div className="flex gap-3 max-w-md mx-auto">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 px-4 py-2 rounded bg-background text-foreground"
+              />
+              <EnhancedButton variant="secondary">
+                Subscribe
+              </EnhancedButton>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Page-specific Survey CTA */}
-        <div className="mt-12 bg-gradient-to-r from-dna-emerald/10 via-dna-copper/10 to-dna-gold/10 rounded-xl p-8 text-center border border-dna-copper/20">
-          <h3 className="text-2xl font-bold text-dna-forest mb-4">
-            Help Us Amplify Impact Stories
-          </h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Share your thoughts on how we can better showcase diaspora achievements and innovations. 
-            Your feedback will help us build the most powerful storytelling platform for Africa's development.
-          </p>
-          <button
-            onClick={() => setIsSurveyOpen(true)}
-            className="bg-dna-copper hover:bg-dna-gold text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-          >
-            Share Your Convey Experience
-          </button>
+        {/* Stats Section */}
+        <div className="grid md:grid-cols-4 gap-6 mb-12 bg-muted/50 rounded-lg p-8">
+          <div className="text-center">
+            <div className="text-4xl font-bold text-dna-copper mb-2">{stats.totalReach}</div>
+            <div className="text-sm text-muted-foreground font-medium">Total Readers</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl font-bold text-dna-emerald mb-2">{stats.storiesShared}</div>
+            <div className="text-sm text-muted-foreground font-medium">Stories Published</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl font-bold text-dna-forest mb-2">{stats.totalEngagements}</div>
+            <div className="text-sm text-muted-foreground font-medium">Total Engagement</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl font-bold text-dna-gold mb-2">{stats.activeContributors}</div>
+            <div className="text-sm text-muted-foreground font-medium">Contributors</div>
+          </div>
         </div>
       </main>
 
