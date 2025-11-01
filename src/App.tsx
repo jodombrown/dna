@@ -46,6 +46,7 @@ import ConveneCategoryPage from "./pages/ConveneCategoryPage";
 import FeaturedCalendarsPage from "./pages/FeaturedCalendarsPage";
 import LocalEventsPage from "./pages/LocalEventsPage";
 import FactSheetPage from "./pages/FactSheetPage";
+import PitchDeck from "./pages/PitchDeck";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -125,6 +126,7 @@ function App() {
               
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
               <Route path="/fact-sheet" element={<FactSheetPage />} />
+              <Route path="/pitch-deck" element={<PitchDeck />} />
               <Route path="/dna/me" element={
                 <OnboardingGuard>
                   <DnaMe />
