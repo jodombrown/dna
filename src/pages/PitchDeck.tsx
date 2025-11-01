@@ -88,47 +88,108 @@ const PitchDeck = () => {
       showHeader: true,
       sources: [],
       content: (
-        <div className="flex flex-col h-full space-y-8 animate-fade-in">
-          <div className="space-y-4 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            <p className="text-2xl md:text-3xl font-bold text-dna-copper">
-              The first digital mobilization engine for the African Diaspora
-            </p>
-            <p className="text-lg md:text-xl text-foreground/90 font-semibold">
-              Built on the 5 C's Framework:
-            </p>
+        <div className="flex flex-col h-full animate-fade-in">
+          {/* Hero Statement */}
+          <div className="text-center mb-8 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <h3 className="text-3xl md:text-4xl font-bold text-dna-copper mb-4 leading-tight">
+              The first digital mobilization engine<br />for the African Diaspora
+            </h3>
           </div>
           
-          <div className="flex-1 flex items-center">
-            <div className="w-full grid grid-cols-5 gap-5 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          {/* 5 C's Framework Title */}
+          <div className="text-center mb-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <p className="text-xl md:text-2xl font-semibold text-foreground mb-2">
+              Built on the 5 C's Framework
+            </p>
+            <div className="w-24 h-1 bg-gradient-to-r from-dna-copper to-dna-gold mx-auto rounded-full"></div>
+          </div>
+          
+          {/* Cards Grid - 5 Cards in a Row */}
+          <div className="flex-1 flex items-center justify-center mb-6">
+            <div className="w-full grid grid-cols-5 gap-4 max-w-7xl animate-fade-in" style={{ animationDelay: '0.3s' }}>
               {[
-                { name: 'CONNECT', desc: 'Build verified diaspora profiles linking skills, regions, and cultural heritage to create a living map of our collective power', color: 'bg-dna-emerald' },
-                { name: 'CONVENE', desc: 'Host virtual and in-person gatherings to spark dialogue, share knowledge, and build trust across borders', color: 'bg-dna-copper' },
-                { name: 'COLLABORATE', desc: 'Launch coordinated projects, ventures, and initiatives that turn ideas into action through smart matching and shared resources', color: 'bg-dna-gold' },
-                { name: 'CONTRIBUTE', desc: 'Channel skills, capital, and expertise toward high-impact opportunities with transparent tracking and recognition', color: 'bg-dna-forest' },
-                { name: 'CONVEY', desc: 'Amplify diaspora stories, insights, and achievements to shift narratives and inspire the next generation', color: 'bg-dna-emerald' }
-              ].map((c, idx) => (
+                { 
+                  num: 1, 
+                  name: 'CONNECT', 
+                  tagline: 'Unite the network',
+                  desc: 'Verified profiles linking skills, heritage, and aspirations across the global diaspora',
+                  color: 'bg-dna-emerald',
+                  lightColor: 'bg-dna-emerald/10'
+                },
+                { 
+                  num: 2, 
+                  name: 'CONVENE', 
+                  tagline: 'Gather together',
+                  desc: 'Virtual and in-person gatherings to build trust and share knowledge',
+                  color: 'bg-dna-copper',
+                  lightColor: 'bg-dna-copper/10'
+                },
+                { 
+                  num: 3, 
+                  name: 'COLLABORATE', 
+                  tagline: 'Build together',
+                  desc: 'Smart-matched projects and ventures that turn ideas into coordinated action',
+                  color: 'bg-dna-gold',
+                  lightColor: 'bg-dna-gold/10'
+                },
+                { 
+                  num: 4, 
+                  name: 'CONTRIBUTE', 
+                  tagline: 'Give strategically',
+                  desc: 'Channel skills, capital, and expertise toward transparent, high-impact opportunities',
+                  color: 'bg-dna-forest',
+                  lightColor: 'bg-dna-forest/10'
+                },
+                { 
+                  num: 5, 
+                  name: 'CONVEY', 
+                  tagline: 'Amplify impact',
+                  desc: 'Share stories and insights to inspire the next generation and shift narratives',
+                  color: 'bg-dna-emerald',
+                  lightColor: 'bg-dna-emerald/10'
+                }
+              ].map((item) => (
                 <FlipCard
-                  key={c.name}
-                  className="h-56 hover:scale-[1.02] transition-all duration-300"
+                  key={item.name}
+                  className="h-64 group"
                   front={
-                    <div className="bg-card border border-border shadow-md rounded-2xl h-full w-full p-6 flex flex-col">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className={`w-12 h-12 ${c.color} rounded-lg flex items-center justify-center flex-shrink-0`}>
-                          <span className="text-2xl font-black text-white">{idx + 1}</span>
+                    <div className={`${item.lightColor} border border-border/50 rounded-xl h-full flex flex-col p-5 transition-all duration-300 hover:shadow-xl hover:border-border`}>
+                      {/* Number Badge */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className={`${item.color} w-11 h-11 rounded-lg flex items-center justify-center shadow-md`}>
+                          <span className="text-xl font-black text-white">{item.num}</span>
                         </div>
-                        <h3 className="text-xl font-bold text-foreground">{c.name}</h3>
+                        <div className="text-xs text-muted-foreground font-medium">
+                          Hover →
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-4 flex-1">{c.desc}</p>
-                      <div className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
-                        Hover for why it matters
-                      </div>
+                      
+                      {/* Title */}
+                      <h4 className="text-lg font-bold text-foreground mb-2 tracking-wide">
+                        {item.name}
+                      </h4>
+                      
+                      {/* Tagline */}
+                      <p className="text-sm font-semibold text-dna-copper mb-3">
+                        {item.tagline}
+                      </p>
+                      
+                      {/* Description */}
+                      <p className="text-xs text-muted-foreground leading-relaxed flex-1">
+                        {item.desc}
+                      </p>
                     </div>
                   }
                   back={
-                    <div className="bg-card border border-border rounded-2xl h-full w-full flex flex-col items-center justify-center p-6">
-                      <h3 className="text-lg text-dna-forest font-bold mb-4">Why it matters</h3>
-                      <p className="text-base text-foreground/80 font-medium text-center leading-relaxed">
-                        {c.desc}
+                    <div className="bg-card border border-border rounded-xl h-full flex flex-col items-center justify-center p-5 shadow-lg">
+                      <div className={`${item.color} w-14 h-14 rounded-full flex items-center justify-center mb-4 shadow-md`}>
+                        <span className="text-2xl font-black text-white">{item.num}</span>
+                      </div>
+                      <h4 className="text-base font-bold text-foreground mb-3 text-center">
+                        {item.name}
+                      </h4>
+                      <p className="text-sm text-foreground/80 text-center leading-relaxed">
+                        {item.desc}
                       </p>
                     </div>
                   }
@@ -137,10 +198,12 @@ const PitchDeck = () => {
             </div>
           </div>
           
-          <div className="relative bg-gradient-to-r from-dna-copper/15 via-dna-gold/10 to-dna-emerald/15 p-8 rounded-2xl border border-border overflow-hidden animate-fade-in" style={{ animationDelay: '0.8s' }}>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-dna-copper via-dna-gold to-dna-emerald"></div>
-            <p className="text-xl md:text-2xl font-semibold text-foreground text-center leading-relaxed">
-              We transform scattered strength into <strong className="text-dna-copper">collective power</strong>, turning individual efforts into <strong className="text-dna-emerald">systemic change</strong>.
+          {/* Bottom Impact Statement */}
+          <div className="relative bg-gradient-to-r from-dna-copper/10 via-dna-gold/5 to-dna-emerald/10 border border-border rounded-xl p-6 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+            <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-dna-copper via-dna-gold to-dna-emerald"></div>
+            <p className="text-lg md:text-xl font-semibold text-foreground text-center leading-relaxed">
+              Transforming scattered strength into <span className="text-dna-copper font-bold">collective power</span>, <br className="hidden md:block" />
+              turning individual efforts into <span className="text-dna-emerald font-bold">systemic change</span>
             </p>
           </div>
         </div>
