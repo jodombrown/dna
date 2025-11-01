@@ -113,90 +113,124 @@ const PitchDeck = () => {
             </div>
           </div>
 
-          {/* 5 Cs - Horizontal Flow */}
+          {/* 5 Cs - Responsive Layout */}
           <div className="max-w-6xl mx-auto w-full mb-8 md:mb-10 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            {/* Top Row: Connect → Convene → Collaborate */}
-            <div className="grid grid-cols-5 gap-3 md:gap-4 mb-6">
-              {/* Connect */}
-              <div className="text-center group">
-                <div className="mb-3 flex justify-center">
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
-                    <span className="text-xl md:text-2xl font-bold text-dna-copper">1</span>
+            {/* Mobile & Tablet: Vertical Stack */}
+            <div className="flex flex-col gap-6 lg:hidden">
+              {[
+                { num: 1, title: 'Connect', desc: 'Unite verified diaspora profiles by skills and heritage' },
+                { num: 2, title: 'Convene', desc: 'Host gatherings that build trust and shared knowledge' },
+                { num: 3, title: 'Collaborate', desc: 'Turn ideas into ventures through smart-matched teams' },
+                { num: 4, title: 'Contribute', desc: 'Channel capital and expertise toward impactful projects' },
+                { num: 5, title: 'Convey', desc: 'Amplify stories that inspire and shift narratives' }
+              ].map((item, idx) => (
+                <div key={item.num} className="flex items-center gap-4 animate-fade-in" style={{ animationDelay: `${0.1 * idx}s` }}>
+                  <div className="flex-shrink-0">
+                    <div className="w-14 h-14 rounded-full bg-dna-copper/10 flex items-center justify-center hover:bg-dna-copper/20 transition-all duration-300">
+                      <span className="text-2xl font-bold text-dna-copper">{item.num}</span>
+                    </div>
                   </div>
-                </div>
-                <h4 className="text-sm md:text-lg font-bold mb-1 md:mb-2">Connect</h4>
-                <p className="text-xs md:text-sm text-muted-foreground leading-snug">
-                  Unite verified diaspora profiles by skills and heritage
-                </p>
-              </div>
-
-              {/* Arrow */}
-              <div className="flex items-center justify-center pt-8 md:pt-12">
-                <div className="w-full h-px bg-dna-copper/20" />
-              </div>
-
-              {/* Convene */}
-              <div className="text-center group">
-                <div className="mb-3 flex justify-center">
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
-                    <span className="text-xl md:text-2xl font-bold text-dna-copper">2</span>
+                  <div className="flex-1">
+                    <h4 className="text-lg font-bold mb-1">{item.title}</h4>
+                    <p className="text-sm text-muted-foreground leading-snug">{item.desc}</p>
                   </div>
+                  {idx < 4 && (
+                    <div className="hidden sm:block w-8 h-px bg-dna-copper/20 flex-shrink-0" />
+                  )}
                 </div>
-                <h4 className="text-sm md:text-lg font-bold mb-1 md:mb-2">Convene</h4>
-                <p className="text-xs md:text-sm text-muted-foreground leading-snug">
-                  Host gatherings that build trust and shared knowledge
-                </p>
-              </div>
-
-              {/* Arrow */}
-              <div className="flex items-center justify-center pt-8 md:pt-12">
-                <div className="w-full h-px bg-dna-copper/20" />
-              </div>
-
-              {/* Collaborate */}
-              <div className="text-center group">
-                <div className="mb-3 flex justify-center">
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
-                    <span className="text-xl md:text-2xl font-bold text-dna-copper">3</span>
-                  </div>
-                </div>
-                <h4 className="text-sm md:text-lg font-bold mb-1 md:mb-2">Collaborate</h4>
-                <p className="text-xs md:text-sm text-muted-foreground leading-snug">
-                  Turn ideas into ventures through smart-matched teams
-                </p>
-              </div>
+              ))}
             </div>
 
-            {/* Bottom Row: Contribute → Convey */}
-            <div className="grid grid-cols-5 gap-3 md:gap-4">
-              <div className="col-start-2 text-center group">
-                <div className="mb-3 flex justify-center">
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
-                    <span className="text-xl md:text-2xl font-bold text-dna-copper">4</span>
+            {/* Desktop: Horizontal Flow with Stagger */}
+            <div className="hidden lg:block">
+              {/* Top Row: Connect → Convene → Collaborate */}
+              <div className="grid grid-cols-5 gap-4 mb-6">
+                {/* Connect */}
+                <div className="text-center group">
+                  <div className="mb-3 flex justify-center">
+                    <div className="w-16 h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
+                      <span className="text-2xl font-bold text-dna-copper">1</span>
+                    </div>
                   </div>
+                  <h4 className="text-lg font-bold mb-2">Connect</h4>
+                  <p className="text-sm text-muted-foreground leading-snug">
+                    Unite verified diaspora profiles by skills and heritage
+                  </p>
                 </div>
-                <h4 className="text-sm md:text-lg font-bold mb-1 md:mb-2">Contribute</h4>
-                <p className="text-xs md:text-sm text-muted-foreground leading-snug">
-                  Channel capital and expertise toward impactful projects
-                </p>
+
+                {/* Arrow */}
+                <div className="flex items-center justify-center pt-12">
+                  <div className="w-full h-px bg-dna-copper/20" />
+                </div>
+
+                {/* Convene */}
+                <div className="text-center group">
+                  <div className="mb-3 flex justify-center">
+                    <div className="w-16 h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
+                      <span className="text-2xl font-bold text-dna-copper">2</span>
+                    </div>
+                  </div>
+                  <h4 className="text-lg font-bold mb-2">Convene</h4>
+                  <p className="text-sm text-muted-foreground leading-snug">
+                    Host gatherings that build trust and shared knowledge
+                  </p>
+                </div>
+
+                {/* Arrow */}
+                <div className="flex items-center justify-center pt-12">
+                  <div className="w-full h-px bg-dna-copper/20" />
+                </div>
+
+                {/* Collaborate */}
+                <div className="text-center group">
+                  <div className="mb-3 flex justify-center">
+                    <div className="w-16 h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
+                      <span className="text-2xl font-bold text-dna-copper">3</span>
+                    </div>
+                  </div>
+                  <h4 className="text-lg font-bold mb-2">Collaborate</h4>
+                  <p className="text-sm text-muted-foreground leading-snug">
+                    Turn ideas into ventures through smart-matched teams
+                  </p>
+                </div>
               </div>
 
-              {/* Arrow */}
-              <div className="flex items-center justify-center pt-8 md:pt-12">
-                <div className="w-full h-px bg-dna-copper/20" />
-              </div>
-
-              {/* Convey */}
-              <div className="text-center group">
-                <div className="mb-3 flex justify-center">
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
-                    <span className="text-xl md:text-2xl font-bold text-dna-copper">5</span>
+              {/* Bottom Row: Contribute → Convey */}
+              <div className="flex items-start justify-center gap-4">
+                <div className="w-1/5" />
+                
+                {/* Contribute */}
+                <div className="w-1/5 text-center group">
+                  <div className="mb-3 flex justify-center">
+                    <div className="w-16 h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
+                      <span className="text-2xl font-bold text-dna-copper">4</span>
+                    </div>
                   </div>
+                  <h4 className="text-lg font-bold mb-2">Contribute</h4>
+                  <p className="text-sm text-muted-foreground leading-snug">
+                    Channel capital and expertise toward impactful projects
+                  </p>
                 </div>
-                <h4 className="text-sm md:text-lg font-bold mb-1 md:mb-2">Convey</h4>
-                <p className="text-xs md:text-sm text-muted-foreground leading-snug">
-                  Amplify stories that inspire and shift narratives
-                </p>
+
+                {/* Arrow */}
+                <div className="w-1/5 flex items-center justify-center pt-12">
+                  <div className="w-full h-px bg-dna-copper/20" />
+                </div>
+
+                {/* Convey */}
+                <div className="w-1/5 text-center group">
+                  <div className="mb-3 flex justify-center">
+                    <div className="w-16 h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
+                      <span className="text-2xl font-bold text-dna-copper">5</span>
+                    </div>
+                  </div>
+                  <h4 className="text-lg font-bold mb-2">Convey</h4>
+                  <p className="text-sm text-muted-foreground leading-snug">
+                    Amplify stories that inspire and shift narratives
+                  </p>
+                </div>
+                
+                <div className="w-1/5" />
               </div>
             </div>
           </div>
