@@ -5,6 +5,8 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import { useToast } from '@/hooks/use-toast';
 import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
+import { AnimatedNumber } from '@/components/AnimatedNumber';
+import { FlipCard } from '@/components/FlipCard';
 
 const PitchDeck = () => {
   const { toast } = useToast();
@@ -26,10 +28,10 @@ const PitchDeck = () => {
             alt="DNA Logo" 
             className="h-32 md:h-48 w-auto mb-4 animate-scale-in"
           />
-          <div className="text-lg md:text-xl font-semibold text-muted-foreground tracking-widest animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <div className="text-xl md:text-2xl font-semibold text-muted-foreground tracking-widest animate-fade-in" style={{ animationDelay: '0.2s' }}>
             DIASPORA NETWORK OF AFRICA
           </div>
-          <p className="text-2xl md:text-4xl font-bold text-foreground max-w-3xl animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <p className="text-3xl md:text-5xl font-bold text-foreground max-w-4xl animate-fade-in" style={{ animationDelay: '0.4s' }}>
             Mobilizing the African Diaspora to drive systemic change through innovation and entrepreneurship
           </p>
         </div>
@@ -44,31 +46,39 @@ const PitchDeck = () => {
         { text: "World Bank - Migration and Remittances Data", url: "https://www.worldbank.org/en/topic/migrationremittancesdiasporaissues" }
       ],
       content: (
-        <div className="flex flex-col justify-center h-full space-y-6 animate-fade-in">
-          <div className="space-y-6 text-base md:text-xl text-foreground/90">
-            <p className="leading-relaxed animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <strong className="text-dna-copper text-xl md:text-2xl">200+ million African diasporans</strong> worldwide possess extraordinary power:
-            </p>
-            <ul className="space-y-3 ml-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <li className="flex items-start gap-3">
-                <span className="text-dna-emerald mt-1 text-xl">•</span>
-                <span className="text-lg md:text-xl">Skills honed across continents</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-dna-emerald mt-1 text-xl">•</span>
-                <span className="text-lg md:text-xl">Networks spanning the globe</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-dna-emerald mt-1 text-xl">•</span>
-                <span className="text-lg md:text-xl">Knowledge bridging cultures</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-dna-emerald mt-1 text-xl">•</span>
-                <span className="text-lg md:text-xl">$200B+ in annual remittances</span>
-              </li>
-            </ul>
-            <p className="text-2xl md:text-3xl font-bold text-destructive mt-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              Yet this power remains scattered, underutilized, and disconnected from Africa's urgent needs.
+        <div className="flex flex-col justify-center h-full space-y-8 animate-fade-in">
+          <div className="space-y-8">
+            <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <p className="text-2xl md:text-3xl font-bold text-dna-copper mb-4">
+                The Root Cause
+              </p>
+              <p className="text-xl md:text-2xl leading-relaxed text-foreground/90">
+                <AnimatedNumber value={200} suffix="+ million" className="text-dna-copper font-bold" /> African diasporans worldwide possess extraordinary power—skills, networks, knowledge, and <AnimatedNumber value={200} prefix="$" suffix="B+" className="text-dna-emerald font-bold" /> in annual remittances.
+              </p>
+            </div>
+            
+            <div className="bg-gradient-to-br from-destructive/10 to-destructive/5 p-8 rounded-xl border-2 border-destructive/30 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <p className="text-2xl md:text-3xl font-bold text-destructive mb-6">
+                But there's a critical disconnect:
+              </p>
+              <ul className="space-y-4 text-xl md:text-2xl text-foreground/90">
+                <li className="flex items-start gap-4">
+                  <span className="text-destructive text-2xl">✗</span>
+                  <span>No unified platform to channel this collective power</span>
+                </li>
+                <li className="flex items-start gap-4">
+                  <span className="text-destructive text-2xl">✗</span>
+                  <span>Individual efforts remain fragmented and inefficient</span>
+                </li>
+                <li className="flex items-start gap-4">
+                  <span className="text-destructive text-2xl">✗</span>
+                  <span>Massive potential goes untapped while Africa faces urgent challenges</span>
+                </li>
+              </ul>
+            </div>
+            
+            <p className="text-xl md:text-2xl font-semibold text-foreground italic animate-fade-in" style={{ animationDelay: '0.5s' }}>
+              Without infrastructure for coordination, diaspora strength remains scattered—unable to create the systemic change Africa needs.
             </p>
           </div>
         </div>
@@ -81,21 +91,47 @@ const PitchDeck = () => {
       showHeader: true,
       sources: [],
       content: (
-        <div className="flex flex-col justify-center h-full space-y-6 animate-fade-in">
-          <p className="text-xl md:text-2xl font-semibold text-dna-copper animate-fade-in" style={{ animationDelay: '0.1s' }}>
+        <div className="flex flex-col justify-center h-full space-y-8 animate-fade-in">
+          <p className="text-2xl md:text-3xl font-bold text-dna-copper animate-fade-in" style={{ animationDelay: '0.1s' }}>
             The first digital mobilization engine for the African Diaspora
           </p>
-          <div className="grid grid-cols-5 gap-3 mt-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            {['CONNECT', 'CONVENE', 'COLLABORATE', 'CONTRIBUTE', 'CONVEY'].map((c, idx) => (
-              <div key={c} className="bg-gradient-to-br from-dna-forest/10 to-dna-emerald/10 p-4 rounded-lg border-2 border-dna-emerald/20 hover-scale" style={{ animationDelay: `${0.3 + idx * 0.1}s` }}>
-                <div className="text-3xl md:text-4xl font-bold text-dna-copper mb-1">{idx + 1}</div>
-                <div className="text-sm md:text-base font-bold text-foreground">{c}</div>
-              </div>
+          
+          <p className="text-xl md:text-2xl text-foreground/90 animate-fade-in" style={{ animationDelay: '0.15s' }}>
+            Built on the 5 C's Framework:
+          </p>
+          
+          <div className="grid grid-cols-5 gap-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            {[
+              { name: 'CONNECT', desc: 'Build verified diaspora profiles linking skills, regions, and cultural heritage to create a living map of our collective power' },
+              { name: 'CONVENE', desc: 'Host virtual and in-person gatherings to spark dialogue, share knowledge, and build trust across borders' },
+              { name: 'COLLABORATE', desc: 'Launch coordinated projects, ventures, and initiatives that turn ideas into action through smart matching and shared resources' },
+              { name: 'CONTRIBUTE', desc: 'Channel skills, capital, and expertise toward high-impact opportunities with transparent tracking and recognition' },
+              { name: 'CONVEY', desc: 'Amplify diaspora stories, insights, and achievements to shift narratives and inspire the next generation' }
+            ].map((c, idx) => (
+              <FlipCard
+                key={c.name}
+                className="h-48"
+                front={
+                  <div className="bg-gradient-to-br from-dna-forest/10 to-dna-emerald/10 p-6 rounded-xl border-2 border-dna-emerald/30 h-full flex flex-col items-center justify-center hover-scale cursor-pointer">
+                    <div className="text-4xl md:text-5xl font-bold text-dna-copper mb-3">{idx + 1}</div>
+                    <div className="text-lg md:text-xl font-bold text-foreground text-center">{c.name}</div>
+                    <div className="text-sm text-muted-foreground mt-2">Hover for details</div>
+                  </div>
+                }
+                back={
+                  <div className="bg-gradient-to-br from-dna-copper/10 to-dna-gold/10 p-6 rounded-xl border-2 border-dna-copper/30 h-full flex items-center justify-center">
+                    <p className="text-sm md:text-base text-foreground/90 text-center leading-relaxed">
+                      {c.desc}
+                    </p>
+                  </div>
+                }
+              />
             ))}
           </div>
-          <div className="bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 p-6 rounded-lg border-2 border-dna-copper/20 mt-6 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-            <p className="text-lg md:text-xl text-foreground/90">
-              We transform scattered strength into <strong>collective power</strong>, turning individual efforts into <strong>systemic change</strong>.
+          
+          <div className="bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 p-8 rounded-xl border-2 border-dna-copper/30 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+            <p className="text-xl md:text-2xl font-semibold text-foreground text-center">
+              We transform scattered strength into <strong className="text-dna-copper">collective power</strong>, turning individual efforts into <strong className="text-dna-emerald">systemic change</strong>.
             </p>
           </div>
         </div>
@@ -111,22 +147,29 @@ const PitchDeck = () => {
       ],
       content: (
         <div className="flex flex-col justify-center h-full space-y-6 animate-fade-in">
-          <div className="grid grid-cols-3 gap-6 mt-4">
+          <div className="grid grid-cols-3 gap-8 mt-4">
             {[
-              { value: '200M+', label: 'African Diasporans Worldwide', color: 'dna-copper', delay: '0.1s' },
-              { value: '$200B+', label: 'Annual Diaspora Remittances', color: 'dna-emerald', delay: '0.2s' },
-              { value: '$3.4T', label: "Africa's GDP by 2030", color: 'dna-gold', delay: '0.3s' }
+              { value: 200, label: 'African Diasporans Worldwide', suffix: 'M+', color: 'dna-copper', delay: '0.1s' },
+              { value: 200, label: 'Annual Diaspora Remittances', prefix: '$', suffix: 'B+', color: 'dna-emerald', delay: '0.2s' },
+              { value: 3.4, label: "Africa's GDP by 2030", prefix: '$', suffix: 'T', decimals: 1, color: 'dna-gold', delay: '0.3s' }
             ].map((stat) => (
-              <div key={stat.label} className={`bg-gradient-to-br from-${stat.color}/10 to-${stat.color}/5 p-6 rounded-lg border-2 border-${stat.color}/20 text-center hover-scale animate-fade-in`} style={{ animationDelay: stat.delay }}>
-                <div className={`text-5xl md:text-6xl font-bold text-${stat.color} mb-3`}>{stat.value}</div>
-                <div className="text-base md:text-lg font-semibold text-foreground">{stat.label}</div>
+              <div key={stat.label} className={`bg-gradient-to-br from-${stat.color}/10 to-${stat.color}/5 p-8 rounded-xl border-2 border-${stat.color}/30 text-center hover-scale animate-fade-in`} style={{ animationDelay: stat.delay }}>
+                <div className={`text-6xl md:text-7xl font-bold text-${stat.color} mb-4`}>
+                  <AnimatedNumber 
+                    value={stat.value} 
+                    prefix={stat.prefix} 
+                    suffix={stat.suffix}
+                    decimals={stat.decimals || 0}
+                  />
+                </div>
+                <div className="text-lg md:text-xl font-semibold text-foreground">{stat.label}</div>
               </div>
             ))}
           </div>
-          <div className="space-y-3 text-base md:text-lg text-foreground/90 mt-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <p className="text-lg md:text-xl">✦ Africa is the world's <strong>fastest-growing economic region</strong></p>
-            <p className="text-lg md:text-xl">✦ The diaspora is <strong>massively underutilized</strong> as a development resource</p>
-            <p className="text-lg md:text-xl">✦ DNA positions diasporans as <strong>architects of Africa's future</strong></p>
+          <div className="space-y-4 text-foreground/90 mt-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <p className="text-xl md:text-2xl">✦ Africa is the world's <strong>fastest-growing economic region</strong></p>
+            <p className="text-xl md:text-2xl">✦ The diaspora is <strong>massively underutilized</strong> as a development resource</p>
+            <p className="text-xl md:text-2xl">✦ DNA positions diasporans as <strong>architects of Africa's future</strong></p>
           </div>
         </div>
       )
@@ -146,15 +189,15 @@ const PitchDeck = () => {
               { title: 'Collaboration Spaces', desc: 'Project hubs, events, and opportunities for coordinated action', color: 'dna-gold', delay: '0.3s' },
               { title: 'Impact Tracking', desc: 'Measure contributions, showcase outcomes, amplify success stories', color: 'dna-forest', delay: '0.4s' }
             ].map((feature) => (
-              <div key={feature.title} className={`bg-card p-5 rounded-lg border-2 border-${feature.color}/20 hover-scale animate-fade-in`} style={{ animationDelay: feature.delay }}>
-                <h3 className={`text-xl md:text-2xl font-bold text-${feature.color} mb-2`}>{feature.title}</h3>
-                <p className="text-sm md:text-base text-foreground/80">{feature.desc}</p>
+              <div key={feature.title} className={`bg-card p-6 rounded-xl border-2 border-${feature.color}/30 hover-scale animate-fade-in`} style={{ animationDelay: feature.delay }}>
+                <h3 className={`text-2xl md:text-3xl font-bold text-${feature.color} mb-3`}>{feature.title}</h3>
+                <p className="text-base md:text-lg text-foreground/80">{feature.desc}</p>
               </div>
             ))}
           </div>
-          <div className="bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 p-5 rounded-lg border-2 border-dna-copper/20 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-            <p className="text-lg md:text-xl font-semibold text-foreground">
-              Currently in private beta with <strong>500+ early adopters</strong> from 40+ countries
+          <div className="bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 p-6 rounded-xl border-2 border-dna-copper/30 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+            <p className="text-xl md:text-2xl font-semibold text-foreground">
+              Currently in private beta with <strong><AnimatedNumber value={500} suffix="+" /> early adopters</strong> from <AnimatedNumber value={40} suffix="+" /> countries
             </p>
           </div>
         </div>
@@ -169,28 +212,30 @@ const PitchDeck = () => {
       content: (
         <div className="flex flex-col justify-center h-full space-y-6 animate-fade-in">
           <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-4">
+            <div className="space-y-6">
               {[
-                { value: '500+', label: 'Beta Users in 3 Months', color: 'dna-emerald', delay: '0.1s' },
-                { value: '40+', label: 'Countries Represented', color: 'dna-copper', delay: '0.2s' },
-                { value: '15+', label: 'Active Partnerships', color: 'dna-gold', delay: '0.3s' }
+                { value: 500, label: 'Beta Users in 3 Months', color: 'dna-emerald', delay: '0.1s' },
+                { value: 40, label: 'Countries Represented', color: 'dna-copper', delay: '0.2s' },
+                { value: 15, label: 'Active Partnerships', color: 'dna-gold', delay: '0.3s' }
               ].map((stat) => (
-                <div key={stat.label} className={`bg-gradient-to-br from-${stat.color}/10 to-${stat.color}/5 p-5 rounded-lg border-2 border-${stat.color}/20 hover-scale animate-fade-in`} style={{ animationDelay: stat.delay }}>
-                  <div className={`text-4xl md:text-5xl font-bold text-${stat.color} mb-1`}>{stat.value}</div>
-                  <div className="text-base md:text-lg font-semibold text-foreground">{stat.label}</div>
+                <div key={stat.label} className={`bg-gradient-to-br from-${stat.color}/10 to-${stat.color}/5 p-6 rounded-xl border-2 border-${stat.color}/30 hover-scale animate-fade-in`} style={{ animationDelay: stat.delay }}>
+                  <div className={`text-5xl md:text-6xl font-bold text-${stat.color} mb-2`}>
+                    <AnimatedNumber value={stat.value} suffix="+" />
+                  </div>
+                  <div className="text-lg md:text-xl font-semibold text-foreground">{stat.label}</div>
                 </div>
               ))}
             </div>
-            <div className="bg-card p-5 rounded-lg border-2 border-dna-forest/20 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <h3 className="text-xl md:text-2xl font-bold text-dna-forest mb-3">Early Feedback</h3>
-              <div className="space-y-4 text-sm md:text-base text-foreground/80">
+            <div className="bg-card p-6 rounded-xl border-2 border-dna-forest/30 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <h3 className="text-2xl md:text-3xl font-bold text-dna-forest mb-4">Early Feedback</h3>
+              <div className="space-y-6 text-base md:text-lg text-foreground/80">
                 <div>
-                  <p className="italic">"Finally, a platform that understands the diaspora experience and makes it easy to give back meaningfully."</p>
-                  <p className="text-xs md:text-sm text-muted-foreground mt-1">- Tech entrepreneur, San Francisco</p>
+                  <p className="italic leading-relaxed">"Finally, a platform that understands the diaspora experience and makes it easy to give back meaningfully."</p>
+                  <p className="text-sm md:text-base text-muted-foreground mt-2">— Tech entrepreneur, San Francisco</p>
                 </div>
                 <div>
-                  <p className="italic">"This is the missing infrastructure we've been waiting for to coordinate diaspora impact."</p>
-                  <p className="text-xs md:text-sm text-muted-foreground mt-1">- Impact investor, London</p>
+                  <p className="italic leading-relaxed">"This is the missing infrastructure we've been waiting for to coordinate diaspora impact."</p>
+                  <p className="text-sm md:text-base text-muted-foreground mt-2">— Impact investor, London</p>
                 </div>
               </div>
             </div>
@@ -213,10 +258,10 @@ const PitchDeck = () => {
               { title: 'Platform Fees', price: '5-10% transaction fee', features: ['Investment facilitation', 'Event ticketing', 'Service marketplace'], color: 'dna-gold', delay: '0.3s' },
               { title: 'Data & Insights', price: 'Custom pricing', features: ['Diaspora trend reports', 'Market intelligence', 'Research partnerships'], color: 'dna-forest', delay: '0.4s' }
             ].map((stream) => (
-              <div key={stream.title} className={`bg-gradient-to-br from-${stream.color}/10 to-${stream.color}/5 p-4 rounded-lg border-2 border-${stream.color}/20 hover-scale animate-fade-in`} style={{ animationDelay: stream.delay }}>
-                <h3 className={`text-lg md:text-xl font-bold text-${stream.color} mb-1`}>{stream.title}</h3>
-                <p className="text-sm md:text-base text-foreground/80 mb-2 font-semibold">{stream.price}</p>
-                <ul className="space-y-1 text-xs md:text-sm text-foreground/70">
+              <div key={stream.title} className={`bg-gradient-to-br from-${stream.color}/10 to-${stream.color}/5 p-6 rounded-xl border-2 border-${stream.color}/30 hover-scale animate-fade-in`} style={{ animationDelay: stream.delay }}>
+                <h3 className={`text-xl md:text-2xl font-bold text-${stream.color} mb-2`}>{stream.title}</h3>
+                <p className="text-base md:text-lg text-foreground/80 mb-3 font-semibold">{stream.price}</p>
+                <ul className="space-y-2 text-sm md:text-base text-foreground/70">
                   {stream.features.map((f) => <li key={f}>• {f}</li>)}
                 </ul>
               </div>
@@ -238,10 +283,10 @@ const PitchDeck = () => {
             { phase: 'Phase 2: Viral Growth', timeline: 'Months 7-12', desc: 'Leverage success stories, referral programs, and content marketing. Launch in 10+ major diaspora cities.', color: 'dna-copper', delay: '0.2s' },
             { phase: 'Phase 3: Enterprise Expansion', timeline: 'Year 2+', desc: 'Partner with governments, corporations, and NGOs. Scale to 100K+ users across 50+ countries.', color: 'dna-gold', delay: '0.3s' }
           ].map((phase) => (
-            <div key={phase.phase} className={`bg-gradient-to-r from-${phase.color}/10 to-${phase.color}/5 p-5 rounded-lg border-l-4 border-l-${phase.color} hover-scale animate-fade-in`} style={{ animationDelay: phase.delay }}>
-              <h3 className={`text-xl md:text-2xl font-bold text-${phase.color} mb-1`}>{phase.phase}</h3>
-              <p className="text-sm md:text-base text-muted-foreground mb-2">{phase.timeline}</p>
-              <p className="text-sm md:text-lg text-foreground/80">{phase.desc}</p>
+            <div key={phase.phase} className={`bg-gradient-to-r from-${phase.color}/10 to-${phase.color}/5 p-6 rounded-xl border-l-4 border-l-${phase.color} hover-scale animate-fade-in`} style={{ animationDelay: phase.delay }}>
+              <h3 className={`text-2xl md:text-3xl font-bold text-${phase.color} mb-2`}>{phase.phase}</h3>
+              <p className="text-base md:text-lg text-muted-foreground mb-3">{phase.timeline}</p>
+              <p className="text-lg md:text-xl text-foreground/80">{phase.desc}</p>
             </div>
           ))}
         </div>
@@ -257,8 +302,8 @@ const PitchDeck = () => {
         <div className="flex flex-col justify-center h-full space-y-5 animate-fade-in">
           <div className="grid grid-cols-2 gap-6">
             <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <h3 className="text-xl md:text-2xl font-bold text-dna-copper mb-3">The Competition</h3>
-              <div className="space-y-2 text-sm md:text-base text-foreground/80">
+              <h3 className="text-2xl md:text-3xl font-bold text-dna-copper mb-4">The Competition</h3>
+              <div className="space-y-3 text-lg md:text-xl text-foreground/80">
                 <p>❌ LinkedIn: Generic networking, no diaspora focus</p>
                 <p>❌ Facebook Groups: Fragmented, no action tools</p>
                 <p>❌ Remittance Apps: Transactional, no community</p>
@@ -266,8 +311,8 @@ const PitchDeck = () => {
               </div>
             </div>
             <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <h3 className="text-xl md:text-2xl font-bold text-dna-emerald mb-3">DNA Advantage</h3>
-              <div className="space-y-2 text-sm md:text-base text-foreground/80">
+              <h3 className="text-2xl md:text-3xl font-bold text-dna-emerald mb-4">DNA Advantage</h3>
+              <div className="space-y-3 text-lg md:text-xl text-foreground/80">
                 <p>✓ <strong>Diaspora-First Design:</strong> Built for our unique needs</p>
                 <p>✓ <strong>Systems-Change Focus:</strong> Coordinated action, not just networking</p>
                 <p>✓ <strong>Cultural Intelligence:</strong> Rooted in Ubuntu & Sankofa</p>
@@ -275,8 +320,8 @@ const PitchDeck = () => {
               </div>
             </div>
           </div>
-          <div className="bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 p-5 rounded-lg border-2 border-dna-copper/20 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            <p className="text-lg md:text-xl font-bold text-foreground">
+          <div className="bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 p-6 rounded-xl border-2 border-dna-copper/30 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <p className="text-xl md:text-2xl font-bold text-foreground">
               Why we win: <span className="text-dna-copper">Founder-market fit + First-mover advantage + Community-led growth</span>
             </p>
           </div>
@@ -291,24 +336,24 @@ const PitchDeck = () => {
       sources: [],
       content: (
         <div className="flex flex-col justify-center h-full space-y-5 animate-fade-in">
-          <div className="bg-gradient-to-br from-dna-forest/10 to-dna-emerald/10 p-6 rounded-lg border-2 border-dna-emerald/20 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            <h3 className="text-2xl md:text-3xl font-bold text-dna-copper mb-1">Jaûne Odombrown</h3>
-            <p className="text-lg md:text-xl font-semibold text-dna-emerald mb-3">Founder & CEO</p>
-            <div className="space-y-2 text-sm md:text-base text-foreground/80">
-              <p>• 10+ years building ecosystems and launching startups</p>
-              <p>• Deep diaspora network across 3 continents</p>
+          <div className="bg-gradient-to-br from-dna-forest/10 to-dna-emerald/10 p-8 rounded-xl border-2 border-dna-emerald/30 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <h3 className="text-3xl md:text-4xl font-bold text-dna-copper mb-2">Jaûne Odombrown</h3>
+            <p className="text-xl md:text-2xl font-semibold text-dna-emerald mb-4">Founder & CEO</p>
+            <div className="space-y-3 text-base md:text-lg text-foreground/80">
+              <p>• <AnimatedNumber value={10} suffix="+" /> years building ecosystems and launching startups</p>
+              <p>• Deep diaspora network across <AnimatedNumber value={3} /> continents</p>
               <p>• Previous: Ecosystem development, venture building</p>
               <p>• Mission-driven entrepreneur with lived diaspora experience</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-card p-4 rounded-lg border-2 border-dna-copper/20 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <h3 className="text-lg md:text-xl font-bold text-dna-copper mb-2">Advisors</h3>
-              <p className="text-sm md:text-base text-foreground/80">Diaspora thought leaders, tech entrepreneurs, impact investors</p>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="bg-card p-6 rounded-xl border-2 border-dna-copper/30 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <h3 className="text-xl md:text-2xl font-bold text-dna-copper mb-3">Advisors</h3>
+              <p className="text-base md:text-lg text-foreground/80">Diaspora thought leaders, tech entrepreneurs, impact investors</p>
             </div>
-            <div className="bg-card p-4 rounded-lg border-2 border-dna-gold/20 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <h3 className="text-lg md:text-xl font-bold text-dna-gold mb-2">Building</h3>
-              <p className="text-sm md:text-base text-foreground/80">Strategic partnerships with diaspora organizations, universities, and tech platforms</p>
+            <div className="bg-card p-6 rounded-xl border-2 border-dna-gold/30 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <h3 className="text-xl md:text-2xl font-bold text-dna-gold mb-3">Building</h3>
+              <p className="text-base md:text-lg text-foreground/80">Strategic partnerships with diaspora organizations, universities, and tech platforms</p>
             </div>
           </div>
         </div>
@@ -326,19 +371,19 @@ const PitchDeck = () => {
             { quarter: 'Q1-Q2: Foundation', goals: ['Complete MVP with core features', 'Reach 2,500 beta users', 'Launch in 5 diaspora hubs', '$50K MRR from premium memberships'], color: 'dna-emerald', delay: '0.1s' },
             { quarter: 'Q3-Q4: Acceleration', goals: ['Scale to 10,000 active users', 'Launch enterprise solutions', 'Expand to 15+ cities', '$200K MRR, path to $1M ARR'], color: 'dna-copper', delay: '0.2s' }
           ].map((roadmap) => (
-            <div key={roadmap.quarter} className={`bg-gradient-to-r from-${roadmap.color}/10 to-${roadmap.color}/5 p-5 rounded-lg border-l-4 border-l-${roadmap.color} hover-scale animate-fade-in`} style={{ animationDelay: roadmap.delay }}>
-              <h3 className={`text-xl md:text-2xl font-bold text-${roadmap.color} mb-2`}>{roadmap.quarter}</h3>
-              <ul className="space-y-1 text-sm md:text-base text-foreground/80">
+            <div key={roadmap.quarter} className={`bg-gradient-to-r from-${roadmap.color}/10 to-${roadmap.color}/5 p-6 rounded-xl border-l-4 border-l-${roadmap.color} hover-scale animate-fade-in`} style={{ animationDelay: roadmap.delay }}>
+              <h3 className={`text-2xl md:text-3xl font-bold text-${roadmap.color} mb-3`}>{roadmap.quarter}</h3>
+              <ul className="space-y-2 text-base md:text-lg text-foreground/80">
                 {roadmap.goals.map((g) => <li key={g}>• {g}</li>)}
               </ul>
             </div>
           ))}
-          <div className="bg-gradient-to-br from-dna-gold/10 to-dna-emerald/10 p-5 rounded-lg border-2 border-dna-gold/20 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            <h3 className="text-xl md:text-2xl font-bold text-dna-gold mb-3">Use of Funds</h3>
-            <div className="grid grid-cols-3 gap-3 text-base md:text-lg text-foreground/80">
-              <div><strong>40%</strong> Product Development</div>
-              <div><strong>35%</strong> Marketing & Growth</div>
-              <div><strong>25%</strong> Operations & Team</div>
+          <div className="bg-gradient-to-br from-dna-gold/10 to-dna-emerald/10 p-6 rounded-xl border-2 border-dna-gold/30 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <h3 className="text-2xl md:text-3xl font-bold text-dna-gold mb-4">Use of Funds</h3>
+            <div className="grid grid-cols-3 gap-4 text-lg md:text-xl text-foreground/80">
+              <div><strong><AnimatedNumber value={40} suffix="%" /></strong> Product Development</div>
+              <div><strong><AnimatedNumber value={35} suffix="%" /></strong> Marketing & Growth</div>
+              <div><strong><AnimatedNumber value={25} suffix="%" /></strong> Operations & Team</div>
             </div>
           </div>
         </div>
@@ -351,28 +396,41 @@ const PitchDeck = () => {
       showHeader: true,
       sources: [],
       content: (
-        <div className="flex flex-col items-center justify-center h-full space-y-6 text-center animate-fade-in">
-          <div className="bg-gradient-to-br from-dna-copper/10 to-dna-gold/10 p-10 rounded-lg border-2 border-dna-copper/20 max-w-4xl animate-scale-in" style={{ animationDelay: '0.1s' }}>
-            <p className="text-3xl md:text-4xl font-bold text-dna-copper mb-4">
-              Raising $500K Seed Round
+        <div className="flex flex-col items-center justify-center h-full space-y-8 text-center animate-fade-in">
+          <div className="bg-gradient-to-br from-dna-copper/10 to-dna-gold/10 p-12 rounded-xl border-2 border-dna-copper/30 max-w-5xl animate-scale-in" style={{ animationDelay: '0.1s' }}>
+            <p className="text-4xl md:text-5xl font-bold text-dna-copper mb-6">
+              Raising $<AnimatedNumber value={500} />K Seed Round
             </p>
-            <p className="text-lg md:text-xl text-foreground/90">
-              To scale product development, onboard 10,000 users, and establish DNA as the premier diaspora mobilization platform
+            <p className="text-xl md:text-2xl text-foreground/90 leading-relaxed">
+              To scale product development, onboard <AnimatedNumber value={10} suffix="K+" /> users, and establish DNA as the premier diaspora mobilization platform
             </p>
           </div>
-          <div className="space-y-3 max-w-3xl animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            <p className="text-xl md:text-2xl font-bold text-foreground">
+          <div className="space-y-4 max-w-4xl animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <p className="text-2xl md:text-3xl font-bold text-foreground">
               Join us in mobilizing the world's most powerful distributed asset
             </p>
-            <p className="text-lg md:text-xl text-dna-emerald">
+            <p className="text-xl md:text-2xl text-dna-emerald">
               Together, we transform scattered strength into collective power
             </p>
           </div>
-          <div className="mt-8 pt-6 border-t-2 border-border w-full max-w-2xl animate-fade-in" style={{ animationDelay: '0.5s' }}>
-            <p className="text-lg font-semibold text-foreground mb-3">Contact</p>
-            <p className="text-base text-foreground/80">Jaûne Odombrown</p>
-            <p className="text-base text-dna-copper font-semibold">jaune@diasporanetwork.africa</p>
-            <p className="text-base text-foreground/80 mt-2">www.diasporanetwork.africa</p>
+          <div className="mt-10 pt-8 border-t-2 border-border w-full max-w-3xl animate-fade-in" style={{ animationDelay: '0.5s' }}>
+            <p className="text-xl md:text-2xl font-semibold text-foreground mb-4">Contact</p>
+            <p className="text-lg md:text-xl text-foreground/80 mb-2">Jaûne Odombrown</p>
+            <a 
+              href="mailto:jaune@diasporanetwork.africa" 
+              className="text-lg md:text-xl text-dna-copper font-semibold hover:text-dna-gold transition-colors underline"
+            >
+              jaune@diasporanetwork.africa
+            </a>
+            <br />
+            <a 
+              href="https://www.diasporanetwork.africa" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lg md:text-xl text-foreground/80 mt-3 inline-block hover:text-dna-emerald transition-colors underline"
+            >
+              www.diasporanetwork.africa
+            </a>
           </div>
         </div>
       )
@@ -508,10 +566,10 @@ const PitchDeck = () => {
                 className="aspect-video bg-card rounded-lg shadow-lg p-6 md:p-8 flex flex-col relative"
               >
                 {slide.showHeader && (
-                  <div className="flex items-start justify-between mb-4 animate-fade-in">
+                  <div className="flex items-start justify-between mb-6 animate-fade-in">
                     <div className="flex-1">
-                      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-1">{slide.title}</h2>
-                      <p className="text-xs md:text-sm text-muted-foreground">{slide.subtitle}</p>
+                      <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{slide.title}</h2>
+                      <p className="text-sm md:text-base text-muted-foreground">{slide.subtitle}</p>
                     </div>
                     <img 
                       src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
@@ -575,10 +633,10 @@ const PitchDeck = () => {
               >
                 <div className="w-full aspect-video max-h-full bg-card rounded-lg shadow-2xl p-8 md:p-12 flex flex-col overflow-hidden relative">
                   {slide.showHeader && (
-                    <div className="flex items-start justify-between mb-6 animate-fade-in">
+                    <div className="flex items-start justify-between mb-8 animate-fade-in">
                       <div className="flex-1">
-                        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">{slide.title}</h2>
-                        <p className="text-sm md:text-base text-muted-foreground">{slide.subtitle}</p>
+                        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{slide.title}</h2>
+                        <p className="text-base md:text-lg text-muted-foreground">{slide.subtitle}</p>
                       </div>
                       <img 
                         src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
