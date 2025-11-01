@@ -99,41 +99,45 @@ const PitchDeck = () => {
           </div>
           
           <div className="flex-1 flex items-center">
-            <div className="w-full grid grid-cols-5 gap-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <div className="w-full grid grid-cols-5 gap-5 animate-fade-in" style={{ animationDelay: '0.2s' }}>
               {[
-                { name: 'CONNECT', desc: 'Build verified diaspora profiles linking skills, regions, and cultural heritage to create a living map of our collective power', color: 'emerald' },
-                { name: 'CONVENE', desc: 'Host virtual and in-person gatherings to spark dialogue, share knowledge, and build trust across borders', color: 'copper' },
-                { name: 'COLLABORATE', desc: 'Launch coordinated projects, ventures, and initiatives that turn ideas into action through smart matching and shared resources', color: 'gold' },
-                { name: 'CONTRIBUTE', desc: 'Channel skills, capital, and expertise toward high-impact opportunities with transparent tracking and recognition', color: 'forest' },
-                { name: 'CONVEY', desc: 'Amplify diaspora stories, insights, and achievements to shift narratives and inspire the next generation', color: 'emerald' }
+                { name: 'CONNECT', desc: 'Build verified diaspora profiles linking skills, regions, and cultural heritage to create a living map of our collective power', color: 'bg-dna-emerald' },
+                { name: 'CONVENE', desc: 'Host virtual and in-person gatherings to spark dialogue, share knowledge, and build trust across borders', color: 'bg-dna-copper' },
+                { name: 'COLLABORATE', desc: 'Launch coordinated projects, ventures, and initiatives that turn ideas into action through smart matching and shared resources', color: 'bg-dna-gold' },
+                { name: 'CONTRIBUTE', desc: 'Channel skills, capital, and expertise toward high-impact opportunities with transparent tracking and recognition', color: 'bg-dna-forest' },
+                { name: 'CONVEY', desc: 'Amplify diaspora stories, insights, and achievements to shift narratives and inspire the next generation', color: 'bg-dna-emerald' }
               ].map((c, idx) => (
-                <div key={c.name} className="relative group">
-                  <FlipCard
-                    className="h-56"
-                    front={
-                      <div className={`relative bg-gradient-to-br from-dna-${c.color}/20 via-dna-${c.color}/10 to-background p-6 rounded-2xl border-2 border-dna-${c.color}/40 h-full flex flex-col items-center justify-center cursor-pointer transition-all duration-500 group-hover:shadow-2xl group-hover:border-dna-${c.color}/60 group-hover:scale-105 overflow-hidden`}>
-                        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-dna-copper/20 to-transparent rounded-bl-full"></div>
-                        <div className={`text-6xl font-black text-dna-${c.color} mb-4 drop-shadow-lg`}>{idx + 1}</div>
-                        <div className="text-xl font-bold text-foreground text-center mb-3 tracking-wide">{c.name}</div>
-                        <div className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Hover to explore</div>
+                <FlipCard
+                  key={c.name}
+                  className="h-56 hover:scale-[1.02] transition-all duration-300"
+                  front={
+                    <div className="bg-card border border-border shadow-md rounded-2xl h-full w-full p-6 flex flex-col">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className={`w-12 h-12 ${c.color} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                          <span className="text-2xl font-black text-white">{idx + 1}</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-foreground">{c.name}</h3>
                       </div>
-                    }
-                    back={
-                      <div className={`relative bg-gradient-to-br from-dna-copper/20 via-dna-gold/10 to-background p-6 rounded-2xl border-2 border-dna-copper/50 h-full flex flex-col items-center justify-center overflow-hidden shadow-xl`}>
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-dna-copper via-dna-gold to-dna-emerald"></div>
-                        <div className="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-tl from-dna-emerald/20 to-transparent rounded-tl-full"></div>
-                        <p className="text-sm text-foreground/95 text-center leading-relaxed font-medium z-10">
-                          {c.desc}
-                        </p>
+                      <p className="text-sm text-muted-foreground mb-4 flex-1">{c.desc}</p>
+                      <div className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
+                        Hover for why it matters
                       </div>
-                    }
-                  />
-                </div>
+                    </div>
+                  }
+                  back={
+                    <div className="bg-card border border-border rounded-2xl h-full w-full flex flex-col items-center justify-center p-6">
+                      <h3 className="text-lg text-dna-forest font-bold mb-4">Why it matters</h3>
+                      <p className="text-base text-foreground/80 font-medium text-center leading-relaxed">
+                        {c.desc}
+                      </p>
+                    </div>
+                  }
+                />
               ))}
             </div>
           </div>
           
-          <div className="relative bg-gradient-to-r from-dna-copper/15 via-dna-gold/10 to-dna-emerald/15 p-8 rounded-2xl border-2 border-dna-copper/40 overflow-hidden animate-fade-in" style={{ animationDelay: '0.8s' }}>
+          <div className="relative bg-gradient-to-r from-dna-copper/15 via-dna-gold/10 to-dna-emerald/15 p-8 rounded-2xl border border-border overflow-hidden animate-fade-in" style={{ animationDelay: '0.8s' }}>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-dna-copper via-dna-gold to-dna-emerald"></div>
             <p className="text-xl md:text-2xl font-semibold text-foreground text-center leading-relaxed">
               We transform scattered strength into <strong className="text-dna-copper">collective power</strong>, turning individual efforts into <strong className="text-dna-emerald">systemic change</strong>.
