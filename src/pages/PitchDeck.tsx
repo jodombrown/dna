@@ -88,122 +88,123 @@ const PitchDeck = () => {
       showHeader: true,
       sources: [],
       content: (
-        <div className="flex flex-col h-full animate-fade-in">
-          {/* Hero Statement */}
-          <div className="text-center mb-8 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            <h3 className="text-3xl md:text-4xl font-bold text-dna-copper mb-4 leading-tight">
-              The first digital mobilization engine<br />for the African Diaspora
-            </h3>
-          </div>
-          
-          {/* 5 C's Framework Title */}
-          <div className="text-center mb-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <p className="text-xl md:text-2xl font-semibold text-foreground mb-2">
-              Built on the 5 C's Framework
+        <div className="flex flex-col h-full justify-center px-4 md:px-8 animate-fade-in">
+          {/* Top Tagline */}
+          <div className="text-center mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <p className="text-xs md:text-sm font-semibold tracking-widest uppercase text-dna-copper mb-2">
+              The Solution
             </p>
-            <div className="w-24 h-1 bg-gradient-to-r from-dna-copper to-dna-gold mx-auto rounded-full"></div>
+            <p className="text-base md:text-lg text-muted-foreground">
+              A digital mobilization engine for collective impact
+            </p>
           </div>
-          
-          {/* Cards Grid - 5 Cards in a Row */}
-          <div className="flex-1 flex items-center justify-center mb-6">
-            <div className="w-full grid grid-cols-5 gap-4 max-w-7xl animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              {[
-                { 
-                  num: 1, 
-                  name: 'CONNECT', 
-                  tagline: 'Unite the network',
-                  desc: 'Verified profiles linking skills, heritage, and aspirations across the global diaspora',
-                  color: 'bg-dna-emerald',
-                  lightColor: 'bg-dna-emerald/10'
-                },
-                { 
-                  num: 2, 
-                  name: 'CONVENE', 
-                  tagline: 'Gather together',
-                  desc: 'Virtual and in-person gatherings to build trust and share knowledge',
-                  color: 'bg-dna-copper',
-                  lightColor: 'bg-dna-copper/10'
-                },
-                { 
-                  num: 3, 
-                  name: 'COLLABORATE', 
-                  tagline: 'Build together',
-                  desc: 'Smart-matched projects and ventures that turn ideas into coordinated action',
-                  color: 'bg-dna-gold',
-                  lightColor: 'bg-dna-gold/10'
-                },
-                { 
-                  num: 4, 
-                  name: 'CONTRIBUTE', 
-                  tagline: 'Give strategically',
-                  desc: 'Channel skills, capital, and expertise toward transparent, high-impact opportunities',
-                  color: 'bg-dna-forest',
-                  lightColor: 'bg-dna-forest/10'
-                },
-                { 
-                  num: 5, 
-                  name: 'CONVEY', 
-                  tagline: 'Amplify impact',
-                  desc: 'Share stories and insights to inspire the next generation and shift narratives',
-                  color: 'bg-dna-emerald',
-                  lightColor: 'bg-dna-emerald/10'
-                }
-              ].map((item) => (
-                <FlipCard
-                  key={item.name}
-                  className="h-64 group"
-                  front={
-                    <div className={`${item.lightColor} border border-border/50 rounded-xl h-full flex flex-col p-5 transition-all duration-300 hover:shadow-xl hover:border-border`}>
-                      {/* Number Badge */}
-                      <div className="flex items-center justify-between mb-4">
-                        <div className={`${item.color} w-11 h-11 rounded-lg flex items-center justify-center shadow-md`}>
-                          <span className="text-xl font-black text-white">{item.num}</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground font-medium">
-                          Hover →
-                        </div>
-                      </div>
-                      
-                      {/* Title */}
-                      <h4 className="text-lg font-bold text-foreground mb-2 tracking-wide">
-                        {item.name}
-                      </h4>
-                      
-                      {/* Tagline */}
-                      <p className="text-sm font-semibold text-dna-copper mb-3">
-                        {item.tagline}
-                      </p>
-                      
-                      {/* Description */}
-                      <p className="text-xs text-muted-foreground leading-relaxed flex-1">
-                        {item.desc}
-                      </p>
-                    </div>
-                  }
-                  back={
-                    <div className="bg-card border border-border rounded-xl h-full flex flex-col items-center justify-center p-5 shadow-lg">
-                      <div className={`${item.color} w-14 h-14 rounded-full flex items-center justify-center mb-4 shadow-md`}>
-                        <span className="text-2xl font-black text-white">{item.num}</span>
-                      </div>
-                      <h4 className="text-base font-bold text-foreground mb-3 text-center">
-                        {item.name}
-                      </h4>
-                      <p className="text-sm text-foreground/80 text-center leading-relaxed">
-                        {item.desc}
-                      </p>
-                    </div>
-                  }
-                />
-              ))}
+
+          {/* Main Headline */}
+          <div className="text-center mb-8 md:mb-10 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 max-w-5xl mx-auto leading-tight">
+              The first digital mobilization engine for the African Diaspora
+            </h2>
+            <div className="flex items-center justify-center gap-4 mb-2">
+              <div className="h-px bg-border w-12 md:w-16" />
+              <p className="text-lg md:text-2xl font-semibold text-dna-copper">
+                Built on the 5C Framework
+              </p>
+              <div className="h-px bg-border w-12 md:w-16" />
             </div>
           </div>
-          
-          {/* Bottom Impact Statement */}
-          <div className="relative bg-gradient-to-r from-dna-copper/10 via-dna-gold/5 to-dna-emerald/10 border border-border rounded-xl p-6 animate-fade-in" style={{ animationDelay: '0.9s' }}>
-            <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-dna-copper via-dna-gold to-dna-emerald"></div>
-            <p className="text-lg md:text-xl font-semibold text-foreground text-center leading-relaxed">
-              Transforming scattered strength into <span className="text-dna-copper font-bold">collective power</span>, <br className="hidden md:block" />
-              turning individual efforts into <span className="text-dna-emerald font-bold">systemic change</span>
+
+          {/* 5 Cs - Horizontal Flow */}
+          <div className="max-w-6xl mx-auto w-full mb-8 md:mb-10 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            {/* Top Row: Connect → Convene → Collaborate */}
+            <div className="grid grid-cols-5 gap-3 md:gap-4 mb-6">
+              {/* Connect */}
+              <div className="text-center group">
+                <div className="mb-3 flex justify-center">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
+                    <span className="text-xl md:text-2xl font-bold text-dna-copper">1</span>
+                  </div>
+                </div>
+                <h4 className="text-sm md:text-lg font-bold mb-1 md:mb-2">Connect</h4>
+                <p className="text-xs md:text-sm text-muted-foreground leading-snug">
+                  Unite verified diaspora profiles by skills and heritage
+                </p>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex items-center justify-center pt-8 md:pt-12">
+                <div className="w-full h-px bg-dna-copper/20" />
+              </div>
+
+              {/* Convene */}
+              <div className="text-center group">
+                <div className="mb-3 flex justify-center">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
+                    <span className="text-xl md:text-2xl font-bold text-dna-copper">2</span>
+                  </div>
+                </div>
+                <h4 className="text-sm md:text-lg font-bold mb-1 md:mb-2">Convene</h4>
+                <p className="text-xs md:text-sm text-muted-foreground leading-snug">
+                  Host gatherings that build trust and shared knowledge
+                </p>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex items-center justify-center pt-8 md:pt-12">
+                <div className="w-full h-px bg-dna-copper/20" />
+              </div>
+
+              {/* Collaborate */}
+              <div className="text-center group">
+                <div className="mb-3 flex justify-center">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
+                    <span className="text-xl md:text-2xl font-bold text-dna-copper">3</span>
+                  </div>
+                </div>
+                <h4 className="text-sm md:text-lg font-bold mb-1 md:mb-2">Collaborate</h4>
+                <p className="text-xs md:text-sm text-muted-foreground leading-snug">
+                  Turn ideas into ventures through smart-matched teams
+                </p>
+              </div>
+            </div>
+
+            {/* Bottom Row: Contribute → Convey */}
+            <div className="grid grid-cols-5 gap-3 md:gap-4">
+              <div className="col-start-2 text-center group">
+                <div className="mb-3 flex justify-center">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
+                    <span className="text-xl md:text-2xl font-bold text-dna-copper">4</span>
+                  </div>
+                </div>
+                <h4 className="text-sm md:text-lg font-bold mb-1 md:mb-2">Contribute</h4>
+                <p className="text-xs md:text-sm text-muted-foreground leading-snug">
+                  Channel capital and expertise toward impactful projects
+                </p>
+              </div>
+
+              {/* Arrow */}
+              <div className="flex items-center justify-center pt-8 md:pt-12">
+                <div className="w-full h-px bg-dna-copper/20" />
+              </div>
+
+              {/* Convey */}
+              <div className="text-center group">
+                <div className="mb-3 flex justify-center">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dna-copper/10 flex items-center justify-center group-hover:bg-dna-copper/20 transition-all duration-300">
+                    <span className="text-xl md:text-2xl font-bold text-dna-copper">5</span>
+                  </div>
+                </div>
+                <h4 className="text-sm md:text-lg font-bold mb-1 md:mb-2">Convey</h4>
+                <p className="text-xs md:text-sm text-muted-foreground leading-snug">
+                  Amplify stories that inspire and shift narratives
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Tagline */}
+          <div className="text-center animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <p className="text-xl md:text-3xl font-normal italic text-foreground">
+              Transforming scattered strength into collective power
             </p>
           </div>
         </div>
