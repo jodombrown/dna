@@ -18,6 +18,7 @@ const PitchDeck = () => {
       title: "DNA Platform",
       subtitle: "Diaspora Network of Africa",
       showHeader: false,
+      sources: [],
       content: (
         <div className="flex flex-col items-center justify-center h-full text-center space-y-8 animate-fade-in">
           <img 
@@ -39,8 +40,11 @@ const PitchDeck = () => {
       title: "The Problem",
       subtitle: "Untapped potential across 200M+ diasporans worldwide",
       showHeader: true,
+      sources: [
+        { text: "World Bank - Migration and Remittances Data", url: "https://www.worldbank.org/en/topic/migrationremittancesdiasporaissues" }
+      ],
       content: (
-        <div className="space-y-6 animate-fade-in">
+        <div className="flex flex-col justify-center h-full space-y-6 animate-fade-in">
           <div className="space-y-6 text-base md:text-xl text-foreground/90">
             <p className="leading-relaxed animate-fade-in" style={{ animationDelay: '0.1s' }}>
               <strong className="text-dna-copper text-xl md:text-2xl">200+ million African diasporans</strong> worldwide possess extraordinary power:
@@ -75,8 +79,9 @@ const PitchDeck = () => {
       title: "The Solution",
       subtitle: "A digital mobilization engine for collective impact",
       showHeader: true,
+      sources: [],
       content: (
-        <div className="space-y-6 animate-fade-in">
+        <div className="flex flex-col justify-center h-full space-y-6 animate-fade-in">
           <p className="text-xl md:text-2xl font-semibold text-dna-copper animate-fade-in" style={{ animationDelay: '0.1s' }}>
             The first digital mobilization engine for the African Diaspora
           </p>
@@ -101,8 +106,11 @@ const PitchDeck = () => {
       title: "Market Opportunity",
       subtitle: "Riding Africa's economic boom and diaspora awakening",
       showHeader: true,
+      sources: [
+        { text: "African Development Bank - African Economic Outlook 2024", url: "https://www.afdb.org/en/knowledge/publications/african-economic-outlook" }
+      ],
       content: (
-        <div className="space-y-6 animate-fade-in">
+        <div className="flex flex-col justify-center h-full space-y-6 animate-fade-in">
           <div className="grid grid-cols-3 gap-6 mt-4">
             {[
               { value: '200M+', label: 'African Diasporans Worldwide', color: 'dna-copper', delay: '0.1s' },
@@ -128,8 +136,9 @@ const PitchDeck = () => {
       title: "Platform Features",
       subtitle: "Built for impact, designed for diaspora",
       showHeader: true,
+      sources: [],
       content: (
-        <div className="space-y-6 animate-fade-in">
+        <div className="flex flex-col justify-center h-full space-y-6 animate-fade-in">
           <div className="grid grid-cols-2 gap-4">
             {[
               { title: 'Verified Profiles', desc: 'Cultural & professional identity system with skills, regions, and diaspora connections', color: 'dna-emerald', delay: '0.1s' },
@@ -156,8 +165,9 @@ const PitchDeck = () => {
       title: "Traction & Validation",
       subtitle: "Early momentum proves the market is ready",
       showHeader: true,
+      sources: [],
       content: (
-        <div className="space-y-6 animate-fade-in">
+        <div className="flex flex-col justify-center h-full space-y-6 animate-fade-in">
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-4">
               {[
@@ -193,8 +203,9 @@ const PitchDeck = () => {
       title: "Business Model",
       subtitle: "Multiple revenue streams for sustainable growth",
       showHeader: true,
+      sources: [],
       content: (
-        <div className="space-y-5 animate-fade-in">
+        <div className="flex flex-col justify-center h-full space-y-5 animate-fade-in">
           <div className="grid grid-cols-2 gap-4">
             {[
               { title: 'Premium Memberships', price: '$29/mo or $290/yr', features: ['Advanced matching & analytics', 'Priority event access', 'Enhanced visibility'], color: 'dna-emerald', delay: '0.1s' },
@@ -219,8 +230,9 @@ const PitchDeck = () => {
       title: "Go-to-Market Strategy",
       subtitle: "Phased growth from community to enterprise",
       showHeader: true,
+      sources: [],
       content: (
-        <div className="space-y-5 animate-fade-in">
+        <div className="flex flex-col justify-center h-full space-y-5 animate-fade-in">
           {[
             { phase: 'Phase 1: Community Seeding', timeline: 'Now - Month 6', desc: 'Target diaspora hubs: Lagos, London, New York, Atlanta. Partner with diaspora organizations and thought leaders.', color: 'dna-emerald', delay: '0.1s' },
             { phase: 'Phase 2: Viral Growth', timeline: 'Months 7-12', desc: 'Leverage success stories, referral programs, and content marketing. Launch in 10+ major diaspora cities.', color: 'dna-copper', delay: '0.2s' },
@@ -240,8 +252,9 @@ const PitchDeck = () => {
       title: "Competition & Differentiation",
       subtitle: "Why DNA wins in the diaspora engagement space",
       showHeader: true,
+      sources: [],
       content: (
-        <div className="space-y-5 animate-fade-in">
+        <div className="flex flex-col justify-center h-full space-y-5 animate-fade-in">
           <div className="grid grid-cols-2 gap-6">
             <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
               <h3 className="text-xl md:text-2xl font-bold text-dna-copper mb-3">The Competition</h3>
@@ -275,8 +288,9 @@ const PitchDeck = () => {
       title: "Team",
       subtitle: "Founder-market fit rooted in diaspora experience",
       showHeader: true,
+      sources: [],
       content: (
-        <div className="space-y-5 animate-fade-in">
+        <div className="flex flex-col justify-center h-full space-y-5 animate-fade-in">
           <div className="bg-gradient-to-br from-dna-forest/10 to-dna-emerald/10 p-6 rounded-lg border-2 border-dna-emerald/20 animate-fade-in" style={{ animationDelay: '0.1s' }}>
             <h3 className="text-2xl md:text-3xl font-bold text-dna-copper mb-1">Jaûne Odombrown</h3>
             <p className="text-lg md:text-xl font-semibold text-dna-emerald mb-3">Founder & CEO</p>
@@ -305,8 +319,9 @@ const PitchDeck = () => {
       title: "Financials & Roadmap",
       subtitle: "Clear path to $1M ARR and beyond",
       showHeader: true,
+      sources: [],
       content: (
-        <div className="space-y-5 animate-fade-in">
+        <div className="flex flex-col justify-center h-full space-y-5 animate-fade-in">
           {[
             { quarter: 'Q1-Q2: Foundation', goals: ['Complete MVP with core features', 'Reach 2,500 beta users', 'Launch in 5 diaspora hubs', '$50K MRR from premium memberships'], color: 'dna-emerald', delay: '0.1s' },
             { quarter: 'Q3-Q4: Acceleration', goals: ['Scale to 10,000 active users', 'Launch enterprise solutions', 'Expand to 15+ cities', '$200K MRR, path to $1M ARR'], color: 'dna-copper', delay: '0.2s' }
@@ -334,6 +349,7 @@ const PitchDeck = () => {
       title: "The Ask",
       subtitle: "Join us in mobilizing Africa's greatest asset",
       showHeader: true,
+      sources: [],
       content: (
         <div className="flex flex-col items-center justify-center h-full space-y-6 text-center animate-fade-in">
           <div className="bg-gradient-to-br from-dna-copper/10 to-dna-gold/10 p-10 rounded-lg border-2 border-dna-copper/20 max-w-4xl animate-scale-in" style={{ animationDelay: '0.1s' }}>
@@ -489,7 +505,7 @@ const PitchDeck = () => {
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className="aspect-video bg-card rounded-lg shadow-lg p-6 md:p-8 flex flex-col"
+                className="aspect-video bg-card rounded-lg shadow-lg p-6 md:p-8 flex flex-col relative"
               >
                 {slide.showHeader && (
                   <div className="flex items-start justify-between mb-4 animate-fade-in">
@@ -504,8 +520,32 @@ const PitchDeck = () => {
                     />
                   </div>
                 )}
-                <div className="flex-1 overflow-auto">
+                <div className="flex-1 overflow-auto mb-6">
                   {slide.content}
+                </div>
+                {/* Footer with sources and page number */}
+                <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                  <div className="flex-1">
+                    {slide.sources && slide.sources.length > 0 && (
+                      <div className="text-xs text-muted-foreground">
+                        {slide.sources.map((source, idx) => (
+                          <div key={idx}>
+                            <a 
+                              href={source.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="hover:text-dna-copper transition-colors underline"
+                            >
+                              {source.text}
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-xs md:text-sm text-muted-foreground font-medium">
+                    {index + 1} / {slides.length}
+                  </div>
                 </div>
               </div>
             ))}
@@ -528,12 +568,12 @@ const PitchDeck = () => {
               }
             }}
           >
-            {slides.map((slide) => (
+            {slides.map((slide, index) => (
               <div
                 key={slide.id}
                 className="min-w-full h-full snap-center flex items-center justify-center px-8 py-4 print:min-w-0 print:page-break-after-always"
               >
-                <div className="w-full aspect-video max-h-full bg-card rounded-lg shadow-2xl p-8 md:p-12 flex flex-col overflow-hidden">
+                <div className="w-full aspect-video max-h-full bg-card rounded-lg shadow-2xl p-8 md:p-12 flex flex-col overflow-hidden relative">
                   {slide.showHeader && (
                     <div className="flex items-start justify-between mb-6 animate-fade-in">
                       <div className="flex-1">
@@ -547,8 +587,32 @@ const PitchDeck = () => {
                       />
                     </div>
                   )}
-                  <div className="flex-1 overflow-auto">
+                  <div className="flex-1 overflow-auto mb-8">
                     {slide.content}
+                  </div>
+                  {/* Footer with sources and page number */}
+                  <div className="absolute bottom-6 left-8 right-8 flex items-end justify-between animate-fade-in" style={{ animationDelay: '0.6s' }}>
+                    <div className="flex-1">
+                      {slide.sources && slide.sources.length > 0 && (
+                        <div className="text-xs text-muted-foreground">
+                          {slide.sources.map((source, idx) => (
+                            <div key={idx}>
+                              <a 
+                                href={source.url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="hover:text-dna-copper transition-colors underline"
+                              >
+                                {source.text}
+                              </a>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-sm text-muted-foreground font-medium">
+                      {index + 1} / {slides.length}
+                    </div>
                   </div>
                 </div>
               </div>
