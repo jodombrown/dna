@@ -88,47 +88,50 @@ const PitchDeck = () => {
       showHeader: true,
       sources: [],
       content: (
-        <div className="flex flex-col justify-start h-full space-y-6 animate-fade-in overflow-auto">
-          <p className="text-xl md:text-3xl font-bold text-dna-copper animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            The first digital mobilization engine for the African Diaspora
-          </p>
-          
-          <p className="text-lg md:text-xl text-foreground/90 font-semibold animate-fade-in" style={{ animationDelay: '0.15s' }}>
-            Built on the 5 C's Framework:
-          </p>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 pb-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            {[
-              { name: 'CONNECT', desc: 'Build verified diaspora profiles linking skills, regions, and cultural heritage to create a living map of our collective power' },
-              { name: 'CONVENE', desc: 'Host virtual and in-person gatherings to spark dialogue, share knowledge, and build trust across borders' },
-              { name: 'COLLABORATE', desc: 'Launch coordinated projects, ventures, and initiatives that turn ideas into action through smart matching and shared resources' },
-              { name: 'CONTRIBUTE', desc: 'Channel skills, capital, and expertise toward high-impact opportunities with transparent tracking and recognition' },
-              { name: 'CONVEY', desc: 'Amplify diaspora stories, insights, and achievements to shift narratives and inspire the next generation' }
-            ].map((c, idx) => (
-              <div key={c.name} className="relative" style={{ zIndex: 5 - idx }}>
-                <FlipCard
-                  className="h-36 sm:h-40 md:h-44"
-                  front={
-                    <div className="bg-gradient-to-br from-dna-forest/10 to-dna-emerald/10 p-3 md:p-4 rounded-lg border-2 border-dna-emerald/30 h-full flex flex-col items-center justify-center hover-scale cursor-pointer transition-all duration-300">
-                      <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-dna-copper mb-2">{idx + 1}</div>
-                      <div className="text-sm sm:text-base md:text-lg font-bold text-foreground text-center">{c.name}</div>
-                      <div className="text-xs text-muted-foreground mt-1">Hover for details</div>
-                    </div>
-                  }
-                  back={
-                    <div className="bg-gradient-to-br from-dna-copper/10 to-dna-gold/10 p-3 md:p-4 rounded-lg border-2 border-dna-copper/30 h-full flex items-center justify-center overflow-hidden">
-                      <p className="text-xs sm:text-sm text-foreground/90 text-center leading-snug line-clamp-6">
-                        {c.desc}
-                      </p>
-                    </div>
-                  }
-                />
-              </div>
-            ))}
+        <div className="flex flex-col h-full space-y-8 animate-fade-in">
+          <div className="space-y-4 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <p className="text-2xl md:text-3xl font-bold text-dna-copper">
+              The first digital mobilization engine for the African Diaspora
+            </p>
+            <p className="text-lg md:text-xl text-foreground/90 font-semibold">
+              Built on the 5 C's Framework:
+            </p>
           </div>
           
-          <div className="bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 p-6 md:p-8 rounded-xl border-2 border-dna-copper/30 mt-4 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-            <p className="text-lg md:text-2xl font-semibold text-foreground text-center leading-relaxed">
+          <div className="flex-1 flex items-center">
+            <div className="w-full grid grid-cols-5 gap-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              {[
+                { name: 'CONNECT', desc: 'Build verified diaspora profiles linking skills, regions, and cultural heritage to create a living map of our collective power' },
+                { name: 'CONVENE', desc: 'Host virtual and in-person gatherings to spark dialogue, share knowledge, and build trust across borders' },
+                { name: 'COLLABORATE', desc: 'Launch coordinated projects, ventures, and initiatives that turn ideas into action through smart matching and shared resources' },
+                { name: 'CONTRIBUTE', desc: 'Channel skills, capital, and expertise toward high-impact opportunities with transparent tracking and recognition' },
+                { name: 'CONVEY', desc: 'Amplify diaspora stories, insights, and achievements to shift narratives and inspire the next generation' }
+              ].map((c, idx) => (
+                <div key={c.name} className="relative group">
+                  <FlipCard
+                    className="h-52"
+                    front={
+                      <div className="bg-gradient-to-br from-dna-forest/10 to-dna-emerald/10 p-5 rounded-xl border-2 border-dna-emerald/30 h-full flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group-hover:shadow-xl">
+                        <div className="text-5xl font-bold text-dna-copper mb-3">{idx + 1}</div>
+                        <div className="text-lg font-bold text-foreground text-center mb-2">{c.name}</div>
+                        <div className="text-xs text-muted-foreground">Hover for details</div>
+                      </div>
+                    }
+                    back={
+                      <div className="bg-gradient-to-br from-dna-copper/10 to-dna-gold/10 p-5 rounded-xl border-2 border-dna-copper/30 h-full flex items-center justify-center">
+                        <p className="text-sm text-foreground/90 text-center leading-relaxed">
+                          {c.desc}
+                        </p>
+                      </div>
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 p-6 rounded-xl border-2 border-dna-copper/30 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+            <p className="text-xl md:text-2xl font-semibold text-foreground text-center leading-relaxed">
               We transform scattered strength into <strong className="text-dna-copper">collective power</strong>, turning individual efforts into <strong className="text-dna-emerald">systemic change</strong>.
             </p>
           </div>
