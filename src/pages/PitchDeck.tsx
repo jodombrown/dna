@@ -520,7 +520,7 @@ const PitchDeck = () => {
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className="min-h-[calc(100vh-8rem)] bg-card rounded-lg shadow-lg p-8 md:p-12 flex items-center justify-center"
+                className="aspect-video bg-card rounded-lg shadow-lg p-8 md:p-12 flex items-center justify-center"
               >
                 <div className="w-full max-w-5xl">
                   {slide.content}
@@ -549,9 +549,9 @@ const PitchDeck = () => {
             {slides.map((slide) => (
               <div
                 key={slide.id}
-                className="min-w-full h-full snap-center flex items-center justify-center px-16 py-8 print:min-w-0 print:page-break-after-always"
+                className="min-w-full h-full snap-center flex items-center justify-center px-8 py-4 print:min-w-0 print:page-break-after-always"
               >
-                <div className="w-full h-full max-w-7xl bg-card rounded-lg shadow-2xl p-12 md:p-16 flex items-center justify-center">
+                <div className="w-full aspect-video max-h-full bg-card rounded-lg shadow-2xl p-12 md:p-16 flex items-center justify-center overflow-auto">
                   <div className="w-full">
                     {slide.content}
                   </div>
