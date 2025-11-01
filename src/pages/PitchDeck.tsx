@@ -18,10 +18,12 @@ const PitchDeck = () => {
       title: "DNA Platform",
       subtitle: "Diaspora Network of Africa",
       content: (
-        <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
-          <div className="text-7xl md:text-9xl font-bold bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-copper bg-clip-text text-transparent">
-            DNA
-          </div>
+        <div className="flex flex-col items-center justify-center h-full text-center space-y-8">
+          <img 
+            src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
+            alt="DNA Logo" 
+            className="h-32 md:h-48 w-auto mb-4"
+          />
           <div className="text-lg md:text-xl font-semibold text-muted-foreground tracking-widest">
             DIASPORA NETWORK OF AFRICA
           </div>
@@ -384,7 +386,7 @@ const PitchDeck = () => {
           <div className="mt-12 pt-8 border-t-2 border-border w-full max-w-2xl">
             <p className="text-xl font-semibold text-foreground mb-4">Contact</p>
             <p className="text-lg text-foreground/80">Jaûne Odombrown</p>
-            <p className="text-lg text-dna-copper">founder@diasporanetwork.africa</p>
+            <p className="text-lg text-dna-copper">jaune@diasporanetwork.africa</p>
             <p className="text-lg text-foreground/80 mt-4">www.diasporanetwork.africa</p>
           </div>
         </div>
@@ -404,15 +406,29 @@ const PitchDeck = () => {
           text: 'Discover the Diaspora Network of Africa - mobilizing the African Diaspora for systemic change.',
           url: window.location.href,
         });
+        toast({
+          title: "Shared successfully!",
+          description: "Thank you for sharing the DNA pitch deck",
+        });
       } catch (err) {
-        console.log('Share failed:', err);
+        if ((err as Error).name !== 'AbortError') {
+          console.log('Share failed:', err);
+        }
       }
     } else {
-      toast({
-        title: "Link copied!",
-        description: "Pitch deck link copied to clipboard",
-      });
-      navigator.clipboard.writeText(window.location.href);
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Link copied!",
+          description: "Pitch deck link copied to clipboard",
+        });
+      } catch (err) {
+        toast({
+          title: "Could not copy",
+          description: "Please copy the URL manually",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -516,7 +532,11 @@ const PitchDeck = () => {
           // Desktop: Horizontal scroll
           <div
             ref={scrollContainerRef}
-            className="flex overflow-x-hidden snap-x snap-mandatory h-[calc(100vh-5rem)] print:block print:overflow-visible"
+            className="flex overflow-x-auto snap-x snap-mandatory h-[calc(100vh-5rem)] scroll-smooth print:block print:overflow-visible"
+            style={{ 
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
             onScroll={(e) => {
               const slideWidth = e.currentTarget.offsetWidth;
               const scrollLeft = e.currentTarget.scrollLeft;
@@ -529,10 +549,12 @@ const PitchDeck = () => {
             {slides.map((slide) => (
               <div
                 key={slide.id}
-                className="min-w-full h-full snap-center flex items-center justify-center p-8 md:p-12 print:min-w-0 print:page-break-after-always"
+                className="min-w-full h-full snap-center flex items-center justify-center px-16 py-8 print:min-w-0 print:page-break-after-always"
               >
-                <div className="w-full max-w-6xl bg-card rounded-lg shadow-2xl p-12 md:p-16">
-                  {slide.content}
+                <div className="w-full h-full max-w-7xl bg-card rounded-lg shadow-2xl p-12 md:p-16 flex items-center justify-center">
+                  <div className="w-full">
+                    {slide.content}
+                  </div>
                 </div>
               </div>
             ))}
@@ -550,6 +572,11 @@ const PitchDeck = () => {
             print-color-adjust: exact;
             -webkit-print-color-adjust: exact;
           }
+        }
+        
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .overflow-x-auto::-webkit-scrollbar {
+          display: none;
         }
       `}</style>
     </div>
