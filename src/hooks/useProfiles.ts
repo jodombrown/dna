@@ -31,8 +31,10 @@ export const useUpdateProfile = () => {
     onSuccess: (data) => {
       // Invalidate and refetch profiles queries
       queryClient.invalidateQueries({ queryKey: ['profiles'] });
-      queryClient.setQueryData(['profileById', data.id], data);
-      queryClient.setQueryData(['profile', data.id], data);
+      if (data) {
+        queryClient.setQueryData(['profileById', (data as any).id], data);
+        queryClient.setQueryData(['profile', (data as any).id], data);
+      }
     },
   });
 };
