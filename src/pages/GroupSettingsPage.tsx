@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { UserDashboardLayout } from '@/components/layout/UserDashboardLayout';
+import { FeedLayout } from '@/components/layout/FeedLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -183,19 +183,19 @@ export default function GroupSettingsPage() {
 
   if (isLoading) {
     return (
-      <UserDashboardLayout>
+      <FeedLayout>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12 text-muted-foreground">
             Loading settings...
           </div>
         </div>
-      </UserDashboardLayout>
+      </FeedLayout>
     );
   }
 
   if (!group) {
     return (
-      <UserDashboardLayout>
+      <FeedLayout>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold mb-2">Group not found</h2>
@@ -204,12 +204,12 @@ export default function GroupSettingsPage() {
             </Button>
           </div>
         </div>
-      </UserDashboardLayout>
+      </FeedLayout>
     );
   }
 
   return (
-    <UserDashboardLayout>
+    <FeedLayout>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
@@ -364,7 +364,7 @@ export default function GroupSettingsPage() {
           </TabsContent>
         </Tabs>
       </div>
-
+      
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
@@ -385,6 +385,6 @@ export default function GroupSettingsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </UserDashboardLayout>
+    </FeedLayout>
   );
 }
