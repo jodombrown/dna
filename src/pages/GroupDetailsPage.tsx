@@ -30,6 +30,8 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { GroupPostComments } from '@/components/groups/GroupPostComments';
+import { cn } from '@/lib/utils';
 
 interface CommentDialogProps {
   isOpen: boolean;
@@ -197,6 +199,7 @@ export default function GroupDetailsPage() {
     postId: string;
     postAuthor: string;
   } | null>(null);
+  const [openComments, setOpenComments] = useState<{ [key: string]: boolean }>({});
 
   // Fetch group details
   const { data: group, isLoading } = useQuery({
@@ -705,6 +708,10 @@ export default function GroupDetailsPage() {
                           <Button
                             variant="ghost"
                             size="sm"
+                            className={cn(
+                              'gap-2',
+                              post.user_has_liked && 'text-red-500'
+                            )}
                             onClick={() => {
                               if (post.user_has_liked) {
                                 unlikePostMutation.mutate(post.post_id);
@@ -712,27 +719,35 @@ export default function GroupDetailsPage() {
                                 likePostMutation.mutate(post.post_id);
                               }
                             }}
-                            className={post.user_has_liked ? 'text-[hsl(151,75%,50%)]' : ''}
                           >
                             <Heart
-                              className={`h-4 w-4 mr-2 ${post.user_has_liked ? 'fill-current' : ''}`}
+                              className={cn(
+                                'h-4 w-4',
+                                post.user_has_liked && 'fill-current'
+                              )}
                             />
                             {post.like_count}
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                              setActiveCommentDialog({
-                                postId: post.post_id,
-                                postAuthor: post.author_full_name,
-                              })
-                            }
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="gap-2"
+                            onClick={() => setOpenComments(prev => ({
+                              ...prev,
+                              [post.post_id]: !prev[post.post_id]
+                            }))}
                           >
-                            <MessageCircle className="h-4 w-4 mr-2" />
+                            <MessageCircle className="h-4 w-4" />
                             {post.comment_count}
                           </Button>
                         </div>
+
+                        {/* Comments Section */}
+                        <GroupPostComments
+                          postId={post.post_id}
+                          isOpen={openComments[post.post_id] || false}
+                          onClose={() => setOpenComments(prev => ({ ...prev, [post.post_id]: false }))}
+                        />
                       </Card>
                     ))
                   ) : (
