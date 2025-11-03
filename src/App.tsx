@@ -21,6 +21,11 @@ import DnaUserDashboard from "./pages/dna/Username";
 import ActivityFeed from "./pages/ActivityFeed";
 import NetworkFeedPage from "./pages/NetworkFeedPage";
 import DiscoveryFeedPage from "./pages/DiscoveryFeedPage";
+import DnaNetwork from "./pages/dna/Network";
+import DnaFeed from "./pages/dna/Feed";
+import DnaEvents from "./pages/dna/Events";
+import DnaMessages from "./pages/dna/Messages";
+import DnaImpact from "./pages/dna/Impact";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -155,14 +160,26 @@ function App() {
               <Route path="/dna/discover" element={<Navigate to="/dna/discover/members" replace />} />
               
               {/* ========== CONNECT PILLAR ========== */}
-              <Route path="/dna/connect/network" element={<Network />} />
-              <Route path="/dna/connect/feed" element={
+              <Route path="/dna/connect/network" element={
                 <OnboardingGuard>
-                  <NetworkFeedPage />
+                  <DnaNetwork />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/connect/messages" element={<MessagesPage />} />
-              <Route path="/dna/connect/messages/:conversationId" element={<MessagesPage />} />
+              <Route path="/dna/connect/feed" element={
+                <OnboardingGuard>
+                  <DnaFeed />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/connect/messages" element={
+                <OnboardingGuard>
+                  <DnaMessages />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/connect/messages/:conversationId" element={
+                <OnboardingGuard>
+                  <DnaMessages />
+                </OnboardingGuard>
+              } />
               {/* Legacy connect route redirects */}
               <Route path="/dna/network" element={<Navigate to="/dna/connect/network" replace />} />
               <Route path="/dna/network/feed" element={<Navigate to="/dna/connect/feed" replace />} />
@@ -171,7 +188,11 @@ function App() {
               <Route path="/dna/messages/:conversationId" element={<Navigate to="/dna/connect/messages/$1" replace />} />
               
               {/* ========== CONVENE PILLAR ========== */}
-              <Route path="/dna/convene/events" element={<EventsPage />} />
+              <Route path="/dna/convene/events" element={
+                <OnboardingGuard>
+                  <DnaEvents />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/convene/events/:id" element={<EventDetailsPage />} />
               <Route path="/dna/convene/events/:id/edit" element={<EditEventPage />} />
               <Route path="/dna/convene/groups" element={
@@ -186,7 +207,11 @@ function App() {
               <Route path="/events" element={<Navigate to="/dna/convene/events" replace />} />
               
               {/* ========== CONTRIBUTE PILLAR (Future) ========== */}
-              <Route path="/dna/impact" element={<Opportunities />} />
+              <Route path="/dna/impact" element={
+                <OnboardingGuard>
+                  <DnaImpact />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/impact/:id" element={<OpportunityDetail />} />
               <Route path="/dna/applications" element={<MyApplications />} />
               <Route path="/dna/spaces" element={<CollaborationSpaces />} />

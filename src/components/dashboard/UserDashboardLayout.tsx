@@ -12,10 +12,15 @@ import DashboardCenterColumn from './DashboardCenterColumn';
 import DashboardRightColumn from './DashboardRightColumn';
 import DashboardDiscoverColumn from './DashboardDiscoverColumn';
 import DashboardGroupsColumn from './DashboardGroupsColumn';
+import DashboardNetworkColumn from './DashboardNetworkColumn';
+import DashboardFeedColumn from './DashboardFeedColumn';
+import DashboardEventsColumn from './DashboardEventsColumn';
+import DashboardMessagesColumn from './DashboardMessagesColumn';
+import DashboardImpactColumn from './DashboardImpactColumn';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { useNavigate } from 'react-router-dom';
 
-type ViewMode = 'profile' | 'discover' | 'groups';
+type ViewMode = 'profile' | 'discover' | 'groups' | 'network' | 'feed' | 'events' | 'messages' | 'impact';
 
 interface UserDashboardLayoutProps {
   profile: Profile;
@@ -67,6 +72,16 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
                 <DashboardDiscoverColumn profile={profile} isOwnProfile={isOwnProfile} />
               ) : viewMode === 'groups' ? (
                 <DashboardGroupsColumn profile={profile} isOwnProfile={isOwnProfile} />
+              ) : viewMode === 'network' ? (
+                <DashboardNetworkColumn profile={profile} isOwnProfile={isOwnProfile} />
+              ) : viewMode === 'feed' ? (
+                <DashboardFeedColumn profile={profile} isOwnProfile={isOwnProfile} />
+              ) : viewMode === 'events' ? (
+                <DashboardEventsColumn profile={profile} isOwnProfile={isOwnProfile} />
+              ) : viewMode === 'messages' ? (
+                <DashboardMessagesColumn profile={profile} isOwnProfile={isOwnProfile} />
+              ) : viewMode === 'impact' ? (
+                <DashboardImpactColumn profile={profile} isOwnProfile={isOwnProfile} />
               ) : (
                 <>
                   <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
@@ -89,6 +104,16 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
                   <DashboardDiscoverColumn profile={profile} isOwnProfile={isOwnProfile} />
                 ) : viewMode === 'groups' ? (
                   <DashboardGroupsColumn profile={profile} isOwnProfile={isOwnProfile} />
+                ) : viewMode === 'network' ? (
+                  <DashboardNetworkColumn profile={profile} isOwnProfile={isOwnProfile} />
+                ) : viewMode === 'feed' ? (
+                  <DashboardFeedColumn profile={profile} isOwnProfile={isOwnProfile} />
+                ) : viewMode === 'events' ? (
+                  <DashboardEventsColumn profile={profile} isOwnProfile={isOwnProfile} />
+                ) : viewMode === 'messages' ? (
+                  <DashboardMessagesColumn profile={profile} isOwnProfile={isOwnProfile} />
+                ) : viewMode === 'impact' ? (
+                  <DashboardImpactColumn profile={profile} isOwnProfile={isOwnProfile} />
                 ) : (
                   <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
                 )}
