@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Dialog,
   DialogContent,
@@ -37,6 +38,7 @@ export function CreateEventDialog({
   currentUserId,
   onSuccess,
 }: CreateEventDialogProps) {
+  const { user } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -125,10 +127,14 @@ export function CreateEventDialog({
 
     setIsSubmitting(true);
     try {
+      if (!user?.id) {
+        throw new Error('You must be logged in to create an event');
+      }
+
       const { data, error } = await supabase
         .from('events')
         .insert({
-          organizer_id: currentUserId,
+          organizer_id: user.id,
           ...formData,
         })
         .select()
