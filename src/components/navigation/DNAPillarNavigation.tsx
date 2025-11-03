@@ -28,11 +28,11 @@ const pillars = [
     label: 'Feed',
     description: 'Latest updates and community insights',
     icon: Home,
-    href: '/app/dashboard',
+    href: '/dna/connect/feed',
     color: 'dna-forest',
     actions: [
-      { label: 'Browse Posts', icon: Search, href: '/app/feed' },
-      { label: 'Create Post', icon: MessageSquare, href: '/app/posts/create' }
+      { label: 'Browse Posts', icon: Search, href: '/dna/connect/feed' },
+      { label: 'Create Post', icon: MessageSquare, href: '/dna/connect/feed' }
     ]
   },
   {
@@ -40,13 +40,12 @@ const pillars = [
     label: 'Connect',
     description: 'Build meaningful professional relationships',
     icon: Users,
-    href: '/app/connect',
+    href: '/dna/connect/network',
     color: 'dna-emerald',
     actions: [
-      { label: 'Discover People', icon: Search, href: '/app/connect/discover' },
-      { label: 'My Network', icon: Users, href: '/app/connect/network' },
-      { label: 'Messages', icon: MessageSquare, href: '/app/messages' },
-      { label: 'Connect Requests', icon: UserPlus, href: '/app/connect/requests' }
+      { label: 'Discover People', icon: Search, href: '/dna/discover/members' },
+      { label: 'My Network', icon: Users, href: '/dna/connect/network' },
+      { label: 'Messages', icon: MessageSquare, href: '/dna/connect/messages' }
     ]
   },
   {
@@ -54,12 +53,11 @@ const pillars = [
     label: 'Collaborate',
     description: 'Partner on projects and opportunities',
     icon: Handshake,
-    href: '/app/collaborate',
+    href: '/dna/convene/events',
     color: 'dna-copper',
     actions: [
-      { label: 'Active Projects', icon: Handshake, href: '/app/collaborate/projects' },
-      { label: 'Find Partners', icon: Search, href: '/app/collaborate/partners' },
-      { label: 'Events', icon: Calendar, href: '/app/collaborate/events' }
+      { label: 'Events', icon: Calendar, href: '/dna/convene/events' },
+      { label: 'Groups', icon: Users, href: '/dna/convene/groups' }
     ]
   },
   {
@@ -67,11 +65,11 @@ const pillars = [
     label: 'Contribute',
     description: 'Give back and create lasting impact',
     icon: Heart,
-    href: '/app/contribute',
+    href: '/dna/impact',
     color: 'dna-gold',
     actions: [
-      { label: 'Impact Opportunities', icon: Heart, href: '/app/contribute/opportunities' },
-      { label: 'My Contributions', icon: Users, href: '/app/contribute/my-contributions' }
+      { label: 'Impact Opportunities', icon: Heart, href: '/dna/impact' },
+      { label: 'My Applications', icon: Users, href: '/dna/applications' }
     ]
   }
 ];
@@ -130,8 +128,8 @@ export const DNAPillarNavigation: React.FC<DNAPillarNavigationProps> = ({
   };
   
   const isActivePillar = (href: string) => {
-    if (href === '/app/dashboard') {
-      return location.pathname === '/app/dashboard' || location.pathname === '/app/feed';
+    if (href === '/dna/connect/feed') {
+      return location.pathname === '/dna/connect/feed' || location.pathname === '/dna/me';
     }
     return location.pathname.startsWith(href);
   };
