@@ -29,7 +29,7 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
     if (!user) return;
 
     const channel = supabase
-      .channel('network_feed_updates')
+      .channel(`network_feed_updates_${user.id}_${Date.now()}`) // Unique channel per mount
       .on(
         'postgres_changes',
         {
@@ -66,9 +66,10 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
       .subscribe();
 
     return () => {
+      channel.unsubscribe();
       supabase.removeChannel(channel);
     };
-  }, [user, refetch]);
+  }, [user?.id, refetch]);
 
   const handleCommentClick = (postId: string) => {
     setExpandedPostId(expandedPostId === postId ? null : postId);
