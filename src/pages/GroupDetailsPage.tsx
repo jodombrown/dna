@@ -267,15 +267,17 @@ export default function GroupDetailsPage() {
   useEffect(() => {
     if (!group) return;
 
+    const groupId = group.group_id;
+
     const channel = supabase
-      .channel(`group_${group.group_id}_updates`)
+      .channel(`group_${groupId}_updates`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'group_posts',
-          filter: `group_id=eq.${group.group_id}`,
+          filter: `group_id=eq.${groupId}`,
         },
         () => {
           refetchPosts();
@@ -297,12 +299,23 @@ export default function GroupDetailsPage() {
         {
           event: '*',
           schema: 'public',
-          table: 'group_members',
-          filter: `group_id=eq.${group.group_id}`,
+          table: 'group_post_comments',
         },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['group-members'] });
+          refetchPosts();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'group_members',
+          filter: `group_id=eq.${groupId}`,
+        },
+        () => {
           queryClient.invalidateQueries({ queryKey: ['group-details'] });
+          queryClient.invalidateQueries({ queryKey: ['group-members'] });
         }
       )
       .subscribe();
@@ -310,7 +323,7 @@ export default function GroupDetailsPage() {
     return () => {
       channel.unsubscribe();
     };
-  }, [group, refetchPosts, queryClient]);
+  }, [group?.group_id, refetchPosts, queryClient]);
 
   // Join group mutation
   const joinGroupMutation = useMutation({
