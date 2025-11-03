@@ -56,6 +56,7 @@ import CollaborationSpaces from "./pages/CollaborationSpaces";
 import SpaceDetail from "./pages/SpaceDetail";
 import Discover from "./pages/Discover";
 import DiscoverMembers from "./pages/DiscoverMembers";
+import DnaDiscover from "./pages/dna/Discover";
 import Network from "./pages/Network";
 import Messages from "./pages/Messages";
 import MessagesPage from "./pages/MessagesPage";
@@ -66,6 +67,7 @@ import EventsPage from "./pages/EventsPage";
 import EventDetailsPage from "./pages/EventDetailsPage";
 import EditEventPage from "./pages/EditEventPage";
 import GroupsPage from "./pages/GroupsPage";
+import DnaGroups from "./pages/dna/Groups";
 import GroupDetailsPage from "./pages/GroupDetailsPage";
 import GroupSettingsPage from "./pages/GroupSettingsPage";
 
@@ -139,7 +141,11 @@ function App() {
               } />
               
               {/* ========== DISCOVER PILLAR ========== */}
-              <Route path="/dna/discover/members" element={<DiscoverMembers />} />
+              <Route path="/dna/discover/members" element={
+                <OnboardingGuard>
+                  <DnaDiscover />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/discover/feed" element={
                 <OnboardingGuard>
                   <DiscoveryFeedPage />
@@ -168,7 +174,11 @@ function App() {
               <Route path="/dna/convene/events" element={<EventsPage />} />
               <Route path="/dna/convene/events/:id" element={<EventDetailsPage />} />
               <Route path="/dna/convene/events/:id/edit" element={<EditEventPage />} />
-              <Route path="/dna/convene/groups" element={<GroupsPage />} />
+              <Route path="/dna/convene/groups" element={
+                <OnboardingGuard>
+                  <DnaGroups />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/convene/groups/:slug" element={<GroupDetailsPage />} />
               <Route path="/dna/convene/groups/:slug/settings" element={<GroupSettingsPage />} />
               {/* Legacy convene route redirects */}

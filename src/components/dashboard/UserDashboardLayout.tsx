@@ -10,17 +10,23 @@ import { BannerUploadModal } from '@/components/profile/BannerUploadModal';
 import DashboardLeftColumn from './DashboardLeftColumn';
 import DashboardCenterColumn from './DashboardCenterColumn';
 import DashboardRightColumn from './DashboardRightColumn';
+import DashboardDiscoverColumn from './DashboardDiscoverColumn';
+import DashboardGroupsColumn from './DashboardGroupsColumn';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { useNavigate } from 'react-router-dom';
+
+type ViewMode = 'profile' | 'discover' | 'groups';
 
 interface UserDashboardLayoutProps {
   profile: Profile;
   currentUser: User;
+  viewMode?: ViewMode;
 }
 
 const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
   profile,
-  currentUser
+  currentUser,
+  viewMode = 'profile'
 }) => {
   const { isMobile, isTablet, isDesktop } = useMobile();
   const navigate = useNavigate();
@@ -57,9 +63,17 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
           {useStackedLayout ? (
             // Mobile & Tablet: Single column layout, stacked
             <div className="space-y-3 pt-1 px-3 overflow-y-auto h-full">
-              <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
-              <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
-              <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
+              {viewMode === 'discover' ? (
+                <DashboardDiscoverColumn profile={profile} isOwnProfile={isOwnProfile} />
+              ) : viewMode === 'groups' ? (
+                <DashboardGroupsColumn profile={profile} isOwnProfile={isOwnProfile} />
+              ) : (
+                <>
+                  <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
+                  <DashboardLeftColumn profile={profile} isOwnProfile={isOwnProfile} />
+                  <DashboardRightColumn profile={profile} isOwnProfile={isOwnProfile} />
+                </>
+              )}
             </div>
           ) : (
             // Desktop: 3-column layout with independent scrolling - minimal padding
@@ -71,7 +85,13 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
               
               {/* Center Column - 70% */}
               <div className="w-[70%] flex-shrink-0 overflow-y-auto px-6 pt-1 pb-4">
-                <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
+                {viewMode === 'discover' ? (
+                  <DashboardDiscoverColumn profile={profile} isOwnProfile={isOwnProfile} />
+                ) : viewMode === 'groups' ? (
+                  <DashboardGroupsColumn profile={profile} isOwnProfile={isOwnProfile} />
+                ) : (
+                  <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
+                )}
               </div>
               
               {/* Right Column - 15% */}
