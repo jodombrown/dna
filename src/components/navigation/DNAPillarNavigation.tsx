@@ -13,6 +13,8 @@ import {
   Calendar
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { usePillarStats } from '@/hooks/usePillarStats';
+import { supabase } from '@/integrations/supabase/client';
 
 interface DNAPillarNavigationProps {
   className?: string;
@@ -98,6 +100,34 @@ export const DNAPillarNavigation: React.FC<DNAPillarNavigationProps> = ({
   showDescriptions = true
 }) => {
   const location = useLocation();
+  const [userId, setUserId] = React.useState<string | undefined>();
+  
+  React.useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUserId(data.user?.id);
+    });
+  }, []);
+  
+  const { data: stats, isLoading } = usePillarStats(userId);
+  
+  const getPillarStats = (pillarId: string) => {
+    if (!stats) return null;
+    
+    switch (pillarId) {
+      case 'feed':
+        return stats.feed.postsCount > 0 ? `${stats.feed.postsCount} posts` : 'No posts yet';
+      case 'connect':
+        return stats.connect.pendingRequests > 0 
+          ? `${stats.connect.connectionsCount} connections • ${stats.connect.pendingRequests} pending`
+          : `${stats.connect.connectionsCount} connections`;
+      case 'collaborate':
+        return `${stats.collaborate.activeProjects} projects • ${stats.collaborate.upcomingEvents} events`;
+      case 'contribute':
+        return `${stats.contribute.opportunitiesCount} opportunities • ${stats.contribute.myContributions} applied`;
+      default:
+        return null;
+    }
+  };
   
   const isActivePillar = (href: string) => {
     if (href === '/app/dashboard') {
@@ -129,7 +159,7 @@ export const DNAPillarNavigation: React.FC<DNAPillarNavigationProps> = ({
                       <div className="font-medium">{pillar.label}</div>
                       {showDescriptions && (
                         <div className="text-xs opacity-80 mt-0.5">
-                          {pillar.description}
+                          {isLoading ? 'Loading...' : getPillarStats(pillar.id) || pillar.description}
                         </div>
                       )}
                     </div>
@@ -189,9 +219,9 @@ export const DNAPillarNavigation: React.FC<DNAPillarNavigationProps> = ({
                   <div className="font-medium text-xs sm:text-sm">
                     {pillar.label}
                   </div>
-                  {showDescriptions && (
+                  {showDescriptions && !isLoading && (
                     <div className="text-xs opacity-80 mt-1 hidden sm:block">
-                      {pillar.description.split(' ').slice(0, 3).join(' ')}...
+                      {getPillarStats(pillar.id) || pillar.description.split(' ').slice(0, 3).join(' ') + '...'}
                     </div>
                   )}
                 </div>
