@@ -134,7 +134,7 @@ const ProfileHeroSection = ({
     <section className="relative rounded-3xl overflow-hidden mb-6">
       {/* Banner */}
       <div 
-        className="w-full h-[300px] md:h-[500px] relative"
+        className="w-full h-[200px] md:h-[280px] relative"
         style={getBannerStyle()}
       >
         {/* Overlay for text contrast */}

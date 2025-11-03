@@ -62,51 +62,6 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
 
   return (
     <div className="space-y-3 md:space-y-4">
-      {/* Profile Preview Card */}
-      <Card className="overflow-hidden transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
-        <CardContent className="p-3 sm:p-4 md:p-5">
-          <div className="text-center">
-            <Avatar className="w-20 h-20 mx-auto mb-4">
-              <AvatarImage src={profile.avatar_url || ''} alt={profile.full_name || ''} />
-              <AvatarFallback className="bg-dna-copper text-white text-lg">
-                {profile.full_name?.charAt(0) || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            
-            <h2 className="text-xl font-semibold text-dna-forest mb-1">
-              {profile.full_name || 'DNA Member'}
-            </h2>
-            
-            {profile.headline && (
-              <p className="text-sm text-muted-foreground mb-2">{profile.headline}</p>
-            )}
-            
-            {profile.profession && (
-              <div className="flex items-center justify-center text-sm text-muted-foreground mb-2">
-                <Briefcase className="w-4 h-4 mr-1" />
-                {profile.profession}
-              </div>
-            )}
-            
-            {profile.location && (
-              <div className="flex items-center justify-center text-sm text-muted-foreground mb-4">
-                <MapPin className="w-4 h-4 mr-1" />
-                {profile.location}
-              </div>
-            )}
-            
-            {isOwnProfile && (
-              <Link to="/app/profile/edit">
-                <Button variant="outline" size="sm" className="w-full">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Edit Profile
-                </Button>
-              </Link>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Impact Areas */}
       {profile.impact_areas && profile.impact_areas.length > 0 && (
         <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
