@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { GroupPostComments } from '@/components/groups/GroupPostComments';
+import { GroupJoinRequests } from '@/components/groups/GroupJoinRequests';
 import { cn } from '@/lib/utils';
 
 interface CommentDialogProps {
@@ -788,6 +789,11 @@ export default function GroupDetailsPage() {
 
             {/* Sidebar */}
             <div className="space-y-6">
+              {/* Join Requests (for admins) */}
+              {group.user_role && ['owner', 'admin', 'moderator'].includes(group.user_role) && (
+                <GroupJoinRequests groupId={group.group_id} />
+              )}
+
               {/* Members */}
               <Card className="p-6">
                 <h3 className="font-semibold mb-4">
