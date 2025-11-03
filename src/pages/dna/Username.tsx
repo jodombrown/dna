@@ -129,13 +129,6 @@ const DnaUserDashboard = () => {
                       <p className="text-muted-foreground mt-1">{profile.headline}</p>
                     )}
                   </div>
-
-                  {isOwnProfile && (
-                    <Button onClick={() => navigate('/app/profile/edit')}>
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit Profile
-                    </Button>
-                  )}
                 </div>
 
                 {/* Quick Info */}
