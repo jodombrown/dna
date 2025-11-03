@@ -8,6 +8,7 @@ import { MapPin, Briefcase, Users, Eye, Settings } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { ProfileDiscoveryTags } from '@/components/profile/ProfileDiscoveryTags';
 interface DashboardLeftColumnProps {
   profile: Profile;
   isOwnProfile: boolean;
@@ -62,6 +63,34 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
 
   return (
     <div className="space-y-3 md:space-y-4">
+      {/* About */}
+      {profile.bio && (
+        <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-dna-forest">About</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <p className="text-sm text-muted-foreground leading-relaxed">{profile.bio}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Areas of Focus & Expertise */}
+      <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium text-dna-forest">Areas of Focus & Expertise</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <ProfileDiscoveryTags
+            focusAreas={profile.focus_areas}
+            regionalExpertise={profile.regional_expertise}
+            industries={profile.industries}
+            skills={profile.skills}
+            interests={profile.interests}
+          />
+        </CardContent>
+      </Card>
+
       {/* Impact Areas */}
       {profile.impact_areas && profile.impact_areas.length > 0 && (
         <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">

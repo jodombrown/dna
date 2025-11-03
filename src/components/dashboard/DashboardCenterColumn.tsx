@@ -213,18 +213,6 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
         </CardContent>
       </Card>
 
-      {/* Professional Summary */}
-      {profile.bio && (
-        <Card className="transition-all duration-150 hover:shadow-lg">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base md:text-lg font-semibold">About</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <p className="text-muted-foreground leading-relaxed">{profile.bio}</p>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Diaspora Story */}
       {profile.diaspora_story && (
         <Card>
@@ -236,19 +224,6 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
           </CardContent>
         </Card>
       )}
-
-      {/* Discovery Tags & Expertise */}
-      <Card>
-        <CardContent className="pt-6">
-          <ProfileDiscoveryTags
-            focusAreas={profile.focus_areas}
-            regionalExpertise={profile.regional_expertise}
-            industries={profile.industries}
-            skills={profile.skills}
-            interests={profile.interests}
-          />
-        </CardContent>
-      </Card>
 
       {/* Profile Completion CTA */}
       {isOwnProfile && completionScore < 80 && (
