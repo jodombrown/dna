@@ -169,33 +169,6 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
         </CardContent>
       </Card>
 
-      {/* Quick Links */}
-      {isOwnProfile && (
-        <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-dna-forest">Quick Links</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <div className="space-y-1">
-              <Link to="/dna/connect" className="block">
-                <Button variant="ghost" size="sm" className="w-full justify-start">
-                  Find Connections
-                </Button>
-              </Link>
-              <Link to="/dna/network" className="block">
-                <Button variant="ghost" size="sm" className="w-full justify-start">
-                  Network
-                </Button>
-              </Link>
-              <Link to="/dna/impact" className="block">
-                <Button variant="ghost" size="sm" className="w-full justify-start">
-                  Explore Opportunities
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };
