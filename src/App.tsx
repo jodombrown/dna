@@ -26,6 +26,8 @@ import DnaFeed from "./pages/dna/Feed";
 import DnaEvents from "./pages/dna/Events";
 import DnaMessages from "./pages/dna/Messages";
 import DnaImpact from "./pages/dna/Impact";
+import DnaNotifications from "./pages/dna/Notifications";
+import DnaNotificationSettings from "./pages/dna/NotificationSettings";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -220,16 +222,19 @@ function App() {
               {/* ========== LEGACY ROUTES ========== */}
               <Route path="/dna/connect" element={<Navigate to="/dna/connect/network" replace />} />
               <Route path="/dna/convene" element={<Navigate to="/dna/convene/events" replace />} />
+              
+              {/* ========== NOTIFICATIONS ========== */}
               <Route path="/dna/notifications" element={
                 <OnboardingGuard>
-                  <NotificationsPage />
+                  <DnaNotifications />
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/notifications" element={
                 <OnboardingGuard>
-                  <NotificationSettingsPage />
+                  <DnaNotificationSettings />
                 </OnboardingGuard>
               } />
+              
               <Route path="/app/profile/edit" element={
                 <OnboardingGuard>
                   <ProfileEdit />

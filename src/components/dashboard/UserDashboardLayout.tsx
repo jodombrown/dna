@@ -17,10 +17,12 @@ import DashboardFeedColumn from './DashboardFeedColumn';
 import DashboardEventsColumn from './DashboardEventsColumn';
 import DashboardMessagesColumn from './DashboardMessagesColumn';
 import DashboardImpactColumn from './DashboardImpactColumn';
+import { DashboardNotificationsColumn } from './DashboardNotificationsColumn';
+import { DashboardNotificationSettingsColumn } from './DashboardNotificationSettingsColumn';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { useNavigate } from 'react-router-dom';
 
-type ViewMode = 'profile' | 'discover' | 'groups' | 'network' | 'feed' | 'events' | 'messages' | 'impact';
+type ViewMode = 'profile' | 'discover' | 'groups' | 'network' | 'feed' | 'events' | 'messages' | 'impact' | 'notifications' | 'notification-settings';
 
 interface UserDashboardLayoutProps {
   profile: Profile;
@@ -82,6 +84,10 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
                 <DashboardMessagesColumn profile={profile} isOwnProfile={isOwnProfile} />
               ) : viewMode === 'impact' ? (
                 <DashboardImpactColumn profile={profile} isOwnProfile={isOwnProfile} />
+              ) : viewMode === 'notifications' ? (
+                <DashboardNotificationsColumn />
+              ) : viewMode === 'notification-settings' ? (
+                <DashboardNotificationSettingsColumn />
               ) : (
                 <>
                   <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
@@ -114,6 +120,10 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
                   <DashboardMessagesColumn profile={profile} isOwnProfile={isOwnProfile} />
                 ) : viewMode === 'impact' ? (
                   <DashboardImpactColumn profile={profile} isOwnProfile={isOwnProfile} />
+                ) : viewMode === 'notifications' ? (
+                  <DashboardNotificationsColumn />
+                ) : viewMode === 'notification-settings' ? (
+                  <DashboardNotificationSettingsColumn />
                 ) : (
                   <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
                 )}
