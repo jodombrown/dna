@@ -49,6 +49,8 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
         return <Calendar className="h-4 w-4" />;
       case 'group_invite':
         return <Users className="h-4 w-4" />;
+      case 'profile_view':
+        return <UserPlus className="h-4 w-4" />;
       default:
         return <Bell className="h-4 w-4" />;
     }

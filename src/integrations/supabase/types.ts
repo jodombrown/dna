@@ -5123,6 +5123,19 @@ export type Database = {
         }
         Returns: string
       }
+      create_notification: {
+        Args: {
+          p_action_url?: string
+          p_actor_id: string
+          p_entity_id?: string
+          p_entity_type?: string
+          p_message: string
+          p_title: string
+          p_type: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       cron_overdue_task_reminders: { Args: never; Returns: undefined }
       discover_members: {
         Args: {
@@ -5601,6 +5614,10 @@ export type Database = {
       get_total_posts: { Args: never; Returns: number }
       get_total_unread_count: { Args: { p_user_id: string }; Returns: number }
       get_total_users: { Args: never; Returns: number }
+      get_unread_notification_count: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
       get_user_cohort: { Args: { target_user_id: string }; Returns: string }
       get_user_connections:
         | {
@@ -5646,6 +5663,30 @@ export type Database = {
           other_user_id: string
           other_user_username: string
           unread_count: number
+        }[]
+      }
+      get_user_notifications: {
+        Args: {
+          p_limit?: number
+          p_offset?: number
+          p_unread_only?: boolean
+          p_user_id: string
+        }
+        Returns: {
+          action_url: string
+          actor_avatar_url: string
+          actor_full_name: string
+          actor_id: string
+          actor_username: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          is_read: boolean
+          message: string
+          notification_id: string
+          read_at: string
+          title: string
+          type: string
         }[]
       }
       get_user_role: { Args: { user_id: string }; Returns: string }
@@ -5707,8 +5748,16 @@ export type Database = {
         Returns: undefined
       }
       make_user_admin: { Args: { user_email: string }; Returns: string }
+      mark_all_notifications_read: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       mark_conversation_read: {
         Args: { p_conversation_id: string; p_user_id: string }
+        Returns: undefined
+      }
+      mark_notifications_read: {
+        Args: { p_notification_ids: string[]; p_user_id: string }
         Returns: undefined
       }
       owns_organization: {

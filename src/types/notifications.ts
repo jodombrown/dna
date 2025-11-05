@@ -9,6 +9,7 @@ export type NotificationType =
   | 'event_invite'
   | 'event_reminder'
   | 'group_invite'
+  | 'profile_view'
   | 'system';
 
 export interface Notification {
