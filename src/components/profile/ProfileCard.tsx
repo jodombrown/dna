@@ -7,6 +7,7 @@ import { MapPin, Building, ExternalLink, Users, Calendar, Heart, MessageCircle }
 import { useNavigate } from 'react-router-dom';
 import { useMessage } from '@/contexts/MessageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 
 interface ProfileCardProps {
   profile: {
@@ -34,6 +35,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
   const navigate = useNavigate();
   const { openMessageOverlay } = useMessage();
   const { user } = useAuth();
+  const { data: connectionStatus } = useConnectionStatus(profile.id);
+  
+  const isConnected = connectionStatus === 'accepted';
 
   const handleConnectClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -199,8 +203,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
             </Button>
           )}
           
-          {/* Only show Message button if not viewing own profile */}
-          {user?.id !== profile.id && (
+          {/* Only show Message button if connected */}
+          {user?.id !== profile.id && isConnected && (
             <Button 
               size="sm" 
               variant="outline"

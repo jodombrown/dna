@@ -9,6 +9,7 @@ import { TYPOGRAPHY } from '@/lib/typography.config';
 import { Separator } from '@/components/ui/separator';
 import { useMessage } from '@/contexts/MessageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 
 interface EventDetailPanelProps {
   event: Event | null;
@@ -22,6 +23,9 @@ interface EventDetailPanelProps {
 const EventDetailPanel: React.FC<EventDetailPanelProps> = ({ event, onRegister }) => {
   const { openMessageOverlay } = useMessage();
   const { user } = useAuth();
+  const { data: connectionStatus } = useConnectionStatus(event?.creator_profile?.id);
+  
+  const isConnected = connectionStatus === 'accepted';
 
   const getInitials = (name: string) => {
     return name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?';
@@ -168,7 +172,7 @@ const EventDetailPanel: React.FC<EventDetailPanelProps> = ({ event, onRegister }
                   {event.creator_profile.full_name}
                 </p>
               </div>
-              {user?.id !== event.creator_profile.id && (
+              {user?.id !== event.creator_profile.id && isConnected && (
                 <Button
                   variant="outline"
                   size="sm"

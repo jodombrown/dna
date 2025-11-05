@@ -62,13 +62,23 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       setCurrentRecipientId(recipientId);
       setCurrentConversationId(conversation.id);
       setIsOverlayOpen(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to open conversation:', error);
-      toast({
-        title: 'Failed to start conversation',
-        description: 'Please try again',
-        variant: 'destructive',
-      });
+      
+      // Handle connection requirement error
+      if (error?.message?.includes('must be connected')) {
+        toast({
+          title: 'Connection Required',
+          description: 'You must be connected to message this member. Send them a connection request first.',
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Failed to start conversation',
+          description: 'Please try again',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
