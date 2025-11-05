@@ -4,23 +4,44 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import MinimalProfileStep from '@/components/onboarding/MinimalProfileStep';
-
-// Single step onboarding
+import { useOnboardingForm } from '@/components/onboarding/hooks/useOnboardingForm';
+import { OnboardingProgressBar } from '@/components/onboarding/OnboardingProgressBar';
+import IdentityStep from '@/components/onboarding/steps/IdentityStep';
+import ProfessionalStep from '@/components/onboarding/steps/ProfessionalStep';
+import DiasporaImpactStep from '@/components/onboarding/steps/DiasporaImpactStep';
+import DiscoveryStep from '@/components/onboarding/steps/DiscoveryStep';
+import { validateStep } from '@/components/onboarding/validation/onboardingStepValidation';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const Onboarding = () => {
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    first_name: user?.user_metadata?.full_name?.split(' ')[0] || '',
-    last_name: user?.user_metadata?.full_name?.split(' ').slice(1).join(' ') || '',
-    current_country: '',
-    avatar_url: user?.user_metadata?.picture || '',
-    professional_sectors: [] as string[],
-    interests: [] as string[]
-  });
+  const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Initialize form with any existing profile data
+  const { formData, updateField } = useOnboardingForm({
+    first_name: profile?.first_name || user?.user_metadata?.full_name?.split(' ')[0] || '',
+    last_name: profile?.last_name || user?.user_metadata?.full_name?.split(' ').slice(1).join(' ') || '',
+    avatar_url: profile?.avatar_url || user?.user_metadata?.picture || '',
+    current_country: profile?.current_country || '',
+    headline: profile?.headline || '',
+    profession: profile?.profession || '',
+    professional_role: profile?.professional_role || '',
+    professional_sectors: profile?.professional_sectors || [],
+    skills: profile?.skills || [],
+    years_experience: profile?.years_experience?.toString() || '',
+    country_of_origin: profile?.country_of_origin || '',
+    diaspora_origin: profile?.diaspora_origin || '',
+    interests: profile?.interests || [],
+    my_dna_statement: profile?.my_dna_statement || '',
+    focus_areas: profile?.focus_areas || [],
+    regional_expertise: profile?.regional_expertise || [],
+    industries: profile?.industries || [],
+    engagement_intentions: profile?.engagement_intentions || [],
+  });
 
   // Redirect if user is not authenticated
   useEffect(() => {
@@ -29,26 +50,59 @@ const Onboarding = () => {
     }
   }, [user, navigate]);
 
-  // If profile already exists and basic info is complete, redirect to dashboard
+  // If profile already has onboarding_completed_at, redirect to dashboard
   useEffect(() => {
-    if (profile && profile.first_name && profile.avatar_url) {
+    if (profile?.onboarding_completed_at) {
       navigate('/dna/me');
     }
   }, [profile, navigate]);
 
-  const updateFormData = (updates: Partial<typeof formData>) => {
-    setFormData(prev => ({ ...prev, ...updates }));
+  const handleNext = async () => {
+    // Validate current step
+    const validationErrors = validateStep(currentStep, formData);
+    
+    if (validationErrors.length > 0) {
+      const errorMap: Record<string, string> = {};
+      validationErrors.forEach(err => {
+        errorMap[err.field] = err.message;
+      });
+      setErrors(errorMap);
+      
+      toast({
+        title: "Please complete required fields",
+        description: `Step ${currentStep} has missing or invalid information.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Clear errors
+    setErrors({});
+
+    // If not on last step, advance
+    if (currentStep < 4) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // On final step, submit the profile
+    await handleSubmit();
   };
 
-  const canProceedToNext = () => {
-    return Boolean(
-      formData.first_name &&
-      formData.last_name &&
-      formData.current_country &&
-      formData.avatar_url &&
-      formData.professional_sectors.length > 0 &&
-      formData.interests.length > 0
-    );
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      setErrors({});
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleSkip = async () => {
+    // Only allow skipping step 4 (Discovery)
+    if (currentStep === 4) {
+      await handleSubmit();
+    }
   };
 
   const handleSubmit = async () => {
@@ -75,7 +129,7 @@ const Onboarding = () => {
           .from('profiles')
           .select('username')
           .eq('username', uniqueUsername)
-          .neq('id', user.id) // Don't count our own profile
+          .neq('id', user.id)
           .maybeSingle();
         
         if (!existingProfile) {
@@ -86,91 +140,107 @@ const Onboarding = () => {
         }
       }
 
-      // Create or update profile with minimal required data (only columns that exist)
-      let profileData: any = {
+      // Prepare profile data
+      const profileData: any = {
         id: user.id,
         email: user.email,
         full_name: fullName,
         first_name: formData.first_name,
         last_name: formData.last_name,
         username: uniqueUsername,
-        current_country: formData.current_country,
         avatar_url: formData.avatar_url,
-        // Map to existing column name in DB
-        sectors: formData.professional_sectors, // Array field
-        interests: formData.interests, // Array field
+        current_country: formData.current_country,
+        headline: formData.headline,
+        profession: formData.profession,
+        professional_role: formData.professional_role,
+        professional_sectors: formData.professional_sectors,
+        skills: formData.skills,
+        years_experience: formData.years_experience ? parseInt(formData.years_experience.split('-')[0]) : null,
+        country_of_origin: formData.country_of_origin,
+        diaspora_origin: formData.diaspora_origin || null,
+        interests: formData.interests,
+        my_dna_statement: formData.my_dna_statement,
+        focus_areas: formData.focus_areas,
+        regional_expertise: formData.regional_expertise,
+        industries: formData.industries,
+        engagement_intentions: formData.engagement_intentions,
         is_public: true,
-        onboarding_completed_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
 
-      console.log('Attempting to upsert profile with data:', {
-        ...profileData,
-        email: '***',  // Hide email in logs
-      });
-
-      const { error } = await supabase
+      // Upsert profile
+      const { error: upsertError } = await supabase
         .from('profiles')
         .upsert([profileData], { onConflict: 'id' });
 
-      if (error) {
-        console.error('Detailed error from Supabase:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        });
-
-        // Handle duplicate username gracefully (unique constraint violation)
-        if (
-          error.code === '23505' && (
-            error.message?.includes('unique_username') ||
-            error.details?.includes('unique_username') ||
-            error.message?.toLowerCase().includes('duplicate key')
-          )
-        ) {
+      if (upsertError) {
+        // Handle duplicate username
+        if (upsertError.code === '23505') {
           const fallbackUsername = `${baseUsername}-${Math.random().toString(36).slice(2,7)}`;
           profileData.username = fallbackUsername;
-          console.warn('Retrying upsert with fallback username:', fallbackUsername);
-
+          
           const retry = await supabase
             .from('profiles')
             .upsert([profileData], { onConflict: 'id' });
 
-          if (retry.error) {
-            console.error('Retry failed:', {
-              message: retry.error.message,
-              details: retry.error.details,
-              hint: retry.error.hint,
-              code: retry.error.code,
-            });
-            throw retry.error;
-          }
+          if (retry.error) throw retry.error;
         } else {
-          throw error;
+          throw upsertError;
         }
       }
 
-      // Wait a moment for DB to commit
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Wait for DB to commit
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Refresh the profile to get the updated data
+      // Calculate profile completion percentage
+      const { data: completionData, error: completionError } = await supabase
+        .rpc('calculate_profile_completion_percentage', { profile_id: user.id });
+
+      if (completionError) {
+        console.error('Error calculating completion:', completionError);
+      }
+
+      const completionPercentage = completionData || 0;
+
+      // ENFORCE 40% RULE
+      if (completionPercentage < 40) {
+        toast({
+          title: "Profile Incomplete",
+          description: `Your profile is ${Math.round(completionPercentage)}% complete. Please complete all required fields to reach 40%.`,
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Mark onboarding as complete
+      const { error: completeError } = await supabase
+        .from('profiles')
+        .update({ 
+          onboarding_completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id);
+
+      if (completeError) throw completeError;
+
+      // Refresh profile
       await refreshProfile();
 
       toast({
         title: "Welcome to DNA!",
-        description: "Your profile has been created successfully.",
+        description: `Your profile is ${Math.round(completionPercentage)}% complete. Let's start connecting!`,
       });
 
-      // Small delay before redirect to ensure profile is updated
+      // Redirect to dashboard
       setTimeout(() => {
         navigate('/dna/me');
       }, 100);
-    } catch (error) {
-      console.error('Error creating profile:', error);
+    } catch (error: any) {
+      console.error('Error completing onboarding:', error);
       toast({
         title: "Error",
-        description: "Failed to complete onboarding. Please try again.",
+        description: error.message || "Failed to complete onboarding. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -182,38 +252,125 @@ const Onboarding = () => {
     return null;
   }
 
+  // Calculate estimated completion based on current step and filled fields
+  const estimateCompletion = () => {
+    let baseCompletion = 0;
+    
+    if (currentStep >= 1) baseCompletion += 15;
+    if (currentStep >= 2) baseCompletion += 15;
+    if (currentStep >= 3) baseCompletion += 15;
+    if (currentStep >= 4) {
+      // Add partial completion for optional fields filled
+      if (formData.focus_areas.length > 0) baseCompletion += 5;
+      if (formData.regional_expertise.length > 0) baseCompletion += 5;
+      if (formData.industries.length > 0) baseCompletion += 5;
+      if (formData.engagement_intentions.length > 0) baseCompletion += 5;
+    }
+    
+    return Math.min(baseCompletion, 65);
+  };
+
+  const currentStepComponent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <IdentityStep
+            data={formData}
+            onUpdate={updateField}
+            errors={errors}
+          />
+        );
+      case 2:
+        return (
+          <ProfessionalStep
+            data={formData}
+            onUpdate={updateField}
+            errors={errors}
+          />
+        );
+      case 3:
+        return (
+          <DiasporaImpactStep
+            data={formData}
+            onUpdate={updateField}
+            errors={errors}
+          />
+        );
+      case 4:
+        return (
+          <DiscoveryStep
+            data={formData}
+            onUpdate={updateField}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-dna-forest mb-2">
-            Welcome to DNA Community
-          </h1>
-          <p className="text-muted-foreground">
-            Complete your profile in just one step to get started
-          </p>
+        <div className="text-center mb-6">
+          <div className="mb-6">
+            <img 
+              src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
+              alt="DNA Logo" 
+              className="w-16 h-16 mx-auto mb-4"
+            />
+          </div>
+          <OnboardingProgressBar
+            currentStep={currentStep}
+            totalSteps={4}
+            completionPercentage={estimateCompletion()}
+          />
         </div>
 
-        {/* Main Content */}
-        <MinimalProfileStep 
-          data={formData} 
-          updateData={updateFormData}
-        />
+        {/* Step Content */}
+        <div className="mb-8">
+          {currentStepComponent()}
+        </div>
 
-        {/* Submit Button */}
-        <div className="text-center mt-8">
+        {/* Navigation */}
+        <div className="flex items-center justify-between gap-4">
           <Button
-            onClick={handleSubmit}
-            disabled={!canProceedToNext() || isSubmitting}
-            className="bg-dna-copper hover:bg-dna-gold text-white px-8 py-3 text-lg"
-            size="lg"
+            variant="outline"
+            onClick={handleBack}
+            disabled={currentStep === 1 || isSubmitting}
+            className="flex items-center gap-2"
           >
-            {isSubmitting ? "Creating Your Profile..." : "Join DNA Community"}
+            <ArrowLeft className="h-4 w-4" />
+            Back
           </Button>
-          <p className="text-sm text-muted-foreground mt-2">
-            You can complete additional profile details later from your dashboard
-          </p>
+
+          <div className="flex items-center gap-3">
+            {currentStep === 4 && (
+              <Button
+                variant="ghost"
+                onClick={handleSkip}
+                disabled={isSubmitting}
+              >
+                Complete Later
+              </Button>
+            )}
+            <Button
+              onClick={handleNext}
+              disabled={isSubmitting}
+              className="bg-dna-copper hover:bg-dna-gold text-white flex items-center gap-2 px-6"
+            >
+              {isSubmitting ? (
+                "Saving..."
+              ) : currentStep === 4 ? (
+                "Complete & Explore DNA"
+              ) : (
+                <>
+                  Next
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
