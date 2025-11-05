@@ -72,5 +72,39 @@ export const profilesService = {
     
     if (error) throw error;
     return data;
+  },
+
+  // Get current user's full profile with realtime updates
+  async getCurrentUserProfile(userId: string) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
+    
+    if (error) throw error;
+    return data;
+  },
+
+  // Get projects and initiatives for a user
+  async getUserProjectsAndInitiatives(userId: string) {
+    const [projectsResult, initiativesResult] = await Promise.all([
+      supabase
+        .from('projects')
+        .select('*')
+        .eq('creator_id', userId)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('initiatives')
+        .select('*')
+        .eq('creator_id', userId)
+        .order('created_at', { ascending: false })
+    ]);
+
+    return {
+      projects: projectsResult.data || [],
+      initiatives: initiativesResult.data || [],
+    };
   }
 };

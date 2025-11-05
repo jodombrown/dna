@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useProfile } from '@/hooks/useProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -66,21 +67,8 @@ const ProfileEdit = () => {
     navigate('/');
   };
 
-  // Fetch current profile
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ['current-user-profile', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user?.id,
-  });
+  // Fetch current profile using unified hook
+  const { data: profile, isLoading } = useProfile();
 
   // Form state
   const [formData, setFormData] = useState<any>({});
@@ -155,7 +143,7 @@ const ProfileEdit = () => {
       return data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['current-user-profile', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
       
       const completionPercentage = data.profile_completion_percentage || 0;
       toast({
@@ -346,6 +334,98 @@ const ProfileEdit = () => {
             </CardContent>
           </Card>
 
+          {/* Professional Background */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Professional Background</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="profession">Profession</Label>
+                  <Input
+                    id="profession"
+                    placeholder="e.g., Software Engineer"
+                    value={formData.profession || ''}
+                    onChange={(e) => setFormData({ ...formData, profession: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="company">Company</Label>
+                  <Input
+                    id="company"
+                    placeholder="e.g., Tech Company Inc."
+                    value={formData.company || ''}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="years_experience">Years of Experience</Label>
+                <Input
+                  id="years_experience"
+                  type="number"
+                  min="0"
+                  value={formData.years_experience || 0}
+                  onChange={(e) => setFormData({ ...formData, years_experience: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+
+              <div>
+                <Label>Skills</Label>
+                <div className="flex gap-2 mb-2">
+                  <Input
+                    value={newSkill}
+                    onChange={(e) => setNewSkill(e.target.value)}
+                    placeholder="Add a skill"
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
+                  />
+                  <Button type="button" onClick={addSkill} size="sm">
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {formData.skills?.map((skill: string) => (
+                    <Badge key={skill} variant="secondary">
+                      {skill}
+                      <X
+                        className="w-3 h-3 ml-1 cursor-pointer"
+                        onClick={() => removeSkill(skill)}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <Label>Interests</Label>
+                <div className="flex gap-2 mb-2">
+                  <Input
+                    value={newInterest}
+                    onChange={(e) => setNewInterest(e.target.value)}
+                    placeholder="Add an interest"
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addInterest())}
+                  />
+                  <Button type="button" onClick={addInterest} size="sm">
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {formData.interests?.map((interest: string) => (
+                    <Badge key={interest} variant="secondary">
+                      {interest}
+                      <X
+                        className="w-3 h-3 ml-1 cursor-pointer"
+                        onClick={() => removeInterest(interest)}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* African Diaspora Identity */}
           <Card className="border-l-4 border-l-primary">
             <CardHeader>
@@ -466,7 +546,6 @@ const ProfileEdit = () => {
                 type="button"
                 variant="outline"
                 onClick={addAfricaFocusArea}
-                className="w-full"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Focus Area
@@ -474,125 +553,15 @@ const ProfileEdit = () => {
             </CardContent>
           </Card>
 
-          {/* Discovery & Matching Section */}
-          <Card className="border-l-4 border-l-dna-emerald">
-            <CardHeader>
-              <CardTitle>Discovery & Matching</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ProfileDiscoverySection
-                focusAreas={focusAreas}
-                regionalExpertise={regionalExpertise}
-                industries={industries}
-                onFocusAreasChange={setFocusAreas}
-                onRegionalExpertiseChange={setRegionalExpertise}
-                onIndustriesChange={setIndustries}
-              />
-            </CardContent>
-          </Card>
-
-          {/* Professional Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Professional Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="profession">Profession</Label>
-                  <Input
-                    id="profession"
-                    placeholder="Your current profession"
-                    value={formData.profession || ''}
-                    onChange={(e) => setFormData({ ...formData, profession: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="company">Company</Label>
-                  <Input
-                    id="company"
-                    placeholder="Current company"
-                    value={formData.company || ''}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="years_experience">Years of Experience</Label>
-                <Input
-                  id="years_experience"
-                  type="number"
-                  min="0"
-                  placeholder="0"
-                  value={formData.years_experience || ''}
-                  onChange={(e) => setFormData({ ...formData, years_experience: parseInt(e.target.value) || 0 })}
-                />
-              </div>
-
-              <div>
-                <Label>Skills</Label>
-                <div className="flex gap-2 mb-2">
-                  <Input
-                    placeholder="Add a skill"
-                    value={newSkill}
-                    onChange={(e) => setNewSkill(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addSkill();
-                      }
-                    }}
-                  />
-                  <Button type="button" variant="outline" onClick={addSkill}>
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {(formData.skills || []).map((skill: string) => (
-                    <Badge key={skill} variant="secondary" className="flex items-center gap-1">
-                      {skill}
-                      <X
-                        className="w-3 h-3 cursor-pointer"
-                        onClick={() => removeSkill(skill)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <Label>Interests</Label>
-                <div className="flex gap-2 mb-2">
-                  <Input
-                    placeholder="Add an interest"
-                    value={newInterest}
-                    onChange={(e) => setNewInterest(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addInterest();
-                      }
-                    }}
-                  />
-                  <Button type="button" variant="outline" onClick={addInterest}>
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {(formData.interests || []).map((interest: string) => (
-                    <Badge key={interest} variant="secondary" className="flex items-center gap-1">
-                      {interest}
-                      <X
-                        className="w-3 h-3 cursor-pointer"
-                        onClick={() => removeInterest(interest)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Discovery Tags */}
+          <ProfileDiscoverySection
+            focusAreas={focusAreas}
+            setFocusAreas={setFocusAreas}
+            regionalExpertise={regionalExpertise}
+            setRegionalExpertise={setRegionalExpertise}
+            industries={industries}
+            setIndustries={setIndustries}
+          />
 
           {/* Social Links */}
           <Card>
@@ -605,23 +574,23 @@ const ProfileEdit = () => {
                 <Input
                   id="linkedin_url"
                   type="url"
-                  placeholder="https://linkedin.com/in/username"
+                  placeholder="https://linkedin.com/in/yourprofile"
                   value={formData.linkedin_url || ''}
                   onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
                 />
               </div>
               <div>
-                <Label htmlFor="twitter_url">Twitter URL</Label>
+                <Label htmlFor="twitter_url">Twitter/X URL</Label>
                 <Input
                   id="twitter_url"
                   type="url"
-                  placeholder="https://twitter.com/username"
+                  placeholder="https://twitter.com/yourhandle"
                   value={formData.twitter_url || ''}
                   onChange={(e) => setFormData({ ...formData, twitter_url: e.target.value })}
                 />
               </div>
               <div>
-                <Label htmlFor="website_url">Website URL</Label>
+                <Label htmlFor="website_url">Personal Website</Label>
                 <Input
                   id="website_url"
                   type="url"
@@ -641,34 +610,41 @@ const ProfileEdit = () => {
             <CardContent>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Public Profile</Label>
+                  <Label htmlFor="is_public">Public Profile</Label>
                   <p className="text-sm text-muted-foreground">
-                    Make your profile visible to other community members
+                    Make your profile visible to other DNA members
                   </p>
                 </div>
                 <Switch
-                  checked={formData.is_public || false}
+                  id="is_public"
+                  checked={formData.is_public}
                   onCheckedChange={(checked) => setFormData({ ...formData, is_public: checked })}
                 />
               </div>
             </CardContent>
           </Card>
 
-          {/* Submit Button */}
-          <div className="flex flex-col gap-4">
+          {/* Submit Buttons */}
+          <div className="flex gap-4 justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate('/dna/me')}
+            >
+              Cancel
+            </Button>
             <div className="flex gap-4">
               <Button
                 type="button"
-                variant="outline"
-                onClick={() => navigate('/dna/me')}
-                className="flex-1"
+                variant="ghost"
+                onClick={handleSignOut}
               >
-                Cancel
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
               </Button>
               <Button
                 type="submit"
                 disabled={updateMutation.isPending}
-                className="flex-1"
               >
                 {updateMutation.isPending ? (
                   <>
@@ -683,15 +659,6 @@ const ProfileEdit = () => {
                 )}
               </Button>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleSignOut}
-              className="w-full text-destructive hover:bg-destructive/10 hover:text-destructive"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Sign Out
-            </Button>
           </div>
         </form>
       </div>

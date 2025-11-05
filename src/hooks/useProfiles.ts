@@ -1,14 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { profilesService, Profile } from '@/services/profilesService';
 
-export const useProfiles = (filters?: {
+export interface ProfileFilters {
   location?: string;
   skills?: string[];
   profession?: string;
   limit?: number;
-}) => {
+}
+
+export const useProfiles = (filters?: ProfileFilters) => {
   return useQuery({
-    queryKey: ['profiles', filters],
+    queryKey: ['public-profiles', filters],
     queryFn: () => profilesService.getPublicProfiles(filters),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

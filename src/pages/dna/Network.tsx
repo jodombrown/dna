@@ -1,25 +1,10 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useProfile } from '@/hooks/useProfile';
 import UserDashboardLayout from '@/components/dashboard/UserDashboardLayout';
 
 const DnaNetwork = () => {
   const { user } = useAuth();
-
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ['current-user-profile', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user?.id,
-  });
+  const { data: profile, isLoading } = useProfile();
 
   if (isLoading) {
     return (

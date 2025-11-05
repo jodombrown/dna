@@ -2,7 +2,7 @@
 import React from 'react';
 import ProfessionalsFilters from './ProfessionalsFilters';
 import ProfessionalListItem from './ProfessionalListItem';
-import { usePublicProfiles } from '@/hooks/usePublicProfiles';
+import { useProfiles } from '@/hooks/useProfiles';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 import { MockProfessional, mockProfessionals } from './ProfessionalsMockData';
