@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MatchScoreBadge } from "./MatchScoreBadge";
 import { BANNER_GRADIENTS, BannerGradientKey } from "@/lib/constants/bannerGradients";
 import { useNavigate } from "react-router-dom";
+import { ProfileViewTracker } from "@/components/analytics/ProfileViewTracker";
 
 interface DiscoveryCardProps {
   profile: {
@@ -47,7 +48,11 @@ export function DiscoveryCard({ profile }: DiscoveryCardProps) {
     .slice(0, 2);
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <>
+      {/* Track card view as profile impression */}
+      <ProfileViewTracker profileId={profile.id} viewType="discovery_card" />
+      
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       {/* Banner */}
       <div 
         className="h-20 w-full relative"
@@ -136,5 +141,6 @@ export function DiscoveryCard({ profile }: DiscoveryCardProps) {
         </Button>
       </div>
     </Card>
+    </>
   );
 }

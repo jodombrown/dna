@@ -12,6 +12,7 @@ import ConnectionRequestCard from '@/components/network/ConnectionRequestCard';
 import NetworkSearch from '@/components/network/NetworkSearch';
 import SuggestionsTab from '@/components/network/SuggestionsTab';
 import { Profile } from '@/services/profilesService';
+import { ProfileViewersWidget } from '@/components/analytics/ProfileViewersWidget';
 
 interface DashboardNetworkColumnProps {
   profile: Profile;
@@ -91,6 +92,11 @@ export default function DashboardNetworkColumn({ profile, isOwnProfile }: Dashbo
 
   return (
     <div className="space-y-4">
+      {/* Profile Viewers Widget - Only show for own profile */}
+      {isOwnProfile && (
+        <ProfileViewersWidget profileId={profile.id} />
+      )}
+      
       <div>
         <h2 className="text-2xl font-bold text-foreground mb-1">My Network</h2>
         <p className="text-sm text-muted-foreground">Manage your connections and requests</p>

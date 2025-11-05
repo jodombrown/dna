@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
 
 interface ConnectionCardProps {
   connection: {
@@ -57,7 +58,11 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, onMessage }
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <>
+      {/* Track connection card view */}
+      <ProfileViewTracker profileId={connection.id} viewType="connection_card" />
+      
+      <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           <Avatar className="w-16 h-16">
@@ -103,6 +108,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, onMessage }
         </div>
       </CardContent>
     </Card>
+    </>
   );
 };
 

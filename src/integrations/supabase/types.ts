@@ -5568,6 +5568,19 @@ export type Database = {
           username: string
         }[]
       }
+      get_profile_viewers: {
+        Args: { p_limit?: number; p_offset?: number; p_profile_id: string }
+        Returns: {
+          is_connected: boolean
+          last_viewed_at: string
+          view_count: number
+          viewer_avatar_url: string
+          viewer_full_name: string
+          viewer_headline: string
+          viewer_id: string
+          viewer_username: string
+        }[]
+      }
       get_public_profiles: {
         Args: { p_limit?: number; p_user_id?: string }
         Returns: {

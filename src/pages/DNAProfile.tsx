@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
 
 export default function DNAProfile() {
   const { username } = useParams();
@@ -46,6 +47,9 @@ export default function DNAProfile() {
 
   return (
     <div className="max-w-5xl mx-auto p-4 space-y-6">
+      {/* Track profile views */}
+      {p.id && <ProfileViewTracker profileId={p.id} viewType="profile_page" />}
+      
       <Card>
         <CardHeader>
           <CardTitle>Profile</CardTitle>
