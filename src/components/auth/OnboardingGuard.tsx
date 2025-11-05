@@ -20,7 +20,7 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
       
       const { data, error } = await supabase
         .from('profiles')
-        .select('onboarding_completed_at, username')
+        .select('onboarding_completed_at, username, profile_completion_percentage')
         .eq('id', user.id)
         .single();
       
@@ -45,16 +45,23 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
       return;
     }
 
-    // If onboarding incomplete and not already on onboarding page
-    if (!profile?.onboarding_completed_at && location.pathname !== '/onboarding') {
-      console.log('OnboardingGuard: Onboarding incomplete, redirecting to /onboarding');
+    const completionPercentage = profile?.profile_completion_percentage || 0;
+    const hasCompletedOnboarding = profile?.onboarding_completed_at;
+
+    // CRITICAL: Enforce 40% minimum profile completion
+    // Users must complete onboarding AND reach 40% completion to access platform
+    const meetsMinimumRequirement = hasCompletedOnboarding && completionPercentage >= 40;
+
+    // If requirements not met and not already on onboarding page, redirect
+    if (!meetsMinimumRequirement && location.pathname !== '/onboarding') {
+      console.log(`OnboardingGuard: Requirements not met (completed: ${hasCompletedOnboarding}, completion: ${completionPercentage}%), redirecting to /onboarding`);
       navigate('/onboarding', { replace: true });
       return;
     }
 
-    // If onboarding complete but trying to access onboarding page, redirect to dashboard
-    if (profile?.onboarding_completed_at && location.pathname === '/onboarding') {
-      console.log('OnboardingGuard: Onboarding complete, redirecting to /dna/me');
+    // If requirements met but trying to access onboarding page, redirect to dashboard
+    if (meetsMinimumRequirement && location.pathname === '/onboarding') {
+      console.log('OnboardingGuard: Requirements met, redirecting to /dna/me');
       navigate('/dna/me', { replace: true });
     }
   }, [profile, user, authLoading, profileLoading, navigate, location.pathname]);
