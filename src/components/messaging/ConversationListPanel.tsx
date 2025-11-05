@@ -120,17 +120,19 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                 <button
                   key={conversation.conversation_id}
                   onClick={() => onSelectConversation(conversation.conversation_id)}
-                  className={`w-full p-4 hover:bg-accent transition-colors text-left ${
+                   className={`w-full p-4 hover:bg-accent transition-colors text-left ${
                     selectedConversationId === conversation.conversation_id ? 'bg-accent' : ''
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <Avatar className="w-12 h-12">
-                      <AvatarImage src={conversation.other_user_avatar_url || ''} />
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        {getInitials(conversation.other_user_full_name || '')}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div className="relative">
+                      <Avatar className="w-12 h-12">
+                        <AvatarImage src={conversation.other_user_avatar_url || ''} />
+                        <AvatarFallback className="bg-primary text-primary-foreground">
+                          {getInitials(conversation.other_user_full_name || '')}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
                         <p className={`font-semibold text-sm truncate ${hasUnread ? 'text-primary' : ''}`}>

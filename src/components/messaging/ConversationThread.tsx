@@ -7,10 +7,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2, Send, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
+import { messageService } from '@/services/messageService';
 
 interface ConversationThreadProps {
   conversationId: string;
@@ -37,9 +38,12 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const [messageInput, setMessageInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [typingUsers, setTypingUsers] = useState<Array<{ user_id: string; display_name: string }>>([]);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
   // Fetch conversation details
   const { data: conversations } = useQuery({
@@ -54,16 +58,47 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
 
   // Send message mutation
   const sendMessageMutation = useMutation({
-    mutationFn: (content: string) => messagingService.sendMessage(conversationId, content),
+    mutationFn: (content: string) => messageService.sendMessage(conversationId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
       setMessageInput('');
+      // Stop typing indicator on send
+      if (user && isTyping) {
+        setIsTyping(false);
+        messageService.broadcastTyping(conversationId, user.id, '', false);
+      }
     },
     onError: () => {
       toast({ title: 'Failed to send message', variant: 'destructive' });
     },
   });
+
+  // Subscribe to realtime updates, typing, and presence
+  useEffect(() => {
+    if (!conversationId || !user) return;
+
+    const typingChannel = messageService.subscribeToTyping(conversationId, (users) => {
+      // Filter out current user from typing indicators
+      setTypingUsers(users.filter(u => u.user_id !== user.id));
+    });
+
+    const presenceChannel = messageService.subscribeToPresence(conversationId, (presences) => {
+      setOnlineUsers(presences.map(p => p.user_id));
+    });
+
+    // Track own presence
+    const ownPresenceChannel = messageService.trackPresence(conversationId, user.id, {
+      display_name: conversation?.other_user_full_name || 'User',
+      avatar_url: conversation?.other_user_avatar_url,
+    });
+
+    return () => {
+      typingChannel.unsubscribe();
+      presenceChannel.unsubscribe();
+      ownPresenceChannel.unsubscribe();
+    };
+  }, [conversationId, user, conversation]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -73,7 +108,7 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
   // Mark as read
   useEffect(() => {
     if (conversationId) {
-      messagingService.markAsRead(conversationId);
+      messageService.markAsRead(conversationId);
     }
   }, [conversationId]);
 
@@ -86,7 +121,30 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
-    // TODO: Implement typing indicator broadcast
+
+    // Broadcast typing indicator
+    if (!isTyping && e.target.value.length > 0 && user) {
+      setIsTyping(true);
+      messageService.broadcastTyping(
+        conversationId,
+        user.id,
+        conversation?.other_user_full_name || 'User',
+        true
+      );
+    }
+
+    // Clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Set timeout to stop typing indicator
+    typingTimeoutRef.current = setTimeout(() => {
+      if (user) {
+        setIsTyping(false);
+        messageService.broadcastTyping(conversationId, user.id, '', false);
+      }
+    }, 2000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -113,21 +171,29 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
       {/* Thread Header */}
       {!isOverlay && (
         <div className="p-4 border-b flex items-center gap-3 bg-card">
-          <Avatar className="w-10 h-10">
-            <AvatarImage src={conversation.other_user_avatar_url || ''} />
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {getInitials(conversation.other_user_full_name || '')}
-            </AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className="w-10 h-10">
+              <AvatarImage src={conversation.other_user_avatar_url || ''} />
+              <AvatarFallback className="bg-primary text-primary-foreground">
+                {getInitials(conversation.other_user_full_name || '')}
+              </AvatarFallback>
+            </Avatar>
+            {onlineUsers.includes(conversation.other_user_id || '') && (
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
+            )}
+          </div>
           <div className="flex-1">
             <p className="font-semibold">{conversation.other_user_full_name}</p>
             {conversation.other_user_headline && (
               <p className="text-xs text-muted-foreground">{conversation.other_user_headline}</p>
             )}
+            {onlineUsers.includes(conversation.other_user_id || '') && (
+              <p className="text-xs text-green-600">Active now</p>
+            )}
           </div>
           {onClose && (
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              ×
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="h-5 w-5" />
             </Button>
           )}
         </div>
@@ -151,16 +217,18 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
                 key={message.message_id}
                 message={message}
                 isOwnMessage={message.sender_id === user?.id}
+                showReadReceipt={true}
+                isRead={conversation?.last_message_sender_id === user?.id}
               />
             ))}
-            {isTyping && (
-              <TypingIndicator 
-                users={[{ 
-                  user_id: conversation.other_user_id || '', 
-                  display_name: conversation.other_user_full_name || 'User' 
-                }]} 
-              />
+            
+            {/* Typing Indicator */}
+            {typingUsers.length > 0 && (
+              <div className="px-4">
+                <TypingIndicator users={typingUsers} />
+              </div>
             )}
+            
             <div ref={messagesEndRef} />
           </div>
         )}

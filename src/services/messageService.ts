@@ -217,6 +217,143 @@ export const messageService = {
   },
 
   /**
+   * Broadcast typing status to conversation participants
+   * 
+   * Uses Supabase broadcast for low-latency typing indicator updates.
+   * No persistence - ephemeral state only.
+   * 
+   * @param conversationId - ID of the conversation
+   * @param userId - ID of the user typing
+   * @param displayName - Display name of the user
+   * @param isTyping - Whether user is currently typing
+   * @returns Supabase channel
+   */
+  broadcastTyping(conversationId: string, userId: string, displayName: string, isTyping: boolean) {
+    const channel = supabase.channel(`typing:${conversationId}`);
+    
+    channel.subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        channel.send({
+          type: 'broadcast',
+          event: 'typing',
+          payload: { userId, displayName, isTyping },
+        });
+      }
+    });
+
+    return channel;
+  },
+
+  /**
+   * Subscribe to typing indicators in a conversation
+   * 
+   * Manages typing state with automatic timeout after 3 seconds.
+   * Filters typing users and notifies via callback.
+   * 
+   * @param conversationId - ID of the conversation
+   * @param onTypingChange - Callback with current typing users
+   * @returns Supabase channel
+   */
+  subscribeToTyping(
+    conversationId: string,
+    onTypingChange: (users: Array<{ user_id: string; display_name: string }>) => void
+  ) {
+    const typingUsers = new Map<string, { user_id: string; display_name: string; timeout?: NodeJS.Timeout }>();
+
+    const channel = supabase
+      .channel(`typing:${conversationId}`)
+      .on('broadcast', { event: 'typing' }, ({ payload }) => {
+        const { userId, displayName, isTyping } = payload;
+
+        if (isTyping) {
+          // Clear existing timeout
+          const existing = typingUsers.get(userId);
+          if (existing?.timeout) {
+            clearTimeout(existing.timeout);
+          }
+
+          // Add user to typing list with auto-remove timeout
+          const timeout = setTimeout(() => {
+            typingUsers.delete(userId);
+            onTypingChange(Array.from(typingUsers.values()));
+          }, 3000);
+
+          typingUsers.set(userId, { user_id: userId, display_name: displayName, timeout });
+        } else {
+          // Remove user from typing list
+          const existing = typingUsers.get(userId);
+          if (existing?.timeout) {
+            clearTimeout(existing.timeout);
+          }
+          typingUsers.delete(userId);
+        }
+
+        onTypingChange(Array.from(typingUsers.values()));
+      })
+      .subscribe();
+
+    return channel;
+  },
+
+  /**
+   * Track user presence in a conversation
+   * 
+   * Broadcasts user's online status using Supabase Presence API.
+   * Auto-expires when user disconnects.
+   * 
+   * @param conversationId - ID of the conversation
+   * @param userId - ID of the user
+   * @param userData - Additional user data (name, avatar)
+   * @returns Supabase channel
+   */
+  trackPresence(conversationId: string, userId: string, userData: { display_name: string; avatar_url?: string }) {
+    const channel = supabase.channel(`presence:${conversationId}`, {
+      config: { presence: { key: userId } },
+    });
+
+    channel.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await channel.track({
+          user_id: userId,
+          online_at: new Date().toISOString(),
+          ...userData,
+        });
+      }
+    });
+
+    return channel;
+  },
+
+  /**
+   * Subscribe to presence updates in a conversation
+   * 
+   * Listens for users joining/leaving the conversation.
+   * Returns array of currently online users.
+   * 
+   * @param conversationId - ID of the conversation
+   * @param onPresenceChange - Callback with online users
+   * @returns Supabase channel
+   */
+  subscribeToPresence(
+    conversationId: string,
+    onPresenceChange: (presences: Array<{ user_id: string; online_at: string }>) => void
+  ) {
+    const channel = supabase.channel(`presence:${conversationId}`);
+
+    channel.on('presence', { event: 'sync' }, () => {
+      const state = channel.presenceState();
+      const presences = Object.values(state).flat().map((p: any) => ({
+        user_id: p.user_id,
+        online_at: p.online_at,
+      }));
+      onPresenceChange(presences);
+    });
+
+    channel.subscribe();
+    return channel;
+  },
+
+  /**
    * Subscribe to conversation list updates
    * 
    * Listens for new messages across all conversations to update the list.
