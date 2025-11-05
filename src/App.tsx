@@ -35,6 +35,7 @@ import AdminEngagement from "./pages/admin/AdminEngagement";
 import AdminSignals from "./pages/admin/AdminSignals";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
 import FeedComingSoon from "./pages/FeedComingSoon";
+import Analytics from "./pages/Analytics";
 
 // Static pages  
 import About from "./pages/About";
@@ -232,6 +233,13 @@ function App() {
               <Route path="/dna/settings/notifications" element={
                 <OnboardingGuard>
                   <DnaNotificationSettings />
+                </OnboardingGuard>
+              } />
+              
+              {/* ========== ANALYTICS ========== */}
+              <Route path="/dna/analytics" element={
+                <OnboardingGuard>
+                  <Analytics />
                 </OnboardingGuard>
               } />
               
