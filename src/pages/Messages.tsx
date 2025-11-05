@@ -33,7 +33,7 @@ export default function MessagesPage() {
   // Fetch conversations
   const { data: conversations, isLoading } = useQuery({
     queryKey: ['conversations'],
-    queryFn: messagingService.getConversations,
+    queryFn: () => messagingService.getConversations(),
   });
 
   const selectedConversation = conversations?.find(c => c.conversation_id === selectedConversationId);

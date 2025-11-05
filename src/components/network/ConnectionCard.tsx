@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MessageCircle, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
+import { messageService } from '@/services/messageService';
 
 interface ConnectionCardProps {
   connection: {
@@ -39,19 +39,13 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, onMessage }
     if (!user) return;
     
     try {
-      const { data: conversationId, error } = await supabase.rpc('get_or_create_conversation', {
-        user1_id: user.id,
-        user2_id: connection.id,
-      });
-
-      if (error) throw error;
-      
-      navigate(`/dna/messages/${conversationId}`);
-    } catch (error) {
+      const conversation = await messageService.getOrCreateConversation(connection.id);
+      navigate(`/dna/connect/messages/${conversation.id}`);
+    } catch (error: any) {
       console.error('Error creating conversation:', error);
       toast({
         title: 'Error',
-        description: 'Failed to start conversation',
+        description: error.message || 'Failed to start conversation',
         variant: 'destructive',
       });
     }

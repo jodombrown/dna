@@ -44,7 +44,7 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
   // Fetch conversation details
   const { data: conversations } = useQuery({
     queryKey: ['conversations'],
-    queryFn: messagingService.getConversations,
+    queryFn: () => messagingService.getConversations(),
   });
 
   const conversation = conversations?.find(c => c.conversation_id === conversationId);
