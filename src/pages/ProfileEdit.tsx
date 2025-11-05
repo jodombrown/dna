@@ -556,11 +556,11 @@ const ProfileEdit = () => {
           {/* Discovery Tags */}
           <ProfileDiscoverySection
             focusAreas={focusAreas}
-            setFocusAreas={setFocusAreas}
             regionalExpertise={regionalExpertise}
-            setRegionalExpertise={setRegionalExpertise}
             industries={industries}
-            setIndustries={setIndustries}
+            onFocusAreasChange={setFocusAreas}
+            onRegionalExpertiseChange={setRegionalExpertise}
+            onIndustriesChange={setIndustries}
           />
 
           {/* Social Links */}

@@ -14,7 +14,7 @@ interface ProfessionalsTabProps {
 const ProfessionalsTab: React.FC<ProfessionalsTabProps> = ({ searchTerm }) => {
   const { user } = useAuth();
 
-  const { data: profiles, isLoading } = usePublicProfiles({
+  const { data: profiles, isLoading } = useProfiles({
     limit: 50,
   });
 
