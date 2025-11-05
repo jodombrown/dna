@@ -27,7 +27,7 @@ import DnaEvents from "./pages/dna/Events";
 import DnaMessages from "./pages/dna/Messages";
 import DnaImpact from "./pages/dna/Impact";
 import DnaNotifications from "./pages/dna/Notifications";
-import DnaNotificationSettings from "./pages/dna/NotificationSettings";
+import DnaAnalytics from "./pages/dna/Analytics";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -35,7 +35,6 @@ import AdminEngagement from "./pages/admin/AdminEngagement";
 import AdminSignals from "./pages/admin/AdminSignals";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
 import FeedComingSoon from "./pages/FeedComingSoon";
-import Analytics from "./pages/Analytics";
 
 // Static pages  
 import About from "./pages/About";
@@ -230,16 +229,10 @@ function App() {
                   <DnaNotifications />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/settings/notifications" element={
-                <OnboardingGuard>
-                  <DnaNotificationSettings />
-                </OnboardingGuard>
-              } />
-              
               {/* ========== ANALYTICS ========== */}
               <Route path="/dna/analytics" element={
                 <OnboardingGuard>
-                  <Analytics />
+                  <DnaAnalytics />
                 </OnboardingGuard>
               } />
               

@@ -13,13 +13,16 @@ import {
   LogOut,
   ChevronRight,
   Settings as SettingsIcon,
-  Trash2
+  Trash2,
+  BarChart3
 } from 'lucide-react';
 import ConfirmDialog from '@/components/ui/confirm-dialog';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 const MobileSettingsView = () => {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
   const [deleteOpen, setDeleteOpen] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
 
@@ -47,7 +50,8 @@ const MobileSettingsView = () => {
         { label: 'Personal Information', description: 'Update your profile details', action: () => {} },
         { label: 'Professional Details', description: 'Manage your work information', action: () => {} },
         { label: 'African Diaspora Identity', description: 'Share your heritage and background', action: () => {} },
-        { label: 'Privacy Settings', description: 'Control who can see your information', action: () => {} }
+        { label: 'Privacy Settings', description: 'Control who can see your information', action: () => {} },
+        { label: 'Analytics', description: 'View your profile performance and engagement', action: () => navigate('/dna/analytics') }
       ]
     },
     {

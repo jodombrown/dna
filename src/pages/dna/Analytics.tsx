@@ -2,7 +2,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import UserDashboardLayout from '@/components/dashboard/UserDashboardLayout';
 
-const DnaNotificationSettings = () => {
+const DnaAnalytics = () => {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
 
@@ -18,7 +18,7 @@ const DnaNotificationSettings = () => {
     return null;
   }
 
-  return <UserDashboardLayout profile={profile} currentUser={user} viewMode="notification-settings" />;
+  return <UserDashboardLayout profile={profile} currentUser={user} viewMode="analytics" />;
 };
 
-export default DnaNotificationSettings;
+export default DnaAnalytics;

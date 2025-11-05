@@ -19,10 +19,11 @@ import DashboardMessagesColumn from './DashboardMessagesColumn';
 import DashboardImpactColumn from './DashboardImpactColumn';
 import { DashboardNotificationsColumn } from './DashboardNotificationsColumn';
 import { DashboardNotificationSettingsColumn } from './DashboardNotificationSettingsColumn';
+import { DashboardAnalyticsColumn } from './DashboardAnalyticsColumn';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { useNavigate } from 'react-router-dom';
 
-type ViewMode = 'profile' | 'discover' | 'groups' | 'network' | 'feed' | 'events' | 'messages' | 'impact' | 'notifications' | 'notification-settings';
+type ViewMode = 'profile' | 'discover' | 'groups' | 'network' | 'feed' | 'events' | 'messages' | 'impact' | 'notifications' | 'notification-settings' | 'analytics';
 
 interface UserDashboardLayoutProps {
   profile: Profile;
@@ -88,6 +89,8 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
                 <DashboardNotificationsColumn />
               ) : viewMode === 'notification-settings' ? (
                 <DashboardNotificationSettingsColumn />
+              ) : viewMode === 'analytics' ? (
+                <DashboardAnalyticsColumn />
               ) : (
                 <>
                   <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
@@ -124,6 +127,8 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
                   <DashboardNotificationsColumn />
                 ) : viewMode === 'notification-settings' ? (
                   <DashboardNotificationSettingsColumn />
+                ) : viewMode === 'analytics' ? (
+                  <DashboardAnalyticsColumn />
                 ) : (
                   <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
                 )}
