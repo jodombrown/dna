@@ -1,4 +1,4 @@
-export type ConnectionStatus = 'none' | 'pending_sent' | 'pending_received' | 'accepted' | 'declined';
+export type ConnectionStatus = 'none' | 'pending_sent' | 'pending_received' | 'accepted' | 'declined' | 'blocked';
 
 export interface Connection {
   id: string;

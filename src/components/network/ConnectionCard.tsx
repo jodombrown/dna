@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
 import { messageService } from '@/services/messageService';
+import { ConnectionActionsMenu } from '@/components/connections/ConnectionActionsMenu';
 
 interface ConnectionCardProps {
   connection: {
@@ -18,11 +19,13 @@ interface ConnectionCardProps {
     professional_role?: string;
     headline?: string;
     location?: string;
+    username?: string;
   };
+  connectionId?: string; // The ID of the connection record (for removal)
   onMessage?: (userId: string) => void;
 }
 
-const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, onMessage }) => {
+const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionId, onMessage }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -80,11 +83,11 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, onMessage }
                 {connection.location}
               </Badge>
             )}
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-2 mt-3 items-center">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate(`/dna/profile/${connection.id}`)}
+                onClick={() => navigate(`/dna/${connection.username || `profile/${connection.id}`}`)}
               >
                 <User className="w-4 h-4 mr-2" />
                 View Profile
@@ -97,6 +100,16 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, onMessage }
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Message
               </Button>
+              
+              {/* Connection Actions Menu */}
+              {connectionId && (
+                <ConnectionActionsMenu
+                  connectionId={connectionId}
+                  userId={connection.id}
+                  userName={connection.full_name}
+                  onMessage={handleMessage}
+                />
+              )}
             </div>
           </div>
         </div>

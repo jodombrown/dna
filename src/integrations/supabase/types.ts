@@ -312,6 +312,30 @@ export type Database = {
           },
         ]
       }
+      blocked_users: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       causes: {
         Row: {
           created_at: string | null
@@ -5022,6 +5046,10 @@ export type Database = {
         Args: { u1: string; u2: string }
         Returns: boolean
       }
+      block_user: {
+        Args: { p_blocked_user_id: string; p_reason?: string }
+        Returns: undefined
+      }
       calculate_impact_score: {
         Args: { target_user_id: string }
         Returns: number
@@ -5217,6 +5245,18 @@ export type Database = {
         Returns: string
       }
       get_active_users_this_week: { Args: never; Returns: number }
+      get_blocked_users: {
+        Args: { p_user_id: string }
+        Returns: {
+          block_id: string
+          blocked_at: string
+          blocked_avatar_url: string
+          blocked_full_name: string
+          blocked_user_id: string
+          blocked_username: string
+          reason: string
+        }[]
+      }
       get_connection_requests: {
         Args: { user_id: string }
         Returns: {
@@ -5725,6 +5765,10 @@ export type Database = {
         Returns: boolean
       }
       is_prelaunch_locked: { Args: never; Returns: boolean }
+      is_user_blocked: {
+        Args: { p_other_user_id: string; p_user_id: string }
+        Returns: boolean
+      }
       log_connection_event: {
         Args: { p_connection: string; p_event_type: string; p_payload?: Json }
         Returns: string
@@ -5782,6 +5826,10 @@ export type Database = {
         Returns: number
       }
       reject_html: { Args: { _txt: string }; Returns: boolean }
+      remove_connection: {
+        Args: { p_connection_id: string }
+        Returns: undefined
+      }
       remove_message_reaction: {
         Args: { p_message_id: string; p_reaction: string; p_user_id: string }
         Returns: undefined
@@ -6104,6 +6152,7 @@ export type Database = {
         Args: { event_type: string; target_user_id: string }
         Returns: undefined
       }
+      unblock_user: { Args: { p_blocked_user_id: string }; Returns: undefined }
       update_adin_last_active: {
         Args: { target_user_id: string }
         Returns: undefined
