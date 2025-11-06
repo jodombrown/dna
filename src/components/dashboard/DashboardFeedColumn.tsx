@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { PostCard } from '@/components/posts/PostCard';
 import { PostComments } from '@/components/posts/PostComments';
 import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useFeedPosts } from '@/hooks/useFeedPosts';
+import { useInfiniteFeedPosts } from '@/hooks/useInfiniteFeedPosts';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { PenSquare, Users, Sparkles, Image as ImageIcon, Video, FileText } from 'lucide-react';
+import { PenSquare, Users, Sparkles, Image as ImageIcon, Video, FileText, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Profile } from '@/services/profilesService';
 
@@ -24,7 +24,43 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
 
-  const { data: posts, refetch, isLoading, error } = useFeedPosts(activeTab, user?.id);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error,
+    refetch,
+  } = useInfiniteFeedPosts(activeTab, user?.id);
+
+  // Infinite scroll observer
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  // Flatten all pages into a single posts array
+  const posts = data?.pages.flatMap((page) => page.posts) ?? [];
 
   useEffect(() => {
     if (!user) return;
@@ -175,7 +211,7 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
             Loading posts...
           </div>
-        ) : posts && posts.length === 0 ? (
+        ) : posts.length === 0 ? (
           <div className="text-center py-12 bg-muted/30 rounded-lg">
             <Users className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">
@@ -190,19 +226,36 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
             </p>
           </div>
         ) : (
-          posts?.map((post) => (
-            <div key={post.post_id}>
-              <PostCard
-                post={post}
-                currentUserId={user?.id || ''}
-                onUpdate={refetch}
-                onCommentClick={() => handleCommentClick(post.post_id)}
-              />
-              {expandedPostId === post.post_id && (
-                <PostComments postId={post.post_id} currentUserId={user?.id || ''} />
+          <>
+            {posts.map((post) => (
+              <div key={post.post_id}>
+                <PostCard
+                  post={post}
+                  currentUserId={user?.id || ''}
+                  onUpdate={refetch}
+                  onCommentClick={() => handleCommentClick(post.post_id)}
+                />
+                {expandedPostId === post.post_id && (
+                  <PostComments postId={post.post_id} currentUserId={user?.id || ''} />
+                )}
+              </div>
+            ))}
+
+            {/* Infinite scroll trigger */}
+            <div ref={observerTarget} className="py-8">
+              {isFetchingNextPage && (
+                <div className="text-center text-muted-foreground">
+                  <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2" />
+                  <p className="text-sm">Loading more posts...</p>
+                </div>
+              )}
+              {!hasNextPage && posts.length > 0 && (
+                <div className="text-center text-muted-foreground">
+                  <p className="text-sm">You've reached the end</p>
+                </div>
               )}
             </div>
-          ))
+          </>
         )}
       </div>
 
