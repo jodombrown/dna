@@ -3559,8 +3559,11 @@ export type Database = {
           link_title: string | null
           link_url: string | null
           metadata: Json | null
+          original_post_id: string | null
           post_type: string
           privacy_level: string
+          share_commentary: string | null
+          shared_by: string | null
           updated_at: string
         }
         Insert: {
@@ -3574,8 +3577,11 @@ export type Database = {
           link_title?: string | null
           link_url?: string | null
           metadata?: Json | null
+          original_post_id?: string | null
           post_type?: string
           privacy_level?: string
+          share_commentary?: string | null
+          shared_by?: string | null
           updated_at?: string
         }
         Update: {
@@ -3589,11 +3595,29 @@ export type Database = {
           link_title?: string | null
           link_url?: string | null
           metadata?: Json | null
+          original_post_id?: string | null
           post_type?: string
           privacy_level?: string
+          share_commentary?: string | null
+          shared_by?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "posts_original_post_id_fkey"
+            columns: ["original_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_shared_by_fkey"
+            columns: ["shared_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profile_causes: {
         Row: {
