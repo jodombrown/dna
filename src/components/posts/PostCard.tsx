@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PostWithAuthor } from '@/types/posts';
-import { MessageCircle, MoreHorizontal, Globe, Users } from 'lucide-react';
+import { MessageCircle, MoreHorizontal, Globe, Users, Repeat2, Share2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -13,8 +13,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { EmbedPreview } from '@/components/social-feed/EmbedPreview';
 import { ReactionPicker } from './ReactionPicker';
 import { ReactionSummary } from './ReactionSummary';
+import { RepostDialog } from './RepostDialog';
 import { usePostReactions } from '@/hooks/usePostReactions';
+import { usePostRepost } from '@/hooks/usePostRepost';
 import { ReactionType, REACTION_EMOJIS } from '@/types/reactions';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,6 +43,11 @@ export function PostCard({
 }: PostCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { data: profile } = useProfile();
+  
+  const [showRepostDialog, setShowRepostDialog] = useState(false);
+  const [shareCount, setShareCount] = useState(0);
   
   const {
     reactions,
@@ -48,6 +57,8 @@ export function PostCard({
     removeReaction,
     isLoading: isReacting,
   } = usePostReactions(post.post_id, currentUserId);
+
+  const { repost, isReposting } = usePostRepost();
 
   const isOwnPost = post.author_id === currentUserId;
 
@@ -79,6 +90,40 @@ export function PostCard({
       removeReaction();
     } else {
       addReaction(reaction);
+    }
+  };
+
+  const handleRepost = async (commentary?: string) => {
+    if (!currentUserId) return;
+    
+    repost({
+      postId: post.post_id,
+      userId: currentUserId,
+      commentary,
+    });
+  };
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/post/${post.post_id}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Post by ${post.author_full_name}`,
+          text: post.content.substring(0, 100) + '...',
+          url: shareUrl,
+        });
+      } catch (error) {
+        // User cancelled share
+        console.log('Share cancelled');
+      }
+    } else {
+      // Fallback: copy to clipboard
+      await navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: 'Link copied!',
+        description: 'Post link copied to clipboard',
+      });
     }
   };
 
@@ -221,19 +266,26 @@ export function PostCard({
       )}
 
       {/* Stats */}
-      {(totalReactions > 0 || post.comments_count > 0) && (
+      {(totalReactions > 0 || post.comments_count > 0 || shareCount > 0) && (
         <div className="flex items-center justify-between pb-3 mb-3 border-b text-sm">
           <ReactionSummary reactions={reactions} totalCount={totalReactions} />
-          {post.comments_count > 0 && (
-            <span className="text-muted-foreground">
-              {post.comments_count} {post.comments_count === 1 ? 'comment' : 'comments'}
-            </span>
-          )}
+          <div className="flex items-center gap-3 text-muted-foreground">
+            {post.comments_count > 0 && (
+              <span>
+                {post.comments_count} {post.comments_count === 1 ? 'comment' : 'comments'}
+              </span>
+            )}
+            {shareCount > 0 && (
+              <span>
+                {shareCount} {shareCount === 1 ? 'share' : 'shares'}
+              </span>
+            )}
+          </div>
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <ReactionPicker onReactionSelect={handleReactionSelect}>
           <Button
             variant="ghost"
@@ -267,7 +319,50 @@ export function PostCard({
           <MessageCircle className="h-4 w-4 mr-2" />
           Comment
         </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowRepostDialog(true)}
+          disabled={isReposting || isOwnPost}
+          className="flex-1"
+          title={isOwnPost ? "You can't share your own post" : "Share to your feed"}
+        >
+          <Repeat2 className="h-4 w-4 mr-2" />
+          Share
+        </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm">
+              <Share2 className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleShare}>
+              Copy link
+            </DropdownMenuItem>
+            {!isOwnPost && (
+              <DropdownMenuItem onClick={() => setShowRepostDialog(true)}>
+                <Repeat2 className="h-4 w-4 mr-2" />
+                Share to feed
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+
+      {/* Repost Dialog */}
+      {profile && (
+        <RepostDialog
+          isOpen={showRepostDialog}
+          onClose={() => setShowRepostDialog(false)}
+          post={post}
+          currentUserName={profile.full_name}
+          currentUserAvatar={profile.avatar_url}
+          onRepost={handleRepost}
+        />
+      )}
     </Card>
   );
 }
