@@ -4,13 +4,17 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PostWithAuthor } from '@/types/posts';
-import { Heart, MessageCircle, MoreHorizontal, Globe, Users } from 'lucide-react';
+import { MessageCircle, MoreHorizontal, Globe, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { EmbedPreview } from '@/components/social-feed/EmbedPreview';
+import { ReactionPicker } from './ReactionPicker';
+import { ReactionSummary } from './ReactionSummary';
+import { usePostReactions } from '@/hooks/usePostReactions';
+import { ReactionType, REACTION_EMOJIS } from '@/types/reactions';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,9 +39,15 @@ export function PostCard({
 }: PostCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLiking, setIsLiking] = useState(false);
-  const [localLiked, setLocalLiked] = useState(post.user_has_liked);
-  const [localLikesCount, setLocalLikesCount] = useState(post.likes_count);
+  
+  const {
+    reactions,
+    totalReactions,
+    currentReaction,
+    addReaction,
+    removeReaction,
+    isLoading: isReacting,
+  } = usePostReactions(post.post_id, currentUserId);
 
   const isOwnPost = post.author_id === currentUserId;
 
@@ -64,48 +74,11 @@ export function PostCard({
 
   const postTypeDisplay = getPostTypeDisplay();
 
-  const handleLike = async () => {
-    if (isLiking) return;
-
-    setIsLiking(true);
-    const wasLiked = localLiked;
-    
-    // Optimistic update
-    setLocalLiked(!wasLiked);
-    setLocalLikesCount((prev) => (wasLiked ? prev - 1 : prev + 1));
-
-    try {
-      if (wasLiked) {
-        // Unlike
-        const { error } = await supabase
-          .from('post_likes')
-          .delete()
-          .eq('post_id', post.post_id)
-          .eq('user_id', currentUserId);
-
-        if (error) throw error;
-      } else {
-        // Like
-        const { error } = await supabase
-          .from('post_likes')
-          .insert({ post_id: post.post_id, user_id: currentUserId });
-
-        if (error) throw error;
-      }
-
-      onUpdate?.();
-    } catch (error) {
-      console.error('Error toggling like:', error);
-      // Revert optimistic update
-      setLocalLiked(wasLiked);
-      setLocalLikesCount((prev) => (wasLiked ? prev + 1 : prev - 1));
-      toast({
-        title: 'Error',
-        description: 'Failed to update like',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLiking(false);
+  const handleReactionSelect = (reaction: ReactionType) => {
+    if (currentReaction === reaction) {
+      removeReaction();
+    } else {
+      addReaction(reaction);
     }
   };
 
@@ -248,15 +221,11 @@ export function PostCard({
       )}
 
       {/* Stats */}
-      {(localLikesCount > 0 || post.comments_count > 0) && (
-        <div className="flex items-center gap-4 pb-3 mb-3 border-b text-sm text-muted-foreground">
-          {localLikesCount > 0 && (
-            <span>
-              {localLikesCount} {localLikesCount === 1 ? 'like' : 'likes'}
-            </span>
-          )}
+      {(totalReactions > 0 || post.comments_count > 0) && (
+        <div className="flex items-center justify-between pb-3 mb-3 border-b text-sm">
+          <ReactionSummary reactions={reactions} totalCount={totalReactions} />
           {post.comments_count > 0 && (
-            <span>
+            <span className="text-muted-foreground">
               {post.comments_count} {post.comments_count === 1 ? 'comment' : 'comments'}
             </span>
           )}
@@ -265,19 +234,29 @@ export function PostCard({
 
       {/* Actions */}
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleLike}
-          disabled={isLiking}
-          className={cn(
-            'flex-1',
-            localLiked && 'text-red-500 hover:text-red-600'
-          )}
-        >
-          <Heart className={cn('h-4 w-4 mr-2', localLiked && 'fill-current')} />
-          {localLiked ? 'Liked' : 'Like'}
-        </Button>
+        <ReactionPicker onReactionSelect={handleReactionSelect}>
+          <Button
+            variant="ghost"
+            size="sm"
+            disabled={isReacting}
+            className={cn(
+              'flex-1',
+              currentReaction && REACTION_EMOJIS[currentReaction].color
+            )}
+          >
+            {currentReaction ? (
+              <>
+                <span className="mr-2 text-base">{REACTION_EMOJIS[currentReaction].emoji}</span>
+                {REACTION_EMOJIS[currentReaction].label}
+              </>
+            ) : (
+              <>
+                <span className="mr-2 text-base">👍</span>
+                Like
+              </>
+            )}
+          </Button>
+        </ReactionPicker>
 
         <Button
           variant="ghost"
