@@ -10,6 +10,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { EmbedPreview } from '@/components/social-feed/EmbedPreview';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -208,35 +209,42 @@ export function PostCard({
         <p className="whitespace-pre-wrap break-words">{post.content}</p>
       </div>
 
-      {/* Image */}
+      {/* Media Display - Image or Video */}
       {post.image_url && (
-        <div className="mb-4 rounded-lg overflow-hidden">
-          <img
-            src={post.image_url}
-            alt="Post image"
-            className="w-full h-auto object-cover max-h-96"
-          />
+        <div className="mb-4 rounded-lg overflow-hidden border">
+          {/* Check if it's a video based on file extension */}
+          {post.image_url.match(/\.(mp4|webm|mov|quicktime)$/i) ? (
+            <video
+              src={post.image_url}
+              controls
+              className="w-full h-auto max-h-[32rem] object-cover"
+            >
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            <img
+              src={post.image_url}
+              alt="Post media"
+              className="w-full h-auto object-cover max-h-[32rem]"
+            />
+          )}
         </div>
       )}
 
-      {/* Link Preview */}
+      {/* Link Preview - Enhanced with metadata */}
       {post.link_url && (
-        <a
-          href={post.link_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block mb-4 border rounded-lg p-4 hover:bg-accent transition-colors"
-        >
-          {post.link_title && (
-            <h4 className="font-semibold text-sm mb-1 line-clamp-2">{post.link_title}</h4>
-          )}
-          {post.link_description && (
-            <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
-              {post.link_description}
-            </p>
-          )}
-          <p className="text-xs text-[hsl(151,75%,50%)] truncate">{post.link_url}</p>
-        </a>
+        <div className="mb-4">
+          <EmbedPreview
+            embedData={{
+              url: post.link_url,
+              version: '1.0',
+              type: 'link',
+              title: post.link_title,
+              thumbnail_url: post.link_description ? undefined : post.link_url,
+            }}
+            showRemoveButton={false}
+          />
+        </div>
       )}
 
       {/* Stats */}
