@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PostWithAuthor } from '@/types/posts';
-import { MessageCircle, MoreHorizontal, Globe, Users, Repeat2, Share2 } from 'lucide-react';
+import { MessageCircle, MoreHorizontal, Globe, Users, Repeat2, Share2, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -15,7 +15,9 @@ import { ReactionPicker } from './ReactionPicker';
 import { ReactionSummary } from './ReactionSummary';
 import { RepostDialog } from './RepostDialog';
 import { SharedPostCard } from './SharedPostCard';
+import { LikedByModal } from './LikedByModal';
 import { usePostReactions } from '@/hooks/usePostReactions';
+import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostRepost } from '@/hooks/usePostRepost';
 import { ReactionType, REACTION_EMOJIS } from '@/types/reactions';
 import { useAuth } from '@/contexts/AuthContext';
@@ -48,8 +50,10 @@ export function PostCard({
   const { data: profile } = useProfile();
   
   const [showRepostDialog, setShowRepostDialog] = useState(false);
+  const [showLikedByModal, setShowLikedByModal] = useState(false);
   const [shareCount, setShareCount] = useState(0);
   
+  // Post reactions (emoji reactions)
   const {
     reactions,
     totalReactions,
@@ -58,6 +62,15 @@ export function PostCard({
     removeReaction,
     isLoading: isReacting,
   } = usePostReactions(post.post_id, currentUserId);
+
+  // Post likes (simple heart like)
+  const {
+    likeCount,
+    userHasLiked,
+    likedBy,
+    toggleLike,
+    isLoading: isLiking,
+  } = usePostLikes(post.post_id, currentUserId);
 
   const { repost, isReposting } = usePostRepost();
 
@@ -293,9 +306,26 @@ export function PostCard({
       )}
 
       {/* Stats */}
-      {(totalReactions > 0 || post.comments_count > 0 || shareCount > 0) && (
+      {(likeCount > 0 || totalReactions > 0 || post.comments_count > 0 || shareCount > 0) && (
         <div className="flex items-center justify-between pb-3 mb-3 border-b text-sm">
-          <ReactionSummary reactions={reactions} totalCount={totalReactions} />
+          <div className="flex items-center gap-3">
+            {/* Like count - clickable */}
+            {likeCount > 0 && (
+              <button
+                onClick={() => setShowLikedByModal(true)}
+                className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                <span>{likeCount}</span>
+              </button>
+            )}
+            
+            {/* Emoji reactions summary */}
+            {totalReactions > 0 && (
+              <ReactionSummary reactions={reactions} totalCount={totalReactions} />
+            )}
+          </div>
+          
           <div className="flex items-center gap-3 text-muted-foreground">
             {post.comments_count > 0 && (
               <span>
@@ -313,6 +343,22 @@ export function PostCard({
 
       {/* Actions */}
       <div className="flex items-center gap-1">
+        {/* Simple Like Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => toggleLike()}
+          disabled={isLiking}
+          className={cn(
+            'flex-1',
+            userHasLiked && 'text-red-500 hover:text-red-600'
+          )}
+        >
+          <Heart className={cn('h-4 w-4 mr-2', userHasLiked && 'fill-red-500')} />
+          {userHasLiked ? 'Liked' : 'Like'}
+        </Button>
+
+        {/* Emoji Reaction Picker */}
         <ReactionPicker onReactionSelect={handleReactionSelect}>
           <Button
             variant="ghost"
@@ -330,8 +376,8 @@ export function PostCard({
               </>
             ) : (
               <>
-                <span className="mr-2 text-base">👍</span>
-                Like
+                <span className="mr-2 text-base">😊</span>
+                React
               </>
             )}
           </Button>
@@ -378,6 +424,13 @@ export function PostCard({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* Liked By Modal */}
+      <LikedByModal
+        isOpen={showLikedByModal}
+        onClose={() => setShowLikedByModal(false)}
+        likedBy={likedBy}
+      />
 
       {/* Repost Dialog */}
       {profile && (
