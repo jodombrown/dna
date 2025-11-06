@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { ReactionType } from '@/types/reactions';
+import { ReactionEmoji } from '@/types/reactions';
 import { useToast } from '@/hooks/use-toast';
 
 interface ReactionData {
-  emoji: ReactionType;
+  emoji: ReactionEmoji;
   count: number;
   users: {
     user_id: string;
@@ -38,7 +38,7 @@ export function usePostReactions(postId: string, userId?: string) {
 
       // Group reactions by emoji
       const grouped = (data || []).reduce((acc: Record<string, ReactionData>, item: any) => {
-        const emoji = item.emoji as ReactionType;
+        const emoji = item.emoji as ReactionEmoji;
         if (!acc[emoji]) {
           acc[emoji] = {
             emoji,
@@ -71,7 +71,7 @@ export function usePostReactions(postId: string, userId?: string) {
 
   // Add or update reaction
   const addReactionMutation = useMutation({
-    mutationFn: async (emoji: ReactionType) => {
+    mutationFn: async (emoji: ReactionEmoji) => {
       if (!userId) throw new Error('Not authenticated');
 
       // First, remove any existing reaction from this user

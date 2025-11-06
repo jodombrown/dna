@@ -1,5 +1,5 @@
 import React from 'react';
-import { REACTION_EMOJIS, ReactionType } from '@/types/reactions';
+import { ReactionEmoji, getEmojiLabel } from '@/types/reactions';
 import {
   HoverCard,
   HoverCardContent,
@@ -8,7 +8,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface ReactionData {
-  emoji: ReactionType;
+  emoji: ReactionEmoji;
   count: number;
   users: {
     user_id: string;
@@ -40,9 +40,9 @@ export const ReactionSummary: React.FC<ReactionSummaryProps> = ({
               <span
                 key={reaction.emoji}
                 className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-background border border-border text-sm"
-                title={REACTION_EMOJIS[reaction.emoji].label}
+                title={getEmojiLabel(reaction.emoji)}
               >
-                {REACTION_EMOJIS[reaction.emoji].emoji}
+                {reaction.emoji}
               </span>
             ))}
           </div>
@@ -54,9 +54,9 @@ export const ReactionSummary: React.FC<ReactionSummaryProps> = ({
           {reactions.map((reaction) => (
             <div key={reaction.emoji} className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="text-lg">{REACTION_EMOJIS[reaction.emoji].emoji}</span>
+                <span className="text-lg">{reaction.emoji}</span>
                 <span className="font-semibold text-sm">
-                  {REACTION_EMOJIS[reaction.emoji].label}
+                  {getEmojiLabel(reaction.emoji)}
                 </span>
                 <span className="text-xs text-muted-foreground ml-auto">
                   {reaction.count}

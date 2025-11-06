@@ -19,7 +19,7 @@ import { LikedByModal } from './LikedByModal';
 import { usePostReactions } from '@/hooks/usePostReactions';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostRepost } from '@/hooks/usePostRepost';
-import { ReactionType, REACTION_EMOJIS } from '@/types/reactions';
+import { ReactionEmoji, REACTION_EMOJIS, getEmojiLabel } from '@/types/reactions';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import {
@@ -99,7 +99,7 @@ export function PostCard({
 
   const postTypeDisplay = getPostTypeDisplay();
 
-  const handleReactionSelect = (reaction: ReactionType) => {
+  const handleReactionSelect = (reaction: ReactionEmoji) => {
     if (currentReaction === reaction) {
       removeReaction();
     } else {
@@ -364,15 +364,12 @@ export function PostCard({
             variant="ghost"
             size="sm"
             disabled={isReacting}
-            className={cn(
-              'flex-1',
-              currentReaction && REACTION_EMOJIS[currentReaction].color
-            )}
+            className="flex-1"
           >
             {currentReaction ? (
               <>
-                <span className="mr-2 text-base">{REACTION_EMOJIS[currentReaction].emoji}</span>
-                {REACTION_EMOJIS[currentReaction].label}
+                <span className="mr-2 text-base">{currentReaction}</span>
+                {getEmojiLabel(currentReaction)}
               </>
             ) : (
               <>
