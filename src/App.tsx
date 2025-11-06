@@ -19,6 +19,7 @@ import Onboarding from "./pages/Onboarding";
 import DnaMe from "./pages/dna/Me";
 import DnaUserDashboard from "./pages/dna/Username";
 import ActivityFeed from "./pages/ActivityFeed";
+import SavedPostsPage from "./pages/SavedPostsPage";
 import NetworkFeedPage from "./pages/NetworkFeedPage";
 import DiscoveryFeedPage from "./pages/DiscoveryFeedPage";
 import DnaNetwork from "./pages/dna/Network";
@@ -215,11 +216,16 @@ function App() {
                 </OnboardingGuard>
               } />
               <Route path="/dna/impact/:id" element={<OpportunityDetail />} />
-              <Route path="/dna/applications" element={<MyApplications />} />
-              <Route path="/dna/spaces" element={<CollaborationSpaces />} />
-              <Route path="/dna/spaces/:id" element={<SpaceDetail />} />
-              
-              {/* ========== LEGACY ROUTES ========== */}
+               <Route path="/dna/applications" element={<MyApplications />} />
+               <Route path="/dna/spaces" element={<CollaborationSpaces />} />
+               <Route path="/dna/spaces/:id" element={<SpaceDetail />} />
+               <Route path="/dna/saved" element={
+                 <OnboardingGuard>
+                   <SavedPostsPage />
+                 </OnboardingGuard>
+               } />
+               
+               {/* ========== LEGACY ROUTES ========== */}
               <Route path="/dna/connect" element={<Navigate to="/dna/connect/network" replace />} />
               <Route path="/dna/convene" element={<Navigate to="/dna/convene/events" replace />} />
               

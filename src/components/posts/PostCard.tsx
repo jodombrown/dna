@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PostWithAuthor } from '@/types/posts';
-import { MessageCircle, MoreHorizontal, Globe, Users, Repeat2, Share2, Heart } from 'lucide-react';
+import { MessageCircle, MoreHorizontal, Globe, Users, Repeat2, Share2, Heart, Bookmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,7 @@ import { SharedPostCard } from './SharedPostCard';
 import { LikedByModal } from './LikedByModal';
 import { usePostReactions } from '@/hooks/usePostReactions';
 import { usePostLikes } from '@/hooks/usePostLikes';
+import { usePostBookmark } from '@/hooks/usePostBookmark';
 import { usePostRepost } from '@/hooks/usePostRepost';
 import { ReactionEmoji, REACTION_EMOJIS, getEmojiLabel } from '@/types/reactions';
 import { useAuth } from '@/contexts/AuthContext';
@@ -71,6 +72,13 @@ export function PostCard({
     toggleLike,
     isLoading: isLiking,
   } = usePostLikes(post.post_id, currentUserId);
+
+  // Post bookmark
+  const {
+    isBookmarked,
+    toggleBookmark,
+    isLoading: isBookmarking,
+  } = usePostBookmark(post.post_id, currentUserId);
 
   const { repost, isReposting } = usePostRepost();
 
@@ -400,6 +408,22 @@ export function PostCard({
         >
           <Repeat2 className="h-4 w-4 mr-2" />
           Share
+        </Button>
+
+        {/* Bookmark Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => toggleBookmark()}
+          disabled={isBookmarking}
+          className={cn(
+            'flex-1',
+            isBookmarked && 'text-primary'
+          )}
+          title={isBookmarked ? 'Remove bookmark' : 'Save post'}
+        >
+          <Bookmark className={cn('h-4 w-4 mr-2', isBookmarked && 'fill-current')} />
+          {isBookmarked ? 'Saved' : 'Save'}
         </Button>
 
         <DropdownMenu>
