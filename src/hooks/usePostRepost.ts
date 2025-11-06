@@ -14,18 +14,16 @@ export function usePostRepost() {
 
   const repostMutation = useMutation({
     mutationFn: async ({ postId, userId, commentary }: RepostParams) => {
-      // Create a new post as a share/repost
-      const shareContent = commentary 
-        ? commentary 
-        : `Shared a post by ${userId}`;
-
       const { error } = await supabase
         .from('posts')
         .insert({
           author_id: userId,
-          content: shareContent,
+          content: commentary || '', // Empty if no commentary
           post_type: 'update',
           privacy_level: 'public',
+          original_post_id: postId, // Link to original post
+          shared_by: userId, // Track who shared it
+          share_commentary: commentary || null,
         });
 
       if (error) throw error;

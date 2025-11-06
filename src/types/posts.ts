@@ -35,6 +35,19 @@ export interface PostWithAuthor {
   comments_count: number;
   user_has_liked: boolean;
   is_connection: boolean;
+  // Repost/share fields
+  original_post_id?: string;
+  shared_by?: string;
+  share_commentary?: string;
+  // Original post data (when this is a repost)
+  original_author_id?: string;
+  original_author_username?: string;
+  original_author_full_name?: string;
+  original_author_avatar_url?: string;
+  original_author_headline?: string;
+  original_content?: string;
+  original_image_url?: string;
+  original_created_at?: string;
 }
 
 export interface PostComment {

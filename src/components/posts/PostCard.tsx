@@ -14,6 +14,7 @@ import { EmbedPreview } from '@/components/social-feed/EmbedPreview';
 import { ReactionPicker } from './ReactionPicker';
 import { ReactionSummary } from './ReactionSummary';
 import { RepostDialog } from './RepostDialog';
+import { SharedPostCard } from './SharedPostCard';
 import { usePostReactions } from '@/hooks/usePostReactions';
 import { usePostRepost } from '@/hooks/usePostRepost';
 import { ReactionType, REACTION_EMOJIS } from '@/types/reactions';
@@ -154,8 +155,20 @@ export function PostCard({
     }
   };
 
+  const isRepost = !!post.original_post_id;
+
   return (
     <Card className="p-6">
+      {/* Repost indicator */}
+      {isRepost && (
+        <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+          <Repeat2 className="h-4 w-4" />
+          <span>
+            <span className="font-medium text-foreground">{post.author_full_name}</span> shared this
+          </span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <Avatar
@@ -222,47 +235,61 @@ export function PostCard({
         )}
       </div>
 
-      {/* Content */}
-      <div className="mb-4">
-        <p className="whitespace-pre-wrap break-words">{post.content}</p>
-      </div>
-
-      {/* Media Display - Image or Video */}
-      {post.image_url && (
-        <div className="mb-4 rounded-lg overflow-hidden border">
-          {/* Check if it's a video based on file extension */}
-          {post.image_url.match(/\.(mp4|webm|mov|quicktime)$/i) ? (
-            <video
-              src={post.image_url}
-              controls
-              className="w-full h-auto max-h-[32rem] object-cover"
-            >
-              Your browser does not support the video tag.
-            </video>
-          ) : (
-            <img
-              src={post.image_url}
-              alt="Post media"
-              className="w-full h-auto object-cover max-h-[32rem]"
-            />
-          )}
+      {/* Share Commentary (if this is a repost with commentary) */}
+      {isRepost && post.share_commentary && (
+        <div className="mb-4">
+          <p className="whitespace-pre-wrap break-words">{post.share_commentary}</p>
         </div>
       )}
 
-      {/* Link Preview - Enhanced with metadata */}
-      {post.link_url && (
-        <div className="mb-4">
-          <EmbedPreview
-            embedData={{
-              url: post.link_url,
-              version: '1.0',
-              type: 'link',
-              title: post.link_title,
-              thumbnail_url: post.link_description ? undefined : post.link_url,
-            }}
-            showRemoveButton={false}
-          />
-        </div>
+      {/* Original Post Content (if repost) */}
+      {isRepost ? (
+        <SharedPostCard post={post} />
+      ) : (
+        <>
+          {/* Content */}
+          <div className="mb-4">
+            <p className="whitespace-pre-wrap break-words">{post.content}</p>
+          </div>
+
+          {/* Media Display - Image or Video */}
+          {post.image_url && (
+            <div className="mb-4 rounded-lg overflow-hidden border">
+              {/* Check if it's a video based on file extension */}
+              {post.image_url.match(/\.(mp4|webm|mov|quicktime)$/i) ? (
+                <video
+                  src={post.image_url}
+                  controls
+                  className="w-full h-auto max-h-[32rem] object-cover"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <img
+                  src={post.image_url}
+                  alt="Post media"
+                  className="w-full h-auto object-cover max-h-[32rem]"
+                />
+              )}
+            </div>
+          )}
+
+          {/* Link Preview - Enhanced with metadata */}
+          {post.link_url && (
+            <div className="mb-4">
+              <EmbedPreview
+                embedData={{
+                  url: post.link_url,
+                  version: '1.0',
+                  type: 'link',
+                  title: post.link_title,
+                  thumbnail_url: post.link_description ? undefined : post.link_url,
+                }}
+                showRemoveButton={false}
+              />
+            </div>
+          )}
+        </>
       )}
 
       {/* Stats */}
