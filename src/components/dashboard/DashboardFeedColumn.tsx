@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { PostCard } from '@/components/posts/PostCard';
 import { PostComments } from '@/components/posts/PostComments';
-import { CreatePostDialog } from '@/components/posts/CreatePostDialog';
+import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useFeedPosts } from '@/hooks/useFeedPosts';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { PenSquare, Users, Sparkles } from 'lucide-react';
+import { PenSquare, Users, Sparkles, Image as ImageIcon, Video, FileText } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { Profile } from '@/services/profilesService';
 
 type FeedFilter = 'connections' | 'my_posts';
@@ -77,23 +78,65 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-2xl font-bold">My Network</h2>
+          <h2 className="text-2xl font-bold">Feed</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Stay connected with your network's latest updates
+            Discover what's happening in your network
           </p>
         </div>
         {isOwnProfile && (
           <Button
             onClick={() => setShowCreateDialog(true)}
             className="bg-primary hover:bg-primary/90"
+            size="lg"
           >
             <PenSquare className="h-4 w-4 mr-2" />
-            Share
+            Start a post
           </Button>
         )}
       </div>
+
+      {/* Quick Post Composer */}
+      {isOwnProfile && (
+        <Card className="p-4 mb-4">
+          <button
+            onClick={() => setShowCreateDialog(true)}
+            className="w-full text-left px-4 py-3 rounded-full border border-input bg-background hover:bg-accent transition-colors text-muted-foreground"
+          >
+            Start a post...
+          </button>
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCreateDialog(true)}
+              className="flex-1 gap-2"
+            >
+              <ImageIcon className="h-5 w-5 text-blue-500" />
+              <span className="text-sm">Photo</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCreateDialog(true)}
+              className="flex-1 gap-2"
+            >
+              <Video className="h-5 w-5 text-green-500" />
+              <span className="text-sm">Video</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowCreateDialog(true)}
+              className="flex-1 gap-2"
+            >
+              <FileText className="h-5 w-5 text-orange-500" />
+              <span className="text-sm">Document</span>
+            </Button>
+          </div>
+        </Card>
+      )}
 
       <Tabs 
         value={activeTab} 
@@ -164,7 +207,7 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
       </div>
 
       {isOwnProfile && (
-        <CreatePostDialog
+        <EnhancedCreatePostDialog
           isOpen={showCreateDialog}
           onClose={() => setShowCreateDialog(false)}
           currentUserId={user?.id || ''}

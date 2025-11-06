@@ -98,9 +98,9 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
   
   if (loading) return null;
   
-  // Only redirect authenticated users if this is an auth-specific page
+  // Redirect authenticated users to feed (primary landing page)
   if (user && redirectAuth) {
-    return <Navigate to="/dna/me" replace />;
+    return <Navigate to="/dna/connect/feed" replace />;
   }
   
   return <>{children}</>;
