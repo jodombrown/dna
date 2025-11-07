@@ -1,315 +1,241 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
-import { Resend } from "npm:resend@2.0.0";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-interface ReminderData {
-  reminder_id: string;
-  user_id: string;
-  user_email: string;
-  reminder_type: string;
-  cohort: string;
-  metadata: any;
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+interface NudgeTemplate {
+  type: string
+  category: string
+  priority: string
+  getMessage: (context: any) => string
+}
 
-// Ubuntu-inspired messaging templates
-const getReminderContent = (reminderType: string, cohort: string, metadata: any) => {
-  const userName = metadata.user_name || 'DNA Family Member';
-  const userType = metadata.user_type || 'member';
-  const daysOnboarded = metadata.days_since_onboarding || 0;
-  
-  const baseUrl = Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '') || 'https://dna-platform.com';
-  const unsubscribeUrl = `${baseUrl}/unsubscribe`;
-  const dashboardUrl = `${baseUrl}/app`;
-  
-  let subject = '';
-  let greeting = '';
-  let mainMessage = '';
-  let cta = '';
-  let ubuntu_touch = '';
-  
-  // Ubuntu opening with cultural authenticity
-  const ubuntuOpenings = [
-    'Asé, your presence is missed in the DNA village',
-    'Ubuntu reminds us that we are because we are together',
-    'The ancestors whisper - your voice matters in our circle',
-    'Sawubona, the DNA community awaits your wisdom'
-  ];
-  
-  ubuntu_touch = ubuntuOpenings[Math.floor(Math.random() * ubuntuOpenings.length)];
-  
-  switch (reminderType) {
-    case '3_day':
-      subject = `${userName}, your DNA journey awaits - Welcome back! 🌍`;
-      greeting = `Habari ${userName}!`;
-      mainMessage = `
-        <p>${ubuntu_touch}. You joined DNA ${daysOnboarded} days ago, and we're excited to help you connect with your Pan-African family.</p>
-        
-        <p><strong>Your next steps as a ${userType}:</strong></p>
-        <ul>
-          <li>🤝 <strong>Connect:</strong> Discover and reach out to fellow diasporans in your field</li>
-          <li>🚀 <strong>Collaborate:</strong> Join ongoing projects that match your interests</li>
-          <li>💡 <strong>Contribute:</strong> Share your expertise with the community</li>
-        </ul>
-        
-        <p>Remember: <em>"If you want to go fast, go alone. If you want to go far, go together."</em> - African Proverb</p>
-      `;
-      cta = 'Complete Your DNA Profile';
-      break;
-      
-    case '7_day':
-      subject = `${userName}, the village is stronger with your voice 🌟`;
-      greeting = `Sanibonani ${userName}!`;
-      mainMessage = `
-        <p>${ubuntu_touch}. It's been a week since you joined our Pan-African movement, and your unique perspective is needed.</p>
-        
-        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #16a34a; margin-top: 0;">This Week in DNA:</h3>
-          <ul>
-            <li>🌍 <strong>52 new connections</strong> made across the diaspora</li>
-            <li>🤝 <strong>12 new collaborations</strong> launched</li>
-            <li>💰 <strong>$2.1M in funding</strong> raised by our founder community</li>
-          </ul>
-        </div>
-        
-        <p>As a ${userType}, you bring invaluable experience to our community. Whether you're looking to mentor, be mentored, or collaborate on projects that drive Africa's development - we're here to connect you with the right people.</p>
-      `;
-      cta = 'Explore DNA Community';
-      break;
-      
-    case '14_day':
-      subject = `${userName}, Ubuntu calls - Your community needs you ❤️`;
-      greeting = `Salaam ${userName}!`;
-      mainMessage = `
-        <p>${ubuntu_touch}. Two weeks ago, you took a powerful step by joining DNA - a movement that believes in the potential of African innovation and diaspora collaboration.</p>
-        
-        <p><strong>We understand life gets busy.</strong> That's exactly why DNA exists - to create meaningful connections that fit into your world, not disrupt it.</p>
-        
-        <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #d97706; margin-top: 0;">Success Story:</h3>
-          <p><em>"Through DNA, I connected with a developer in Lagos who became my co-founder. We just closed our seed round!"</em></p>
-          <p><strong>- Amara K., DNA Founder</strong></p>
-        </div>
-        
-        <p>Your journey as a ${userType} in the diaspora network can start with just one conversation. We've designed DNA to make meaningful connections effortless - whether you have 5 minutes or 5 hours.</p>
-        
-        <p><strong>Ready to take the next step?</strong> We're here to support you.</p>
-      `;
-      cta = 'Reconnect with DNA';
-      break;
-      
-    default:
-      subject = `${userName}, your DNA community awaits`;
-      greeting = `Hello ${userName}!`;
-      mainMessage = `<p>Your presence strengthens our Pan-African community. Ready to reconnect?</p>`;
-      cta = 'Join the Conversation';
+const NUDGE_TEMPLATES: NudgeTemplate[] = [
+  {
+    type: 'dormant_comeback',
+    category: 'engagement',
+    priority: 'high',
+    getMessage: (ctx) => `We've missed you! Your network has grown by ${ctx.newConnections || 0} connections since your last visit. Check out what's new.`
+  },
+  {
+    type: 'at_risk_post',
+    category: 'content',
+    priority: 'normal',
+    getMessage: (ctx) => `You haven't posted in ${ctx.daysSincePost || 14} days. Share an update with your ${ctx.connectionCount || 0} connections!`
+  },
+  {
+    type: 'new_connections',
+    category: 'connection',
+    priority: 'normal',
+    getMessage: (ctx) => `${ctx.newConnectionRequests || 0} people want to connect with you. View your pending requests.`
+  },
+  {
+    type: 'profile_incomplete',
+    category: 'engagement',
+    priority: 'normal',
+    getMessage: (ctx) => `Your profile is ${ctx.completionPercent || 0}% complete. Add more details to unlock collaboration features.`
+  },
+  {
+    type: 'popular_post',
+    category: 'content',
+    priority: 'normal',
+    getMessage: (ctx) => `Your connection ${ctx.connectionName} posted about ${ctx.topic} - perfect time to reconnect!`
+  },
+  {
+    type: 'weak_connection',
+    category: 'connection',
+    priority: 'low',
+    getMessage: (ctx) => `You haven't connected with ${ctx.connectionName} in ${ctx.daysSinceInteraction} days. Send them a message?`
   }
-  
-  return {
-    subject,
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${subject}</title>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; margin: 0; padding: 0; background-color: #f8fafc; }
-          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
-          .header { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); padding: 32px 24px; text-align: center; }
-          .logo { color: #ffffff; font-size: 24px; font-weight: bold; margin-bottom: 8px; }
-          .tagline { color: #dcfce7; font-size: 14px; margin: 0; }
-          .content { padding: 32px 24px; }
-          .greeting { font-size: 20px; font-weight: 600; color: #1f2937; margin-bottom: 16px; }
-          .cta-button { display: inline-block; background-color: #16a34a; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; margin: 20px 0; }
-          .cta-button:hover { background-color: #15803d; }
-          .footer { background-color: #f3f4f6; padding: 24px; text-align: center; color: #6b7280; font-size: 14px; }
-          .unsubscribe { color: #9ca3af; text-decoration: none; }
-          ul { padding-left: 20px; }
-          li { margin-bottom: 8px; }
-          @media (max-width: 600px) {
-            .container { margin: 0 16px; }
-            .content, .header { padding: 24px 16px; }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <!-- Header -->
-          <div class="header">
-            <div class="logo">DNA</div>
-            <p class="tagline">Diaspora Network of Africa</p>
-          </div>
+]
 
-          <!-- Main Content -->
-          <div class="content">
-            <h1 class="greeting">${greeting}</h1>
-            
-            ${mainMessage}
+async function generateNudgesForUser(supabase: any, userId: string, tier: string, metrics: any) {
+  const nudges: any[] = []
+  const now = new Date()
 
-            <div style="text-align: center; margin: 32px 0;">
-              <a href="${dashboardUrl}" class="cta-button">${cta}</a>
-            </div>
-            
-            <p style="font-style: italic; color: #6b7280; border-left: 4px solid #16a34a; padding-left: 16px; margin: 24px 0;">
-              "Ubuntu: I am because we are. Your success is our success, and together we build the Africa we envision."
-            </p>
-          </div>
+  // Check user's nudge preferences
+  const { data: prefs } = await supabase
+    .from('adin_preferences')
+    .select('*')
+    .eq('user_id', userId)
+    .single()
 
-          <!-- Footer -->
-          <div class="footer">
-            <p style="margin: 8px 0;">
-              <strong>DNA - Diaspora Network of Africa</strong><br>
-              Building bridges, Creating opportunities, Transforming Africa
-            </p>
-            <p style="margin: 16px 0; font-size: 12px;">
-              You're receiving this because you're part of the DNA community. 
-              <a href="${unsubscribeUrl}" class="unsubscribe">Unsubscribe from reminders</a>
-            </p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `
-  };
-};
+  const enabledCategories = prefs?.nudge_categories || ['connection', 'content', 'engagement']
 
-const handler = async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+  // Dormant users - high priority comeback nudge
+  if (tier === 'dormant') {
+    const { count: newConnections } = await supabase
+      .from('connections')
+      .select('*', { count: 'exact', head: true })
+      .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
+      .eq('status', 'accepted')
+      .gte('created_at', metrics.last_login || new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString())
+
+    nudges.push({
+      user_id: userId,
+      nudge_type: 'dormant_comeback',
+      nudge_category: 'engagement',
+      priority: 'high',
+      message: NUDGE_TEMPLATES[0].getMessage({ newConnections }),
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    })
+  }
+
+  // At risk users - encourage posting
+  if ((tier === 'at_risk' || tier === 'moderate') && enabledCategories.includes('content')) {
+    const daysSincePost = metrics.last_post_created 
+      ? Math.floor((now.getTime() - new Date(metrics.last_post_created).getTime()) / (1000 * 60 * 60 * 24))
+      : 999
+
+    if (daysSincePost > 14) {
+      nudges.push({
+        user_id: userId,
+        nudge_type: 'at_risk_post',
+        nudge_category: 'content',
+        priority: 'normal',
+        message: NUDGE_TEMPLATES[1].getMessage({ 
+          daysSincePost, 
+          connectionCount: metrics.total_connections 
+        }),
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      })
+    }
+  }
+
+  // Check for pending connection requests
+  if (enabledCategories.includes('connection')) {
+    const { count: pendingRequests } = await supabase
+      .from('connections')
+      .select('*', { count: 'exact', head: true })
+      .eq('recipient_id', userId)
+      .eq('status', 'pending')
+
+    if (pendingRequests && pendingRequests > 0) {
+      nudges.push({
+        user_id: userId,
+        nudge_type: 'new_connections',
+        nudge_category: 'connection',
+        priority: 'normal',
+        message: NUDGE_TEMPLATES[2].getMessage({ newConnectionRequests: pendingRequests }),
+        expires_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
+      })
+    }
+  }
+
+  // Check profile completeness
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('profile_completion_percentage')
+    .eq('id', userId)
+    .single()
+
+  if (profile && profile.profile_completion_percentage < 60) {
+    nudges.push({
+      user_id: userId,
+      nudge_type: 'profile_incomplete',
+      nudge_category: 'engagement',
+      priority: 'normal',
+      message: NUDGE_TEMPLATES[3].getMessage({ completionPercent: profile.profile_completion_percentage }),
+      expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+    })
+  }
+
+  return nudges
+}
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
 
-    console.log("🚀 Starting engagement reminders processing...");
+    console.log('Starting engagement reminders generation...')
 
-    // Get pending reminders
-    const { data: pendingReminders, error: fetchError } = await supabase
-      .rpc('get_pending_reminders', { batch_size: 20 });
+    // Get users that need nudges (at_risk and dormant)
+    const { data: usersToNudge, error: fetchError } = await supabase
+      .from('user_engagement_tracking')
+      .select('*')
+      .in('engagement_tier', ['at_risk', 'dormant', 'moderate'])
 
     if (fetchError) {
-      console.error("Error fetching pending reminders:", fetchError);
-      throw fetchError;
+      throw fetchError
     }
 
-    if (!pendingReminders || pendingReminders.length === 0) {
-      console.log("No pending reminders to process");
-      return new Response(
-        JSON.stringify({ success: true, processed: 0, message: "No pending reminders" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    console.log(`Found ${usersToNudge?.length || 0} users to process...`)
 
-    console.log(`📧 Processing ${pendingReminders.length} pending reminders`);
+    let nudgesCreated = 0
 
-    let sentCount = 0;
-    let failedCount = 0;
-
-    // Process each reminder
-    for (const reminder of pendingReminders as ReminderData[]) {
+    for (const user of usersToNudge || []) {
       try {
-        console.log(`Processing reminder ${reminder.reminder_id} for user ${reminder.user_email}`);
-        
-        // Generate culturally authentic content
-        const emailContent = getReminderContent(
-          reminder.reminder_type,
-          reminder.cohort,
-          reminder.metadata
-        );
+        // Check if user already has recent nudges
+        const { data: recentNudges } = await supabase
+          .from('adin_nudges')
+          .select('id')
+          .eq('user_id', user.user_id)
+          .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
 
-        // Send email via Resend
-        const emailResponse = await resend.emails.send({
-          from: "DNA Community <community@diasporanetwork.africa>",
-          to: [reminder.user_email],
-          subject: emailContent.subject,
-          html: emailContent.html,
-        });
-
-        if (emailResponse.data?.id) {
-          // Mark as sent
-          await supabase.rpc('update_reminder_status', {
-            reminder_id: reminder.reminder_id,
-            new_status: 'sent'
-          });
-
-          // Log engagement event
-          await supabase.rpc('log_engagement_event', {
-            target_user_id: reminder.user_id,
-            event_type_param: 'reminder_sent',
-            event_context_param: {
-              reminder_type: reminder.reminder_type,
-              email_id: emailResponse.data.id,
-              cohort: reminder.cohort
-            },
-            cohort_param: reminder.cohort
-          });
-
-          sentCount++;
-          console.log(`✅ Reminder sent successfully to ${reminder.user_email}`);
-        } else {
-          throw new Error('No email ID returned from Resend');
+        // Skip if already nudged today
+        if (recentNudges && recentNudges.length > 0) {
+          continue
         }
 
-      } catch (emailError) {
-        console.error(`❌ Failed to send reminder to ${reminder.user_email}:`, emailError);
-        
-        // Mark as failed
-        await supabase.rpc('update_reminder_status', {
-          reminder_id: reminder.reminder_id,
-          new_status: 'failed',
-          error_message: emailError.message
-        });
+        // Generate personalized nudges
+        const nudges = await generateNudgesForUser(supabase, user.user_id, user.engagement_tier, user)
 
-        failedCount++;
+        // Insert nudges
+        for (const nudge of nudges) {
+          const { error: insertError } = await supabase
+            .from('adin_nudges')
+            .insert(nudge)
+
+          if (insertError) {
+            console.error(`Error creating nudge for user ${user.user_id}:`, insertError)
+          } else {
+            nudgesCreated++
+
+            // Log to reminder_logs
+            await supabase
+              .from('reminder_logs')
+              .insert({
+                user_id: user.user_id,
+                reminder_type: nudge.nudge_type,
+                reminder_content: { message: nudge.message, category: nudge.nudge_category }
+              })
+          }
+        }
+
+      } catch (userError) {
+        console.error(`Error processing user ${user.user_id}:`, userError)
       }
     }
 
-    // Log batch completion
-    await supabase.rpc('log_engagement_event', {
-      target_user_id: '00000000-0000-0000-0000-000000000000',
-      event_type_param: 'reminder_batch_processed',
-      event_context_param: {
-        total_processed: pendingReminders.length,
-        sent_count: sentCount,
-        failed_count: failedCount,
-        processed_at: new Date().toISOString()
+    console.log(`Engagement reminders complete. Created ${nudgesCreated} nudges.`)
+
+    return new Response(
+      JSON.stringify({ 
+        success: true, 
+        processed: usersToNudge?.length || 0,
+        nudges_created: nudgesCreated
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
+  } catch (error) {
+    console.error('Error in engagement-reminders:', error)
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
-    });
-
-    console.log(`🎯 Batch complete: ${sentCount} sent, ${failedCount} failed`);
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        processed: pendingReminders.length,
-        sent: sentCount,
-        failed: failedCount,
-        message: `Processed ${pendingReminders.length} reminders`
-      }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-
-  } catch (error: any) {
-    console.error("Error in engagement reminders function:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Failed to process engagement reminders",
-        details: error.message
-      }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    )
   }
-};
-
-serve(handler);
+})

@@ -62,7 +62,6 @@ verify_jwt = false
 [functions.seed-test-accounts]
 verify_jwt = false
 
-# Explicit function configs
 [functions.create-payment]
 verify_jwt = true
 
@@ -76,4 +75,13 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-magic-link]
+verify_jwt = false
+
+[functions.engagement-tracker]
+verify_jwt = false
+
+[functions.engagement-reminders]
+verify_jwt = false
+
+[functions.connection-health-analyzer]
 verify_jwt = false
