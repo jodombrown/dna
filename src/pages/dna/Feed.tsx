@@ -10,18 +10,18 @@ const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
 
-  const { data: posts, isLoading: postsLoading } = useQuery<any[]>({
+  const { data: posts = [], isLoading: postsLoading } = useQuery({
     queryKey: ['feed-posts'],
-    queryFn: async () => {
-      const { data, error } = await supabase
+    queryFn: async (): Promise<any[]> => {
+      const { data, error } = await (supabase as any)
         .from('posts')
         .select('*')
         .eq('visibility', 'public')
         .order('created_at', { ascending: false })
-        .limit(50) as { data: any[] | null; error: any };
+        .limit(50);
 
-      if (error) throw error;
-      return data || [];
+      if (error) throw error as any;
+      return (data as any[]) || [];
     },
   });
 
