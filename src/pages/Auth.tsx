@@ -200,12 +200,12 @@ const Auth = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check if registration is enabled for signup
-    if (!isLogin && !registrationEnabled) {
+    // Block all new signups - show waitlist dialog instead
+    if (!isLogin) {
+      setShowWaitlist(true);
       toast({
-        title: "Registration Closed",
-        description: "We're currently in private beta. Please contact us for early access.",
-        variant: "destructive"
+        title: "Launching Soon!",
+        description: "We're launching our free beta on December 1, 2025. Join our waitlist!",
       });
       return;
     }
@@ -273,8 +273,8 @@ const Auth = () => {
     }
   };
   const toggleMode = () => {
-    // If trying to switch to signup mode and registration is disabled, show waitlist
-    if (isLogin && !registrationEnabled) {
+    // Always show waitlist when trying to switch to signup
+    if (isLogin) {
       setShowWaitlist(true);
       return;
     }
@@ -289,12 +289,12 @@ const Auth = () => {
     });
   };
   const handleOAuthSignIn = async (provider: 'google' | 'linkedin_oidc') => {
-    // Check if registration is enabled for OAuth signup
-    if (!isLogin && !registrationEnabled) {
+    // Block OAuth signups - show waitlist instead
+    if (!isLogin) {
+      setShowWaitlist(true);
       toast({
-        title: "Registration Closed",
-        description: "We're currently in private beta. Please contact us for early access.",
-        variant: "destructive"
+        title: "Launching Soon!",
+        description: "We're launching our free beta on December 1, 2025. Join our waitlist!",
       });
       return;
     }
@@ -695,6 +695,12 @@ const Auth = () => {
           )}
         </div>
       </div>
+      
+      {/* Waitlist Dialog */}
+      <BetaWaitlist 
+        open={showWaitlist} 
+        onOpenChange={setShowWaitlist}
+      />
     </div>;
 };
 export default Auth;

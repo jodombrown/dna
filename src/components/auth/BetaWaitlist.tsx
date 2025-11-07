@@ -4,30 +4,41 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { LockKeyhole, Mail, User, MessageSquare, Calendar, Loader2 } from 'lucide-react';
+import { LockKeyhole, Mail, User, MessageSquare, Calendar, Loader2, Linkedin } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 interface BetaWaitlistProps {
-  onBack: () => void;
+  onBack?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export const BetaWaitlist = ({ onBack }: BetaWaitlistProps) => {
+export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
     email: '',
-    fullName: '',
+    linkedin: '',
     message: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.fullName) {
+    if (!formData.email || !formData.firstName || !formData.lastName) {
       toast({
         title: "Missing Information",
-        description: "Please provide your name and email.",
+        description: "Please provide your first name, last name, and email.",
         variant: "destructive"
       });
       return;
@@ -40,7 +51,8 @@ export const BetaWaitlist = ({ onBack }: BetaWaitlistProps) => {
         .from('beta_waitlist')
         .insert([{
           email: formData.email.toLowerCase().trim(),
-          full_name: formData.fullName.trim(),
+          full_name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+          linkedin_url: formData.linkedin.trim() || null,
           message: formData.message.trim() || null
         }]);
 
@@ -56,11 +68,12 @@ export const BetaWaitlist = ({ onBack }: BetaWaitlistProps) => {
       } else {
         toast({
           title: "You're on the list! 🎉",
-          description: "We'll email you when DNA launches on November 1st.",
+          description: "We'll email you when DNA launches our free beta on December 1st, 2025.",
         });
         
-        // Clear form
-        setFormData({ email: '', fullName: '', message: '' });
+        // Clear form and close dialog
+        setFormData({ firstName: '', lastName: '', email: '', linkedin: '', message: '' });
+        if (onOpenChange) onOpenChange(false);
       }
     } catch (error: any) {
       console.error('Waitlist error:', error);
@@ -74,106 +87,136 @@ export const BetaWaitlist = ({ onBack }: BetaWaitlistProps) => {
     }
   };
 
-  return (
-    <Card className="border-dna-copper/20 shadow-xl">
-      <CardHeader className="space-y-1 text-center">
+  const content = (
+    <>
+      <div className="space-y-1 text-center mb-6">
         <div className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-dna-copper to-dna-gold rounded-full flex items-center justify-center">
           <LockKeyhole className="w-8 h-8 text-white" />
         </div>
-        <CardTitle className="text-2xl font-bold text-dna-forest">
-          Private Beta Access
-        </CardTitle>
-        <CardDescription className="text-base">
-          DNA is currently in private beta and will launch publicly on{' '}
-          <span className="font-semibold text-dna-copper">November 1, 2025</span>.
-        </CardDescription>
-      </CardHeader>
-      
-      <CardContent>
-        <div className="mb-6 p-4 bg-dna-mint/10 border border-dna-mint/30 rounded-lg">
-          <div className="flex items-start gap-3">
-            <Calendar className="w-5 h-5 text-dna-copper mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-gray-700">
-              <p className="font-medium mb-1">Join our waitlist to get early access</p>
-              <p className="text-gray-600">
-                Be the first to know when we launch and receive exclusive updates about the platform.
-              </p>
-            </div>
+        <h2 className="text-2xl font-bold text-dna-forest">
+          Launching Free Beta
+        </h2>
+        <p className="text-base text-muted-foreground">
+          We're launching our free beta to a select group of users on{' '}
+          <span className="font-semibold text-dna-copper">December 1, 2025</span>.
+        </p>
+      </div>
+      <div className="mb-6 p-4 bg-dna-mint/10 border border-dna-mint/30 rounded-lg">
+        <div className="flex items-start gap-3">
+          <Calendar className="w-5 h-5 text-dna-copper mt-0.5 flex-shrink-0" />
+          <div className="text-sm text-gray-700">
+            <p className="font-medium mb-1">Join our waitlist for early access</p>
+            <p className="text-gray-600">
+              Be among the first to experience DNA when we launch in December.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="waitlist-firstName" className="text-sm font-medium">
+              First Name <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="waitlist-firstName"
+              type="text"
+              placeholder="First name"
+              value={formData.firstName}
+              onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+              className="border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="waitlist-lastName" className="text-sm font-medium">
+              Last Name <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="waitlist-lastName"
+              type="text"
+              placeholder="Last name"
+              value={formData.lastName}
+              onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+              className="border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
+              required
+            />
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="waitlist-name" className="text-sm font-medium">
-              Full Name <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                id="waitlist-name"
-                type="text"
-                placeholder="Your full name"
-                value={formData.fullName}
-                onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                className="pl-10 border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
-                required
-              />
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="waitlist-email" className="text-sm font-medium">
+            Email Address <span className="text-red-500">*</span>
+          </Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Input
+              id="waitlist-email"
+              type="email"
+              placeholder="you@example.com"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              className="pl-10 border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
+              required
+            />
           </div>
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="waitlist-email" className="text-sm font-medium">
-              Email Address <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                id="waitlist-email"
-                type="email"
-                placeholder="you@example.com"
-                value={formData.email}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                className="pl-10 border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
-                required
-              />
-            </div>
+        <div className="space-y-2">
+          <Label htmlFor="waitlist-linkedin" className="text-sm font-medium">
+            LinkedIn Profile URL
+          </Label>
+          <div className="relative">
+            <Linkedin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Input
+              id="waitlist-linkedin"
+              type="url"
+              placeholder="https://linkedin.com/in/yourprofile"
+              value={formData.linkedin}
+              onChange={(e) => setFormData(prev => ({ ...prev, linkedin: e.target.value }))}
+              className="pl-10 border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
+            />
           </div>
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="waitlist-message" className="text-sm font-medium">
-              Why are you interested? (Optional)
-            </Label>
-            <div className="relative">
-              <MessageSquare className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-              <Textarea
-                id="waitlist-message"
-                placeholder="Tell us what excites you about DNA..."
-                value={formData.message}
-                onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                className="pl-10 pt-2 border-gray-300 focus:border-dna-copper focus:ring-dna-copper min-h-[100px]"
-                maxLength={500}
-              />
-            </div>
-            <p className="text-xs text-gray-500 text-right">
-              {formData.message.length}/500 characters
-            </p>
+        <div className="space-y-2">
+          <Label htmlFor="waitlist-message" className="text-sm font-medium">
+            Why are you interested? (Optional)
+          </Label>
+          <div className="relative">
+            <MessageSquare className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+            <Textarea
+              id="waitlist-message"
+              placeholder="Tell us what excites you about DNA..."
+              value={formData.message}
+              onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+              className="pl-10 pt-2 border-gray-300 focus:border-dna-copper focus:ring-dna-copper min-h-[100px]"
+              maxLength={500}
+            />
           </div>
+          <p className="text-xs text-gray-500 text-right">
+            {formData.message.length}/500 characters
+          </p>
+        </div>
 
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-gradient-to-r from-dna-copper to-dna-gold hover:from-dna-gold hover:to-dna-copper text-white font-medium py-6"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Joining Waitlist...
-              </>
-            ) : (
-              'Join the Waitlist'
-            )}
-          </Button>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-gradient-to-r from-dna-copper to-dna-gold hover:from-dna-gold hover:to-dna-copper text-white font-medium py-6"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Joining Waitlist...
+            </>
+          ) : (
+            'Join the Waitlist'
+          )}
+        </Button>
 
+        {onBack && (
           <Button
             type="button"
             variant="ghost"
@@ -182,8 +225,10 @@ export const BetaWaitlist = ({ onBack }: BetaWaitlistProps) => {
           >
             ← Back to Sign In
           </Button>
-        </form>
+        )}
+      </form>
 
+      {onBack && (
         <div className="mt-6 pt-6 border-t border-gray-200">
           <p className="text-xs text-center text-gray-500">
             Already have an account?{' '}
@@ -195,6 +240,26 @@ export const BetaWaitlist = ({ onBack }: BetaWaitlistProps) => {
             </button>
           </p>
         </div>
+      )}
+    </>
+  );
+
+  // If used as a dialog
+  if (open !== undefined && onOpenChange) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[500px]">
+          {content}
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // If used as a standalone card
+  return (
+    <Card className="border-dna-copper/20 shadow-xl">
+      <CardContent className="pt-6">
+        {content}
       </CardContent>
     </Card>
   );
