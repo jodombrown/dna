@@ -25,6 +25,8 @@ import { usePostShares } from '@/hooks/usePostShares';
 import { ReactionEmoji, REACTION_EMOJIS, getEmojiLabel } from '@/types/reactions';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { usePostViewTracker } from '@/hooks/usePostViewTracker';
+import { PostAnalytics } from './PostAnalytics';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -91,6 +93,9 @@ export function PostCard({
     sharePost,
     isSharing,
   } = usePostShares(post.post_id, currentUserId);
+
+  // Automatic view tracking
+  const viewTrackerRef = usePostViewTracker(post.post_id);
 
   const isOwnPost = post.author_id === currentUserId;
 
@@ -197,7 +202,7 @@ export function PostCard({
   const isRepost = !!post.original_post_id;
 
   return (
-    <Card className="p-6">
+    <Card ref={viewTrackerRef} className="p-6">
       {/* Repost indicator */}
       {isRepost && (
         <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
@@ -256,6 +261,11 @@ export function PostCard({
               <Users className="h-3 w-3" />
             )}
           </div>
+          
+          {/* Analytics - only show on own posts */}
+          {isOwnPost && (
+            <PostAnalytics postId={post.post_id} className="mt-1" showEngagement />
+          )}
         </div>
 
         {isOwnPost && (
