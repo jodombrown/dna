@@ -335,6 +335,48 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         `
       };
 
+    case 'engagement_reminder':
+      const userTypeGreeting = {
+        entrepreneur: 'Fellow Builder',
+        professional: 'DNA Professional',
+        student: 'Future Leader',
+        investor: 'Change Maker',
+      }[formData.userType] || 'DNA Member';
+
+      return {
+        subject: formData.subject || 'We Miss You on DNA',
+        adminHtml: `
+          <h2>Engagement Reminder Sent</h2>
+          <p>Reminder sent to ${formData.userName} (${formData.to})</p>
+          <p><strong>Type:</strong> ${formData.data?.reminder_type || 'engagement_reminder'}</p>
+        `,
+        userSubject: formData.subject || 'We Miss You on DNA',
+        userHtml: `
+          <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.1);">
+              <h2 style="color: #1a1a1a; margin-top: 0;">Hey ${formData.userName} 👋</h2>
+              <p style="font-size: 16px; line-height: 1.6; color: #333;">
+                ${formData.message}
+              </p>
+              <div style="margin: 30px 0;">
+                <a href="${formData.actionUrl}" 
+                   style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                  Take Action
+                </a>
+              </div>
+              <p style="color: #666; font-size: 14px; line-height: 1.6;">
+                DNA is more than a network—it's a movement. ${userTypeGreeting}, your presence makes a difference.
+              </p>
+              <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e5e5;">
+              <p style="color: #999; font-size: 12px;">
+                Sent with care by ADIN, your DNA engagement assistant.<br>
+                Don't want these emails? <a href="https://diasporanetwork.africa/dna/notifications" style="color: #667eea;">Manage preferences</a>
+              </p>
+            </div>
+          </div>
+        `
+      };
+
     case 'waitlist_signup':
       return {
         subject: "New Waitlist Signup - DNA Platform",
