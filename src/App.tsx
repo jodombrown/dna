@@ -72,6 +72,7 @@ import MessagesPage from "./pages/MessagesPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import ProfileEdit from "./pages/ProfileEdit";
+import AdinPreferences from "./pages/AdinPreferences";
 import NudgeCenter from "./pages/NudgeCenter";
 import EventsPage from "./pages/EventsPage";
 import EventDetailsPage from "./pages/EventDetailsPage";
@@ -240,6 +241,11 @@ function App() {
               <Route path="/dna/nudges" element={
                 <OnboardingGuard>
                   <NudgeCenter />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/preferences" element={
+                <OnboardingGuard>
+                  <AdinPreferences />
                 </OnboardingGuard>
               } />
               {/* ========== ANALYTICS ========== */}

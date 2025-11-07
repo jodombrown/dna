@@ -95,6 +95,51 @@ export type Database = {
         }
         Relationships: []
       }
+      adin_preferences: {
+        Row: {
+          created_at: string | null
+          email_enabled: boolean | null
+          id: string
+          in_app_enabled: boolean | null
+          notification_frequency: string | null
+          nudge_categories: Json | null
+          quiet_hours_enabled: boolean | null
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          timezone: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          in_app_enabled?: boolean | null
+          notification_frequency?: string | null
+          nudge_categories?: Json | null
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          in_app_enabled?: boolean | null
+          notification_frequency?: string | null
+          nudge_categories?: Json | null
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       adin_recommendations: {
         Row: {
           created_at: string
@@ -5656,6 +5701,29 @@ export type Database = {
           full_name: string
           user_id: string
         }[]
+      }
+      get_or_create_adin_preferences: {
+        Args: { p_user_id: string }
+        Returns: {
+          created_at: string | null
+          email_enabled: boolean | null
+          id: string
+          in_app_enabled: boolean | null
+          notification_frequency: string | null
+          nudge_categories: Json | null
+          quiet_hours_enabled: boolean | null
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          timezone: string | null
+          updated_at: string | null
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "adin_preferences"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_or_create_conversation: {
         Args: { user1_id: string; user2_id: string }
