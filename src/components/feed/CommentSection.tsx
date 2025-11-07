@@ -1,0 +1,225 @@
+import { useState } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Heart, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+
+interface CommentSectionProps {
+  postId: string;
+}
+
+export function CommentSection({ postId }: CommentSectionProps) {
+  const { user, profile } = useAuth();
+  const [commentText, setCommentText] = useState('');
+  const queryClient = useQueryClient();
+
+  // Fetch comments
+  const { data: comments, isLoading } = useQuery({
+    queryKey: ['post-comments', postId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('post_comments')
+        .select('*')
+        .eq('post_id', postId)
+        .is('parent_comment_id', null)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Create comment
+  const createCommentMutation = useMutation({
+    mutationFn: async (content: string) => {
+      const { error } = await supabase
+        .from('post_comments')
+        .insert({
+          post_id: postId,
+          author_id: user!.id,
+          content,
+        } as any);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['post-comments', postId] });
+      queryClient.invalidateQueries({ queryKey: ['post-comments-count', postId] });
+      setCommentText('');
+      toast.success('Comment added');
+    },
+  });
+
+  const handleSubmitComment = () => {
+    if (!commentText.trim()) return;
+    if (!user) {
+      toast.error('You must be logged in to comment');
+      return;
+    }
+    createCommentMutation.mutate(commentText);
+  };
+
+  return (
+    <div className="space-y-4 border-t pt-4">
+      {/* Create Comment */}
+      {user && (
+        <div className="flex gap-3">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={profile?.avatar_url || ''} />
+            <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+              {profile?.full_name?.[0] || 'U'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 space-y-2">
+            <Textarea
+              placeholder="Write a comment..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              className="min-h-[60px] resize-none text-sm"
+            />
+            <div className="flex justify-end">
+              <Button
+                size="sm"
+                onClick={handleSubmitComment}
+                disabled={!commentText.trim() || createCommentMutation.isPending}
+              >
+                {createCommentMutation.isPending ? (
+                  <>
+                    <Loader2 className="h-3 w-3 mr-2 animate-spin" />
+                    Posting...
+                  </>
+                ) : (
+                  'Comment'
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Comments List */}
+      <div className="space-y-4">
+        {isLoading ? (
+          <div className="text-center py-4">
+            <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
+          </div>
+        ) : comments && comments.length > 0 ? (
+          comments.map((comment) => (
+            <CommentItem key={comment.id} comment={comment} />
+          ))
+        ) : (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            No comments yet. Be the first to comment!
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CommentItem({ comment }: { comment: any }) {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  // Fetch author profile
+  const { data: author } = useQuery({
+    queryKey: ['user-profile', comment.author_id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', comment.author_id)
+        .maybeSingle();
+      return data;
+    },
+  });
+
+  // Fetch like count
+  const { data: likeCount } = useQuery({
+    queryKey: ['comment-likes-count', comment.id],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('comment_likes')
+        .select('id', { count: 'exact', head: true })
+        .eq('comment_id', comment.id);
+      return count || 0;
+    },
+  });
+
+  // Fetch user liked status
+  const { data: hasLiked } = useQuery({
+    queryKey: ['comment-user-liked', comment.id, user?.id],
+    queryFn: async () => {
+      if (!user) return false;
+      const { data } = await supabase
+        .from('comment_likes')
+        .select('id')
+        .eq('comment_id', comment.id)
+        .eq('user_id', user.id)
+        .maybeSingle();
+      return !!data;
+    },
+    enabled: !!user,
+  });
+
+  // Toggle like
+  const toggleLikeMutation = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error('Not authenticated');
+      
+      if (hasLiked) {
+        await supabase
+          .from('comment_likes')
+          .delete()
+          .eq('comment_id', comment.id)
+          .eq('user_id', user.id);
+      } else {
+        await supabase
+          .from('comment_likes')
+          .insert({ comment_id: comment.id, user_id: user.id } as any);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['comment-likes-count', comment.id] });
+      queryClient.invalidateQueries({ queryKey: ['comment-user-liked', comment.id] });
+    },
+  });
+
+  return (
+    <div className="flex gap-3">
+      <Avatar className="h-8 w-8">
+        <AvatarImage src={author?.avatar_url || ''} />
+        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+          {author?.full_name?.[0] || 'U'}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex-1 space-y-1">
+        <div className="bg-accent rounded-lg p-3">
+          <p className="font-semibold text-sm text-foreground">{author?.full_name || 'User'}</p>
+          <p className="text-sm text-foreground mt-1">{comment.content}</p>
+        </div>
+        <div className="flex items-center gap-4 px-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-auto p-0 text-xs"
+            onClick={() => user && toggleLikeMutation.mutate()}
+          >
+            <Heart
+              className={`h-3 w-3 mr-1 ${hasLiked ? 'fill-current text-red-500' : ''}`}
+            />
+            {likeCount || 0}
+          </Button>
+          <span className="text-xs text-muted-foreground">
+            {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
