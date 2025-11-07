@@ -4714,25 +4714,46 @@ export type Database = {
         Row: {
           cohort: string | null
           created_at: string
+          engagement_score: number | null
           event_context: Json | null
           event_type: string
           id: string
+          last_active: string | null
+          last_connection_made: string | null
+          last_post_created: string | null
+          last_profile_update: string | null
+          reminder_stage: number | null
+          updated_at: string | null
           user_id: string
         }
         Insert: {
           cohort?: string | null
           created_at?: string
+          engagement_score?: number | null
           event_context?: Json | null
           event_type: string
           id?: string
+          last_active?: string | null
+          last_connection_made?: string | null
+          last_post_created?: string | null
+          last_profile_update?: string | null
+          reminder_stage?: number | null
+          updated_at?: string | null
           user_id: string
         }
         Update: {
           cohort?: string | null
           created_at?: string
+          engagement_score?: number | null
           event_context?: Json | null
           event_type?: string
           id?: string
+          last_active?: string | null
+          last_connection_made?: string | null
+          last_post_created?: string | null
+          last_profile_update?: string | null
+          reminder_stage?: number | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []

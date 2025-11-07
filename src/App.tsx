@@ -32,6 +32,7 @@ import DnaAnalytics from "./pages/dna/Analytics";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import EngagementDashboard from "./pages/admin/EngagementDashboard";
 import AdminEngagement from "./pages/admin/AdminEngagement";
 import AdminSignals from "./pages/admin/AdminSignals";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
@@ -268,7 +269,7 @@ function App() {
               {/* Admin routes */}
               <Route path="/app/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
-                <Route path="engagement" element={<AdminEngagement />} />
+                <Route path="engagement" element={<EngagementDashboard />} />
                 <Route path="signals" element={<AdminSignals />} />
               </Route>
               
