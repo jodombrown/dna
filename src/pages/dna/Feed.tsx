@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { Loader2 } from 'lucide-react';
-import { CreatePost } from '@/components/feed/CreatePost';
+import { Loader2, PenSquare } from 'lucide-react';
+import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { PostCard } from '@/components/posts/PostCard';
 import { PostComments } from '@/components/posts/PostComments';
 import { useInfiniteFeedPosts } from '@/hooks/useInfiniteFeedPosts';
 import { LoadMoreTrigger } from '@/components/social-feed/LoadMoreTrigger';
 import { SkeletonPostCard } from '@/components/social-feed/SkeletonPostCard';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 type FeedType = 'all' | 'connections' | 'my_posts';
 
@@ -17,6 +20,7 @@ const DnaFeed = () => {
   const { data: profile, isLoading: profileLoading } = useProfile();
   const [feedType, setFeedType] = useState<FeedType>('all');
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   const {
     data,
@@ -47,7 +51,31 @@ const DnaFeed = () => {
 
   return (
     <div className="max-w-2xl mx-auto py-6 px-4 space-y-6">
-      <CreatePost />
+      {/* Create Post Trigger Card */}
+      <Card className="p-4">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={profile?.avatar_url || ''} />
+            <AvatarFallback className="bg-primary text-primary-foreground">
+              {profile?.full_name?.[0] || user.email?.[0] || 'U'}
+            </AvatarFallback>
+          </Avatar>
+          <Button
+            variant="outline"
+            className="flex-1 justify-start text-muted-foreground hover:text-foreground"
+            onClick={() => setShowCreateDialog(true)}
+          >
+            What's on your mind?
+          </Button>
+          <Button
+            size="icon"
+            onClick={() => setShowCreateDialog(true)}
+            className="bg-primary hover:bg-primary/90"
+          >
+            <PenSquare className="h-4 w-4" />
+          </Button>
+        </div>
+      </Card>
 
       {/* Feed Type Filter */}
       <Tabs value={feedType} onValueChange={(v) => setFeedType(v as FeedType)}>
@@ -107,6 +135,17 @@ const DnaFeed = () => {
           </p>
         </div>
       )}
+      
+      {/* Enhanced Create Post Dialog */}
+      <EnhancedCreatePostDialog
+        isOpen={showCreateDialog}
+        onClose={() => setShowCreateDialog(false)}
+        currentUserId={user.id}
+        onSuccess={() => {
+          refetch();
+          setShowCreateDialog(false);
+        }}
+      />
     </div>
   );
 };
