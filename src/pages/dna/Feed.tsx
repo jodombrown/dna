@@ -12,6 +12,7 @@ import { TrendingHashtags } from '@/components/feed/TrendingHashtags';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 type FeedType = 'all' | 'connections' | 'my_posts';
@@ -20,6 +21,7 @@ const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const [feedType, setFeedType] = useState<FeedType>('all');
+  const [selectedHashtag, setSelectedHashtag] = useState<string | null>(null);
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
@@ -30,7 +32,7 @@ const DnaFeed = () => {
     hasNextPage,
     fetchNextPage,
     refetch,
-  } = useInfiniteFeedPosts(feedType, user?.id);
+  } = useInfiniteFeedPosts(feedType, user?.id, selectedHashtag);
 
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
@@ -55,6 +57,27 @@ const DnaFeed = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Feed - Left Column */}
         <div className="lg:col-span-8 space-y-6">
+          {/* Active Hashtag Filter */}
+          {selectedHashtag && (
+            <Card className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Filtering by:</span>
+                  <Badge variant="secondary" className="text-base">
+                    #{selectedHashtag}
+                  </Badge>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedHashtag(null)}
+                >
+                  Clear filter
+                </Button>
+              </div>
+            </Card>
+          )}
+
           {/* Create Post Trigger Card */}
           <Card className="p-4">
             <div className="flex items-center gap-3">
@@ -131,7 +154,9 @@ const DnaFeed = () => {
           ) : (
             <div className="text-center py-12">
               <p className="text-muted-foreground">
-                {feedType === 'connections' 
+                {selectedHashtag
+                  ? `No posts found with #${selectedHashtag}`
+                  : feedType === 'connections' 
                   ? 'No posts from your connections yet. Start connecting with people!' 
                   : feedType === 'my_posts'
                   ? 'You haven\'t posted anything yet. Share your first post!'
@@ -145,8 +170,8 @@ const DnaFeed = () => {
         <aside className="hidden lg:block lg:col-span-4 space-y-6">
           <TrendingHashtags
             onHashtagClick={(tag) => {
-              // TODO: Filter feed by hashtag
-              console.log('Clicked hashtag:', tag);
+              setSelectedHashtag(tag);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
         </aside>

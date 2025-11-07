@@ -6,20 +6,25 @@ type FeedType = 'all' | 'connections' | 'my_posts';
 
 const POSTS_PER_PAGE = 10;
 
-export function useInfiniteFeedPosts(feedType: FeedType = 'all', userId?: string) {
+export function useInfiniteFeedPosts(
+  feedType: FeedType = 'all',
+  userId?: string,
+  hashtag?: string | null
+) {
   return useInfiniteQuery({
-    queryKey: ['infinite-feed-posts', userId, feedType],
+    queryKey: ['infinite-feed-posts', userId, feedType, hashtag],
     queryFn: async ({ pageParam = 0 }) => {
       if (!userId) {
         console.log('No user found');
         return { posts: [], nextOffset: null };
       }
 
-      console.log('Fetching feed posts:', { userId, feedType, offset: pageParam });
+      console.log('Fetching feed posts:', { userId, feedType, hashtag, offset: pageParam });
 
       const { data, error } = await supabase.rpc('get_feed_posts', {
         p_user_id: userId,
         p_feed_type: feedType,
+        p_hashtag: hashtag || null,
         p_limit: POSTS_PER_PAGE,
         p_offset: pageParam,
       });
