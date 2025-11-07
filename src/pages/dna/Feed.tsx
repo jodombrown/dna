@@ -10,8 +10,7 @@ const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
 
-  // Fetch posts
-  const { data: posts, isLoading: postsLoading } = useQuery({
+  const { data: posts, isLoading: postsLoading } = useQuery<any[]>({
     queryKey: ['feed-posts'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -19,7 +18,7 @@ const DnaFeed = () => {
         .select('*')
         .eq('visibility', 'public')
         .order('created_at', { ascending: false })
-        .limit(50);
+        .limit(50) as { data: any[] | null; error: any };
 
       if (error) throw error;
       return data || [];
@@ -48,7 +47,7 @@ const DnaFeed = () => {
         </div>
       ) : posts && posts.length > 0 ? (
         <div className="space-y-4">
-          {posts.map((post) => (
+          {posts.map((post: any) => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>

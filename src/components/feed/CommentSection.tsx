@@ -144,7 +144,7 @@ function CommentItem({ comment }: { comment: any }) {
     queryKey: ['comment-likes-count', comment.id],
     queryFn: async () => {
       const { count } = await supabase
-        .from('comment_likes')
+        .from('comment_likes' as any)
         .select('id', { count: 'exact', head: true })
         .eq('comment_id', comment.id);
       return count || 0;
@@ -157,7 +157,7 @@ function CommentItem({ comment }: { comment: any }) {
     queryFn: async () => {
       if (!user) return false;
       const { data } = await supabase
-        .from('comment_likes')
+        .from('comment_likes' as any)
         .select('id')
         .eq('comment_id', comment.id)
         .eq('user_id', user.id)
@@ -174,14 +174,14 @@ function CommentItem({ comment }: { comment: any }) {
       
       if (hasLiked) {
         await supabase
-          .from('comment_likes')
+          .from('comment_likes' as any)
           .delete()
           .eq('comment_id', comment.id)
           .eq('user_id', user.id);
       } else {
         await supabase
-          .from('comment_likes')
-          .insert({ comment_id: comment.id, user_id: user.id } as any);
+          .from('comment_likes' as any)
+          .insert({ comment_id: comment.id, user_id: user.id });
       }
     },
     onSuccess: () => {

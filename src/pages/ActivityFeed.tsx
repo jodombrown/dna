@@ -132,27 +132,24 @@ const ActivityFeed = () => {
                   id: post.post_id,
                   content: post.content,
                   created_at: post.created_at,
-                  type: post.post_type,
-                  pillar: 'connect', // Default pillar
-                  media_url: post.image_url,
-                  embed_metadata: post.link_url ? {
-                    url: post.link_url,
-                    title: post.link_title || '',
-                    description_text: post.link_description || '',
-                  } : undefined,
+                  author_id: post.author_id,
+                  updated_at: post.created_at,
+                  post_type: post.post_type,
+                  visibility: 'public',
+                  is_pinned: false,
+                  is_flagged: false,
+                  media_urls: post.image_url ? [post.image_url] : null,
                   profiles: {
                     id: post.author_id,
                     full_name: post.author_full_name,
                     avatar_url: post.author_avatar_url,
-                    location: '', // Not included in PostWithAuthor
+                    location: '',
                     professional_role: post.author_headline || '',
                   },
                   like_count: Number(post.likes_count),
                   comment_count: Number(post.comments_count),
                   user_has_liked: post.user_has_liked,
-                }}
-                onLike={handlePostCreated}
-                onComment={handlePostCreated}
+                } as any}
               />
             ))}
           </div>

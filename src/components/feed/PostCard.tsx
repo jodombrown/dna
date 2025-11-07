@@ -21,11 +21,15 @@ interface Post {
   author_id: string;
   content: string;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
   post_type: string;
-  visibility: string;
-  is_pinned: boolean;
-  is_flagged: boolean;
+  visibility?: string;
+  is_pinned?: boolean;
+  is_flagged?: boolean;
+  media_urls?: string[] | null;
+  flagged_at?: string | null;
+  flagged_by?: string | null;
+  [key: string]: any; // Allow additional properties
 }
 
 interface PostCardProps {
