@@ -235,6 +235,7 @@ export type Database = {
           email: string
           full_name: string | null
           id: string
+          linkedin_url: string | null
           message: string | null
           status: string
           updated_at: string
@@ -244,6 +245,7 @@ export type Database = {
           email: string
           full_name?: string | null
           id?: string
+          linkedin_url?: string | null
           message?: string | null
           status?: string
           updated_at?: string
@@ -253,6 +255,7 @@ export type Database = {
           email?: string
           full_name?: string | null
           id?: string
+          linkedin_url?: string | null
           message?: string | null
           status?: string
           updated_at?: string
