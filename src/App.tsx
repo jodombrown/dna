@@ -36,6 +36,7 @@ import EngagementDashboard from "./pages/admin/EngagementDashboard";
 import AdminEngagement from "./pages/admin/AdminEngagement";
 import AdminSignals from "./pages/admin/AdminSignals";
 import WaitlistManagement from "./pages/admin/WaitlistManagement";
+import UserManagement from "./pages/admin/UserManagement";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
 import FeedComingSoon from "./pages/FeedComingSoon";
 
@@ -277,6 +278,7 @@ function App() {
               <Route path="/app/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="waitlist" element={<WaitlistManagement />} />
+                <Route path="users" element={<UserManagement />} />
                 <Route path="engagement" element={<EngagementDashboard />} />
                 <Route path="signals" element={<AdminSignals />} />
               </Route>

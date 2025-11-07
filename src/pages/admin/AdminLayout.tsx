@@ -35,7 +35,7 @@ export default function AdminLayout() {
         {/* Admin Navigation */}
         <div className="bg-card border-b border-border">
           <div className="max-w-7xl mx-auto px-4">
-            <nav className="flex gap-2 py-3">
+            <nav className="flex gap-2 py-3 overflow-x-auto">
               <NavLink to="/app/admin" end className={navLinkClass}>
                 <BarChart className="h-4 w-4" />
                 Dashboard
@@ -43,6 +43,10 @@ export default function AdminLayout() {
               <NavLink to="/app/admin/waitlist" className={navLinkClass}>
                 <Users className="h-4 w-4" />
                 Waitlist
+              </NavLink>
+              <NavLink to="/app/admin/users" className={navLinkClass}>
+                <Users className="h-4 w-4" />
+                Users
               </NavLink>
               <NavLink to="/app/admin/engagement" className={navLinkClass}>
                 <Users className="h-4 w-4" />
