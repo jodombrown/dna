@@ -3548,8 +3548,15 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          flag_reason: string | null
+          flagged_at: string | null
+          flagged_by: string | null
           id: string
           is_deleted: boolean
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_notes: string | null
+          moderation_status: string | null
           post_id: string
           updated_at: string
           user_id: string
@@ -3557,8 +3564,15 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          flag_reason?: string | null
+          flagged_at?: string | null
+          flagged_by?: string | null
           id?: string
           is_deleted?: boolean
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
+          moderation_status?: string | null
           post_id: string
           updated_at?: string
           user_id: string
@@ -3566,8 +3580,15 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          flag_reason?: string | null
+          flagged_at?: string | null
+          flagged_by?: string | null
           id?: string
           is_deleted?: boolean
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
+          moderation_status?: string | null
           post_id?: string
           updated_at?: string
           user_id?: string
@@ -3669,6 +3690,9 @@ export type Database = {
           author_id: string
           content: string
           created_at: string
+          flag_reason: string | null
+          flagged_at: string | null
+          flagged_by: string | null
           id: string
           image_url: string | null
           is_deleted: boolean
@@ -3676,6 +3700,10 @@ export type Database = {
           link_title: string | null
           link_url: string | null
           metadata: Json | null
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_notes: string | null
+          moderation_status: string | null
           original_post_id: string | null
           post_type: string
           privacy_level: string
@@ -3687,6 +3715,9 @@ export type Database = {
           author_id: string
           content: string
           created_at?: string
+          flag_reason?: string | null
+          flagged_at?: string | null
+          flagged_by?: string | null
           id?: string
           image_url?: string | null
           is_deleted?: boolean
@@ -3694,6 +3725,10 @@ export type Database = {
           link_title?: string | null
           link_url?: string | null
           metadata?: Json | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
+          moderation_status?: string | null
           original_post_id?: string | null
           post_type?: string
           privacy_level?: string
@@ -3705,6 +3740,9 @@ export type Database = {
           author_id?: string
           content?: string
           created_at?: string
+          flag_reason?: string | null
+          flagged_at?: string | null
+          flagged_by?: string | null
           id?: string
           image_url?: string | null
           is_deleted?: boolean
@@ -3712,6 +3750,10 @@ export type Database = {
           link_title?: string | null
           link_url?: string | null
           metadata?: Json | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
+          moderation_status?: string | null
           original_post_id?: string | null
           post_type?: string
           privacy_level?: string
@@ -5397,6 +5439,10 @@ export type Database = {
           profile_id: string
           username: string
         }[]
+      }
+      flag_content: {
+        Args: { content_id: string; content_type: string; reason: string }
+        Returns: undefined
       }
       generate_join_token: { Args: never; Returns: string }
       generate_magic_link_token: { Args: never; Returns: string }

@@ -38,6 +38,7 @@ import AdminSignals from "./pages/admin/AdminSignals";
 import WaitlistManagement from "./pages/admin/WaitlistManagement";
 import UserManagement from "./pages/admin/UserManagement";
 import PlatformHealth from "./pages/admin/PlatformHealth";
+import ContentModeration from "./pages/admin/ContentModeration";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
 import FeedComingSoon from "./pages/FeedComingSoon";
 
@@ -283,6 +284,7 @@ function App() {
                 <Route path="health" element={<PlatformHealth />} />
                 <Route path="engagement" element={<EngagementDashboard />} />
                 <Route path="signals" element={<AdminSignals />} />
+                <Route path="moderation" element={<ContentModeration />} />
               </Route>
               
               {/* Regional landing pages */}
