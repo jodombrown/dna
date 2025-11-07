@@ -1,29 +1,37 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { Loader2 } from 'lucide-react';
 import { CreatePost } from '@/components/feed/CreatePost';
-import { PostCard } from '@/components/feed/PostCard';
+import { PostCard } from '@/components/posts/PostCard';
+import { PostComments } from '@/components/posts/PostComments';
+import { useInfiniteFeedPosts } from '@/hooks/useInfiniteFeedPosts';
+import { LoadMoreTrigger } from '@/components/social-feed/LoadMoreTrigger';
+import { SkeletonPostCard } from '@/components/social-feed/SkeletonPostCard';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+type FeedType = 'all' | 'connections' | 'my_posts';
 
 const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
+  const [feedType, setFeedType] = useState<FeedType>('all');
+  const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
 
-  const { data: posts = [], isLoading: postsLoading } = useQuery({
-    queryKey: ['feed-posts'],
-    queryFn: async (): Promise<any[]> => {
-      const { data, error } = await (supabase as any)
-        .from('posts')
-        .select('*')
-        .eq('visibility', 'public')
-        .order('created_at', { ascending: false })
-        .limit(50);
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    refetch,
+  } = useInfiniteFeedPosts(feedType, user?.id);
 
-      if (error) throw error as any;
-      return (data as any[]) || [];
-    },
-  });
+  const posts = data?.pages.flatMap((page) => page.posts) || [];
+
+  const handleCommentClick = (postId: string) => {
+    setExpandedPostId(expandedPostId === postId ? null : postId);
+  };
 
   if (profileLoading) {
     return (
@@ -41,19 +49,62 @@ const DnaFeed = () => {
     <div className="max-w-2xl mx-auto py-6 px-4 space-y-6">
       <CreatePost />
 
-      {postsLoading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      ) : posts && posts.length > 0 ? (
+      {/* Feed Type Filter */}
+      <Tabs value={feedType} onValueChange={(v) => setFeedType(v as FeedType)}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all">All Posts</TabsTrigger>
+          <TabsTrigger value="connections">Connections</TabsTrigger>
+          <TabsTrigger value="my_posts">My Posts</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      {/* Posts Feed */}
+      {isLoading ? (
         <div className="space-y-4">
-          {posts.map((post: any) => (
-            <PostCard key={post.id} post={post} />
+          <SkeletonPostCard />
+          <SkeletonPostCard />
+          <SkeletonPostCard />
+        </div>
+      ) : posts.length > 0 ? (
+        <div className="space-y-4">
+          {posts.map((post) => (
+            <div key={post.post_id}>
+              <PostCard
+                post={post}
+                currentUserId={user.id}
+                onUpdate={refetch}
+                onCommentClick={() => handleCommentClick(post.post_id)}
+                showComments={expandedPostId === post.post_id}
+              />
+              {expandedPostId === post.post_id && (
+                <PostComments postId={post.post_id} currentUserId={user.id} />
+              )}
+            </div>
           ))}
+
+          {/* Infinite Scroll Trigger */}
+          <LoadMoreTrigger
+            onLoadMore={fetchNextPage}
+            hasMore={hasNextPage || false}
+            isLoading={isFetchingNextPage}
+          />
+
+          {/* Loading Indicator */}
+          {isFetchingNextPage && (
+            <div className="flex justify-center py-6">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          )}
         </div>
       ) : (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No posts yet. Be the first to share!</p>
+          <p className="text-muted-foreground">
+            {feedType === 'connections' 
+              ? 'No posts from your connections yet. Start connecting with people!' 
+              : feedType === 'my_posts'
+              ? 'You haven\'t posted anything yet. Share your first post!'
+              : 'No posts yet. Be the first to share!'}
+          </p>
         </div>
       )}
     </div>
