@@ -1,0 +1,167 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
+import { Database } from "@/integrations/supabase/types";
+
+type AdinNudgeRow = Database['public']['Tables']['adin_nudges']['Row'];
+
+export interface AdinNudge {
+  id: string;
+  user_id: string;
+  connection_id: string;
+  nudge_type: string;
+  message: string;
+  status: string; // 'sent' | 'accepted' | 'dismissed' | 'snoozed'
+  payload: any;
+  resolved_at: string | null;
+  created_at: string;
+  action_url?: string;
+  priority?: 'low' | 'medium' | 'high';
+}
+
+export function useAdinNudges(statusFilter?: 'sent' | 'all') {
+  const { user } = useAuth();
+  const [nudges, setNudges] = useState<AdinNudge[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchNudges = async () => {
+    if (!user) {
+      setNudges([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    let query = supabase
+      .from("adin_nudges")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    // Filter by status - 'sent' is the pending status in this schema
+    if (statusFilter === 'sent') {
+      query = query.eq("status", "sent");
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Error fetching nudges:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load nudges",
+        variant: "destructive",
+      });
+      setNudges([]);
+    } else {
+      // Map the data and add computed properties
+      const mappedNudges: AdinNudge[] = (data || []).map(nudge => ({
+        ...nudge,
+        action_url: (nudge.payload as any)?.action_url,
+        priority: (nudge.payload as any)?.priority || 'medium',
+      }));
+      setNudges(mappedNudges);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchNudges();
+
+    // Subscribe to realtime changes
+    const channel = supabase
+      .channel('adin_nudges_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'adin_nudges',
+          filter: user ? `user_id=eq.${user.id}` : undefined,
+        },
+        () => {
+          fetchNudges();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, statusFilter]);
+
+  const acceptNudge = async (nudgeId: string) => {
+    const { error } = await supabase
+      .from("adin_nudges")
+      .update({ status: "accepted", resolved_at: new Date().toISOString() })
+      .eq("id", nudgeId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to accept nudge",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    toast({
+      title: "Success",
+      description: "Nudge accepted",
+    });
+    return true;
+  };
+
+  const dismissNudge = async (nudgeId: string) => {
+    const { error } = await supabase
+      .from("adin_nudges")
+      .update({ status: "dismissed", resolved_at: new Date().toISOString() })
+      .eq("id", nudgeId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to dismiss nudge",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const snoozeNudge = async (nudgeId: string, until: string) => {
+    const { error } = await supabase
+      .from("adin_nudges")
+      .update({ 
+        status: "snoozed"
+      })
+      .eq("id", nudgeId);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to snooze nudge",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    toast({
+      title: "Snoozed",
+      description: "You'll see this again later",
+    });
+    return true;
+  };
+
+  return {
+    nudges,
+    loading,
+    acceptNudge,
+    dismissNudge,
+    snoozeNudge,
+    refetch: fetchNudges,
+  };
+}

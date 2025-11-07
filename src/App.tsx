@@ -71,6 +71,7 @@ import MessagesPage from "./pages/MessagesPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import ProfileEdit from "./pages/ProfileEdit";
+import NudgeCenter from "./pages/NudgeCenter";
 import EventsPage from "./pages/EventsPage";
 import EventDetailsPage from "./pages/EventDetailsPage";
 import EditEventPage from "./pages/EditEventPage";
@@ -229,10 +230,15 @@ function App() {
               <Route path="/dna/connect" element={<Navigate to="/dna/connect/network" replace />} />
               <Route path="/dna/convene" element={<Navigate to="/dna/convene/events" replace />} />
               
-              {/* ========== NOTIFICATIONS ========== */}
+              {/* ========== NOTIFICATIONS & NUDGES ========== */}
               <Route path="/dna/notifications" element={
                 <OnboardingGuard>
                   <DnaNotifications />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/nudges" element={
+                <OnboardingGuard>
+                  <NudgeCenter />
                 </OnboardingGuard>
               } />
               {/* ========== ANALYTICS ========== */}

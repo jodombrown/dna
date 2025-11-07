@@ -1,161 +1,64 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { X, ChevronRight, Target, Users, Lightbulb, Link, Settings } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { ChevronRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-interface NudgeItem {
-  id: string;
-  title: string;
-  description: string;
-  category: 'profile' | 'connect' | 'contribute' | 'settings';
-  priority: 'high' | 'medium' | 'low';
-  icon: React.ReactNode;
-  action: () => void;
-  dismissible: boolean;
-}
+import { useAdinNudges } from '@/hooks/useAdinNudges';
+import NudgeCard from '@/components/adin/NudgeCard';
 
 const DashboardNudges: React.FC = () => {
-  const { profile } = useAuth();
   const navigate = useNavigate();
-  const [dismissedNudges, setDismissedNudges] = useState<string[]>([]);
+  const { nudges, loading, acceptNudge, dismissNudge, snoozeNudge } = useAdinNudges('sent');
 
-  const dismissNudge = (nudgeId: string) => {
-    setDismissedNudges(prev => [...prev, nudgeId]);
+  const handleAccept = async (nudgeId: string) => {
+    const nudge = nudges.find(n => n.id === nudgeId);
+    const success = await acceptNudge(nudgeId);
+    
+    if (success && nudge?.action_url) {
+      navigate(nudge.action_url);
+    }
   };
 
-  const nudges: NudgeItem[] = [
-    {
-      id: 'complete-bio',
-      title: 'Add your professional bio',
-      description: 'Share your story and what you\'re passionate about to help others connect with you.',
-      category: 'profile',
-      priority: 'high',
-      icon: <Settings className="w-4 h-4" />,
-      action: () => navigate('/app/profile'),
-      dismissible: true
-    },
-    {
-      id: 'select-pillars',
-      title: 'Choose your DNA framework pillars',
-      description: 'Select the areas where you want to make an impact: Create, Connect, or Contribute.',
-      category: 'profile',
-      priority: 'high',
-      icon: <Target className="w-4 h-4" />,
-      action: () => navigate('/app/profile'),
-      dismissible: true
-    },
-    {
-      id: 'add-skills',
-      title: 'Showcase your expertise',
-      description: 'Add your professional skills to help others find you for collaboration opportunities.',
-      category: 'profile',
-      priority: 'medium',
-      icon: <Lightbulb className="w-4 h-4" />,
-      action: () => navigate('/app/profile'),
-      dismissible: true
-    },
-    {
-      id: 'connect-social',
-      title: 'Link your social profiles',
-      description: 'Connect your LinkedIn, Twitter, and website to make it easier for people to learn about you.',
-      category: 'profile',
-      priority: 'medium',
-      icon: <Link className="w-4 h-4" />,
-      action: () => navigate('/app/profile'),
-      dismissible: true
-    },
-    {
-      id: 'find-connections',
-      title: 'Discover your network',
-      description: 'Browse DNA members who share your interests and professional background.',
-      category: 'connect',
-      priority: 'medium',
-      icon: <Users className="w-4 h-4" />,
-      action: () => navigate('/app/connect'),
-      dismissible: true
-    }
-  ];
+  if (loading) return null;
+  if (nudges.length === 0) return null;
 
-  // Filter based on profile completeness and dismissed nudges
-  const activeNudges = nudges.filter(nudge => {
-    if (dismissedNudges.includes(nudge.id)) return false;
-    
-    // Check if nudge is relevant based on profile state
-    switch (nudge.id) {
-      case 'complete-bio':
-        return !profile?.bio || profile.bio.length < 50;
-      case 'select-pillars':
-        return !profile?.selected_pillars || profile.selected_pillars.length === 0;
-      case 'add-skills':
-        return !profile?.skills || profile.skills.length < 3;
-      case 'connect-social':
-        return !profile?.linkedin_url && !profile?.website_url;
-      case 'find-connections':
-        return true; // Always show for engagement
-      default:
-        return true;
-    }
-  });
-
-  if (activeNudges.length === 0) return null;
-
-  const completionPercentage = Math.round(
-    ((5 - activeNudges.length) / 5) * 100
-  );
+  const topNudges = nudges.slice(0, 3);
 
   return (
-    <Card className="mb-6">
+    <Card className="mb-6 border-dna-copper/20">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg text-dna-forest">Complete Your DNA Journey</CardTitle>
-          <Badge variant="outline">{completionPercentage}% Complete</Badge>
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-dna-copper" />
+            <CardTitle className="text-lg text-foreground">ADIN Suggestions</CardTitle>
+          </div>
+          <Badge variant="outline" className="bg-dna-copper/10 text-dna-copper border-dna-copper/30">
+            {nudges.length} active
+          </Badge>
         </div>
-        <Progress value={completionPercentage} className="h-2" />
       </CardHeader>
       <CardContent className="space-y-3">
-        {activeNudges.slice(0, 3).map((nudge) => (
-          <div
+        {topNudges.map((nudge) => (
+          <NudgeCard
             key={nudge.id}
-            className="flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 transition-colors"
-          >
-            <div className="flex items-start gap-3 flex-1">
-              <div className="flex-shrink-0 mt-1">
-                {nudge.icon}
-              </div>
-              <div className="min-w-0 flex-1">
-                <h4 className="font-medium text-sm text-foreground">{nudge.title}</h4>
-                <p className="text-sm text-muted-foreground mt-1">{nudge.description}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <Button
-                size="sm"
-                onClick={nudge.action}
-                className="bg-dna-copper hover:bg-dna-gold text-white"
-              >
-                <ChevronRight className="w-3 h-3" />
-              </Button>
-              {nudge.dismissible && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => dismissNudge(nudge.id)}
-                >
-                  <X className="w-3 h-3" />
-                </Button>
-              )}
-            </div>
-          </div>
+            nudge={nudge}
+            onAccept={handleAccept}
+            onDismiss={dismissNudge}
+            onSnooze={snoozeNudge}
+          />
         ))}
         
-        {activeNudges.length > 3 && (
+        {nudges.length > 3 && (
           <div className="text-center pt-2">
-            <Button variant="ghost" size="sm" className="text-muted-foreground">
-              +{activeNudges.length - 3} more suggestions
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-muted-foreground hover:text-dna-copper"
+              onClick={() => navigate('/dna/nudges')}
+            >
+              <ChevronRight className="w-4 h-4 mr-1" />
+              View all {nudges.length} nudges
             </Button>
           </div>
         )}
