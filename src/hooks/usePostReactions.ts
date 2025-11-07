@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ReactionEmoji } from '@/types/reactions';
@@ -15,13 +14,14 @@ interface ReactionData {
 }
 
 export function usePostReactions(postId: string, userId?: string) {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
-  // Fetch reactions for a post
-  const { data: reactions = [], refetch } = useQuery({
+  // Fetch reactions for a post with user details
+  const { data: reactions = [], isLoading } = useQuery({
     queryKey: ['post-reactions', postId],
     queryFn: async () => {
+      // Get all reactions for the post with user info
       const { data, error } = await supabase
         .from('post_reactions')
         .select(`
@@ -36,9 +36,9 @@ export function usePostReactions(postId: string, userId?: string) {
 
       if (error) throw error;
 
-      // Group reactions by emoji
-      const grouped = (data || []).reduce((acc: Record<string, ReactionData>, item: any) => {
-        const emoji = item.emoji as ReactionEmoji;
+      // Group by emoji and aggregate counts/users
+      const grouped = (data || []).reduce((acc, reaction) => {
+        const emoji = reaction.emoji;
         if (!acc[emoji]) {
           acc[emoji] = {
             emoji,
@@ -48,99 +48,105 @@ export function usePostReactions(postId: string, userId?: string) {
         }
         acc[emoji].count++;
         acc[emoji].users.push({
-          user_id: item.user_id,
-          full_name: item.profiles?.full_name || 'Unknown',
-          avatar_url: item.profiles?.avatar_url,
+          user_id: reaction.user_id,
+          full_name: (reaction.profiles as any)?.full_name || 'Unknown',
+          avatar_url: (reaction.profiles as any)?.avatar_url,
         });
         return acc;
-      }, {});
+      }, {} as Record<string, ReactionData>);
 
       return Object.values(grouped).sort((a, b) => b.count - a.count);
     },
     enabled: !!postId,
   });
 
-  // Get user's current reaction
-  const userReaction = reactions
-    .flatMap((r) => r.users)
-    .find((u) => u.user_id === userId);
-
-  const currentReaction = userReaction
-    ? reactions.find((r) => r.users.some((u) => u.user_id === userId))?.emoji
-    : null;
-
-  // Add or update reaction
-  const addReactionMutation = useMutation({
+  // Add reaction
+  const addReaction = useMutation({
     mutationFn: async (emoji: ReactionEmoji) => {
-      if (!userId) throw new Error('Not authenticated');
+      if (!userId) throw new Error('Must be logged in');
 
-      // First, remove any existing reaction from this user
-      await supabase
-        .from('post_reactions')
-        .delete()
-        .eq('post_id', postId)
-        .eq('user_id', userId);
-
-      // Then add the new reaction
       const { error } = await supabase
         .from('post_reactions')
-        .insert({
-          post_id: postId,
-          user_id: userId,
-          emoji,
-        });
+        .insert({ post_id: postId, user_id: userId, emoji });
 
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['post-reactions', postId] });
-      refetch();
     },
-    onError: (error) => {
-      console.error('Error adding reaction:', error);
+    onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: 'Failed to add reaction',
+        title: 'Failed to add reaction',
+        description: error.message,
         variant: 'destructive',
       });
     },
   });
 
   // Remove reaction
-  const removeReactionMutation = useMutation({
-    mutationFn: async () => {
-      if (!userId) throw new Error('Not authenticated');
+  const removeReaction = useMutation({
+    mutationFn: async (emoji: ReactionEmoji) => {
+      if (!userId) throw new Error('Must be logged in');
 
       const { error } = await supabase
         .from('post_reactions')
         .delete()
         .eq('post_id', postId)
-        .eq('user_id', userId);
+        .eq('user_id', userId)
+        .eq('emoji', emoji);
 
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['post-reactions', postId] });
-      refetch();
     },
-    onError: (error) => {
-      console.error('Error removing reaction:', error);
+    onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: 'Failed to remove reaction',
+        title: 'Failed to remove reaction',
+        description: error.message,
         variant: 'destructive',
       });
     },
   });
 
+  // Calculate totals and current user's reaction
   const totalReactions = reactions.reduce((sum, r) => sum + r.count, 0);
+  const currentReaction = reactions.find((r) =>
+    r.users.some((u) => u.user_id === userId)
+  )?.emoji;
+
+  // Toggle reaction (add if not present, remove if present)
+  const toggleReaction = async (emoji: ReactionEmoji) => {
+    if (!userId) {
+      toast({
+        title: 'Authentication required',
+        description: 'Please sign in to react to posts',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const userHasThisReaction = reactions.find((r) =>
+      r.emoji === emoji && r.users.some((u) => u.user_id === userId)
+    );
+    
+    if (userHasThisReaction) {
+      await removeReaction.mutateAsync(emoji);
+    } else {
+      // Remove any existing reaction first
+      if (currentReaction && currentReaction !== emoji) {
+        await removeReaction.mutateAsync(currentReaction);
+      }
+      await addReaction.mutateAsync(emoji);
+    }
+  };
 
   return {
     reactions,
     totalReactions,
     currentReaction,
-    addReaction: addReactionMutation.mutate,
-    removeReaction: removeReactionMutation.mutate,
-    isLoading: addReactionMutation.isPending || removeReactionMutation.isPending,
+    isLoading,
+    addReaction: addReaction.mutateAsync,
+    removeReaction: removeReaction.mutateAsync,
   };
 }

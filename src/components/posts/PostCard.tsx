@@ -16,10 +16,12 @@ import { ReactionSummary } from './ReactionSummary';
 import { RepostDialog } from './RepostDialog';
 import { SharedPostCard } from './SharedPostCard';
 import { LikedByModal } from './LikedByModal';
+import { ShareDialog } from './ShareDialog';
 import { usePostReactions } from '@/hooks/usePostReactions';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmark } from '@/hooks/usePostBookmark';
 import { usePostRepost } from '@/hooks/usePostRepost';
+import { usePostShares } from '@/hooks/usePostShares';
 import { ReactionEmoji, REACTION_EMOJIS, getEmojiLabel } from '@/types/reactions';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
@@ -51,8 +53,8 @@ export function PostCard({
   const { data: profile } = useProfile();
   
   const [showRepostDialog, setShowRepostDialog] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const [showLikedByModal, setShowLikedByModal] = useState(false);
-  const [shareCount, setShareCount] = useState(0);
   
   // Post reactions (emoji reactions)
   const {
@@ -82,6 +84,14 @@ export function PostCard({
 
   const { repost, isReposting } = usePostRepost();
 
+  // Post shares
+  const {
+    shareCount,
+    userHasShared,
+    sharePost,
+    isSharing,
+  } = usePostShares(post.post_id, currentUserId);
+
   const isOwnPost = post.author_id === currentUserId;
 
   const getInitials = (name: string) => {
@@ -107,11 +117,19 @@ export function PostCard({
 
   const postTypeDisplay = getPostTypeDisplay();
 
-  const handleReactionSelect = (reaction: ReactionEmoji) => {
-    if (currentReaction === reaction) {
-      removeReaction();
+  const handleReactionSelect = async (reaction: ReactionEmoji) => {
+    const userHasThisReaction = reactions.find((r) =>
+      r.emoji === reaction && r.users.some((u) => u.user_id === currentUserId)
+    );
+    
+    if (userHasThisReaction) {
+      await removeReaction(reaction);
     } else {
-      addReaction(reaction);
+      // Remove any existing reaction first
+      if (currentReaction && currentReaction !== reaction) {
+        await removeReaction(currentReaction);
+      }
+      await addReaction(reaction);
     }
   };
 
@@ -401,13 +419,16 @@ export function PostCard({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => setShowRepostDialog(true)}
-          disabled={isReposting || isOwnPost}
-          className="flex-1"
-          title={isOwnPost ? "You can't share your own post" : "Share to your feed"}
+          onClick={() => setShowShareDialog(true)}
+          disabled={isSharing}
+          className={cn(
+            'flex-1',
+            userHasShared && 'text-green-600 hover:text-green-700'
+          )}
+          title="Share this post"
         >
-          <Repeat2 className="h-4 w-4 mr-2" />
-          Share
+          <Share2 className={cn('h-4 w-4 mr-2', userHasShared && 'fill-green-600')} />
+          {userHasShared ? 'Shared' : 'Share'}
         </Button>
 
         {/* Bookmark Button */}
@@ -462,6 +483,20 @@ export function PostCard({
           currentUserName={profile.full_name}
           currentUserAvatar={profile.avatar_url}
           onRepost={handleRepost}
+        />
+      )}
+
+      {/* Share Dialog */}
+      {profile && (
+        <ShareDialog
+          isOpen={showShareDialog}
+          onClose={() => setShowShareDialog(false)}
+          post={post}
+          onShare={sharePost}
+          userProfile={{
+            full_name: profile.full_name,
+            avatar_url: profile.avatar_url,
+          }}
         />
       )}
     </Card>

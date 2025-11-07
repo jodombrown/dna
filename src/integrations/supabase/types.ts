@@ -2445,6 +2445,33 @@ export type Database = {
         }
         Relationships: []
       }
+      hashtags: {
+        Row: {
+          created_at: string
+          first_used_at: string
+          id: string
+          last_used_at: string
+          tag: string
+          usage_count: number
+        }
+        Insert: {
+          created_at?: string
+          first_used_at?: string
+          id?: string
+          last_used_at?: string
+          tag: string
+          usage_count?: number
+        }
+        Update: {
+          created_at?: string
+          first_used_at?: string
+          id?: string
+          last_used_at?: string
+          tag?: string
+          usage_count?: number
+        }
+        Relationships: []
+      }
       impact_attributions: {
         Row: {
           connection_id: string
@@ -3603,6 +3630,27 @@ export type Database = {
           },
         ]
       }
+      post_hashtags: {
+        Row: {
+          created_at: string
+          hashtag_id: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          created_at?: string
+          hashtag_id: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          created_at?: string
+          hashtag_id?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: []
+      }
       post_likes: {
         Row: {
           created_at: string
@@ -3652,6 +3700,30 @@ export type Database = {
           emoji?: string
           id?: string
           post_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      post_shares: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          share_commentary: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          share_commentary?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          share_commentary?: string | null
           user_id?: string
         }
         Relationships: []
@@ -5409,6 +5481,10 @@ export type Database = {
         Returns: undefined
       }
       event_owner_id: { Args: { p_event: string }; Returns: string }
+      extract_and_create_hashtags: {
+        Args: { p_content: string; p_post_id: string }
+        Returns: undefined
+      }
       find_adin_matches:
         | {
             Args: { target_user_id: string }
@@ -5863,6 +5939,7 @@ export type Database = {
           username: string
         }[]
       }
+      get_post_share_count: { Args: { p_post_id: string }; Returns: number }
       get_profile_viewers: {
         Args: { p_limit?: number; p_offset?: number; p_profile_id: string }
         Returns: {
@@ -5896,6 +5973,14 @@ export type Database = {
       get_total_posts: { Args: never; Returns: number }
       get_total_unread_count: { Args: { p_user_id: string }; Returns: number }
       get_total_users: { Args: never; Returns: number }
+      get_trending_hashtags: {
+        Args: { p_days?: number; p_limit?: number }
+        Returns: {
+          recent_usage_count: number
+          tag: string
+          usage_count: number
+        }[]
+      }
       get_unread_notification_count: {
         Args: { p_user_id: string }
         Returns: number
