@@ -4,7 +4,7 @@ import { useDashboard } from '@/contexts/DashboardContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { NotificationCenter } from '@/components/notifications/NotificationCenter';
 
 import { 
   Home,
@@ -298,8 +298,8 @@ const UnifiedHeader = () => {
                     </Tooltip>
                   )}
                   
-                  {/* Notifications Bell */}
-                  {user && <NotificationBell />}
+                  {/* Notifications Center */}
+                  {user && <NotificationCenter />}
                   
                   {/* User Profile Dropdown */}
                   {profile && (

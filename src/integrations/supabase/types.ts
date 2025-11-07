@@ -5427,19 +5427,31 @@ export type Database = {
         }
         Returns: string
       }
-      create_notification: {
-        Args: {
-          p_action_url?: string
-          p_actor_id: string
-          p_entity_id?: string
-          p_entity_type?: string
-          p_message: string
-          p_title: string
-          p_type: string
-          p_user_id: string
-        }
-        Returns: string
-      }
+      create_notification:
+        | {
+            Args: {
+              p_actor_id?: string
+              p_link?: string
+              p_message: string
+              p_title: string
+              p_type: string
+              p_user_id: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_action_url?: string
+              p_actor_id: string
+              p_entity_id?: string
+              p_entity_type?: string
+              p_message: string
+              p_title: string
+              p_type: string
+              p_user_id: string
+            }
+            Returns: string
+          }
       cron_overdue_task_reminders: { Args: never; Returns: undefined }
       discover_members: {
         Args: {
