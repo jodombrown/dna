@@ -18,31 +18,25 @@ export default function PlatformHealth() {
   const { data: metrics, isLoading } = useQuery({
     queryKey: ['platform-health'],
     queryFn: async () => {
-      const now = new Date();
-      const todayStart = new Date(now.setHours(0, 0, 0, 0)).toISOString();
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      const weekStart = weekAgo.toISOString();
+      // Waitlist metrics
+      const { count: waitlistTotal } = await supabase
+        .from('beta_waitlist')
+        .select('id', { count: 'exact', head: true });
 
-      // Use RPC calls for counting to avoid TypeScript issues
-      const [totalUsersRes, activeTodayRes, activeWeekRes, waitlistTotalRes, waitlistPendingRes, signupsTodayRes, signupsWeekRes] = await Promise.all([
-        supabase.rpc('count_all_users'),
-        supabase.rpc('count_active_users_today'),
-        supabase.rpc('count_active_users_week'),
-        supabase.from('beta_waitlist').select('id', { count: 'exact', head: true }),
-        supabase.from('beta_waitlist').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-        supabase.rpc('count_signups_today'),
-        supabase.rpc('count_signups_week'),
-      ]);
+      const { count: waitlistPending } = await supabase
+        .from('beta_waitlist')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'pending');
 
+      // For now, return placeholder values for user metrics until user_profiles table exists
       return {
-        totalUsers: totalUsersRes.data || 0,
-        activeUsersToday: activeTodayRes.data || 0,
-        activeUsersWeek: activeWeekRes.data || 0,
-        waitlistTotal: waitlistTotalRes.count || 0,
-        waitlistPending: waitlistPendingRes.count || 0,
-        newSignupsToday: signupsTodayRes.data || 0,
-        newSignupsWeek: signupsWeekRes.data || 0,
+        totalUsers: 0,
+        activeUsersToday: 0,
+        activeUsersWeek: 0,
+        waitlistTotal: waitlistTotal || 0,
+        waitlistPending: waitlistPending || 0,
+        newSignupsToday: 0,
+        newSignupsWeek: 0,
       } as HealthMetrics;
     },
     refetchInterval: 30000, // Refresh every 30 seconds
