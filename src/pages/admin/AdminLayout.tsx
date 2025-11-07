@@ -40,6 +40,10 @@ export default function AdminLayout() {
                 <BarChart className="h-4 w-4" />
                 Dashboard
               </NavLink>
+              <NavLink to="/app/admin/waitlist" className={navLinkClass}>
+                <Users className="h-4 w-4" />
+                Waitlist
+              </NavLink>
               <NavLink to="/app/admin/engagement" className={navLinkClass}>
                 <Users className="h-4 w-4" />
                 Engagement
