@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import UnifiedHeader from '@/components/UnifiedHeader';
+import UserDashboardLayout from '@/components/dashboard/UserDashboardLayout';
+import { useMobile } from '@/hooks/useMobile';
 import { 
   MapPin, 
   Briefcase, 
@@ -27,6 +29,7 @@ const DnaUserDashboard = () => {
   const { username } = useParams<{ username: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { isMobile } = useMobile();
 
   // Fetch profile data
   const { data: profile, isLoading } = useQuery({
@@ -82,6 +85,12 @@ const DnaUserDashboard = () => {
     );
   }
 
+  // Desktop: Use full UserDashboardLayout
+  if (!isMobile) {
+    return <UserDashboardLayout profile={profile} currentUser={user} />;
+  }
+
+  // Mobile: Use simplified profile view
   return (
     <div className="min-h-screen bg-background">
       <UnifiedHeader />

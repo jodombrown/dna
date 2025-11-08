@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Users, Calendar, User, MessageCircle } from 'lucide-react';
+import { Home, Users, Calendar, Briefcase, MessageCircle, Search, Globe } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useMobile } from '@/hooks/useMobile';
@@ -17,10 +17,10 @@ const MobileBottomNav: React.FC = () => {
 
   const navItems = [
     { label: 'Home', icon: Home, path: '/dna/me' },
-    { label: 'Network', icon: Users, path: '/dna/connect/feed' },
+    { label: 'Discover', icon: Search, path: '/dna/discover/members' },
+    { label: 'Feed', icon: Globe, path: '/dna/connect/feed' },
     { label: 'Messages', icon: MessageCircle, path: '/dna/connect/messages', badge: unreadCount },
-    { label: 'Events', icon: Calendar, path: '/dna/convene/events' },
-    { label: 'Groups', icon: Users, path: '/dna/convene/groups' },
+    { label: 'Impact', icon: Briefcase, path: '/dna/contribute/opportunities' },
   ];
 
   const isActive = (path: string) => {
