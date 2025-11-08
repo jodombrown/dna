@@ -20,6 +20,7 @@ import {
 import { PostType, PrivacyLevel } from '@/types/posts';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { uploadMedia as uploadMediaUtil } from '@/lib/uploadMedia';
 import { Globe, Users, Image as ImageIcon, Video, FileText, X } from 'lucide-react';
 
 interface EnhancedCreatePostDialogProps {
@@ -90,24 +91,13 @@ export function EnhancedCreatePostDialog({
   };
 
   const uploadMedia = async (file: File): Promise<string | null> => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${currentUserId}-${Date.now()}.${fileExt}`;
-    const filePath = `posts/${fileName}`;
-
-    const { error: uploadError, data } = await supabase.storage
-      .from('post-media')
-      .upload(filePath, file);
-
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
+    try {
+      const url = await uploadMediaUtil(file, currentUserId, 'user-posts');
+      return url;
+    } catch (error) {
+      console.error('Upload error:', error);
       return null;
     }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('post-media')
-      .getPublicUrl(filePath);
-
-    return publicUrl;
   };
 
   const handleSubmit = async () => {
