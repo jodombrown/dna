@@ -60,8 +60,8 @@ const InteractiveTimeline = () => {
         <p className="text-lg text-gray-600 mb-4">Explore a decade of diaspora growth and impact</p>
       </div>
       
-      <div className="bg-gray-50 py-8 px-2 sm:px-4 lg:px-6 w-full">
-        <div className="max-w-[1600px] mx-auto">
+      <div className="bg-gray-50 py-8 w-full">
+        <div className="px-4 sm:px-6 lg:px-8">
         {/* Mobile: Keep original grid layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-6">
           {timelineData.map((item) => (
