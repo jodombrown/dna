@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import DiasporaStats from '@/components/DiasporaStats';
 import { TYPOGRAPHY } from '@/lib/typography.config';
 import RequestDemoDialog from '@/components/RequestDemoDialog';
+import JoinBetaDialog from '@/components/JoinBetaDialog';
 import PatternBackground from '@/components/ui/PatternBackground';
 import heroProfessional from '@/assets/hero-professional.jpeg';
 
 const HeroSection = () => {
   const navigate = useNavigate();
   const [isDemoDialogOpen, setIsDemoDialogOpen] = useState(false);
+  const [isBetaDialogOpen, setIsBetaDialogOpen] = useState(false);
 
   return (
     <>
@@ -48,10 +50,10 @@ const HeroSection = () => {
                   <Button 
                     variant="default" 
                     size="lg"
-                    onClick={() => navigate('/auth')}
+                    onClick={() => setIsBetaDialogOpen(true)}
                     className="bg-dna-emerald hover:bg-dna-forest"
                   >
-                    Join for free
+                    Join Our Beta
                   </Button>
                   <Button 
                     variant="outline"
@@ -113,6 +115,11 @@ const HeroSection = () => {
       <RequestDemoDialog 
         isOpen={isDemoDialogOpen} 
         onClose={() => setIsDemoDialogOpen(false)} 
+      />
+
+      <JoinBetaDialog 
+        isOpen={isBetaDialogOpen} 
+        onClose={() => setIsBetaDialogOpen(false)} 
       />
     </>
   );

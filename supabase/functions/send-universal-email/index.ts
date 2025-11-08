@@ -86,6 +86,8 @@ const handler = async (req: Request): Promise<Response> => {
       experience: sanitizeInput(formData.experience || ''),
       motivation: sanitizeInput(formData.motivation || ''),
       linkedin_url: sanitizeInput(formData.linkedin_url || ''),
+      linkedin: sanitizeInput(formData.linkedin || ''),
+      interest: sanitizeInput(formData.interest || ''),
       organization: sanitizeInput(formData.organization || ''),
       stakeholderType: sanitizeInput(formData.stakeholderType || '')
     };
@@ -100,10 +102,12 @@ const handler = async (req: Request): Promise<Response> => {
     // Get email content based on form type using sanitized data
     const emailContent = getEmailContent(formType, sanitizedFormData);
 
-    // For demo requests, send to both admin emails
-    const adminRecipients = formType === 'demo_request' 
-      ? ['aweh@diasporanetwork.africa', 'jaune@diasporanetwork.africa']
-      : undefined;
+    // Set admin recipients based on form type
+    let adminRecipients: string[] | undefined;
+    
+    if (formType === 'demo_request' || formType === 'beta_request') {
+      adminRecipients = ['aweh@diasporanetwork.africa', 'jaune@diasporanetwork.africa'];
+    }
 
     // Send email to admin(s)
     const adminEmailResponse = await emailService.sendAdminEmail(emailContent, adminRecipients);

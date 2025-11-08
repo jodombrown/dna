@@ -654,6 +654,122 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         `,
       };
 
+    case 'beta_request':
+      return {
+        subject: `🎯 New Beta Program Request from ${formData.name}`,
+        adminHtml: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; }
+                .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                .header { background: linear-gradient(135deg, #1a4d2e 0%, #2d7a4f 100%); color: white; padding: 30px; text-align: center; }
+                .content { padding: 30px; }
+                .field { margin: 15px 0; padding: 15px; background: #f9fafb; border-radius: 4px; border-left: 3px solid #d4af37; }
+                .label { font-weight: bold; color: #1a4d2e; margin-bottom: 5px; }
+                .value { color: #333; }
+                .urgent { display: inline-block; background: #d4af37; color: #1a4d2e; padding: 5px 15px; border-radius: 4px; font-weight: bold; margin-bottom: 20px; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1 style="margin: 0;">🌟 New Beta Program Request</h1>
+                  <p style="margin: 10px 0 0 0; opacity: 0.9;">New Early Adopter</p>
+                </div>
+                <div class="content">
+                  <span class="urgent">BETA APPLICANT</span>
+                  <div class="field">
+                    <div class="label">Name:</div>
+                    <div class="value">${formData.name}</div>
+                  </div>
+                  <div class="field">
+                    <div class="label">Email:</div>
+                    <div class="value"><a href="mailto:${formData.email}">${formData.email}</a></div>
+                  </div>
+                  ${formData.linkedin ? `
+                  <div class="field">
+                    <div class="label">LinkedIn Profile:</div>
+                    <div class="value"><a href="${formData.linkedin}" target="_blank">${formData.linkedin}</a></div>
+                  </div>
+                  ` : ''}
+                  ${formData.interest ? `
+                  <div class="field">
+                    <div class="label">Interest / Goals:</div>
+                    <div class="value">${formData.interest}</div>
+                  </div>
+                  ` : ''}
+                  <div class="field" style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #2d7a4f;">
+                    <div class="label">Next Steps:</div>
+                    <div class="value">
+                      <ol>
+                        <li>Review applicant's background and interest</li>
+                        <li>Assess fit for current beta phase</li>
+                        <li>Send beta access invitation within 48 hours</li>
+                        <li>Add to beta user communication list</li>
+                      </ol>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <div class="label">Submitted:</div>
+                    <div class="value">${new Date().toLocaleString()}</div>
+                  </div>
+                </div>
+              </div>
+            </body>
+          </html>
+        `,
+        userSubject: "Welcome to the DNA Beta Program!",
+        userHtml: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #1a4d2e 0%, #2d7a4f 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+                .greeting { font-size: 18px; margin-bottom: 20px; }
+                .message { background: white; padding: 20px; border-radius: 4px; margin: 20px 0; border-left: 3px solid #d4af37; }
+                .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #2d7a4f; color: #666; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1 style="margin: 0;">🌟 Welcome to DNA Beta</h1>
+                  <p style="margin: 10px 0 0 0; opacity: 0.9;">Diaspora Network of Africa</p>
+                </div>
+                <div class="content">
+                  <div class="greeting">Asé ${formData.name},</div>
+                  <div class="message">
+                    <p><strong>Thank you for joining our beta program!</strong></p>
+                    <p>We're thrilled to have you as one of our early adopters. Your participation will help shape the future of diaspora collaboration and Africa's transformation.</p>
+                    <p><strong>What happens next:</strong></p>
+                    <ul>
+                      <li>Our team will review your application within 48 hours</li>
+                      <li>You'll receive beta access credentials and onboarding materials</li>
+                      <li>You'll be added to our beta community for direct feedback and updates</li>
+                      <li>You'll have early access to new features as we build together</li>
+                    </ul>
+                    <p>As a beta user, your voice matters. We'll be reaching out for your insights and feedback as we refine the platform.</p>
+                    <p><em>The diaspora is ready. Africa is calling. The time is now.</em></p>
+                  </div>
+                  <div class="footer">
+                    <p><strong>Diaspora Network of Africa</strong></p>
+                    <p style="font-size: 12px;">Ubuntu | Sankofa | Excellence</p>
+                    <p style="font-size: 12px; margin-top: 10px;">
+                      Questions? Contact us at aweh@diasporanetwork.africa
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </body>
+          </html>
+        `,
+      };
+
     default:
       throw new Error(`Unknown form type: ${formType}`);
   }
