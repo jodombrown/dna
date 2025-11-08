@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MessageCircle, Eye, BookOpen } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import PatternBackground from './ui/PatternBackground';
+import MainPageFeedbackPanel from './MainPageFeedbackPanel';
 
 const BuildingTogetherSection = () => {
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+
   return (
     <PatternBackground pattern="stripes" intensity="subtle" className="py-16 bg-gradient-to-br from-dna-pearl-light via-white to-dna-terra-light/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,7 +35,7 @@ const BuildingTogetherSection = () => {
               </p>
               <Button 
                 variant="default"
-                onClick={() => window.open('mailto:feedback@diasporanetwork.africa', '_blank')}
+                onClick={() => setIsFeedbackOpen(true)}
               >
                 Give Feedback
               </Button>
@@ -78,6 +81,11 @@ const BuildingTogetherSection = () => {
           </Card>
         </div>
       </div>
+
+      <MainPageFeedbackPanel 
+        isOpen={isFeedbackOpen} 
+        onClose={() => setIsFeedbackOpen(false)} 
+      />
     </PatternBackground>
   );
 };
