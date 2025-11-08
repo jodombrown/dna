@@ -61,37 +61,22 @@ const InteractiveTimeline = () => {
       </div>
       
       <div className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 w-full">
-        {/* Mobile: Keep original grid layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-6">
+        {/* Horizontal scrollable timeline for all screen sizes */}
+        <div ref={scrollContainerRef} className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide">
           {timelineData.map((item) => (
-            <TimelineItem
-              key={item.year}
-              year={item.year}
-              events={item.events}
-              isActive={activeTimelineYear === item.year}
-              onClick={() => handleTimelineClick(item.year)}
-            />
+            <div key={item.year} className="flex-shrink-0 w-72 sm:w-80">
+              <TimelineItem
+                year={item.year}
+                events={item.events}
+                isActive={activeTimelineYear === item.year}
+                onClick={() => handleTimelineClick(item.year)}
+              />
+            </div>
           ))}
         </div>
-        
-        {/* Desktop: Horizontal scrollable timeline */}
-        <div className="hidden lg:block">
-          <div ref={scrollContainerRef} className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide">
-            {timelineData.map((item) => (
-              <div key={item.year} className="flex-shrink-0 w-72 sm:w-80">
-                <TimelineItem
-                  year={item.year}
-                  events={item.events}
-                  isActive={activeTimelineYear === item.year}
-                  onClick={() => handleTimelineClick(item.year)}
-                />
-              </div>
-            ))}
-          </div>
-          {/* Scroll indicator */}
-          <div className="text-center mt-4">
-            <p className="text-sm text-gray-500">← Scroll horizontally to explore more years →</p>
-          </div>
+        {/* Scroll indicator */}
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-500">← Scroll horizontally to explore more years →</p>
         </div>
         
         {/* Decade's Legacy Summary */}
