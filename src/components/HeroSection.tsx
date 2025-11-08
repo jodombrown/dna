@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import { TYPOGRAPHY } from '@/lib/typography.config';
 import RequestDemoDialog from '@/components/RequestDemoDialog';
 import PatternBackground from '@/components/ui/PatternBackground';
+import heroProfessional from '@/assets/hero-professional.jpeg';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const HeroSection = () => {
     <>
       {/* Main Hero Section with Kente pattern */}
       <PatternBackground pattern="kente" intensity="subtle" className="relative bg-gradient-to-br from-dna-terra-light/20 via-white to-dna-ochre-light/10 pt-2">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 2xl:px-24">
           <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[60vh] py-6">
             
             {/* Left Column, Main Content */}
@@ -82,10 +82,14 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Right Column, Introduction */}
-            <div className="space-y-6">
-              <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg border-0 overflow-hidden">
-                <HeroIntroduction />
+            {/* Right Column, Hero Image */}
+            <div className="relative">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <img 
+                  src={heroProfessional} 
+                  alt="African diaspora professionals collaborating and working together" 
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
