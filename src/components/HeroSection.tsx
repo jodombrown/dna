@@ -22,10 +22,10 @@ const HeroSection = () => {
             <div className="space-y-6">
               {/* Main Headline */}
               <div className="text-center lg:text-left">
-                <h1 className={`${TYPOGRAPHY.display} text-dna-forest mb-4`}>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-dna-forest mb-4 leading-tight">
                   Welcome to the
                   <br />
-                  <span className="text-dna-copper">Diaspora Network of Africa</span>
+                  <span className="text-dna-copper whitespace-nowrap">Diaspora Network of Africa</span>
                 </h1>
                 
                 <p className={`${TYPOGRAPHY.bodyLarge} text-gray-700 mb-6`}>
@@ -48,10 +48,10 @@ const HeroSection = () => {
                   <Button 
                     variant="default" 
                     size="lg"
-                    onClick={() => navigate('/auth')}
+                    onClick={() => navigate('/waitlist')}
                     className="bg-dna-emerald hover:bg-dna-forest"
                   >
-                    Join for free
+                    Join our Waitlist
                   </Button>
                   <Button 
                     variant="outline"
