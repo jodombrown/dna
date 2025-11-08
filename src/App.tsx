@@ -47,6 +47,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import UserAgreement from "./pages/UserAgreement";
 
 // Example pages
 import ConnectExample from "./pages/ConnectExample";
@@ -305,6 +306,9 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/legal/user-agreement" element={<UserAgreement />} />
+              <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/legal/terms" element={<TermsOfService />} />
               
               {/* Authentication flows */}
               <Route path="/invite" element={<InviteSignup />} />
