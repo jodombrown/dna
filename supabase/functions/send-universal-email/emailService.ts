@@ -17,10 +17,12 @@ export class EmailService {
     this.config = config;
   }
 
-  async sendAdminEmail(emailContent: EmailContent) {
+  async sendAdminEmail(emailContent: EmailContent, recipients?: string[]) {
+    const toEmails = recipients || [this.config.adminEmail];
+    
     return await this.resend.emails.send({
       from: this.config.fromEmail,
-      to: [this.config.adminEmail],
+      to: toEmails,
       subject: emailContent.subject,
       html: emailContent.adminHtml,
     });

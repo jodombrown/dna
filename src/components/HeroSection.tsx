@@ -4,20 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import HeroIntroduction from '@/components/HeroIntroduction';
 import DiasporaStats from '@/components/DiasporaStats';
 import { TYPOGRAPHY } from '@/lib/typography.config';
-import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
+import RequestDemoDialog from '@/components/RequestDemoDialog';
 import PatternBackground from '@/components/ui/PatternBackground';
-import { Play, Users } from 'lucide-react';
 
 const HeroSection = () => {
   const navigate = useNavigate();
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-
-  const scrollToDNAFramework = () => {
-    const frameworkSection = document.getElementById('dna-framework');
-    if (frameworkSection) {
-      frameworkSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const [isDemoDialogOpen, setIsDemoDialogOpen] = useState(false);
 
   return (
     <>
@@ -61,6 +53,14 @@ const HeroSection = () => {
                   >
                     Join for free
                   </Button>
+                  <Button 
+                    variant="outline"
+                    size="lg" 
+                    onClick={() => setIsDemoDialogOpen(true)}
+                    className="border-2 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
+                  >
+                    Request a Demo
+                  </Button>
                 </div>
 
                 {/* Legal Disclaimer */}
@@ -79,19 +79,6 @@ const HeroSection = () => {
                   </a>
                   .
                 </p>
-
-                {/* Secondary CTA */}
-                <div className="flex justify-center lg:justify-start">
-                  <Button 
-                    variant="ghost" 
-                    size="lg"
-                    onClick={scrollToDNAFramework}
-                    className="text-dna-forest hover:text-dna-copper"
-                  >
-                    <Play className="w-4 h-4 mr-2" />
-                    See How It Works
-                  </Button>
-                </div>
               </div>
             </div>
 
@@ -119,9 +106,9 @@ const HeroSection = () => {
       </PatternBackground>
 
 
-      <MainPageFeedbackPanel 
-        isOpen={isFeedbackOpen} 
-        onClose={() => setIsFeedbackOpen(false)} 
+      <RequestDemoDialog 
+        isOpen={isDemoDialogOpen} 
+        onClose={() => setIsDemoDialogOpen(false)} 
       />
     </>
   );

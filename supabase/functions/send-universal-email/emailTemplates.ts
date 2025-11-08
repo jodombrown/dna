@@ -528,6 +528,132 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         `,
       };
 
+    case 'demo_request':
+      return {
+        subject: `Demo Request from ${formData.name} - ${formData.organization}`,
+        adminHtml: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #d4af37 0%, #c17817 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+                .field { margin-bottom: 20px; }
+                .label { font-weight: bold; color: #1a4d2e; margin-bottom: 5px; }
+                .value { background: white; padding: 12px; border-radius: 4px; border-left: 3px solid #d4af37; }
+                .urgent { background: #d4af37; color: white; padding: 6px 12px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1 style="margin: 0;">🎯 New Demo Request</h1>
+                  <p style="margin: 10px 0 0 0; opacity: 0.9;">Action Required</p>
+                </div>
+                <div class="content">
+                  <span class="urgent">HIGH PRIORITY</span>
+                  <div class="field">
+                    <div class="label">Contact Name:</div>
+                    <div class="value">${formData.name}</div>
+                  </div>
+                  <div class="field">
+                    <div class="label">Email:</div>
+                    <div class="value"><a href="mailto:${formData.email}">${formData.email}</a></div>
+                  </div>
+                  <div class="field">
+                    <div class="label">Organization:</div>
+                    <div class="value">${formData.organization}</div>
+                  </div>
+                  ${formData.role ? `
+                  <div class="field">
+                    <div class="label">Role:</div>
+                    <div class="value">${formData.role}</div>
+                  </div>
+                  ` : ''}
+                  ${formData.team_size ? `
+                  <div class="field">
+                    <div class="label">Team Size:</div>
+                    <div class="value">${formData.team_size}</div>
+                  </div>
+                  ` : ''}
+                  ${formData.message ? `
+                  <div class="field">
+                    <div class="label">Message / Goals:</div>
+                    <div class="value">${formData.message}</div>
+                  </div>
+                  ` : ''}
+                  <div class="field" style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #2d7a4f;">
+                    <div class="label">Next Steps:</div>
+                    <div class="value">
+                      <ol>
+                        <li>Review the request details above</li>
+                        <li>Schedule a demo meeting within 24-48 hours</li>
+                        <li>Send calendar invite to ${formData.email}</li>
+                        <li>Prepare customized demo based on their goals</li>
+                      </ol>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <div class="label">Submitted:</div>
+                    <div class="value">${new Date().toLocaleString()}</div>
+                  </div>
+                </div>
+              </div>
+            </body>
+          </html>
+        `,
+        userSubject: "Thank you for requesting a DNA demo!",
+        userHtml: `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #1a4d2e 0%, #2d7a4f 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+                .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+                .greeting { font-size: 18px; margin-bottom: 20px; }
+                .message { background: white; padding: 20px; border-radius: 4px; margin: 20px 0; border-left: 3px solid #d4af37; }
+                .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #2d7a4f; color: #666; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1 style="margin: 0;">Diaspora Network of Africa</h1>
+                  <p style="margin: 10px 0 0 0; opacity: 0.9;">Demo Request Received</p>
+                </div>
+                <div class="content">
+                  <div class="greeting">Asé ${formData.name},</div>
+                  <div class="message">
+                    <p><strong>Thank you for your interest in seeing DNA in action!</strong></p>
+                    <p>We've received your demo request and are excited to show you how the Diaspora Network of Africa can transform ${formData.organization}'s connection to the African diaspora.</p>
+                    <p><strong>What happens next:</strong></p>
+                    <ul>
+                      <li>Our team will review your request within 24-48 hours</li>
+                      <li>We'll reach out to schedule a personalized demo at your convenience</li>
+                      <li>We'll prepare the demo to address your specific goals and use cases</li>
+                      <li>You'll see firsthand how DNA enables diaspora-driven transformation</li>
+                    </ul>
+                    <p>In the meantime, feel free to explore our platform at <a href="https://www.diasporanetwork.africa">diasporanetwork.africa</a>.</p>
+                    <p><em>The diaspora is ready. Africa is calling. The time is now.</em></p>
+                  </div>
+                  <div class="footer">
+                    <p><strong>Diaspora Network of Africa</strong></p>
+                    <p style="font-size: 12px;">Ubuntu | Sankofa | Excellence</p>
+                    <p style="font-size: 12px; margin-top: 10px;">
+                      Questions? Contact us at aweh@diasporanetwork.africa
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </body>
+          </html>
+        `,
+      };
+
     default:
       throw new Error(`Unknown form type: ${formType}`);
   }

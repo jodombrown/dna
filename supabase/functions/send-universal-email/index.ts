@@ -100,8 +100,13 @@ const handler = async (req: Request): Promise<Response> => {
     // Get email content based on form type using sanitized data
     const emailContent = getEmailContent(formType, sanitizedFormData);
 
-    // Send email to admin
-    const adminEmailResponse = await emailService.sendAdminEmail(emailContent);
+    // For demo requests, send to both admin emails
+    const adminRecipients = formType === 'demo_request' 
+      ? ['aweh@diasporanetwork.africa', 'jaune@diasporanetwork.africa']
+      : undefined;
+
+    // Send email to admin(s)
+    const adminEmailResponse = await emailService.sendAdminEmail(emailContent, adminRecipients);
     console.log("Admin email sent successfully:", adminEmailResponse);
 
     // Send confirmation email to user if email provided
