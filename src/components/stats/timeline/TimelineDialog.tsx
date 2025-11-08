@@ -82,6 +82,19 @@ const TimelineDialog: React.FC<TimelineDialogProps> = ({
                 <ArrowRight className="w-5 h-5 animate-[bounce_1s_ease-in-out_infinite]" />
               </Button>
             )}
+
+            {/* Exit button for last card */}
+            {!canNavigateNext && (
+              <Button
+                variant="default"
+                size="lg"
+                onClick={() => onOpenChange(false)}
+                className="flex items-center gap-2 bg-dna-emerald hover:bg-dna-forest transition-all duration-300"
+              >
+                <span>Close Timeline</span>
+                <X className="w-5 h-5" />
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>
