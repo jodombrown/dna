@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import UnifiedHeader from '@/components/UnifiedHeader';
+import { FeedLayout } from '@/components/layout/FeedLayout';
 import { PostCard } from '@/components/posts/PostCard';
 import { PostComments } from '@/components/posts/PostComments';
 import { CreatePostDialog } from '@/components/posts/CreatePostDialog';
