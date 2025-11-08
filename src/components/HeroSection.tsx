@@ -21,49 +21,63 @@ const HeroSection = () => {
 
   return (
     <>
-      {/* Main Hero Section */}
-      <PatternBackground pattern="kente" intensity="subtle" className="relative bg-gradient-to-br from-white via-dna-terra-light/5 to-white pt-24 pb-20">
+      {/* Main Hero Section with Kente pattern */}
+      <PatternBackground pattern="kente" intensity="subtle" className="relative bg-gradient-to-br from-dna-terra-light/20 via-white to-dna-ochre-light/10 pt-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[60vh] py-6">
             
-            {/* Left Column - Main Message */}
-            <div className="space-y-8 text-center lg:text-left">
-              <h1 className="text-5xl lg:text-6xl font-bold text-dna-forest leading-tight">
-                Connecting Africa's diaspora for 
-                <span className="text-dna-copper"> transformative impact</span>
-              </h1>
-              
-              <p className="text-xl text-gray-600 leading-relaxed">
-                Join visionary leaders, builders, and changemakers mobilizing talent, capital, and expertise to accelerate Africa's transformation.
-              </p>
+            {/* Left Column, Main Content */}
+            <div className="space-y-6">
+              {/* Main Headline */}
+              <div className="text-center lg:text-left">
+                <h1 className={`${TYPOGRAPHY.display} text-dna-forest mb-4`}>
+                  Welcome to the
+                  <br />
+                  <span className="text-dna-copper">Diaspora Network of Africa</span>
+                </h1>
+                
+                <p className={`${TYPOGRAPHY.bodyLarge} text-gray-700 mb-6`}>
+                  Connecting Africa's diaspora professionals for transformative global impact through 
+                  <span className="font-semibold text-dna-emerald"> capacity building</span>, 
+                  <span className="font-semibold text-dna-copper"> venture building</span>, and 
+                  <span className="font-semibold text-dna-forest"> ecosystem building</span>.
+                </p>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Button 
-                  size="lg"
-                  className="bg-dna-emerald hover:bg-dna-forest text-white font-semibold shadow-lg hover:shadow-xl transition-all"
-                  onClick={() => navigate('/about')}
-                >
-                  <Users className="w-5 h-5 mr-2" />
-                  Join Our Journey
-                </Button>
-                <Button 
-                  size="lg"
-                  variant="outline"
-                  className="border-2 border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white"
-                  onClick={scrollToDNAFramework}
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  See How It Works
-                </Button>
+                {/* Primary CTA */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
+                  <Button 
+                    variant="default"
+                    size="lg" 
+                    onClick={() => navigate('/about')}
+                  >
+                    <Users className="w-5 h-5 mr-2" />
+                    Join Our Journey
+                  </Button>
+                  <Button 
+                    variant="secondary" 
+                    size="lg"
+                    onClick={scrollToDNAFramework}
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    See How It Works
+                  </Button>
+                </div>
               </div>
             </div>
 
-            {/* Right Column - Introduction Card */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-              <HeroIntroduction />
+            {/* Right Column, Introduction */}
+            <div className="space-y-6">
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg border-0 overflow-hidden">
+                <HeroIntroduction />
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Background Pattern */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
+          <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-dna-sunset/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-dna-terra/10 rounded-full blur-3xl"></div>
         </div>
       </PatternBackground>
 
