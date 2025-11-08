@@ -83,8 +83,8 @@ const HeroSection = () => {
             </div>
 
             {/* Right Column, Hero Image */}
-            <div className="relative">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative h-full min-h-[400px] lg:min-h-[500px]">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl h-full">
                 <img 
                   src={heroProfessional} 
                   alt="African diaspora professionals collaborating and working together" 
