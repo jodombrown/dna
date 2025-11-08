@@ -468,7 +468,20 @@ const Auth = () => {
       </div>
 
       {/* Right Side - Auth Form */}
-      <div className="lg:w-1/2 flex items-center justify-center p-4 pt-20 lg:pt-4">
+      <div className="lg:w-1/2 flex items-center justify-center p-4 pt-20 lg:pt-4 relative">
+        {/* Back to Home Button - Outside the card */}
+        <div className="absolute top-6 left-6 z-20">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/')} 
+            className="text-dna-emerald hover:text-dna-copper hover:bg-dna-emerald/5 transition-all duration-200 flex items-center gap-2 font-medium"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Back to Home</span>
+          </Button>
+        </div>
+
         <div className="w-full max-w-md">
           {/* Show waitlist form if registration is disabled and user wants to sign up */}
           {showWaitlist ? (
@@ -492,11 +505,6 @@ const Auth = () => {
 
           <Card className="shadow-xl border-0 sm:border bg-white/80 backdrop-blur-sm">
             <CardHeader className="text-center rounded-none">
-              <div className="absolute top-4 left-4 z-10 group" title="Back to Home">
-                <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="text-dna-emerald hover:text-dna-copper hover:bg-dna-emerald/5 transition-all duration-200 group-hover:scale-105">
-                  <ArrowLeft className="w-4 h-4" />
-                </Button>
-              </div>
             </CardHeader>
           
           <CardContent>
