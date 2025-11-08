@@ -53,14 +53,14 @@ const InteractiveTimeline = () => {
   const canNavigateNext = currentIndex < timelineData.length - 1;
 
   return (
-    <section className="mb-16 w-full">
+    <section className="mb-16 w-full -mx-4 sm:-mx-6 lg:-mx-8">
       <div className="text-center mb-8 px-4">
         <h3 className="text-3xl font-bold text-dna-forest mb-2">Interactive Timeline</h3>
         <p className="text-xl font-semibold text-dna-emerald mb-4">(2014 – 2024)</p>
         <p className="text-lg text-gray-600 mb-4">Explore a decade of diaspora growth and impact</p>
       </div>
       
-      <div className="bg-gray-50 py-8 px-2 w-full">
+      <div className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 w-full">
         {/* Mobile: Keep original grid layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-6">
           {timelineData.map((item) => (
