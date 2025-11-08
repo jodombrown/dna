@@ -28,7 +28,7 @@ const MobileBottomNav: React.FC = () => {
   };
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 bg-background border-t border-border z-50 safe-area-pb">
+    <nav className="md:hidden fixed bottom-0 safe-area-bottom inset-x-0 bg-background border-t border-border z-50 safe-area-pb">
       <div className="flex justify-around items-center h-16">
         {navItems.map((item) => (
           <button

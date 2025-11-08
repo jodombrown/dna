@@ -37,7 +37,7 @@ export function CreatePostDialog({
 }: CreatePostDialogProps) {
   const [content, setContent] = useState('');
   const [postType, setPostType] = useState<PostType>('update');
-  const [privacyLevel, setPrivacyLevel] = useState<PrivacyLevel>('connections');
+  const [privacyLevel, setPrivacyLevel] = useState<PrivacyLevel>('public');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -78,14 +78,14 @@ export function CreatePostDialog({
 
       toast({
         title: 'Post created!',
-        description: 'Your post has been shared',
+        description: 'Your post is live on All Posts',
       });
 
       onSuccess?.();
       onClose();
       setContent('');
       setPostType('update');
-      setPrivacyLevel('connections');
+      setPrivacyLevel('public');
     } catch (error) {
       console.error('Error creating post:', error);
       toast({

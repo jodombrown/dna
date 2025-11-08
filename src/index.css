@@ -457,6 +457,11 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* Ensure bottom-fixed elements sit above iOS browser bar */
+.safe-area-bottom {
+  bottom: env(safe-area-inset-bottom) !important;
+}
+
 /* Dynamic Bokeh Animation Keyframes */
 @keyframes bokeh-drift-1 {
   0% { transform: translate(-20px, 100vh) scale(0.8); opacity: 0; }
