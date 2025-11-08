@@ -7,18 +7,24 @@ import CallToActionSection from './stats/CallToActionSection';
 
 const DiasporaStats = () => {
   return (
-    <div className="max-w-7xl mx-auto">
+    <div>
       {/* Hero Section with Background Image */}
-      <AnimatedStatsSection />
+      <div className="max-w-7xl mx-auto">
+        <AnimatedStatsSection />
+      </div>
 
-      {/* Interactive Timeline */}
+      {/* Interactive Timeline - Full Width */}
       <InteractiveTimeline />
 
       {/* Real Voices Carousel */}
-      <TestimonialsCarousel />
+      <div className="max-w-7xl mx-auto">
+        <TestimonialsCarousel />
+      </div>
 
       {/* Call-to-Action Band and Sources */}
-      <CallToActionSection />
+      <div className="max-w-7xl mx-auto">
+        <CallToActionSection />
+      </div>
     </div>
   );
 };
