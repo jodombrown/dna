@@ -21,65 +21,84 @@ const HeroSection = () => {
 
   return (
     <>
-      {/* Main Hero Section with Kente pattern */}
-      <PatternBackground pattern="kente" intensity="subtle" className="relative bg-gradient-to-br from-dna-terra-light/20 via-white to-dna-ochre-light/10 pt-2">
+      {/* Main Hero Section - LinkedIn Inspired */}
+      <section className="relative bg-white pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[60vh] py-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
             
-            {/* Left Column, Main Content */}
-            <div className="space-y-6">
-              {/* Main Headline */}
-              <div className="text-center lg:text-left">
-                <h1 className={`${TYPOGRAPHY.display} text-dna-forest mb-4`}>
-                  Welcome to the
-                  <br />
-                  <span className="text-dna-copper">Diaspora Network of Africa</span>
+            {/* Left Column - Clear Value Proposition */}
+            <div className="space-y-8">
+              <div>
+                <h1 className="text-5xl lg:text-6xl font-bold text-dna-forest leading-tight mb-6">
+                  Connect Africa's diaspora for transformative impact
                 </h1>
                 
-                <p className={`${TYPOGRAPHY.bodyLarge} text-gray-700 mb-6`}>
-                  Connecting Africa's diaspora professionals for transformative global impact through 
-                  <span className="font-semibold text-dna-emerald"> capacity building</span>, 
-                  <span className="font-semibold text-dna-copper"> venture building</span>, and 
-                  <span className="font-semibold text-dna-forest"> ecosystem building</span>.
+                <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                  Join visionary leaders, builders, and changemakers mobilizing talent, capital, and expertise to reshape Africa's future.
                 </p>
 
-                {/* Primary CTA */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-6">
+                {/* CTA Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
-                    variant="default"
-                    size="lg" 
+                    size="lg"
+                    className="bg-dna-emerald hover:bg-dna-forest text-white font-semibold px-8 py-6 rounded-full text-lg shadow-lg hover:shadow-xl transition-all h-14"
                     onClick={() => navigate('/about')}
                   >
-                    <Users className="w-5 h-5 mr-2" />
-                    Join Our Journey
+                    Join the Network
                   </Button>
                   <Button 
-                    variant="secondary" 
                     size="lg"
+                    variant="outline"
+                    className="border-2 border-dna-forest text-dna-forest hover:bg-dna-forest/5 font-semibold px-8 py-6 rounded-full text-lg h-14"
                     onClick={scrollToDNAFramework}
                   >
-                    <Play className="w-4 h-4 mr-2" />
-                    See How It Works
+                    Learn More
                   </Button>
                 </div>
+
+                {/* Trust Indicator */}
+                <p className="text-sm text-gray-500 mt-6">
+                  By joining, you agree to our{' '}
+                  <a href="/terms" className="text-dna-copper hover:underline">Terms</a>
+                  {' '}and{' '}
+                  <a href="/privacy" className="text-dna-copper hover:underline">Privacy Policy</a>
+                </p>
               </div>
             </div>
 
-            {/* Right Column, Introduction */}
-            <div className="space-y-6">
-              <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg border-0 overflow-hidden">
-                <HeroIntroduction />
+            {/* Right Column - Professional Illustration */}
+            <div className="hidden lg:flex items-center justify-center">
+              <div className="relative w-full h-[500px] bg-gradient-to-br from-dna-terra-light/20 via-dna-ochre-light/10 to-dna-sunset-light/20 rounded-3xl overflow-hidden">
+                {/* Decorative pattern overlay */}
+                <div className="absolute inset-0 opacity-10 bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,rgba(0,0,0,.05)_10px,rgba(0,0,0,.05)_20px)]"></div>
+                
+                {/* Illustration placeholder - can be replaced with actual illustration */}
+                <div className="relative z-10 flex flex-col items-center justify-center h-full p-12 text-center">
+                  <div className="space-y-6">
+                    <div className="w-32 h-32 mx-auto bg-dna-copper/20 rounded-full flex items-center justify-center">
+                      <Users className="w-16 h-16 text-dna-copper" />
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="h-3 w-3 rounded-full bg-dna-emerald animate-pulse"></div>
+                        <span className="text-sm font-medium text-dna-forest">50K+ Global Professionals</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="h-3 w-3 rounded-full bg-dna-copper animate-pulse delay-75"></div>
+                        <span className="text-sm font-medium text-dna-forest">Building Across 54 Countries</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="h-3 w-3 rounded-full bg-dna-sunset animate-pulse delay-150"></div>
+                        <span className="text-sm font-medium text-dna-forest">One Unified Network</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Background Pattern */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
-          <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-dna-sunset/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-1/4 left-1/4 w-48 h-48 bg-dna-terra/10 rounded-full blur-3xl"></div>
-        </div>
-      </PatternBackground>
+      </section>
 
       {/* Statistics Section with Mudcloth pattern */}
       <PatternBackground pattern="mudcloth" intensity="subtle" className="py-10 bg-gradient-to-r from-dna-terra/10 to-dna-sunset/10">
