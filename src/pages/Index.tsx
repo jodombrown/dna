@@ -4,6 +4,7 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import HeroSection from '@/components/HeroSection';
 import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
 import BuildingTogetherSection from '@/components/BuildingTogetherSection';
+import WhoIsDNAForSection from '@/components/WhoIsDNAForSection';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import PrototypeBanner from '@/components/PrototypeBanner';
@@ -30,6 +31,9 @@ const Index = () => {
 
       {/* Building Together Section */}
       <BuildingTogetherSection />
+
+      {/* Who is DNA for Section */}
+      <WhoIsDNAForSection />
 
       <Footer />
       
