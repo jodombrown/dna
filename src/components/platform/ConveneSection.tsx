@@ -1,12 +1,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users2, Sparkles, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Users2, Sparkles, ArrowRight, Clock, Globe, Ticket } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useBreathingAnimation } from '@/hooks/useBreathingAnimation';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const ConveneSection = () => {
   const navigate = useNavigate();
-  const cardRef = useBreathingAnimation();
 
   return (
     <section id="convene-section" className="py-16 bg-gray-50">
@@ -50,47 +49,164 @@ const ConveneSection = () => {
             </Button>
           </div>
           
-          <div className="relative md:order-1">
-            <div 
-              ref={cardRef.elementRef}
-              className="bg-gradient-to-br from-dna-sunset to-dna-copper rounded-3xl p-1.5 shadow-2xl cursor-pointer hover:shadow-3xl transition-all hover:scale-[1.02]"
-              onClick={() => navigate('/convene')}
-            >
-              <div className="bg-white rounded-[22px] overflow-hidden p-5">
-                <div className="bg-dna-sunset text-white p-4 text-center">
-                  <h3 className="font-semibold">Upcoming Diaspora Events</h3>
-                </div>
-                
-                <div className="p-6 space-y-4">
-                  <div className="p-4 border rounded-lg hover:border-dna-sunset/50 transition-colors">
-                    <div className="flex items-start gap-3 mb-2">
-                      <Calendar className="w-5 h-5 text-dna-sunset mt-1" />
-                      <div className="flex-1">
-                        <p className="font-semibold">African Tech Summit 2025</p>
-                        <p className="text-sm text-gray-600">March 15 • Lagos, Nigeria</p>
+          <div className="relative md:order-1 px-12">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {/* Featured Event Card */}
+                <CarouselItem>
+                  <div className="bg-gradient-to-br from-dna-sunset to-dna-copper rounded-3xl p-1.5 shadow-2xl">
+                    <div className="bg-white rounded-[22px] overflow-hidden">
+                      <div className="h-32 bg-gradient-to-br from-dna-sunset via-dna-copper to-dna-gold relative overflow-hidden">
+                        <div className="absolute inset-0 bg-black/20"></div>
+                        <div className="absolute top-4 right-4">
+                          <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-sunset text-xs font-semibold rounded-full">Featured</span>
+                        </div>
+                      </div>
+                      
+                      <div className="p-6">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h3 className="font-bold text-lg mb-1">African Tech Summit 2025</h3>
+                            <p className="text-sm text-gray-600">The Future of Innovation</p>
+                          </div>
+                          <Calendar className="w-5 h-5 text-dna-sunset mt-1" />
+                        </div>
+                        
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center gap-2 text-sm">
+                            <MapPin className="w-4 h-4 text-dna-copper" />
+                            <span className="text-gray-700">Lagos, Nigeria</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Clock className="w-4 h-4 text-dna-copper" />
+                            <span className="text-gray-700">March 15-17, 2025</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Users2 className="w-4 h-4 text-dna-copper" />
+                            <span className="text-gray-700">250+ attendees registered</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-4">
+                          <span className="px-2 py-1 bg-dna-sunset/10 text-dna-sunset text-xs rounded-full">Conference</span>
+                          <span className="px-2 py-1 bg-dna-copper/10 text-dna-copper text-xs rounded-full">Technology</span>
+                          <span className="px-2 py-1 bg-dna-gold/10 text-dna-ochre text-xs rounded-full">Networking</span>
+                        </div>
+                        
+                        <Button className="w-full bg-dna-sunset hover:bg-dna-copper">
+                          <Ticket className="w-4 h-4 mr-2" />
+                          Register Now
+                        </Button>
+                        
+                        <p className="text-center text-xs text-gray-500 mt-3">Swipe to see more events →</p>
                       </div>
                     </div>
-                    <p className="text-xs text-dna-emerald">250+ attendees registered</p>
                   </div>
-                  
-                  <div className="p-4 border rounded-lg hover:border-dna-sunset/50 transition-colors">
-                    <div className="flex items-start gap-3 mb-2">
-                      <Calendar className="w-5 h-5 text-dna-sunset mt-1" />
-                      <div className="flex-1">
-                        <p className="font-semibold">Diaspora Investment Forum</p>
-                        <p className="text-sm text-gray-600">March 22 • London, UK</p>
+                </CarouselItem>
+
+                {/* Community Gathering Card */}
+                <CarouselItem>
+                  <div className="bg-gradient-to-br from-dna-copper to-dna-gold rounded-3xl p-1.5 shadow-2xl">
+                    <div className="bg-white rounded-[22px] overflow-hidden">
+                      <div className="h-32 bg-gradient-to-br from-dna-copper via-dna-gold to-dna-ochre relative overflow-hidden">
+                        <div className="absolute inset-0 bg-black/10"></div>
+                        <div className="absolute top-4 right-4">
+                          <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-copper text-xs font-semibold rounded-full">This Week</span>
+                        </div>
+                      </div>
+                      
+                      <div className="p-6">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h3 className="font-bold text-lg mb-1">Diaspora Investment Forum</h3>
+                            <p className="text-sm text-gray-600">Connect with Investors</p>
+                          </div>
+                          <Globe className="w-5 h-5 text-dna-copper mt-1" />
+                        </div>
+                        
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center gap-2 text-sm">
+                            <MapPin className="w-4 h-4 text-dna-gold" />
+                            <span className="text-gray-700">London, United Kingdom</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Clock className="w-4 h-4 text-dna-gold" />
+                            <span className="text-gray-700">March 22, 2025 • 6:00 PM GMT</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Users2 className="w-4 h-4 text-dna-gold" />
+                            <span className="text-gray-700">150+ attendees registered</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-4">
+                          <span className="px-2 py-1 bg-dna-copper/10 text-dna-copper text-xs rounded-full">Investment</span>
+                          <span className="px-2 py-1 bg-dna-gold/10 text-dna-ochre text-xs rounded-full">Business</span>
+                          <span className="px-2 py-1 bg-dna-emerald/10 text-dna-emerald text-xs rounded-full">Finance</span>
+                        </div>
+                        
+                        <Button className="w-full bg-dna-copper hover:bg-dna-gold">
+                          <Ticket className="w-4 h-4 mr-2" />
+                          RSVP Free
+                        </Button>
                       </div>
                     </div>
-                    <p className="text-xs text-dna-emerald">150+ attendees registered</p>
                   </div>
-                  
-                  <div className="text-center py-4">
-                    <p className="text-sm text-gray-500">50+ events happening this month</p>
-                    <p className="text-xs text-dna-sunset">Join the movement</p>
+                </CarouselItem>
+
+                {/* Cultural Event Card */}
+                <CarouselItem>
+                  <div className="bg-gradient-to-br from-dna-ochre to-dna-sunset rounded-3xl p-1.5 shadow-2xl">
+                    <div className="bg-white rounded-[22px] overflow-hidden">
+                      <div className="h-32 bg-gradient-to-br from-dna-ochre via-dna-gold to-dna-sunset relative overflow-hidden">
+                        <div className="absolute inset-0 bg-black/20"></div>
+                        <div className="absolute top-4 right-4">
+                          <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-ochre text-xs font-semibold rounded-full">Cultural</span>
+                        </div>
+                      </div>
+                      
+                      <div className="p-6">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h3 className="font-bold text-lg mb-1">Pan-African Cultural Festival</h3>
+                            <p className="text-sm text-gray-600">Celebrate Our Heritage</p>
+                          </div>
+                          <Sparkles className="w-5 h-5 text-dna-ochre mt-1" />
+                        </div>
+                        
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center gap-2 text-sm">
+                            <MapPin className="w-4 h-4 text-dna-sunset" />
+                            <span className="text-gray-700">New York, USA</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Clock className="w-4 h-4 text-dna-sunset" />
+                            <span className="text-gray-700">April 5, 2025 • All Day</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm">
+                            <Users2 className="w-4 h-4 text-dna-sunset" />
+                            <span className="text-gray-700">500+ expected attendees</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-4">
+                          <span className="px-2 py-1 bg-dna-ochre/10 text-dna-ochre text-xs rounded-full">Cultural</span>
+                          <span className="px-2 py-1 bg-dna-sunset/10 text-dna-sunset text-xs rounded-full">Music</span>
+                          <span className="px-2 py-1 bg-dna-copper/10 text-dna-copper text-xs rounded-full">Arts</span>
+                        </div>
+                        
+                        <Button className="w-full bg-dna-ochre hover:bg-dna-sunset">
+                          <Ticket className="w-4 h-4 mr-2" />
+                          Get Tickets
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious className="text-dna-sunset hover:text-dna-copper hover:bg-dna-sunset/10" />
+              <CarouselNext className="text-dna-sunset hover:text-dna-copper hover:bg-dna-sunset/10" />
+            </Carousel>
           </div>
         </div>
       </div>
