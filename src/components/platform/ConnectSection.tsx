@@ -1,229 +1,148 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Users, Globe, Target, Network, ArrowRight, MapPin, Briefcase, Star } from 'lucide-react';
+import React from 'react';
+import { Users, MapPin, Briefcase, ArrowRight, Network } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import FiveCsCardModal from './FiveCsCardModal';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import SwipeableCardStack from './SwipeableCardStack';
 
 const ConnectSection = () => {
   const navigate = useNavigate();
-  const [selectedCard, setSelectedCard] = useState<any>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const cards = [
+  const professionals = [
     {
-      type: 'professionals',
-      title: 'Suggested Connections',
-      subtitle: 'People in your network',
-      gradient: 'from-dna-emerald to-dna-forest',
-    },
-    {
-      type: 'communities',
-      title: 'Your Communities',
-      subtitle: 'Groups you might like',
+      name: 'Amara Okafor',
+      title: 'FinTech Product Lead',
+      location: 'Lagos, Nigeria',
+      interests: ['FinTech', 'Product', 'Payments'],
+      mutualConnections: 3,
       gradient: 'from-dna-forest to-dna-emerald',
+      initials: 'AO',
+      color: 'bg-dna-emerald',
     },
     {
-      type: 'opportunities',
-      title: 'Opportunities For You',
-      subtitle: 'Matched to your profile',
-      gradient: 'from-dna-mint to-dna-emerald',
+      name: 'Kwame Mensah',
+      title: 'Impact Investor',
+      location: 'Accra, Ghana',
+      interests: ['Climate Tech', 'AgriTech', 'Venture'],
+      mutualConnections: 5,
+      gradient: 'from-dna-emerald to-dna-copper',
+      initials: 'KM',
+      color: 'bg-dna-copper',
+    },
+    {
+      name: 'Zainab Hassan',
+      title: 'Healthcare Innovation Director',
+      location: 'Nairobi, Kenya',
+      interests: ['HealthTech', 'AI', 'Innovation'],
+      mutualConnections: 2,
+      gradient: 'from-dna-copper to-dna-gold',
+      initials: 'ZH',
+      color: 'bg-dna-gold',
     },
   ];
 
-  const handleCardClick = (card: any) => {
-    setSelectedCard(card);
-    setIsModalOpen(true);
+  const handleCardClick = (index: number) => {
+    navigate('/connect');
   };
 
   return (
     <section id="connect-section" className="mb-16 w-full -mx-4 sm:-mx-6 lg:-mx-8">
       <div className="text-center mb-8 px-4">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-dna-forest to-dna-emerald rounded-xl flex items-center justify-center">
             <Users className="w-6 h-6 text-white" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Connect</h2>
         </div>
-        <p className="text-lg text-gray-600 mb-6">
-          Build meaningful professional relationships across the diaspora.
-          Discover opportunities, expand your network, and find your tribe.
+        <p className="text-xl font-semibold text-gray-900 mb-3">
+          Your Network is Your Networth
+        </p>
+        <p className="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">
+          Build your professional network by discovering diaspora professionals, entrepreneurs, investors, and creatives worldwide who share your interests and goals.
         </p>
         <Button 
-          onClick={() => navigate('/dna/connect')}
-          className="bg-dna-emerald hover:bg-dna-forest text-white inline-flex items-center gap-2"
+          onClick={() => navigate('/connect')}
+          className="bg-dna-forest hover:bg-dna-emerald text-white inline-flex items-center gap-2"
         >
-          Explore Network
+          Discover Your People
           <ArrowRight className="w-4 h-4" />
         </Button>
       </div>
 
       <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 w-full">
         <SwipeableCardStack
-          cards={cards.map((card, index) => {
-            if (card.type === 'professionals') {
-              return (
-                <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
-                  <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
-                    <div className={`bg-gradient-to-r ${card.gradient} text-white p-6`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-semibold text-lg">{card.title}</h3>
-                        <Users className="w-5 h-5" />
-                      </div>
-                      <p className="text-sm text-white/80">{card.subtitle}</p>
-                    </div>
-                    
-                    <div className="p-6 space-y-4 flex-1">
-                      <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-dna-emerald/5 to-transparent rounded-xl border border-dna-emerald/20">
-                        <div className="w-14 h-14 bg-gradient-to-br from-dna-ochre to-dna-gold rounded-full flex items-center justify-center text-white font-bold">AO</div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold truncate">Dr. Amara Okafor</p>
-                          <p className="text-sm text-gray-600 flex items-center gap-1 truncate">
-                            <Briefcase className="w-3 h-3 flex-shrink-0" /> FinTech Entrepreneur
-                          </p>
-                          <p className="text-xs text-dna-emerald flex items-center gap-1 truncate">
-                            <MapPin className="w-3 h-3 flex-shrink-0" /> Lagos → London
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-dna-mint/5 to-transparent rounded-xl border border-dna-mint/20">
-                        <div className="w-14 h-14 bg-gradient-to-br from-dna-sunset to-dna-copper rounded-full flex items-center justify-center text-white font-bold">KA</div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold truncate">Prof. Kwame Asante</p>
-                          <p className="text-sm text-gray-600 flex items-center gap-1 truncate">
-                            <Briefcase className="w-3 h-3 flex-shrink-0" /> AgriTech Innovator
-                          </p>
-                          <p className="text-xs text-dna-emerald flex items-center gap-1 truncate">
-                            <MapPin className="w-3 h-3 flex-shrink-0" /> Accra → Toronto
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="text-center pt-2">
-                        <p className="text-sm font-medium text-dna-forest">50+ professionals</p>
-                        <p className="text-xs text-gray-500">Tap to view all →</p>
-                      </div>
-                    </div>
+          cards={professionals.map((professional) => (
+            <div className={`bg-gradient-to-br ${professional.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
+              <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+                <div className={`bg-gradient-to-r ${professional.gradient} text-white p-6`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-lg">Diaspora Professional</h3>
+                    <Network className="w-5 h-5" />
                   </div>
+                  <p className="text-sm text-white/80">Expand your network</p>
                 </div>
-              );
-            }
-
-            if (card.type === 'communities') {
-              return (
-                <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
-                  <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
-                    <div className={`bg-gradient-to-r ${card.gradient} text-white p-6`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-semibold text-lg">{card.title}</h3>
-                        <Network className="w-5 h-5" />
+                
+                <div className="p-6 space-y-6 flex-1">
+                  {/* Profile Section */}
+                  <div className="flex items-start gap-4">
+                    <Avatar className="w-16 h-16">
+                      <AvatarFallback className={`${professional.color} text-white text-lg font-bold`}>
+                        {professional.initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-lg text-gray-900 mb-1">{professional.name}</h4>
+                      <p className="text-sm font-medium text-gray-700 mb-2">{professional.title}</p>
+                      <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                        <MapPin className="w-3.5 h-3.5" />
+                        <span>{professional.location}</span>
                       </div>
-                      <p className="text-sm text-white/80">{card.subtitle}</p>
-                    </div>
-                    
-                    <div className="p-6 space-y-4 flex-1">
-                      <div className="p-4 bg-gradient-to-br from-dna-emerald/10 to-dna-mint/10 rounded-xl border border-dna-emerald/30">
-                        <div className="flex items-start gap-3">
-                          <div className="w-12 h-12 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Globe className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold mb-1 truncate">African Tech Founders</h4>
-                            <p className="text-xs text-gray-600 mb-2">2,847 members</p>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="px-2 py-1 bg-dna-emerald/20 text-dna-forest text-xs rounded-full">Technology</span>
-                              <span className="px-2 py-1 bg-dna-mint/20 text-dna-forest text-xs rounded-full">Startups</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="p-4 bg-gradient-to-br from-dna-mint/10 to-dna-emerald/10 rounded-xl border border-dna-mint/30">
-                        <div className="flex items-start gap-3">
-                          <div className="w-12 h-12 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Target className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold mb-1 truncate">Diaspora Investors</h4>
-                            <p className="text-xs text-gray-600 mb-2">1,523 members</p>
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="px-2 py-1 bg-dna-copper/20 text-dna-copper text-xs rounded-full">Investment</span>
-                              <span className="px-2 py-1 bg-dna-gold/20 text-dna-ochre text-xs rounded-full">Finance</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <p className="text-center text-xs text-gray-500">Tap to view all →</p>
                     </div>
                   </div>
-                </div>
-              );
-            }
 
-            // opportunities
-            return (
-              <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
-                <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
-                  <div className={`bg-gradient-to-r ${card.gradient} text-white p-6`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-lg">{card.title}</h3>
-                      <Star className="w-5 h-5" />
+                  {/* Interests */}
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Interests</p>
+                    <div className="flex flex-wrap gap-2">
+                      {professional.interests.map((interest, idx) => (
+                        <Badge key={idx} variant="secondary" className="bg-dna-emerald/10 text-dna-forest">
+                          {interest}
+                        </Badge>
+                      ))}
                     </div>
-                    <p className="text-sm text-white/80">{card.subtitle}</p>
                   </div>
-                  
-                  <div className="p-6 space-y-4 flex-1">
-                    <div className="p-4 bg-gradient-to-r from-dna-gold/10 to-dna-copper/10 rounded-xl border border-dna-gold/30">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold truncate">Senior Product Designer</h4>
-                          <p className="text-sm text-gray-600 truncate">Flutterwave • Remote</p>
-                        </div>
-                        <span className="px-2 py-1 bg-dna-emerald/20 text-dna-forest text-xs rounded-full whitespace-nowrap ml-2">95% Match</span>
-                      </div>
-                      <p className="text-xs text-gray-600 mb-3 line-clamp-2">Leading payment infrastructure for Africa. Join us in building the future.</p>
-                      <div className="flex items-center gap-2 mb-3 flex-wrap">
-                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">$120K-$150K</span>
-                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Full-time</span>
-                      </div>
-                    </div>
 
-                    <div className="p-4 bg-gradient-to-r from-dna-copper/10 to-dna-sunset/10 rounded-xl border border-dna-copper/30">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold truncate">Tech Advisor Needed</h4>
-                          <p className="text-sm text-gray-600 truncate">AgriTech Startup</p>
-                        </div>
-                        <span className="px-2 py-1 bg-dna-sunset/20 text-dna-sunset text-xs rounded-full whitespace-nowrap ml-2">88% Match</span>
-                      </div>
-                      <p className="text-xs text-gray-600 mb-3 line-clamp-2">Early-stage startup revolutionizing farming in East Africa.</p>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Equity</span>
-                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Part-time</span>
-                      </div>
+                  {/* Mutual Connections */}
+                  <div className="bg-dna-forest/5 rounded-xl p-4 border-2 border-dna-forest/20">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Users className="w-4 h-4 text-dna-forest" />
+                      <span className="text-sm font-semibold text-gray-900">
+                        {professional.mutualConnections} mutual connections
+                      </span>
                     </div>
-                    
-                    <p className="text-center text-xs text-gray-500">Tap to view all →</p>
+                    <p className="text-xs text-gray-600">
+                      Connected through shared communities and interests
+                    </p>
                   </div>
+
+                  {/* CTA */}
+                  <Button 
+                    className="w-full bg-gradient-to-r from-dna-forest to-dna-emerald hover:from-dna-emerald hover:to-dna-forest text-white font-semibold"
+                  >
+                    Connect Now
+                  </Button>
+
+                  <p className="text-xs text-center text-gray-500">
+                    After connecting, see their upcoming events →
+                  </p>
                 </div>
               </div>
-            );
-          })}
-          onCardClick={(index) => {
-            setSelectedCard(cards[index]);
-            setIsModalOpen(true);
-          }}
+            </div>
+          ))}
+          onCardClick={handleCardClick}
         />
       </div>
-
-      <FiveCsCardModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        cardType="connect"
-        cardData={selectedCard}
-      />
     </section>
   );
 };
