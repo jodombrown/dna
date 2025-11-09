@@ -26,8 +26,8 @@ const HeroTriangleSection = () => {
               Each pillar strengthens the others, multiplying your impact across the continent.
             </p>
 
-            {/* Five Pillars Navigation */}
-            <div className="grid md:grid-cols-5 gap-6 mb-12">
+            {/* Five Pillars Navigation - Hidden on mobile */}
+            <div className="hidden md:grid md:grid-cols-5 gap-6 mb-12">
               {/* Connect Navigation Button */}
               <button 
                 onClick={() => scrollToSection('connect-section')}
