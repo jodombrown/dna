@@ -39,108 +39,86 @@ const ConveneSection = () => {
   };
 
   return (
-    <section id="convene-section" className="py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="md:order-2">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-dna-sunset to-dna-copper rounded-xl flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-white" />
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
-                Convene
-              </h2>
-            </div>
-            <p className="text-xl text-gray-600 mb-6">
-              Discover and create meaningful gatherings across the diaspora. 
-              From tech meetups to cultural celebrations, find your community events.
-            </p>
-            
-            <div className="space-y-3 mb-8">
-              <div className="flex items-center gap-3 p-4 bg-dna-sunset/10 rounded-lg hover:bg-dna-sunset/15 transition-colors">
-                <MapPin className="w-5 h-5 text-dna-sunset" />
-                <span className="font-medium">Diaspora Event Discovery</span>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-dna-sunset/10 rounded-lg hover:bg-dna-sunset/15 transition-colors">
-                <Users2 className="w-5 h-5 text-dna-sunset" />
-                <span className="font-medium">Community Gatherings</span>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-dna-sunset/10 rounded-lg hover:bg-dna-sunset/15 transition-colors">
-                <Sparkles className="w-5 h-5 text-dna-sunset" />
-                <span className="font-medium">Cultural Celebrations</span>
-              </div>
-            </div>
-
-            <Button 
-              onClick={() => navigate('/convene')}
-              className="bg-dna-sunset hover:bg-dna-copper text-white flex items-center gap-2"
-            >
-              Explore Events
-              <ArrowRight className="w-4 h-4" />
-            </Button>
+    <section id="convene-section" className="mb-16 w-full -mx-4 sm:-mx-6 lg:-mx-8">
+      <div className="text-center mb-8 px-4">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-dna-sunset to-dna-copper rounded-xl flex items-center justify-center">
+            <Calendar className="w-6 h-6 text-white" />
           </div>
-          
-          <div className="relative md:order-1 w-full -mx-4 sm:-mx-6 lg:-mx-8">
-            <div className="bg-white py-8 px-4 sm:px-6 lg:px-8 w-full">
-              <div className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide">
-                {cards.map((card, index) => (
-                  <div 
-                    key={index}
-                    className="flex-shrink-0 w-72 sm:w-80 cursor-pointer animate-fade-in"
-                    onClick={() => handleCardClick(card)}
-                  >
-                    <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full`}>
-                      <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
-                        <div className={`h-32 bg-gradient-to-br ${card.gradient} relative overflow-hidden`}>
-                          <div className="absolute inset-0 bg-black/20"></div>
-                          <div className="absolute top-4 right-4">
-                            <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-sunset text-xs font-semibold rounded-full">
-                              {card.category}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="p-6 flex-1">
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <h3 className="font-bold text-lg mb-1">{card.title}</h3>
-                              <p className="text-sm text-gray-600">{card.subtitle}</p>
-                            </div>
-                            <Calendar className="w-5 h-5 text-dna-sunset mt-1 flex-shrink-0" />
-                          </div>
-                          
-                          <div className="space-y-2 mb-4">
-                            <div className="flex items-center gap-2 text-sm">
-                              <MapPin className="w-4 h-4 text-dna-copper flex-shrink-0" />
-                              <span className="text-gray-700">Lagos, Nigeria</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm">
-                              <Clock className="w-4 h-4 text-dna-copper flex-shrink-0" />
-                              <span className="text-gray-700">March 15-17, 2025</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm">
-                              <Users2 className="w-4 h-4 text-dna-copper flex-shrink-0" />
-                              <span className="text-gray-700">250+ attending</span>
-                            </div>
-                          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Convene</h2>
+        </div>
+        <p className="text-lg text-gray-600">
+          Discover and create meaningful gatherings across the diaspora.
+          From tech meetups to cultural celebrations, find your community events.
+        </p>
+        <div className="mt-6">
+          <Button 
+            onClick={() => navigate('/convene')}
+            className="bg-dna-sunset hover:bg-dna-copper text-white inline-flex items-center gap-2"
+          >
+            Explore Events
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
 
-                          <div className="flex items-center gap-2 mb-4 flex-wrap">
-                            <span className="px-2 py-1 bg-dna-sunset/10 text-dna-sunset text-xs rounded-full">Conference</span>
-                            <span className="px-2 py-1 bg-dna-copper/10 text-dna-copper text-xs rounded-full">Tech</span>
-                          </div>
-                          
-                          <p className="text-center text-xs text-gray-500">Tap to view details →</p>
-                        </div>
-                      </div>
+      <div className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 w-full">
+        <div className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide">
+          {cards.map((card, index) => (
+            <div 
+              key={index}
+              className="flex-shrink-0 w-72 sm:w-80 cursor-pointer animate-fade-in"
+              onClick={() => handleCardClick(card)}
+            >
+              <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full`}>
+                <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+                  <div className={`h-32 bg-gradient-to-br ${card.gradient} relative overflow-hidden`}>
+                    <div className="absolute inset-0 bg-black/20"></div>
+                    <div className="absolute top-4 right-4">
+                      <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-sunset text-xs font-semibold rounded-full">
+                        {card.category}
+                      </span>
                     </div>
                   </div>
-                ))}
-              </div>
-              <div className="text-center mt-4">
-                <p className="text-sm text-gray-500">← Scroll to explore events →</p>
+                  
+                  <div className="p-6 flex-1">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-bold text-lg mb-1">{card.title}</h3>
+                        <p className="text-sm text-gray-600">{card.subtitle}</p>
+                      </div>
+                      <Calendar className="w-5 h-5 text-dna-sunset mt-1 flex-shrink-0" />
+                    </div>
+                    
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2 text-sm">
+                        <MapPin className="w-4 h-4 text-dna-copper flex-shrink-0" />
+                        <span className="text-gray-700">Lagos, Nigeria</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Clock className="w-4 h-4 text-dna-copper flex-shrink-0" />
+                        <span className="text-gray-700">March 15-17, 2025</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        <Users2 className="w-4 h-4 text-dna-copper flex-shrink-0" />
+                        <span className="text-gray-700">250+ attending</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-4 flex-wrap">
+                      <span className="px-2 py-1 bg-dna-sunset/10 text-dna-sunset text-xs rounded-full">Conference</span>
+                      <span className="px-2 py-1 bg-dna-copper/10 text-dna-copper text-xs rounded-full">Tech</span>
+                    </div>
+                    
+                    <p className="text-center text-xs text-gray-500">Tap to view details →</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          ))}
+        </div>
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-500">← Scroll to explore events →</p>
         </div>
       </div>
 
