@@ -24,12 +24,21 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
   const handleTouchStart = (e: React.TouchEvent) => {
     startX.current = e.touches[0].clientX;
     setIsDragging(true);
+    // Prevent page scroll when interacting with cards
+    e.stopPropagation();
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
     const currentX = e.touches[0].clientX;
     const diff = currentX - startX.current;
+    
+    // Only prevent default if there's horizontal movement to allow vertical scroll
+    if (Math.abs(diff) > 10) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     setDragOffset(diff);
   };
 
@@ -70,8 +79,10 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
     setDragOffset(0);
   };
 
-  const handleCardClick = () => {
+  const handleCardClick = (e: React.MouseEvent | React.TouchEvent) => {
+    // Only trigger click if it wasn't a drag
     if (Math.abs(dragOffset) < 5 && onCardClick) {
+      e.stopPropagation();
       onCardClick(currentIndex);
     }
   };
@@ -82,6 +93,7 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
       <div 
         ref={containerRef}
         className="relative h-[480px] sm:h-[520px] perspective-1000"
+        style={{ touchAction: 'pan-y' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

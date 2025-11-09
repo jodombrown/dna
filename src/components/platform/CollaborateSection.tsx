@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Handshake, Briefcase, Network, TrendingUp, ArrowRight, Users, DollarSign, Calendar, Target } from 'lucide-react';
+import { Handshake, ArrowRight, Users, DollarSign, Target } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';
-import FiveCsCardModal from './FiveCsCardModal';
 import SwipeableCardStack from './SwipeableCardStack';
 
 const CollaborateSection = () => {
   const navigate = useNavigate();
-  const [selectedCard, setSelectedCard] = useState<any>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const cards = [
     {
@@ -30,9 +27,9 @@ const CollaborateSection = () => {
     },
   ];
 
-  const handleCardClick = (card: any) => {
-    setSelectedCard(card);
-    setIsModalOpen(true);
+  const handleCardClick = (index: number) => {
+    // Navigate to collaborate page with the selected project
+    navigate('/collaborate');
   };
 
   return (
@@ -108,25 +105,21 @@ const CollaborateSection = () => {
                       </div>
                     </div>
 
-                    <p className="text-center text-xs text-gray-500">Tap to view project →</p>
+                    <Button 
+                      className="w-full bg-gradient-to-r from-dna-copper to-dna-gold hover:from-dna-gold hover:to-dna-copper text-white font-semibold"
+                      size="sm"
+                    >
+                      Explore Collaboration
+                    </Button>
                   </div>
                 </div>
               </div>
             </div>
           ))}
-          onCardClick={(index) => {
-            setSelectedCard(cards[index]);
-            setIsModalOpen(true);
-          }}
+          onCardClick={handleCardClick}
         />
       </div>
 
-      <FiveCsCardModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        cardType="collaborate"
-        cardData={selectedCard}
-      />
     </section>
   );
 };
