@@ -76,20 +76,18 @@ const CollaborateSection = () => {
             </Button>
           </div>
           
-          <div className="order-2 md:order-2">
+          <div className="order-2 md:order-2 -mx-4 md:mx-0">
             {/* Mobile: Horizontal Scroll */}
-            <div className="md:hidden overflow-x-auto pb-4 hide-scrollbar">
-              <div className="flex gap-4 px-4"
+            <div className="md:hidden overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
+              <div className="flex gap-4 pl-4 pr-4"
                 style={{
-                  scrollSnapType: 'x mandatory',
                   WebkitOverflowScrolling: 'touch'
                 }}
               >
                 {cards.map((card, index) => (
                   <div 
                     key={index}
-                    className="flex-shrink-0 w-[85vw] cursor-pointer"
-                    style={{ scrollSnapAlign: 'center' }}
+                    className="flex-shrink-0 w-[85vw] max-w-sm cursor-pointer snap-center animate-fade-in"
                     onClick={() => handleCardClick(card)}
                   >
                     <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full`}>

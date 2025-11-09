@@ -78,20 +78,18 @@ const ConnectSection = () => {
           </div>
           
           {/* Horizontal scroll for mobile, carousel for desktop */}
-          <div className="relative">
+          <div className="relative -mx-4 md:mx-0">
             {/* Mobile: Horizontal Scroll */}
-            <div className="md:hidden overflow-x-auto pb-4 hide-scrollbar">
-              <div className="flex gap-4 px-4"
+            <div className="md:hidden overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
+              <div className="flex gap-4 pl-4 pr-4"
                 style={{
-                  scrollSnapType: 'x mandatory',
                   WebkitOverflowScrolling: 'touch'
                 }}
               >
                 {cards.map((card, index) => (
                   <div 
                     key={index}
-                    className="flex-shrink-0 w-[85vw] cursor-pointer"
-                    style={{ scrollSnapAlign: 'center' }}
+                    className="flex-shrink-0 w-[85vw] max-w-sm cursor-pointer snap-center animate-fade-in"
                     onClick={() => handleCardClick(card)}
                   >
                     {card.type === 'professionals' && (
