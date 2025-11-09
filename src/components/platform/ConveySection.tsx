@@ -1,11 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Newspaper, TrendingUp, MessageSquare, Heart, ArrowRight, Share2, Bookmark, Eye, Award } from 'lucide-react';
+import { Newspaper, TrendingUp, MessageSquare, Heart, ArrowRight, Eye, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import FiveCsCardModal from './FiveCsCardModal';
 
 const ConveySection = () => {
   const navigate = useNavigate();
+  const [selectedCard, setSelectedCard] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const cards = [
+    {
+      title: 'Innovation Hub Empowers 500+ African Entrepreneurs',
+      category: 'Tech & Innovation',
+      readTime: '5 min read',
+      gradient: 'from-dna-ochre to-dna-gold',
+    },
+    {
+      title: 'Diaspora Investment Reaches $2B in African Startups',
+      category: 'Finance & Investment',
+      readTime: '7 min read',
+      gradient: 'from-dna-gold to-dna-copper',
+    },
+    {
+      title: 'From Brooklyn to Kigali: A Developer\'s Journey Home',
+      category: 'Community Impact',
+      readTime: '4 min read',
+      gradient: 'from-dna-sunset to-dna-ochre',
+    },
+  ];
+
+  const handleCardClick = (card: any) => {
+    setSelectedCard(card);
+    setIsModalOpen(true);
+  };
 
   return (
     <section id="convey-section" className="py-16">
@@ -49,200 +77,87 @@ const ConveySection = () => {
             </Button>
           </div>
 
-          <div className="order-1 md:order-2 px-12">
-            <Carousel className="w-full">
-              <CarouselContent>
-                {/* Featured Story Card */}
-                <CarouselItem>
-                  <div className="bg-gradient-to-br from-dna-ochre to-dna-gold rounded-3xl p-1.5 shadow-2xl">
-                    <div className="bg-white rounded-[22px] overflow-hidden">
-                      <div className="relative">
-                        <div className="h-40 bg-gradient-to-br from-dna-emerald via-dna-mint to-dna-forest"></div>
-                        <div className="absolute top-3 right-3">
-                          <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-ochre text-xs font-semibold rounded-full flex items-center gap-1">
-                            <Award className="w-3 h-3" /> Featured
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="p-6">
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="px-2 py-1 bg-dna-emerald/10 text-dna-emerald text-xs rounded-full">Tech & Innovation</span>
-                          <span className="text-xs text-gray-500">• 5 min read</span>
-                        </div>
-
-                        <h3 className="font-bold text-lg mb-2 line-clamp-2">Innovation Hub Empowers 500+ African Entrepreneurs</h3>
-                        <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                          How diaspora-funded incubator is transforming startup ecosystem across West Africa with mentorship and capital.
-                        </p>
-
-                        <div className="flex items-center gap-4 mb-4 pb-4 border-b">
-                          <div className="flex items-center gap-1 text-sm">
-                            <Heart className="w-4 h-4 text-dna-sunset" />
-                            <span className="font-semibold">1.2K</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-sm">
-                            <MessageSquare className="w-4 h-4 text-dna-copper" />
-                            <span className="font-semibold">340</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-sm">
-                            <Eye className="w-4 h-4 text-dna-ochre" />
-                            <span className="font-semibold">15.3K</span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-dna-ochre to-dna-gold rounded-full"></div>
-                            <div>
-                              <p className="text-xs font-semibold">Adaeze Nwosu</p>
-                              <p className="text-xs text-gray-500">Tech Reporter</p>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="h-8 px-3">
-                              <Bookmark className="w-3 h-3" />
-                            </Button>
-                            <Button size="sm" variant="outline" className="h-8 px-3">
-                              <Share2 className="w-3 h-3" />
-                            </Button>
+          <div className="order-1 md:order-2">
+            {/* Mobile: Horizontal Scroll */}
+            <div className="md:hidden overflow-x-auto pb-4 hide-scrollbar">
+              <div className="flex gap-4 px-4"
+                style={{
+                  scrollSnapType: 'x mandatory',
+                  WebkitOverflowScrolling: 'touch'
+                }}
+              >
+                {cards.map((card, index) => (
+                  <div 
+                    key={index}
+                    className="flex-shrink-0 w-[85vw] cursor-pointer"
+                    style={{ scrollSnapAlign: 'center' }}
+                    onClick={() => handleCardClick(card)}
+                  >
+                    <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full`}>
+                      <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+                        <div className="relative">
+                          <div className="h-40 bg-gradient-to-br from-dna-emerald via-dna-mint to-dna-forest"></div>
+                          <div className="absolute top-3 right-3">
+                            <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-ochre text-xs font-semibold rounded-full flex items-center gap-1">
+                              <Award className="w-3 h-3" /> Featured
+                            </span>
                           </div>
                         </div>
                         
-                        <p className="text-center text-xs text-gray-500 mt-4">Swipe for more stories →</p>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-
-                {/* Finance News Card */}
-                <CarouselItem>
-                  <div className="bg-gradient-to-br from-dna-gold to-dna-copper rounded-3xl p-1.5 shadow-2xl">
-                    <div className="bg-white rounded-[22px] overflow-hidden">
-                      <div className="relative">
-                        <div className="h-40 bg-gradient-to-br from-dna-sunset via-dna-copper to-dna-gold"></div>
-                        <div className="absolute top-3 right-3">
-                          <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-sunset text-xs font-semibold rounded-full flex items-center gap-1">
-                            <TrendingUp className="w-3 h-3" /> Trending
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="p-6">
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="px-2 py-1 bg-dna-copper/10 text-dna-copper text-xs rounded-full">Finance & Investment</span>
-                          <span className="text-xs text-gray-500">• 7 min read</span>
-                        </div>
-
-                        <h3 className="font-bold text-lg mb-2 line-clamp-2">Diaspora Investment Reaches $2B in African Startups</h3>
-                        <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                          Record-breaking year as African diaspora investors fuel innovation across fintech, agritech, and healthtech sectors.
-                        </p>
-
-                        <div className="flex items-center gap-4 mb-4 pb-4 border-b">
-                          <div className="flex items-center gap-1 text-sm">
-                            <Heart className="w-4 h-4 text-dna-sunset" />
-                            <span className="font-semibold">890</span>
+                        <div className="p-6 flex-1">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="px-2 py-1 bg-dna-emerald/10 text-dna-emerald text-xs rounded-full">{card.category}</span>
+                            <span className="text-xs text-gray-500">• {card.readTime}</span>
                           </div>
-                          <div className="flex items-center gap-1 text-sm">
-                            <MessageSquare className="w-4 h-4 text-dna-copper" />
-                            <span className="font-semibold">210</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-sm">
-                            <Eye className="w-4 h-4 text-dna-ochre" />
-                            <span className="font-semibold">8.7K</span>
-                          </div>
-                        </div>
 
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-dna-sunset to-dna-copper rounded-full"></div>
-                            <div>
-                              <p className="text-xs font-semibold">Kofi Mensah</p>
-                              <p className="text-xs text-gray-500">Finance Analyst</p>
+                          <h3 className="font-bold text-lg mb-2 line-clamp-2">{card.title}</h3>
+                          <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                            How diaspora-funded incubator is transforming startup ecosystem across West Africa.
+                          </p>
+
+                          <div className="flex items-center gap-4 mb-4 pb-4 border-b">
+                            <div className="flex items-center gap-1 text-sm">
+                              <Heart className="w-4 h-4 text-dna-sunset" />
+                              <span className="font-semibold">1.2K</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-sm">
+                              <MessageSquare className="w-4 h-4 text-dna-copper" />
+                              <span className="font-semibold">340</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-sm">
+                              <Eye className="w-4 h-4 text-dna-ochre" />
+                              <span className="font-semibold">15.3K</span>
                             </div>
                           </div>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="h-8 px-3">
-                              <Bookmark className="w-3 h-3" />
-                            </Button>
-                            <Button size="sm" variant="outline" className="h-8 px-3">
-                              <Share2 className="w-3 h-3" />
-                            </Button>
-                          </div>
+
+                          <p className="text-center text-xs text-gray-500">Tap to read full story →</p>
                         </div>
                       </div>
                     </div>
                   </div>
-                </CarouselItem>
-
-                {/* Community Story Card */}
-                <CarouselItem>
-                  <div className="bg-gradient-to-br from-dna-sunset to-dna-ochre rounded-3xl p-1.5 shadow-2xl">
-                    <div className="bg-white rounded-[22px] overflow-hidden">
-                      <div className="relative">
-                        <div className="h-40 bg-gradient-to-br from-dna-mint via-dna-emerald to-dna-forest"></div>
-                        <div className="absolute top-3 right-3">
-                          <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-emerald text-xs font-semibold rounded-full flex items-center gap-1">
-                            <Heart className="w-3 h-3" /> Community
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="p-6">
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="px-2 py-1 bg-dna-emerald/10 text-dna-emerald text-xs rounded-full">Community Impact</span>
-                          <span className="text-xs text-gray-500">• 4 min read</span>
-                        </div>
-
-                        <h3 className="font-bold text-lg mb-2 line-clamp-2">From Brooklyn to Kigali: A Developer's Journey Home</h3>
-                        <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                          Software engineer leaves Silicon Valley to build Rwanda's next generation of tech talent through coding bootcamp.
-                        </p>
-
-                        <div className="flex items-center gap-4 mb-4 pb-4 border-b">
-                          <div className="flex items-center gap-1 text-sm">
-                            <Heart className="w-4 h-4 text-dna-sunset" />
-                            <span className="font-semibold">2.1K</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-sm">
-                            <MessageSquare className="w-4 h-4 text-dna-copper" />
-                            <span className="font-semibold">567</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-sm">
-                            <Eye className="w-4 h-4 text-dna-ochre" />
-                            <span className="font-semibold">23.5K</span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-full"></div>
-                            <div>
-                              <p className="text-xs font-semibold">Grace Uwimana</p>
-                              <p className="text-xs text-gray-500">Staff Writer</p>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="h-8 px-3">
-                              <Bookmark className="w-3 h-3" />
-                            </Button>
-                            <Button size="sm" variant="outline" className="h-8 px-3">
-                              <Share2 className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-              </CarouselContent>
-              <CarouselPrevious className="text-dna-ochre hover:text-dna-gold hover:bg-dna-ochre/10" />
-              <CarouselNext className="text-dna-ochre hover:text-dna-gold hover:bg-dna-ochre/10" />
-            </Carousel>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <FiveCsCardModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        cardType="convey"
+        cardData={selectedCard}
+      />
+
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </section>
   );
 };
