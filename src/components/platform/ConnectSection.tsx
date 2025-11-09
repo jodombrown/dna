@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Users, Globe, Target, Network, ArrowRight, MapPin, Briefcase, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FiveCsCardModal from './FiveCsCardModal';
+import SwipeableCardStack from './SwipeableCardStack';
 
 const ConnectSection = () => {
   const navigate = useNavigate();
@@ -57,16 +58,12 @@ const ConnectSection = () => {
         </Button>
       </div>
 
-      <div className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 w-full">
-        <div className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide">
-          {cards.map((card, index) => (
-            <div 
-              key={index}
-              className="flex-shrink-0 w-72 sm:w-80 cursor-pointer animate-fade-in"
-              onClick={() => handleCardClick(card)}
-            >
-              {card.type === 'professionals' && (
-                <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full`}>
+      <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 w-full">
+        <SwipeableCardStack
+          cards={cards.map((card, index) => {
+            if (card.type === 'professionals') {
+              return (
+                <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
                   <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
                     <div className={`bg-gradient-to-r ${card.gradient} text-white p-6`}>
                       <div className="flex items-center justify-between mb-2">
@@ -110,10 +107,12 @@ const ConnectSection = () => {
                     </div>
                   </div>
                 </div>
-              )}
+              );
+            }
 
-              {card.type === 'communities' && (
-                <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full`}>
+            if (card.type === 'communities') {
+              return (
+                <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
                   <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
                     <div className={`bg-gradient-to-r ${card.gradient} text-white p-6`}>
                       <div className="flex items-center justify-between mb-2">
@@ -160,61 +159,63 @@ const ConnectSection = () => {
                     </div>
                   </div>
                 </div>
-              )}
+              );
+            }
 
-              {card.type === 'opportunities' && (
-                <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full`}>
-                  <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
-                    <div className={`bg-gradient-to-r ${card.gradient} text-white p-6`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-semibold text-lg">{card.title}</h3>
-                        <Star className="w-5 h-5" />
+            // opportunities
+            return (
+              <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
+                <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+                  <div className={`bg-gradient-to-r ${card.gradient} text-white p-6`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-semibold text-lg">{card.title}</h3>
+                      <Star className="w-5 h-5" />
+                    </div>
+                    <p className="text-sm text-white/80">{card.subtitle}</p>
+                  </div>
+                  
+                  <div className="p-6 space-y-4 flex-1">
+                    <div className="p-4 bg-gradient-to-r from-dna-gold/10 to-dna-copper/10 rounded-xl border border-dna-gold/30">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold truncate">Senior Product Designer</h4>
+                          <p className="text-sm text-gray-600 truncate">Flutterwave • Remote</p>
+                        </div>
+                        <span className="px-2 py-1 bg-dna-emerald/20 text-dna-forest text-xs rounded-full whitespace-nowrap ml-2">95% Match</span>
                       </div>
-                      <p className="text-sm text-white/80">{card.subtitle}</p>
+                      <p className="text-xs text-gray-600 mb-3 line-clamp-2">Leading payment infrastructure for Africa. Join us in building the future.</p>
+                      <div className="flex items-center gap-2 mb-3 flex-wrap">
+                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">$120K-$150K</span>
+                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Full-time</span>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-gradient-to-r from-dna-copper/10 to-dna-sunset/10 rounded-xl border border-dna-copper/30">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold truncate">Tech Advisor Needed</h4>
+                          <p className="text-sm text-gray-600 truncate">AgriTech Startup</p>
+                        </div>
+                        <span className="px-2 py-1 bg-dna-sunset/20 text-dna-sunset text-xs rounded-full whitespace-nowrap ml-2">88% Match</span>
+                      </div>
+                      <p className="text-xs text-gray-600 mb-3 line-clamp-2">Early-stage startup revolutionizing farming in East Africa.</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Equity</span>
+                        <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Part-time</span>
+                      </div>
                     </div>
                     
-                    <div className="p-6 space-y-4 flex-1">
-                      <div className="p-4 bg-gradient-to-r from-dna-gold/10 to-dna-copper/10 rounded-xl border border-dna-gold/30">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold truncate">Senior Product Designer</h4>
-                            <p className="text-sm text-gray-600 truncate">Flutterwave • Remote</p>
-                          </div>
-                          <span className="px-2 py-1 bg-dna-emerald/20 text-dna-forest text-xs rounded-full whitespace-nowrap ml-2">95% Match</span>
-                        </div>
-                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">Leading payment infrastructure for Africa. Join us in building the future.</p>
-                        <div className="flex items-center gap-2 mb-3 flex-wrap">
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">$120K-$150K</span>
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Full-time</span>
-                        </div>
-                      </div>
-
-                      <div className="p-4 bg-gradient-to-r from-dna-copper/10 to-dna-sunset/10 rounded-xl border border-dna-copper/30">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold truncate">Tech Advisor Needed</h4>
-                            <p className="text-sm text-gray-600 truncate">AgriTech Startup</p>
-                          </div>
-                          <span className="px-2 py-1 bg-dna-sunset/20 text-dna-sunset text-xs rounded-full whitespace-nowrap ml-2">88% Match</span>
-                        </div>
-                        <p className="text-xs text-gray-600 mb-3 line-clamp-2">Early-stage startup revolutionizing farming in East Africa.</p>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Equity</span>
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Part-time</span>
-                        </div>
-                      </div>
-                      
-                      <p className="text-center text-xs text-gray-500">Tap to view all →</p>
-                    </div>
+                    <p className="text-center text-xs text-gray-500">Tap to view all →</p>
                   </div>
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
-        <div className="text-center mt-4">
-          <p className="text-sm text-gray-500">← Scroll to explore connections →</p>
-        </div>
+              </div>
+            );
+          })}
+          onCardClick={(index) => {
+            setSelectedCard(cards[index]);
+            setIsModalOpen(true);
+          }}
+        />
       </div>
 
       <FiveCsCardModal 
@@ -223,23 +224,6 @@ const ConnectSection = () => {
         cardType="connect"
         cardData={selectedCard}
       />
-
-      <FiveCsCardModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        cardType="connect"
-        cardData={selectedCard}
-      />
-
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </section>
   );
 };

@@ -4,6 +4,7 @@ import { Target, TrendingUp, Users, HandHeart, ArrowRight, DollarSign } from 'lu
 import { useNavigate } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';
 import FiveCsCardModal from './FiveCsCardModal';
+import SwipeableCardStack from './SwipeableCardStack';
 
 const ContributeSection = () => {
   const navigate = useNavigate();
@@ -55,52 +56,47 @@ const ContributeSection = () => {
         </Button>
       </div>
 
-      <div className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 w-full">
-        <div className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide">
-          {cards.map((card, index) => (
-            <div 
-              key={index}
-              className="flex-shrink-0 w-72 sm:w-80 cursor-pointer animate-fade-in"
-              onClick={() => handleCardClick(card)}
-            >
-              <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full`}>
-                <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
-                  <div className={`bg-gradient-to-r ${card.gradient} text-white p-6`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-lg">{card.title}</h3>
-                      <DollarSign className="w-5 h-5" />
-                    </div>
-                    <p className="text-sm text-white/80">{card.subtitle}</p>
+      <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 w-full">
+        <SwipeableCardStack
+          cards={cards.map((card) => (
+            <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
+              <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+                <div className={`bg-gradient-to-r ${card.gradient} text-white p-6`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-lg">{card.title}</h3>
+                    <DollarSign className="w-5 h-5" />
                   </div>
-                  
-                  <div className="p-6 space-y-4 flex-1">
-                    <div className="text-center p-5 bg-gradient-to-br from-dna-emerald/10 to-dna-mint/10 rounded-xl border-2 border-dna-emerald/30 mb-4">
-                      <p className="text-sm text-gray-600 mb-2">Total Contributions</p>
-                      <p className="text-3xl font-bold text-dna-emerald mb-1">$127,500</p>
-                      <p className="text-xs text-dna-forest">+$15K this month</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className="p-4 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-xl text-center">
-                        <p className="text-2xl font-bold text-dna-emerald mb-1">8,847</p>
-                        <p className="text-xs text-gray-600">Lives Impacted</p>
-                      </div>
-                      <div className="p-4 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-xl text-center">
-                        <p className="text-2xl font-bold text-dna-copper mb-1">23</p>
-                        <p className="text-xs text-gray-600">Projects Funded</p>
-                      </div>
-                    </div>
-
-                    <p className="text-center text-xs text-gray-500">Tap to view details →</p>
+                  <p className="text-sm text-white/80">{card.subtitle}</p>
+                </div>
+                
+                <div className="p-6 space-y-4 flex-1">
+                  <div className="text-center p-5 bg-gradient-to-br from-dna-emerald/10 to-dna-mint/10 rounded-xl border-2 border-dna-emerald/30 mb-4">
+                    <p className="text-sm text-gray-600 mb-2">Total Contributions</p>
+                    <p className="text-3xl font-bold text-dna-emerald mb-1">$127,500</p>
+                    <p className="text-xs text-dna-forest">+$15K this month</p>
                   </div>
+
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="p-4 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-xl text-center">
+                      <p className="text-2xl font-bold text-dna-emerald mb-1">8,847</p>
+                      <p className="text-xs text-gray-600">Lives Impacted</p>
+                    </div>
+                    <div className="p-4 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-xl text-center">
+                      <p className="text-2xl font-bold text-dna-copper mb-1">23</p>
+                      <p className="text-xs text-gray-600">Projects Funded</p>
+                    </div>
+                  </div>
+
+                  <p className="text-center text-xs text-gray-500">Tap to view details →</p>
                 </div>
               </div>
             </div>
           ))}
-        </div>
-        <div className="text-center mt-4">
-          <p className="text-sm text-gray-500">← Scroll to explore pathways →</p>
-        </div>
+          onCardClick={(index) => {
+            setSelectedCard(cards[index]);
+            setIsModalOpen(true);
+          }}
+        />
       </div>
 
       <FiveCsCardModal 
@@ -109,16 +105,6 @@ const ContributeSection = () => {
         cardType="contribute"
         cardData={selectedCard}
       />
-
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </section>
   );
 };

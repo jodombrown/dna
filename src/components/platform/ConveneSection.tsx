@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users2, Sparkles, ArrowRight, Clock, Globe, Ticket } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FiveCsCardModal from './FiveCsCardModal';
+import SwipeableCardStack from './SwipeableCardStack';
 
 const ConveneSection = () => {
   const navigate = useNavigate();
@@ -62,64 +63,59 @@ const ConveneSection = () => {
         </div>
       </div>
 
-      <div className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 w-full">
-        <div className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide">
-          {cards.map((card, index) => (
-            <div 
-              key={index}
-              className="flex-shrink-0 w-72 sm:w-80 cursor-pointer animate-fade-in"
-              onClick={() => handleCardClick(card)}
-            >
-              <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full`}>
-                <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
-                  <div className={`h-32 bg-gradient-to-br ${card.gradient} relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-black/20"></div>
-                    <div className="absolute top-4 right-4">
-                      <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-sunset text-xs font-semibold rounded-full">
-                        {card.category}
-                      </span>
+      <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 w-full">
+        <SwipeableCardStack
+          cards={cards.map((card) => (
+            <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
+              <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+                <div className={`h-32 bg-gradient-to-br ${card.gradient} relative overflow-hidden`}>
+                  <div className="absolute inset-0 bg-black/20"></div>
+                  <div className="absolute top-4 right-4">
+                    <span className="px-3 py-1 bg-white/90 backdrop-blur text-dna-sunset text-xs font-semibold rounded-full">
+                      {card.category}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="p-6 flex-1">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="font-bold text-lg mb-1">{card.title}</h3>
+                      <p className="text-sm text-gray-600">{card.subtitle}</p>
                     </div>
+                    <Calendar className="w-5 h-5 text-dna-sunset mt-1 flex-shrink-0" />
                   </div>
                   
-                  <div className="p-6 flex-1">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="font-bold text-lg mb-1">{card.title}</h3>
-                        <p className="text-sm text-gray-600">{card.subtitle}</p>
-                      </div>
-                      <Calendar className="w-5 h-5 text-dna-sunset mt-1 flex-shrink-0" />
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="w-4 h-4 text-dna-copper flex-shrink-0" />
+                      <span className="text-gray-700">Lagos, Nigeria</span>
                     </div>
-                    
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center gap-2 text-sm">
-                        <MapPin className="w-4 h-4 text-dna-copper flex-shrink-0" />
-                        <span className="text-gray-700">Lagos, Nigeria</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Clock className="w-4 h-4 text-dna-copper flex-shrink-0" />
-                        <span className="text-gray-700">March 15-17, 2025</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <Users2 className="w-4 h-4 text-dna-copper flex-shrink-0" />
-                        <span className="text-gray-700">250+ attending</span>
-                      </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="w-4 h-4 text-dna-copper flex-shrink-0" />
+                      <span className="text-gray-700">March 15-17, 2025</span>
                     </div>
-
-                    <div className="flex items-center gap-2 mb-4 flex-wrap">
-                      <span className="px-2 py-1 bg-dna-sunset/10 text-dna-sunset text-xs rounded-full">Conference</span>
-                      <span className="px-2 py-1 bg-dna-copper/10 text-dna-copper text-xs rounded-full">Tech</span>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Users2 className="w-4 h-4 text-dna-copper flex-shrink-0" />
+                      <span className="text-gray-700">250+ attending</span>
                     </div>
-                    
-                    <p className="text-center text-xs text-gray-500">Tap to view details →</p>
                   </div>
+
+                  <div className="flex items-center gap-2 mb-4 flex-wrap">
+                    <span className="px-2 py-1 bg-dna-sunset/10 text-dna-sunset text-xs rounded-full">Conference</span>
+                    <span className="px-2 py-1 bg-dna-copper/10 text-dna-copper text-xs rounded-full">Tech</span>
+                  </div>
+                  
+                  <p className="text-center text-xs text-gray-500">Tap to view details →</p>
                 </div>
               </div>
             </div>
           ))}
-        </div>
-        <div className="text-center mt-4">
-          <p className="text-sm text-gray-500">← Scroll to explore events →</p>
-        </div>
+          onCardClick={(index) => {
+            setSelectedCard(cards[index]);
+            setIsModalOpen(true);
+          }}
+        />
       </div>
 
       <FiveCsCardModal 
@@ -128,16 +124,6 @@ const ConveneSection = () => {
         cardType="convene"
         cardData={selectedCard}
       />
-
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </section>
   );
 };
