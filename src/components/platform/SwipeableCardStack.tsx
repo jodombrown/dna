@@ -45,10 +45,10 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
   const handleTouchEnd = () => {
     setIsDragging(false);
     
-    // Swipe threshold: 80px
-    if (dragOffset > 80 && currentIndex > 0) {
+    // Swipe threshold: 50px (lower for smoother experience)
+    if (dragOffset > 50 && currentIndex > 0) {
       handlePrevious();
-    } else if (dragOffset < -80 && currentIndex < cards.length - 1) {
+    } else if (dragOffset < -50 && currentIndex < cards.length - 1) {
       handleNext();
     }
     
@@ -70,9 +70,9 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
   const handleMouseUp = () => {
     setIsDragging(false);
     
-    if (dragOffset > 80 && currentIndex > 0) {
+    if (dragOffset > 50 && currentIndex > 0) {
       handlePrevious();
-    } else if (dragOffset < -80 && currentIndex < cards.length - 1) {
+    } else if (dragOffset < -50 && currentIndex < cards.length - 1) {
       handleNext();
     }
     
@@ -135,9 +135,9 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
           return (
             <div
               key={index}
-              className={`absolute inset-0 transition-all duration-300 ease-out cursor-pointer select-none ${
+              className={`absolute inset-0 cursor-pointer select-none ${
                 isActive ? 'pointer-events-auto' : 'pointer-events-none'
-              }`}
+              } ${isDragging && isActive ? '' : 'transition-all duration-300 ease-out'}`}
               style={{
                 transform,
                 zIndex,
