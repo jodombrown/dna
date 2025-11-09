@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SwipeableCardStackProps {
@@ -8,8 +8,10 @@ interface SwipeableCardStackProps {
 
 const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const startX = useRef(0);
 
   const handlePrevious = () => {
     setCurrentIndex((prev) => Math.max(0, prev - 1));
@@ -20,90 +22,160 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
+    startX.current = e.touches[0].clientX;
+    setIsDragging(true);
+    // Prevent page scroll when interacting with cards
+    e.stopPropagation();
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
+    if (!isDragging) return;
+    const currentX = e.touches[0].clientX;
+    const diff = currentX - startX.current;
+    
+    // Only prevent default if there's horizontal movement to allow vertical scroll
+    if (Math.abs(diff) > 10) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    setDragOffset(diff);
   };
 
   const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    setIsDragging(false);
     
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 75;
-    const isRightSwipe = distance < -75;
-    
-    if (isLeftSwipe && currentIndex < cards.length - 1) {
+    // Swipe threshold: 80px
+    if (dragOffset > 80 && currentIndex > 0) {
+      handlePrevious();
+    } else if (dragOffset < -80 && currentIndex < cards.length - 1) {
       handleNext();
     }
-    if (isRightSwipe && currentIndex > 0) {
-      handlePrevious();
-    }
     
-    setTouchStart(0);
-    setTouchEnd(0);
+    setDragOffset(0);
   };
 
-  const handleCardClick = () => {
-    if (onCardClick) {
+  const handleMouseDown = (e: React.MouseEvent) => {
+    startX.current = e.clientX;
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const currentX = e.clientX;
+    const diff = currentX - startX.current;
+    setDragOffset(diff);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    
+    if (dragOffset > 80 && currentIndex > 0) {
+      handlePrevious();
+    } else if (dragOffset < -80 && currentIndex < cards.length - 1) {
+      handleNext();
+    }
+    
+    setDragOffset(0);
+  };
+
+  const handleCardClick = (e: React.MouseEvent | React.TouchEvent) => {
+    // Only trigger click if it wasn't a drag
+    if (Math.abs(dragOffset) < 5 && onCardClick) {
+      e.stopPropagation();
       onCardClick(currentIndex);
     }
   };
 
   return (
-    <div className="relative w-full max-w-lg mx-auto">
-      {/* Card Carousel Container */}
+    <div className="relative w-full max-w-md mx-auto">
+      {/* Card Stack Container */}
       <div 
-        className="relative overflow-hidden rounded-2xl"
+        ref={containerRef}
+        className="relative h-[480px] sm:h-[520px] perspective-1000"
+        style={{ touchAction: 'pan-y' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={() => {
+          if (isDragging) {
+            setIsDragging(false);
+            setDragOffset(0);
+          }
+        }}
       >
-        <div 
-          className="flex transition-transform duration-500 ease-out"
-          style={{ 
-            transform: `translateX(-${currentIndex * 100}%)`,
-          }}
-        >
-          {cards.map((card, index) => (
+        {cards.map((card, index) => {
+          const offset = index - currentIndex;
+          const isActive = index === currentIndex;
+          
+          // Calculate transform based on position in stack
+          let transform = '';
+          let zIndex = cards.length - Math.abs(offset);
+          let opacity = 1;
+          
+          if (offset < 0) {
+            // Cards before current (left side, hidden)
+            transform = `translateX(-120%) scale(0.85) rotateY(45deg)`;
+            opacity = 0;
+          } else if (offset === 0) {
+            // Current active card
+            const dragTransform = isDragging ? `translateX(${dragOffset}px) rotate(${dragOffset * 0.05}deg)` : '';
+            transform = `translateX(0) scale(1) ${dragTransform}`;
+            opacity = 1;
+          } else {
+            // Cards after current (stacked behind)
+            const stackOffset = Math.min(offset, 3);
+            transform = `translateX(${stackOffset * 16}px) translateY(${stackOffset * 16}px) scale(${1 - stackOffset * 0.05})`;
+            opacity = 1 - stackOffset * 0.2;
+          }
+
+          return (
             <div
               key={index}
-              className="min-w-full px-2 sm:px-4"
+              className={`absolute inset-0 transition-all duration-300 ease-out cursor-pointer select-none ${
+                isActive ? 'pointer-events-auto' : 'pointer-events-none'
+              }`}
+              style={{
+                transform,
+                zIndex,
+                opacity,
+                transformStyle: 'preserve-3d',
+              }}
               onClick={handleCardClick}
             >
-              <div className="w-full">
-                {card}
-              </div>
+              {card}
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6">
+      <div className="flex items-center justify-center gap-4 mt-6">
         <button
           onClick={handlePrevious}
           disabled={currentIndex === 0}
-          className={`p-2 sm:p-3 rounded-full bg-white shadow-lg transition-all ${
+          className={`p-3 rounded-full bg-white shadow-lg transition-all ${
             currentIndex === 0 
               ? 'opacity-30 cursor-not-allowed' 
               : 'hover:bg-gray-50 active:scale-95'
           }`}
           aria-label="Previous card"
         >
-          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
+          <ChevronLeft className="w-6 h-6 text-gray-700" />
         </button>
 
         {/* Indicator Dots */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-2">
           {cards.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`transition-all rounded-full ${
                 index === currentIndex
-                  ? 'w-6 sm:w-8 h-2 bg-dna-emerald'
+                  ? 'w-8 h-2 bg-dna-emerald'
                   : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
               }`}
               aria-label={`Go to card ${index + 1}`}
@@ -114,20 +186,20 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
         <button
           onClick={handleNext}
           disabled={currentIndex === cards.length - 1}
-          className={`p-2 sm:p-3 rounded-full bg-white shadow-lg transition-all ${
+          className={`p-3 rounded-full bg-white shadow-lg transition-all ${
             currentIndex === cards.length - 1
               ? 'opacity-30 cursor-not-allowed'
               : 'hover:bg-gray-50 active:scale-95'
           }`}
           aria-label="Next card"
         >
-          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
+          <ChevronRight className="w-6 h-6 text-gray-700" />
         </button>
       </div>
 
       {/* Swipe Hint */}
-      <div className="text-center mt-3 sm:mt-4">
-        <p className="text-xs sm:text-sm text-muted-foreground font-medium">Swipe or tap arrows to explore</p>
+      <div className="text-center mt-4">
+        <p className="text-sm text-gray-500">← Swipe to explore →</p>
       </div>
     </div>
   );

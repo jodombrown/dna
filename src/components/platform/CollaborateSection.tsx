@@ -113,16 +113,16 @@ const CollaborateSection = () => {
           {/* Left: Text Content */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center flex-shrink-0">
-                <Handshake className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
+                <Handshake className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Collaborate</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Collaborate</h2>
             </div>
-            <p className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
-              Join Forces on Cross-Border Projects
+            <p className="text-xl font-semibold text-gray-900 mb-3">
+              Together We Build Stronger
             </p>
-            <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed">
-              Work together on meaningful projects that drive African development. Pool resources, share specialized knowledge, and amplify your collective impact across borders.
+            <p className="text-lg text-gray-600 mb-6">
+              Work together on meaningful projects that drive African development. Pool resources, share knowledge, and amplify collective impact.
             </p>
 
             <div className="space-y-4 mb-8">
