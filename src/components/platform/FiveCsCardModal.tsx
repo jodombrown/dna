@@ -16,6 +16,8 @@ interface FiveCsCardModalProps {
 }
 
 const FiveCsCardModal = ({ isOpen, onClose, cardType, cardData }: FiveCsCardModalProps) => {
+  if (!cardData) return null;
+  
   const renderConnectContent = () => {
     if (cardData.type === 'professionals') {
       return (
