@@ -75,18 +75,13 @@ const ContributeSection = () => {
             </Button>
           </div>
           
-          <div className="relative md:order-1 -mx-4 md:mx-0">
-            {/* Mobile: Horizontal Scroll */}
-            <div className="md:hidden overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
-              <div className="flex gap-4 pl-4 pr-4"
-                style={{
-                  WebkitOverflowScrolling: 'touch'
-                }}
-              >
+          <div className="relative md:order-1 w-full -mx-4 sm:-mx-6 lg:-mx-8">
+            <div className="bg-white py-8 px-4 sm:px-6 lg:px-8 w-full">
+              <div className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide">
                 {cards.map((card, index) => (
                   <div 
                     key={index}
-                    className="flex-shrink-0 w-[85vw] max-w-sm cursor-pointer snap-center animate-fade-in"
+                    className="flex-shrink-0 w-72 sm:w-80 cursor-pointer animate-fade-in"
                     onClick={() => handleCardClick(card)}
                   >
                     <div className={`bg-gradient-to-br ${card.gradient} rounded-3xl p-1.5 shadow-2xl h-full`}>
@@ -123,6 +118,9 @@ const ContributeSection = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+              <div className="text-center mt-4">
+                <p className="text-sm text-gray-500">← Scroll to explore pathways →</p>
               </div>
             </div>
           </div>
