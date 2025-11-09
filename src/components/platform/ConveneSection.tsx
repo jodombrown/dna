@@ -128,8 +128,24 @@ const ConveneSection = () => {
     <section id="convene-section" className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Text Content */}
-          <div>
+          {/* Left: Card Preview (Desktop) / Swipeable Cards (Mobile) */}
+          <div className="order-2 lg:order-1">
+            {/* Desktop: Single Card Preview */}
+            <div className="hidden lg:block">
+              {renderCard(events[0])}
+            </div>
+
+            {/* Mobile: Swipeable Cards */}
+            <div className="lg:hidden">
+              <SwipeableCardStack
+                cards={events.map((event) => renderCard(event))}
+                onCardClick={handleCardClick}
+              />
+            </div>
+          </div>
+
+          {/* Right: Text Content */}
+          <div className="order-1 lg:order-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
                 <Calendar className="w-6 h-6 text-white" />
@@ -180,22 +196,6 @@ const ConveneSection = () => {
               Explore Events
               <ArrowRight className="w-4 h-4" />
             </Button>
-          </div>
-
-          {/* Right: Card Preview (Desktop) / Swipeable Cards (Mobile) */}
-          <div>
-            {/* Desktop: Single Card Preview */}
-            <div className="hidden lg:block">
-              {renderCard(events[0])}
-            </div>
-
-            {/* Mobile: Swipeable Cards */}
-            <div className="lg:hidden">
-              <SwipeableCardStack
-                cards={events.map((event) => renderCard(event))}
-                onCardClick={handleCardClick}
-              />
-            </div>
           </div>
         </div>
       </div>
