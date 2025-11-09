@@ -89,7 +89,7 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
       {/* Card Stack Container with Bleeding Edge Effect */}
       <div 
         ref={containerRef}
-        className="relative h-[480px] sm:h-[540px] md:h-[580px] perspective-1000 overflow-visible touch-pan-y"
+        className="relative h-[500px] sm:h-[540px] md:h-[580px] perspective-1000 overflow-visible touch-pan-y"
         style={{ touchAction: 'pan-y' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
