@@ -24,8 +24,6 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
   const handleTouchStart = (e: React.TouchEvent) => {
     startX.current = e.touches[0].clientX;
     setIsDragging(true);
-    // Prevent page scroll when interacting with cards
-    e.stopPropagation();
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -33,10 +31,9 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
     const currentX = e.touches[0].clientX;
     const diff = currentX - startX.current;
     
-    // Only prevent default if there's horizontal movement to allow vertical scroll
-    if (Math.abs(diff) > 10) {
+    // Prevent page scroll when swiping horizontally on cards
+    if (Math.abs(diff) > 5) {
       e.preventDefault();
-      e.stopPropagation();
     }
     
     setDragOffset(diff);
@@ -45,10 +42,10 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
   const handleTouchEnd = () => {
     setIsDragging(false);
     
-    // Swipe threshold: 80px
-    if (dragOffset > 80 && currentIndex > 0) {
+    // Reduced swipe threshold for mobile: 50px
+    if (dragOffset > 50 && currentIndex > 0) {
       handlePrevious();
-    } else if (dragOffset < -80 && currentIndex < cards.length - 1) {
+    } else if (dragOffset < -50 && currentIndex < cards.length - 1) {
       handleNext();
     }
     
@@ -92,7 +89,7 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
       {/* Card Stack Container with Bleeding Edge Effect */}
       <div 
         ref={containerRef}
-        className="relative h-[520px] sm:h-[560px] perspective-1000 overflow-visible"
+        className="relative h-[480px] sm:h-[540px] md:h-[580px] perspective-1000 overflow-visible touch-pan-y"
         style={{ touchAction: 'pan-y' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -109,13 +106,13 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
       >
         {/* Bleeding Edge Indicators - Shows next card peeking */}
         {currentIndex < cards.length - 1 && (
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-32 bg-gradient-to-l from-dna-emerald/20 to-transparent rounded-l-2xl z-[9999] pointer-events-none flex items-center justify-start pl-1">
-            <div className="w-1 h-16 bg-dna-emerald/40 rounded-full animate-pulse" />
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 sm:w-12 h-24 sm:h-32 bg-gradient-to-l from-dna-emerald/20 to-transparent rounded-l-2xl z-[9999] pointer-events-none flex items-center justify-start pl-0.5 sm:pl-1">
+            <div className="w-0.5 sm:w-1 h-12 sm:h-16 bg-dna-emerald/40 rounded-full animate-pulse" />
           </div>
         )}
         {currentIndex > 0 && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-32 bg-gradient-to-r from-dna-emerald/20 to-transparent rounded-r-2xl z-[9999] pointer-events-none flex items-center justify-end pr-1">
-            <div className="w-1 h-16 bg-dna-emerald/40 rounded-full animate-pulse" />
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-8 sm:w-12 h-24 sm:h-32 bg-gradient-to-r from-dna-emerald/20 to-transparent rounded-r-2xl z-[9999] pointer-events-none flex items-center justify-end pr-0.5 sm:pr-1">
+            <div className="w-0.5 sm:w-1 h-12 sm:h-16 bg-dna-emerald/40 rounded-full animate-pulse" />
           </div>
         )}
         
@@ -130,23 +127,23 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
           
           if (offset < 0) {
             // Cards before current (left side, partially visible for bleeding edge)
-            transform = `translateX(-85%) scale(0.88) rotateY(35deg)`;
-            opacity = 0.3;
+            transform = `translateX(-90%) scale(0.85)`;
+            opacity = 0.4;
             zIndex = 1;
           } else if (offset === 0) {
             // Current active card
-            const dragTransform = isDragging ? `translateX(${dragOffset}px) rotate(${dragOffset * 0.05}deg)` : '';
+            const dragTransform = isDragging ? `translateX(${dragOffset}px)` : '';
             transform = `translateX(0) scale(1) ${dragTransform}`;
             opacity = 1;
           } else if (offset === 1) {
             // Next card (visible bleeding edge on right)
-            transform = `translateX(85%) scale(0.88) rotateY(-35deg)`;
-            opacity = 0.3;
+            transform = `translateX(90%) scale(0.85)`;
+            opacity = 0.4;
             zIndex = 1;
           } else {
             // Cards further ahead (stacked behind next card)
             const stackOffset = Math.min(offset - 1, 2);
-            transform = `translateX(${85 + stackOffset * 12}%) scale(${0.88 - stackOffset * 0.04}) rotateY(-35deg)`;
+            transform = `translateX(${90 + stackOffset * 10}%) scale(${0.85 - stackOffset * 0.03})`;
             opacity = Math.max(0, 0.3 - stackOffset * 0.15);
             zIndex = 1;
           }
@@ -217,8 +214,8 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
       </div>
 
       {/* Swipe Hint */}
-      <div className="text-center mt-4">
-        <p className="text-xs sm:text-sm text-gray-500 font-medium">← Swipe or scroll horizontally to explore →</p>
+      <div className="text-center mt-3 sm:mt-4">
+        <p className="text-xs sm:text-sm text-gray-500 font-medium px-4">← Swipe to explore →</p>
       </div>
     </div>
   );
