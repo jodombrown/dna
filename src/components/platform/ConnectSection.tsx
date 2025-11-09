@@ -118,16 +118,16 @@ const ConnectSection = () => {
           {/* Left: Text Content */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-dna-forest to-dna-emerald rounded-xl flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-dna-forest to-dna-emerald rounded-xl flex items-center justify-center flex-shrink-0">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Connect</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Connect</h2>
             </div>
-            <p className="text-xl font-semibold text-gray-900 mb-3">
-              Your Network is Your Networth
+            <p className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
+              Discover Your Professional Diaspora Network
             </p>
-            <p className="text-lg text-gray-600 mb-6">
-              Build meaningful professional relationships across the diaspora. Discover opportunities, expand your network, and find your tribe.
+            <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed">
+              Build meaningful professional relationships across the diaspora. Connect with innovators, investors, and changemakers aligned with your vision for Africa's future.
             </p>
 
             <div className="space-y-4 mb-8">

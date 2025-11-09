@@ -139,16 +139,16 @@ const ContributeSection = () => {
           {/* Right: Text Content */}
           <div className="order-1 lg:order-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-dna-gold to-dna-ochre rounded-xl flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-dna-gold to-dna-ochre rounded-xl flex items-center justify-center flex-shrink-0">
+                <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Contribute</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Contribute</h2>
             </div>
-            <p className="text-xl font-semibold text-gray-900 mb-3">
-              Every Asset Counts
+            <p className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
+              Deploy Your Assets Where They Matter Most
             </p>
-            <p className="text-lg text-gray-600 mb-6">
-              Mobilize your unique assets—time, attention, networks, skills, expertise, research, capital, and more—toward causes and projects you care about.
+            <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed">
+              Mobilize your unique assets—time, attention, networks, skills, expertise, research, capital, and more—toward initiatives you believe in. Track your real-time impact and earn recognition.
             </p>
 
             <div className="space-y-4 mb-8">

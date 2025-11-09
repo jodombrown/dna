@@ -89,10 +89,10 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
 
   return (
     <div className="relative w-full max-w-md mx-auto">
-      {/* Card Stack Container */}
+      {/* Card Stack Container with Bleeding Edge Effect */}
       <div 
         ref={containerRef}
-        className="relative h-[480px] sm:h-[520px] perspective-1000"
+        className="relative h-[520px] sm:h-[560px] perspective-1000 overflow-visible"
         style={{ touchAction: 'pan-y' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -107,29 +107,48 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
           }
         }}
       >
+        {/* Bleeding Edge Indicators - Shows next card peeking */}
+        {currentIndex < cards.length - 1 && (
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-32 bg-gradient-to-l from-dna-emerald/20 to-transparent rounded-l-2xl z-[9999] pointer-events-none flex items-center justify-start pl-1">
+            <div className="w-1 h-16 bg-dna-emerald/40 rounded-full animate-pulse" />
+          </div>
+        )}
+        {currentIndex > 0 && (
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-32 bg-gradient-to-r from-dna-emerald/20 to-transparent rounded-r-2xl z-[9999] pointer-events-none flex items-center justify-end pr-1">
+            <div className="w-1 h-16 bg-dna-emerald/40 rounded-full animate-pulse" />
+          </div>
+        )}
+        
         {cards.map((card, index) => {
           const offset = index - currentIndex;
           const isActive = index === currentIndex;
           
-          // Calculate transform based on position in stack
+          // Calculate transform based on position in stack with better bleeding
           let transform = '';
           let zIndex = cards.length - Math.abs(offset);
           let opacity = 1;
           
           if (offset < 0) {
-            // Cards before current (left side, hidden)
-            transform = `translateX(-120%) scale(0.85) rotateY(45deg)`;
-            opacity = 0;
+            // Cards before current (left side, partially visible for bleeding edge)
+            transform = `translateX(-85%) scale(0.88) rotateY(35deg)`;
+            opacity = 0.3;
+            zIndex = 1;
           } else if (offset === 0) {
             // Current active card
             const dragTransform = isDragging ? `translateX(${dragOffset}px) rotate(${dragOffset * 0.05}deg)` : '';
             transform = `translateX(0) scale(1) ${dragTransform}`;
             opacity = 1;
+          } else if (offset === 1) {
+            // Next card (visible bleeding edge on right)
+            transform = `translateX(85%) scale(0.88) rotateY(-35deg)`;
+            opacity = 0.3;
+            zIndex = 1;
           } else {
-            // Cards after current (stacked behind)
-            const stackOffset = Math.min(offset, 3);
-            transform = `translateX(${stackOffset * 16}px) translateY(${stackOffset * 16}px) scale(${1 - stackOffset * 0.05})`;
-            opacity = 1 - stackOffset * 0.2;
+            // Cards further ahead (stacked behind next card)
+            const stackOffset = Math.min(offset - 1, 2);
+            transform = `translateX(${85 + stackOffset * 12}%) scale(${0.88 - stackOffset * 0.04}) rotateY(-35deg)`;
+            opacity = Math.max(0, 0.3 - stackOffset * 0.15);
+            zIndex = 1;
           }
 
           return (
@@ -199,7 +218,7 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
 
       {/* Swipe Hint */}
       <div className="text-center mt-4">
-        <p className="text-sm text-gray-500">← Swipe to explore →</p>
+        <p className="text-xs sm:text-sm text-gray-500 font-medium">← Swipe or scroll horizontally to explore →</p>
       </div>
     </div>
   );
