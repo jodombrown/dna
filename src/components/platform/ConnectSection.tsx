@@ -19,6 +19,7 @@ const ConnectSection = () => {
       gradient: 'from-dna-forest to-dna-emerald',
       initials: 'AO',
       color: 'bg-dna-emerald',
+      engagementType: 'Professional Matching',
     },
     {
       name: 'Kwame Mensah',
@@ -29,6 +30,7 @@ const ConnectSection = () => {
       gradient: 'from-dna-emerald to-dna-copper',
       initials: 'KM',
       color: 'bg-dna-copper',
+      engagementType: 'Community Groups',
     },
     {
       name: 'Zainab Hassan',
@@ -39,6 +41,29 @@ const ConnectSection = () => {
       gradient: 'from-dna-copper to-dna-gold',
       initials: 'ZH',
       color: 'bg-dna-gold',
+      engagementType: 'Mentorship Pairing',
+    },
+    {
+      name: 'Dr. Chioma Nwankwo',
+      title: 'Blockchain Expert',
+      location: 'Austin, TX',
+      interests: ['Web3', 'DeFi', 'Smart Contracts'],
+      mutualConnections: 8,
+      gradient: 'from-dna-gold to-dna-ochre',
+      initials: 'CN',
+      color: 'bg-dna-ochre',
+      engagementType: 'Expert Directory',
+    },
+    {
+      name: 'Yusuf Ibrahim',
+      title: 'EdTech Founder',
+      location: 'Kigali, Rwanda',
+      interests: ['Education', 'AI', 'SaaS'],
+      mutualConnections: 4,
+      gradient: 'from-dna-ochre to-dna-forest',
+      initials: 'YI',
+      color: 'bg-dna-forest',
+      engagementType: 'Intro Requests',
     },
   ];
 
