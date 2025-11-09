@@ -126,22 +126,14 @@ const ConveneSection = () => {
 
   return (
     <section id="convene-section" className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-[1400px] mx-auto">
+        <div className="grid lg:grid-cols-[1.2fr_1fr] gap-16 items-center">
           {/* Left: Card Preview (Desktop) / Swipeable Cards (Mobile) */}
           <div className="order-2 lg:order-1">
-            {/* Desktop: Single Card Preview */}
-            <div className="hidden lg:block">
-              {renderCard(events[0])}
-            </div>
-
-            {/* Mobile: Swipeable Cards */}
-            <div className="lg:hidden">
-              <SwipeableCardStack
-                cards={events.map((event) => renderCard(event))}
-                onCardClick={handleCardClick}
-              />
-            </div>
+            <SwipeableCardStack
+              cards={events.map((event) => renderCard(event))}
+              onCardClick={handleCardClick}
+            />
           </div>
 
           {/* Right: Text Content */}

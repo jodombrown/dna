@@ -113,8 +113,8 @@ const ConnectSection = () => {
 
   return (
     <section id="connect-section" className="py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-[1400px] mx-auto">
+        <div className="grid lg:grid-cols-[1fr_1.2fr] gap-16 items-center">
           {/* Left: Text Content */}
           <div>
             <div className="flex items-center gap-3 mb-4">
@@ -171,18 +171,10 @@ const ConnectSection = () => {
 
           {/* Right: Card Preview (Desktop) / Swipeable Cards (Mobile) */}
           <div>
-            {/* Desktop: Single Card Preview */}
-            <div className="hidden lg:block">
-              {renderCard(professionals[0])}
-            </div>
-
-            {/* Mobile: Swipeable Cards */}
-            <div className="lg:hidden">
-              <SwipeableCardStack
-                cards={professionals.map((professional) => renderCard(professional))}
-                onCardClick={handleCardClick}
-              />
-            </div>
+            <SwipeableCardStack
+              cards={professionals.map((professional) => renderCard(professional))}
+              onCardClick={handleCardClick}
+            />
           </div>
         </div>
       </div>
