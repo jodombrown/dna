@@ -1,9 +1,8 @@
 import React from 'react';
-import { Calendar, Users, MapPin, Video, ArrowRight, Clock, Star } from 'lucide-react';
+import { Calendar, MapPin, Users, ArrowRight, Clock, Globe, Sparkles, Video } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import SwipeableCardStack from './SwipeableCardStack';
 
 const ConveneSection = () => {
@@ -11,37 +10,40 @@ const ConveneSection = () => {
 
   const events = [
     {
-      title: 'AfriTech Summit 2024',
-      type: 'Panel Discussion',
-      date: 'March 15, 2024',
+      title: 'African Tech Summit 2025',
+      type: 'Tech Conference',
+      date: 'March 15',
       time: '2:00 PM WAT',
-      location: 'Virtual',
-      attendees: 247,
-      host: { name: 'Chinelo Okeke', initials: 'CO' },
+      location: 'Lagos, Nigeria',
+      attendees: '250+ attendees registered',
+      host: 'African Tech Leaders',
+      format: 'Hybrid',
       gradient: 'from-dna-copper to-dna-gold',
-      tags: ['Innovation', 'Tech', 'Networking'],
+      featured: true,
     },
     {
-      title: 'Diaspora Investor Circle',
-      type: 'Pitch Night',
-      date: 'March 22, 2024',
-      time: '6:00 PM EST',
-      location: 'New York, USA',
-      attendees: 45,
-      host: { name: 'James Adeyemi', initials: 'JA' },
+      title: 'Diaspora Investment Forum',
+      type: 'Investment Event',
+      date: 'March 22',
+      time: '6:00 PM GMT',
+      location: 'London, UK',
+      attendees: '150+ attendees registered',
+      host: 'DNA Investment Circle',
+      format: 'In-Person',
       gradient: 'from-dna-gold to-dna-ochre',
-      tags: ['Investment', 'Startups', 'Capital'],
+      featured: false,
     },
     {
       title: 'Creative Africa Workshop',
-      type: 'Skill Building',
-      date: 'March 28, 2024',
+      type: 'Workshop',
+      date: 'March 28',
       time: '10:00 AM EAT',
-      location: 'Nairobi, Kenya',
-      attendees: 89,
-      host: { name: 'Fatima Diallo', initials: 'FD' },
+      location: 'Virtual Event',
+      attendees: '500+ attendees registered',
+      host: 'Creative Diaspora Network',
+      format: 'Virtual',
       gradient: 'from-dna-emerald to-dna-forest',
-      tags: ['Creative', 'Workshop', 'Skills'],
+      featured: true,
     },
   ];
 
@@ -49,123 +51,153 @@ const ConveneSection = () => {
     navigate('/convene');
   };
 
-  return (
-    <section id="convene-section" className="mb-16 w-full -mx-4 sm:-mx-6 lg:-mx-8">
-      <div className="text-center mb-8 px-4">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
-            <Calendar className="w-6 h-6 text-white" />
+  const renderCard = (event: typeof events[0]) => (
+    <div className={`bg-gradient-to-br ${event.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
+      <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+        <div className={`bg-gradient-to-r ${event.gradient} text-white p-6`}>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-semibold text-lg">Upcoming Diaspora Events</h3>
+            <Calendar className="w-5 h-5" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Convene</h2>
+          <p className="text-sm text-white/80">Join the movement</p>
         </div>
-        <p className="text-xl font-semibold text-gray-900 mb-3">
-          Where Ideas Meet Action
-        </p>
-        <p className="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">
-          Gather with your network by attending events that matter, creating your own convenings, or supporting gatherings that align with your vision—whether digital or in-person.
-        </p>
-        <Button 
-          onClick={() => navigate('/convene')}
-          className="bg-dna-copper hover:bg-dna-gold text-white inline-flex items-center gap-2"
-        >
-          Browse All Events
-          <ArrowRight className="w-4 h-4" />
-        </Button>
-      </div>
-
-      <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 w-full">
-        <SwipeableCardStack
-          cards={events.map((event) => (
-            <div className={`bg-gradient-to-br ${event.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
-              <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
-                <div className={`bg-gradient-to-r ${event.gradient} text-white p-6`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-lg">Upcoming Event</h3>
-                    <Calendar className="w-5 h-5" />
-                  </div>
-                  <p className="text-sm text-white/80">Join your community</p>
+        
+        <div className="p-6 space-y-6 flex-1">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Badge className="bg-dna-copper text-white text-xs">{event.type}</Badge>
+              {event.featured && (
+                <div className="flex items-center gap-1 text-dna-gold">
+                  <Sparkles className="w-3 h-3" />
+                  <span className="text-xs font-bold">Featured</span>
                 </div>
-                
-                <div className="p-6 space-y-4 flex-1">
-                  {/* Event Title & Type */}
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <h4 className="font-bold text-lg text-gray-900">{event.title}</h4>
-                      <Badge className="bg-dna-copper text-white text-xs">{event.type}</Badge>
-                    </div>
-                  </div>
+              )}
+            </div>
+            <h4 className="font-bold text-xl text-gray-900 mb-4">{event.title}</h4>
+          </div>
 
-                  {/* Date & Time */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="w-4 h-4 text-dna-copper" />
-                      <span className="font-medium text-gray-700">{event.date}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Clock className="w-4 h-4 text-dna-copper" />
-                      <span className="font-medium text-gray-700">{event.time}</span>
-                    </div>
-                  </div>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 text-gray-700">
+              <Calendar className="w-4 h-4 text-dna-copper flex-shrink-0" />
+              <span className="text-sm font-medium">{event.date}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-700">
+              <Clock className="w-4 h-4 text-dna-copper flex-shrink-0" />
+              <span className="text-sm font-medium">{event.time}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-700">
+              {event.format === 'Hybrid' ? (
+                <Globe className="w-4 h-4 text-dna-copper flex-shrink-0" />
+              ) : event.format === 'Virtual' ? (
+                <Video className="w-4 h-4 text-dna-copper flex-shrink-0" />
+              ) : (
+                <MapPin className="w-4 h-4 text-dna-copper flex-shrink-0" />
+              )}
+              <span className="text-sm font-medium">{event.location}</span>
+            </div>
+          </div>
 
-                  {/* Location */}
-                  <div className="flex items-center gap-2 text-sm">
-                    {event.location === 'Virtual' ? (
-                      <Video className="w-4 h-4 text-dna-emerald" />
-                    ) : (
-                      <MapPin className="w-4 h-4 text-dna-forest" />
-                    )}
-                    <span className="font-medium text-gray-700">{event.location}</span>
-                  </div>
+          <div className="bg-dna-copper/5 rounded-xl p-4 border-2 border-dna-copper/20">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-dna-copper" />
+                <span className="text-sm font-semibold text-gray-900">{event.attendees}</span>
+              </div>
+              <Badge variant="secondary" className="text-xs">{event.format}</Badge>
+            </div>
+            <p className="text-xs text-gray-600">
+              Hosted by {event.host}
+            </p>
+          </div>
 
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {event.tags.map((tag, idx) => (
-                      <Badge key={idx} variant="secondary" className="bg-dna-gold/10 text-dna-ochre text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
+          <Button 
+            className="w-full bg-gradient-to-r from-dna-copper to-dna-gold hover:from-dna-gold hover:to-dna-copper text-white font-semibold"
+          >
+            RSVP Now
+          </Button>
 
-                  {/* Attendees & Host */}
-                  <div className="bg-dna-copper/5 rounded-xl p-4 border-2 border-dna-copper/20">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-dna-copper" />
-                        <span className="text-sm font-semibold text-gray-900">
-                          {event.attendees} attending
-                        </span>
-                      </div>
-                      <Star className="w-4 h-4 text-dna-gold fill-dna-gold" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Avatar className="w-8 h-8">
-                        <AvatarFallback className="bg-dna-copper text-white text-xs font-bold">
-                          {event.host.initials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="text-xs font-medium text-gray-700">Hosted by</p>
-                        <p className="text-sm font-semibold text-gray-900">{event.host.name}</p>
-                      </div>
-                    </div>
-                  </div>
+          <p className="text-xs text-center text-gray-500">
+            After RSVP, create your own event →
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 
-                  {/* CTA */}
-                  <Button 
-                    className="w-full bg-gradient-to-r from-dna-copper to-dna-gold hover:from-dna-gold hover:to-dna-copper text-white font-semibold"
-                  >
-                    RSVP Now
-                  </Button>
+  return (
+    <section id="convene-section" className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left: Text Content */}
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Convene</h2>
+            </div>
+            <p className="text-xl font-semibold text-gray-900 mb-3">
+              Where Ideas Meet Action
+            </p>
+            <p className="text-lg text-gray-600 mb-6">
+              Discover and create meaningful gatherings across the diaspora. From tech meetups to cultural celebrations, find your community events.
+            </p>
 
-                  <p className="text-xs text-center text-gray-500">
-                    Meet attendees who share your interests →
-                  </p>
+            <div className="space-y-4 mb-8">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-dna-copper/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Calendar className="w-4 h-4 text-dna-copper" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Diaspora Event Discovery</h3>
+                  <p className="text-sm text-gray-600">Find events that align with your interests</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-dna-gold/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Users className="w-4 h-4 text-dna-gold" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Community Gatherings</h3>
+                  <p className="text-sm text-gray-600">Create and host your own events</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-dna-forest/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Sparkles className="w-4 h-4 text-dna-forest" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Cultural Celebrations</h3>
+                  <p className="text-sm text-gray-600">Connect through shared heritage and culture</p>
                 </div>
               </div>
             </div>
-          ))}
-          onCardClick={handleCardClick}
-        />
+
+            <Button 
+              onClick={() => navigate('/convene')}
+              className="bg-dna-copper hover:bg-dna-gold text-white inline-flex items-center gap-2"
+            >
+              Explore Events
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+
+          {/* Right: Card Preview (Desktop) / Swipeable Cards (Mobile) */}
+          <div>
+            {/* Desktop: Single Card Preview */}
+            <div className="hidden lg:block">
+              {renderCard(events[0])}
+            </div>
+
+            {/* Mobile: Swipeable Cards */}
+            <div className="lg:hidden">
+              <SwipeableCardStack
+                cards={events.map((event) => renderCard(event))}
+                onCardClick={handleCardClick}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
