@@ -21,6 +21,8 @@ const ConnectSection = () => {
       initials: 'AO',
       color: 'bg-dna-emerald',
       engagementType: 'Professional Matching',
+      categoryTitle: 'Industry Leaders',
+      categorySubtitle: 'Connect with innovators',
     },
     {
       name: 'Kwame Mensah',
@@ -33,6 +35,8 @@ const ConnectSection = () => {
       initials: 'KM',
       color: 'bg-dna-copper',
       engagementType: 'Community Groups',
+      categoryTitle: 'Meet Investors',
+      categorySubtitle: 'Find funding partners',
     },
     {
       name: 'Zainab Hassan',
@@ -45,6 +49,8 @@ const ConnectSection = () => {
       initials: 'ZH',
       color: 'bg-dna-gold',
       engagementType: 'Mentorship Pairing',
+      categoryTitle: 'Find Mentors',
+      categorySubtitle: 'Learn from experts',
     },
     {
       name: 'Dr. Chioma Nwankwo',
@@ -57,6 +63,8 @@ const ConnectSection = () => {
       initials: 'CN',
       color: 'bg-dna-ochre',
       engagementType: 'Expert Directory',
+      categoryTitle: 'Expert Network',
+      categorySubtitle: 'Access specialized knowledge',
     },
     {
       name: 'Yusuf Ibrahim',
@@ -69,6 +77,8 @@ const ConnectSection = () => {
       initials: 'YI',
       color: 'bg-dna-forest',
       engagementType: 'Intro Requests',
+      categoryTitle: 'Discover Co-Founders',
+      categorySubtitle: 'Build your team',
     },
   ];
 
@@ -81,10 +91,10 @@ const ConnectSection = () => {
       <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
         <div className={`bg-gradient-to-r ${professional.gradient} text-white p-6`}>
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-lg font-serif">Build With Your Tribe</h3>
+            <h3 className="font-semibold text-lg font-serif">{professional.categoryTitle}</h3>
             <Network className="w-5 h-5" />
           </div>
-          <p className="text-sm text-white/80">Connect with innovators building Africa's future</p>
+          <p className="text-sm text-white/80">{professional.categorySubtitle}</p>
         </div>
         
         <div className="p-6 space-y-6 flex-1">
