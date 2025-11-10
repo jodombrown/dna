@@ -167,7 +167,7 @@ const ConveySection = () => {
               <div className="w-12 h-12 bg-gradient-to-br from-dna-forest to-dna-emerald rounded-xl flex items-center justify-center">
                 <Megaphone className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Convey</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Convey</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
               Your Story, Our Movement

@@ -12,7 +12,7 @@ const BuildingTogetherSection = () => {
     <PatternBackground pattern="stripes" intensity="subtle" className="py-16 bg-gradient-to-br from-dna-pearl-light via-white to-dna-terra-light/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h3 className="text-3xl md:text-4xl font-bold text-dna-forest mb-4">
+          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-dna-forest mb-4">
             Join Us in Shaping Africa's Future
           </h3>
           <p className="text-lg text-gray-600 max-w-4xl mx-auto">
