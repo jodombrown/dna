@@ -89,10 +89,10 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
 
   return (
     <div className="relative w-full max-w-md mx-auto">
-      {/* Card Stack Container */}
+      {/* Card Stack Container - Cascading Layout */}
       <div 
         ref={containerRef}
-        className="relative h-[480px] sm:h-[520px] perspective-1000"
+        className="relative h-[480px] sm:h-[520px]"
         style={{ touchAction: 'pan-y' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -111,25 +111,35 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
           const offset = index - currentIndex;
           const isActive = index === currentIndex;
           
-          // Calculate transform based on position in stack
+          // Calculate cascading transform based on position - inspired by coffee shop layered cards
           let transform = '';
-          let zIndex = cards.length - Math.abs(offset);
+          let zIndex = cards.length - offset;
           let opacity = 1;
           
           if (offset < 0) {
-            // Cards before current (left side, hidden)
-            transform = `translateX(-120%) scale(0.85) rotateY(45deg)`;
+            // Cards before current (hidden to the left with rotation)
+            transform = `translateX(-120%) rotate(-8deg) scale(0.9)`;
             opacity = 0;
+            zIndex = 0;
           } else if (offset === 0) {
-            // Current active card
-            const dragTransform = isDragging ? `translateX(${dragOffset}px) rotate(${dragOffset * 0.05}deg)` : '';
-            transform = `translateX(0) scale(1) ${dragTransform}`;
+            // Current active card - centered with subtle tilt
+            const dragTransform = isDragging ? `translateX(${dragOffset}px) rotate(${dragOffset * 0.02}deg)` : '';
+            transform = `translateX(0) translateY(0) rotate(1deg) scale(1) ${dragTransform}`;
             opacity = 1;
+            zIndex = 30;
           } else {
-            // Cards after current (stacked behind)
-            const stackOffset = Math.min(offset, 3);
-            transform = `translateX(${stackOffset * 16}px) translateY(${stackOffset * 16}px) scale(${1 - stackOffset * 0.05})`;
-            opacity = 1 - stackOffset * 0.2;
+            // Cards after current - cascading with varied rotations like scattered papers
+            const cardRotations = ['-3deg', '2deg', '-4deg', '3deg', '-2deg'];
+            const rotation = cardRotations[(offset - 1) % cardRotations.length] || '0deg';
+            
+            // Create layered cascade effect
+            const xOffset = offset * 12; // Horizontal spread
+            const yOffset = offset * -8; // Vertical lift (negative for upward cascade)
+            const scale = 1 - (offset * 0.03); // Slight size reduction
+            
+            transform = `translateX(${xOffset}px) translateY(${yOffset}px) rotate(${rotation}) scale(${scale})`;
+            opacity = Math.max(0.6, 1 - offset * 0.15);
+            zIndex = 30 - offset;
           }
 
           return (
@@ -137,12 +147,11 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
               key={index}
               className={`absolute inset-0 cursor-pointer select-none ${
                 isActive ? 'pointer-events-auto' : 'pointer-events-none'
-              } ${isDragging && isActive ? '' : 'transition-all duration-300 ease-out'}`}
+              } ${isDragging && isActive ? '' : 'transition-all duration-500 ease-out'}`}
               style={{
                 transform,
                 zIndex,
                 opacity,
-                transformStyle: 'preserve-3d',
               }}
               onClick={handleCardClick}
             >
