@@ -185,20 +185,20 @@ const ConveneSection = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Convene</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
-              Where Connections Become Movements
+              Where Strategy Meets Action
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Join gatherings that fuel Africa's progress—from 250-person innovation summits to 800-person cultural festivals. Whether virtual, in-person, or hybrid, these spaces turn conversations into collaborations and ideas into action.
+              Join convenings designed for decision-making, not just discussion. Whether virtual or in-person, intimate or large-scale—these are spaces where ideas become initiatives, conversations become commitments, and attendees leave with next steps. Your participation accelerates both your goals and the movement.
             </p>
 
             <div className="space-y-4 mb-8">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-dna-copper/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Calendar className="w-4 h-4 text-dna-copper" />
+                  <Sparkles className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Innovation Summits & Knowledge Sessions</h3>
-                  <p className="text-sm text-gray-600">Learn from experts shaping Africa's tech, health, and climate future</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Intentional Gathering Design</h3>
+                  <p className="text-sm text-gray-600">Every convening has clear objectives, structured agendas, and tangible outcomes</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -206,17 +206,17 @@ const ConveneSection = () => {
                   <Users className="w-4 h-4 text-dna-gold" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Networking Meetups & Local Hubs</h3>
-                  <p className="text-sm text-gray-600">Build relationships in intimate settings—from 45 to 120 people</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Commitment Culture</h3>
+                  <p className="text-sm text-gray-600">Attendees arrive prepared, participate actively, and leave with action items</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-dna-forest/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Sparkles className="w-4 h-4 text-dna-forest" />
+                  <Calendar className="w-4 h-4 text-dna-forest" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Cultural Celebrations</h3>
-                  <p className="text-sm text-gray-600">Gather at festivals celebrating heritage, music, and entrepreneurship</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Momentum Through Frequency</h3>
+                  <p className="text-sm text-gray-600">Regular convenings create sustained progress, not one-time inspiration</p>
                 </div>
               </div>
             </div>

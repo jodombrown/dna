@@ -180,10 +180,10 @@ const ConveySection = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Convey</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
-              Your Wins Fuel the Movement
+              Amplify Your Story, Inspire the Movement
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Share your story—success, journey, insight—and watch it reach thousands. From 6.7K to 14.3K views per story, your wins become social proof that DNA members are building, raising capital, and making impact. Inspire the next wave.
+              Share your wins, insights, and journey to build credibility, inspire others, and create social proof for the movement. When you convey your success, you demonstrate what's possible—attracting resources, partners, and momentum to your work while showing the world that Africa's diaspora is building at scale.
             </p>
 
             <div className="space-y-4 mb-8">
@@ -192,8 +192,8 @@ const ConveySection = () => {
                   <Sparkles className="w-4 h-4 text-dna-forest" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Success Stories & Founder Journeys</h3>
-                  <p className="text-sm text-gray-600">Share how you raised $2M, built your team, or launched in new markets</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Strategic Storytelling</h3>
+                  <p className="text-sm text-gray-600">Share wins, lessons, and insights that attract opportunities and inspire action</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -201,8 +201,8 @@ const ConveySection = () => {
                   <MessageCircle className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Impact Reports & Community Spotlights</h3>
-                  <p className="text-sm text-gray-600">Track project progress and celebrate members driving change</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Credibility Building</h3>
+                  <p className="text-sm text-gray-600">Visible success stories position you as a leader and attract resources to your work</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -210,8 +210,8 @@ const ConveySection = () => {
                   <Share2 className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Viral Reach & Social Proof</h3>
-                  <p className="text-sm text-gray-600">Get featured, earn 10K+ views, and build credibility for the movement</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Movement Amplification</h3>
+                  <p className="text-sm text-gray-600">Your story becomes social proof—showing the world that DNA members deliver results</p>
                 </div>
               </div>
             </div>

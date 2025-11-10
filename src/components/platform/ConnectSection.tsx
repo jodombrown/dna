@@ -165,10 +165,10 @@ const ConnectSection = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Connect</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
-              Find Your People. Fuel Your Progress.
+              Build Relationships That Move Africa Forward
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Build strategic relationships that move your goals forward. Whether you need capital, guidance, expertise, partnerships, or leadership insights—connect with the exact people who can help you win.
+              Connect with verified diaspora changemakers who share your commitment to Africa's progress. Whether you need a co-founder, investor, mentor, or collaborator—strategic relationships are the foundation of impact. Your network becomes the movement's strength.
             </p>
 
             <div className="space-y-4 mb-8">
@@ -177,8 +177,8 @@ const ConnectSection = () => {
                   <Users className="w-4 h-4 text-dna-forest" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Industry Leaders & Experts</h3>
-                  <p className="text-sm text-gray-600">Learn from CEOs, researchers, and specialists who've built at scale</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Quality Over Quantity</h3>
+                  <p className="text-sm text-gray-600">Verified members committed to action, not just conversation</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -186,8 +186,8 @@ const ConnectSection = () => {
                   <Network className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Investors & Mentors</h3>
-                  <p className="text-sm text-gray-600">Access funding partners and battle-tested advisors who guide your growth</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Purpose-Driven Matching</h3>
+                  <p className="text-sm text-gray-600">Find the right people based on shared goals, not random networking</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -195,8 +195,8 @@ const ConnectSection = () => {
                   <Briefcase className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Co-Founders & Partners</h3>
-                  <p className="text-sm text-gray-600">Find the commercial, technical, or creative partner you need to scale</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Individual Success = Collective Power</h3>
+                  <p className="text-sm text-gray-600">Your connections accelerate your goals while strengthening the entire network</p>
                 </div>
               </div>
             </div>

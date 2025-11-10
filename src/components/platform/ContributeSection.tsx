@@ -177,10 +177,10 @@ const ContributeSection = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Contribute</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
-              Give. Gain. Grow the Movement.
+              Give What You Have, Get What You Need
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Deploy your assets—capital, time, expertise, network, or voice—toward projects you believe in. Every contribution earns you recognition, expands your influence, and delivers measurable impact: 10 schools powered, 100K users reached, 15 entrepreneurs guided.
+              Contribute your capital, expertise, time, knowledge, or network to the movement—and watch your impact multiply. Every contribution is tracked, recognized, and often reciprocated. Whether you invest, mentor, share skills, or make connections—you strengthen the ecosystem while advancing your own goals.
             </p>
 
             <div className="space-y-4 mb-8">
@@ -189,17 +189,17 @@ const ContributeSection = () => {
                   <Target className="w-4 h-4 text-dna-gold" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Capital & Skills</h3>
-                  <p className="text-sm text-gray-600">Invest $5K-$50K or contribute 4 hours/week to power transformative projects</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Multiple Contribution Pathways</h3>
+                  <p className="text-sm text-gray-600">Deploy capital, expertise, time, knowledge, or network based on what you can give</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-dna-copper/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Lightbulb className="w-4 h-4 text-dna-copper" />
+                  <TrendingUp className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Mentorship & Knowledge</h3>
-                  <p className="text-sm text-gray-600">Guide 15 founders or publish insights that educate 5K+ members</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Measurable Impact</h3>
+                  <p className="text-sm text-gray-600">Track how your contributions create tangible outcomes for specific initiatives</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -207,8 +207,8 @@ const ContributeSection = () => {
                   <Award className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Recognition & Status</h3>
-                  <p className="text-sm text-gray-600">Earn Impact Points, badges, and community leadership as you contribute</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Reciprocal Ecosystem</h3>
+                  <p className="text-sm text-gray-600">Today's contribution becomes tomorrow's received support—the more you give, the more you gain</p>
                 </div>
               </div>
             </div>

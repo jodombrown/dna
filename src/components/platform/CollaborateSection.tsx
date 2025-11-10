@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Handshake, ArrowRight, Users, DollarSign, Target, TrendingUp } from 'lucide-react';
+import { Handshake, ArrowRight, Users, DollarSign, Target, TrendingUp, Rocket } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';
 import SwipeableCardStack from './SwipeableCardStack';
@@ -154,20 +154,20 @@ const CollaborateSection = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Collaborate</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
-              From Ideas to Impact—Together
+              Build Solutions Together
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Join live projects building Africa's future. From $500K early-stage ventures to $5.8M scaling operations—collaborate with teams of 4 to 34 people across 2 to 12 countries. Track progress, pool capital, and share the wins.
+              Transform ideas into funded ventures through structured collaboration. Co-create with fellow members, access shared resources, track milestones transparently, and participate in real initiatives solving Africa's challenges. Your contribution earns recognition, equity, and impact—while building solutions that scale.
             </p>
 
             <div className="space-y-4 mb-8">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-dna-copper/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Users className="w-4 h-4 text-dna-copper" />
+                  <Target className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Impact Projects & Innovation Labs</h3>
-                  <p className="text-sm text-gray-600">Join ventures tackling energy, fintech, health—with real budgets and timelines</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Structured Co-Creation</h3>
+                  <p className="text-sm text-gray-600">Clear workflows, defined roles, and milestone-based progress keep projects moving</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -175,17 +175,17 @@ const CollaborateSection = () => {
                   <TrendingUp className="w-4 h-4 text-dna-gold" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Research Consortiums & Joint Ventures</h3>
-                  <p className="text-sm text-gray-600">Co-create open-source tools or scale commercial solutions across borders</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Transparent Value Exchange</h3>
+                  <p className="text-sm text-gray-600">Contributions are tracked and rewarded with equity, recognition, or revenue share</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-dna-emerald/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <DollarSign className="w-4 h-4 text-dna-emerald" />
+                  <Users className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Resource Collectives</h3>
-                  <p className="text-sm text-gray-600">Pool capital, equipment, and facilities—$1M+ in shared assets</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Collective Problem-Solving</h3>
+                  <p className="text-sm text-gray-600">Combine diverse expertise to tackle challenges no one could solve alone</p>
                 </div>
               </div>
             </div>
