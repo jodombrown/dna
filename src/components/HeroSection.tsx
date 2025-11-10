@@ -24,7 +24,7 @@ const HeroSection = () => {
             <div className="space-y-6 lg:space-y-10">
               {/* Main Headline */}
               <div className="text-center lg:text-left">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-dna-forest mb-6 lg:mb-10 leading-[1.1] lg:leading-[1.05]">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-serif text-dna-forest mb-6 lg:mb-10 leading-[1.1] lg:leading-[1.05]">
                   Welcome to the
                   <br />
                   <span className="text-dna-copper">Diaspora Network of Africa</span>
