@@ -29,22 +29,34 @@ export const useWaitlistPopup = () => {
       if (hasTriggered) return;
 
       // Find the Connect section by looking for an element with data-section="connect"
-      // or by finding the section that comes after HeroTriangleSection
       const connectSection = document.querySelector('[data-section="connect"]');
       
       if (connectSection) {
         const rect = connectSection.getBoundingClientRect();
-        const sectionBottom = rect.bottom + window.pageYOffset;
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const windowHeight = window.innerHeight;
         
-        // Trigger when user has scrolled past the Connect section
-        if (scrollTop + windowHeight > sectionBottom) {
-          console.log('🎯 Triggering waitlist popup after Connect section!');
+        // Calculate section position
+        const sectionTop = rect.top + scrollTop;
+        const sectionBottom = rect.bottom + scrollTop;
+        const viewportBottom = scrollTop + windowHeight;
+        
+        // Trigger when user has scrolled past 50% of the Connect section
+        const sectionMidpoint = sectionTop + (rect.height * 0.5);
+        
+        if (viewportBottom > sectionMidpoint) {
+          console.log('🎯 Triggering waitlist popup after Connect section!', {
+            sectionMidpoint,
+            viewportBottom,
+            hasScrolledPastMidpoint: viewportBottom > sectionMidpoint
+          });
           setShowWaitlistPopup(true);
           setHasTriggered(true);
+          localStorage.setItem('dna_waitlist_shown', Date.now().toString());
           window.removeEventListener('scroll', handleScroll);
         }
+      } else {
+        console.log('❌ Connect section not found in DOM');
       }
     };
 
