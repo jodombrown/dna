@@ -12,6 +12,7 @@ const ConveneSection = () => {
     {
       title: 'African Tech Summit 2025',
       type: 'Tech Conference',
+      description: "Leading innovators shaping Africa's digital transformation and future.",
       date: 'March 15',
       time: '2:00 PM WAT',
       location: 'Lagos, Nigeria',
@@ -20,10 +21,13 @@ const ConveneSection = () => {
       format: 'Hybrid',
       gradient: 'from-dna-copper to-dna-gold',
       featured: true,
+      categoryTitle: 'Innovation Summits',
+      categorySubtitle: 'Shape the future together',
     },
     {
       title: 'Afrobeats & Innovation Festival',
       type: 'Cultural Celebration',
+      description: 'Celebrating the intersection of African culture, music, and entrepreneurship.',
       date: 'March 20',
       time: '5:00 PM GMT',
       location: 'London, UK',
@@ -32,10 +36,13 @@ const ConveneSection = () => {
       format: 'In-Person',
       gradient: 'from-dna-gold to-dna-ochre',
       featured: true,
+      categoryTitle: 'Cultural Gatherings',
+      categorySubtitle: 'Connect through heritage',
     },
     {
       title: 'Startup Networking Mixer',
       type: 'Networking Mixer',
+      description: 'Connect with founders, investors, and innovators building the next wave.',
       date: 'March 25',
       time: '6:30 PM EST',
       location: 'New York, USA',
@@ -44,10 +51,13 @@ const ConveneSection = () => {
       format: 'In-Person',
       gradient: 'from-dna-ochre to-dna-emerald',
       featured: false,
+      categoryTitle: 'Networking Meetups',
+      categorySubtitle: 'Grow your circle',
     },
     {
       title: 'AI in Healthcare Webinar Series',
       type: 'Webinar Series',
+      description: 'Expert insights on leveraging AI to transform healthcare across Africa.',
       date: 'March 28',
       time: '3:00 PM GMT',
       location: 'Virtual Event',
@@ -56,10 +66,13 @@ const ConveneSection = () => {
       format: 'Virtual',
       gradient: 'from-dna-emerald to-dna-forest',
       featured: false,
+      categoryTitle: 'Knowledge Sessions',
+      categorySubtitle: 'Learn from the best',
     },
     {
       title: 'Toronto Diaspora Meetup',
       type: 'Local Meetup',
+      description: 'Monthly gathering for diaspora professionals to connect and collaborate.',
       date: 'April 2',
       time: '7:00 PM EST',
       location: 'Toronto, Canada',
@@ -68,6 +81,8 @@ const ConveneSection = () => {
       format: 'In-Person',
       gradient: 'from-dna-forest to-dna-copper',
       featured: false,
+      categoryTitle: 'Local Communities',
+      categorySubtitle: 'Build local bonds',
     },
   ];
 
@@ -80,10 +95,10 @@ const ConveneSection = () => {
       <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
         <div className={`bg-gradient-to-r ${event.gradient} text-white p-6`}>
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-lg">Upcoming Diaspora Events</h3>
+            <h3 className="font-semibold text-lg font-serif">{event.categoryTitle}</h3>
             <Calendar className="w-5 h-5" />
           </div>
-          <p className="text-sm text-white/80">Join the movement</p>
+          <p className="text-sm text-white/80">{event.categorySubtitle}</p>
         </div>
         
         <div className="p-6 space-y-6 flex-1">
@@ -97,7 +112,8 @@ const ConveneSection = () => {
                 </div>
               )}
             </div>
-            <h4 className="font-bold text-xl text-gray-900 mb-4">{event.title}</h4>
+            <h4 className="font-bold text-xl text-gray-900 mb-2">{event.title}</h4>
+            <p className="text-xs text-gray-600 line-clamp-2 mb-3">{event.description}</p>
           </div>
 
           <div className="space-y-3">
