@@ -20,6 +20,8 @@ const ConveySection = () => {
       gradient: 'from-dna-forest to-dna-emerald',
       featured: true,
       storyType: 'Success Story',
+      categoryTitle: 'Success Stories',
+      categorySubtitle: 'Celebrate wins together',
     },
     {
       title: 'Solar Initiative Impact: Q1 2025 Report',
@@ -31,6 +33,8 @@ const ConveySection = () => {
       gradient: 'from-dna-emerald to-dna-copper',
       featured: false,
       storyType: 'Impact Report',
+      categoryTitle: 'Impact Reports',
+      categorySubtitle: 'Track collective progress',
     },
     {
       title: 'From London to Lagos: My Return Journey',
@@ -42,6 +46,8 @@ const ConveySection = () => {
       gradient: 'from-dna-copper to-dna-gold',
       featured: true,
       storyType: 'Founder Journey',
+      categoryTitle: 'Founder Journeys',
+      categorySubtitle: 'Share your path',
     },
     {
       title: 'Spotlight: Dr. Zainab Hassan, HealthTech Pioneer',
@@ -53,6 +59,8 @@ const ConveySection = () => {
       gradient: 'from-dna-gold to-dna-ochre',
       featured: false,
       storyType: 'Community Spotlight',
+      categoryTitle: 'Community Spotlights',
+      categorySubtitle: 'Highlight changemakers',
     },
     {
       title: 'The Future of African AI: A Thought Leader Perspective',
@@ -64,6 +72,8 @@ const ConveySection = () => {
       gradient: 'from-dna-ochre to-dna-forest',
       featured: true,
       storyType: 'Thought Leadership',
+      categoryTitle: 'Thought Leadership',
+      categorySubtitle: 'Shape the narrative',
     },
   ];
 
@@ -76,10 +86,10 @@ const ConveySection = () => {
       <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
         <div className={`bg-gradient-to-r ${story.gradient} text-white p-6`}>
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-lg">Diaspora Impact Stories</h3>
+            <h3 className="font-semibold text-lg font-serif">{story.categoryTitle}</h3>
             <Megaphone className="w-5 h-5" />
           </div>
-          <p className="text-sm text-white/80">Inspire the movement</p>
+          <p className="text-sm text-white/80">{story.categorySubtitle}</p>
         </div>
         
         <div className="p-6 space-y-4 flex-1">
