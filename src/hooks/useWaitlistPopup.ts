@@ -28,31 +28,23 @@ export const useWaitlistPopup = () => {
     const handleScroll = () => {
       if (hasTriggered) return;
 
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-      const scrollableDistance = documentHeight - windowHeight;
+      // Find the Connect section by looking for an element with data-section="connect"
+      // or by finding the section that comes after HeroTriangleSection
+      const connectSection = document.querySelector('[data-section="connect"]');
       
-      if (scrollableDistance <= 0) return; // Prevent division by zero
-      
-      const scrollPercentage = (scrollTop / scrollableDistance) * 100;
-      
-      console.log('Scroll progress:', {
-        scrollTop,
-        scrollableDistance,
-        percentage: Math.round(scrollPercentage),
-        windowWidth: window.innerWidth
-      });
-
-      // Trigger at 60% for desktop, 90% for mobile
-      const isMobile = window.innerWidth < 768;
-      const triggerPoint = isMobile ? 90 : 60;
-
-      if (scrollPercentage >= triggerPoint) {
-        console.log('🎯 Triggering waitlist popup!');
-        setShowWaitlistPopup(true);
-        setHasTriggered(true);
-        window.removeEventListener('scroll', handleScroll);
+      if (connectSection) {
+        const rect = connectSection.getBoundingClientRect();
+        const sectionBottom = rect.bottom + window.pageYOffset;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight;
+        
+        // Trigger when user has scrolled past the Connect section
+        if (scrollTop + windowHeight > sectionBottom) {
+          console.log('🎯 Triggering waitlist popup after Connect section!');
+          setShowWaitlistPopup(true);
+          setHasTriggered(true);
+          window.removeEventListener('scroll', handleScroll);
+        }
       }
     };
 

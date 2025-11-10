@@ -137,7 +137,7 @@ const ConnectSection = () => {
   );
 
   return (
-    <section id="connect-section" className="py-16 px-4 sm:px-6 lg:px-8">
+    <section id="connect-section" data-section="connect" className="py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1400px] mx-auto">
         <div className="grid lg:grid-cols-[1fr_1.2fr] gap-16 items-center">
           {/* Left: Text Content */}
