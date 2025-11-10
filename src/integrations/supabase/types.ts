@@ -6597,6 +6597,7 @@ export type Database = {
         Returns: boolean
       }
       update_username: { Args: { new_username: string }; Returns: Json }
+      user_has_profile: { Args: { user_id: string }; Returns: boolean }
       validate_invite_code: { Args: { invite_code: string }; Returns: Json }
       validate_prelaunch_access: {
         Args: { user_email: string }
