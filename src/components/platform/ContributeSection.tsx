@@ -19,6 +19,8 @@ const ContributeSection = () => {
       gradient: 'from-dna-gold to-dna-ochre',
       badge: 'Investment',
       recognition: '+500 Impact Points',
+      categoryTitle: 'Investment Opportunities',
+      categorySubtitle: 'Fund transformative projects',
     },
     {
       type: 'Skills',
@@ -30,6 +32,8 @@ const ContributeSection = () => {
       gradient: 'from-dna-copper to-dna-gold',
       badge: 'Expertise',
       recognition: 'Featured Contributor Badge',
+      categoryTitle: 'Skill Exchanges',
+      categorySubtitle: 'Apply your expertise',
     },
     {
       type: 'Mentorship',
@@ -41,6 +45,8 @@ const ContributeSection = () => {
       gradient: 'from-dna-ochre to-dna-emerald',
       badge: 'Mentorship',
       recognition: 'Community Leader Status',
+      categoryTitle: 'Mentorship Programs',
+      categorySubtitle: 'Guide the next generation',
     },
     {
       type: 'Knowledge',
@@ -52,6 +58,8 @@ const ContributeSection = () => {
       gradient: 'from-dna-emerald to-dna-forest',
       badge: 'Knowledge',
       recognition: 'Thought Leader Badge',
+      categoryTitle: 'Knowledge Sharing',
+      categorySubtitle: 'Educate and inspire',
     },
     {
       type: 'Advocacy',
@@ -63,6 +71,8 @@ const ContributeSection = () => {
       gradient: 'from-dna-forest to-dna-copper',
       badge: 'Advocacy',
       recognition: 'Ambassador Status',
+      categoryTitle: 'Network Amplification',
+      categorySubtitle: 'Expand our reach',
     },
   ];
 
@@ -77,10 +87,10 @@ const ContributeSection = () => {
         <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
           <div className={`bg-gradient-to-r ${contribution.gradient} text-white p-6`}>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-lg">Your Impact Dashboard</h3>
+              <h3 className="font-semibold text-lg font-serif">{contribution.categoryTitle}</h3>
               <Icon className="w-5 h-5" />
             </div>
-            <p className="text-sm text-white/80">Make your impact</p>
+            <p className="text-sm text-white/80">{contribution.categorySubtitle}</p>
           </div>
           
           <div className="p-6 space-y-6 flex-1">
