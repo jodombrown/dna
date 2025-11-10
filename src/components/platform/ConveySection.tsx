@@ -180,10 +180,10 @@ const ConveySection = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Convey</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
-              Your Story, Our Movement
+              Your Wins Fuel the Movement
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Amplify your impact by sharing your stories, insights, and successes. Inspire others to join the movement.
+              Share your story—success, journey, insight—and watch it reach thousands. From 6.7K to 14.3K views per story, your wins become social proof that DNA members are building, raising capital, and making impact. Inspire the next wave.
             </p>
 
             <div className="space-y-4 mb-8">
@@ -192,8 +192,8 @@ const ConveySection = () => {
                   <Sparkles className="w-4 h-4 text-dna-forest" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Curated Diaspora News</h3>
-                  <p className="text-sm text-gray-600">Stay informed with relevant stories</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Success Stories & Founder Journeys</h3>
+                  <p className="text-sm text-gray-600">Share how you raised $2M, built your team, or launched in new markets</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -201,8 +201,8 @@ const ConveySection = () => {
                   <MessageCircle className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Community Impact Stories</h3>
-                  <p className="text-sm text-gray-600">Share your journey and wins</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Impact Reports & Community Spotlights</h3>
+                  <p className="text-sm text-gray-600">Track project progress and celebrate members driving change</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -210,8 +210,8 @@ const ConveySection = () => {
                   <Share2 className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Authentic Diaspora Voices</h3>
-                  <p className="text-sm text-gray-600">Amplify real perspectives</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Viral Reach & Social Proof</h3>
+                  <p className="text-sm text-gray-600">Get featured, earn 10K+ views, and build credibility for the movement</p>
                 </div>
               </div>
             </div>

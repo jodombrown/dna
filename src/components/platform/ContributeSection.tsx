@@ -177,10 +177,10 @@ const ContributeSection = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Contribute</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
-              Every Asset Counts
+              Give. Gain. Grow the Movement.
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Mobilize your unique assets—time, attention, networks, skills, expertise, research, capital, and more—toward causes and projects you care about.
+              Deploy your assets—capital, time, expertise, network, or voice—toward projects you believe in. Every contribution earns you recognition, expands your influence, and delivers measurable impact: 10 schools powered, 100K users reached, 15 entrepreneurs guided.
             </p>
 
             <div className="space-y-4 mb-8">
@@ -189,8 +189,8 @@ const ContributeSection = () => {
                   <Target className="w-4 h-4 text-dna-gold" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Seven Pathways to Impact</h3>
-                  <p className="text-sm text-gray-600">Find the right way to contribute</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Capital & Skills</h3>
+                  <p className="text-sm text-gray-600">Invest $5K-$50K or contribute 4 hours/week to power transformative projects</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -198,8 +198,8 @@ const ContributeSection = () => {
                   <Lightbulb className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Skills-Based Contributions</h3>
-                  <p className="text-sm text-gray-600">Share your expertise where it matters</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Mentorship & Knowledge</h3>
+                  <p className="text-sm text-gray-600">Guide 15 founders or publish insights that educate 5K+ members</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -207,8 +207,8 @@ const ContributeSection = () => {
                   <Award className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Real-Time Impact Tracking</h3>
-                  <p className="text-sm text-gray-600">See your contribution's effect</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Recognition & Status</h3>
+                  <p className="text-sm text-gray-600">Earn Impact Points, badges, and community leadership as you contribute</p>
                 </div>
               </div>
             </div>

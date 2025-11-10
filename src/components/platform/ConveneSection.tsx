@@ -185,10 +185,10 @@ const ConveneSection = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Convene</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
-              Where Ideas Meet Action
+              Where Connections Become Movements
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Discover and create meaningful gatherings across the diaspora. From tech meetups to cultural celebrations, find your community events.
+              Join gatherings that fuel Africa's progress—from 250-person innovation summits to 800-person cultural festivals. Whether virtual, in-person, or hybrid, these spaces turn conversations into collaborations and ideas into action.
             </p>
 
             <div className="space-y-4 mb-8">
@@ -197,8 +197,8 @@ const ConveneSection = () => {
                   <Calendar className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Diaspora Event Discovery</h3>
-                  <p className="text-sm text-gray-600">Find events that align with your interests</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Innovation Summits & Knowledge Sessions</h3>
+                  <p className="text-sm text-gray-600">Learn from experts shaping Africa's tech, health, and climate future</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -206,8 +206,8 @@ const ConveneSection = () => {
                   <Users className="w-4 h-4 text-dna-gold" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Community Gatherings</h3>
-                  <p className="text-sm text-gray-600">Create and host your own events</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Networking Meetups & Local Hubs</h3>
+                  <p className="text-sm text-gray-600">Build relationships in intimate settings—from 45 to 120 people</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -216,7 +216,7 @@ const ConveneSection = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Cultural Celebrations</h3>
-                  <p className="text-sm text-gray-600">Connect through shared heritage and culture</p>
+                  <p className="text-sm text-gray-600">Gather at festivals celebrating heritage, music, and entrepreneurship</p>
                 </div>
               </div>
             </div>

@@ -165,10 +165,10 @@ const ConnectSection = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Connect</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
-              Your Network is Your Networth
+              Find Your People. Fuel Your Progress.
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Build meaningful professional relationships across the diaspora. Discover opportunities, expand your network, and find your tribe.
+              Build strategic relationships that move your goals forward. Whether you need capital, guidance, expertise, partnerships, or leadership insights—connect with the exact people who can help you win.
             </p>
 
             <div className="space-y-4 mb-8">
@@ -177,8 +177,8 @@ const ConnectSection = () => {
                   <Users className="w-4 h-4 text-dna-forest" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Global Network Access</h3>
-                  <p className="text-sm text-gray-600">Connect with diaspora professionals worldwide</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Industry Leaders & Experts</h3>
+                  <p className="text-sm text-gray-600">Learn from CEOs, researchers, and specialists who've built at scale</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -186,8 +186,8 @@ const ConnectSection = () => {
                   <Network className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Smart Opportunity Matching</h3>
-                  <p className="text-sm text-gray-600">Find professionals aligned with your goals</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Investors & Mentors</h3>
+                  <p className="text-sm text-gray-600">Access funding partners and battle-tested advisors who guide your growth</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -195,8 +195,8 @@ const ConnectSection = () => {
                   <Briefcase className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Professional Communities</h3>
-                  <p className="text-sm text-gray-600">Join interest-based professional groups</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Co-Founders & Partners</h3>
+                  <p className="text-sm text-gray-600">Find the commercial, technical, or creative partner you need to scale</p>
                 </div>
               </div>
             </div>

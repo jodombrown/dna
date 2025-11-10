@@ -21,9 +21,13 @@ const HeroTriangleSection = () => {
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-serif text-gray-900 mb-6 leading-tight">
               The DNA Framework
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
-              Our framework transforms how Africa's diaspora creates change. 
-              Each pillar strengthens the others, multiplying your impact across the continent.
+            <p className="text-lg sm:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-4">
+              A virtuous cycle where <strong>individual success fuels collective power</strong>. Connect with leaders. 
+              Convene for breakthroughs. Collaborate on ventures. Contribute your assets. Convey your wins. 
+              Each action strengthens your network while mobilizing billions toward Africa's transformation.
+            </p>
+            <p className="text-base sm:text-lg text-gray-500 max-w-3xl mx-auto leading-relaxed mb-12">
+              <em>You grow. The movement grows. Africa grows. That's the DNA way.</em>
             </p>
 
             {/* Five Pillars Navigation - Hidden on mobile */}

@@ -154,10 +154,10 @@ const CollaborateSection = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Collaborate</h2>
             </div>
             <p className="text-xl font-semibold text-gray-900 mb-3">
-              Together We Build Stronger
+              From Ideas to Impact—Together
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Work together on meaningful projects that drive African development. Pool resources, share knowledge, and amplify collective impact.
+              Join live projects building Africa's future. From $500K early-stage ventures to $5.8M scaling operations—collaborate with teams of 4 to 34 people across 2 to 12 countries. Track progress, pool capital, and share the wins.
             </p>
 
             <div className="space-y-4 mb-8">
@@ -166,8 +166,8 @@ const CollaborateSection = () => {
                   <Users className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Cross-Border Project Teams</h3>
-                  <p className="text-sm text-gray-600">Join forces across continents</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Impact Projects & Innovation Labs</h3>
+                  <p className="text-sm text-gray-600">Join ventures tackling energy, fintech, health—with real budgets and timelines</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -175,8 +175,8 @@ const CollaborateSection = () => {
                   <TrendingUp className="w-4 h-4 text-dna-gold" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Knowledge Sharing Platforms</h3>
-                  <p className="text-sm text-gray-600">Learn and share expertise</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Research Consortiums & Joint Ventures</h3>
+                  <p className="text-sm text-gray-600">Co-create open-source tools or scale commercial solutions across borders</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -184,8 +184,8 @@ const CollaborateSection = () => {
                   <DollarSign className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Resource Pooling Tools</h3>
-                  <p className="text-sm text-gray-600">Combine capital and skills</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">Resource Collectives</h3>
+                  <p className="text-sm text-gray-600">Pool capital, equipment, and facilities—$1M+ in shared assets</p>
                 </div>
               </div>
             </div>
