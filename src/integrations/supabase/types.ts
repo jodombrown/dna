@@ -3503,32 +3503,47 @@ export type Database = {
         Row: {
           count: number
           created_at: string
+          engaged: boolean | null
+          engagement_type: string | null
           event_date: string
           event_type: string
           id: string
           metadata: Json | null
           post_id: string | null
           user_id: string | null
+          view_duration: number | null
+          viewed_at: string | null
+          viewer_id: string | null
         }
         Insert: {
           count?: number
           created_at?: string
+          engaged?: boolean | null
+          engagement_type?: string | null
           event_date?: string
           event_type: string
           id?: string
           metadata?: Json | null
           post_id?: string | null
           user_id?: string | null
+          view_duration?: number | null
+          viewed_at?: string | null
+          viewer_id?: string | null
         }
         Update: {
           count?: number
           created_at?: string
+          engaged?: boolean | null
+          engagement_type?: string | null
           event_date?: string
           event_type?: string
           id?: string
           metadata?: Json | null
           post_id?: string | null
           user_id?: string | null
+          view_duration?: number | null
+          viewed_at?: string | null
+          viewer_id?: string | null
         }
         Relationships: []
       }
@@ -5945,6 +5960,17 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_post_analytics_summary: {
+        Args: { p_post_id: string }
+        Returns: {
+          avg_view_duration: number
+          engagement_breakdown: Json
+          engagement_rate: number
+          total_engagements: number
+          total_views: number
+          unique_viewers: number
+        }[]
+      }
       get_post_comments: {
         Args: { p_post_id: string; p_user_id: string }
         Returns: {
@@ -6525,6 +6551,22 @@ export type Database = {
           p_notes?: string
           p_type: string
           p_visibility?: string
+        }
+        Returns: string
+      }
+      track_post_engagement: {
+        Args: {
+          p_engagement_type: string
+          p_post_id: string
+          p_viewer_id: string
+        }
+        Returns: string
+      }
+      track_post_view: {
+        Args: {
+          p_post_id: string
+          p_view_duration?: number
+          p_viewer_id?: string
         }
         Returns: string
       }
