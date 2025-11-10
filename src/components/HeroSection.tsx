@@ -24,13 +24,13 @@ const HeroSection = () => {
             <div className="space-y-6 lg:space-y-10">
               {/* Main Headline */}
               <div className="text-center lg:text-left">
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold text-dna-forest mb-6 lg:mb-10 leading-[1.1] lg:leading-[1.05]">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-dna-forest mb-6 lg:mb-10 leading-[1.1] lg:leading-[1.05]">
                   Welcome to the
                   <br />
                   <span className="text-dna-copper">Diaspora Network of Africa</span>
                 </h1>
                 
-                <p className="text-lg sm:text-xl lg:text-3xl xl:text-4xl text-gray-700 mb-8 lg:mb-12 leading-relaxed lg:leading-relaxed font-light">
+                <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-700 mb-8 lg:mb-12 leading-relaxed">
                   Connecting Africa's diaspora professionals for transformative global impact through 
                   <span className="font-semibold text-dna-emerald"> capacity building</span>, 
                   <span className="font-semibold text-dna-copper"> venture building</span>, and 
