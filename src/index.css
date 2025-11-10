@@ -198,15 +198,29 @@
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
 
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
   }
 
   /* Smooth scrolling for all pages */
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Prevent horizontal overflow on root */
+  #root {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
   }
 
   /* Remove black outlines on focus and hover */

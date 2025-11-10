@@ -27,8 +27,9 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   return (
     <div 
       className={cn(
-        "min-h-screen w-full bg-background",
+        "min-h-screen w-full max-w-full bg-background",
         "transition-all duration-300 ease-in-out",
+        "overflow-x-hidden"
       )}
       data-view-state={viewState}
       data-layout-type={layoutConfig.type}

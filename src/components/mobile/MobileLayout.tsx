@@ -46,7 +46,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   return (
     <div 
       className={cn(
-        'w-full',
+        'w-full max-w-full overflow-x-hidden',
         getVariantClasses(),
         getSpacingClasses(),
         // Touch-friendly classes for mobile
