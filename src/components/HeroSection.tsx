@@ -21,16 +21,16 @@ const HeroSection = () => {
           <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[60vh] py-6">
             
             {/* Left Column, Main Content */}
-            <div className="space-y-6">
+            <div className="space-y-6 lg:space-y-8">
               {/* Main Headline */}
               <div className="text-center lg:text-left">
-                <h1 className={`${TYPOGRAPHY.display} text-dna-forest mb-4`}>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-dna-forest mb-6 lg:mb-8 leading-tight">
                   Welcome to the
                   <br />
                   <span className="text-dna-copper">Diaspora Network of Africa</span>
                 </h1>
                 
-                <p className={`${TYPOGRAPHY.bodyLarge} text-gray-700 mb-6`}>
+                <p className="text-lg sm:text-xl lg:text-2xl text-gray-700 mb-8 lg:mb-10 leading-relaxed">
                   Connecting Africa's diaspora professionals for transformative global impact through 
                   <span className="font-semibold text-dna-emerald"> capacity building</span>, 
                   <span className="font-semibold text-dna-copper"> venture building</span>, and 
@@ -38,12 +38,12 @@ const HeroSection = () => {
                 </p>
 
                 {/* LinkedIn-style Auth Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-4">
+                <div className="flex flex-col sm:flex-row gap-4 lg:gap-5 justify-center lg:justify-start mb-6 lg:mb-8">
                   <Button 
                     variant="outline"
                     size="lg" 
                     onClick={() => navigate('/auth')}
-                    className="border-2 border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
+                    className="border-2 border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white text-base lg:text-lg px-6 lg:px-8 py-3 lg:py-4 h-auto"
                   >
                     Sign in
                   </Button>
@@ -51,7 +51,7 @@ const HeroSection = () => {
                     variant="default" 
                     size="lg"
                     onClick={() => setIsBetaDialogOpen(true)}
-                    className="bg-dna-emerald hover:bg-dna-forest"
+                    className="bg-dna-emerald hover:bg-dna-forest text-base lg:text-lg px-6 lg:px-8 py-3 lg:py-4 h-auto"
                   >
                     Join Our Beta
                   </Button>
@@ -59,14 +59,14 @@ const HeroSection = () => {
                     variant="outline"
                     size="lg" 
                     onClick={() => setIsDemoDialogOpen(true)}
-                    className="border-2 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
+                    className="border-2 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white text-base lg:text-lg px-6 lg:px-8 py-3 lg:py-4 h-auto"
                   >
                     Request a Demo
                   </Button>
                 </div>
 
                 {/* Legal Disclaimer */}
-                <p className="text-sm text-gray-600 mb-6 text-center lg:text-left">
+                <p className="text-sm lg:text-base text-gray-600 mb-6 text-center lg:text-left">
                   By clicking Continue to join or sign in, you agree to DNA's{' '}
                   <a href="/legal/user-agreement" className="text-dna-copper hover:underline font-medium">
                     User Agreement
