@@ -20,6 +20,8 @@ const CollaborateSection = () => {
       pooled: '$2.3M',
       gradient: 'from-dna-copper to-dna-gold',
       engagementType: 'Join Active Project',
+      categoryTitle: 'Impact Projects',
+      categorySubtitle: 'Build sustainable change',
     },
     {
       title: 'FinTech for Refugees',
@@ -31,6 +33,8 @@ const CollaborateSection = () => {
       pooled: '$500K',
       gradient: 'from-dna-gold to-dna-ochre',
       engagementType: 'Start a Project',
+      categoryTitle: 'Innovation Labs',
+      categorySubtitle: 'Launch breakthrough solutions',
     },
     {
       title: 'Climate Data Collective',
@@ -42,6 +46,8 @@ const CollaborateSection = () => {
       pooled: '$1.2M',
       gradient: 'from-dna-ochre to-dna-emerald',
       engagementType: 'Expert Network',
+      categoryTitle: 'Research Consortiums',
+      categorySubtitle: 'Advance knowledge together',
     },
     {
       title: 'Shared Manufacturing Hub',
@@ -53,6 +59,8 @@ const CollaborateSection = () => {
       pooled: '$3.1M',
       gradient: 'from-dna-emerald to-dna-forest',
       engagementType: 'Resource Sharing',
+      categoryTitle: 'Resource Collectives',
+      categorySubtitle: 'Pool assets and expertise',
     },
     {
       title: 'Pan-African E-Commerce',
@@ -64,6 +72,8 @@ const CollaborateSection = () => {
       pooled: '$5.8M',
       gradient: 'from-dna-forest to-dna-copper',
       engagementType: 'Cross-Border Team',
+      categoryTitle: 'Joint Ventures',
+      categorySubtitle: 'Scale across borders',
     },
   ];
 
@@ -76,10 +86,10 @@ const CollaborateSection = () => {
       <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
         <div className={`bg-gradient-to-r ${project.gradient} text-white p-6`}>
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-lg">Active Collaborations</h3>
+            <h3 className="font-semibold text-lg font-serif">{project.categoryTitle}</h3>
             <Handshake className="w-5 h-5" />
           </div>
-          <p className="text-sm text-white/80">Live collaborations</p>
+          <p className="text-sm text-white/80">{project.categorySubtitle}</p>
         </div>
         
         <div className="p-6 space-y-6 flex-1">
