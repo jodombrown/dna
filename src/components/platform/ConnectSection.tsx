@@ -13,6 +13,7 @@ const ConnectSection = () => {
     {
       name: 'Amara Okafor',
       title: 'FinTech Product Lead',
+      bio: 'Building digital payment infrastructure connecting Africa to global markets.',
       location: 'Lagos, Nigeria',
       interests: ['FinTech', 'Product', 'Payments'],
       mutualConnections: 3,
@@ -24,6 +25,7 @@ const ConnectSection = () => {
     {
       name: 'Kwame Mensah',
       title: 'Impact Investor',
+      bio: 'Funding climate-resilient agriculture across West Africa.',
       location: 'Accra, Ghana',
       interests: ['Climate Tech', 'AgriTech', 'Venture'],
       mutualConnections: 5,
@@ -35,6 +37,7 @@ const ConnectSection = () => {
     {
       name: 'Zainab Hassan',
       title: 'Healthcare Innovation Director',
+      bio: 'Leveraging AI to expand healthcare access in underserved communities.',
       location: 'Nairobi, Kenya',
       interests: ['HealthTech', 'AI', 'Innovation'],
       mutualConnections: 2,
@@ -46,6 +49,7 @@ const ConnectSection = () => {
     {
       name: 'Dr. Chioma Nwankwo',
       title: 'Blockchain Expert',
+      bio: 'Pioneering decentralized finance solutions for the African diaspora.',
       location: 'Austin, TX',
       interests: ['Web3', 'DeFi', 'Smart Contracts'],
       mutualConnections: 8,
@@ -57,6 +61,7 @@ const ConnectSection = () => {
     {
       name: 'Yusuf Ibrahim',
       title: 'EdTech Founder',
+      bio: 'Democratizing quality education through AI-powered learning platforms.',
       location: 'Kigali, Rwanda',
       interests: ['Education', 'AI', 'SaaS'],
       mutualConnections: 4,
@@ -76,10 +81,10 @@ const ConnectSection = () => {
       <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
         <div className={`bg-gradient-to-r ${professional.gradient} text-white p-6`}>
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-lg">Your Professional Network</h3>
+            <h3 className="font-semibold text-lg font-serif">Build With Your Tribe</h3>
             <Network className="w-5 h-5" />
           </div>
-          <p className="text-sm text-white/80">Expand your network</p>
+          <p className="text-sm text-white/80">Connect with innovators building Africa's future</p>
         </div>
         
         <div className="p-6 space-y-6 flex-1">
@@ -91,7 +96,8 @@ const ConnectSection = () => {
             </Avatar>
             <div className="flex-1 min-w-0">
               <h4 className="font-bold text-lg text-gray-900 mb-1">{professional.name}</h4>
-              <p className="text-sm font-medium text-gray-700 mb-2">{professional.title}</p>
+              <p className="text-sm font-medium text-gray-700 mb-1">{professional.title}</p>
+              <p className="text-xs text-gray-600 mb-2 line-clamp-2">{professional.bio}</p>
               <div className="flex items-center gap-1.5 text-sm text-gray-600">
                 <MapPin className="w-3.5 h-3.5" />
                 <span>{professional.location}</span>
