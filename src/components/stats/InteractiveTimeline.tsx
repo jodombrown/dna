@@ -14,9 +14,11 @@ const InteractiveTimeline = () => {
     if (activeTimelineYear && scrollContainerRef.current) {
       const activeIndex = timelineData.findIndex(item => item.year === activeTimelineYear);
       if (activeIndex !== -1) {
-        const cardWidth = Math.min(320, window.innerWidth - 48) + 24; // Responsive card width
+        const isMobile = window.innerWidth < 640; // Tailwind 'sm' breakpoint
+        const gap = window.innerWidth >= 1024 ? 24 : 12; // gap-3 on mobile/tablet, gap-6 on lg+
+        const cardWidth = isMobile ? window.innerWidth + gap : 320 + gap; // mobile uses full viewport width
         const scrollPosition = activeIndex * cardWidth;
-        
+
         scrollContainerRef.current.scrollTo({
           left: scrollPosition,
           behavior: 'smooth'
@@ -60,11 +62,11 @@ const InteractiveTimeline = () => {
         <p className="text-lg text-gray-600 mb-4">Explore a decade of diaspora growth and impact</p>
       </div>
       
-      <div className="bg-gray-50 py-8 px-2 sm:px-6 lg:px-8 w-full">
+      <div className="bg-gray-50 py-8 px-0 sm:px-6 lg:px-8 w-full">
         {/* Horizontal scrollable timeline for all screen sizes */}
-        <div ref={scrollContainerRef} className="flex gap-3 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide px-2">
+        <div ref={scrollContainerRef} className="flex gap-3 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide px-0">
           {timelineData.map((item) => (
-            <div key={item.year} className="flex-shrink-0 w-[calc(100vw-3rem)] sm:w-80">
+            <div key={item.year} className="flex-shrink-0 w-screen sm:w-80">
               <TimelineItem
                 year={item.year}
                 events={item.events}
