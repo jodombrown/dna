@@ -10,20 +10,24 @@ const WhoIsDNAForSection = () => {
 
   const faqs = [
     {
-      question: "Connect with diaspora professionals across the globe",
-      answer: "Build meaningful relationships with African diaspora professionals worldwide. Our platform enables you to discover and network with leaders, innovators, and changemakers who share your commitment to Africa's development."
+      question: "Do I need to live in Africa to participate?",
+      answer: "No. DNA is built for the global African diaspora. Whether you're in Atlanta, London, Toronto, or Lagos, if you're committed to Africa's transformation, you belong here. We connect professionals across continents to collaborate on ventures that drive real change."
     },
     {
-      question: "Find impact opportunities in Africa",
-      answer: "Explore curated opportunities to contribute your skills and expertise to transformative projects across the continent. From venture building to capacity development, discover pathways that match your passion and experience."
+      question: "How does DNA differ from other professional networks?",
+      answer: "DNA is purpose-built for diaspora-led impact. We're not just another LinkedIn. We center African identity, honor Ubuntu principles, and focus exclusively on connecting talent, capital, and expertise to accelerate Africa's development through entrepreneurship and innovation."
     },
     {
-      question: "Build ventures that transform communities",
-      answer: "Collaborate with fellow entrepreneurs and innovators to create scalable solutions addressing Africa's most pressing challenges. Access resources, mentorship, and partnerships to bring your vision to life."
+      question: "What if I'm just starting my Africa engagement journey?",
+      answer: "Perfect. DNA welcomes everyone from seasoned investors to curious first-timers. Our community includes mentors ready to guide you, opportunities matched to your current experience level, and resources designed to help you find your path to meaningful contribution."
     },
     {
-      question: "Access capacity building and mentorship",
-      answer: "Engage with experienced mentors and participate in structured programs designed to enhance your skills and amplify your impact. Learn from those who have successfully navigated the journey of diaspora-led innovation."
+      question: "Is this only for tech entrepreneurs?",
+      answer: "Not at all. While we embrace innovation, DNA serves professionals across all sectors: agriculture, education, healthcare, finance, creative industries, and more. If you're building solutions or contributing expertise that advances Africa, you're in the right place."
+    },
+    {
+      question: "How do you ensure quality connections and opportunities?",
+      answer: "We vet all members and opportunities through our community standards rooted in Ubuntu values. Our platform prioritizes meaningful engagement over vanity metrics, fostering authentic relationships between vetted professionals committed to collective progress and systemic change."
     }
   ];
 
