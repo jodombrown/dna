@@ -14,11 +14,9 @@ const InteractiveTimeline = () => {
     if (activeTimelineYear && scrollContainerRef.current) {
       const activeIndex = timelineData.findIndex(item => item.year === activeTimelineYear);
       if (activeIndex !== -1) {
-        const isMobile = window.innerWidth < 640; // Tailwind 'sm' breakpoint
-        const gap = window.innerWidth >= 1024 ? 24 : 12; // gap-3 on mobile/tablet, gap-6 on lg+
-        const cardWidth = isMobile ? window.innerWidth + gap : 320 + gap; // mobile uses full viewport width
+        const cardWidth = Math.min(320, window.innerWidth - 48) + 24; // Responsive card width
         const scrollPosition = activeIndex * cardWidth;
-
+        
         scrollContainerRef.current.scrollTo({
           left: scrollPosition,
           behavior: 'smooth'
@@ -62,11 +60,11 @@ const InteractiveTimeline = () => {
         <p className="text-lg text-gray-600 mb-4">Explore a decade of diaspora growth and impact</p>
       </div>
       
-      <div className="bg-gray-50 py-8 px-0 sm:px-6 lg:px-8 w-full">
+      <div className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 w-full">
         {/* Horizontal scrollable timeline for all screen sizes */}
-        <div ref={scrollContainerRef} className="flex gap-3 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide px-0">
+        <div ref={scrollContainerRef} className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide">
           {timelineData.map((item) => (
-            <div key={item.year} className="flex-shrink-0 w-screen sm:w-80">
+            <div key={item.year} className="flex-shrink-0 w-72 sm:w-80">
               <TimelineItem
                 year={item.year}
                 events={item.events}
@@ -82,7 +80,7 @@ const InteractiveTimeline = () => {
         </div>
         
         {/* Decade's Legacy Summary */}
-        <div className="mt-8 bg-dna-emerald/10 rounded-xl p-4 sm:p-6 lg:p-8 text-center max-w-5xl mx-auto">
+        <div className="mt-8 bg-dna-emerald/10 rounded-xl p-6 lg:p-8 text-center max-w-5xl mx-auto">
           <h4 className="text-xl font-bold text-dna-forest mb-3">The Decade's Legacy</h4>
           <p className="text-gray-700 leading-relaxed mb-4">
             Over the course of ten years, a simple act that began with sending money home became something greater. It evolved into a movement of resilience, innovation, and unity. The diaspora didn't just send funds; they sent hope, opportunity, and the tools for transformation. Now, the future lies beyond remittances. It's through strategic partnerships, shared knowledge, and coordinated investment that Africa's untapped potential will be unlocked.
