@@ -246,7 +246,7 @@ const MarketContext = () => {
             <p className="text-center text-lg text-muted-foreground max-w-3xl mx-auto">
               DNA addresses these pain points by creating a trusted, AI-powered platform that connects 
               diaspora professionals, entrepreneurs, and investors with vetted opportunities, collaborators, 
-              and projects aligned with Africa's sustainable development—turning fragmentation into 
+              and projects aligned with Africa's sustainable development, turning fragmentation into 
               a unified network for impact and growth.
             </p>
           </div>

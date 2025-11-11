@@ -157,7 +157,7 @@ const CollaborateSection = () => {
               Build Solutions Together
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Transform ideas into funded ventures through structured collaboration. Co-create with fellow members, access shared resources, track milestones transparently, and participate in real initiatives solving Africa's challenges. Your contribution earns recognition, equity, and impact—while building solutions that scale.
+              Transform ideas into funded ventures through structured collaboration. Co-create with fellow members, access shared resources, track milestones transparently, and participate in real initiatives solving Africa's challenges. Your contribution earns recognition, equity, and impact while building solutions that scale.
             </p>
 
             <div className="space-y-4 mb-8">

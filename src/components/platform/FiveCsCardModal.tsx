@@ -454,7 +454,7 @@ const FiveCsCardModal = ({ isOpen, onClose, cardType, cardData }: FiveCsCardModa
             "The diaspora isn't just sending money home anymore. We're building institutions, transferring knowledge, 
             and creating sustainable impact that will benefit generations to come."
           </p>
-          <p className="text-sm text-gray-600 mt-2">— Dr. Kwame Mensah, Program Director</p>
+          <p className="text-sm text-gray-600 mt-2">Dr. Kwame Mensah, Program Director</p>
         </div>
 
         <p className="text-gray-700 leading-relaxed">

@@ -133,9 +133,9 @@ const CulturalNarrative = () => {
             <div className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 rounded-lg p-6 border border-dna-emerald/20">
               <blockquote className="text-dna-forest font-medium italic mb-3">
                 "The wealth of Africa is not just in its minerals and resources, but in the wisdom, 
-                resilience, and innovative spirit of its people - both at home and in the diaspora."
+                resilience, and innovative spirit of its people, both at home and in the diaspora."
               </blockquote>
-              <cite className="text-sm text-muted-foreground">— Ancient African Proverb, Modern Application</cite>
+              <cite className="text-sm text-muted-foreground">Ancient African Proverb, Modern Application</cite>
             </div>
           </div>
         </div>

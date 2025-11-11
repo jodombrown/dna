@@ -41,8 +41,8 @@ const UserAgreement = () => {
             <p className="text-lg text-foreground leading-relaxed">
               Our mission is to <strong>connect the African Diaspora and allies</strong> to empower transformative development across Africa. 
               Our services are designed to promote <strong>economic opportunity, innovation, and entrepreneurship</strong> for our members by enabling 
-              diaspora professionals and allies to <strong>discover, connect, convene, contribute, and convey</strong> — meeting, exchanging ideas, 
-              learning, finding opportunities, building ventures, and making decisions in a network of trusted relationships rooted in 
+              diaspora professionals and allies to <strong>discover, connect, convene, contribute, and convey</strong> (meeting, exchanging ideas, 
+              learning, finding opportunities, building ventures, and making decisions) in a network of trusted relationships rooted in 
               <strong> Ubuntu, Sankofa, and Afro-futurism</strong>.
             </p>
           </div>
@@ -153,7 +153,7 @@ const UserAgreement = () => {
               <h3 className="text-dna-copper font-semibold mt-6">3.2 Service Availability</h3>
               <p>
                 We may change, suspend, or discontinue any of our Services. We may also limit feature availability so they are not 
-                available to all Members. DNA is not a storage service — you agree we have no obligation to store, maintain, or provide 
+                available to all Members. DNA is not a storage service. You agree we have no obligation to store, maintain, or provide 
                 you a copy of any content, except as required by law.
               </p>
 

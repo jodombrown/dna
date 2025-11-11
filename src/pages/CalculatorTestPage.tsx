@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 
 /**
- * Calculator Test Page — Lactation Visit Out-of-Pocket Estimator
+ * Calculator Test Page: Lactation Visit Out-of-Pocket Estimator
  * Single-file React component you can paste into Lovable.dev.
  *
  * How to use (Lovable + Vite/React):

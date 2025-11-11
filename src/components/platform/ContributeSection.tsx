@@ -180,7 +180,7 @@ const ContributeSection = () => {
               Give What You Have, Get What You Need
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Contribute your capital, expertise, time, knowledge, or network to the movement—and watch your impact multiply. Every contribution is tracked, recognized, and often reciprocated. Whether you invest, mentor, share skills, or make connections—you strengthen the ecosystem while advancing your own goals.
+              Contribute your capital, expertise, time, knowledge, or network to the movement and watch your impact multiply. Every contribution is tracked, recognized, and often reciprocated. Whether you invest, mentor, share skills, or make connections, you strengthen the ecosystem while advancing your own goals.
             </p>
 
             <div className="space-y-4 mb-8">
@@ -208,7 +208,7 @@ const ContributeSection = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Reciprocal Ecosystem</h3>
-                  <p className="text-sm text-gray-600">Today's contribution becomes tomorrow's received support—the more you give, the more you gain</p>
+                  <p className="text-sm text-gray-600">Today's contribution becomes tomorrow's received support. The more you give, the more you gain</p>
                 </div>
               </div>
             </div>

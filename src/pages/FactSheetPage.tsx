@@ -149,13 +149,13 @@ const FactSheetPage = () => {
             <Card className="p-6 bg-card/50">
               <h3 className="text-xl font-bold mb-3 text-dna-forest">Our Mission</h3>
               <p className="text-foreground/80">
-                To mobilize the Global African Diaspora's collective power—skills, networks, knowledge, resources, and capital—into coordinated action that accelerates Africa's progress and prosperity.
+                To mobilize the Global African Diaspora's collective power (skills, networks, knowledge, resources, and capital) into coordinated action that accelerates Africa's progress and prosperity.
               </p>
             </Card>
             <Card className="p-6 bg-card/50">
               <h3 className="text-xl font-bold mb-3 text-dna-forest">Our Vision</h3>
               <p className="text-foreground/80">
-                A world where the African Diaspora operates as Africa's most powerful distributed asset—seamlessly connected, purposefully convened, actively collaborating, meaningfully contributing, and amplifying impact that transforms the continent and uplifts our global community.
+                A world where the African Diaspora operates as Africa's most powerful distributed asset, seamlessly connected, purposefully convened, actively collaborating, meaningfully contributing, and amplifying impact that transforms the continent and uplifts our global community.
               </p>
             </Card>
           </div>
@@ -317,7 +317,7 @@ const FactSheetPage = () => {
             <Card className="p-6 bg-card/50">
               <h3 className="text-xl font-bold mb-3 text-dna-copper">Systems-Change Focus</h3>
               <p className="text-foreground/80">
-                We don't just connect people—we mobilize coordinated action for transformative impact. From individual connections to collective movements.
+                We don't just connect people. We mobilize coordinated action for transformative impact, from individual connections to collective movements.
               </p>
             </Card>
 

@@ -183,7 +183,7 @@ const ConveySection = () => {
               Amplify Your Story, Inspire the Movement
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Share your wins, insights, and journey to build credibility, inspire others, and create social proof for the movement. When you convey your success, you demonstrate what's possible—attracting resources, partners, and momentum to your work while showing the world that Africa's diaspora is building at scale.
+              Share your wins, insights, and journey to build credibility, inspire others, and create social proof for the movement. When you convey your success, you demonstrate what's possible, attracting resources, partners, and momentum to your work while showing the world that Africa's diaspora is building at scale.
             </p>
 
             <div className="space-y-4 mb-8">
@@ -211,7 +211,7 @@ const ConveySection = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Movement Amplification</h3>
-                  <p className="text-sm text-gray-600">Your story becomes social proof—showing the world that DNA members deliver results</p>
+                  <p className="text-sm text-gray-600">Your story becomes social proof, showing the world that DNA members deliver results</p>
                 </div>
               </div>
             </div>

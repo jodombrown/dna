@@ -68,16 +68,16 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                     <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
                       Something went wrong
                     </h1>
-                    <p className="text-muted-foreground">
-                      We encountered an unexpected error. Don't worry—your data is safe.
-                    </p>
+                  <p className="text-muted-foreground">
+                    We encountered an unexpected error. Don't worry, your data is safe.
+                  </p>
                   </div>
                 </div>
 
                 {/* African proverb / message */}
                 <div className="bg-dna-mint/10 border-l-4 border-dna-emerald rounded-r-lg p-4 mb-6">
                   <p className="text-sm italic text-dna-forest">
-                    "Smooth seas do not make skillful sailors" — African Proverb
+                    "Smooth seas do not make skillful sailors" (African Proverb)
                   </p>
                   <p className="text-xs text-muted-foreground mt-2">
                     Every challenge is an opportunity to grow stronger together.

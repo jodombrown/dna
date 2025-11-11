@@ -188,7 +188,7 @@ const ConveneSection = () => {
               Where Strategy Meets Action
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Join convenings designed for decision-making, not just discussion. Whether virtual or in-person, intimate or large-scale—these are spaces where ideas become initiatives, conversations become commitments, and attendees leave with next steps. Your participation accelerates both your goals and the movement.
+              Join convenings designed for decision-making, not just discussion. Whether virtual or in-person, intimate or large-scale, these are spaces where ideas become initiatives, conversations become commitments, and attendees leave with next steps. Your participation accelerates both your goals and the movement.
             </p>
 
             <div className="space-y-4 mb-8">

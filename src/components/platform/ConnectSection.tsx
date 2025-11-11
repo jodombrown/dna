@@ -168,7 +168,7 @@ const ConnectSection = () => {
               Build Relationships That Move Africa Forward
             </p>
             <p className="text-lg text-gray-600 mb-6">
-              Connect with verified diaspora changemakers who share your commitment to Africa's progress. Whether you need a co-founder, investor, mentor, or collaborator—strategic relationships are the foundation of impact. Your network becomes the movement's strength.
+              Connect with verified diaspora changemakers who share your commitment to Africa's progress. Whether you need a co-founder, investor, mentor, or collaborator, strategic relationships are the foundation of impact. Your network becomes the movement's strength.
             </p>
 
             <div className="space-y-4 mb-8">

@@ -353,7 +353,7 @@ export const mockProfessionals: MockProfessional[] = [
     followers: 723,
     connections: 589,
     skills: ['Virtual reality development', 'Augmented reality', '3D modeling', 'Immersive storytelling', 'Unity development'],
-    bio: 'Samira creates virtual reality experiences that transport people to places they can\'t physically visit—whether due to conflict, borders, or physical limitations. Her VR project \'Homeland\' allows diaspora children to virtually explore their parents\' and grandparents\' home cities.',
+    bio: 'Samira creates virtual reality experiences that transport people to places they can\'t physically visit, whether due to conflict, borders, or physical limitations. Her VR project \'Homeland\' allows diaspora children to virtually explore their parents\' and grandparents\' home cities.',
     connectionStatus: null,
     recentActivity: 'Active on DNA',
     isOnline: true,

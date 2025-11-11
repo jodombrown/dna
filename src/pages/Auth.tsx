@@ -545,7 +545,7 @@ const Auth = () => {
                   <strong className="text-dna-forest">🎉 Beta Launching November 1st!</strong>
                   <br />
                   <p className="mt-2 mb-3">
-                    We're preparing something special for the African Diaspora. Registration opens soon — be among the first to join our community-powered platform!
+                    We're preparing something special for the African Diaspora. Registration opens soon. Be among the first to join our community-powered platform!
                   </p>
                   <Button
                     variant="outline"
@@ -665,7 +665,7 @@ const Auth = () => {
               {/* Admin Quick Login */}
               {isLogin && formData.email && formData.email.toLowerCase().endsWith('@diasporanetwork.africa') && (
                 <div className="text-center border rounded-lg p-3 bg-dna-emerald/5">
-                  <p className="text-sm text-muted-foreground mb-2">Admin detected — use a secure magic link</p>
+                  <p className="text-sm text-muted-foreground mb-2">Admin detected. Use a secure magic link</p>
                   <Button
                     type="button"
                     onClick={handleAdminMagicLink}
