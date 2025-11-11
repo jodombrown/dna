@@ -180,7 +180,7 @@ const UserAgreement = () => {
               <h3 className="text-dna-copper font-semibold mt-6">3.6 Recommendations and Automated Processing</h3>
               <p>
                 We use data and information you provide to make relevant recommendations for connections, content, and features that 
-                may be useful to you. We may also use AI features to generate content — please review such content before sharing, 
+                may be useful to you. We may also use AI features to generate content. Please review such content before sharing, 
                 as you are responsible for ensuring it complies with our Community Policies.
               </p>
             </AccordionContent>
@@ -278,7 +278,7 @@ const UserAgreement = () => {
                 <li>Provide accurate contact and identity information and keep it updated</li>
                 <li>Use your real name on your profile</li>
                 <li>Use the Services in a professional and culturally respectful manner</li>
-                <li>Honor Ubuntu principles — treating others with dignity and fostering collective progress</li>
+                <li>Honor Ubuntu principles by treating others with dignity and fostering collective progress</li>
               </ul>
 
               <h3 className="text-dna-copper font-semibold mt-6">8.2 Don'ts</h3>
