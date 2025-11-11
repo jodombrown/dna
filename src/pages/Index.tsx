@@ -19,6 +19,9 @@ const Index = () => {
     <div className="min-h-screen bg-white">
       {/* Navigation Header */}
       <UnifiedHeader />
+      
+      {/* Spacer for fixed header on mobile */}
+      <div className="h-16 md:hidden" aria-hidden="true" />
 
       {/* Prototype Banner */}
       <PrototypeBanner />
