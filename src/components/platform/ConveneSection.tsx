@@ -165,7 +165,7 @@ const ConveneSection = () => {
   );
 
   return (
-    <section id="convene-section" className="py-16 px-6 sm:px-8 lg:px-8 bg-gray-50">
+    <section id="convene-section" className="py-16 px-8 sm:px-10 lg:px-8 bg-gray-50">
       <div className="max-w-[1400px] mx-auto">
         <div className="grid lg:grid-cols-[1.2fr_1fr] gap-16 items-center">
           {/* Left: Card Preview (Desktop) / Swipeable Cards (Mobile) */}
