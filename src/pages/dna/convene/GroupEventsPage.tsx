@@ -50,12 +50,12 @@ export default function GroupEventsPage() {
     queryFn: async () => {
       if (!group?.id) return [];
       
-      // Break up the query to avoid TypeScript inference issues
-      const queryBuilder = supabase.from('events');
-      const selectQuery = queryBuilder.select('id, title, description, event_type, format, location_city, location_country, start_time, end_time, max_attendees, is_cancelled');
-      const filterQuery = selectQuery.eq('group_id', group.id);
-      const orderedQuery = filterQuery.order('start_time');
-      const response: any = await orderedQuery;
+      // Use any to bypass TypeScript's deep type inference issue
+      const response: any = await (supabase as any)
+        .from('events')
+        .select('id, title, description, event_type, format, location_city, location_country, start_time, end_time, max_attendees, is_cancelled')
+        .eq('group_id', group.id)
+        .order('start_time');
 
       if (response.error) throw response.error;
       return response.data || [];
