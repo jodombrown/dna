@@ -63,6 +63,11 @@ import LocalEventsPage from "./pages/LocalEventsPage";
 import FactSheetPage from "./pages/FactSheetPage";
 import PitchDeck from "./pages/PitchDeck";
 
+// Convene M1 pages
+import ConveneHub from "./pages/dna/convene/ConveneHub";
+import EventsIndex from "./pages/dna/convene/EventsIndex";
+import EventDetail from "./pages/dna/convene/EventDetail";
+
 // Feature pages
 import Opportunities from "./pages/Opportunities";
 import OpportunityDetail from "./pages/OpportunityDetail";
@@ -191,14 +196,28 @@ function App() {
               <Route path="/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/discover" element={<Navigate to="/dna/connect/discover" replace />} />
               
-              {/* ========== CONVENE PILLAR ========== */}
+              {/* ========== CONVENE PILLAR M1 ========== */}
+              <Route path="/dna/convene" element={
+                <OnboardingGuard>
+                  <ConveneHub />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/convene/events" element={
+                <OnboardingGuard>
+                  <EventsIndex />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/convene/events/:id" element={
+                <OnboardingGuard>
+                  <EventDetail />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/convene/events/:id/edit" element={<EditEventPage />} />
+              <Route path="/dna/convene/my-events" element={
                 <OnboardingGuard>
                   <DnaEvents />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/convene/events/:id" element={<EventDetailsPage />} />
-              <Route path="/dna/convene/events/:id/edit" element={<EditEventPage />} />
               <Route path="/dna/convene/groups" element={
                 <OnboardingGuard>
                   <DnaGroups />
@@ -206,9 +225,12 @@ function App() {
               } />
               <Route path="/dna/convene/groups/:slug" element={<GroupDetailsPage />} />
               <Route path="/dna/convene/groups/:slug/settings" element={<GroupSettingsPage />} />
+              
               {/* Legacy convene route redirects */}
               <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />
               <Route path="/events" element={<Navigate to="/dna/convene/events" replace />} />
+              <Route path="/convene" element={<Navigate to="/dna/convene" replace />} />
+              <Route path="/dna/convene-example" element={<Navigate to="/dna/convene" replace />} />
               
               {/* ========== CONTRIBUTE PILLAR (Future) ========== */}
               <Route path="/dna/impact" element={
