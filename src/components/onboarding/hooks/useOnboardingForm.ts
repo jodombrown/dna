@@ -1,6 +1,11 @@
 import { useState } from 'react';
 
 export interface OnboardingFormData {
+  // Step 0: User Type
+  user_type: 'individual' | 'organization';
+  organization_name: string;
+  organization_category: string;
+
   // Step 1: Identity
   first_name: string;
   last_name: string;
@@ -30,6 +35,11 @@ export interface OnboardingFormData {
 
 export const useOnboardingForm = (initialData?: Partial<OnboardingFormData>) => {
   const [formData, setFormData] = useState<OnboardingFormData>({
+    // Step 0
+    user_type: initialData?.user_type || 'individual',
+    organization_name: initialData?.organization_name || '',
+    organization_category: initialData?.organization_category || '',
+
     // Step 1
     first_name: initialData?.first_name || '',
     last_name: initialData?.last_name || '',

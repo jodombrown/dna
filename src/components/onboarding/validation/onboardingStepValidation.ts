@@ -3,6 +3,26 @@ export interface ValidationError {
   message: string;
 }
 
+export const validateUserTypeStep = (data: any): ValidationError[] => {
+  const errors: ValidationError[] = [];
+
+  if (!data.user_type) {
+    errors.push({ field: 'user_type', message: 'Please select whether you are joining as an individual or organization' });
+  }
+
+  // If organization, require organization details
+  if (data.user_type === 'organization') {
+    if (!data.organization_name?.trim()) {
+      errors.push({ field: 'organization_name', message: 'Organization name is required' });
+    }
+    if (!data.organization_category?.trim()) {
+      errors.push({ field: 'organization_category', message: 'Organization category is required' });
+    }
+  }
+
+  return errors;
+};
+
 export const validateIdentityStep = (data: any): ValidationError[] => {
   const errors: ValidationError[] = [];
 
@@ -98,6 +118,8 @@ export const validateDiscoveryStep = (data: any): ValidationError[] => {
 
 export const validateStep = (step: number, data: any): ValidationError[] => {
   switch (step) {
+    case 0:
+      return validateUserTypeStep(data);
     case 1:
       return validateIdentityStep(data);
     case 2:

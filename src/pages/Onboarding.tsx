@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useOnboardingForm } from '@/components/onboarding/hooks/useOnboardingForm';
 import { OnboardingProgressBar } from '@/components/onboarding/OnboardingProgressBar';
+import UserTypeStep from '@/components/onboarding/steps/UserTypeStep';
 import IdentityStep from '@/components/onboarding/steps/IdentityStep';
 import ProfessionalStep from '@/components/onboarding/steps/ProfessionalStep';
 import DiasporaImpactStep from '@/components/onboarding/steps/DiasporaImpactStep';
@@ -17,12 +18,15 @@ const Onboarding = () => {
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Initialize form with any existing profile data
   const { formData, updateField } = useOnboardingForm({
+    user_type: (profile as any)?.user_type || 'individual',
+    organization_name: (profile as any)?.organization_name || '',
+    organization_category: (profile as any)?.organization_category || '',
     first_name: profile?.first_name || user?.user_metadata?.full_name?.split(' ')[0] || '',
     last_name: profile?.last_name || user?.user_metadata?.full_name?.split(' ').slice(1).join(' ') || '',
     avatar_url: profile?.avatar_url || user?.user_metadata?.picture || '',
@@ -91,7 +95,7 @@ const Onboarding = () => {
   };
 
   const handleBack = () => {
-    if (currentStep > 1) {
+    if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
       setErrors({});
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -151,6 +155,9 @@ const Onboarding = () => {
         avatar_url: formData.avatar_url,
         current_country: formData.current_country,
         headline: formData.headline,
+        user_type: formData.user_type,
+        organization_name: formData.user_type === 'organization' ? formData.organization_name : null,
+        organization_category: formData.user_type === 'organization' ? formData.organization_category : null,
         profession: formData.profession,
         professional_role: formData.professional_role,
         professional_sectors: formData.professional_sectors,
@@ -256,6 +263,7 @@ const Onboarding = () => {
   const estimateCompletion = () => {
     let baseCompletion = 0;
     
+    if (currentStep >= 0) baseCompletion += 10;
     if (currentStep >= 1) baseCompletion += 15;
     if (currentStep >= 2) baseCompletion += 15;
     if (currentStep >= 3) baseCompletion += 15;
@@ -267,11 +275,23 @@ const Onboarding = () => {
       if (formData.engagement_intentions.length > 0) baseCompletion += 5;
     }
     
-    return Math.min(baseCompletion, 65);
+    return Math.min(baseCompletion, 70);
   };
 
   const currentStepComponent = () => {
     switch (currentStep) {
+      case 0:
+        return (
+          <UserTypeStep
+            data={{
+              user_type: formData.user_type,
+              organization_name: formData.organization_name,
+              organization_category: formData.organization_category,
+            }}
+            onUpdate={(field, value) => updateField(field as any, value)}
+            errors={errors}
+          />
+        );
       case 1:
         return (
           <IdentityStep
@@ -320,11 +340,11 @@ const Onboarding = () => {
               className="w-16 h-16 mx-auto mb-4"
             />
           </div>
-          <OnboardingProgressBar
-            currentStep={currentStep}
-            totalSteps={4}
-            completionPercentage={estimateCompletion()}
-          />
+        <OnboardingProgressBar
+          currentStep={currentStep + 1}
+          totalSteps={5}
+          completionPercentage={estimateCompletion()}
+        />
         </div>
 
         {/* Step Content */}
@@ -337,7 +357,7 @@ const Onboarding = () => {
           <Button
             variant="outline"
             onClick={handleBack}
-            disabled={currentStep === 1 || isSubmitting}
+            disabled={currentStep === 0 || isSubmitting}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
