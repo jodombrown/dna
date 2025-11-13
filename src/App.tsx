@@ -92,6 +92,7 @@ import Connect from "./pages/dna/connect/Connect";
 import ConnectDiscover from "./pages/dna/connect/Discover";
 import ConnectNetwork from "./pages/dna/connect/Network";
 import ConnectMessages from "./pages/dna/connect/Messages";
+import ConversationView from "./pages/dna/connect/ConversationView";
 
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
@@ -172,7 +173,7 @@ function App() {
                 <Route path="discover" element={<ConnectDiscover />} />
                 <Route path="network" element={<ConnectNetwork />} />
                 <Route path="messages" element={<ConnectMessages />} />
-                <Route path="messages/:conversationId" element={<ConnectMessages />} />
+                <Route path="messages/:conversationId" element={<ConversationView />} />
               </Route>
               
               {/* ========== LEGACY CONNECT & DISCOVER ROUTES - Redirects ========== */}
