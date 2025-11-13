@@ -1,38 +1,87 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Calendar, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { FeedLayout } from '@/components/layout/FeedLayout';
+import { CreateEventForm } from '@/components/events/CreateEventForm';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Check user eligibility
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ['profile-eligibility', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('profile_completion_percentage, user_type')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const completionPercentage = profile?.profile_completion_percentage ?? 0;
+  const canCreateEvent = completionPercentage >= 40;
+
+  if (isLoading) {
+    return (
+      <FeedLayout>
+        <div className="container max-w-4xl mx-auto px-4 py-8">
+          <p className="text-center text-muted-foreground">Loading...</p>
+        </div>
+      </FeedLayout>
+    );
+  }
 
   return (
     <FeedLayout>
       <div className="container max-w-4xl mx-auto px-4 py-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-6 w-6" />
-              Create Event
-            </CardTitle>
-            <CardDescription>
-              Event creation form coming in M2
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-4">
-              This feature is being built as part of Milestone 2 (M2 - Event Creation & RSVP).
-            </p>
-            <Button 
-              variant="outline"
-              onClick={() => navigate('/dna/convene')}
-            >
-              Back to Convene Hub
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/dna/convene')}
+            className="mb-4"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Convene
+          </Button>
+          
+          <div className="flex items-center gap-3 mb-2">
+            <Calendar className="h-8 w-8" />
+            <h1 className="text-4xl font-bold">Create Event</h1>
+          </div>
+          <p className="text-muted-foreground text-lg">
+            Bring the diaspora together around a shared experience
+          </p>
+        </div>
+
+        {!canCreateEvent ? (
+          <Alert className="border-warning">
+            <AlertDescription>
+              Your profile must be at least 40% complete to create events. 
+              You're currently at {completionPercentage}%.
+              <Button 
+                variant="link" 
+                className="px-1"
+                onClick={() => navigate('/app/profile/edit')}
+              >
+                Complete your profile
+              </Button>
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <CreateEventForm />
+        )}
       </div>
     </FeedLayout>
   );

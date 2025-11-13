@@ -63,11 +63,12 @@ import LocalEventsPage from "./pages/LocalEventsPage";
 import FactSheetPage from "./pages/FactSheetPage";
 import PitchDeck from "./pages/PitchDeck";
 
-// Convene M1 pages
+// Convene M1-M2 pages
 import ConveneHub from "./pages/dna/convene/ConveneHub";
 import EventsIndex from "./pages/dna/convene/EventsIndex";
 import EventDetail from "./pages/dna/convene/EventDetail";
 import CreateEvent from "./pages/dna/convene/CreateEvent";
+import MyEvents from "./pages/dna/convene/MyEvents";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -221,7 +222,7 @@ function App() {
               <Route path="/dna/convene/events/:id/edit" element={<EditEventPage />} />
               <Route path="/dna/convene/my-events" element={
                 <OnboardingGuard>
-                  <DnaEvents />
+                  <MyEvents />
                 </OnboardingGuard>
               } />
               <Route path="/dna/convene/groups" element={
