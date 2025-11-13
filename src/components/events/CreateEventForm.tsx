@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
 import * as z from 'zod';
 import { Calendar, MapPin, Globe, Clock, Users, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 const eventSchema = z.object({
@@ -46,11 +48,35 @@ const eventSchema = z.object({
 
 type EventFormData = z.infer<typeof eventSchema>;
 
-export const CreateEventForm = () => {
+interface CreateEventFormProps {
+  preselectedGroupId?: string;
+}
+
+export const CreateEventForm = ({ preselectedGroupId }: CreateEventFormProps = {}) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState('basic');
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(preselectedGroupId || null);
+
+  // Fetch user's groups where they can host events
+  const { data: userGroups = [] } = useQuery({
+    queryKey: ['user-admin-groups', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+
+      const { data, error } = await supabase
+        .from('group_members')
+        .select('group_id, role, groups(id, name, slug, avatar_url)')
+        .eq('user_id', user.id)
+        .in('role', ['owner', 'admin', 'moderator']);
+
+      if (error) throw error;
+      return data?.filter(m => m.groups).map(m => m.groups) || [];
+    },
+    enabled: !!user,
+  });
 
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventSchema),
@@ -98,6 +124,7 @@ export const CreateEventForm = () => {
         body: {
           ...data,
           max_attendees: isNaN(data.max_attendees as any) ? null : data.max_attendees,
+          group_id: selectedGroupId || null,
         },
       });
 
@@ -208,6 +235,32 @@ export const CreateEventForm = () => {
                     </FormItem>
                   )}
                 />
+
+                {/* Group Selector (if user has groups) */}
+                {userGroups && userGroups.length > 0 && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Host as Group (Optional)</label>
+                    <Select
+                      value={selectedGroupId || 'personal'}
+                      onValueChange={(val) => setSelectedGroupId(val === 'personal' ? null : val)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="personal">Host as Individual</SelectItem>
+                        {userGroups.map((group: any) => (
+                          <SelectItem key={group.id} value={group.id}>
+                            {group.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Choose to host this event on behalf of a group you manage
+                    </p>
+                  </div>
+                )}
 
                 <FormField
                   control={form.control}
