@@ -24,16 +24,24 @@ const eventSchema = z.object({
   location_address: z.string().optional(),
   location_city: z.string().optional(),
   location_country: z.string().optional(),
-  meeting_url: z.string().url().optional().or(z.literal('')),
+  meeting_url: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
   meeting_platform: z.string().optional(),
-  start_time: z.string(),
-  end_time: z.string(),
+  start_time: z.string().min(1, 'Start time is required'),
+  end_time: z.string().min(1, 'End time is required'),
   timezone: z.string().default('UTC'),
-  max_attendees: z.number().positive().optional().or(z.nan()),
+  max_attendees: z.coerce.number().positive('Must be a positive number').optional().or(z.literal(null)),
   is_public: z.boolean().default(true),
   requires_approval: z.boolean().default(false),
   allow_guests: z.boolean().default(true),
-  cover_image_url: z.string().url().optional().or(z.literal('')),
+  cover_image_url: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
+}).refine((data) => {
+  if (data.start_time && data.end_time) {
+    return new Date(data.end_time) > new Date(data.start_time);
+  }
+  return true;
+}, {
+  message: 'End time must be after start time',
+  path: ['end_time'],
 });
 
 type EventFormData = z.infer<typeof eventSchema>;
