@@ -18,6 +18,7 @@ import InviteSignup from "./pages/InviteSignup";
 import Onboarding from "./pages/Onboarding";
 import DnaMe from "./pages/dna/Me";
 import DnaUserDashboard from "./pages/dna/Username";
+import PublicProfile from "./pages/dna/PublicProfile";
 import ActivityFeed from "./pages/ActivityFeed";
 import SavedPostsPage from "./pages/SavedPostsPage";
 import NetworkFeedPage from "./pages/NetworkFeedPage";
@@ -104,6 +105,7 @@ import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
 import MvpPhase from "./pages/MvpPhase";
 import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
+import Moderation from "./pages/admin/Moderation";
 
 
 const queryClient = new QueryClient();
@@ -159,7 +161,7 @@ function App() {
               } />
               <Route path="/dna/:username" element={
                 <OnboardingGuard>
-                  <DnaUserDashboard />
+                  <PublicProfile />
                 </OnboardingGuard>
               } />
               
@@ -277,7 +279,8 @@ function App() {
                 <Route path="signals" element={<AdminSignals />} />
                 <Route path="moderation" element={<ContentModeration />} />
               </Route>
-              
+              <Route path="/app/admin/moderation" element={<Moderation />} />
+
               {/* Regional landing pages */}
               <Route path="/north-africa" element={<NorthAfricaLandingPage />} />
               

@@ -256,6 +256,33 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_events: {
+        Row: {
+          created_at: string | null
+          event_metadata: Json | null
+          event_name: string
+          id: string
+          route: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_metadata?: Json | null
+          event_name: string
+          id?: string
+          route?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_metadata?: Json | null
+          event_name?: string
+          id?: string
+          route?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           applied_at: string
@@ -5935,6 +5962,16 @@ export type Database = {
           user_role: Database["public"]["Enums"]["group_member_role"]
         }[]
       }
+      get_inactive_users_for_reengagement: {
+        Args: { p_days_inactive?: number }
+        Returns: {
+          days_inactive: number
+          full_name: string
+          last_seen_at: string
+          user_id: string
+          username: string
+        }[]
+      }
       get_leaderboard: {
         Args: {
           board_type?: string
@@ -6213,6 +6250,16 @@ export type Database = {
       get_user_verification_status: {
         Args: { target_user_id: string }
         Returns: Json
+      }
+      get_users_needing_connection_nudges: {
+        Args: never
+        Returns: {
+          account_age_days: number
+          connections_count: number
+          full_name: string
+          user_id: string
+          username: string
+        }[]
       }
       handle_referral_signup: {
         Args: { new_user_id: string; referral_code_param: string }

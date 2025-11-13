@@ -85,3 +85,9 @@ verify_jwt = false
 
 [functions.connection-health-analyzer]
 verify_jwt = false
+
+[functions.send-connection-request]
+verify_jwt = true
+
+[functions.generate-connect-nudges]
+verify_jwt = false
