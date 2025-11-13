@@ -63,12 +63,14 @@ import LocalEventsPage from "./pages/LocalEventsPage";
 import FactSheetPage from "./pages/FactSheetPage";
 import PitchDeck from "./pages/PitchDeck";
 
-// Convene M1-M2 pages
+// Convene M1-M3 pages
 import ConveneHub from "./pages/dna/convene/ConveneHub";
 import EventsIndex from "./pages/dna/convene/EventsIndex";
 import EventDetail from "./pages/dna/convene/EventDetail";
 import CreateEvent from "./pages/dna/convene/CreateEvent";
 import MyEvents from "./pages/dna/convene/MyEvents";
+import GroupsBrowse from "./pages/dna/convene/GroupsBrowse";
+import GroupEventsPage from "./pages/dna/convene/GroupEventsPage";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -230,6 +232,8 @@ function App() {
                   <DnaGroups />
                 </OnboardingGuard>
               } />
+              <Route path="/dna/convene/groups" element={<OnboardingGuard><GroupsBrowse /></OnboardingGuard>} />
+              <Route path="/dna/convene/groups/:slug/events" element={<OnboardingGuard><GroupEventsPage /></OnboardingGuard>} />
               <Route path="/dna/convene/groups/:slug" element={<GroupDetailsPage />} />
               <Route path="/dna/convene/groups/:slug/settings" element={<GroupSettingsPage />} />
               

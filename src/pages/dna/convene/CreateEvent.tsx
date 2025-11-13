@@ -1,9 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { CreateEventForm } from '@/components/events/CreateEventForm';
@@ -12,7 +11,11 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
+
+  // Get preselected group ID from navigation state
+  const preselectedGroupId = location.state?.groupId;
 
   // Check user eligibility
   const { data: profile, isLoading } = useQuery({
@@ -80,7 +83,7 @@ const CreateEvent = () => {
             </AlertDescription>
           </Alert>
         ) : (
-          <CreateEventForm />
+          <CreateEventForm preselectedGroupId={preselectedGroupId} />
         )}
       </div>
     </FeedLayout>
