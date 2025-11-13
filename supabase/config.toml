@@ -91,3 +91,9 @@ verify_jwt = true
 
 [functions.generate-connect-nudges]
 verify_jwt = false
+
+[functions.create-event]
+verify_jwt = true
+
+[functions.update-event]
+verify_jwt = true
