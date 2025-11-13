@@ -10,7 +10,21 @@ import { useAuth } from '@/contexts/AuthContext';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { format } from 'date-fns';
 
-export default function GroupEvents() {
+type GroupEvent = {
+  id: string;
+  title: string;
+  description: string;
+  event_type: string;
+  format: string;
+  location_city: string | null;
+  location_country: string | null;
+  start_time: string;
+  end_time: string;
+  max_attendees: number | null;
+  is_cancelled: boolean;
+};
+
+export default function GroupEventsPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -30,19 +44,24 @@ export default function GroupEvents() {
     },
   });
 
-  // Fetch group events
-  const { data: eventsData, isLoading } = useQuery({
+  // Fetch group events  
+  const { data: events = [], isLoading } = useQuery({
     queryKey: ['group-events', group?.id],
     queryFn: async () => {
-      if (!group) return [];
-      const { data, error } = await supabase.from('events').select('id, title, description, event_type, format, location_city, location_country, start_time, end_time, max_attendees, is_cancelled').eq('group_id', group.id).order('start_time', { ascending: true });
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!group,
-  });
+      if (!group?.id) return [];
+      
+      // Break up the query to avoid TypeScript inference issues
+      const queryBuilder = supabase.from('events');
+      const selectQuery = queryBuilder.select('id, title, description, event_type, format, location_city, location_country, start_time, end_time, max_attendees, is_cancelled');
+      const filterQuery = selectQuery.eq('group_id', group.id);
+      const orderedQuery = filterQuery.order('start_time');
+      const response: any = await orderedQuery;
 
-  const events = eventsData || [];
+      if (response.error) throw response.error;
+      return response.data || [];
+    },
+    enabled: !!group?.id,
+  });
 
   // Check if user is admin/moderator
   const { data: membership } = useQuery({
@@ -68,22 +87,8 @@ export default function GroupEvents() {
   const upcomingEvents = events.filter(e => new Date(e.start_time) > now && !e.is_cancelled);
   const pastEvents = events.filter(e => new Date(e.start_time) <= now || e.is_cancelled);
 
-  const EventCard = ({ event }: { event: EventData }) => {
+  const EventCard = ({ event }: { event: GroupEvent }) => {
     const isPast = new Date(event.start_time) < now;
-
-    // Get attendee count
-    const { data: attendeeCount } = useQuery({
-      queryKey: ['event-attendee-count', event.id],
-      queryFn: async () => {
-        const { count, error } = await supabase
-          .from('event_attendees')
-          .select('*', { count: 'exact', head: true })
-          .eq('event_id', event.id);
-
-        if (error) throw error;
-        return count || 0;
-      },
-    });
 
     return (
       <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/dna/convene/events/${event.id}`)}>
@@ -91,19 +96,13 @@ export default function GroupEvents() {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <Badge variant="secondary" className="capitalize">
-                  {event.event_type}
-                </Badge>
-                <Badge variant="outline" className="capitalize">
-                  {event.format.replace('_', ' ')}
-                </Badge>
+                <Badge variant="secondary" className="capitalize">{event.event_type}</Badge>
+                <Badge variant="outline" className="capitalize">{event.format.replace('_', ' ')}</Badge>
                 {isPast && <Badge variant="secondary">Past</Badge>}
                 {event.is_cancelled && <Badge variant="destructive">Cancelled</Badge>}
               </div>
               <CardTitle className="text-lg">{event.title}</CardTitle>
-              <CardDescription className="mt-2 line-clamp-2">
-                {event.description}
-              </CardDescription>
+              <CardDescription className="mt-2 line-clamp-2">{event.description}</CardDescription>
             </div>
           </div>
         </CardHeader>
