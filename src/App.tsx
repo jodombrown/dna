@@ -67,6 +67,7 @@ import PitchDeck from "./pages/PitchDeck";
 import ConveneHub from "./pages/dna/convene/ConveneHub";
 import EventsIndex from "./pages/dna/convene/EventsIndex";
 import EventDetail from "./pages/dna/convene/EventDetail";
+import CreateEvent from "./pages/dna/convene/CreateEvent";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -210,6 +211,11 @@ function App() {
               <Route path="/dna/convene/events/:id" element={
                 <OnboardingGuard>
                   <EventDetail />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/convene/events/new" element={
+                <OnboardingGuard>
+                  <CreateEvent />
                 </OnboardingGuard>
               } />
               <Route path="/dna/convene/events/:id/edit" element={<EditEventPage />} />

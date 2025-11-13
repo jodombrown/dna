@@ -29,16 +29,17 @@ const EventDetail = () => {
         .from('events')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!event) return null;
       
       // Fetch organizer profile
       const { data: organizer } = await supabase
         .from('profiles')
         .select('id, username, full_name, avatar_url, headline')
         .eq('id', event.organizer_id)
-        .single();
+        .maybeSingle();
       
       return {
         ...event,

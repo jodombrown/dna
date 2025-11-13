@@ -22,7 +22,7 @@ const ConveneHub = () => {
         .from('profiles')
         .select('profile_completion_percentage, user_type')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
