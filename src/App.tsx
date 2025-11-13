@@ -90,6 +90,7 @@ import GroupSettingsPage from "./pages/GroupSettingsPage";
 
 // CONNECT M2 - New Connect Hub pages
 import Connect from "./pages/dna/connect/Connect";
+import { ConnectLayout } from "./components/connect/ConnectLayout";
 import ConnectDiscover from "./pages/dna/connect/Discover";
 import ConnectNetwork from "./pages/dna/connect/Network";
 import ConnectMessages from "./pages/dna/connect/Messages";
@@ -168,7 +169,7 @@ function App() {
               {/* ========== CONNECT HUB M2 ========== */}
               <Route path="/dna/connect" element={
                 <OnboardingGuard>
-                  <Connect />
+                  <ConnectLayout />
                 </OnboardingGuard>
               }>
                 <Route index element={<Navigate to="/dna/connect/discover" replace />} />

@@ -5998,16 +5998,31 @@ export type Database = {
           user_id: string
         }[]
       }
-      get_mutual_connections: {
-        Args: { user1_id: string; user2_id: string }
-        Returns: {
-          avatar_url: string
-          full_name: string
-          headline: string
-          id: string
-          username: string
-        }[]
-      }
+      get_mutual_connections:
+        | {
+            Args: {
+              p_limit?: number
+              p_target_user_id: string
+              p_viewer_id: string
+            }
+            Returns: {
+              avatar_url: string
+              full_name: string
+              headline: string
+              id: string
+              username: string
+            }[]
+          }
+        | {
+            Args: { user1_id: string; user2_id: string }
+            Returns: {
+              avatar_url: string
+              full_name: string
+              headline: string
+              id: string
+              username: string
+            }[]
+          }
       get_newsletter_followers: {
         Args: { newsletter_user_id: string }
         Returns: {

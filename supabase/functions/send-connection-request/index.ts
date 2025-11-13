@@ -98,6 +98,42 @@ serve(async (req) => {
       );
     }
 
+    // Check requester's profile completion (must be >= 40%)
+    const { data: requesterProfile, error: requesterError } = await supabaseClient
+      .from('profiles')
+      .select('id, profile_completion_percentage')
+      .eq('id', user.id)
+      .single();
+
+    if (requesterError || !requesterProfile) {
+      console.error('Requester profile error:', requesterError);
+      return new Response(
+        JSON.stringify({ 
+          status: 'error',
+          error: 'Unable to verify your profile' 
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        }
+      );
+    }
+
+    // Enforce profile gate: requester must have >= 40% completion
+    if ((requesterProfile.profile_completion_percentage || 0) < 40) {
+      return new Response(
+        JSON.stringify({ 
+          status: 'profile_incomplete',
+          error: 'Complete your profile to at least 40% to send connection requests',
+          requester_completion: requesterProfile.profile_completion_percentage || 0
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 403,
+        }
+      );
+    }
+
     // Check if target user exists
     const { data: targetProfile, error: profileError } = await supabaseClient
       .from('profiles')

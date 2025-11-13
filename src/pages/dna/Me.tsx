@@ -1,11 +1,18 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import MyDNAHub from '@/components/dashboard/MyDNAHub';
+import UnifiedHeader from '@/components/UnifiedHeader';
 import { ConnectNudges } from '@/components/connect/ConnectNudges';
+import { MyProfilePreview } from '@/components/profile/MyProfilePreview';
+import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { Users, Calendar, Rocket, TrendingUp } from 'lucide-react';
 
 const DnaMe = () => {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -20,9 +27,111 @@ const DnaMe = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <ConnectNudges />
-      <MyDNAHub profile={profile} currentUser={user} />
+    <div className="min-h-screen bg-background">
+      <UnifiedHeader />
+      
+      <div className="container max-w-7xl mx-auto px-4 py-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-2">My DNA Hub</h1>
+          <p className="text-muted-foreground">
+            Your personal dashboard for the DNA platform
+          </p>
+        </div>
+
+        {/* ADIN Nudges */}
+        <ConnectNudges />
+
+        <div className="grid lg:grid-cols-3 gap-6 mt-6">
+          {/* Left Column - Profile & Strength */}
+          <div className="space-y-6">
+            <MyProfilePreview profile={profile} />
+            <ProfileStrengthCard
+              completionScore={profile.profile_completion_percentage || 0}
+            />
+          </div>
+
+          {/* Right Column - Quick Actions & Stats */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <Button
+                    variant="outline"
+                    className="h-auto py-4 flex-col items-start gap-2"
+                    onClick={() => navigate('/dna/connect/discover')}
+                  >
+                    <div className="flex items-center gap-2 w-full">
+                      <Users className="w-5 h-5 text-dna-copper" />
+                      <span className="font-semibold">Discover Members</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground text-left">
+                      Find and connect with diaspora members
+                    </span>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="h-auto py-4 flex-col items-start gap-2"
+                    onClick={() => navigate('/dna/convene/events')}
+                  >
+                    <div className="flex items-center gap-2 w-full">
+                      <Calendar className="w-5 h-5 text-dna-emerald" />
+                      <span className="font-semibold">Browse Events</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground text-left">
+                      Explore upcoming events and spaces
+                    </span>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="h-auto py-4 flex-col items-start gap-2"
+                    onClick={() => navigate('/opportunities')}
+                  >
+                    <div className="flex items-center gap-2 w-full">
+                      <Rocket className="w-5 h-5 text-dna-gold" />
+                      <span className="font-semibold">Opportunities</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground text-left">
+                      Apply to jobs, grants, and programs
+                    </span>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    className="h-auto py-4 flex-col items-start gap-2"
+                    onClick={() => navigate('/dna/connect/network')}
+                  >
+                    <div className="flex items-center gap-2 w-full">
+                      <TrendingUp className="w-5 h-5 text-dna-forest" />
+                      <span className="font-semibold">My Network</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground text-left">
+                      View connections and requests
+                    </span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Activity placeholder - can be enhanced later */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Activity</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-muted-foreground">
+                  <p className="text-sm">Your recent activity will appear here</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -128,6 +128,22 @@ const PublicProfile = () => {
     }
   };
 
+  // Fetch mutual connections
+  const { data: mutualConnections } = useQuery({
+    queryKey: ['mutual-connections', user?.id, profile?.id],
+    queryFn: async () => {
+      if (!user || !profile || user.id === profile.id) return [];
+      const { data, error } = await supabase.rpc('get_mutual_connections', {
+        p_viewer_id: user.id,
+        p_target_user_id: profile.id,
+        p_limit: 5,
+      });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!user && !!profile && user.id !== profile.id,
+  });
+
   const isOwnProfile = user?.id === profile?.id;
 
   if (isLoading) {
@@ -415,6 +431,39 @@ const PublicProfile = () => {
                 )}
               </div>
             </div>
+
+            {/* Mutual Connections */}
+            {!isOwnProfile && mutualConnections && mutualConnections.length > 0 && (
+              <div className="mt-6 pt-6 border-t">
+                <h3 className="font-semibold mb-3">
+                  {mutualConnections.length} Mutual Connection{mutualConnections.length !== 1 ? 's' : ''}
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {mutualConnections.map((conn: any) => (
+                    <div
+                      key={conn.id}
+                      className="flex items-center gap-2 p-2 rounded-lg border hover:bg-accent cursor-pointer transition-colors"
+                      onClick={() => navigate(`/dna/${conn.username}`)}
+                    >
+                      <Avatar className="w-8 h-8">
+                        <AvatarImage src={conn.avatar_url || undefined} />
+                        <AvatarFallback className="text-xs bg-dna-mint text-dna-forest">
+                          {conn.full_name?.charAt(0) || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="text-sm">
+                        <p className="font-medium">{conn.full_name}</p>
+                        {conn.headline && (
+                          <p className="text-xs text-muted-foreground truncate max-w-[150px]">
+                            {conn.headline}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
