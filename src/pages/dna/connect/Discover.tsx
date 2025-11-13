@@ -5,25 +5,24 @@ import { DiscoverFilters } from '@/components/connect/DiscoverFilters';
 import { MemberCard } from '@/components/connect/MemberCard';
 import { Loader2, Users } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function Discover() {
   const { user } = useAuth();
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<any>({});
+  const { trackEvent } = useAnalytics();
 
   useEffect(() => {
-    if (user) {
-      loadMembers();
-    }
+    if (user) loadMembers();
   }, [user, filters]);
 
   const loadMembers = async () => {
     if (!user) return;
-
     try {
       setLoading(true);
-      const { data, error } = await supabase.rpc('discover_members', {
+      const { data } = await supabase.rpc('discover_members', {
         p_current_user_id: user.id,
         p_focus_areas: filters.focus_areas || null,
         p_regional_expertise: null,
@@ -36,11 +35,7 @@ export default function Discover() {
         p_limit: 20,
         p_offset: 0,
       });
-
-      if (error) throw error;
       setMembers(data || []);
-    } catch (error: any) {
-      console.error('Error loading members:', error);
     } finally {
       setLoading(false);
     }
@@ -50,30 +45,8 @@ export default function Discover() {
 
   return (
     <div className="space-y-6">
-      <DiscoverFilters
-        filters={filters}
-        onFilterChange={setFilters}
-        onClearFilters={() => setFilters({})}
-      />
-
-      {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      ) : members.length === 0 ? (
-        <Alert>
-          <Users className="h-4 w-4" />
-          <AlertDescription>
-            No members found. Try adjusting your filters.
-          </AlertDescription>
-        </Alert>
-      ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {members.map((member) => (
-            <MemberCard key={member.id} member={member} onConnectionSent={loadMembers} />
-          ))}
-        </div>
-      )}
+      <DiscoverFilters filters={filters} onFilterChange={(f) => { setFilters(f); trackEvent('connect_discovery_filter_applied', { filters: f }); }} onClearFilters={() => setFilters({})} />
+      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin" /></div> : members.length === 0 ? <Alert><Users className="h-4 w-4" /><AlertDescription>No members found.</AlertDescription></Alert> : <div className="grid gap-4">{members.map(m => <MemberCard key={m.id} member={m} onConnectionSent={loadMembers} />)}</div>}
     </div>
   );
 }

@@ -3,7 +3,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, MoreVertical, Flag, UserX } from 'lucide-react';
+import { Send, MoreVertical } from 'lucide-react';
+import { BlockUserDialog } from '@/components/safety/BlockUserDialog';
+import { ReportDialog } from '@/components/safety/ReportDialog';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { format } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -51,6 +54,9 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
   const [messageContent, setMessageContent] = useState('');
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [showBlockDialog, setShowBlockDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const { trackEvent } = useAnalytics();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -66,6 +72,10 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
     setSending(true);
     try {
       await onSendMessage(messageContent.trim());
+      await trackEvent('connect_message_sent', {
+        conversation_id: conversationId,
+        target_user_id: otherUser.id,
+      });
       setMessageContent('');
     } finally {
       setSending(false);
@@ -109,12 +119,10 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={onReport}>
-              <Flag className="mr-2 h-4 w-4" />
+            <DropdownMenuItem onClick={() => setShowReportDialog(true)}>
               Report Conversation
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onBlock} className="text-destructive">
-              <UserX className="mr-2 h-4 w-4" />
+            <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-destructive">
               Block User
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -183,6 +191,22 @@ export const MessageThread: React.FC<MessageThreadProps> = ({
           </Button>
         </div>
       </div>
+
+      <BlockUserDialog
+        open={showBlockDialog}
+        onOpenChange={setShowBlockDialog}
+        userId={otherUser.id}
+        userName={otherUser.full_name}
+        onBlockSuccess={onBlock}
+      />
+
+      <ReportDialog
+        open={showReportDialog}
+        onOpenChange={setShowReportDialog}
+        targetUserId={otherUser.id}
+        conversationId={conversationId}
+        context="conversation"
+      />
     </div>
   );
 };

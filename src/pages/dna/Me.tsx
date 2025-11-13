@@ -1,6 +1,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import MyDNAHub from '@/components/dashboard/MyDNAHub';
+import { ConnectNudges } from '@/components/connect/ConnectNudges';
 
 const DnaMe = () => {
   const { user } = useAuth();
@@ -18,7 +19,12 @@ const DnaMe = () => {
     return null;
   }
 
-  return <MyDNAHub profile={profile} currentUser={user} />;
+  return (
+    <div className="space-y-6">
+      <ConnectNudges />
+      <MyDNAHub profile={profile} currentUser={user} />
+    </div>
+  );
 };
 
 export default DnaMe;

@@ -8,6 +8,7 @@ import { MapPin, Briefcase, UserPlus, Eye, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface MemberCardProps {
   member: {
@@ -30,6 +31,7 @@ interface MemberCardProps {
 export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { trackEvent } = useAnalytics();
   const [isSending, setIsSending] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<'none' | 'pending' | 'sent'>('none');
 
@@ -52,6 +54,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
           title: 'Connection request sent',
           description: `Your request to connect with ${member.full_name} has been sent.`,
         });
+        await trackEvent('connect_request_sent', { target_user_id: member.id });
         onConnectionSent?.();
       } else if (result.status === 'already_connected') {
         setConnectionStatus('pending');

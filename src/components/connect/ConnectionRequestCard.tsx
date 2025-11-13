@@ -7,6 +7,7 @@ import { Check, X, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface ConnectionRequestCardProps {
   request: {
@@ -30,6 +31,7 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { trackEvent } = useAnalytics();
   const [isProcessing, setIsProcessing] = useState(false);
   const [status, setStatus] = useState<'pending' | 'accepted' | 'declined'>('pending');
 
@@ -49,6 +51,10 @@ export const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
       toast({
         title: 'Connection accepted',
         description: `You are now connected with ${request.full_name}.`,
+      });
+      await trackEvent('connect_request_accepted', {
+        connection_id: request.connection_id,
+        target_user_id: request.requester_id,
       });
       onRequestHandled?.();
     } catch (error: any) {
