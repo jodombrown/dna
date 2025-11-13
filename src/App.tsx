@@ -87,6 +87,12 @@ import DnaGroups from "./pages/dna/Groups";
 import GroupDetailsPage from "./pages/GroupDetailsPage";
 import GroupSettingsPage from "./pages/GroupSettingsPage";
 
+// CONNECT M2 - New Connect Hub pages
+import Connect from "./pages/dna/connect/Connect";
+import ConnectDiscover from "./pages/dna/connect/Discover";
+import ConnectNetwork from "./pages/dna/connect/Network";
+import ConnectMessages from "./pages/dna/connect/Messages";
+
 // Regional pages
 import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
 
@@ -156,47 +162,30 @@ function App() {
                 </OnboardingGuard>
               } />
               
-              {/* ========== DISCOVER PILLAR ========== */}
-              <Route path="/dna/discover/members" element={
+              {/* ========== CONNECT HUB M2 ========== */}
+              <Route path="/dna/connect" element={
                 <OnboardingGuard>
-                  <DnaDiscover />
+                  <Connect />
                 </OnboardingGuard>
-              } />
-              <Route path="/dna/discover/feed" element={
-                <OnboardingGuard>
-                  <DiscoveryFeedPage />
-                </OnboardingGuard>
-              } />
-              {/* Legacy discover route redirects */}
-              <Route path="/dna/discover" element={<Navigate to="/dna/discover/members" replace />} />
+              }>
+                <Route index element={<Navigate to="/dna/connect/discover" replace />} />
+                <Route path="discover" element={<ConnectDiscover />} />
+                <Route path="network" element={<ConnectNetwork />} />
+                <Route path="messages" element={<ConnectMessages />} />
+                <Route path="messages/:conversationId" element={<ConnectMessages />} />
+              </Route>
               
-              {/* ========== CONNECT PILLAR ========== */}
-              <Route path="/dna/connect/network" element={
-                <OnboardingGuard>
-                  <DnaNetwork />
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/connect/feed" element={
-                <OnboardingGuard>
-                  <DnaFeed />
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/connect/messages" element={
-                <OnboardingGuard>
-                  <DnaMessages />
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/connect/messages/:conversationId" element={
-                <OnboardingGuard>
-                  <DnaMessages />
-                </OnboardingGuard>
-              } />
-              {/* Legacy connect route redirects */}
+              {/* ========== LEGACY CONNECT & DISCOVER ROUTES - Redirects ========== */}
+              <Route path="/dna/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
+              <Route path="/dna/discover" element={<Navigate to="/dna/connect/discover" replace />} />
+              <Route path="/dna/discover/feed" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/dna/network" element={<Navigate to="/dna/connect/network" replace />} />
-              <Route path="/dna/network/feed" element={<Navigate to="/dna/connect/feed" replace />} />
-              <Route path="/dna/feed" element={<Navigate to="/dna/connect/feed" replace />} />
+              <Route path="/dna/network/feed" element={<Navigate to="/dna/connect/discover" replace />} />
+              <Route path="/dna/feed" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/dna/messages" element={<Navigate to="/dna/connect/messages" replace />} />
-              <Route path="/dna/messages/:conversationId" element={<Navigate to="/dna/connect/messages/$1" replace />} />
+              <Route path="/dna/messages/:conversationId" element={<Navigate to="/dna/connect/messages" replace />} />
+              <Route path="/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
+              <Route path="/discover" element={<Navigate to="/dna/connect/discover" replace />} />
               
               {/* ========== CONVENE PILLAR ========== */}
               <Route path="/dna/convene/events" element={

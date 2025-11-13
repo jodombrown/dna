@@ -1,14 +1,14 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import MyDNAHub from '@/components/dashboard/MyDNAHub';
+import DashboardNetworkColumn from '@/components/dashboard/DashboardNetworkColumn';
 
-const DnaMe = () => {
+const ConnectNetwork = () => {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
@@ -18,7 +18,7 @@ const DnaMe = () => {
     return null;
   }
 
-  return <MyDNAHub profile={profile} currentUser={user} />;
+  return <DashboardNetworkColumn profile={profile} isOwnProfile={true} />;
 };
 
-export default DnaMe;
+export default ConnectNetwork;
