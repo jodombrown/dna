@@ -9,6 +9,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ProfileDiscoveryTags } from '@/components/profile/ProfileDiscoveryTags';
+import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
+import { calculateProfileCompletion } from '@/components/profile/ProfileCompletionBar';
 interface DashboardLeftColumnProps {
   profile: Profile;
   isOwnProfile: boolean;
@@ -63,6 +65,11 @@ const DashboardLeftColumn: React.FC<DashboardLeftColumnProps> = ({
 
   return (
     <div className="space-y-3 md:space-y-4">
+      {/* Profile Strength (own profile only) */}
+      {isOwnProfile && (
+        <ProfileStrengthCard completionScore={calculateProfileCompletion(profile)} />
+      )}
+
       {/* About */}
       {profile.bio && (
         <Card className="transition-all duration-150 hover:shadow-lg hover:-translate-y-1">

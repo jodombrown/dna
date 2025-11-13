@@ -6,6 +6,9 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import ProfileHeroSection from '@/components/profile/ProfileHeroSection';
 import { AvatarUploadModal } from '@/components/profile/AvatarUploadModal';
 import { BannerUploadModal } from '@/components/profile/BannerUploadModal';
+import { ProfileUnlockModal } from '@/components/profile/ProfileUnlockModal';
+import { useProfileUnlock } from '@/hooks/useProfileUnlock';
+import { calculateProfileCompletion } from '@/components/profile/ProfileCompletionBar';
 
 import DashboardLeftColumn from './DashboardLeftColumn';
 import DashboardCenterColumn from './DashboardCenterColumn';
@@ -39,6 +42,10 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
   const { isMobile, isTablet, isDesktop } = useMobile();
   const navigate = useNavigate();
   const isOwnProfile = currentUser.id === profile.id;
+  
+  // Profile unlock modal
+  const { showUnlockModal, closeUnlockModal } = useProfileUnlock();
+  const completionScore = calculateProfileCompletion(profile);
   
   // Modal states
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
@@ -167,6 +174,12 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
               overlay: profile.banner_overlay || false
             }}
             onUploadComplete={() => window.location.reload()}
+          />
+          
+          <ProfileUnlockModal
+            isOpen={showUnlockModal}
+            onClose={closeUnlockModal}
+            completionScore={completionScore}
           />
         </>
       )}

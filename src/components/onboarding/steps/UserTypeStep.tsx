@@ -1,154 +1,149 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Briefcase, Rocket, Heart, GraduationCap, Palette, Building, Users, Globe } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Building2, User, AlertCircle } from 'lucide-react';
 
-interface UserTypeStepProps {
-  data: any;
-  updateData: (data: any) => void;
-}
-
-const USER_TYPES = [
-  {
-    id: 'established_professional',
-    title: 'Established Professional',
-    icon: Briefcase,
-    description: 'Experienced professional ready to mentor, share expertise, and drive impact across Africa and the diaspora.',
-    benefits: ['Connect with peers', 'Share expertise', 'Find mentorship opportunities'],
-    examples: 'C-suite executives, senior managers, consultants, specialists'
-  },
-  {
-    id: 'entrepreneur_founder',
-    title: 'Entrepreneur / Founder',
-    icon: Rocket,
-    description: 'Building ventures, solving problems, and creating opportunities that benefit Africa and its diaspora.',
-    benefits: ['Find co-founders', 'Access funding networks', 'Scale your impact'],
-    examples: 'Startup founders, business owners, serial entrepreneurs'
-  },
-  {
-    id: 'emerging_professional',
-    title: 'Emerging Professional',
-    icon: GraduationCap,
-    description: 'Early-career professional or recent graduate looking to build networks and advance your career.',
-    benefits: ['Find mentors', 'Expand your network', 'Discover opportunities'],
-    examples: 'Recent graduates, junior professionals, career changers'
-  },
-  {
-    id: 'creative_innovator',
-    title: 'Creative / Innovator',
-    icon: Palette,
-    description: 'Artist, designer, content creator, or innovator using creativity to tell African stories and drive change.',
-    benefits: ['Showcase your work', 'Collaborate on projects', 'Find creative partners'],
-    examples: 'Artists, designers, writers, filmmakers, musicians'
-  },
-  {
-    id: 'community_builder',
-    title: 'Community Builder',
-    icon: Users,
-    description: 'Organizer, activist, or advocate working to strengthen communities and drive social change.',
-    benefits: ['Organize initiatives', 'Find volunteers', 'Amplify your cause'],
-    examples: 'Non-profit leaders, activists, community organizers'
-  },
-  {
-    id: 'institutional_leader',
-    title: 'Institutional Leader',
-    icon: Building,
-    description: 'Leader in government, academia, or large organizations looking to create systemic change.',
-    benefits: ['Policy influence', 'Institutional partnerships', 'Research collaboration'],
-    examples: 'Government officials, university leaders, NGO executives'
-  },
-  {
-    id: 'ally_supporter',
-    title: 'Ally / Supporter',
-    icon: Heart,
-    description: 'Passionate about supporting African development through skills, advocacy, or resources.',
-    benefits: ['Discover opportunities', 'Support meaningful projects', 'Learn and contribute'],
-    examples: 'Non-African allies, diaspora supporters, philanthropists'
-  },
-  {
-    id: 'global_connector',
-    title: 'Global Connector',
-    icon: Globe,
-    description: 'International business leader, investor, or connector with networks that can benefit Africa.',
-    benefits: ['Facilitate partnerships', 'Investment opportunities', 'Cross-border collaboration'],
-    examples: 'Investors, international business leaders, diplomats'
-  }
+const ORG_CATEGORIES = [
+  'Startup / Tech Company',
+  'Non-Profit / NGO',
+  'Social Enterprise',
+  'Investment Fund / VC',
+  'Corporate / Enterprise',
+  'Foundation / Philanthropic Org',
+  'Government / Public Sector',
+  'Academic / Research Institution',
+  'Professional Association',
+  'Other'
 ];
 
-const UserTypeStep: React.FC<UserTypeStepProps> = ({ data, updateData }) => {
-  const selectedType = data.user_type;
-
-  const selectUserType = (typeId: string) => {
-    updateData({ user_type: typeId });
+interface UserTypeStepProps {
+  data: {
+    user_type: string;
+    organization_name: string;
+    organization_category: string;
   };
+  onUpdate: (field: string, value: any) => void;
+  errors?: Record<string, string>;
+}
 
+const UserTypeStep: React.FC<UserTypeStepProps> = ({ data, onUpdate, errors = {} }) => {
   return (
     <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-semibold text-dna-forest mb-2">
-          Choose Your Path
-        </h2>
-        <p className="text-gray-600">
-          Select the category that best represents your current role and goals. This helps us connect you with the right opportunities and community.
+      <div className="text-center space-y-2">
+        <h2 className="text-2xl font-bold text-dna-forest">How are you joining DNA?</h2>
+        <p className="text-muted-foreground">
+          This helps us customize your experience and connect you with the right opportunities.
         </p>
       </div>
 
-      <div className="grid gap-3 max-h-96 overflow-y-auto pr-2">
-        {USER_TYPES.map((type) => {
-          const IconComponent = type.icon;
-          const isSelected = selectedType === type.id;
-          
-          return (
-            <Card 
-              key={type.id}
-              className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                isSelected 
-                  ? 'ring-2 ring-dna-copper bg-dna-copper/5' 
-                  : 'hover:bg-gray-50'
-              }`}
-              onClick={() => selectUserType(type.id)}
+      <Card>
+        <CardContent className="pt-6 space-y-6">
+          {/* User Type Selection */}
+          <div className="space-y-4">
+            <Label>I'm joining as *</Label>
+            <RadioGroup
+              value={data.user_type}
+              onValueChange={(value) => onUpdate('user_type', value)}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
-              <CardContent className="p-4">
-                <div className="flex items-start space-x-3">
-                  <div className="p-2 rounded-full bg-dna-copper/10 flex-shrink-0">
-                    <IconComponent className="w-5 h-5 text-dna-copper" />
+              <label
+                htmlFor="individual"
+                className={`flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                  data.user_type === 'individual'
+                    ? 'border-dna-copper bg-dna-copper/5'
+                    : 'border-border hover:border-dna-copper/50'
+                }`}
+              >
+                <RadioGroupItem value="individual" id="individual" className="mt-1" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <User className="h-5 w-5 text-dna-copper" />
+                    <span className="font-semibold">Individual</span>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-base font-semibold text-dna-forest">
-                        {type.title}
-                      </h3>
-                      <Button
-                        variant={isSelected ? "default" : "outline"}
-                        size="sm"
-                        className={isSelected ? 'bg-dna-copper hover:bg-dna-copper/90' : ''}
-                      >
-                        {isSelected ? 'Selected' : 'Select'}
-                      </Button>
-                    </div>
-                    <p className="text-gray-600 text-sm mt-1 mb-2">
-                      {type.description}
-                    </p>
-                    {type.examples && (
-                      <p className="text-xs text-gray-500 mb-2 italic">
-                        Examples: {type.examples}
-                      </p>
-                    )}
-                    <ul className="text-xs text-gray-500 space-y-0.5">
-                      {type.benefits.map((benefit, index) => (
-                        <li key={index} className="flex items-center space-x-1.5">
-                          <span className="w-1 h-1 bg-dna-copper rounded-full flex-shrink-0"></span>
-                          <span>{benefit}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    I'm here as a professional, entrepreneur, or community member
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+              </label>
+
+              <label
+                htmlFor="organization"
+                className={`flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                  data.user_type === 'organization'
+                    ? 'border-dna-copper bg-dna-copper/5'
+                    : 'border-border hover:border-dna-copper/50'
+                }`}
+              >
+                <RadioGroupItem value="organization" id="organization" className="mt-1" />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Building2 className="h-5 w-5 text-dna-copper" />
+                    <span className="font-semibold">Organization</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    I represent a company, non-profit, or institution
+                  </p>
+                </div>
+              </label>
+            </RadioGroup>
+            {errors.user_type && (
+              <p className="text-sm text-destructive flex items-center gap-1">
+                <AlertCircle className="h-4 w-4" />
+                {errors.user_type}
+              </p>
+            )}
+          </div>
+
+          {/* Organization Fields (only if organization is selected) */}
+          {data.user_type === 'organization' && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="organization_name">Organization Name *</Label>
+                <Input
+                  id="organization_name"
+                  value={data.organization_name}
+                  onChange={(e) => onUpdate('organization_name', e.target.value)}
+                  placeholder="e.g., Acme Foundation, TechCorp Africa"
+                  className={errors.organization_name ? 'border-destructive' : ''}
+                />
+                {errors.organization_name && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.organization_name}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="organization_category">Organization Type *</Label>
+                <select
+                  id="organization_category"
+                  value={data.organization_category}
+                  onChange={(e) => onUpdate('organization_category', e.target.value)}
+                  className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                    errors.organization_category ? 'border-destructive' : ''
+                  }`}
+                >
+                  <option value="">Select organization type...</option>
+                  {ORG_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+                {errors.organization_category && (
+                  <p className="text-sm text-destructive flex items-center gap-1">
+                    <AlertCircle className="h-4 w-4" />
+                    {errors.organization_category}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
