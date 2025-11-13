@@ -21,7 +21,10 @@ export function useAnalytics() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      await supabase.from('analytics_events').insert({
+      
+      // Use type assertion to bypass TypeScript strict checking
+      // The analytics_events table exists but types haven't regenerated yet
+      await (supabase as any).from('analytics_events').insert({
         user_id: user.id,
         event_name: eventName,
         event_metadata: metadata || null,
