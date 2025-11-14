@@ -1,0 +1,135 @@
+/* Custom styles for react-big-calendar to match DNA theme */
+
+.calendar-container {
+  --rbc-bg: hsl(var(--background));
+  --rbc-border: hsl(var(--border));
+  --rbc-text: hsl(var(--foreground));
+  --rbc-muted: hsl(var(--muted-foreground));
+  --rbc-today: hsl(var(--accent));
+}
+
+.calendar-container .rbc-calendar {
+  font-family: inherit;
+  color: var(--rbc-text);
+}
+
+.calendar-container .rbc-header {
+  padding: 12px 6px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--rbc-border);
+  background: hsl(var(--muted) / 0.3);
+}
+
+.calendar-container .rbc-month-view,
+.calendar-container .rbc-time-view {
+  border: 1px solid var(--rbc-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.calendar-container .rbc-day-bg {
+  border-left: 1px solid var(--rbc-border);
+}
+
+.calendar-container .rbc-month-row {
+  border-top: 1px solid var(--rbc-border);
+}
+
+.calendar-container .rbc-today {
+  background-color: var(--rbc-today);
+}
+
+.calendar-container .rbc-off-range-bg {
+  background-color: hsl(var(--muted) / 0.2);
+}
+
+.calendar-container .rbc-event {
+  padding: 2px 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.calendar-container .rbc-event:hover {
+  opacity: 1 !important;
+}
+
+.calendar-container .rbc-event-label {
+  font-size: 11px;
+}
+
+.calendar-container .rbc-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.calendar-container .rbc-toolbar button {
+  padding: 6px 12px;
+  border: 1px solid var(--rbc-border);
+  background: var(--rbc-bg);
+  color: var(--rbc-text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.calendar-container .rbc-toolbar button:hover {
+  background: hsl(var(--accent));
+}
+
+.calendar-container .rbc-toolbar button.rbc-active {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-color: hsl(var(--primary));
+}
+
+.calendar-container .rbc-toolbar-label {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.calendar-container .rbc-agenda-view {
+  border: 1px solid var(--rbc-border);
+  border-radius: 8px;
+}
+
+.calendar-container .rbc-agenda-table {
+  border: none;
+}
+
+.calendar-container .rbc-agenda-date-cell,
+.calendar-container .rbc-agenda-time-cell {
+  padding: 12px;
+  border-top: 1px solid var(--rbc-border);
+}
+
+.calendar-container .rbc-agenda-event-cell {
+  padding: 12px;
+  border-top: 1px solid var(--rbc-border);
+}
+
+.calendar-container .rbc-time-slot {
+  border-top: 1px solid hsl(var(--border) / 0.3);
+}
+
+.calendar-container .rbc-time-header-content {
+  border-left: 1px solid var(--rbc-border);
+}
+
+.calendar-container .rbc-time-content {
+  border-top: 1px solid var(--rbc-border);
+}
+
+.calendar-container .rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid hsl(var(--border) / 0.2);
+}
+
+.calendar-container .rbc-current-time-indicator {
+  background-color: hsl(var(--destructive));
+  height: 2px;
+}

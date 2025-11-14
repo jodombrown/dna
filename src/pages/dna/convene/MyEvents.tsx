@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, Users, MapPin, Edit, Eye, BarChart3 } from 'lucide-react';
+import { Calendar, Users, MapPin, Edit, Eye, BarChart3, List, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,10 +10,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { format } from 'date-fns';
+import { EventCalendarView } from '@/components/convene/EventCalendarView';
 
 const MyEvents = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
 
   // Fetch events I'm hosting
   const { data: hostingEvents = [], isLoading: hostingLoading } = useQuery({
@@ -170,20 +172,47 @@ const MyEvents = () => {
   return (
     <FeedLayout>
       <div className="container max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-4xl font-bold mb-2">My Events</h1>
             <p className="text-muted-foreground text-lg">
               Manage events you're hosting and attending
             </p>
           </div>
-          <Button onClick={() => navigate('/dna/convene/analytics')}>
-            <BarChart3 className="h-4 w-4 mr-2" />
-            View Analytics Dashboard
-          </Button>
+          <div className="flex gap-2">
+            <div className="flex gap-1 border rounded-lg p-1">
+              <Button
+                variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                <List className="h-4 w-4 mr-2" />
+                List
+              </Button>
+              <Button
+                variant={viewMode === 'calendar' ? 'secondary' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('calendar')}
+              >
+                <CalendarDays className="h-4 w-4 mr-2" />
+                Calendar
+              </Button>
+            </div>
+            <Button onClick={() => navigate('/dna/convene/analytics')}>
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Analytics
+            </Button>
+          </div>
         </div>
 
-        <Tabs defaultValue="hosting" className="space-y-6">
+        {/* Calendar View */}
+        {viewMode === 'calendar' && (
+          <EventCalendarView events={[...hostingEvents, ...attendingEvents]} />
+        )}
+
+        {/* List View */}
+        {viewMode === 'list' && (
+          <Tabs defaultValue="hosting" className="space-y-6">
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="hosting">
               Hosting ({hostingEvents.length})
@@ -281,6 +310,7 @@ const MyEvents = () => {
             )}
           </TabsContent>
         </Tabs>
+        )}
       </div>
     </FeedLayout>
   );

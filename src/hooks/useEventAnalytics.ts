@@ -62,7 +62,7 @@ export function useEventAnalytics(eventId: string | undefined) {
     queryFn: async () => {
       if (!eventId) throw new Error('Event ID required');
 
-      const { data, error } = await supabase.rpc('get_event_analytics', {
+      const { data, error } = await supabase.rpc('get_event_analytics' as any, {
         p_event_id: eventId,
       });
 
@@ -82,7 +82,7 @@ export function useOrganizerAnalytics(organizerId: string | undefined, daysBack:
     queryFn: async () => {
       if (!organizerId) throw new Error('Organizer ID required');
 
-      const { data, error } = await supabase.rpc('get_organizer_analytics', {
+      const { data, error } = await supabase.rpc('get_organizer_analytics' as any, {
         p_organizer_id: organizerId,
         p_days_back: daysBack,
       });
