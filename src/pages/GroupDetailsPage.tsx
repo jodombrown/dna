@@ -32,6 +32,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { GroupPostComments } from '@/components/groups/GroupPostComments';
 import { GroupJoinRequests } from '@/components/groups/GroupJoinRequests';
+import { GroupSpacesSection } from '@/components/collaboration/GroupSpacesSection';
 import { cn } from '@/lib/utils';
 
 interface CommentDialogProps {
@@ -783,6 +784,12 @@ export default function GroupDetailsPage() {
                       <p className="text-muted-foreground">No description available</p>
                     )}
                   </Card>
+
+                  {/* Group Spaces Section */}
+                  <GroupSpacesSection 
+                    groupId={group.group_id}
+                    isAdmin={group.user_role === 'owner' || group.user_role === 'admin'}
+                  />
                 </TabsContent>
               </Tabs>
             </div>

@@ -1,18 +1,16 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useMySpaces, usePublicSpaces } from '@/hooks/useSpaces';
+import { useMySpaces } from '@/hooks/useSpaces';
 import { Link, useNavigate } from 'react-router-dom';
 import { FeedLayout } from '@/components/layout/FeedLayout';
-import { Plus, Search, Calendar, Sparkles } from 'lucide-react';
+import { Plus, Search, Sparkles } from 'lucide-react';
 import { SpaceWithMembership } from '@/types/spaceTypes';
+import { SuggestedSpaces } from '@/components/collaboration/SuggestedSpaces';
 
 export default function CollaborateHub() {
   const navigate = useNavigate();
   const { data: mySpaces, isLoading: mySpacesLoading } = useMySpaces();
-  const { data: publicSpaces, isLoading: publicSpacesLoading } = usePublicSpaces();
-
-  const suggestedSpaces = publicSpaces?.slice(0, 3) || [];
 
   const renderSpaceCard = (space: SpaceWithMembership) => (
     <Card 
@@ -86,19 +84,10 @@ export default function CollaborateHub() {
               Find Spaces
             </Button>
           </div>
-
-          {/* Optional: Turn event into space CTA */}
-          <div className="pt-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate('/dna/collaborate/spaces/new?from_event=true')}
-            >
-              <Calendar className="mr-2 h-4 w-4" />
-              Turn an event into a project space
-            </Button>
-          </div>
         </div>
+
+        {/* Suggested Spaces */}
+        <SuggestedSpaces />
 
         {/* My Spaces */}
         <div className="space-y-6">
@@ -151,33 +140,6 @@ export default function CollaborateHub() {
               </Card>
             )}
           </div>
-        </div>
-
-        {/* Suggested Spaces */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold">Suggested Spaces</h2>
-          {publicSpacesLoading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
-          ) : suggestedSpaces.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {suggestedSpaces.map(renderSpaceCard)}
-            </div>
-          ) : (
-            <Card className="border-dashed">
-              <CardContent className="pt-6 text-center">
-                <p className="text-sm text-muted-foreground">
-                  No public spaces available yet. Be the first to create one!
-                </p>
-              </CardContent>
-            </Card>
-          )}
-          {suggestedSpaces.length > 0 && (
-            <div className="text-center pt-2">
-              <Button variant="link" asChild>
-                <Link to="/dna/collaborate/spaces">View all spaces →</Link>
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     </FeedLayout>
