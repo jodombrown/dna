@@ -1,19 +1,27 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { ConveyItemForm } from '@/components/convey/ConveyItemForm';
-import { useCreateConveyItem } from '@/hooks/useConveyMutations';
+import { useCreateConveyItem, useCheckExistingImpactDraft } from '@/hooks/useConveyMutations';
+import { useImpactSummary, generateImpactTitle, generateImpactSubtitle, generateImpactBody } from '@/hooks/useImpactSummary';
 import { useQuery } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
+import { ConveyItemType } from '@/types/conveyTypes';
 
 export default function CreateStory() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const spaceId = searchParams.get('space_id');
   const eventId = searchParams.get('event_id');
+  const needId = searchParams.get('need_id');
+  const requestedType = searchParams.get('type') as ConveyItemType | null;
+  
+  const [prefillData, setPrefillData] = useState<any>(null);
 
   const createMutation = useCreateConveyItem();
+  const checkExistingDraft = useCheckExistingImpactDraft();
 
   // Fetch space details if space_id is provided
   const { data: space, isLoading: isLoadingSpace } = useQuery({
@@ -51,6 +59,45 @@ export default function CreateStory() {
     enabled: !!eventId,
   });
 
+  // Fetch impact summary if this is an impact story
+  const { data: impactSummary, isLoading: isLoadingImpact } = useImpactSummary(spaceId || undefined, needId || undefined);
+
+  // Check for existing draft when creating impact story
+  useEffect(() => {
+    if (requestedType === 'impact' && spaceId && needId) {
+      checkExistingDraft.mutate({ spaceId, needId }, {
+        onSuccess: (existing) => {
+          if (existing) {
+            // Redirect to existing draft
+            navigate(`/dna/convey/edit/${existing.slug || existing.id}`);
+          }
+        },
+      });
+    }
+  }, [requestedType, spaceId, needId]);
+
+  // Generate prefill data for impact stories
+  useEffect(() => {
+    if (requestedType === 'impact' && impactSummary && !prefillData) {
+      const title = generateImpactTitle(impactSummary.space.name, impactSummary.need.title);
+      const subtitle = generateImpactSubtitle(
+        impactSummary.contributions.validated_count,
+        impactSummary.contributions.first_validated_at,
+        impactSummary.contributions.last_validated_at
+      );
+      const body = generateImpactBody(impactSummary);
+
+      setPrefillData({
+        type: 'impact' as const,
+        title,
+        subtitle,
+        body,
+        region: impactSummary.space.region || '',
+        visibility: 'public' as const,
+      });
+    }
+  }, [requestedType, impactSummary, prefillData]);
+
   // Check if user is admin
   const { data: profile } = useQuery({
     queryKey: ['profile-for-story-auth'],
@@ -76,7 +123,8 @@ export default function CreateStory() {
       ...formData,
       primary_space_id: spaceId || undefined,
       primary_event_id: eventId || undefined,
-      focus_areas: [], // TODO: Add focus area selection to form
+      primary_need_id: needId || undefined,
+      focus_areas: impactSummary?.space.focus_areas || [],
     };
 
     const result = await createMutation.mutateAsync(data);
@@ -99,7 +147,7 @@ export default function CreateStory() {
     }
   };
 
-  if (isLoadingSpace || isLoadingEvent) {
+  if (isLoadingSpace || isLoadingEvent || (requestedType === 'impact' && isLoadingImpact)) {
     return (
       <FeedLayout>
         <div className="max-w-3xl mx-auto px-4 py-8">
@@ -110,6 +158,18 @@ export default function CreateStory() {
       </FeedLayout>
     );
   }
+
+  const pageTitle = requestedType === 'impact' 
+    ? 'Create an Impact Story' 
+    : spaceId 
+      ? 'Post an Update' 
+      : 'Create a Story';
+  
+  const pageDescription = requestedType === 'impact'
+    ? 'Share the impact of validated contributions with the DNA community.'
+    : spaceId
+      ? 'Share progress, milestones, or news with your space members.'
+      : 'Share a story, update, or impact highlight with the DNA community.';
 
   return (
     <FeedLayout>
@@ -126,23 +186,23 @@ export default function CreateStory() {
           </Button>
 
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            {spaceId ? 'Post an Update' : 'Create a Story'}
+            {pageTitle}
           </h1>
           <p className="text-muted-foreground">
-            {spaceId
-              ? 'Share progress, milestones, or news with your space members.'
-              : 'Share a story, update, or impact highlight with the DNA community.'}
+            {pageDescription}
           </p>
         </div>
 
         {/* Form */}
         <div className="bg-card border border-border rounded-lg p-6">
           <ConveyItemForm
+            initialData={prefillData || undefined}
             spaceId={spaceId || undefined}
             spaceName={space?.name}
             spaceVisibility={space?.visibility as any}
             eventId={eventId || undefined}
             eventTitle={event?.title}
+            needId={needId || undefined}
             isAdmin={isAdmin}
             onSubmit={handleSubmit}
             onCancel={handleCancel}

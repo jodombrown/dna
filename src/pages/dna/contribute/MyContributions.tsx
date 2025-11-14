@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { HandHeart, ListChecks, Calendar, Star } from 'lucide-react';
 import { useState } from 'react';
+import { ImpactStoryCTA } from '@/components/contribute/ImpactStoryCTA';
 import type { ContributionOfferWithDetails, ContributionNeedWithSpace } from '@/types/contributeTypes';
 
 const MyContributions = () => {
@@ -54,7 +55,8 @@ const MyContributions = () => {
         .select(`
           *,
           space:spaces(id, name, slug),
-          offers:contribution_offers(count)
+          offers:contribution_offers(count),
+          badges:contribution_badges(count)
         `)
         .eq('created_by', user.id)
         .order('created_at', { ascending: false });
@@ -217,12 +219,15 @@ const MyContributions = () => {
                   </div>
                 ) : myNeeds && myNeeds.length > 0 ? (
                   <div className="space-y-4">
-                    {myNeeds.map((need: any) => (
-                      <Link key={need.id} to={`/dna/contribute/needs/${need.id}`}>
-                        <Card className="hover:shadow-md transition-shadow">
+                    {myNeeds.map((need: any) => {
+                      const badgeCount = need.badges?.[0]?.count || 0;
+                      const isFulfilledOrValidated = need.status === 'fulfilled' || badgeCount > 0;
+                      
+                      return (
+                        <Card key={need.id} className="hover:shadow-md transition-shadow">
                           <CardHeader>
                             <div className="flex items-start justify-between">
-                              <div className="flex-1">
+                              <Link to={`/dna/contribute/needs/${need.id}`} className="flex-1">
                                 <div className="flex items-center gap-2 mb-1">
                                   <CardTitle className="text-base">{need.title}</CardTitle>
                                   <Badge variant={need.status === 'open' ? 'default' : 'secondary'}>
@@ -231,14 +236,24 @@ const MyContributions = () => {
                                   {need.priority === 'high' && (
                                     <Badge variant="destructive">High</Badge>
                                   )}
+                                  {badgeCount > 0 && (
+                                    <Badge variant="outline">
+                                      {badgeCount} validated
+                                    </Badge>
+                                  )}
                                 </div>
                                 <CardDescription>
                                   {need.space?.name} • {need.type}
                                 </CardDescription>
-                              </div>
-                              <Button variant="outline" size="sm">
-                                Manage
-                              </Button>
+                              </Link>
+                              {isFulfilledOrValidated && (
+                                <ImpactStoryCTA
+                                  spaceId={need.space_id}
+                                  needId={need.id}
+                                  needTitle={need.title}
+                                  size="sm"
+                                />
+                              )}
                             </div>
                           </CardHeader>
                           <CardContent>
@@ -259,8 +274,8 @@ const MyContributions = () => {
                             </div>
                           </CardContent>
                         </Card>
-                      </Link>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-12">

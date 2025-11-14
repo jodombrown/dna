@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, DollarSign, Users, Clock, Key, Package, HandHeart, CheckCircle2 } from 'lucide-react';
 import NeedFormDialog from './NeedFormDialog';
 import { useSpaceContributeStats } from '@/hooks/useContributeStats';
+import { ImpactStoryCTA } from './ImpactStoryCTA';
 import type { ContributionNeed } from '@/types/contributeTypes';
 
 const typeIcons = {
@@ -32,12 +33,19 @@ const SpaceNeedsSection = ({ spaceId, isLead }: SpaceNeedsSectionProps) => {
     queryFn: async () => {
       const { data, error} = await supabaseClient
         .from('contribution_needs')
-        .select('*')
+        .select(`
+          *,
+          offers:contribution_offers(count),
+          badges:contribution_badges(count)
+        `)
         .eq('space_id', spaceId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as ContributionNeed[];
+      return data as (ContributionNeed & { 
+        offers: { count: number }[];
+        badges: { count: number }[];
+      })[];
     },
   });
 
@@ -119,37 +127,51 @@ const SpaceNeedsSection = ({ spaceId, isLead }: SpaceNeedsSectionProps) => {
             <div className="space-y-4">
               {needs.map((need) => {
                 const Icon = typeIcons[need.type];
+                const badgeCount = need.badges?.[0]?.count || 0;
+                const isFulfilledOrValidated = need.status === 'fulfilled' || badgeCount > 0;
+                
                 return (
-                  <Link key={need.id} to={`/dna/contribute/needs/${need.id}`}>
-                    <Card className="hover:shadow-md transition-shadow">
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-3 flex-1">
-                            <Icon className="h-5 w-5 text-primary mt-0.5" />
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <CardTitle className="text-base">{need.title}</CardTitle>
-                                <Badge variant={need.status === 'open' ? 'default' : 'secondary'} className="text-xs">
-                                  {need.status}
+                  <Card key={need.id} className="hover:shadow-md transition-shadow">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <Link to={`/dna/contribute/needs/${need.id}`} className="flex items-start gap-3 flex-1">
+                          <Icon className="h-5 w-5 text-primary mt-0.5" />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <CardTitle className="text-base">{need.title}</CardTitle>
+                              <Badge variant={need.status === 'open' ? 'default' : 'secondary'} className="text-xs">
+                                {need.status}
+                              </Badge>
+                              {need.priority === 'high' && (
+                                <Badge variant="destructive" className="text-xs">High</Badge>
+                              )}
+                              {badgeCount > 0 && (
+                                <Badge variant="outline" className="text-xs">
+                                  {badgeCount} validated
                                 </Badge>
-                                {need.priority === 'high' && (
-                                  <Badge variant="destructive" className="text-xs">High</Badge>
-                                )}
-                              </div>
-                              <CardDescription className="line-clamp-2">
-                                {need.description}
-                              </CardDescription>
-                              {need.type === 'funding' && need.target_amount && (
-                                <p className="text-sm font-semibold text-primary mt-2">
-                                  Target: {need.currency || '$'}{need.target_amount.toLocaleString()}
-                                </p>
                               )}
                             </div>
+                            <CardDescription className="line-clamp-2">
+                              {need.description}
+                            </CardDescription>
+                            {need.type === 'funding' && need.target_amount && (
+                              <p className="text-sm font-semibold text-primary mt-2">
+                                Target: {need.currency || '$'}{need.target_amount.toLocaleString()}
+                              </p>
+                            )}
                           </div>
-                        </div>
-                      </CardHeader>
-                    </Card>
-                  </Link>
+                        </Link>
+                        {isLead && isFulfilledOrValidated && (
+                          <ImpactStoryCTA
+                            spaceId={spaceId}
+                            needId={need.id}
+                            needTitle={need.title}
+                            size="sm"
+                          />
+                        )}
+                      </div>
+                    </CardHeader>
+                  </Card>
                 );
               })}
             </div>

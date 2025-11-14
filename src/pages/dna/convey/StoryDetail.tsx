@@ -66,7 +66,11 @@ export default function StoryDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <article className="lg:col-span-2 bg-card border border-border rounded-lg p-8">
               <Badge variant={getTypeBadgeVariant(item.type)} className="mb-4">
-                {getTypeLabel(item.type)}
+                {item.type === 'impact' ? (
+                  <><Sparkles className="h-3 w-3 mr-1 inline" />{getTypeLabel(item.type)}</>
+                ) : (
+                  getTypeLabel(item.type)
+                )}
               </Badge>
 
               <h1 className="text-4xl font-bold text-foreground mb-3">{item.title}</h1>

@@ -31,6 +31,7 @@ interface ConveyItemFormProps {
   spaceVisibility?: 'public' | 'invite_only';
   eventId?: string;
   eventTitle?: string;
+  needId?: string;
   isAdmin?: boolean;
   onSubmit: (data: ConveyItemFormData & { status: ConveyItemStatus }) => Promise<void>;
   onCancel: () => void;
@@ -44,6 +45,7 @@ export function ConveyItemForm({
   spaceVisibility,
   eventId,
   eventTitle,
+  needId,
   isAdmin = false,
   onSubmit,
   onCancel,
@@ -54,6 +56,8 @@ export function ConveyItemForm({
   const defaultVisibility = spaceId && spaceVisibility === 'invite_only'
     ? 'space_members_only'
     : 'public';
+
+  const isImpactMode = initialData?.type === 'impact' || needId;
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<ConveyItemFormData>({
     defaultValues: {
@@ -80,25 +84,45 @@ export function ConveyItemForm({
 
   return (
     <form className="space-y-6">
+      {/* Impact Mode Indicator */}
+      {isImpactMode && needId && (
+        <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+          <p className="text-sm text-foreground">
+            <strong>Impact Story Mode:</strong> You're creating an impact story based on validated contributions from this Need.
+          </p>
+        </div>
+      )}
+
       {/* Type Selection */}
       <div className="space-y-2">
         <Label>Content Type</Label>
         <RadioGroup
           value={selectedType}
           onValueChange={(value) => setValue('type', value as ConveyItemType)}
+          disabled={isImpactMode}
         >
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="update" id="type-update" />
+            <RadioGroupItem value="update" id="type-update" disabled={!!isImpactMode} />
             <Label htmlFor="type-update" className="cursor-pointer font-normal">
               Update – Share progress, milestones, or news
             </Label>
           </div>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="story" id="type-story" />
+            <RadioGroupItem value="story" id="type-story" disabled={!!isImpactMode} />
             <Label htmlFor="type-story" className="cursor-pointer font-normal">
               Story – Tell a deeper narrative or impact story
             </Label>
           </div>
+          {isImpactMode && (
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="impact" id="type-impact" disabled={true} />
+              <Label htmlFor="type-impact" className="cursor-pointer font-normal">
+                Impact – Celebrate validated contributions and outcomes
+              </Label>
+            </div>
+          )}
+            </div>
+          )}
         </RadioGroup>
       </div>
 

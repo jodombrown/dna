@@ -12,6 +12,9 @@ interface CreateConveyItemData {
   status: ConveyItemStatus;
   primary_space_id?: string;
   primary_event_id?: string;
+  primary_need_id?: string;
+  primary_offer_id?: string;
+  primary_badge_id?: string;
   focus_areas?: string[];
   region?: string;
 }
@@ -121,6 +124,28 @@ export function useUpdateConveyItem() {
         description: error.message || 'Failed to update story.',
         variant: 'destructive',
       });
+    },
+  });
+}
+
+export function useCheckExistingImpactDraft() {
+  return useMutation({
+    mutationFn: async ({ spaceId, needId }: { spaceId: string; needId: string }) => {
+      const { data: user } = await supabaseClient.auth.getUser();
+      if (!user.user) throw new Error('Not authenticated');
+
+      const { data, error } = await supabaseClient
+        .from('convey_items')
+        .select('id, slug')
+        .eq('type', 'impact')
+        .eq('primary_space_id', spaceId)
+        .eq('primary_need_id', needId)
+        .eq('author_id', user.user.id)
+        .eq('status', 'draft')
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
     },
   });
 }
