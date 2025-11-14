@@ -8,7 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { HandHeart, ListChecks, Calendar } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { HandHeart, ListChecks, Calendar, Star } from 'lucide-react';
 import { useState } from 'react';
 import type { ContributionOfferWithDetails, ContributionNeedWithSpace } from '@/types/contributeTypes';
 
@@ -26,7 +27,8 @@ const MyContributions = () => {
         .select(`
           *,
           need:contribution_needs(id, title, type),
-          space:spaces(id, name, slug)
+          space:spaces(id, name, slug),
+          badge:contribution_badges(id, validated_at, type, points)
         `)
         .eq('created_by', user.id)
         .order('created_at', { ascending: false });
@@ -91,8 +93,9 @@ const MyContributions = () => {
             <div className="mb-6 p-4 bg-muted/50 rounded-lg border border-border">
               <p className="text-sm text-muted-foreground">
                 This page helps you keep track of where you've raised your hand to support projects. 
-                <strong className="text-foreground"> Validation is an extra 'thank you' from project leads</strong> when 
-                they confirm something is complete – not a requirement to belong here.
+                <strong className="text-foreground"> Validated contributions</strong> are specific actions that project 
+                leads have confirmed as completed. They help tell the story of how people are supporting each other here – 
+                they're not a score or a requirement to belong.
               </p>
             </div>
             
@@ -131,7 +134,7 @@ const MyContributions = () => {
                           <CardHeader>
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
+                                <div className="flex items-center gap-2 mb-1 flex-wrap">
                                   <CardTitle className="text-base">{offer.need?.title}</CardTitle>
                                   <Badge variant={
                                     offer.status === 'validated' ? 'default' :
@@ -142,6 +145,23 @@ const MyContributions = () => {
                                   }>
                                     {offer.status === 'validated' ? 'Validated ✓' : offer.status}
                                   </Badge>
+                                  {offer.badge && (
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <div className="flex items-center gap-1 text-sm text-primary">
+                                            <Star className="h-4 w-4 fill-current" />
+                                            <span className="font-medium">Validated contribution</span>
+                                          </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-xs">
+                                          <p className="text-xs">
+                                            This contribution has been confirmed as completed by a project lead.
+                                          </p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  )}
                                 </div>
                                 <CardDescription>
                                   {offer.space?.name} • {offer.need?.type}
