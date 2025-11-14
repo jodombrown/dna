@@ -97,3 +97,9 @@ verify_jwt = true
 
 [functions.update-event]
 verify_jwt = true
+
+[functions.get-event-recommendations]
+verify_jwt = true
+
+[functions.send-event-reminders]
+verify_jwt = false

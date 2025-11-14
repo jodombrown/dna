@@ -34,17 +34,13 @@ export default function GroupEventsPage() {
   // Fetch group events  
   const { data: eventsData, isLoading } = useQuery({
     queryKey: ['group-events', group?.id],
-    queryFn: async () => {
+    queryFn: async (): Promise<any[]> => {
       if (!group?.id) return [];
       
-      const { data, error } = await supabase
-        .from('events')
-        .select('id, title, description, event_type, format, location_city, location_country, start_time, end_time, max_attendees, is_cancelled, cover_image_url')
-        .eq('group_id', group.id)
-        .order('start_time');
-
-      if (error) throw error;
-      return data || [];
+      const client: any = supabase;
+      const response = await client.from('events').select('*').eq('group_id', group.id).order('start_time');
+      if (response.error) throw response.error;
+      return response.data || [];
     },
     enabled: !!group?.id,
   });

@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { formatDistanceToNow } from 'date-fns';
+import { EventRecommendations } from '@/components/events/EventRecommendations';
 
 const ConveneHub = () => {
   const navigate = useNavigate();
@@ -178,10 +179,17 @@ const ConveneHub = () => {
           </section>
         )}
 
+        {/* AI-Powered Recommendations */}
+        {user && (
+          <section className="mb-12">
+            <EventRecommendations />
+          </section>
+        )}
+
         {/* Upcoming Events For You */}
         <section className="mb-12">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold">Upcoming Events</h2>
+            <h2 className="text-2xl font-bold">All Upcoming Events</h2>
             <Button 
               variant="ghost"
               onClick={() => navigate('/dna/convene/events')}
