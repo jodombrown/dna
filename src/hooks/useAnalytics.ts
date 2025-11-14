@@ -14,7 +14,12 @@ export type ConnectEventName =
   | 'connect_discovery_filter_applied'
   | 'connect_profile_viewed'
   | 'connect_user_blocked'
-  | 'connect_content_reported';
+  | 'connect_content_reported'
+  | 'event_to_space_created'
+  | 'group_to_space_created'
+  | 'space_joined_from_event_view'
+  | 'space_joined_from_group_view'
+  | 'space_joined_from_suggestions';
 
 export function useAnalytics() {
   const trackEvent = async (eventName: ConnectEventName, metadata?: any, route?: string) => {

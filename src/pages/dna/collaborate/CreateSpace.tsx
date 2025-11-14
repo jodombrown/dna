@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,7 @@ export default function CreateSpace() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const createSpace = useCreateSpace();
+  const { trackEvent } = useAnalytics();
   const [isCheckingProfile, setIsCheckingProfile] = useState(false);
   const [isPrefilling, setIsPrefilling] = useState(false);
   const [formData, setFormData] = useState({
@@ -177,6 +179,20 @@ export default function CreateSpace() {
       };
 
       const result = await createSpace.mutateAsync(spaceData);
+      
+      // Track analytics for cross-C flows
+      if (formData.origin_event_id) {
+        await trackEvent('event_to_space_created', {
+          event_id: formData.origin_event_id,
+          space_id: result.id,
+        });
+      } else if (formData.origin_group_id) {
+        await trackEvent('group_to_space_created', {
+          group_id: formData.origin_group_id,
+          space_id: result.id,
+        });
+      }
+      
       navigate(`/dna/collaborate/spaces/${result.slug}`);
     } catch (error: any) {
       console.error('Error creating space:', error);

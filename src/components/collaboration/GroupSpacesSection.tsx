@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { useNavigate } from 'react-router-dom';
 import { SpaceWithMembership } from '@/types/spaceTypes';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface GroupSpacesSectionProps {
   groupId: string;
@@ -14,6 +15,7 @@ interface GroupSpacesSectionProps {
 
 export function GroupSpacesSection({ groupId, isAdmin }: GroupSpacesSectionProps) {
   const navigate = useNavigate();
+  const { trackEvent } = useAnalytics();
 
   const { data: linkedSpaces, isLoading } = useQuery({
     queryKey: ['group-spaces', groupId],
@@ -60,7 +62,14 @@ export function GroupSpacesSection({ groupId, isAdmin }: GroupSpacesSectionProps
               <div
                 key={space.id}
                 className="p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
-                onClick={() => navigate(`/dna/collaborate/spaces/${space.slug}`)}
+                onClick={() => {
+                  // Track that user is viewing space from group
+                  trackEvent('space_joined_from_group_view', {
+                    group_id: groupId,
+                    space_id: space.id,
+                  });
+                  navigate(`/dna/collaborate/spaces/${space.slug}`);
+                }}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">

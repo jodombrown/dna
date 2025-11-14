@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { useNavigate } from 'react-router-dom';
 import { SpaceWithMembership } from '@/types/spaceTypes';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface EventSpacesSectionProps {
   eventId: string;
@@ -14,6 +15,7 @@ interface EventSpacesSectionProps {
 
 export function EventSpacesSection({ eventId, isOrganizer }: EventSpacesSectionProps) {
   const navigate = useNavigate();
+  const { trackEvent } = useAnalytics();
 
   const { data: linkedSpaces, isLoading } = useQuery({
     queryKey: ['event-spaces', eventId],
@@ -61,7 +63,14 @@ export function EventSpacesSection({ eventId, isOrganizer }: EventSpacesSectionP
               <div
                 key={space.id}
                 className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
-                onClick={() => navigate(`/dna/collaborate/spaces/${space.slug}`)}
+                onClick={() => {
+                  // Track that user is viewing space from event
+                  trackEvent('space_joined_from_event_view', {
+                    event_id: eventId,
+                    space_id: space.id,
+                  });
+                  navigate(`/dna/collaborate/spaces/${space.slug}`);
+                }}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
