@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { formatDistanceToNow, format } from 'date-fns';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
+import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -441,6 +442,12 @@ const EventDetail = () => {
                   </CardContent>
                 </Card>
               )}
+
+              {/* Event Spaces Section */}
+              <EventSpacesSection 
+                eventId={id!}
+                isOrganizer={isOrganizer}
+              />
 
               <Card>
                 <CardContent className="pt-6">

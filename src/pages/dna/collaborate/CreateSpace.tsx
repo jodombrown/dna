@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,8 +20,10 @@ import { Loader2 } from 'lucide-react';
 
 export default function CreateSpace() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const createSpace = useCreateSpace();
   const [isCheckingProfile, setIsCheckingProfile] = useState(false);
+  const [isPrefilling, setIsPrefilling] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     tagline: '',
@@ -32,12 +34,102 @@ export default function CreateSpace() {
     focus_areas: [] as string[],
     region: '',
     external_link: '',
+    origin_event_id: undefined as string | undefined,
+    origin_group_id: undefined as string | undefined,
   });
+
+  useEffect(() => {
+    const fromEventId = searchParams.get('from_event_id');
+    const fromGroupId = searchParams.get('from_group_id');
+
+    if (fromEventId) {
+      prefillFromEvent(fromEventId);
+    } else if (fromGroupId) {
+      prefillFromGroup(fromGroupId);
+    }
+  }, [searchParams]);
+
+  const prefillFromEvent = async (eventId: string) => {
+    setIsPrefilling(true);
+    try {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) return;
+
+      const { data: event, error } = await supabaseClient
+        .from('events')
+        .select('*')
+        .eq('id', eventId)
+        .single();
+
+      if (error) throw error;
+
+      if (event.organizer_id !== user.id) {
+        toast.error('Only event organizers can create spaces from events');
+        navigate('/dna/collaborate/spaces/new');
+        return;
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        name: `Project – ${event.title}`,
+        tagline: `Project space for ${event.title}`,
+        description: event.description || '',
+        region: event.location_city || event.location_country || '',
+        origin_event_id: eventId,
+      }));
+    } catch (error) {
+      console.error('Error prefilling from event:', error);
+      toast.error('Failed to load event details');
+    } finally {
+      setIsPrefilling(false);
+    }
+  };
+
+  const prefillFromGroup = async (groupId: string) => {
+    setIsPrefilling(true);
+    try {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) return;
+
+      const { data: group, error: groupError } = await supabaseClient
+        .from('groups')
+        .select('*')
+        .eq('id', groupId)
+        .single();
+
+      if (groupError) throw groupError;
+
+      const { data: membership } = await supabaseClient
+        .from('group_members')
+        .select('role')
+        .eq('group_id', groupId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (!membership || !['owner', 'admin'].includes(membership.role)) {
+        toast.error('Only group admins can create spaces from groups');
+        navigate('/dna/collaborate/spaces/new');
+        return;
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        name: `${group.name} – Working Group`,
+        tagline: `Space for ${group.name} project work`,
+        description: group.description || '',
+        origin_group_id: groupId,
+      }));
+    } catch (error) {
+      console.error('Error prefilling from group:', error);
+      toast.error('Failed to load group details');
+    } finally {
+      setIsPrefilling(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check profile strength
     setIsCheckingProfile(true);
     try {
       const { data: { user } } = await supabaseClient.auth.getUser();
@@ -46,7 +138,6 @@ export default function CreateSpace() {
         return;
       }
 
-      // Get profile strength
       const { data: strengthData, error: strengthError } = await supabaseClient
         .rpc('calculate_profile_strength', { user_id: user.id });
 
@@ -64,17 +155,25 @@ export default function CreateSpace() {
         return;
       }
 
-      // Generate slug from name
       const slug = formData.name
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
       const spaceData = {
-        ...formData,
+        name: formData.name,
+        tagline: formData.tagline,
+        description: formData.description,
+        space_type: formData.space_type,
+        status: formData.status,
+        visibility: formData.visibility,
+        focus_areas: formData.focus_areas.length > 0 ? formData.focus_areas : [],
+        region: formData.region,
+        external_link: formData.external_link,
         slug,
         created_by: user.id,
-        focus_areas: formData.focus_areas.length > 0 ? formData.focus_areas : [],
+        origin_event_id: formData.origin_event_id || null,
+        origin_group_id: formData.origin_group_id || null,
       };
 
       const result = await createSpace.mutateAsync(spaceData);
@@ -92,6 +191,21 @@ export default function CreateSpace() {
       focus_areas: value.split(',').map(s => s.trim()).filter(Boolean),
     }));
   };
+
+  if (isPrefilling) {
+    return (
+      <FeedLayout>
+        <div className="container max-w-3xl mx-auto px-4 py-8">
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-3" />
+              <p className="text-muted-foreground">Loading details...</p>
+            </CardContent>
+          </Card>
+        </div>
+      </FeedLayout>
+    );
+  }
 
   return (
     <FeedLayout>
@@ -120,26 +234,24 @@ export default function CreateSpace() {
                   required
                   value={formData.tagline}
                   onChange={(e) => setFormData(prev => ({ ...prev, tagline: e.target.value }))}
-                  placeholder="Brief description of your space"
-                  maxLength={100}
+                  placeholder="Brief one-liner about this space"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description *</Label>
+                <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
-                  required
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Detailed description of your space goals and activities"
-                  rows={5}
+                  placeholder="Describe what this space is about..."
+                  rows={4}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="space_type">Space Type *</Label>
+                  <Label htmlFor="space_type">Type *</Label>
                   <Select
                     value={formData.space_type}
                     onValueChange={(value) => setFormData(prev => ({ ...prev, space_type: value }))}
@@ -176,26 +288,6 @@ export default function CreateSpace() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="focus_areas">Focus Areas (comma-separated)</Label>
-                <Input
-                  id="focus_areas"
-                  value={formData.focus_areas.join(', ')}
-                  onChange={(e) => handleFocusAreasChange(e.target.value)}
-                  placeholder="e.g., Education, Technology, Healthcare"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="region">Region</Label>
-                <Input
-                  id="region"
-                  value={formData.region}
-                  onChange={(e) => setFormData(prev => ({ ...prev, region: e.target.value }))}
-                  placeholder="e.g., East Africa, West Africa"
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="visibility">Visibility *</Label>
                 <Select
                   value={formData.visibility}
@@ -212,6 +304,26 @@ export default function CreateSpace() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="focus_areas">Focus Areas (comma-separated)</Label>
+                <Input
+                  id="focus_areas"
+                  value={formData.focus_areas.join(', ')}
+                  onChange={(e) => handleFocusAreasChange(e.target.value)}
+                  placeholder="e.g., Education, Technology, Healthcare"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="region">Region</Label>
+                <Input
+                  id="region"
+                  value={formData.region}
+                  onChange={(e) => setFormData(prev => ({ ...prev, region: e.target.value }))}
+                  placeholder="e.g., West Africa, East Africa, Global"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="external_link">External Link (optional)</Label>
                 <Input
                   id="external_link"
@@ -222,16 +334,21 @@ export default function CreateSpace() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3">
+              <div className="flex gap-3 pt-4">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => navigate('/dna/collaborate')}
+                  disabled={isCheckingProfile || createSpace.isPending}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={createSpace.isPending || isCheckingProfile}>
-                  {(createSpace.isPending || isCheckingProfile) && (
+                <Button
+                  type="submit"
+                  disabled={isCheckingProfile || createSpace.isPending}
+                  className="flex-1"
+                >
+                  {(isCheckingProfile || createSpace.isPending) && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Create Space
