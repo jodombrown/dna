@@ -5,13 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSpaceBySlug } from '@/hooks/useSpaces';
 import { useJoinSpace, useLeaveSpace } from '@/hooks/useSpaceMutations';
 import { SpaceMembers } from '@/components/collaboration/SpaceMembers';
 import { SpaceTasks } from '@/components/collaboration/SpaceTasks';
 import { SpaceUpdates } from '@/components/collaboration/SpaceUpdates';
+import { SpaceInsights } from '@/components/collaboration/SpaceInsights';
 import { supabaseClient } from '@/lib/supabaseHelpers';
-import { Loader2, Settings, ExternalLink, ArrowLeft, Users } from 'lucide-react';
+import { Loader2, Settings, ExternalLink, ArrowLeft, Users, BarChart } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SpaceDetail() {
@@ -259,43 +261,79 @@ export default function SpaceDetail() {
           </Card>
         )}
 
-        {/* Members Section */}
-        {(isMember || space.visibility === 'public') && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Members
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <SpaceMembers spaceId={space.id} canManage={isLead} />
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Tasks Section */}
+        {/* Tabbed Content */}
         {isMember && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Tasks</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <SpaceTasks spaceId={space.id} canEdit={isLead} />
-            </CardContent>
-          </Card>
-        )}
+          <Tabs defaultValue="overview" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="tasks">Tasks</TabsTrigger>
+              <TabsTrigger value="updates">Updates</TabsTrigger>
+              {isLead && <TabsTrigger value="insights">Insights</TabsTrigger>}
+            </TabsList>
 
-        {/* Updates Section */}
-        {isMember && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Updates</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <SpaceUpdates spaceId={space.id} canEdit={isLead} />
-            </CardContent>
-          </Card>
+            <TabsContent value="overview" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    Members
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <SpaceMembers spaceId={space.id} canManage={isLead} />
+                </CardContent>
+              </Card>
+
+              <div className="flex gap-4">
+                <Button onClick={() => navigate(`/dna/collaborate/spaces/${slug}/board`)}>
+                  View Kanban Board
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="tasks">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Tasks</CardTitle>
+                    <Button onClick={() => navigate(`/dna/collaborate/spaces/${slug}/board`)}>
+                      Board View
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <SpaceTasks spaceId={space.id} canEdit={isLead} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="updates">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Updates</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <SpaceUpdates spaceId={space.id} canEdit={isLead} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {isLead && (
+              <TabsContent value="insights">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart className="h-5 w-5" />
+                      Space Insights
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <SpaceInsights spaceId={space.id} isLead={isLead} />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
+          </Tabs>
         )}
       </div>
     </FeedLayout>

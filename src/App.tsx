@@ -74,10 +74,14 @@ import OrganizerAnalytics from "./pages/dna/convene/OrganizerAnalytics";
 import GroupsBrowse from "./pages/dna/convene/GroupsBrowse";
 import GroupEventsPage from "./pages/dna/convene/GroupEventsPage";
 
-// Collaborate M1 pages
+// Collaborate M1-M5 pages
 import CollaborateHub from "./pages/dna/collaborate/CollaborateHub";
 import SpacesIndex from "./pages/dna/collaborate/SpacesIndex";
 import CollaborateSpaceDetail from "./pages/dna/collaborate/SpaceDetail";
+import SpaceBoard from "./pages/dna/collaborate/SpaceBoard";
+import CreateSpace from "./pages/dna/collaborate/CreateSpace";
+import SpaceSettings from "./pages/dna/collaborate/SpaceSettings";
+import MySpaces from "./pages/dna/collaborate/MySpaces";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -254,7 +258,7 @@ function App() {
               <Route path="/dna/convene/groups/:slug" element={<GroupDetailsPage />} />
               <Route path="/dna/convene/groups/:slug/settings" element={<GroupSettingsPage />} />
               
-              {/* ========== COLLABORATE PILLAR M1 ========== */}
+              {/* ========== COLLABORATE PILLAR M1-M5 ========== */}
               <Route path="/dna/collaborate" element={
                 <OnboardingGuard>
                   <CollaborateHub />
@@ -265,9 +269,29 @@ function App() {
                   <SpacesIndex />
                 </OnboardingGuard>
               } />
+              <Route path="/dna/collaborate/spaces/new" element={
+                <OnboardingGuard>
+                  <CreateSpace />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/collaborate/spaces/:slug" element={
                 <OnboardingGuard>
                   <CollaborateSpaceDetail />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/collaborate/spaces/:slug/board" element={
+                <OnboardingGuard>
+                  <SpaceBoard />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/collaborate/spaces/:slug/settings" element={
+                <OnboardingGuard>
+                  <SpaceSettings />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/collaborate/my-spaces" element={
+                <OnboardingGuard>
+                  <MySpaces />
                 </OnboardingGuard>
               } />
               

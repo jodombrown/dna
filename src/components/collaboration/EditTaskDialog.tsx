@@ -19,8 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { TaskDependencies } from './TaskDependencies';
 
 interface Task {
   id: string;
@@ -195,6 +197,18 @@ export function EditTaskDialog({ spaceId, task, open, onOpenChange }: EditTaskDi
                 onChange={(e) => setDueDate(e.target.value)}
               />
             </div>
+
+            {/* Dependencies */}
+            {task && (
+              <>
+                <Separator />
+                <TaskDependencies
+                  taskId={task.id}
+                  spaceId={spaceId}
+                  canEdit={true}
+                />
+              </>
+            )}
           </div>
 
           <DialogFooter>
