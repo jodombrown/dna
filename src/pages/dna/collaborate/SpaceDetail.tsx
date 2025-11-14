@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useSpaceBySlug } from '@/hooks/useSpaces';
 import { useJoinSpace, useLeaveSpace } from '@/hooks/useSpaceMutations';
 import { SpaceMembers } from '@/components/collaboration/SpaceMembers';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Loader2, Settings, ExternalLink, ArrowLeft, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -26,7 +26,7 @@ export default function SpaceDetail() {
 
   useEffect(() => {
     async function loadUserData() {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseClient.auth.getUser();
       if (user) {
         setCurrentUserId(user.id);
       }
@@ -39,12 +39,12 @@ export default function SpaceDetail() {
     async function loadMembership() {
       if (!space || !currentUserId) return;
 
-      const { data } = await (supabase
+      const { data } = await supabaseClient
         .from('space_members')
         .select('*')
         .eq('space_id', space.id)
         .eq('user_id', currentUserId)
-        .single() as any);
+        .single();
 
       setMembership(data);
     }
@@ -52,11 +52,11 @@ export default function SpaceDetail() {
     async function loadCreator() {
       if (!space) return;
 
-      const { data } = await (supabase
+      const { data } = await supabaseClient
         .from('profiles')
         .select('id, full_name, username, avatar_url')
         .eq('id', space.created_by)
-        .single() as any);
+        .single();
 
       setCreator(data);
     }

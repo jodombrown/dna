@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSpaceBySlug } from '@/hooks/useSpaces';
 import { useUpdateSpace } from '@/hooks/useSpaceMutations';
 import { SpaceMembers } from '@/components/collaboration/SpaceMembers';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -45,18 +45,18 @@ export default function SpaceSettings() {
     async function checkLeadAccess() {
       if (!space) return;
       
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) {
         navigate('/dna/collaborate');
         return;
       }
 
-      const { data: membership } = await (supabase
+      const { data: membership } = await supabaseClient
         .from('space_members')
         .select('role')
         .eq('space_id', space.id)
         .eq('user_id', user.id)
-        .single() as any);
+        .single();
 
       if (!membership || membership.role !== 'lead') {
         toast.error('You must be a lead to access settings');
