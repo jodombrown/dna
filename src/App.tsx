@@ -74,6 +74,11 @@ import OrganizerAnalytics from "./pages/dna/convene/OrganizerAnalytics";
 import GroupsBrowse from "./pages/dna/convene/GroupsBrowse";
 import GroupEventsPage from "./pages/dna/convene/GroupEventsPage";
 
+// Collaborate M1 pages
+import CollaborateHub from "./pages/dna/collaborate/CollaborateHub";
+import SpacesIndex from "./pages/dna/collaborate/SpacesIndex";
+import CollaborateSpaceDetail from "./pages/dna/collaborate/SpaceDetail";
+
 // Feature pages
 import Opportunities from "./pages/Opportunities";
 import OpportunityDetail from "./pages/OpportunityDetail";
@@ -248,6 +253,23 @@ function App() {
               <Route path="/dna/convene/groups/:slug/events" element={<OnboardingGuard><GroupEventsPage /></OnboardingGuard>} />
               <Route path="/dna/convene/groups/:slug" element={<GroupDetailsPage />} />
               <Route path="/dna/convene/groups/:slug/settings" element={<GroupSettingsPage />} />
+              
+              {/* ========== COLLABORATE PILLAR M1 ========== */}
+              <Route path="/dna/collaborate" element={
+                <OnboardingGuard>
+                  <CollaborateHub />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/collaborate/spaces" element={
+                <OnboardingGuard>
+                  <SpacesIndex />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/collaborate/spaces/:slug" element={
+                <OnboardingGuard>
+                  <CollaborateSpaceDetail />
+                </OnboardingGuard>
+              } />
               
               {/* Legacy convene route redirects */}
               <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />
