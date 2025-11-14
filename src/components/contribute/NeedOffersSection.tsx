@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useUpdateOfferStatus } from '@/hooks/useContributionMutations';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
+import { useUpdateOfferStatus } from '@/hooks/useContributionMutations';
 import { HandHeart } from 'lucide-react';
 import type { ContributionOfferWithDetails, ContributionOfferStatus } from '@/types/contributeTypes';
 
@@ -18,9 +18,8 @@ interface NeedOffersSectionProps {
 }
 
 const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) => {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [selectedOffer, setSelectedOffer] = useState<ContributionOfferWithDetails | null>(null);
+  const updateStatusMutation = useUpdateOfferStatus();
 
   const { data: offers, isLoading } = useQuery({
     queryKey: ['need-offers', needId],
@@ -54,32 +53,9 @@ const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) 
     enabled: !isLead,
   });
 
-  const updateStatusMutation = useMutation({
-    mutationFn: async ({ offerId, status }: { offerId: string; status: ContributionOfferStatus }) => {
-      const { error } = await supabase
-        .from('contribution_offers')
-        .update({ status })
-        .eq('id', offerId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast({
-        title: 'Offer updated',
-        description: 'The offer status has been updated',
-      });
-      queryClient.invalidateQueries({ queryKey: ['need-offers'] });
-      queryClient.invalidateQueries({ queryKey: ['my-offers'] });
-      queryClient.invalidateQueries({ queryKey: ['my-needs'] });
-    },
-    onError: (error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
-  });
+  const handleStatusChange = (offerId: string, newStatus: 'accepted' | 'declined' | 'completed') => {
+    updateStatusMutation.mutate({ offerId, status: newStatus });
+  };
 
   if (!isLead) {
     return (
