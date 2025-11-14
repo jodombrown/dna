@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import { toast } from 'sonner';
 import { SpaceMemberRole } from '@/types/spaceTypes';
 
@@ -8,14 +8,14 @@ export const useJoinSpace = () => {
   
   return useMutation({
     mutationFn: async ({ spaceId, userId }: { spaceId: string; userId: string }) => {
-      const { error } = await (supabase
+      const { error } = await supabaseClient
         .from('space_members')
         .insert({
           space_id: spaceId,
           user_id: userId,
           role: 'contributor' as SpaceMemberRole,
           joined_at: new Date().toISOString(),
-        }) as any);
+        });
 
       if (error) throw error;
     },
@@ -35,11 +35,11 @@ export const useLeaveSpace = () => {
   
   return useMutation({
     mutationFn: async ({ spaceId, userId }: { spaceId: string; userId: string }) => {
-      const { error } = await (supabase
+      const { error } = await supabaseClient
         .from('space_members')
         .delete()
         .eq('space_id', spaceId)
-        .eq('user_id', userId) as any);
+        .eq('user_id', userId);
 
       if (error) throw error;
     },
@@ -63,11 +63,11 @@ export const useUpdateMemberRole = () => {
   
   return useMutation({
     mutationFn: async ({ spaceId, userId, role }: { spaceId: string; userId: string; role: SpaceMemberRole }) => {
-      const { error } = await (supabase
+      const { error } = await supabaseClient
         .from('space_members')
         .update({ role })
         .eq('space_id', spaceId)
-        .eq('user_id', userId) as any);
+        .eq('user_id', userId);
 
       if (error) throw error;
     },
@@ -86,11 +86,11 @@ export const useRemoveMember = () => {
   
   return useMutation({
     mutationFn: async ({ spaceId, userId }: { spaceId: string; userId: string }) => {
-      const { error } = await (supabase
+      const { error } = await supabaseClient
         .from('space_members')
         .delete()
         .eq('space_id', spaceId)
-        .eq('user_id', userId) as any);
+        .eq('user_id', userId);
 
       if (error) throw error;
     },
@@ -113,11 +113,11 @@ export const useCreateSpace = () => {
   
   return useMutation({
     mutationFn: async (spaceData: any) => {
-      const { data, error } = await (supabase
+      const { data, error } = await supabaseClient
         .from('spaces')
         .insert(spaceData)
         .select()
-        .single() as any);
+        .single();
 
       if (error) throw error;
       return data;
@@ -138,10 +138,10 @@ export const useUpdateSpace = () => {
   
   return useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: any }) => {
-      const { error } = await (supabase
+      const { error } = await supabaseClient
         .from('spaces')
         .update(updates)
-        .eq('id', id) as any);
+        .eq('id', id);
 
       if (error) throw error;
     },

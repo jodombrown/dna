@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useCreateSpace } from '@/hooks/useSpaceMutations';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
@@ -40,15 +40,15 @@ export default function CreateSpace() {
     // Check profile strength
     setIsCheckingProfile(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) {
         toast.error('Please log in to create a space');
         return;
       }
 
       // Get profile strength
-      const { data: strengthData, error: strengthError } = await (supabase
-        .rpc('calculate_profile_strength', { user_id: user.id }) as any);
+      const { data: strengthData, error: strengthError } = await supabaseClient
+        .rpc('calculate_profile_strength', { user_id: user.id });
 
       if (strengthError) throw strengthError;
 

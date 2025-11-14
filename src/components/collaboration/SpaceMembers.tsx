@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +15,7 @@ export function SpaceMembers({ spaceId, canManage }: SpaceMembersProps) {
   const { data: members, isLoading } = useQuery({
     queryKey: ['space-members', spaceId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('collaboration_memberships')
         .select(`
           id,
@@ -34,7 +34,7 @@ export function SpaceMembers({ spaceId, canManage }: SpaceMembersProps) {
       if (!data || data.length === 0) return [];
       
       const userIds = data.map(m => m.user_id);
-      const { data: profiles } = await supabase
+      const { data: profiles } = await supabaseClient
         .from('profiles')
         .select('id, full_name, username, avatar_url, headline')
         .in('id', userIds);

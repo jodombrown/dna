@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Space, SpaceWithMembership, SpaceMemberRole } from '@/types/spaceTypes';
 
 export const usePublicSpaces = () => {
   return useQuery({
     queryKey: ['public-spaces'],
     queryFn: async () => {
-      const { data, error } = await (supabase
+      const { data, error } = await supabaseClient
         .from('spaces')
         .select('*')
         .eq('visibility', 'public')
-        .order('created_at', { ascending: false }) as any);
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data as Space[];
@@ -22,14 +22,14 @@ export const useMySpaces = () => {
   return useQuery({
     queryKey: ['my-spaces'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
       // Get spaces where user is a member
-      const { data: memberships, error: membershipsError } = await (supabase
+      const { data: memberships, error: membershipsError } = await supabaseClient
         .from('space_members')
         .select('space_id, role')
-        .eq('user_id', user.id) as any);
+        .eq('user_id', user.id);
 
       if (membershipsError) throw membershipsError;
 
@@ -39,10 +39,10 @@ export const useMySpaces = () => {
 
       // Get the actual space data
       const spaceIds = memberships.map((m: any) => m.space_id);
-      const { data: spaces, error: spacesError } = await (supabase
+      const { data: spaces, error: spacesError } = await supabaseClient
         .from('spaces')
         .select('*')
-        .in('id', spaceIds) as any);
+        .in('id', spaceIds);
 
       if (spacesError) throw spacesError;
 
@@ -68,11 +68,11 @@ export const useSpaceBySlug = (slug: string) => {
   return useQuery({
     queryKey: ['space', slug],
     queryFn: async () => {
-      const { data, error } = await (supabase
+      const { data, error } = await supabaseClient
         .from('spaces')
         .select('*')
         .eq('slug', slug)
-        .single() as any);
+        .single();
 
       if (error) throw error;
       return data as Space;
