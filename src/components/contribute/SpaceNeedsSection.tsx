@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, DollarSign, Users, Clock, Key, Package } from 'lucide-react';
+import { Plus, DollarSign, Users, Clock, Key, Package, HandHeart, CheckCircle2 } from 'lucide-react';
 import NeedFormDialog from './NeedFormDialog';
+import { useSpaceContributeStats } from '@/hooks/useContributeStats';
 import type { ContributionNeed } from '@/types/contributeTypes';
 
 const typeIcons = {
@@ -24,6 +25,7 @@ interface SpaceNeedsSectionProps {
 
 const SpaceNeedsSection = ({ spaceId, isLead }: SpaceNeedsSectionProps) => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const { data: stats } = useSpaceContributeStats(spaceId);
 
   const { data: needs, isLoading } = useQuery({
     queryKey: ['space-needs', spaceId],
@@ -52,6 +54,51 @@ const SpaceNeedsSection = ({ spaceId, isLead }: SpaceNeedsSectionProps) => {
 
   return (
     <>
+      {/* Stats section for Leads */}
+      {isLead && stats && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Plus className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{stats.open_needs}</p>
+                  <p className="text-sm text-muted-foreground">Open Needs</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <HandHeart className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{stats.offers_last_90_days}</p>
+                  <p className="text-sm text-muted-foreground">Offers (90 days)</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{stats.validated_contributions}</p>
+                  <p className="text-sm text-muted-foreground">Validated</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -107,16 +154,24 @@ const SpaceNeedsSection = ({ spaceId, isLead }: SpaceNeedsSectionProps) => {
               })}
             </div>
           ) : (
-            <div className="text-center py-8">
-              <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <div className="text-center py-12">
+              <HandHeart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No needs yet</h3>
               <p className="text-muted-foreground mb-4">
-                {isLead ? "You haven't posted any needs yet" : "This space hasn't posted any needs yet"}
+                {isLead 
+                  ? "Start by posting what your space needs to succeed" 
+                  : "This space hasn't posted any needs yet"}
               </p>
               {isLead && (
                 <Button onClick={() => setIsCreateOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Add First Need
                 </Button>
+              )}
+              {!isLead && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  Check back later or explore other spaces looking for support
+                </p>
               )}
             </div>
           )}

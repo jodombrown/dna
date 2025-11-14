@@ -66,4 +66,24 @@ export interface ContributionOfferWithDetails extends ContributionOffer {
     username: string;
     avatar_url?: string;
   };
+  badge?: ContributionBadge;
+}
+
+export interface ContributionBadge {
+  id: string;
+  user_id: string;
+  space_id: string;
+  need_id: string;
+  offer_id: string;
+  type: ContributionNeedType;
+  validated_by: string | null;
+  validated_at: string;
+  points?: number;
+  note?: string;
+}
+
+export interface ContributeStats {
+  open_needs: number;
+  offers_last_90_days: number;
+  validated_contributions: number;
 }
