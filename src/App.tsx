@@ -69,6 +69,8 @@ import EventsIndex from "./pages/dna/convene/EventsIndex";
 import EventDetail from "./pages/dna/convene/EventDetail";
 import CreateEvent from "./pages/dna/convene/CreateEvent";
 import MyEvents from "./pages/dna/convene/MyEvents";
+import EventAnalytics from "./pages/dna/convene/EventAnalytics";
+import OrganizerAnalytics from "./pages/dna/convene/OrganizerAnalytics";
 import GroupsBrowse from "./pages/dna/convene/GroupsBrowse";
 import GroupEventsPage from "./pages/dna/convene/GroupEventsPage";
 
@@ -222,9 +224,19 @@ function App() {
                 </OnboardingGuard>
               } />
               <Route path="/dna/convene/events/:id/edit" element={<EditEventPage />} />
+              <Route path="/dna/convene/events/:id/analytics" element={
+                <OnboardingGuard>
+                  <EventAnalytics />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/convene/my-events" element={
                 <OnboardingGuard>
                   <MyEvents />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/convene/analytics" element={
+                <OnboardingGuard>
+                  <OrganizerAnalytics />
                 </OnboardingGuard>
               } />
               <Route path="/dna/convene/groups" element={
