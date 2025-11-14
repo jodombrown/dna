@@ -1,0 +1,250 @@
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ConveyItemType, ConveyItemVisibility, ConveyItemStatus } from '@/types/conveyTypes';
+import { Loader2 } from 'lucide-react';
+
+interface ConveyItemFormData {
+  type: ConveyItemType;
+  title: string;
+  subtitle: string;
+  body: string;
+  visibility: ConveyItemVisibility;
+  region: string;
+}
+
+interface ConveyItemFormProps {
+  initialData?: Partial<ConveyItemFormData>;
+  spaceId?: string;
+  spaceName?: string;
+  spaceVisibility?: 'public' | 'invite_only';
+  eventId?: string;
+  eventTitle?: string;
+  isAdmin?: boolean;
+  onSubmit: (data: ConveyItemFormData & { status: ConveyItemStatus }) => Promise<void>;
+  onCancel: () => void;
+  isLoading?: boolean;
+}
+
+export function ConveyItemForm({
+  initialData,
+  spaceId,
+  spaceName,
+  spaceVisibility,
+  eventId,
+  eventTitle,
+  isAdmin = false,
+  onSubmit,
+  onCancel,
+  isLoading = false,
+}: ConveyItemFormProps) {
+  const [savingAs, setSavingAs] = useState<ConveyItemStatus | null>(null);
+
+  const defaultVisibility = spaceId && spaceVisibility === 'invite_only'
+    ? 'space_members_only'
+    : 'public';
+
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<ConveyItemFormData>({
+    defaultValues: {
+      type: initialData?.type || 'update',
+      title: initialData?.title || '',
+      subtitle: initialData?.subtitle || '',
+      body: initialData?.body || '',
+      visibility: initialData?.visibility || defaultVisibility,
+      region: initialData?.region || '',
+    },
+  });
+
+  const selectedType = watch('type');
+  const selectedVisibility = watch('visibility');
+
+  const handleFormSubmit = async (data: ConveyItemFormData, status: ConveyItemStatus) => {
+    setSavingAs(status);
+    try {
+      await onSubmit({ ...data, status });
+    } finally {
+      setSavingAs(null);
+    }
+  };
+
+  return (
+    <form className="space-y-6">
+      {/* Type Selection */}
+      <div className="space-y-2">
+        <Label>Content Type</Label>
+        <RadioGroup
+          value={selectedType}
+          onValueChange={(value) => setValue('type', value as ConveyItemType)}
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="update" id="type-update" />
+            <Label htmlFor="type-update" className="cursor-pointer font-normal">
+              Update – Share progress, milestones, or news
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="story" id="type-story" />
+            <Label htmlFor="type-story" className="cursor-pointer font-normal">
+              Story – Tell a deeper narrative or impact story
+            </Label>
+          </div>
+        </RadioGroup>
+      </div>
+
+      {/* Title */}
+      <div className="space-y-2">
+        <Label htmlFor="title">Title *</Label>
+        <Input
+          id="title"
+          {...register('title', { required: 'Title is required' })}
+          placeholder="Give your story a clear title"
+        />
+        {errors.title && (
+          <p className="text-sm text-destructive">{errors.title.message}</p>
+        )}
+      </div>
+
+      {/* Subtitle */}
+      <div className="space-y-2">
+        <Label htmlFor="subtitle">Subtitle (optional)</Label>
+        <Input
+          id="subtitle"
+          {...register('subtitle')}
+          placeholder="Add a brief subtitle or tagline"
+        />
+      </div>
+
+      {/* Body */}
+      <div className="space-y-2">
+        <Label htmlFor="body">Story *</Label>
+        <Textarea
+          id="body"
+          {...register('body', { required: 'Story content is required' })}
+          placeholder="Share your story... (supports markdown formatting)"
+          className="min-h-[300px]"
+        />
+        {errors.body && (
+          <p className="text-sm text-destructive">{errors.body.message}</p>
+        )}
+        <p className="text-sm text-muted-foreground">
+          Use markdown for formatting: **bold**, *italic*, links, etc.
+        </p>
+      </div>
+
+      {/* Visibility */}
+      <div className="space-y-2">
+        <Label htmlFor="visibility">Visibility *</Label>
+        <Select
+          value={selectedVisibility}
+          onValueChange={(value) => setValue('visibility', value as ConveyItemVisibility)}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="public">
+              Public – Anyone can see this story
+            </SelectItem>
+            <SelectItem value="members_only">
+              Members only – All DNA members can see this
+            </SelectItem>
+            {spaceId && (
+              <SelectItem value="space_members_only">
+                Space members only – Only members of this space
+              </SelectItem>
+            )}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Region */}
+      <div className="space-y-2">
+        <Label htmlFor="region">Region (optional)</Label>
+        <Select
+          value={watch('region')}
+          onValueChange={(value) => setValue('region', value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a region" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">No specific region</SelectItem>
+            <SelectItem value="East Africa">East Africa</SelectItem>
+            <SelectItem value="West Africa">West Africa</SelectItem>
+            <SelectItem value="Southern Africa">Southern Africa</SelectItem>
+            <SelectItem value="Central Africa">Central Africa</SelectItem>
+            <SelectItem value="North Africa">North Africa</SelectItem>
+            <SelectItem value="Diaspora - North America">Diaspora - North America</SelectItem>
+            <SelectItem value="Diaspora - Europe">Diaspora - Europe</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Linked Space (read-only if set) */}
+      {spaceId && spaceName && (
+        <div className="space-y-2">
+          <Label>Linked to Space</Label>
+          <div className="bg-muted/50 border border-border rounded-lg p-3">
+            <p className="font-medium">{spaceName}</p>
+            <p className="text-sm text-muted-foreground">
+              This story will appear in this space's updates section
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Linked Event (read-only if set) */}
+      {eventId && eventTitle && (
+        <div className="space-y-2">
+          <Label>Linked to Event</Label>
+          <div className="bg-muted/50 border border-border rounded-lg p-3">
+            <p className="font-medium">{eventTitle}</p>
+            <p className="text-sm text-muted-foreground">
+              This story will appear on the event page
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex gap-3 pt-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={isLoading}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleSubmit((data) => handleFormSubmit(data, 'draft'))}
+          disabled={isLoading}
+        >
+          {savingAs === 'draft' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Save draft
+        </Button>
+        <Button
+          type="button"
+          onClick={handleSubmit((data) => handleFormSubmit(data, 'published'))}
+          disabled={isLoading}
+        >
+          {savingAs === 'published' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Publish
+        </Button>
+      </div>
+    </form>
+  );
+}

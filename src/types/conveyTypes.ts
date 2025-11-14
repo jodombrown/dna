@@ -29,12 +29,20 @@ export interface ConveyItemWithDetails extends ConveyItem {
     id: string;
     full_name: string;
     avatar_url: string | null;
+    region?: string | null;
   };
   primary_space?: {
     id: string;
     name: string;
     tagline: string | null;
     slug: string;
+    region?: string | null;
+  };
+  primary_event?: {
+    id: string;
+    title: string;
+    start_time: string;
+    format: string;
   };
 }
 
