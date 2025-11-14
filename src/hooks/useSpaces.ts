@@ -6,11 +6,11 @@ export const usePublicSpaces = () => {
   return useQuery({
     queryKey: ['public-spaces'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase
         .from('spaces')
         .select('*')
         .eq('visibility', 'public')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }) as any);
 
       if (error) throw error;
       return data as Space[];
@@ -26,10 +26,10 @@ export const useMySpaces = () => {
       if (!user) throw new Error('Not authenticated');
 
       // Get spaces where user is a member
-      const { data: memberships, error: membershipsError } = await supabase
+      const { data: memberships, error: membershipsError } = await (supabase
         .from('space_members')
         .select('space_id, role')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id) as any);
 
       if (membershipsError) throw membershipsError;
 
@@ -38,20 +38,20 @@ export const useMySpaces = () => {
       }
 
       // Get the actual space data
-      const spaceIds = memberships.map(m => m.space_id);
-      const { data: spaces, error: spacesError } = await supabase
+      const spaceIds = memberships.map((m: any) => m.space_id);
+      const { data: spaces, error: spacesError } = await (supabase
         .from('spaces')
         .select('*')
-        .in('id', spaceIds) as { data: Space[] | null; error: any };
+        .in('id', spaceIds) as any);
 
       if (spacesError) throw spacesError;
 
       // Merge membership data with space data
-      const spacesWithRoles: SpaceWithMembership[] = (spaces || []).map(space => {
-        const membership = memberships.find(m => m.space_id === space.id);
+      const spacesWithRoles: SpaceWithMembership[] = (spaces || []).map((space: any) => {
+        const membership = memberships.find((m: any) => m.space_id === space.id);
         return {
           ...space,
-          user_role: membership?.role as SpaceMemberRole | undefined,
+          user_role: (membership?.role as SpaceMemberRole) || undefined,
         };
       });
 
@@ -68,11 +68,11 @@ export const useSpaceBySlug = (slug: string) => {
   return useQuery({
     queryKey: ['space', slug],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase
         .from('spaces')
         .select('*')
         .eq('slug', slug)
-        .single();
+        .single() as any);
 
       if (error) throw error;
       return data as Space;

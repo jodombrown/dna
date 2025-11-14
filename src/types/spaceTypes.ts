@@ -17,6 +17,7 @@ export interface Space {
   created_by: string;
   origin_event_id?: string;
   origin_group_id?: string;
+  external_link?: string;
   created_at: string;
   updated_at: string;
 }
