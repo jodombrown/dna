@@ -12,6 +12,7 @@ import { SpaceMembers } from '@/components/collaboration/SpaceMembers';
 import { SpaceTasks } from '@/components/collaboration/SpaceTasks';
 import { SpaceUpdates } from '@/components/collaboration/SpaceUpdates';
 import { SpaceInsights } from '@/components/collaboration/SpaceInsights';
+import SpaceNeedsSection from '@/components/contribute/SpaceNeedsSection';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Loader2, Settings, ExternalLink, ArrowLeft, Users, BarChart } from 'lucide-react';
 import { toast } from 'sonner';
@@ -264,10 +265,11 @@ export default function SpaceDetail() {
         {/* Tabbed Content */}
         {isMember && (
           <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="tasks">Tasks</TabsTrigger>
               <TabsTrigger value="updates">Updates</TabsTrigger>
+              <TabsTrigger value="contribute">Contribute</TabsTrigger>
               {isLead && <TabsTrigger value="insights">Insights</TabsTrigger>}
             </TabsList>
 
@@ -316,6 +318,10 @@ export default function SpaceDetail() {
                   <SpaceUpdates spaceId={space.id} canEdit={isLead} />
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="contribute">
+              <SpaceNeedsSection spaceId={space.id} isLead={isLead} />
             </TabsContent>
 
             {isLead && (
