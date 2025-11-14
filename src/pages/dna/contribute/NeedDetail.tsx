@@ -13,6 +13,7 @@ import { useState } from 'react';
 import NeedFormDialog from '@/components/contribute/NeedFormDialog';
 import OfferFormDialog from '@/components/contribute/OfferFormDialog';
 import NeedOffersSection from '@/components/contribute/NeedOffersSection';
+import { ImpactStoryCTA } from '@/components/contribute/ImpactStoryCTA';
 
 const typeIcons = {
   funding: DollarSign,
@@ -34,13 +35,16 @@ const NeedDetail = () => {
         .from('contribution_needs')
         .select(`
           *,
-          space:spaces(id, name, slug, tagline, description, focus_areas, region, status)
+          space:spaces(id, name, slug, tagline, description, focus_areas, region, status),
+          badges:contribution_badges(count)
         `)
         .eq('id', id)
         .single();
 
       if (error) throw error;
-      return data as ContributionNeedWithSpace;
+      return data as ContributionNeedWithSpace & {
+        badges: { count: number }[];
+      };
     },
   });
 
@@ -65,6 +69,8 @@ const NeedDetail = () => {
   });
 
   const isLead = userRole === 'lead';
+  const badgeCount = need?.badges?.[0]?.count || 0;
+  const isFulfilledOrValidated = need && (need.status === 'fulfilled' || badgeCount > 0);
   const Icon = need ? typeIcons[need.type] : Package;
 
   if (isLoading) {
