@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
 import { useCreateNeed } from '@/hooks/useContributionMutations';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
 import type { ContributionNeed, ContributionNeedType, ContributionNeedPriority } from '@/types/contributeTypes';
 
 interface NeedFormDialogProps {
@@ -18,7 +16,6 @@ interface NeedFormDialogProps {
 }
 
 const NeedFormDialog = ({ isOpen, onClose, spaceId, existingNeed }: NeedFormDialogProps) => {
-  const { toast } = useToast();
   const createMutation = useCreateNeed();
   
   const [formData, setFormData] = useState({
@@ -195,7 +192,7 @@ const NeedFormDialog = ({ isOpen, onClose, spaceId, existingNeed }: NeedFormDial
               Cancel
             </Button>
             <Button type="submit" disabled={createMutation.isPending}>
-              {mutation.isPending ? 'Saving...' : existingNeed ? 'Update Need' : 'Create Need'}
+              {createMutation.isPending ? 'Saving...' : existingNeed ? 'Update Need' : 'Create Need'}
             </Button>
           </div>
         </form>

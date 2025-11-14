@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
 import { useCreateOffer } from '@/hooks/useContributionMutations';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { InfoIcon } from 'lucide-react';
 import type { ContributionNeedType } from '@/types/contributeTypes';
@@ -21,7 +19,6 @@ interface OfferFormDialogProps {
 }
 
 const OfferFormDialog = ({ isOpen, onClose, needId, spaceId, needType }: OfferFormDialogProps) => {
-  const { toast } = useToast();
   const createOfferMutation = useCreateOffer();
 
   const [formData, setFormData] = useState({
@@ -32,14 +29,6 @@ const OfferFormDialog = ({ isOpen, onClose, needId, spaceId, needType }: OfferFo
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.message.trim()) {
-      toast({
-        title: 'Message required',
-        description: 'Please provide a message with your offer',
-        variant: 'destructive',
-      });
-      return;
-    }
     createOfferMutation.mutate({
       needId,
       spaceId,

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Link } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
@@ -27,7 +27,7 @@ const NeedsIndex = () => {
   const { data: needs, isLoading } = useQuery({
     queryKey: ['contribution-needs', typeFilter, statusFilter, sortBy],
     queryFn: async () => {
-      let query = supabase
+      let query = supabaseClient
         .from('contribution_needs')
         .select(`
           *,

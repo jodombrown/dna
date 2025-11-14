@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import { useUpdateOfferStatus } from '@/hooks/useContributionMutations';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useUpdateOfferStatus } from '@/hooks/useContributionMutations';
 import { HandHeart } from 'lucide-react';
 import type { ContributionOfferWithDetails, ContributionOfferStatus } from '@/types/contributeTypes';
 
@@ -24,7 +24,7 @@ const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) 
   const { data: offers, isLoading } = useQuery({
     queryKey: ['need-offers', needId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('contribution_offers')
         .select(`
           *,
@@ -42,7 +42,7 @@ const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) 
   const { data: offerCount } = useQuery({
     queryKey: ['need-offer-count', needId],
     queryFn: async () => {
-      const { count, error } = await supabase
+      const { count, error } = await supabaseClient
         .from('contribution_offers')
         .select('*', { count: 'exact', head: true })
         .eq('need_id', needId);
@@ -141,10 +141,14 @@ const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) 
                     
                     <Select
                       value={offer.status}
-                      onValueChange={(value) => updateStatusMutation.mutate({
-                        offerId: offer.id,
-                        status: value as ContributionOfferStatus
-                      })}
+                      onValueChange={(value) => {
+                        if (value !== 'pending') {
+                          updateStatusMutation.mutate({
+                            offerId: offer.id,
+                            status: value as 'accepted' | 'declined' | 'completed'
+                          });
+                        }
+                      }}
                     >
                       <SelectTrigger className="w-[160px]">
                         <SelectValue />

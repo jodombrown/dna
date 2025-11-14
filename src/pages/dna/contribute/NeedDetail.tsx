@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -30,7 +30,7 @@ const NeedDetail = () => {
   const { data: need, isLoading } = useQuery({
     queryKey: ['contribution-need', id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('contribution_needs')
         .select(`
           *,
@@ -49,10 +49,10 @@ const NeedDetail = () => {
     queryFn: async () => {
       if (!need?.space_id) return null;
       
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) return null;
 
-      const { data } = await supabase
+      const { data } = await supabaseClient
         .from('space_members')
         .select('role')
         .eq('space_id', need.space_id)
