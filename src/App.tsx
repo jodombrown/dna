@@ -89,9 +89,10 @@ import NeedsIndex from "./pages/dna/contribute/NeedsIndex";
 import NeedDetail from "./pages/dna/contribute/NeedDetail";
 import MyContributions from "./pages/dna/contribute/MyContributions";
 
-// Convey M1 pages
+// Convey M1-M2 pages
 import Convey from "./pages/dna/Convey";
 import StoryDetail from "./pages/dna/convey/StoryDetail";
+import CreateStory from "./pages/dna/convey/CreateStory";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -327,10 +328,15 @@ function App() {
                 </OnboardingGuard>
               } />
               
-              {/* CONVEY M1 - Story Feed & Details */}
+              {/* CONVEY M1-M2 - Story Feed, Details & Authoring */}
               <Route path="/dna/convey" element={
                 <OnboardingGuard>
                   <Convey />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/convey/new" element={
+                <OnboardingGuard>
+                  <CreateStory />
                 </OnboardingGuard>
               } />
               <Route path="/dna/convey/stories/:slug" element={

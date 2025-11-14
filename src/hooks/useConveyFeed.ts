@@ -92,6 +92,83 @@ export function useConveyFeed(options: UseConveyFeedOptions = {}) {
   });
 }
 
+export function useSpaceConveyItems(
+  spaceId: string | undefined,
+  options: { type?: string; limit?: number; offset?: number } = {}
+) {
+  const { type, limit = 20, offset = 0 } = options;
+
+  return useQuery({
+    queryKey: ['space-convey-items', spaceId, { type, limit, offset }],
+    queryFn: async () => {
+      if (!spaceId) return [];
+
+      let query = supabaseClient
+        .from('convey_items')
+        .select(`
+          *,
+          author:profiles!convey_items_author_id_fkey(
+            id,
+            full_name,
+            avatar_url
+          )
+        `)
+        .eq('status', 'published')
+        .eq('primary_space_id', spaceId)
+        .order('published_at', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false });
+
+      if (type) {
+        query = query.eq('type', type);
+      }
+
+      query = query.range(offset, offset + limit - 1);
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      return (data || []) as ConveyItemWithDetails[];
+    },
+    enabled: !!spaceId,
+  });
+}
+
+export function useEventConveyItems(
+  eventId: string | undefined,
+  options: { limit?: number } = {}
+) {
+  const { limit = 5 } = options;
+
+  return useQuery({
+    queryKey: ['event-convey-items', eventId, { limit }],
+    queryFn: async () => {
+      if (!eventId) return [];
+
+      const { data, error } = await supabaseClient
+        .from('convey_items')
+        .select(`
+          *,
+          author:profiles!convey_items_author_id_fkey(
+            id,
+            full_name,
+            avatar_url
+          )
+        `)
+        .eq('status', 'published')
+        .eq('primary_event_id', eventId)
+        .order('published_at', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+
+      return (data || []) as ConveyItemWithDetails[];
+    },
+    enabled: !!eventId,
+  });
+}
+
 export function useConveyItemBySlug(slug: string | undefined) {
   return useQuery({
     queryKey: ['convey-item', slug],
@@ -105,13 +182,21 @@ export function useConveyItemBySlug(slug: string | undefined) {
           author:profiles!convey_items_author_id_fkey(
             id,
             full_name,
-            avatar_url
+            avatar_url,
+            region
           ),
           primary_space:spaces!convey_items_primary_space_id_fkey(
             id,
             name,
             tagline,
-            slug
+            slug,
+            region
+          ),
+          primary_event:events!convey_items_primary_event_id_fkey(
+            id,
+            title,
+            start_time,
+            format
           )
         `)
         .eq('slug', slug)
