@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useCreateOffer } from '@/hooks/useContributionMutations';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -22,55 +22,12 @@ interface OfferFormDialogProps {
 
 const OfferFormDialog = ({ isOpen, onClose, needId, spaceId, needType }: OfferFormDialogProps) => {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const createOfferMutation = useCreateOffer();
 
   const [formData, setFormData] = useState({
     message: '',
     offered_amount: '',
     offered_currency: 'USD',
-  });
-
-  const mutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
-
-      const payload: any = {
-        need_id: needId,
-        space_id: spaceId,
-        created_by: user.id,
-        message: data.message,
-      };
-
-      if (needType === 'funding' && data.offered_amount) {
-        payload.offered_amount = parseFloat(data.offered_amount);
-        payload.offered_currency = data.offered_currency;
-      }
-
-      const { error } = await supabase
-        .from('contribution_offers')
-        .insert([payload]);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast({
-        title: 'Offer submitted',
-        description: 'Your offer has been sent to the project leads for review',
-      });
-      queryClient.invalidateQueries({ queryKey: ['contribution-need'] });
-      queryClient.invalidateQueries({ queryKey: ['need-offers'] });
-      queryClient.invalidateQueries({ queryKey: ['my-offers'] });
-      setFormData({ message: '', offered_amount: '', offered_currency: 'USD' });
-      onClose();
-    },
-    onError: (error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -83,7 +40,13 @@ const OfferFormDialog = ({ isOpen, onClose, needId, spaceId, needType }: OfferFo
       });
       return;
     }
-    mutation.mutate(formData);
+    createOfferMutation.mutate({
+      needId,
+      spaceId,
+      message: formData.message,
+      offeredAmount: formData.offered_amount ? parseFloat(formData.offered_amount) : undefined,
+      offeredCurrency: formData.offered_currency,
+    });
   };
 
   const getPlaceholder = () => {
@@ -180,8 +143,8 @@ const OfferFormDialog = ({ isOpen, onClose, needId, spaceId, needType }: OfferFo
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? 'Submitting...' : 'Submit Offer'}
+            <Button type="submit" disabled={createOfferMutation.isPending}>
+              {createOfferMutation.isPending ? 'Submitting...' : 'Submit Offer'}
             </Button>
           </div>
         </form>

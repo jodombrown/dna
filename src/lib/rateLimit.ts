@@ -35,6 +35,10 @@ const RATE_LIMIT_CONFIGS: Record<string, RateLimitConfig> = {
   
   // Likes
   'like_post': { maxRequests: 100, windowMs: 60 * 60 * 1000 }, // 100 per hour
+  
+  // Contributions
+  'create_contribution_need': { maxRequests: 5, windowMs: 24 * 60 * 60 * 1000 }, // 5 per day per space
+  'create_contribution_offer': { maxRequests: 20, windowMs: 24 * 60 * 60 * 1000 }, // 20 per day
 };
 
 export function checkRateLimit(userId: string, action: keyof typeof RATE_LIMIT_CONFIGS): {

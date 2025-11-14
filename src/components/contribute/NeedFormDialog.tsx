@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useCreateNeed } from '@/hooks/useContributionMutations';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,7 +19,7 @@ interface NeedFormDialogProps {
 
 const NeedFormDialog = ({ isOpen, onClose, spaceId, existingNeed }: NeedFormDialogProps) => {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const createMutation = useCreateNeed();
   
   const [formData, setFormData] = useState({
     type: existingNeed?.type || 'funding' as ContributionNeedType,
@@ -33,64 +33,20 @@ const NeedFormDialog = ({ isOpen, onClose, spaceId, existingNeed }: NeedFormDial
     needed_by: existingNeed?.needed_by || '',
   });
 
-  const mutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
-
-      const payload: any = {
-        space_id: spaceId,
-        created_by: user.id,
-        type: data.type,
-        title: data.title,
-        description: data.description,
-        priority: data.priority,
-        needed_by: data.needed_by || null,
-      };
-
-      if (data.type === 'funding') {
-        payload.target_amount = data.target_amount ? parseFloat(data.target_amount) : null;
-        payload.currency = data.currency;
-      } else if (data.type === 'skills' || data.type === 'time') {
-        payload.time_commitment = data.time_commitment;
-        payload.duration = data.duration;
-      }
-
-      if (existingNeed) {
-        const { error } = await supabase
-          .from('contribution_needs')
-          .update(payload)
-          .eq('id', existingNeed.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('contribution_needs')
-          .insert([payload]);
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      toast({
-        title: existingNeed ? 'Need updated' : 'Need created',
-        description: existingNeed ? 'Your need has been updated successfully' : 'Your need has been posted successfully',
-      });
-      queryClient.invalidateQueries({ queryKey: ['contribution-needs'] });
-      queryClient.invalidateQueries({ queryKey: ['space-needs'] });
-      queryClient.invalidateQueries({ queryKey: ['contribution-need'] });
-      onClose();
-    },
-    onError: (error) => {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate(formData);
+    createMutation.mutate({
+      spaceId,
+      type: formData.type,
+      title: formData.title,
+      description: formData.description,
+      priority: formData.priority,
+      targetAmount: formData.target_amount ? parseFloat(formData.target_amount) : undefined,
+      currency: formData.currency,
+      timeCommitment: formData.time_commitment,
+      duration: formData.duration,
+      neededBy: formData.needed_by,
+    });
   };
 
   return (
@@ -238,7 +194,7 @@ const NeedFormDialog = ({ isOpen, onClose, spaceId, existingNeed }: NeedFormDial
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={mutation.isPending}>
+            <Button type="submit" disabled={createMutation.isPending}>
               {mutation.isPending ? 'Saving...' : existingNeed ? 'Update Need' : 'Create Need'}
             </Button>
           </div>
