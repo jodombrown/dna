@@ -8,6 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useSpaceBySlug } from '@/hooks/useSpaces';
 import { useJoinSpace, useLeaveSpace } from '@/hooks/useSpaceMutations';
 import { SpaceMembers } from '@/components/collaboration/SpaceMembers';
+import { SpaceTasks } from '@/components/collaboration/SpaceTasks';
+import { SpaceUpdates } from '@/components/collaboration/SpaceUpdates';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Loader2, Settings, ExternalLink, ArrowLeft, Users } from 'lucide-react';
 import { toast } from 'sonner';
@@ -272,13 +274,26 @@ export default function SpaceDetail() {
           </Card>
         )}
 
-        {/* Placeholder for future features */}
+        {/* Tasks Section */}
         {isMember && (
-          <Card className="border-dashed">
-            <CardContent className="pt-12 pb-12 text-center">
-              <p className="text-sm text-muted-foreground">
-                Tasks, updates, and collaboration tools coming in M3
-              </p>
+          <Card>
+            <CardHeader>
+              <CardTitle>Tasks</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SpaceTasks spaceId={space.id} canEdit={isLead} />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Updates Section */}
+        {isMember && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Updates</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SpaceUpdates spaceId={space.id} canEdit={isLead} />
             </CardContent>
           </Card>
         )}
