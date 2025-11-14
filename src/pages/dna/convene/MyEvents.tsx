@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, Users, MapPin, Edit, Eye } from 'lucide-react';
+import { Calendar, Users, MapPin, Edit, Eye, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -138,15 +138,27 @@ const MyEvents = () => {
                 <Eye className="h-4 w-4 mr-2" />
                 View
               </Button>
-              {isHost && !isPast && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate(`/dna/convene/events/${event.id}/edit`)}
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
+              {isHost && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/dna/convene/events/${event.id}/analytics`)}
+                  >
+                    <BarChart3 className="h-4 w-4 mr-2" />
+                    Analytics
+                  </Button>
+                  {!isPast && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/dna/convene/events/${event.id}/edit`)}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -158,11 +170,17 @@ const MyEvents = () => {
   return (
     <FeedLayout>
       <div className="container max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">My Events</h1>
-          <p className="text-muted-foreground text-lg">
-            Manage events you're hosting and attending
-          </p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">My Events</h1>
+            <p className="text-muted-foreground text-lg">
+              Manage events you're hosting and attending
+            </p>
+          </div>
+          <Button onClick={() => navigate('/dna/convene/analytics')}>
+            <BarChart3 className="h-4 w-4 mr-2" />
+            View Analytics Dashboard
+          </Button>
         </div>
 
         <Tabs defaultValue="hosting" className="space-y-6">
