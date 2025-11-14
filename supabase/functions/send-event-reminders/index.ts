@@ -280,7 +280,6 @@ serve(async (req) => {
         }
 
         console.log(`Sent ${emailsSent} email reminders for event ${event.id}`);
-      }
       } catch (eventError) {
         console.error(`Error processing event ${event.id}:`, eventError);
         errors.push(`Event ${event.id}: ${eventError instanceof Error ? eventError.message : 'Unknown error'}`);
