@@ -9,20 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { format } from 'date-fns';
-
-type GroupEvent = {
-  id: string;
-  title: string;
-  description: string;
-  event_type: string;
-  format: string;
-  location_city: string | null;
-  location_country: string | null;
-  start_time: string;
-  end_time: string;
-  max_attendees: number | null;
-  is_cancelled: boolean;
-};
+import { Event } from '@/types/events';
 
 export default function GroupEventsPage() {
   const { slug } = useParams();
@@ -45,23 +32,24 @@ export default function GroupEventsPage() {
   });
 
   // Fetch group events  
-  const { data: events = [], isLoading } = useQuery({
+  const { data: eventsData, isLoading } = useQuery({
     queryKey: ['group-events', group?.id],
     queryFn: async () => {
       if (!group?.id) return [];
       
-      // Use any to bypass TypeScript's deep type inference issue
-      const response: any = await (supabase as any)
+      const { data, error } = await supabase
         .from('events')
-        .select('id, title, description, event_type, format, location_city, location_country, start_time, end_time, max_attendees, is_cancelled')
+        .select('id, title, description, event_type, format, location_city, location_country, start_time, end_time, max_attendees, is_cancelled, cover_image_url')
         .eq('group_id', group.id)
         .order('start_time');
 
-      if (response.error) throw response.error;
-      return response.data || [];
+      if (error) throw error;
+      return data || [];
     },
     enabled: !!group?.id,
   });
+  
+  const events = (eventsData || []) as Event[];
 
   // Check if user is admin/moderator
   const { data: membership } = useQuery({
@@ -87,7 +75,7 @@ export default function GroupEventsPage() {
   const upcomingEvents = events.filter(e => new Date(e.start_time) > now && !e.is_cancelled);
   const pastEvents = events.filter(e => new Date(e.start_time) <= now || e.is_cancelled);
 
-  const EventCard = ({ event }: { event: GroupEvent }) => {
+  const EventCard = ({ event }: { event: Event }) => {
     const isPast = new Date(event.start_time) < now;
 
     return (
