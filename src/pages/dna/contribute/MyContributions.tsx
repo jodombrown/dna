@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Link } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
@@ -18,10 +18,10 @@ const MyContributions = () => {
   const { data: myOffers, isLoading: offersLoading } = useQuery({
     queryKey: ['my-offers', offerStatusFilter],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) return [];
 
-      let query = supabase
+      let query = supabaseClient
         .from('contribution_offers')
         .select(`
           *,
@@ -44,10 +44,10 @@ const MyContributions = () => {
   const { data: myNeeds, isLoading: needsLoading } = useQuery({
     queryKey: ['my-needs'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseClient.auth.getUser();
       if (!user) return [];
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('contribution_needs')
         .select(`
           *,

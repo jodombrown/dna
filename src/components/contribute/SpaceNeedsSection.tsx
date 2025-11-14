@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,7 @@ const SpaceNeedsSection = ({ spaceId, isLead }: SpaceNeedsSectionProps) => {
   const { data: needs, isLoading } = useQuery({
     queryKey: ['space-needs', spaceId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error} = await supabaseClient
         .from('contribution_needs')
         .select('*')
         .eq('space_id', spaceId)
