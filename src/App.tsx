@@ -83,10 +83,11 @@ import CreateSpace from "./pages/dna/collaborate/CreateSpace";
 import SpaceSettings from "./pages/dna/collaborate/SpaceSettings";
 import MySpaces from "./pages/dna/collaborate/MySpaces";
 
-// Contribute M1 pages
+// Contribute M1-M2 pages
 import ContributeHub from "./pages/dna/contribute/ContributeHub";
 import NeedsIndex from "./pages/dna/contribute/NeedsIndex";
 import NeedDetail from "./pages/dna/contribute/NeedDetail";
+import MyContributions from "./pages/dna/contribute/MyContributions";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -314,6 +315,11 @@ function App() {
               <Route path="/dna/contribute/needs/:id" element={
                 <OnboardingGuard>
                   <NeedDetail />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/contribute/my" element={
+                <OnboardingGuard>
+                  <MyContributions />
                 </OnboardingGuard>
               } />
               

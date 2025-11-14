@@ -31,4 +31,39 @@ export interface ContributionNeedWithSpace extends ContributionNeed {
     focus_areas?: string[];
     region?: string;
   };
+  offer_count?: number;
+}
+
+export type ContributionOfferStatus = 'pending' | 'accepted' | 'declined' | 'completed';
+
+export interface ContributionOffer {
+  id: string;
+  need_id: string;
+  space_id: string;
+  created_by: string;
+  message: string;
+  offered_amount?: number;
+  offered_currency?: string;
+  status: ContributionOfferStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ContributionOfferWithDetails extends ContributionOffer {
+  need?: {
+    id: string;
+    title: string;
+    type: ContributionNeedType;
+  };
+  space?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  contributor?: {
+    id: string;
+    full_name: string;
+    username: string;
+    avatar_url?: string;
+  };
 }
