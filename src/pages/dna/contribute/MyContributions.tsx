@@ -13,7 +13,7 @@ import { useState } from 'react';
 import type { ContributionOfferWithDetails, ContributionNeedWithSpace } from '@/types/contributeTypes';
 
 const MyContributions = () => {
-  const [offerStatusFilter, setOfferStatusFilter] = useState<'all' | 'pending' | 'accepted' | 'completed' | 'declined'>('all');
+  const [offerStatusFilter, setOfferStatusFilter] = useState<'all' | 'pending' | 'accepted' | 'completed' | 'validated' | 'declined'>('all');
 
   const { data: myOffers, isLoading: offersLoading } = useQuery({
     queryKey: ['my-offers', offerStatusFilter],
@@ -88,6 +88,14 @@ const MyContributions = () => {
 
           {/* As Contributor Tab */}
           <TabsContent value="contributor" className="space-y-6">
+            <div className="mb-6 p-4 bg-muted/50 rounded-lg border border-border">
+              <p className="text-sm text-muted-foreground">
+                This page helps you keep track of where you've raised your hand to support projects. 
+                <strong className="text-foreground"> Validation is an extra 'thank you' from project leads</strong> when 
+                they confirm something is complete – not a requirement to belong here.
+              </p>
+            </div>
+            
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -104,6 +112,7 @@ const MyContributions = () => {
                       <SelectItem value="pending">Pending</SelectItem>
                       <SelectItem value="accepted">Accepted</SelectItem>
                       <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="validated">Validated</SelectItem>
                       <SelectItem value="declined">Declined</SelectItem>
                     </SelectContent>
                   </Select>
@@ -125,12 +134,13 @@ const MyContributions = () => {
                                 <div className="flex items-center gap-2 mb-1">
                                   <CardTitle className="text-base">{offer.need?.title}</CardTitle>
                                   <Badge variant={
-                                    offer.status === 'accepted' ? 'default' :
+                                    offer.status === 'validated' ? 'default' :
                                     offer.status === 'completed' ? 'default' :
+                                    offer.status === 'accepted' ? 'default' :
                                     offer.status === 'declined' ? 'destructive' :
                                     'secondary'
                                   }>
-                                    {offer.status}
+                                    {offer.status === 'validated' ? 'Validated ✓' : offer.status}
                                   </Badge>
                                 </div>
                                 <CardDescription>

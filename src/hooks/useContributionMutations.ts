@@ -29,7 +29,7 @@ interface CreateOfferVariables {
 
 interface UpdateOfferStatusVariables {
   offerId: string;
-  status: 'accepted' | 'declined' | 'completed';
+  status: 'accepted' | 'declined' | 'completed' | 'validated';
 }
 
 export function useCreateNeed() {
