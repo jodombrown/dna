@@ -1,15 +1,91 @@
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useSpaceBySlug } from '@/hooks/useSpaces';
-import { Loader2 } from 'lucide-react';
+import { useJoinSpace, useLeaveSpace } from '@/hooks/useSpaceMutations';
+import { SpaceMembers } from '@/components/collaboration/SpaceMembers';
+import { supabase } from '@/integrations/supabase/client';
+import { Loader2, Settings, ExternalLink, ArrowLeft, Users } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function SpaceDetail() {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const { data: space, isLoading } = useSpaceBySlug(slug || '');
+  const joinSpace = useJoinSpace();
+  const leaveSpace = useLeaveSpace();
+  
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [membership, setMembership] = useState<any>(null);
+  const [creator, setCreator] = useState<any>(null);
+  const [membershipLoading, setMembershipLoading] = useState(true);
 
-  if (isLoading) {
+  useEffect(() => {
+    async function loadUserData() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+      }
+      setMembershipLoading(false);
+    }
+    loadUserData();
+  }, []);
+
+  useEffect(() => {
+    async function loadMembership() {
+      if (!space || !currentUserId) return;
+
+      const { data } = await (supabase
+        .from('space_members')
+        .select('*')
+        .eq('space_id', space.id)
+        .eq('user_id', currentUserId)
+        .single() as any);
+
+      setMembership(data);
+    }
+
+    async function loadCreator() {
+      if (!space) return;
+
+      const { data } = await (supabase
+        .from('profiles')
+        .select('id, full_name, username, avatar_url')
+        .eq('id', space.created_by)
+        .single() as any);
+
+      setCreator(data);
+    }
+
+    loadMembership();
+    loadCreator();
+  }, [space, currentUserId]);
+
+  const handleJoin = async () => {
+    if (!space || !currentUserId) return;
+    
+    await joinSpace.mutateAsync({ spaceId: space.id, userId: currentUserId });
+    window.location.reload();
+  };
+
+  const handleLeave = async () => {
+    if (!space || !currentUserId) return;
+    
+    if (window.confirm('Are you sure you want to leave this space?')) {
+      try {
+        await leaveSpace.mutateAsync({ spaceId: space.id, userId: currentUserId });
+        navigate('/dna/collaborate/my-spaces');
+      } catch (error: any) {
+        // Error is handled by the mutation
+      }
+    }
+  };
+
+  if (isLoading || membershipLoading) {
     return (
       <FeedLayout>
         <div className="flex items-center justify-center min-h-[50vh]">
@@ -33,10 +109,23 @@ export default function SpaceDetail() {
     );
   }
 
+  const isMember = !!membership;
+  const isLead = membership?.role === 'lead';
+
   return (
     <FeedLayout>
       <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
-        {/* Header */}
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/dna/collaborate/spaces')}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Spaces
+        </Button>
+
+        {/* Hero Section */}
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
@@ -45,7 +134,7 @@ export default function SpaceDetail() {
                 <p className="text-xl text-muted-foreground mt-2">{space.tagline}</p>
               )}
             </div>
-            <Badge variant={space.status === 'active' ? 'default' : 'secondary'} className="text-sm">
+            <Badge variant={space.status === 'active' ? 'default' : 'secondary'} className="text-sm shrink-0">
               {space.status}
             </Badge>
           </div>
@@ -61,19 +150,94 @@ export default function SpaceDetail() {
               <Badge variant="outline">📍 {space.region}</Badge>
             )}
           </div>
+
+          {/* Hosted By */}
+          {creator && (
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-muted-foreground">Hosted by:</span>
+              <Link to={`/profile/${creator.username}`} className="flex items-center gap-2 hover:underline">
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={creator.avatar_url || undefined} />
+                  <AvatarFallback>{creator.full_name?.[0]}</AvatarFallback>
+                </Avatar>
+                <span className="font-medium">{creator.full_name}</span>
+              </Link>
+            </div>
+          )}
+
+          {/* Primary Actions */}
+          <div className="flex gap-3">
+            {!isMember && currentUserId && (
+              <Button onClick={handleJoin} disabled={joinSpace.isPending}>
+                {joinSpace.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {space.visibility === 'invite_only' ? 'Request to Join' : 'Join Space'}
+              </Button>
+            )}
+            {isMember && !isLead && (
+              <Button variant="outline" onClick={handleLeave} disabled={leaveSpace.isPending}>
+                {leaveSpace.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Leave Space
+              </Button>
+            )}
+            {isLead && (
+              <Button onClick={() => navigate(`/dna/collaborate/spaces/${slug}/settings`)}>
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </Button>
+            )}
+          </div>
         </div>
 
-        {/* Description */}
-        {space.description && (
-          <Card>
-            <CardHeader>
-              <CardTitle>About</CardTitle>
-            </CardHeader>
-            <CardContent>
+        {/* Overview Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>About</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {space.description && (
               <p className="text-muted-foreground whitespace-pre-wrap">{space.description}</p>
-            </CardContent>
-          </Card>
-        )}
+            )}
+
+            {space.external_link && (
+              <div>
+                <h4 className="font-semibold mb-2">External Link</h4>
+                <a 
+                  href={space.external_link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  {space.external_link}
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            )}
+
+            {space.origin_event_id && (
+              <div>
+                <h4 className="font-semibold mb-2">Origin</h4>
+                <Link 
+                  to={`/dna/convene/events/${space.origin_event_id}`}
+                  className="text-primary hover:underline"
+                >
+                  View Origin Event →
+                </Link>
+              </div>
+            )}
+
+            {space.origin_group_id && (
+              <div>
+                <h4 className="font-semibold mb-2">Origin Group</h4>
+                <Link 
+                  to={`/dna/convene/groups/${space.origin_group_id}`}
+                  className="text-primary hover:underline"
+                >
+                  View Origin Group →
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Focus Areas */}
         {space.focus_areas && space.focus_areas.length > 0 && (
@@ -93,14 +257,31 @@ export default function SpaceDetail() {
           </Card>
         )}
 
-        {/* Placeholder for future sections */}
-        <Card className="border-dashed">
-          <CardContent className="pt-12 pb-12 text-center">
-            <p className="text-sm text-muted-foreground">
-              Full space details, tasks, and collaboration tools coming in M2
-            </p>
-          </CardContent>
-        </Card>
+        {/* Members Section */}
+        {(isMember || space.visibility === 'public') && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Members
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SpaceMembers spaceId={space.id} canManage={isLead} />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Placeholder for future features */}
+        {isMember && (
+          <Card className="border-dashed">
+            <CardContent className="pt-12 pb-12 text-center">
+              <p className="text-sm text-muted-foreground">
+                Tasks, updates, and collaboration tools coming in M3
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </FeedLayout>
   );
