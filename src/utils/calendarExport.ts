@@ -1,0 +1,198 @@
+import { createEvent, EventAttributes, DateArray } from 'ics';
+
+interface EventData {
+  id: string;
+  title: string;
+  description?: string;
+  start_time: string;
+  end_time: string;
+  location_name?: string;
+  location_address?: string;
+  location_city?: string;
+  location_country?: string;
+  meeting_url?: string;
+  format: 'in_person' | 'virtual' | 'hybrid';
+  organizer?: {
+    full_name: string;
+    email?: string;
+  };
+}
+
+/**
+ * Convert ISO date string to ICS DateArray format [year, month, day, hour, minute]
+ */
+function dateToICSFormat(isoString: string): DateArray {
+  const date = new Date(isoString);
+  return [
+    date.getUTCFullYear(),
+    date.getUTCMonth() + 1, // ICS months are 1-indexed
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes(),
+  ];
+}
+
+/**
+ * Generate a .ics file for an event
+ */
+export function generateICSFile(event: EventData): { error?: Error; value?: string } {
+  const location = event.format === 'virtual' 
+    ? event.meeting_url || 'Online Event'
+    : [event.location_name, event.location_address, event.location_city, event.location_country]
+        .filter(Boolean)
+        .join(', ') || 'Location TBA';
+
+  const description = [
+    event.description || '',
+    event.format === 'virtual' && event.meeting_url ? `\nJoin here: ${event.meeting_url}` : '',
+    `\nView on DNA Platform: ${window.location.origin}/dna/convene/events/${event.id}`,
+  ]
+    .filter(Boolean)
+    .join('\n')
+    .substring(0, 1000); // Limit description length
+
+  const eventAttributes: EventAttributes = {
+    start: dateToICSFormat(event.start_time),
+    end: dateToICSFormat(event.end_time),
+    title: event.title,
+    description,
+    location,
+    url: `${window.location.origin}/dna/convene/events/${event.id}`,
+    status: 'CONFIRMED',
+    busyStatus: 'BUSY',
+    organizer: event.organizer ? {
+      name: event.organizer.full_name,
+      email: event.organizer.email,
+    } : undefined,
+    productId: 'diasporanetwork.africa',
+  };
+
+  return createEvent(eventAttributes);
+}
+
+/**
+ * Download .ics file to user's device
+ */
+export function downloadICSFile(event: EventData) {
+  const result = generateICSFile(event);
+  
+  if (result.error) {
+    console.error('Error generating ICS file:', result.error);
+    throw result.error;
+  }
+
+  const blob = new Blob([result.value!], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${event.title.replace(/[^a-z0-9]/gi, '_')}.ics`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Generate Google Calendar URL
+ */
+export function getGoogleCalendarUrl(event: EventData): string {
+  const startDate = new Date(event.start_time);
+  const endDate = new Date(event.end_time);
+  
+  // Format dates as YYYYMMDDTHHMMSSZ
+  const formatDate = (date: Date) => {
+    return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  };
+
+  const location = event.format === 'virtual'
+    ? event.meeting_url || 'Online'
+    : [event.location_name, event.location_city, event.location_country]
+        .filter(Boolean)
+        .join(', ');
+
+  const details = [
+    event.description || '',
+    event.format === 'virtual' && event.meeting_url ? `Join: ${event.meeting_url}` : '',
+    `View on DNA: ${window.location.origin}/dna/convene/events/${event.id}`,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: event.title,
+    dates: `${formatDate(startDate)}/${formatDate(endDate)}`,
+    details,
+    location,
+  });
+
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+/**
+ * Generate Outlook Calendar URL (web version)
+ */
+export function getOutlookCalendarUrl(event: EventData): string {
+  const startDate = new Date(event.start_time);
+  const endDate = new Date(event.end_time);
+
+  const location = event.format === 'virtual'
+    ? event.meeting_url || 'Online'
+    : [event.location_name, event.location_city, event.location_country]
+        .filter(Boolean)
+        .join(', ');
+
+  const body = [
+    event.description || '',
+    event.format === 'virtual' && event.meeting_url ? `Join: ${event.meeting_url}` : '',
+    `View on DNA: ${window.location.origin}/dna/convene/events/${event.id}`,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const params = new URLSearchParams({
+    path: '/calendar/action/compose',
+    rru: 'addevent',
+    subject: event.title,
+    startdt: startDate.toISOString(),
+    enddt: endDate.toISOString(),
+    body,
+    location,
+  });
+
+  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
+}
+
+/**
+ * Generate Office 365 Calendar URL
+ */
+export function getOffice365CalendarUrl(event: EventData): string {
+  const startDate = new Date(event.start_time);
+  const endDate = new Date(event.end_time);
+
+  const location = event.format === 'virtual'
+    ? event.meeting_url || 'Online'
+    : [event.location_name, event.location_city, event.location_country]
+        .filter(Boolean)
+        .join(', ');
+
+  const body = [
+    event.description || '',
+    event.format === 'virtual' && event.meeting_url ? `Join: ${event.meeting_url}` : '',
+    `View on DNA: ${window.location.origin}/dna/convene/events/${event.id}`,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const params = new URLSearchParams({
+    path: '/calendar/action/compose',
+    rru: 'addevent',
+    subject: event.title,
+    startdt: startDate.toISOString(),
+    enddt: endDate.toISOString(),
+    body,
+    location,
+  });
+
+  return `https://outlook.office.com/calendar/0/deeplink/compose?${params.toString()}`;
+}

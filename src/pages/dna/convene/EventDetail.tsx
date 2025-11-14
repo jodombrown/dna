@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, MapPin, Users, ExternalLink, Download, Share2, Clock } from 'lucide-react';
+import { Calendar, MapPin, Users, ExternalLink, Share2, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { formatDistanceToNow, format } from 'date-fns';
+import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -170,27 +171,11 @@ const EventDetail = () => {
   };
 
   const handleDownloadCalendar = () => {
-    if (!event) return;
-    
-    // Basic .ics generation
-    const ics = `BEGIN:VCALENDAR
-VERSION:2.0
-BEGIN:VEVENT
-SUMMARY:${event.title}
-DTSTART:${new Date(event.start_time).toISOString().replace(/[-:]/g, '').split('.')[0]}Z
-DTEND:${new Date(event.end_time).toISOString().replace(/[-:]/g, '').split('.')[0]}Z
-DESCRIPTION:${event.description}
-LOCATION:${event.location_name || event.meeting_url || ''}
-END:VEVENT
-END:VCALENDAR`;
-
-    const blob = new Blob([ics], { type: 'text/calendar' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${event.title.replace(/\s+/g, '-')}.ics`;
-    a.click();
-    URL.revokeObjectURL(url);
+    // This function is kept for backward compatibility but is replaced by AddToCalendarButton
+    toast({
+      title: 'Use Add to Calendar',
+      description: 'Click the "Add to Calendar" button to save this event',
+    });
   };
 
   if (isLoading) {
@@ -259,6 +244,11 @@ END:VCALENDAR`;
             </div>
             
             <div className="flex gap-2">
+              <AddToCalendarButton 
+                event={event}
+                organizer={event.organizer}
+                variant="outline"
+              />
               <Button variant="outline" size="icon" onClick={handleShareEvent}>
                 <Share2 className="h-4 w-4" />
               </Button>
@@ -453,15 +443,13 @@ END:VCALENDAR`;
               )}
 
               <Card>
-                <CardContent className="pt-6 space-y-2">
-                  <Button
+                <CardContent className="pt-6">
+                  <AddToCalendarButton 
+                    event={event}
+                    organizer={event.organizer}
                     variant="outline"
-                    className="w-full"
-                    onClick={handleDownloadCalendar}
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Add to Calendar
-                  </Button>
+                    size="default"
+                  />
                 </CardContent>
               </Card>
             </div>
