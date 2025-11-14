@@ -14,6 +14,7 @@ export type RsvpStatus = 'going' | 'maybe' | 'not_going' | 'pending' | 'waitlist
 export interface Event {
   id: string;
   organizer_id: string;
+  group_id?: string;
   title: string;
   description: string;
   event_type: EventType;

@@ -34,16 +34,30 @@ const EventDetail = () => {
       if (error) throw error;
       if (!event) return null;
       
+      const eventData: any = event;
+      
       // Fetch organizer profile
       const { data: organizer } = await supabase
         .from('profiles')
         .select('id, username, full_name, avatar_url, headline')
-        .eq('id', event.organizer_id)
+        .eq('id', eventData.organizer_id)
         .maybeSingle();
       
+      // Fetch group info if event is group-hosted
+      let group = null;
+      if (eventData.group_id) {
+        const { data: groupData } = await supabase
+          .from('groups')
+          .select('id, name, slug, description, avatar_url, member_count')
+          .eq('id', eventData.group_id)
+          .maybeSingle();
+        group = groupData;
+      }
+      
       return {
-        ...event,
-        organizer
+        ...eventData,
+        organizer,
+        group
       };
     },
     enabled: !!id,
@@ -256,8 +270,33 @@ END:VCALENDAR`;
             </div>
           </div>
 
-          {/* Host Info */}
-          {event.organizer && (
+          {/* Host Info - Group or Individual */}
+          {event.group ? (
+            <div className="flex items-center gap-3">
+              <div 
+                className="flex items-center gap-3 cursor-pointer hover:opacity-80 flex-1"
+                onClick={() => navigate(`/dna/convene/groups/${event.group.slug}`)}
+              >
+                <Avatar>
+                  <AvatarImage src={event.group.avatar_url || ''} />
+                  <AvatarFallback>{event.group.name?.[0]}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">Hosted by {event.group.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {event.group.member_count || 0} members
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(`/dna/convene/groups/${event.group.slug}/events`)}
+              >
+                View All Group Events
+              </Button>
+            </div>
+          ) : event.organizer && (
             <div 
               className="flex items-center gap-3 cursor-pointer hover:opacity-80"
               onClick={() => navigate(`/dna/${event.organizer.username}`)}
