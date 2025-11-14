@@ -22,6 +22,9 @@ serve(async (req) => {
     }
   );
 
+  const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
+  const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+
   // Create job log entry
   const jobLogId = crypto.randomUUID();
   const startTime = new Date().toISOString();
@@ -93,10 +96,10 @@ serve(async (req) => {
 
     for (const event of upcomingEvents) {
       try {
-        // Get all attendees who RSVP'd "going"
+        // Get all attendees who RSVP'd "going" with their notification preferences
         const { data: attendees, error: attendeesError } = await supabaseClient
           .from('event_attendees')
-          .select('user_id, profiles(email, full_name, email_notifications)')
+          .select('user_id, profiles(email, full_name, email_notifications, notification_preferences)')
           .eq('event_id', event.id)
           .eq('status', 'going');
 
@@ -136,6 +139,35 @@ serve(async (req) => {
         }
 
         console.log(`Sending ${attendeesToRemind.length} new reminders for event: ${event.title}`);
+
+        // Get organizer name for event details
+        const { data: organizer } = await supabaseClient
+          .from('profiles')
+          .select('full_name')
+          .eq('id', event.organizer_id)
+          .single();
+
+        // Get group name if event is part of a group
+        let groupName = null;
+        if (event.group_id) {
+          const { data: group } = await supabaseClient
+            .from('groups')
+            .select('name')
+            .eq('id', event.group_id)
+            .single();
+          groupName = group?.name;
+        }
+
+        // Format event date/time
+        const eventDate = new Date(event.start_time).toLocaleString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZoneName: 'short'
+        });
 
         // Create notifications
         const notifications = attendeesToRemind.map(attendee => ({
@@ -183,13 +215,72 @@ serve(async (req) => {
 
           if (logError) {
             console.error(`Error logging reminders for event ${event.id}:`, logError);
-            // Don't fail the job for logging errors, but record it
             errors.push(`Event ${event.id} logging: ${logError.message}`);
           } else {
             totalReminders += reminderLogs.length;
-            console.log(`Created ${reminderLogs.length} notifications for event ${event.id}`);
+            console.log(`Created ${reminderLogs.length} in-app notifications for event ${event.id}`);
           }
         }
+
+        // Send email reminders to users who have email notifications enabled
+        let emailsSent = 0;
+        for (const attendee of attendeesToRemind) {
+          try {
+            // Check if user wants email reminders
+            const emailNotificationsEnabled = attendee.profiles?.email_notifications !== false;
+            const eventRemindersEnabled = attendee.profiles?.notification_preferences?.event_reminders !== false;
+            
+            if (!emailNotificationsEnabled || !eventRemindersEnabled || !attendee.profiles?.email) {
+              continue;
+            }
+
+            // Prepare email data
+            const emailData = {
+              formType: 'event_reminder',
+              formData: {
+                event_title: event.title,
+                event_date: eventDate,
+                event_url: `${SUPABASE_URL.replace('.supabase.co', '')}/dna/convene/events/${event.id}`,
+                format: event.format,
+                location: event.format === 'in_person' ? `${event.location_name || ''}${event.location_city ? `, ${event.location_city}` : ''}` : null,
+                meeting_url: event.format === 'virtual' ? event.meeting_url : null,
+                host_name: organizer?.full_name,
+                group_name: groupName,
+                user_name: attendee.profiles.full_name,
+                settings_url: `${SUPABASE_URL.replace('.supabase.co', '')}/settings`
+              },
+              userEmail: attendee.profiles.email
+            };
+
+            // Call send-universal-email function
+            const emailResponse = await fetch(
+              `${SUPABASE_URL}/functions/v1/send-universal-email`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                },
+                body: JSON.stringify(emailData),
+              }
+            );
+
+            if (emailResponse.ok) {
+              emailsSent++;
+              console.log(`Email reminder sent to ${attendee.profiles.email} for event ${event.id}`);
+            } else {
+              const errorText = await emailResponse.text();
+              console.error(`Failed to send email to ${attendee.profiles.email}:`, errorText);
+              errors.push(`Email to ${attendee.profiles.email}: ${errorText}`);
+            }
+          } catch (emailError) {
+            console.error(`Error sending email reminder to user ${attendee.user_id}:`, emailError);
+            errors.push(`Email error for user ${attendee.user_id}: ${emailError instanceof Error ? emailError.message : 'Unknown error'}`);
+          }
+        }
+
+        console.log(`Sent ${emailsSent} email reminders for event ${event.id}`);
+      }
       } catch (eventError) {
         console.error(`Error processing event ${event.id}:`, eventError);
         errors.push(`Event ${event.id}: ${eventError instanceof Error ? eventError.message : 'Unknown error'}`);
@@ -209,6 +300,7 @@ serve(async (req) => {
         errors_count: errors.length,
         window_start: in24Hours.toISOString(),
         window_end: in26Hours.toISOString(),
+        emails_sent: totalReminders
       }
     }).eq('id', jobLogId);
 

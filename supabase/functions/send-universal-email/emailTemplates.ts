@@ -770,6 +770,64 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         `,
       };
 
+    case 'event_reminder':
+      return {
+        subject: `Reminder: ${formData.event_title} starts tomorrow`,
+        adminHtml: '', // No admin email for event reminders
+        userSubject: `Reminder: ${formData.event_title} starts tomorrow`,
+        userHtml: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 24px;">Event Reminder</h1>
+            </div>
+            
+            <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
+              <p style="font-size: 16px; margin-bottom: 20px;">Hi ${formData.user_name || 'there'},</p>
+              
+              <p style="font-size: 16px; margin-bottom: 25px;">This is a friendly reminder that <strong>${formData.event_title}</strong> is starting in 24 hours!</p>
+              
+              <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin: 25px 0;">
+                <h2 style="color: #667eea; margin-top: 0; font-size: 20px;">${formData.event_title}</h2>
+                
+                <div style="margin: 15px 0;">
+                  <p style="margin: 8px 0;"><strong>📅 When:</strong> ${formData.event_date}</p>
+                  ${formData.format === 'virtual' 
+                    ? `<p style="margin: 8px 0;"><strong>💻 Format:</strong> Virtual Event</p>${formData.meeting_url ? `<p style="margin: 8px 0;"><strong>🔗 Join:</strong> <a href="${formData.meeting_url}" style="color: #667eea;">Click here to join</a></p>` : ''}`
+                    : `<p style="margin: 8px 0;"><strong>📍 Location:</strong> ${formData.location || 'TBA'}</p>`
+                  }
+                  ${formData.host_name ? `<p style="margin: 8px 0;"><strong>👤 Host:</strong> ${formData.host_name}</p>` : ''}
+                  ${formData.group_name ? `<p style="margin: 8px 0;"><strong>👥 Group:</strong> ${formData.group_name}</p>` : ''}
+                </div>
+              </div>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${formData.event_url}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">View Event Details</a>
+              </div>
+              
+              <p style="font-size: 14px; color: #6b7280; margin-top: 25px;">
+                ${formData.format === 'virtual' 
+                  ? 'Make sure you have a stable internet connection and test your audio/video before the event starts.' 
+                  : 'Please plan your journey and arrive on time. Looking forward to seeing you there!'}
+              </p>
+              
+              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
+              
+              <p style="font-size: 13px; color: #9ca3af;">
+                You're receiving this email because you RSVP'd "Going" to this event. 
+                <br>To manage your notification preferences, visit your <a href="${formData.settings_url || 'https://diasporanetwork.africa/settings'}" style="color: #667eea;">account settings</a>.
+              </p>
+            </div>
+          </body>
+          </html>
+        `
+      };
+
     default:
       throw new Error(`Unknown form type: ${formType}`);
   }
