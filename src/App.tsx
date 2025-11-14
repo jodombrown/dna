@@ -83,6 +83,11 @@ import CreateSpace from "./pages/dna/collaborate/CreateSpace";
 import SpaceSettings from "./pages/dna/collaborate/SpaceSettings";
 import MySpaces from "./pages/dna/collaborate/MySpaces";
 
+// Contribute M1 pages
+import ContributeHub from "./pages/dna/contribute/ContributeHub";
+import NeedsIndex from "./pages/dna/contribute/NeedsIndex";
+import NeedDetail from "./pages/dna/contribute/NeedDetail";
+
 // Feature pages
 import Opportunities from "./pages/Opportunities";
 import OpportunityDetail from "./pages/OpportunityDetail";
@@ -292,6 +297,23 @@ function App() {
               <Route path="/dna/collaborate/my-spaces" element={
                 <OnboardingGuard>
                   <MySpaces />
+                </OnboardingGuard>
+              } />
+              
+              {/* ========== CONTRIBUTE PILLAR M1 ========== */}
+              <Route path="/dna/contribute" element={
+                <OnboardingGuard>
+                  <ContributeHub />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/contribute/needs" element={
+                <OnboardingGuard>
+                  <NeedsIndex />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/contribute/needs/:id" element={
+                <OnboardingGuard>
+                  <NeedDetail />
                 </OnboardingGuard>
               } />
               
