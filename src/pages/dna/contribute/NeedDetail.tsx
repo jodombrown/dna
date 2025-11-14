@@ -7,10 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, DollarSign, Users, Clock, Key, Package, MapPin, Calendar } from 'lucide-react';
+import { ArrowLeft, DollarSign, Users, Clock, Key, Package, MapPin, Calendar, HandHeart } from 'lucide-react';
 import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
 import { useState } from 'react';
 import NeedFormDialog from '@/components/contribute/NeedFormDialog';
+import OfferFormDialog from '@/components/contribute/OfferFormDialog';
+import NeedOffersSection from '@/components/contribute/NeedOffersSection';
 
 const typeIcons = {
   funding: DollarSign,
@@ -23,6 +25,7 @@ const typeIcons = {
 const NeedDetail = () => {
   const { id } = useParams();
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isOfferOpen, setIsOfferOpen] = useState(false);
 
   const { data: need, isLoading } = useQuery({
     queryKey: ['contribution-need', id],
@@ -215,6 +218,27 @@ const NeedDetail = () => {
                 </CardHeader>
               </Card>
             </div>
+
+            <Separator />
+
+            {/* Offers Section */}
+            <div>
+              <NeedOffersSection
+                needId={need.id}
+                spaceId={need.space_id}
+                isLead={isLead}
+              />
+            </div>
+
+            {/* Offer Button for Non-Leads */}
+            {!isLead && (
+              <div>
+                <Button onClick={() => setIsOfferOpen(true)} size="lg" className="w-full">
+                  <HandHeart className="mr-2 h-5 w-5" />
+                  Offer to Help
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </main>
@@ -227,6 +251,16 @@ const NeedDetail = () => {
           onClose={() => setIsEditOpen(false)}
           spaceId={need.space_id}
           existingNeed={need}
+        />
+      )}
+
+      {!isLead && need && (
+        <OfferFormDialog
+          isOpen={isOfferOpen}
+          onClose={() => setIsOfferOpen(false)}
+          needId={need.id}
+          spaceId={need.space_id}
+          needType={need.type}
         />
       )}
     </div>
