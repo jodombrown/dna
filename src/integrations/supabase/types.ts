@@ -1065,6 +1065,128 @@ export type Database = {
           },
         ]
       }
+      contribution_needs: {
+        Row: {
+          created_at: string
+          created_by: string
+          currency: string | null
+          description: string
+          duration: string | null
+          focus_areas: string[] | null
+          id: string
+          needed_by: string | null
+          priority: Database["public"]["Enums"]["contribution_need_priority"]
+          region: string | null
+          space_id: string
+          status: Database["public"]["Enums"]["contribution_need_status"]
+          target_amount: number | null
+          time_commitment: string | null
+          title: string
+          type: Database["public"]["Enums"]["contribution_need_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          currency?: string | null
+          description: string
+          duration?: string | null
+          focus_areas?: string[] | null
+          id?: string
+          needed_by?: string | null
+          priority?: Database["public"]["Enums"]["contribution_need_priority"]
+          region?: string | null
+          space_id: string
+          status?: Database["public"]["Enums"]["contribution_need_status"]
+          target_amount?: number | null
+          time_commitment?: string | null
+          title: string
+          type: Database["public"]["Enums"]["contribution_need_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          currency?: string | null
+          description?: string
+          duration?: string | null
+          focus_areas?: string[] | null
+          id?: string
+          needed_by?: string | null
+          priority?: Database["public"]["Enums"]["contribution_need_priority"]
+          region?: string | null
+          space_id?: string
+          status?: Database["public"]["Enums"]["contribution_need_status"]
+          target_amount?: number | null
+          time_commitment?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["contribution_need_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contribution_needs_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contribution_offers: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          message: string
+          need_id: string
+          offered_amount: number | null
+          offered_currency: string | null
+          space_id: string
+          status: Database["public"]["Enums"]["contribution_offer_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          message: string
+          need_id: string
+          offered_amount?: number | null
+          offered_currency?: string | null
+          space_id: string
+          status?: Database["public"]["Enums"]["contribution_offer_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          message?: string
+          need_id?: string
+          offered_amount?: number | null
+          offered_currency?: string | null
+          space_id?: string
+          status?: Database["public"]["Enums"]["contribution_offer_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contribution_offers_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "contribution_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_offers_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversation_participants: {
         Row: {
           conversation_id: string
@@ -1188,6 +1310,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      cron_job_logs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          events_processed: number | null
+          id: string
+          job_name: string
+          metadata: Json | null
+          reminders_sent: number | null
+          started_at: string
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          events_processed?: number | null
+          id?: string
+          job_name: string
+          metadata?: Json | null
+          reminders_sent?: number | null
+          started_at?: string
+          status: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          events_processed?: number | null
+          id?: string
+          job_name?: string
+          metadata?: Json | null
+          reminders_sent?: number | null
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
       }
       diaspora_data: {
         Row: {
@@ -1648,6 +1809,51 @@ export type Database = {
           },
         ]
       }
+      event_reminder_logs: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          notification_id: string | null
+          reminder_type: string
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          notification_id?: string | null
+          reminder_type?: string
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          notification_id?: string | null
+          reminder_type?: string
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_reminder_logs_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_reminder_logs_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_reports: {
         Row: {
           created_at: string | null
@@ -1859,6 +2065,7 @@ export type Database = {
           end_time: string
           event_type: Database["public"]["Enums"]["event_type"]
           format: Database["public"]["Enums"]["event_format"]
+          group_id: string | null
           id: string
           is_cancelled: boolean
           is_public: boolean
@@ -1887,6 +2094,7 @@ export type Database = {
           end_time: string
           event_type: Database["public"]["Enums"]["event_type"]
           format: Database["public"]["Enums"]["event_format"]
+          group_id?: string | null
           id?: string
           is_cancelled?: boolean
           is_public?: boolean
@@ -1915,6 +2123,7 @@ export type Database = {
           end_time?: string
           event_type?: Database["public"]["Enums"]["event_type"]
           format?: Database["public"]["Enums"]["event_format"]
+          group_id?: string | null
           id?: string
           is_cancelled?: boolean
           is_public?: boolean
@@ -1934,7 +2143,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "events_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       events_log: {
         Row: {
@@ -4742,6 +4959,266 @@ export type Database = {
         }
         Relationships: []
       }
+      space_attachments: {
+        Row: {
+          attached_to_id: string
+          attached_to_type: Database["public"]["Enums"]["attachment_type"]
+          created_at: string
+          file_name: string
+          file_size: number
+          file_type: string | null
+          file_url: string
+          id: string
+          space_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          attached_to_id: string
+          attached_to_type: Database["public"]["Enums"]["attachment_type"]
+          created_at?: string
+          file_name: string
+          file_size: number
+          file_type?: string | null
+          file_url: string
+          id?: string
+          space_id: string
+          uploaded_by: string
+        }
+        Update: {
+          attached_to_id?: string
+          attached_to_type?: Database["public"]["Enums"]["attachment_type"]
+          created_at?: string
+          file_name?: string
+          file_size?: number
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          space_id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "space_attachments_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      space_members: {
+        Row: {
+          joined_at: string
+          role: string
+          space_id: string
+          user_id: string
+        }
+        Insert: {
+          joined_at?: string
+          role?: string
+          space_id: string
+          user_id: string
+        }
+        Update: {
+          joined_at?: string
+          role?: string
+          space_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "space_members_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      space_task_dependencies: {
+        Row: {
+          created_at: string
+          depends_on_task_id: string
+          task_id: string
+        }
+        Insert: {
+          created_at?: string
+          depends_on_task_id: string
+          task_id: string
+        }
+        Update: {
+          created_at?: string
+          depends_on_task_id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "space_task_dependencies_depends_on_task_id_fkey"
+            columns: ["depends_on_task_id"]
+            isOneToOne: false
+            referencedRelation: "space_tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "space_task_dependencies_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "space_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      space_tasks: {
+        Row: {
+          assignee_id: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string | null
+          id: string
+          space_id: string
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          space_id: string
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee_id?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          space_id?: string
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "space_tasks_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      space_updates: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          id: string
+          space_id: string
+          type: Database["public"]["Enums"]["space_update_type"]
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          id?: string
+          space_id: string
+          type?: Database["public"]["Enums"]["space_update_type"]
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          space_id?: string
+          type?: Database["public"]["Enums"]["space_update_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "space_updates_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spaces: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          focus_areas: string[] | null
+          id: string
+          name: string
+          origin_event_id: string | null
+          origin_group_id: string | null
+          region: string | null
+          slug: string
+          space_type: string
+          status: string
+          tagline: string | null
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          focus_areas?: string[] | null
+          id?: string
+          name: string
+          origin_event_id?: string | null
+          origin_group_id?: string | null
+          region?: string | null
+          slug: string
+          space_type: string
+          status?: string
+          tagline?: string | null
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          focus_areas?: string[] | null
+          id?: string
+          name?: string
+          origin_event_id?: string | null
+          origin_group_id?: string | null
+          region?: string | null
+          slug?: string
+          space_type?: string
+          status?: string
+          tagline?: string | null
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spaces_origin_event_id_fkey"
+            columns: ["origin_event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spaces_origin_group_id_fkey"
+            columns: ["origin_group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_comments: {
         Row: {
           author_id: string
@@ -5697,6 +6174,7 @@ export type Database = {
         }[]
       }
       get_engagement_rate: { Args: never; Returns: number }
+      get_event_analytics: { Args: { p_event_id: string }; Returns: Json }
       get_event_attendees: {
         Args: {
           p_event_id: string
@@ -6058,6 +6536,10 @@ export type Database = {
         Args: { user1_id: string; user2_id: string }
         Returns: string
       }
+      get_organizer_analytics: {
+        Args: { p_days_back?: number; p_organizer_id: string }
+        Returns: Json
+      }
       get_pending_reminders: {
         Args: { batch_size?: number }
         Returns: {
@@ -6289,6 +6771,10 @@ export type Database = {
       }
       is_admin_email: { Args: { email_address: string }; Returns: boolean }
       is_admin_user: { Args: { _user_id: string }; Returns: boolean }
+      is_blocked_from_space: {
+        Args: { _space_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_connection_participant: {
         Args: { p_connection: string }
         Returns: boolean
@@ -6748,6 +7234,20 @@ export type Database = {
         | "accepted"
         | "rejected"
         | "withdrawn"
+      attachment_type: "space" | "task" | "update"
+      contribution_need_priority: "normal" | "high"
+      contribution_need_status: "open" | "in_progress" | "fulfilled" | "closed"
+      contribution_need_type:
+        | "funding"
+        | "skills"
+        | "time"
+        | "access"
+        | "resources"
+      contribution_offer_status:
+        | "pending"
+        | "accepted"
+        | "declined"
+        | "completed"
       contribution_type: "time" | "expertise" | "network" | "capital"
       event_format: "in_person" | "virtual" | "hybrid"
       event_type:
@@ -6764,6 +7264,8 @@ export type Database = {
       opportunity_status: "draft" | "active" | "paused" | "closed" | "archived"
       opportunity_visibility: "public" | "network_only" | "private"
       rsvp_status: "going" | "maybe" | "not_going" | "pending" | "waitlist"
+      space_update_type: "manual_update" | "milestone" | "auto_task_event"
+      task_status: "open" | "in_progress" | "done"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -6899,6 +7401,22 @@ export const Constants = {
         "rejected",
         "withdrawn",
       ],
+      attachment_type: ["space", "task", "update"],
+      contribution_need_priority: ["normal", "high"],
+      contribution_need_status: ["open", "in_progress", "fulfilled", "closed"],
+      contribution_need_type: [
+        "funding",
+        "skills",
+        "time",
+        "access",
+        "resources",
+      ],
+      contribution_offer_status: [
+        "pending",
+        "accepted",
+        "declined",
+        "completed",
+      ],
       contribution_type: ["time", "expertise", "network", "capital"],
       event_format: ["in_person", "virtual", "hybrid"],
       event_type: [
@@ -6916,6 +7434,8 @@ export const Constants = {
       opportunity_status: ["draft", "active", "paused", "closed", "archived"],
       opportunity_visibility: ["public", "network_only", "private"],
       rsvp_status: ["going", "maybe", "not_going", "pending", "waitlist"],
+      space_update_type: ["manual_update", "milestone", "auto_task_event"],
+      task_status: ["open", "in_progress", "done"],
     },
   },
 } as const

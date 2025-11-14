@@ -53,7 +53,7 @@ const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) 
     enabled: !isLead,
   });
 
-  const handleStatusChange = (offerId: string, newStatus: 'accepted' | 'declined' | 'completed') => {
+  const handleStatusChange = (offerId: string, newStatus: 'accepted' | 'declined' | 'completed' | 'validated') => {
     updateStatusMutation.mutate({ offerId, status: newStatus });
   };
 
@@ -111,12 +111,13 @@ const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) 
                       </div>
                     </div>
                     <Badge variant={
-                      offer.status === 'accepted' ? 'default' :
+                      offer.status === 'validated' ? 'default' :
                       offer.status === 'completed' ? 'default' :
+                      offer.status === 'accepted' ? 'default' :
                       offer.status === 'declined' ? 'destructive' :
                       'secondary'
                     }>
-                      {offer.status}
+                      {offer.status === 'validated' ? 'Validated ✓' : offer.status}
                     </Badge>
                   </div>
 
@@ -145,12 +146,12 @@ const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) 
                         if (value !== 'pending') {
                           updateStatusMutation.mutate({
                             offerId: offer.id,
-                            status: value as 'accepted' | 'declined' | 'completed'
+                            status: value as 'accepted' | 'declined' | 'completed' | 'validated'
                           });
                         }
                       }}
                     >
-                      <SelectTrigger className="w-[160px]">
+                      <SelectTrigger className="w-[180px]">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -158,6 +159,7 @@ const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) 
                         <SelectItem value="accepted">Accept</SelectItem>
                         <SelectItem value="declined">Decline</SelectItem>
                         <SelectItem value="completed">Mark Complete</SelectItem>
+                        <SelectItem value="validated">Validate ✓</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -202,12 +204,13 @@ const NeedOffersSection = ({ needId, spaceId, isLead }: NeedOffersSectionProps) 
               <div>
                 <p className="text-sm font-medium mb-2">Status:</p>
                 <Badge variant={
-                  selectedOffer.status === 'accepted' ? 'default' :
+                  selectedOffer.status === 'validated' ? 'default' :
                   selectedOffer.status === 'completed' ? 'default' :
+                  selectedOffer.status === 'accepted' ? 'default' :
                   selectedOffer.status === 'declined' ? 'destructive' :
                   'secondary'
                 }>
-                  {selectedOffer.status}
+                  {selectedOffer.status === 'validated' ? 'Validated ✓' : selectedOffer.status}
                 </Badge>
               </div>
             </div>

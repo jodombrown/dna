@@ -34,7 +34,7 @@ export interface ContributionNeedWithSpace extends ContributionNeed {
   offer_count?: number;
 }
 
-export type ContributionOfferStatus = 'pending' | 'accepted' | 'declined' | 'completed';
+export type ContributionOfferStatus = 'pending' | 'accepted' | 'declined' | 'completed' | 'validated';
 
 export interface ContributionOffer {
   id: string;
