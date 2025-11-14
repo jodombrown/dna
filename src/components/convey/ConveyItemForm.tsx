@@ -99,7 +99,7 @@ export function ConveyItemForm({
         <RadioGroup
           value={selectedType}
           onValueChange={(value) => setValue('type', value as ConveyItemType)}
-          disabled={isImpactMode}
+          disabled={!!isImpactMode}
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="update" id="type-update" disabled={!!isImpactMode} />
@@ -119,8 +119,6 @@ export function ConveyItemForm({
               <Label htmlFor="type-impact" className="cursor-pointer font-normal">
                 Impact – Celebrate validated contributions and outcomes
               </Label>
-            </div>
-          )}
             </div>
           )}
         </RadioGroup>

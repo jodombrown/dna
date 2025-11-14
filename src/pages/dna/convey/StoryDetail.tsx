@@ -4,7 +4,7 @@ import { useConveyItemBySlug } from '@/hooks/useConveyFeed';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Loader2, ExternalLink, Calendar } from 'lucide-react';
+import { ArrowLeft, Loader2, ExternalLink, Calendar, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function StoryDetail() {
