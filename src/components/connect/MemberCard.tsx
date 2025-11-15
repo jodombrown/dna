@@ -59,6 +59,13 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
         });
         await trackEvent('connect_request_sent', { target_user_id: member.id });
         onConnectionSent?.();
+      } else if (result.status === 'profile_incomplete') {
+        toast({
+          title: 'Profile Incomplete',
+          description: result.message || 'Complete your profile to at least 40% to send connection requests.',
+          variant: 'destructive',
+        });
+        navigate('/app/profile/edit');
       } else if (result.status === 'already_connected') {
         toast({
           title: 'Already connected',
@@ -193,37 +200,82 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
 
             {/* Actions */}
             <div className="flex gap-2">
-              {connectionStatus === 'sent' ? (
-                <Button variant="outline" size="sm" disabled className="flex-1">
-                  <Check className="mr-2 h-4 w-4" />
-                  Request Sent
-                </Button>
-              ) : connectionStatus === 'pending' ? (
-                <Button variant="outline" size="sm" disabled className="flex-1">
-                  <Check className="mr-2 h-4 w-4" />
-                  Pending
-                </Button>
+              {connectionStatus === 'accepted' ? (
+                <>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={handleMessage}
+                    className="flex-1"
+                  >
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Message
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleViewProfile}
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    Profile
+                  </Button>
+                </>
+              ) : connectionStatus === 'pending_sent' ? (
+                <>
+                  <Button variant="outline" size="sm" disabled className="flex-1">
+                    <Check className="mr-2 h-4 w-4" />
+                    Request Sent
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleViewProfile}
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    Profile
+                  </Button>
+                </>
+              ) : connectionStatus === 'pending_received' ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate('/dna/connect/network?tab=requests')}
+                    className="flex-1"
+                  >
+                    Request Received
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleViewProfile}
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    Profile
+                  </Button>
+                </>
               ) : (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={handleConnect}
-                  disabled={isSending}
-                  className="flex-1"
-                >
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  {isSending ? 'Sending...' : 'Connect'}
-                </Button>
+                <>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={handleConnect}
+                    disabled={isSending}
+                    className="flex-1"
+                  >
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    {isSending ? 'Sending...' : 'Connect'}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleViewProfile}
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    Profile
+                  </Button>
+                </>
               )}
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleViewProfile}
-              >
-                <Eye className="mr-2 h-4 w-4" />
-                View Profile
-              </Button>
             </div>
           </div>
         </div>
