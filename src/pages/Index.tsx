@@ -18,10 +18,10 @@ const Index = () => {
   const { user, loading } = useAuth();
   const { showWaitlistPopup, closeWaitlistPopup } = useWaitlistPopup();
 
-  // Redirect authenticated users to Feed (home)
+  // Redirect authenticated users to MyDNA (home)
   useEffect(() => {
     if (user && !loading) {
-      navigate('/dna/feed');
+      navigate('/dna/me');
     }
   }, [user, loading, navigate]);
 
