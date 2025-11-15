@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import { MapPin, Briefcase, UserPlus, Eye, Check } from 'lucide-react';
+import { MapPin, Briefcase, UserPlus, Eye, Check, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useConnectionStatus } from '@/hooks/useConnectionStatus';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MemberCardProps {
   member: {
@@ -29,11 +31,12 @@ interface MemberCardProps {
 }
 
 export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent }) => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { trackEvent } = useAnalytics();
   const [isSending, setIsSending] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<'none' | 'pending' | 'sent'>('none');
+  const { data: connectionStatus, refetch: refetchStatus } = useConnectionStatus(member.id);
 
   const handleConnect = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -49,7 +52,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
       const result = data as { status: string; message?: string; error?: string };
 
       if (result.status === 'pending') {
-        setConnectionStatus('sent');
+        await refetchStatus();
         toast({
           title: 'Connection request sent',
           description: `Your request to connect with ${member.full_name} has been sent.`,
@@ -57,13 +60,11 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
         await trackEvent('connect_request_sent', { target_user_id: member.id });
         onConnectionSent?.();
       } else if (result.status === 'already_connected') {
-        setConnectionStatus('pending');
         toast({
           title: 'Already connected',
           description: result.message,
         });
       } else if (result.status === 'already_pending' || result.status === 'request_received') {
-        setConnectionStatus('pending');
         toast({
           title: 'Request pending',
           description: result.message,
@@ -84,6 +85,40 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
       });
     } finally {
       setIsSending(false);
+    }
+  };
+
+  const handleMessage = async () => {
+    if (!user) return;
+    
+    try {
+      // Get or create conversation
+      const { data: existingConversation } = await supabase
+        .from('conversations')
+        .select('id')
+        .or(`and(user_a.eq.${user.id},user_b.eq.${member.id}),and(user_a.eq.${member.id},user_b.eq.${user.id})`)
+        .maybeSingle();
+
+      if (existingConversation) {
+        navigate(`/dna/connect/messages?conversation=${existingConversation.id}`);
+      } else {
+        // Create new conversation
+        const { data: newConv, error } = await supabase
+          .from('conversations')
+          .insert({ user_a: user.id, user_b: member.id })
+          .select('id')
+          .single();
+
+        if (error) throw error;
+        navigate(`/dna/connect/messages?conversation=${newConv.id}`);
+      }
+    } catch (error) {
+      console.error('Message error:', error);
+      toast({
+        title: 'Error',
+        description: 'Could not start conversation',
+        variant: 'destructive',
+      });
     }
   };
 

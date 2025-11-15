@@ -12,6 +12,7 @@ interface DiscoverFiltersProps {
     country_of_origin?: string;
     current_country?: string;
     focus_areas?: string[];
+    regional_expertise?: string[];
     industries?: string[];
     skills?: string[];
   };
@@ -58,6 +59,19 @@ const SKILLS = [
   'Research'
 ];
 
+const REGIONAL_EXPERTISE = [
+  'West Africa',
+  'East Africa',
+  'Southern Africa',
+  'Central Africa',
+  'North Africa',
+  'Diaspora - North America',
+  'Diaspora - Europe',
+  'Diaspora - Caribbean',
+  'Diaspora - Asia',
+  'Diaspora - South America'
+];
+
 export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
   filters,
   onFilterChange,
@@ -65,7 +79,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const toggleArrayFilter = (key: 'focus_areas' | 'industries' | 'skills', value: string) => {
+  const toggleArrayFilter = (key: 'focus_areas' | 'regional_expertise' | 'industries' | 'skills', value: string) => {
     const current = filters[key] || [];
     const updated = current.includes(value)
       ? current.filter(v => v !== value)
@@ -156,6 +170,26 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-4 mt-4">
+            {/* Regional Expertise */}
+            <div className="space-y-2">
+              <Label>Regional Expertise</Label>
+              <div className="flex flex-wrap gap-2">
+                {REGIONAL_EXPERTISE.map((region) => (
+                  <Badge
+                    key={region}
+                    variant={filters.regional_expertise?.includes(region) ? 'default' : 'outline'}
+                    className="cursor-pointer"
+                    onClick={() => toggleArrayFilter('regional_expertise', region)}
+                  >
+                    {region}
+                    {filters.regional_expertise?.includes(region) && (
+                      <X className="ml-1 h-3 w-3" />
+                    )}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
             {/* Focus Areas */}
             <div className="space-y-2">
               <Label>Focus Areas</Label>
