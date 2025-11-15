@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { Loader2, PenSquare } from 'lucide-react';
+import { Loader2, PenSquare, Sparkles } from 'lucide-react';
 import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { PostCard } from '@/components/posts/PostCard';
 import { PostComments } from '@/components/posts/PostComments';
-import { useInfiniteFeedPosts } from '@/hooks/useInfiniteFeedPosts';
+import { useActivityFeed } from '@/hooks/useActivityFeed';
 import { LoadMoreTrigger } from '@/components/social-feed/LoadMoreTrigger';
 import { SkeletonPostCard } from '@/components/social-feed/SkeletonPostCard';
 import { TrendingHashtags } from '@/components/feed/TrendingHashtags';
@@ -14,16 +14,40 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ActivityType } from '@/types/activity';
+import { 
+  FeedConnectionCard, 
+  FeedSpaceCard, 
+  FeedEventCard, 
+  FeedContributionCard, 
+  FeedStoryCard 
+} from '@/components/feed/activity-cards';
+import { supabase } from '@/integrations/supabase/client';
 
-type FeedType = 'all' | 'connections' | 'my_posts';
+type FeedFilterType = 'all' | 'posts' | 'connections' | 'spaces-events' | 'contributions-stories';
 
 const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
-  const [feedType, setFeedType] = useState<FeedType>('all');
-  const [selectedHashtag, setSelectedHashtag] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState<FeedFilterType>('all');
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+
+  // Map filter type to activity types
+  const getActivityTypes = (): ActivityType[] | undefined => {
+    switch (filterType) {
+      case 'posts':
+        return ['post'];
+      case 'connections':
+        return ['connection'];
+      case 'spaces-events':
+        return ['space', 'event'];
+      case 'contributions-stories':
+        return ['contribution', 'story'];
+      default:
+        return undefined; // all
+    }
+  };
 
   const {
     data,
@@ -32,9 +56,37 @@ const DnaFeed = () => {
     hasNextPage,
     fetchNextPage,
     refetch,
-  } = useInfiniteFeedPosts(feedType, user?.id, selectedHashtag);
+  } = useActivityFeed({
+    userId: user?.id,
+    activityTypes: getActivityTypes(),
+  });
 
-  const posts = data?.pages.flatMap((page) => page.posts) || [];
+  const activities = data?.pages.flatMap((page) => page.activities) || [];
+
+  // Real-time updates for new activity
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('activity-feed-updates')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
+        refetch();
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'connections' }, () => {
+        refetch();
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'events' }, () => {
+        refetch();
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'convey_items' }, () => {
+        refetch();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, refetch]);
 
   const handleCommentClick = (postId: string) => {
     setExpandedPostId(expandedPostId === postId ? null : postId);
@@ -57,26 +109,18 @@ const DnaFeed = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Feed - Left Column */}
         <div className="lg:col-span-8 space-y-6">
-          {/* Active Hashtag Filter */}
-          {selectedHashtag && (
-            <Card className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Filtering by:</span>
-                  <Badge variant="secondary" className="text-base">
-                    #{selectedHashtag}
-                  </Badge>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedHashtag(null)}
-                >
-                  Clear filter
-                </Button>
-              </div>
-            </Card>
-          )}
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold flex items-center gap-2">
+                <Sparkles className="h-6 w-6 text-primary" />
+                Your DNA Feed
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Activity from across the network
+              </p>
+            </div>
+          </div>
 
           {/* Create Post Trigger Card */}
           <Card className="p-4">
@@ -122,7 +166,7 @@ const DnaFeed = () => {
             </div>
           ) : posts.length > 0 ? (
             <div className="space-y-4">
-              {posts.map((post) => (
+              {activities.map((activity) => (
                 <div key={post.post_id}>
                   <PostCard
                     post={post}
