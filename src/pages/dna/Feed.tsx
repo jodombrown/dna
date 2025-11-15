@@ -252,13 +252,13 @@ const DnaFeed = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => navigate('/dna/spaces')}
+                  onClick={() => navigate('/dna/collaborate/spaces')}
                 >
                   Explore Spaces
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => navigate('/dna/events')}
+                  onClick={() => navigate('/dna/convene/events')}
                 >
                   Browse Events
                 </Button>
