@@ -19,7 +19,12 @@ export type ConnectEventName =
   | 'group_to_space_created'
   | 'space_joined_from_event_view'
   | 'space_joined_from_group_view'
-  | 'space_joined_from_suggestions';
+  | 'space_joined_from_suggestions'
+  | 'convey_item_created'
+  | 'convey_item_published'
+  | 'convey_item_viewed'
+  | 'convey_item_cta_clicked'
+  | 'convey_feed_filtered';
 
 export function useAnalytics() {
   const trackEvent = async (eventName: ConnectEventName, metadata?: any, route?: string) => {
