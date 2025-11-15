@@ -15,6 +15,7 @@ import {
   ProfileContributionsSection,
   ProfileStoriesSection,
 } from '@/components/profile/cross-5c';
+import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
 
 import DashboardLeftColumn from './DashboardLeftColumn';
 import DashboardCenterColumn from './DashboardCenterColumn';
@@ -122,6 +123,7 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
               
               {/* Center Column - 70% */}
               <div className="w-[70%] flex-shrink-0 overflow-y-auto px-6 pt-1 pb-4">
+                {isOwnProfile && <ProfileStrengthBanner />}
                 {viewMode === 'discover' ? (
                   <DashboardDiscoverColumn profile={profile} isOwnProfile={isOwnProfile} />
                 ) : viewMode === 'groups' ? (

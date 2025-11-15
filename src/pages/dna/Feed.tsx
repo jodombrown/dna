@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { Loader2, PenSquare, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Loader2, PenSquare, Sparkles, Users } from 'lucide-react';
 import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { PostCard } from '@/components/posts/PostCard';
 import { PostComments } from '@/components/posts/PostComments';
@@ -23,12 +24,14 @@ import {
   FeedStoryCard 
 } from '@/components/feed/activity-cards';
 import { supabase } from '@/integrations/supabase/client';
+import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
 
 type FeedFilterType = 'all' | 'posts' | 'connections' | 'spaces-events' | 'contributions-stories';
 
 const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
+  const navigate = useNavigate();
   const [filterType, setFilterType] = useState<FeedFilterType>('all');
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -109,6 +112,9 @@ const DnaFeed = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Main Feed - Left Column */}
         <div className="lg:col-span-8 space-y-6">
+          {/* Profile Strength Banner */}
+          <ProfileStrengthBanner />
+
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
@@ -229,21 +235,35 @@ const DnaFeed = () => {
               )}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <Sparkles className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No activity yet</h3>
-              <p className="text-muted-foreground">
-                {filterType === 'posts' 
-                  ? 'No posts yet. Be the first to share!' 
-                  : filterType === 'connections'
-                  ? 'No connection activity yet. Start connecting with people!' 
-                  : filterType === 'spaces-events'
-                  ? 'No space or event activity yet. Join a space or create an event!'
-                  : filterType === 'contributions-stories'
-                  ? 'No contributions or stories yet. Make your first contribution!'
-                  : 'No activity yet. Start by sharing a post or connecting with others!'}
+            /* Empty State with CTAs */
+            <Card className="p-12 text-center">
+              <Sparkles className="h-20 w-20 mx-auto text-dna-copper mb-6" />
+              <h3 className="text-2xl font-bold mb-3">Your Feed Will Light Up Soon!</h3>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                Your feed will come alive as you connect with others, join spaces, RSVP to events, and engage with the community.
               </p>
-            </div>
+              <div className="flex flex-wrap gap-3 justify-center">
+                <Button
+                  onClick={() => navigate('/dna/connect/discover')}
+                  className="bg-dna-copper hover:bg-dna-gold"
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  Discover Members
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/dna/spaces')}
+                >
+                  Explore Spaces
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/dna/events')}
+                >
+                  Browse Events
+                </Button>
+              </div>
+            </Card>
           )}
         </div>
 

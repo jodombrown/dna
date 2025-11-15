@@ -34,6 +34,12 @@ import {
 import { BlockUserDialog } from '@/components/safety/BlockUserDialog';
 import { ReportDialog } from '@/components/safety/ReportDialog';
 import { useState } from 'react';
+import {
+  ProfileSpacesSection,
+  ProfileEventsSection,
+  ProfileContributionsSection,
+  ProfileStoriesSection,
+} from '@/components/profile/cross-5c';
 
 const PublicProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -466,6 +472,14 @@ const PublicProfile = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Cross-5C Sections */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <ProfileSpacesSection userId={profile.id} />
+          <ProfileEventsSection userId={profile.id} />
+          <ProfileContributionsSection userId={profile.id} />
+          <ProfileStoriesSection userId={profile.id} />
+        </div>
       </div>
 
       {/* Safety Dialogs */}
