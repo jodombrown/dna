@@ -218,7 +218,12 @@ function App() {
               <Route path="/dna/discover/feed" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/dna/network" element={<Navigate to="/dna/connect/network" replace />} />
               <Route path="/dna/network/feed" element={<Navigate to="/dna/connect/discover" replace />} />
-              <Route path="/dna/feed" element={<Navigate to="/dna/connect/discover" replace />} />
+              {/* Feed is the multi-C activity stream home */}
+              <Route path="/dna/feed" element={
+                <OnboardingGuard>
+                  <DnaFeed />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/messages" element={<Navigate to="/dna/connect/messages" replace />} />
               <Route path="/dna/messages/:conversationId" element={<Navigate to="/dna/connect/messages" replace />} />
               <Route path="/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />

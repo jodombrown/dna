@@ -7,7 +7,7 @@ import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Users, Calendar, Rocket, TrendingUp } from 'lucide-react';
+import { Users, Calendar, Rocket, TrendingUp, Eye, PenSquare } from 'lucide-react';
 
 const DnaMe = () => {
   const { user } = useAuth();
@@ -45,6 +45,29 @@ const DnaMe = () => {
           {/* Left Column - Profile & Strength */}
           <div className="space-y-6">
             <MyProfilePreview profile={profile} />
+            
+            {/* View/Edit Profile Actions */}
+            <Card>
+              <CardContent className="p-4 space-y-2">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => navigate(`/dna/${profile.username}`)}
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  View My Public Profile
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => navigate('/app/profile/edit')}
+                >
+                  <PenSquare className="w-4 h-4 mr-2" />
+                  Edit Profile
+                </Button>
+              </CardContent>
+            </Card>
+            
             <ProfileStrengthCard
               completionScore={profile.profile_completion_percentage || 0}
             />
