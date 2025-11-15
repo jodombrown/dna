@@ -89,10 +89,12 @@ import NeedsIndex from "./pages/dna/contribute/NeedsIndex";
 import NeedDetail from "./pages/dna/contribute/NeedDetail";
 import MyContributions from "./pages/dna/contribute/MyContributions";
 
-// Convey M1-M2 pages
+// Convey M1-M4 pages
 import Convey from "./pages/dna/Convey";
+import ConveyHub from "./pages/dna/convey/ConveyHub";
 import StoryDetail from "./pages/dna/convey/StoryDetail";
 import CreateStory from "./pages/dna/convey/CreateStory";
+import ConveyAnalytics from "./pages/dna/admin/ConveyAnalytics";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -328,10 +330,10 @@ function App() {
                 </OnboardingGuard>
               } />
               
-              {/* CONVEY M1-M2 - Story Feed, Details & Authoring */}
+              {/* CONVEY M1-M4 - Story Feed, Details, Authoring & Analytics */}
               <Route path="/dna/convey" element={
                 <OnboardingGuard>
-                  <Convey />
+                  <ConveyHub />
                 </OnboardingGuard>
               } />
               <Route path="/dna/convey/new" element={
@@ -420,6 +422,7 @@ function App() {
                 <Route path="engagement" element={<EngagementDashboard />} />
                 <Route path="signals" element={<AdminSignals />} />
                 <Route path="moderation" element={<ContentModeration />} />
+                <Route path="convey" element={<ConveyAnalytics />} />
               </Route>
               <Route path="/app/admin/moderation" element={<Moderation />} />
 
