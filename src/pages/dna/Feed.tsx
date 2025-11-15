@@ -148,38 +148,71 @@ const DnaFeed = () => {
             </div>
           </Card>
 
-          {/* Feed Type Filter */}
-          <Tabs value={feedType} onValueChange={(v) => setFeedType(v as FeedType)}>
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="all">All Posts</TabsTrigger>
+          {/* Activity Type Filter */}
+          <Tabs value={filterType} onValueChange={(v) => setFilterType(v as FeedFilterType)}>
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="posts">Posts</TabsTrigger>
               <TabsTrigger value="connections">Connections</TabsTrigger>
-              <TabsTrigger value="my_posts">My Posts</TabsTrigger>
+              <TabsTrigger value="spaces-events">Spaces & Events</TabsTrigger>
+              <TabsTrigger value="contributions-stories">Contributions</TabsTrigger>
             </TabsList>
           </Tabs>
 
-          {/* Posts Feed */}
+          {/* Activity Feed */}
           {isLoading ? (
             <div className="space-y-4">
               <SkeletonPostCard />
               <SkeletonPostCard />
               <SkeletonPostCard />
             </div>
-          ) : posts.length > 0 ? (
+          ) : activities.length > 0 ? (
             <div className="space-y-4">
-              {activities.map((activity) => (
-                <div key={post.post_id}>
-                  <PostCard
-                    post={post}
-                    currentUserId={user.id}
-                    onUpdate={refetch}
-                    onCommentClick={() => handleCommentClick(post.post_id)}
-                    showComments={expandedPostId === post.post_id}
-                  />
-                  {expandedPostId === post.post_id && (
-                    <PostComments postId={post.post_id} currentUserId={user.id} />
-                  )}
-                </div>
-              ))}
+              {activities.map((activity) => {
+                switch (activity.activity_type) {
+                  case 'post':
+                    return (
+                      <div key={activity.activity_id}>
+                        <PostCard
+                          post={{
+                            post_id: activity.entity_id,
+                            content: activity.entity_data?.content || '',
+                            post_type: (activity.entity_data?.post_type || 'update') as any,
+                            privacy_level: (activity.entity_data?.privacy_level || 'public') as any,
+                            created_at: activity.created_at,
+                            author_id: activity.actor_id,
+                            author_username: activity.actor_username,
+                            author_full_name: activity.actor_full_name,
+                            author_avatar_url: activity.actor_avatar_url,
+                            likes_count: activity.entity_data?.likes_count || 0,
+                            comments_count: activity.entity_data?.comments_count || 0,
+                            user_has_liked: activity.entity_data?.user_has_liked || false,
+                            is_connection: activity.entity_data?.is_connection || false,
+                          }}
+                          currentUserId={user.id}
+                          onUpdate={refetch}
+                          onCommentClick={() => handleCommentClick(activity.entity_id)}
+                          showComments={expandedPostId === activity.entity_id}
+                        />
+                        {expandedPostId === activity.entity_id && (
+                          <PostComments postId={activity.entity_id} currentUserId={user.id} />
+                        )}
+                      </div>
+                    );
+                  case 'connection':
+                    return <FeedConnectionCard key={activity.activity_id} activity={activity} />;
+                  case 'space':
+                    return <FeedSpaceCard key={activity.activity_id} activity={activity} />;
+                  case 'event':
+                    return <FeedEventCard key={activity.activity_id} activity={activity} />;
+                  case 'contribution':
+                    return <FeedContributionCard key={activity.activity_id} activity={activity} />;
+                  case 'story':
+                    return <FeedStoryCard key={activity.activity_id} activity={activity} />;
+                  default:
+                    return null;
+                }
+              })}
 
               {/* Infinite Scroll Trigger */}
               <LoadMoreTrigger
@@ -197,27 +230,31 @@ const DnaFeed = () => {
             </div>
           ) : (
             <div className="text-center py-12">
+              <Sparkles className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No activity yet</h3>
               <p className="text-muted-foreground">
-                {selectedHashtag
-                  ? `No posts found with #${selectedHashtag}`
-                  : feedType === 'connections' 
-                  ? 'No posts from your connections yet. Start connecting with people!' 
-                  : feedType === 'my_posts'
-                  ? 'You haven\'t posted anything yet. Share your first post!'
-                  : 'No posts yet. Be the first to share!'}
+                {filterType === 'posts' 
+                  ? 'No posts yet. Be the first to share!' 
+                  : filterType === 'connections'
+                  ? 'No connection activity yet. Start connecting with people!' 
+                  : filterType === 'spaces-events'
+                  ? 'No space or event activity yet. Join a space or create an event!'
+                  : filterType === 'contributions-stories'
+                  ? 'No contributions or stories yet. Make your first contribution!'
+                  : 'No activity yet. Start by sharing a post or connecting with others!'}
               </p>
             </div>
           )}
         </div>
 
-        {/* Right Sidebar - Trending */}
-        <aside className="hidden lg:block lg:col-span-4 space-y-6">
-          <TrendingHashtags
-            onHashtagClick={(tag) => {
-              setSelectedHashtag(tag);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-          />
+        {/* Right Sidebar - Placeholder for future features */}
+        <aside className="hidden lg:block lg:col-span-4">
+          <Card className="p-6">
+            <h3 className="font-semibold mb-4">Coming Soon</h3>
+            <p className="text-sm text-muted-foreground">
+              Trending topics, suggested connections, and more will appear here.
+            </p>
+          </Card>
         </aside>
       </div>
       
