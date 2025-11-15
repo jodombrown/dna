@@ -2,6 +2,15 @@
 
 Use this as your "we don't ship until all are ✅" list.
 
+---
+
+## Quick Links
+
+- **[CONNECT v2 Summary](../connect-v2-summary.md)** - One-pager explaining what CONNECT v2 is and what it enables
+- **[Smoke Test Script](connect-v2-smoke-test.md)** - 10-step quick verification after deployment
+
+---
+
 ## A. Home & Entry (Engine Feel)
 
 ### 1. Feed is the home base
