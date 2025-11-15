@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
 
 interface MemberCardProps {
   member: {
@@ -32,11 +33,47 @@ interface MemberCardProps {
 
 export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent }) => {
   const { user } = useAuth();
+  const { data: currentUserProfile } = useProfile();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { trackEvent } = useAnalytics();
   const [isSending, setIsSending] = useState(false);
   const { data: connectionStatus, refetch: refetchStatus } = useConnectionStatus(member.id);
+
+  // Compute shared attributes for "why this match"
+  const getSharedAttributes = () => {
+    if (!currentUserProfile) return [];
+    const shared: string[] = [];
+    
+    // Check focus areas
+    if (currentUserProfile.focus_areas && member.focus_areas) {
+      const sharedFocus = currentUserProfile.focus_areas.filter(f => 
+        member.focus_areas?.includes(f)
+      );
+      shared.push(...sharedFocus.slice(0, 2));
+    }
+    
+    // Check industries
+    if (currentUserProfile.industries && member.industries) {
+      const sharedIndustries = currentUserProfile.industries.filter(i => 
+        member.industries?.includes(i)
+      );
+      if (sharedIndustries.length > 0 && shared.length < 3) {
+        shared.push(...sharedIndustries.slice(0, 3 - shared.length));
+      }
+    }
+    
+    // Check regional expertise
+    if (currentUserProfile.regional_expertise && member.country_of_origin) {
+      if (currentUserProfile.regional_expertise.includes(member.country_of_origin) && shared.length < 3) {
+        shared.push(member.country_of_origin);
+      }
+    }
+    
+    return shared.slice(0, 3);
+  };
+
+  const sharedAttributes = getSharedAttributes();
 
   const handleConnect = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -164,6 +201,12 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                 <p className="text-sm text-muted-foreground truncate">
                   {member.headline || member.profession || 'DNA Member'}
                 </p>
+                {/* Why this match */}
+                {sharedAttributes.length > 0 && (
+                  <p className="text-xs text-dna-copper font-medium mt-0.5">
+                    Shared: {sharedAttributes.join(' · ')}
+                  </p>
+                )}
               </div>
 
               {/* Match Score */}
