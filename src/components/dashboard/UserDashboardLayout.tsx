@@ -9,6 +9,12 @@ import { BannerUploadModal } from '@/components/profile/BannerUploadModal';
 import { ProfileUnlockModal } from '@/components/profile/ProfileUnlockModal';
 import { useProfileUnlock } from '@/hooks/useProfileUnlock';
 import { calculateProfileCompletion } from '@/components/profile/ProfileCompletionBar';
+import {
+  ProfileSpacesSection,
+  ProfileEventsSection,
+  ProfileContributionsSection,
+  ProfileStoriesSection,
+} from '@/components/profile/cross-5c';
 
 import DashboardLeftColumn from './DashboardLeftColumn';
 import DashboardCenterColumn from './DashboardCenterColumn';
@@ -137,7 +143,13 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
                 ) : viewMode === 'analytics' ? (
                   <DashboardAnalyticsColumn />
                 ) : (
-                  <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
+                  <>
+                    <DashboardCenterColumn profile={profile} isOwnProfile={isOwnProfile} />
+                    <ProfileSpacesSection userId={profile.id} />
+                    <ProfileEventsSection userId={profile.id} />
+                    <ProfileContributionsSection userId={profile.id} />
+                    <ProfileStoriesSection userId={profile.id} />
+                  </>
                 )}
               </div>
               
