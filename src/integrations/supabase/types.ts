@@ -6117,6 +6117,28 @@ export type Database = {
         Returns: string
       }
       get_active_users_this_week: { Args: never; Returns: number }
+      get_activity_feed: {
+        Args: {
+          p_activity_types?: string[]
+          p_limit?: number
+          p_offset?: number
+          p_user_id: string
+        }
+        Returns: {
+          activity_id: string
+          activity_type: string
+          actor_avatar_url: string
+          actor_full_name: string
+          actor_id: string
+          actor_username: string
+          created_at: string
+          entity_data: Json
+          entity_id: string
+          entity_title: string
+          entity_type: string
+          metadata: Json
+        }[]
+      }
       get_blocked_users: {
         Args: { p_user_id: string }
         Returns: {
