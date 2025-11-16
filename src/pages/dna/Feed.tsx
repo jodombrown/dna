@@ -39,6 +39,7 @@ const DnaFeed = () => {
       const { data, error } = await supabase.rpc('get_feed_posts', {
         p_user_id: user.id,
         p_feed_type: activeTab,
+        p_hashtag: null,
         p_limit: 20,
         p_offset: 0,
       });

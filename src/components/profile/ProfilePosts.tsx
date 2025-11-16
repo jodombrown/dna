@@ -20,6 +20,7 @@ export function ProfilePosts({ profileUserId, currentUserId }: ProfilePostsProps
       const { data, error } = await supabase.rpc('get_feed_posts', {
         p_user_id: currentUserId,
         p_feed_type: 'my_posts',
+        p_hashtag: null,
         p_limit: 50,
         p_offset: 0,
       });
