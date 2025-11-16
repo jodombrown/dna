@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 export default function BadgeToastListener() {
   useEffect(() => {
     const ch = supabase
-      .channel('badge:toasts')
+      .channel(`badge-toasts-${Date.now()}`) // Unique channel per mount
       .on('postgres_changes', { 
         event: 'INSERT', 
         schema: 'public', 
