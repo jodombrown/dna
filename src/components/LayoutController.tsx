@@ -3,6 +3,7 @@ import { useViewState } from '@/contexts/ViewStateContext';
 import ThreeColumnLayout from '@/layouts/ThreeColumnLayout';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import FullCanvasLayout from '@/layouts/FullCanvasLayout';
+import DetailViewLayout from '@/layouts/DetailViewLayout';
 
 interface LayoutControllerProps {
   // Column content for ThreeColumnLayout
@@ -138,12 +139,12 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
       );
 
     case 'FOCUS_DETAIL_MODE':
-      // For focus/detail mode, we might want modal overlay
-      // For now, render with minimal layout
+      // DetailViewLayout for focused entity views (profiles, events, spaces, stories, needs)
+      // Provides consistent breadcrumbs, back navigation, and optional context rail
       return (
-        <div className="w-full h-full p-4 transition-all duration-300 ease-in-out">
+        <DetailViewLayout>
           {children || centerColumn}
-        </div>
+        </DetailViewLayout>
       );
 
     default:

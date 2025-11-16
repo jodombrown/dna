@@ -206,8 +206,9 @@ function App() {
                 <Route index element={<Navigate to="/dna/connect/discover" replace />} />
                 <Route path="discover" element={<ConnectDiscover />} />
                 <Route path="network" element={<ConnectNetwork />} />
-                <Route path="messages" element={<ConnectMessages />} />
-                <Route path="messages/:conversationId" element={<ConversationView />} />
+                {/* Legacy route - now using /dna/messages as canonical */}
+                <Route path="messages" element={<Navigate to="/dna/messages" replace />} />
+                <Route path="messages/:conversationId" element={<Navigate to="/dna/messages" replace />} />
               </Route>
               
               {/* ========== LEGACY CONNECT & DISCOVER ROUTES - Redirects ========== */}
@@ -222,8 +223,22 @@ function App() {
                   <DnaFeed />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/messages" element={<Navigate to="/dna/connect/messages" replace />} />
-              <Route path="/dna/messages/:conversationId" element={<Navigate to="/dna/connect/messages" replace />} />
+              {/* Messages: Canonical routes */}
+              <Route path="/dna/messages" element={
+                <OnboardingGuard>
+                  <DnaMessages />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/messages/:conversationId" element={
+                <OnboardingGuard>
+                  <DnaMessages />
+                </OnboardingGuard>
+              } />
+              
+              {/* Legacy message routes - redirect to canonical */}
+              <Route path="/dna/connect/messages" element={<Navigate to="/dna/messages" replace />} />
+              <Route path="/dna/connect/messages/:conversationId" element={<Navigate to="/dna/messages" replace />} />
+              <Route path="/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/discover" element={<Navigate to="/dna/connect/discover" replace />} />
               

@@ -144,7 +144,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
         .maybeSingle();
 
       if (existingConversation) {
-        navigate(`/dna/connect/messages?conversation=${existingConversation.id}`);
+        navigate(`/dna/messages?conversation=${existingConversation.id}`);
       } else {
         // Create new conversation
         const { data: newConv, error } = await supabase
@@ -154,7 +154,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
           .single();
 
         if (error) throw error;
-        navigate(`/dna/connect/messages?conversation=${newConv.id}`);
+        navigate(`/dna/messages?conversation=${newConv.id}`);
       }
     } catch (error) {
       console.error('Message error:', error);

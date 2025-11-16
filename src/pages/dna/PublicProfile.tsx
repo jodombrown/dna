@@ -124,7 +124,7 @@ const PublicProfile = () => {
     try {
       const { id: conversationId } = await messageService.getOrCreateConversation(profile.id);
       trackEvent('connect_conversation_started', { target_user_id: profile.id });
-      navigate(`/dna/connect/messages/${conversationId}`);
+      navigate(`/dna/messages/${conversationId}`);
     } catch (error: any) {
       toast({
         title: 'Cannot start conversation',

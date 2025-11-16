@@ -57,7 +57,7 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
 
       if (error) throw error;
 
-      navigate('/dna/connect/messages');
+      navigate('/dna/messages');
     } catch (error: any) {
       console.error('Message error:', error);
       toast({

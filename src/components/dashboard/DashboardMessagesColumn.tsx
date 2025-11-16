@@ -73,12 +73,12 @@ export default function DashboardMessagesColumn({ profile, isOwnProfile }: Dashb
 
   const handleSelectConversation = (conversation: ConversationListItem) => {
     setSelectedConversation(conversation);
-    navigate(`/dna/connect/messages/${conversation.conversation_id}`);
+    navigate(`/dna/messages/${conversation.conversation_id}`);
   };
 
   const handleBack = () => {
     setSelectedConversation(null);
-    navigate('/dna/connect/messages');
+    navigate('/dna/messages');
   };
 
   const filteredConversations = conversations?.filter((c) =>

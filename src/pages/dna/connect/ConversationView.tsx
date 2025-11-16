@@ -90,7 +90,7 @@ export default function ConversationView() {
         description: 'Failed to load conversation',
         variant: 'destructive',
       });
-      navigate('/dna/connect/messages');
+      navigate('/dna/messages');
     }
   };
 
@@ -163,7 +163,7 @@ export default function ConversationView() {
         description: `You have blocked ${otherUser.full_name}`,
       });
 
-      navigate('/dna/connect/messages');
+      navigate('/dna/messages');
     } catch (error: any) {
       console.error('Error blocking user:', error);
       toast({
@@ -213,7 +213,7 @@ export default function ConversationView() {
   return (
     <>
       <div className="mb-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/dna/connect/messages')}>
+        <Button variant="ghost" size="sm" onClick={() => navigate('/dna/messages')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Messages
         </Button>
