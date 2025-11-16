@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Link } from 'react-router-dom';
-import UnifiedHeader from '@/components/UnifiedHeader';
-import Footer from '@/components/Footer';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,153 +38,165 @@ const ContributeHub = () => {
     },
   });
 
-  return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Contribute to Africa's Future
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Fund, mentor, volunteer, and open doors for projects building across the continent and diaspora
-          </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Button asChild size="lg">
-              <Link to="/dna/contribute/needs">
-                Browse All Needs <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+  const centerContent = (
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Hero Section */}
+      <div className="text-center mb-16">
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+          Contribute to Africa's Future
+        </h1>
+        <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+          Fund, mentor, volunteer, and open doors for projects building across the continent and diaspora
+        </p>
+        <div className="flex gap-4 justify-center flex-wrap">
+          <Button asChild size="lg">
+            <Link to="/dna/contribute/needs">
+              Browse All Needs <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* Featured Needs */}
+      <section className="mb-16">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-3xl font-bold text-foreground mb-2">Active Needs</h2>
+            <p className="text-muted-foreground">
+              Projects and initiatives currently seeking support
+            </p>
           </div>
         </div>
 
-        {/* Featured Needs */}
-        <section className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-foreground mb-2">Active Needs</h2>
-              <p className="text-muted-foreground">
-                Projects and initiatives currently seeking support
-              </p>
-            </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Card key={i} className="animate-pulse">
+                <CardHeader>
+                  <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-muted rounded w-1/2"></div>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-20 bg-muted rounded"></div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <Card key={i} className="animate-pulse">
-                  <CardHeader>
-                    <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
-                    <div className="h-3 bg-muted rounded w-1/2"></div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-20 bg-muted rounded"></div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : featuredNeeds && featuredNeeds.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredNeeds.map((need) => {
-                const Icon = typeIcons[need.type];
-                return (
-                  <Link key={need.id} to={`/dna/contribute/needs/${need.id}`}>
-                    <Card className="h-full hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <div className="flex items-start justify-between mb-2">
-                          <Icon className="h-5 w-5 text-primary" />
-                          <div className="flex gap-2">
-                            <Badge variant={need.status === 'open' ? 'default' : 'secondary'}>
-                              {need.status}
-                            </Badge>
-                            {need.priority === 'high' && (
-                              <Badge variant="destructive">High Priority</Badge>
-                            )}
-                          </div>
+        ) : featuredNeeds && featuredNeeds.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredNeeds.map((need) => {
+              const Icon = typeIcons[need.type];
+              return (
+                <Link key={need.id} to={`/dna/contribute/needs/${need.id}`}>
+                  <Card className="h-full hover:shadow-lg transition-shadow">
+                    <CardHeader>
+                      <div className="flex items-start justify-between mb-2">
+                        <Icon className="h-5 w-5 text-primary" />
+                        <div className="flex gap-2">
+                          <Badge variant={need.status === 'open' ? 'default' : 'secondary'}>
+                            {need.status}
+                          </Badge>
                         </div>
-                        <CardTitle className="line-clamp-2">{need.title}</CardTitle>
-                        <CardDescription>
-                          {need.space?.name} • {need.space?.region || 'Global'}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                          {need.description}
-                        </p>
-                        {need.type === 'funding' && need.target_amount && (
-                          <p className="text-sm font-semibold text-primary">
-                            Target: {need.currency || '$'}{need.target_amount.toLocaleString()}
-                          </p>
+                      </div>
+                      <CardTitle className="line-clamp-2">{need.title}</CardTitle>
+                      <CardDescription className="line-clamp-1">
+                        {need.space?.name || 'Project'}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+                        {need.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                        {need.region && (
+                          <Badge variant="outline" className="text-xs">
+                            {need.region}
+                          </Badge>
                         )}
-                      </CardContent>
-                    </Card>
-                  </Link>
-                );
-              })}
-            </div>
-          ) : (
-            <Card className="text-center py-12">
-              <CardContent>
-                <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No active needs yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Check back soon for ways to contribute to projects
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </section>
-
-        {/* How to Contribute Section */}
-        <section className="bg-muted/50 rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
-            Ways to Contribute
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                <DollarSign className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold mb-1">Funding</h3>
-              <p className="text-sm text-muted-foreground">Invest in projects and initiatives</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                <Users className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold mb-1">Skills</h3>
-              <p className="text-sm text-muted-foreground">Share your expertise</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                <Clock className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold mb-1">Time</h3>
-              <p className="text-sm text-muted-foreground">Volunteer your time</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                <Key className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold mb-1">Access</h3>
-              <p className="text-sm text-muted-foreground">Open doors and make introductions</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
-                <Package className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold mb-1">Resources</h3>
-              <p className="text-sm text-muted-foreground">Provide tools and materials</p>
-            </div>
+                        {need.priority && (
+                          <Badge variant="outline" className="text-xs">
+                            {need.priority} priority
+                          </Badge>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
-        </section>
-      </main>
+        ) : (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <p className="text-muted-foreground">
+                No active contribution needs at the moment. Check back soon!
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </section>
 
-      <Footer />
-    </div>
+      {/* How It Works */}
+      <section className="mb-16">
+        <h2 className="text-3xl font-bold text-foreground mb-8 text-center">How It Works</h2>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card>
+            <CardHeader>
+              <DollarSign className="h-8 w-8 text-primary mb-2" />
+              <CardTitle className="text-lg">Fund Projects</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Support initiatives with financial contributions that drive impact
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <Users className="h-8 w-8 text-primary mb-2" />
+              <CardTitle className="text-lg">Share Skills</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Offer your expertise to help projects succeed
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <Clock className="h-8 w-8 text-primary mb-2" />
+              <CardTitle className="text-lg">Volunteer Time</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Dedicate your time to make a real difference
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <Key className="h-8 w-8 text-primary mb-2" />
+              <CardTitle className="text-lg">Open Doors</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Connect projects with opportunities and networks
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    </main>
+  );
+
+  return (
+    <LayoutController
+      leftColumn={<LeftNav />}
+      centerColumn={centerContent}
+      rightColumn={<RightWidgets variant="default" />}
+    />
   );
 };
 
 export default ContributeHub;
+

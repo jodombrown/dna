@@ -10,17 +10,233 @@ import { useLiveEvents } from '@/hooks/useLiveEvents';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useModulePolicy, usePolicyConfig } from '@/hooks/useAdaptiveConfig';
+import { useViewState } from '@/contexts/ViewStateContext';
 
-interface ModulesProps {
-  visibleModules: DashboardModule[];
-  collapsedModules: DashboardModule[];
-  density: 'standard' | 'compact';
+interface ModulesConfig {
+  modules: {
+    id: string;
+    order: number;
+    visible: boolean;
+  }[];
 }
 
-export function DashboardModules({ visibleModules, collapsedModules, density }: ModulesProps) {
+interface ModulesProps {
+  visibleModules?: DashboardModule[];
+  collapsedModules?: DashboardModule[];
+  density?: 'standard' | 'compact';
+}
+
+// Extracted module components
+function UpcomingEventsModule({ isCompact, navigate, events }: any) {
+  return (
+    <Card>
+      <CardHeader className={isCompact ? 'pb-3' : ''}>
+        <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-sm' : 'text-base'}`}>
+          <Calendar className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
+          Upcoming Events
+        </CardTitle>
+      </CardHeader>
+      <CardContent className={isCompact ? 'pt-0' : ''}>
+        {events && events.length > 0 ? (
+          <div className="space-y-2">
+            {events.map((event: any) => (
+              <div
+                key={event.id}
+                className="text-sm cursor-pointer hover:text-primary transition-colors"
+                onClick={() => navigate(`/dna/convene/events/${event.id}`)}
+              >
+                <p className="font-medium truncate">{event.title}</p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(event.start_time).toLocaleDateString()}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No upcoming events</p>
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full mt-3"
+          onClick={() => navigate('/dna/convene')}
+        >
+          Browse Events
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+function RecommendedSpacesModule({ isCompact, navigate, spaces }: any) {
+  return (
+    <Card>
+      <CardHeader className={isCompact ? 'pb-3' : ''}>
+        <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-sm' : 'text-base'}`}>
+          <Users className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
+          Recommended Spaces
+        </CardTitle>
+      </CardHeader>
+      <CardContent className={isCompact ? 'pt-0' : ''}>
+        {spaces && spaces.length > 0 ? (
+          <div className="space-y-2">
+            {spaces.map((space: any) => (
+              <div
+                key={space.id}
+                className="text-sm cursor-pointer hover:text-primary transition-colors"
+                onClick={() => navigate(`/dna/collaborate/spaces/${space.id}`)}
+              >
+                <p className="font-medium truncate">{space.title}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2">
+                  {space.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No spaces to show</p>
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full mt-3"
+          onClick={() => navigate('/dna/collaborate')}
+        >
+          Explore Spaces
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+function OpenNeedsModule({ isCompact, navigate, needs }: any) {
+  return (
+    <Card>
+      <CardHeader className={isCompact ? 'pb-3' : ''}>
+        <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-sm' : 'text-base'}`}>
+          <HandHeart className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
+          Ways to Contribute
+        </CardTitle>
+      </CardHeader>
+      <CardContent className={isCompact ? 'pt-0' : ''}>
+        {needs && needs.length > 0 ? (
+          <div className="space-y-2">
+            {needs.map((need: any) => (
+              <div
+                key={need.id}
+                className="text-sm cursor-pointer hover:text-primary transition-colors"
+                onClick={() => navigate(`/dna/contribute/needs/${need.id}`)}
+              >
+                <p className="font-medium truncate">{need.title}</p>
+                <p className="text-xs text-muted-foreground">
+                  {need.spaces?.title || 'Project'}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No open needs</p>
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full mt-3"
+          onClick={() => navigate('/dna/contribute')}
+        >
+          View All Needs
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+function SuggestedPeopleModule({ isCompact, navigate, people }: any) {
+  return (
+    <Card>
+      <CardHeader className={isCompact ? 'pb-3' : ''}>
+        <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-sm' : 'text-base'}`}>
+          <UserPlus className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
+          People to Connect With
+        </CardTitle>
+      </CardHeader>
+      <CardContent className={isCompact ? 'pt-0' : ''}>
+        {people && people.length > 0 ? (
+          <div className="space-y-2">
+            {people.map((person: any) => (
+              <div
+                key={person.id}
+                className="text-sm cursor-pointer hover:text-primary transition-colors"
+                onClick={() => navigate(`/dna/${person.username || person.id}`)}
+              >
+                <p className="font-medium truncate">
+                  {person.display_name || person.username}
+                </p>
+                <p className="text-xs text-muted-foreground line-clamp-2">
+                  {person.bio || 'DNA Network member'}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No suggestions available</p>
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full mt-3"
+          onClick={() => navigate('/dna/connect')}
+        >
+          Discover More
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Module registry - maps module IDs to components
+const MODULE_REGISTRY: Record<string, (props: any) => JSX.Element | null> = {
+  resume_section: (props) => <ResumeModule key="resume_section" />,
+  upcoming_events: (props) => <UpcomingEventsModule {...props} key="upcoming_events" />,
+  whats_next: (props) => <WhatsNextModule key="whats_next" />,
+  trending_hashtags: (props) => <TrendingHashtags key="trending_hashtags" />,
+  recommended_spaces: (props) => <RecommendedSpacesModule {...props} key="recommended_spaces" />,
+  open_needs: (props) => <OpenNeedsModule {...props} key="open_needs" />,
+  suggested_people: (props) => <SuggestedPeopleModule {...props} key="suggested_people" />,
+};
+
+// Default module configuration (fallback if no policy)
+const DEFAULT_MODULES: ModulesConfig = {
+  modules: [
+    { id: 'resume_section', order: 0, visible: true },
+    { id: 'whats_next', order: 1, visible: true },
+    { id: 'upcoming_events', order: 2, visible: true },
+    { id: 'trending_hashtags', order: 3, visible: true },
+    { id: 'recommended_spaces', order: 4, visible: true },
+    { id: 'open_needs', order: 5, visible: true },
+    { id: 'suggested_people', order: 6, visible: true },
+  ],
+};
+
+export function DashboardModules({ 
+  visibleModules = [],
+  collapsedModules = [], 
+  density = 'standard' 
+}: ModulesProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { viewState } = useViewState();
+  
+  // Get adaptive module policy
+  const { data: modulePolicy } = useModulePolicy();
+  const modulesConfig = usePolicyConfig<ModulesConfig>(modulePolicy, DEFAULT_MODULES);
+  
   const { events: upcomingEvents } = useLiveEvents(3);
+
+  // Determine which modules should load data based on adaptive config
+  const shouldLoadSpaces = modulesConfig.modules.some(m => m.id === 'recommended_spaces' && m.visible);
+  const shouldLoadNeeds = modulesConfig.modules.some(m => m.id === 'open_needs' && m.visible);
+  const shouldLoadPeople = modulesConfig.modules.some(m => m.id === 'suggested_people' && m.visible);
 
   const { data: recommendedSpaces } = useQuery({
     queryKey: ['recommended-spaces', user?.id],
@@ -33,7 +249,7 @@ export function DashboardModules({ visibleModules, collapsedModules, density }: 
         .limit(3);
       return data || [];
     },
-    enabled: !!user && visibleModules.includes('recommended_spaces'),
+    enabled: !!user && shouldLoadSpaces,
   });
 
   const { data: openNeeds } = useQuery({
@@ -46,7 +262,7 @@ export function DashboardModules({ visibleModules, collapsedModules, density }: 
         .limit(3);
       return data || [];
     },
-    enabled: !!user && visibleModules.includes('open_needs'),
+    enabled: !!user && shouldLoadNeeds,
   });
 
   const { data: suggestedPeople } = useQuery({
@@ -59,207 +275,39 @@ export function DashboardModules({ visibleModules, collapsedModules, density }: 
         .limit(3);
       return data || [];
     },
-    enabled: !!user && visibleModules.includes('suggested_people'),
+    enabled: !!user && shouldLoadPeople,
   });
 
   const isCompact = density === 'compact';
 
-  const renderModule = (module: DashboardModule) => {
-    const isCollapsed = collapsedModules.includes(module);
-    if (isCollapsed) return null;
+  // Get sorted, visible modules from adaptive config
+  const visibleModulesFromPolicy = modulesConfig.modules
+    .filter(m => m.visible)
+    .sort((a, b) => a.order - b.order);
 
-    switch (module) {
-      case 'resume_section':
-        return <ResumeModule key={module} />;
-
-      case 'upcoming_events':
-        return (
-          <Card key={module}>
-            <CardHeader className={isCompact ? 'pb-3' : ''}>
-              <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-sm' : 'text-base'}`}>
-                <Calendar className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
-                Upcoming Events
-              </CardTitle>
-            </CardHeader>
-            <CardContent className={isCompact ? 'pt-0' : ''}>
-              {upcomingEvents && upcomingEvents.length > 0 ? (
-                <div className="space-y-2">
-                  {upcomingEvents.map((event) => (
-                    <div
-                      key={event.id}
-                      className="text-sm cursor-pointer hover:text-primary transition-colors"
-                      onClick={() => navigate(`/dna/convene/events/${event.id}`)}
-                    >
-                      <p className="font-medium truncate">{event.title}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(event.start_time).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">No upcoming events</p>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full mt-3"
-                onClick={() => navigate('/dna/convene')}
-              >
-                View All Events
-              </Button>
-            </CardContent>
-          </Card>
-        );
-
-      case 'recommended_spaces':
-        return (
-          <Card key={module}>
-            <CardHeader className={isCompact ? 'pb-3' : ''}>
-              <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-sm' : 'text-base'}`}>
-                <Users className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
-                Recommended Spaces
-              </CardTitle>
-            </CardHeader>
-            <CardContent className={isCompact ? 'pt-0' : ''}>
-              {recommendedSpaces && recommendedSpaces.length > 0 ? (
-                <div className="space-y-2">
-                  {recommendedSpaces.map((space: any) => (
-                    <div
-                      key={space.id}
-                      className="text-sm cursor-pointer hover:text-primary transition-colors"
-                      onClick={() => navigate(`/dna/collaborate/spaces/${space.id}`)}
-                    >
-                      <p className="font-medium truncate">{space.title}</p>
-                      <p className="text-xs text-muted-foreground line-clamp-1">
-                        {space.description}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">No spaces yet</p>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full mt-3"
-                onClick={() => navigate('/dna/collaborate')}
-              >
-                Explore Spaces
-              </Button>
-            </CardContent>
-          </Card>
-        );
-
-      case 'open_needs':
-        return (
-          <Card key={module}>
-            <CardHeader className={isCompact ? 'pb-3' : ''}>
-              <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-sm' : 'text-base'}`}>
-                <HandHeart className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
-                Open Needs
-              </CardTitle>
-            </CardHeader>
-            <CardContent className={isCompact ? 'pt-0' : ''}>
-              {openNeeds && openNeeds.length > 0 ? (
-                <div className="space-y-2">
-                  {openNeeds.map((need: any) => (
-                    <div
-                      key={need.id}
-                      className="text-sm cursor-pointer hover:text-primary transition-colors"
-                      onClick={() => navigate(`/dna/contribute/needs/${need.id}`)}
-                    >
-                      <p className="font-medium truncate">{need.title}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {need.spaces?.title || 'Unknown space'}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">No open needs</p>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full mt-3"
-                onClick={() => navigate('/dna/contribute')}
-              >
-                View All Needs
-              </Button>
-            </CardContent>
-          </Card>
-        );
-
-      case 'suggested_people':
-        return (
-          <Card key={module}>
-            <CardHeader className={isCompact ? 'pb-3' : ''}>
-              <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-sm' : 'text-base'}`}>
-                <UserPlus className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
-                Suggested People
-              </CardTitle>
-            </CardHeader>
-            <CardContent className={isCompact ? 'pt-0' : ''}>
-              {suggestedPeople && suggestedPeople.length > 0 ? (
-                <div className="space-y-2">
-                  {suggestedPeople.map((person: any) => (
-                    <div
-                      key={person.id}
-                      className="text-sm cursor-pointer hover:text-primary transition-colors"
-                      onClick={() => navigate(`/dna/${person.username}`)}
-                    >
-                      <p className="font-medium truncate">
-                        {person.display_name || person.username}
-                      </p>
-                      <p className="text-xs text-muted-foreground line-clamp-1">
-                        {person.bio || 'DNA Member'}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">No suggestions</p>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full mt-3"
-                onClick={() => navigate('/dna/connect')}
-              >
-                Discover People
-              </Button>
-            </CardContent>
-          </Card>
-        );
-
-      case 'recent_stories':
-        return (
-          <Card key={module}>
-            <CardHeader className={isCompact ? 'pb-3' : ''}>
-              <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-sm' : 'text-base'}`}>
-                <FileText className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
-                Recent Stories
-              </CardTitle>
-            </CardHeader>
-            <CardContent className={isCompact ? 'pt-0' : ''}>
-              <TrendingHashtags />
-            </CardContent>
-          </Card>
-        );
-
-      default:
-        return null;
-    }
-  };
-
+  // Render modules based on adaptive policy
   return (
-    <div className={`space-y-${isCompact ? '3' : '4'}`}>
-      {/* What's Next is always first and visible */}
-      <WhatsNextModule />
-      
-      {visibleModules.map(renderModule)}
+    <div className="space-y-4">
+      {visibleModulesFromPolicy.map((moduleConfig) => {
+        const moduleRenderer = MODULE_REGISTRY[moduleConfig.id];
+        
+        if (!moduleRenderer) {
+          console.warn(`Module ${moduleConfig.id} not found in registry`);
+          return null;
+        }
+
+        // Pass module-specific data
+        const moduleProps = {
+          isCompact,
+          navigate,
+          events: upcomingEvents,
+          spaces: recommendedSpaces,
+          needs: openNeeds,
+          people: suggestedPeople,
+        };
+
+        return moduleRenderer(moduleProps);
+      })}
     </div>
   );
 }

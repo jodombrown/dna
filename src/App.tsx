@@ -89,6 +89,7 @@ import MySpaces from "./pages/dna/collaborate/MySpaces";
 import ContributeHub from "./pages/dna/contribute/ContributeHub";
 import NeedsIndex from "./pages/dna/contribute/NeedsIndex";
 import NeedDetail from "./pages/dna/contribute/NeedDetail";
+import OpportunityDetail from "./pages/dna/contribute/OpportunityDetail";
 import MyContributions from "./pages/dna/contribute/MyContributions";
 
 // Convey M1-M4 pages
@@ -349,7 +350,7 @@ function App() {
               } />
               <Route path="/dna/contribute/needs/:id" element={
                 <OnboardingGuard>
-                  <NeedDetail />
+                  <OpportunityDetail />
                 </OnboardingGuard>
               } />
               <Route path="/dna/contribute/my" element={
