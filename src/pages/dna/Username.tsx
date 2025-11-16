@@ -8,7 +8,9 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import UnifiedHeader from '@/components/UnifiedHeader';
-import UserDashboardLayout from '@/components/dashboard/UserDashboardLayout';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { useMobile } from '@/hooks/useMobile';
 import { 
   MapPin, 
@@ -85,9 +87,107 @@ const DnaUserDashboard = () => {
     );
   }
 
-  // Desktop: Use full UserDashboardLayout
+  // Desktop: Use LayoutController with profile content
   if (!isMobile) {
-    return <UserDashboardLayout profile={profile} currentUser={user} />;
+    return (
+      <LayoutController
+        leftColumn={<LeftNav />}
+        centerColumn={
+          <div className="max-w-4xl mx-auto">
+            {/* Banner */}
+            {profile.banner_url && (
+              <div 
+                className="h-48 bg-cover bg-center rounded-lg mb-4"
+                style={{ backgroundImage: `url(${profile.banner_url})` }}
+              />
+            )}
+
+            {/* Profile Header */}
+            <Card className="mb-6">
+              <CardContent className="pt-6">
+                <div className="flex gap-6">
+                  <Avatar className="w-24 h-24 border-4 border-background">
+                    <AvatarImage src={profile.avatar_url || undefined} />
+                    <AvatarFallback className="text-2xl">
+                      {profile.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h1 className="text-3xl font-bold">{profile.full_name || profile.username}</h1>
+                        {profile.headline && (
+                          <p className="text-lg text-muted-foreground mt-1">{profile.headline}</p>
+                        )}
+                      </div>
+                      {isOwnProfile && (
+                        <Button onClick={() => navigate('/app/profile/edit')}>
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit Profile
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap gap-4 mt-4 text-sm text-muted-foreground">
+                      {profile.location && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {profile.location}
+                        </div>
+                      )}
+                      {profile.profession && (
+                        <div className="flex items-center gap-1">
+                          <Briefcase className="w-4 h-4" />
+                          {profile.profession}
+                        </div>
+                      )}
+                    </div>
+
+                    {profile.bio && (
+                      <p className="mt-4 text-muted-foreground">{profile.bio}</p>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tabs for additional content */}
+            <Tabs defaultValue="activity">
+              <TabsList>
+                <TabsTrigger value="activity">Activity</TabsTrigger>
+                <TabsTrigger value="about">About</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="activity" className="mt-6">
+                <Card>
+                  <CardContent className="pt-6">
+                    <p className="text-muted-foreground text-center py-8">
+                      No activity yet
+                    </p>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="about" className="mt-6">
+                <Card>
+                  <CardContent className="pt-6">
+                    {profile.bio ? (
+                      <p>{profile.bio}</p>
+                    ) : (
+                      <p className="text-muted-foreground text-center py-8">
+                        No bio available
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+        }
+        rightColumn={<RightWidgets />}
+      />
+    );
   }
 
   // Mobile: Use simplified profile view
