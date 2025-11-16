@@ -8,7 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { format } from 'date-fns';
 import { EventCalendarView } from '@/components/convene/EventCalendarView';
 
@@ -170,149 +172,153 @@ const MyEvents = () => {
   };
 
   return (
-    <FeedLayout>
-      <div className="container max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">My Events</h1>
-            <p className="text-muted-foreground text-lg">
-              Manage events you're hosting and attending
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <div className="flex gap-1 border rounded-lg p-1">
-              <Button
-                variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-              >
-                <List className="h-4 w-4 mr-2" />
-                List
-              </Button>
-              <Button
-                variant={viewMode === 'calendar' ? 'secondary' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('calendar')}
-              >
-                <CalendarDays className="h-4 w-4 mr-2" />
-                Calendar
+    <LayoutController
+      leftColumn={<LeftNav />}
+      centerColumn={
+        <div className="container max-w-6xl mx-auto px-4 py-8">
+          <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">My Events</h1>
+              <p className="text-muted-foreground text-lg">
+                Manage events you're hosting and attending
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <div className="flex gap-1 border rounded-lg p-1">
+                <Button
+                  variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                >
+                  <List className="h-4 w-4 mr-2" />
+                  List
+                </Button>
+                <Button
+                  variant={viewMode === 'calendar' ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('calendar')}
+                >
+                  <CalendarDays className="h-4 w-4 mr-2" />
+                  Calendar
+                </Button>
+              </div>
+              <Button onClick={() => navigate('/dna/convene/analytics')}>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Analytics
               </Button>
             </div>
-            <Button onClick={() => navigate('/dna/convene/analytics')}>
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Analytics
-            </Button>
           </div>
+
+          {/* Calendar View */}
+          {viewMode === 'calendar' && (
+            <EventCalendarView events={[...hostingEvents, ...attendingEvents]} />
+          )}
+
+          {/* List View */}
+          {viewMode === 'list' && (
+            <Tabs defaultValue="hosting" className="space-y-6">
+            <TabsList className="grid w-full max-w-md grid-cols-2">
+              <TabsTrigger value="hosting">
+                Hosting ({hostingEvents.length})
+              </TabsTrigger>
+              <TabsTrigger value="attending">
+                Attending ({attendingEvents.length})
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Hosting Tab */}
+            <TabsContent value="hosting" className="space-y-6">
+              {hostingLoading ? (
+                <p className="text-center text-muted-foreground">Loading events...</p>
+              ) : hostingEvents.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-lg font-medium mb-2">No events yet</p>
+                    <p className="text-muted-foreground mb-4">
+                      You haven't created any events yet. Host one to bring the diaspora together!
+                    </p>
+                    <Button onClick={() => navigate('/dna/convene/events/new')}>
+                      Create Your First Event
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <>
+                  {upcomingHosting.length > 0 && (
+                    <div>
+                      <h2 className="text-2xl font-bold mb-4">Upcoming</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {upcomingHosting.map(event => (
+                          <EventCard key={event.id} event={event} isHost />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {pastHosting.length > 0 && (
+                    <div>
+                      <h2 className="text-2xl font-bold mb-4">Past Events</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {pastHosting.map(event => (
+                          <EventCard key={event.id} event={event} isHost />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </TabsContent>
+
+            {/* Attending Tab */}
+            <TabsContent value="attending" className="space-y-6">
+              {attendingLoading ? (
+                <p className="text-center text-muted-foreground">Loading events...</p>
+              ) : attendingEvents.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-lg font-medium mb-2">No events yet</p>
+                    <p className="text-muted-foreground mb-4">
+                      You're not registered for any events yet.
+                    </p>
+                    <Button onClick={() => navigate('/dna/convene')}>
+                      Discover Events
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <>
+                  {upcomingAttending.length > 0 && (
+                    <div>
+                      <h2 className="text-2xl font-bold mb-4">Upcoming</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {upcomingAttending.map(event => (
+                          <EventCard key={event.id} event={event} isHost={false} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {pastAttending.length > 0 && (
+                    <div>
+                      <h2 className="text-2xl font-bold mb-4">Past Events</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {pastAttending.map(event => (
+                          <EventCard key={event.id} event={event} isHost={false} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </TabsContent>
+          </Tabs>
+          )}
         </div>
-
-        {/* Calendar View */}
-        {viewMode === 'calendar' && (
-          <EventCalendarView events={[...hostingEvents, ...attendingEvents]} />
-        )}
-
-        {/* List View */}
-        {viewMode === 'list' && (
-          <Tabs defaultValue="hosting" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="hosting">
-              Hosting ({hostingEvents.length})
-            </TabsTrigger>
-            <TabsTrigger value="attending">
-              Attending ({attendingEvents.length})
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Hosting Tab */}
-          <TabsContent value="hosting" className="space-y-6">
-            {hostingLoading ? (
-              <p className="text-center text-muted-foreground">Loading events...</p>
-            ) : hostingEvents.length === 0 ? (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-lg font-medium mb-2">No events yet</p>
-                  <p className="text-muted-foreground mb-4">
-                    You haven't created any events yet. Host one to bring the diaspora together!
-                  </p>
-                  <Button onClick={() => navigate('/dna/convene/events/new')}>
-                    Create Your First Event
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <>
-                {upcomingHosting.length > 0 && (
-                  <div>
-                    <h2 className="text-2xl font-bold mb-4">Upcoming</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {upcomingHosting.map(event => (
-                        <EventCard key={event.id} event={event} isHost />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {pastHosting.length > 0 && (
-                  <div>
-                    <h2 className="text-2xl font-bold mb-4">Past Events</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {pastHosting.map(event => (
-                        <EventCard key={event.id} event={event} isHost />
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </TabsContent>
-
-          {/* Attending Tab */}
-          <TabsContent value="attending" className="space-y-6">
-            {attendingLoading ? (
-              <p className="text-center text-muted-foreground">Loading events...</p>
-            ) : attendingEvents.length === 0 ? (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-lg font-medium mb-2">No events yet</p>
-                  <p className="text-muted-foreground mb-4">
-                    You haven't RSVP'd to any events yet. Browse upcoming events to get started!
-                  </p>
-                  <Button onClick={() => navigate('/dna/convene/events')}>
-                    Browse Events
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <>
-                {upcomingAttending.length > 0 && (
-                  <div>
-                    <h2 className="text-2xl font-bold mb-4">Upcoming</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {upcomingAttending.map(event => (
-                        <EventCard key={event.id} event={event} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {pastAttending.length > 0 && (
-                  <div>
-                    <h2 className="text-2xl font-bold mb-4">Past Events</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {pastAttending.map(event => (
-                        <EventCard key={event.id} event={event} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </TabsContent>
-        </Tabs>
-        )}
-      </div>
-    </FeedLayout>
+      }
+      rightColumn={<RightWidgets variant="convene" />}
+    />
   );
 };
 

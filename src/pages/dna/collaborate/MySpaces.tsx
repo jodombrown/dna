@@ -1,4 +1,6 @@
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,11 +15,15 @@ export default function MySpaces() {
 
   if (isLoading) {
     return (
-      <FeedLayout>
-        <div className="flex items-center justify-center min-h-[50vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      </FeedLayout>
+      <LayoutController
+        leftColumn={<LeftNav />}
+        centerColumn={
+          <div className="flex items-center justify-center min-h-[50vh]">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        }
+        rightColumn={<RightWidgets />}
+      />
     );
   }
 
@@ -25,71 +31,75 @@ export default function MySpaces() {
   const contributing = data?.contributing || [];
 
   return (
-    <FeedLayout>
-      <div className="container max-w-6xl mx-auto px-4 py-8 space-y-6">
-        <div>
-          <h1 className="text-4xl font-bold">My Spaces</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your collaboration spaces and contributions
-          </p>
+    <LayoutController
+      leftColumn={<LeftNav />}
+      centerColumn={
+        <div className="container max-w-6xl mx-auto px-4 py-8 space-y-6">
+          <div>
+            <h1 className="text-4xl font-bold">My Spaces</h1>
+            <p className="text-muted-foreground mt-2">
+              Manage your collaboration spaces and contributions
+            </p>
+          </div>
+
+          <Tabs defaultValue="leading" className="w-full">
+            <TabsList>
+              <TabsTrigger value="leading">
+                Leading ({leading.length})
+              </TabsTrigger>
+              <TabsTrigger value="contributing">
+                Contributing ({contributing.length})
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="leading" className="mt-6">
+              {leading.length === 0 ? (
+                <Card>
+                  <CardContent className="pt-12 pb-12 text-center">
+                    <p className="text-muted-foreground">You're not leading any spaces yet</p>
+                    <Link 
+                      to="/dna/collaborate/spaces/new" 
+                      className="text-primary hover:underline mt-2 inline-block"
+                    >
+                      Create your first space →
+                    </Link>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {leading.map((space) => (
+                    <SpaceCard key={space.id} space={space} />
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="contributing" className="mt-6">
+              {contributing.length === 0 ? (
+                <Card>
+                  <CardContent className="pt-12 pb-12 text-center">
+                    <p className="text-muted-foreground">You're not contributing to any spaces yet</p>
+                    <Link 
+                      to="/dna/collaborate/spaces" 
+                      className="text-primary hover:underline mt-2 inline-block"
+                    >
+                      Find spaces to join →
+                    </Link>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {contributing.map((space) => (
+                    <SpaceCard key={space.id} space={space} />
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
-
-        <Tabs defaultValue="leading" className="w-full">
-          <TabsList>
-            <TabsTrigger value="leading">
-              Leading ({leading.length})
-            </TabsTrigger>
-            <TabsTrigger value="contributing">
-              Contributing ({contributing.length})
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="leading" className="mt-6">
-            {leading.length === 0 ? (
-              <Card>
-                <CardContent className="pt-12 pb-12 text-center">
-                  <p className="text-muted-foreground">You're not leading any spaces yet</p>
-                  <Link 
-                    to="/dna/collaborate/spaces/new" 
-                    className="text-primary hover:underline mt-2 inline-block"
-                  >
-                    Create your first space →
-                  </Link>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {leading.map((space) => (
-                  <SpaceCard key={space.id} space={space} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="contributing" className="mt-6">
-            {contributing.length === 0 ? (
-              <Card>
-                <CardContent className="pt-12 pb-12 text-center">
-                  <p className="text-muted-foreground">You're not contributing to any spaces yet</p>
-                  <Link 
-                    to="/dna/collaborate/spaces" 
-                    className="text-primary hover:underline mt-2 inline-block"
-                  >
-                    Find spaces to join →
-                  </Link>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {contributing.map((space) => (
-                  <SpaceCard key={space.id} space={space} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
-    </FeedLayout>
+      }
+      rightColumn={<RightWidgets />}
+    />
   );
 }
 

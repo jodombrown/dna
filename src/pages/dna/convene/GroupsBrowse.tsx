@@ -11,7 +11,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Users, Plus, Search, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 
 type GroupFilter = 'all' | 'my_groups' | 'popular' | 'recommended';
 
