@@ -36,7 +36,7 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
   }
 
   if (!isAdmin) {
-    return <Navigate to="/dna/me" replace />;
+    return <Navigate to="/dna/feed" replace />;
   }
 
   return <>{children}</>;

@@ -22,7 +22,7 @@ export default function AdminLayout() {
                 <h1 className="text-xl font-bold text-foreground">DNA Admin</h1>
               </div>
               <NavLink 
-                to="/dna/me" 
+                to="/dna/feed" 
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />

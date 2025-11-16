@@ -296,7 +296,7 @@ export default function Discover() {
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => navigate('/dna/me')}
+            onClick={() => navigate('/dna/feed')}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

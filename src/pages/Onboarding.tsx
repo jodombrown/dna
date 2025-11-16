@@ -57,7 +57,7 @@ const Onboarding = () => {
   // If profile already has onboarding_completed_at, redirect to dashboard
   useEffect(() => {
     if (profile?.onboarding_completed_at) {
-      navigate('/dna/me');
+      navigate('/dna/feed');
     }
   }, [profile, navigate]);
 
@@ -241,7 +241,7 @@ const Onboarding = () => {
 
       // Redirect to dashboard
       setTimeout(() => {
-        navigate('/dna/me');
+        navigate('/dna/feed');
       }, 100);
     } catch (error: any) {
       console.error('Error completing onboarding:', error);

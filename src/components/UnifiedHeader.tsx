@@ -164,7 +164,6 @@ const UnifiedHeader = () => {
   // Navigation items for authenticated users - Feed as Home
   const authNavigationItems = [
     { title: 'Home', view: 'feed', icon: Home, path: '/dna/feed', badge: 0 },
-    { title: 'My DNA', view: 'dna', icon: User, path: '/dna/me', badge: 0 },
     { title: 'Discover', view: 'discover', icon: Users, path: '/dna/connect/discover', badge: 0 },
     { title: 'Network', view: 'network', icon: Users2, path: '/dna/connect/network', badge: 0 },
     { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/dna/connect/messages', badge: unreadMessageCount },
@@ -314,7 +313,7 @@ const UnifiedHeader = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => navigate('/dna/me')}>
+                        <DropdownMenuItem onClick={() => navigate(profile?.username ? `/dna/${profile.username}` : '/dna/feed')}>
                           <User className="w-4 h-4 mr-2" />
                           Profile
                         </DropdownMenuItem>
