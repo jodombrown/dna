@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UnifiedHeader from '@/components/UnifiedHeader';
+
 import HeroSection from '@/components/HeroSection';
 import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
 import BuildingTogetherSection from '@/components/BuildingTogetherSection';
@@ -26,12 +26,7 @@ const Index = () => {
   }, [user, loading, navigate]);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation Header */}
-      <UnifiedHeader />
-      
-      {/* Spacer for fixed header on mobile */}
-      <div className="h-16 md:hidden" aria-hidden="true" />
+    <div className="min-h-screen bg-white pt-20">
 
       {/* Prototype Banner */}
       <PrototypeBanner />

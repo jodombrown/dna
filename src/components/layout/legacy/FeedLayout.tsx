@@ -18,7 +18,7 @@
  */
 
 import React from 'react';
-import UnifiedHeader from '@/components/UnifiedHeader';
+
 import Footer from '@/components/Footer';
 
 interface FeedLayoutProps {
@@ -28,8 +28,7 @@ interface FeedLayoutProps {
 export const FeedLayout: React.FC<FeedLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <UnifiedHeader />
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full pt-20">
         {children}
       </main>
       <Footer />
