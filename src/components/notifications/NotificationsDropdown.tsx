@@ -17,12 +17,12 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
   
   const { notifications, isLoading, markAsRead, markAllAsRead } = useNotifications();
 
-  // Real-time subscription
+  // Real-time subscription with StrictMode guard
   useEffect(() => {
     if (!user) return;
 
     const channel = supabase
-      .channel('user-notifications')
+      .channel(`user-notifications-${user.id}-${Date.now()}`) // Unique channel per mount
       .on(
         'postgres_changes',
         {
