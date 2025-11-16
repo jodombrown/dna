@@ -1,6 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useProfile } from '@/hooks/useProfile';
-import UnifiedHeader from '@/components/UnifiedHeader';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
 import { Users, Network, MessageCircle } from 'lucide-react';
@@ -18,9 +17,7 @@ export const ConnectLayout = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
-      <div className="container max-w-7xl mx-auto px-4 py-6">
+      <div className="container max-w-7xl mx-auto px-4 py-6 pt-20">
         {/* Header with Profile Strength */}
         <div className="mb-6">
           <div className="flex items-start justify-between gap-6 mb-6">
