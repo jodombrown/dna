@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import UnifiedHeader from '@/components/UnifiedHeader';
+
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, Network, MessageSquare } from 'lucide-react';
 import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
@@ -39,9 +39,7 @@ const Connect = () => {
   const completionScore = calculateProfileCompletion(profile);
 
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
+    <div className="min-h-screen bg-background pt-20">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header with Profile Strength */}
         <div className="flex items-start justify-between mb-6 gap-4">

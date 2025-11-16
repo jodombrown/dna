@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Link } from 'react-router-dom';
-import UnifiedHeader from '@/components/UnifiedHeader';
+
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -67,9 +67,7 @@ const MyContributions = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
+    <div className="min-h-screen bg-background pt-20">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">My Contributions</h1>

@@ -233,9 +233,7 @@ const PublicProfile = () => {
 
   // Main profile view
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
+    <div className="min-h-screen bg-background pt-20">
       {/* Banner */}
       {profile.banner_url && (
         <div 

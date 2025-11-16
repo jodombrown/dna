@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import UnifiedHeader from '@/components/UnifiedHeader';
+
 import { ConnectNudges } from '@/components/connect/ConnectNudges';
 import { MyProfilePreview } from '@/components/profile/MyProfilePreview';
 import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
@@ -27,9 +27,7 @@ const DnaMe = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
+    <div className="min-h-screen bg-background pt-20">
       <div className="container max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">My DNA Hub</h1>
