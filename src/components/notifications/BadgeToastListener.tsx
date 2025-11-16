@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 export default function BadgeToastListener() {
   useEffect(() => {
     const ch = supabase
-      .channel(`badge-toasts-${Date.now()}`) // Unique channel per mount
+      .channel(`badge-toasts-${Date.now()}`)
       .on('postgres_changes', { 
         event: 'INSERT', 
         schema: 'public', 
@@ -18,8 +18,19 @@ export default function BadgeToastListener() {
           description: b.description || 'Great work!',
           duration: 5000,
         });
-      })
-      .subscribe();
+      });
+
+    try {
+      const anyCh: any = ch as any;
+      if (anyCh.state !== 'joined' && anyCh.state !== 'joining') {
+        ch.subscribe();
+      }
+    } catch (err: any) {
+      if (!String(err?.message || '').includes("subscribe' can only be called a single time")) {
+        console.error('Badge toasts subscribe failed', err);
+      }
+    }
+
     return () => { 
       supabase.removeChannel(ch); 
     };
