@@ -30,6 +30,10 @@ All these routes now use:
 5. `/dna/impact` - Impact.tsx
 6. `/dna/network` - Network.tsx
 7. `/dna/notifications` - Notifications.tsx
+8. `/dna/convey` - Convey.tsx ✨
+9. `/dna/convey/hub` - ConveyHub.tsx ✨
+10. `/dna/contribute` - ContributeHub.tsx ✨
+11. `/dna/contribute/needs` - NeedsIndex.tsx ✨
 
 ---
 
@@ -37,28 +41,25 @@ All these routes now use:
 
 ### Routes Still Using Legacy Layouts
 
-#### Using `FeedLayout` (21 files)
+#### Using `FeedLayout` (16 files)
 1. `src/pages/DiscoveryFeedPage.tsx`
 2. `src/pages/FeedPage.tsx`
 3. `src/pages/GroupSettingsPage.tsx`
 4. `src/pages/NetworkFeedPage.tsx`
-5. `src/pages/dna/Convey.tsx`
-6. `src/pages/dna/collaborate/CollaborateHub.tsx`
-7. `src/pages/dna/collaborate/CreateSpace.tsx`
-8. `src/pages/dna/collaborate/MySpaces.tsx`
-9. `src/pages/dna/collaborate/SpaceBoard.tsx`
-10. `src/pages/dna/collaborate/SpaceSettings.tsx`
-11. `src/pages/dna/collaborate/SpacesIndex.tsx`
-12. `src/pages/dna/convene/ConveneHub.tsx`
-13. `src/pages/dna/convene/CreateEvent.tsx`
-14. `src/pages/dna/convene/EventAnalytics.tsx`
-15. `src/pages/dna/convene/EventDetail.tsx`
-16. `src/pages/dna/convene/EventsIndex.tsx`
-17. `src/pages/dna/convene/GroupEventsPage.tsx`
-18. `src/pages/dna/convene/GroupsBrowse.tsx`
-19. `src/pages/dna/convene/MyEvents.tsx`
-20. `src/pages/dna/convene/OrganizerAnalytics.tsx`
-21. `src/pages/dna/contribute/ContributeHub.tsx`
+5. `src/pages/dna/collaborate/CollaborateHub.tsx`
+6. `src/pages/dna/collaborate/CreateSpace.tsx`
+7. `src/pages/dna/collaborate/MySpaces.tsx`
+8. `src/pages/dna/collaborate/SpaceBoard.tsx`
+9. `src/pages/dna/collaborate/SpaceSettings.tsx`
+10. `src/pages/dna/collaborate/SpacesIndex.tsx`
+11. `src/pages/dna/convene/CreateEvent.tsx`
+12. `src/pages/dna/convene/EventAnalytics.tsx`
+13. `src/pages/dna/convene/EventDetail.tsx`
+14. `src/pages/dna/convene/EventsIndex.tsx`
+15. `src/pages/dna/convene/GroupEventsPage.tsx`
+16. `src/pages/dna/convene/GroupsBrowse.tsx`
+17. `src/pages/dna/convene/MyEvents.tsx`
+18. `src/pages/dna/convene/OrganizerAnalytics.tsx`
 
 #### Using `UserDashboardLayout` (1 file)
 1. `src/pages/dna/Username.tsx` - Special case (mobile/desktop branching)
@@ -164,11 +165,12 @@ export function MyPage() {
 | Category | Total | Migrated | Remaining | % Complete |
 |----------|-------|----------|-----------|------------|
 | Core Dashboard | 7 | 7 | 0 | 100% |
+| Convey | 2 | 2 | 0 | 100% ✨ |
 | Convene | 8 | 0 | 8 | 0% |
 | Collaborate | 6 | 0 | 6 | 0% |
-| Contribute | 1 | 0 | 1 | 0% |
+| Contribute | 2 | 2 | 0 | 100% ✨ |
 | Legacy Feeds | 4 | 0 | 4 | 0% |
-| **TOTAL** | **26** | **7** | **19** | **27%** |
+| **TOTAL** | **29** | **11** | **18** | **38%** |
 
 ---
 
