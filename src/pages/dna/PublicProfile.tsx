@@ -24,7 +24,7 @@ import { connectionService } from '@/services/connectionService';
 import { messageService } from '@/services/messageService';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
-import UnifiedHeader from '@/components/UnifiedHeader';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -162,8 +162,7 @@ const PublicProfile = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-background">
-        <UnifiedHeader />
+      <div className="min-h-screen bg-background pt-20">
         <div className="container max-w-4xl mx-auto px-4 py-16 text-center">
           <User className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Profile Not Found</h1>
@@ -181,8 +180,7 @@ const PublicProfile = () => {
   // If profile is private and not own profile
   if (!profile.is_public && !isOwnProfile) {
     return (
-      <div className="min-h-screen bg-background">
-        <UnifiedHeader />
+      <div className="min-h-screen bg-background pt-20">
         <div className="container max-w-4xl mx-auto px-4 py-16">
           <Button
             variant="ghost"
@@ -209,8 +207,7 @@ const PublicProfile = () => {
   // If users are blocked
   if (isBlocked && !isOwnProfile) {
     return (
-      <div className="min-h-screen bg-background">
-        <UnifiedHeader />
+      <div className="min-h-screen bg-background pt-20">
         <div className="container max-w-4xl mx-auto px-4 py-16">
           <Button
             variant="ghost"

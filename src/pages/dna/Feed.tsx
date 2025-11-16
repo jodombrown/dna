@@ -16,7 +16,7 @@ import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
 import LayoutController from '@/components/LayoutController';
-import UnifiedHeader from '@/components/UnifiedHeader';
+
 import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 import { DashboardModules } from '@/components/feed/DashboardModules';
 
@@ -242,8 +242,7 @@ const DnaFeed = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
+    <div className="min-h-screen bg-background pt-20">
       <LayoutController
         leftColumn={leftColumn}
         centerColumn={centerColumn}
