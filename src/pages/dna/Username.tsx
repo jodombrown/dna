@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import UnifiedHeader from '@/components/UnifiedHeader';
+
 import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
@@ -71,8 +71,7 @@ const DnaUserDashboard = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-background">
-        <UnifiedHeader />
+      <div className="min-h-screen bg-background pt-20">
         <div className="container max-w-4xl mx-auto px-4 py-16 text-center">
           <User className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Profile Not Found</h1>
@@ -192,8 +191,7 @@ const DnaUserDashboard = () => {
 
   // Mobile: Use simplified profile view
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
+    <div className="min-h-screen bg-background pt-20">
       
       {/* Banner */}
       {profile.banner_url && (
