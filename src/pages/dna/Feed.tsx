@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, PenSquare, Sparkles, Users } from 'lucide-react';
+import { PenSquare, Sparkles, Users } from 'lucide-react';
 import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { PostCard } from '@/components/posts/PostCard';
 import { PostComments } from '@/components/posts/PostComments';
@@ -13,7 +13,6 @@ import { TrendingHashtags } from '@/components/feed/TrendingHashtags';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ActivityType } from '@/types/activity';
 import { 
@@ -25,6 +24,7 @@ import {
 } from '@/components/feed/activity-cards';
 import { supabase } from '@/integrations/supabase/client';
 import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
+import LayoutController from '@/components/LayoutController';
 
 type FeedFilterType = 'all' | 'posts' | 'connections' | 'spaces-events' | 'contributions-stories';
 
@@ -107,188 +107,160 @@ const DnaFeed = () => {
     return null;
   }
 
-  return (
-    <div className="max-w-7xl mx-auto py-6 px-4">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Main Feed - Left Column */}
-        <div className="lg:col-span-8 space-y-6">
-          {/* Profile Strength Banner */}
-          <ProfileStrengthBanner />
+  // Left Column: Navigation placeholder
+  const leftColumn = (
+    <div className="space-y-4">
+      <Card className="p-4">
+        <h3 className="font-semibold mb-2">Quick Nav</h3>
+        <div className="space-y-2 text-sm">
+          <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/dna/connect')}>
+            <Users className="w-4 h-4 mr-2" />
+            Network
+          </Button>
+        </div>
+      </Card>
+    </div>
+  );
 
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                <Sparkles className="h-6 w-6 text-primary" />
-                Your DNA Feed
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Activity from across the network
-              </p>
-            </div>
+  // Center Column: Main Feed
+  const centerColumn = (
+    <div className="space-y-4">
+      <ProfileStrengthBanner userId={user.id} />
+      
+      {/* Feed Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-primary" />
+            Your DNA Feed
+          </h1>
+          <p className="text-muted-foreground text-sm">Activity from across the network</p>
+        </div>
+      </div>
+
+      {/* Create Post Card */}
+      <Card 
+        className="p-4 cursor-pointer hover:border-primary/50 transition-colors"
+        onClick={() => setShowCreateDialog(true)}
+      >
+        <div className="flex items-center gap-3">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={profile.avatar_url || ''} />
+            <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 bg-muted rounded-full px-4 py-2 text-muted-foreground">
+            What's on your mind?
           </div>
+          <Button size="icon" variant="ghost">
+            <PenSquare className="w-5 h-5" />
+          </Button>
+        </div>
+      </Card>
 
-          {/* Create Post Trigger Card */}
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={profile?.avatar_url || ''} />
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {profile?.full_name?.[0] || user.email?.[0] || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <Button
-                variant="outline"
-                className="flex-1 justify-start text-muted-foreground hover:text-foreground"
-                onClick={() => setShowCreateDialog(true)}
-              >
-                What's on your mind?
-              </Button>
-              <Button
-                size="icon"
-                onClick={() => setShowCreateDialog(true)}
-                className="bg-primary hover:bg-primary/90"
-              >
-                <PenSquare className="h-4 w-4" />
-              </Button>
-            </div>
-          </Card>
+      {/* Filter Tabs */}
+      <Tabs value={filterType} onValueChange={(v) => setFilterType(v as FeedFilterType)}>
+        <TabsList className="w-full grid grid-cols-5">
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="posts">Posts</TabsTrigger>
+          <TabsTrigger value="connections">Connections</TabsTrigger>
+          <TabsTrigger value="spaces-events">Spaces & Events</TabsTrigger>
+          <TabsTrigger value="contributions-stories">Contributions</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-          {/* Activity Type Filter */}
-          <Tabs value={filterType} onValueChange={(v) => setFilterType(v as FeedFilterType)}>
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="posts">Posts</TabsTrigger>
-              <TabsTrigger value="connections">Connections</TabsTrigger>
-              <TabsTrigger value="spaces-events">Spaces & Events</TabsTrigger>
-              <TabsTrigger value="contributions-stories">Contributions</TabsTrigger>
-            </TabsList>
-          </Tabs>
+      {/* Feed Content */}
+      {isLoading ? (
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <SkeletonPostCard key={i} />
+          ))}
+        </div>
+      ) : activities.length === 0 ? (
+        <Card className="p-12 text-center">
+          <Sparkles className="w-12 h-12 mx-auto mb-4 text-primary opacity-50" />
+          <h3 className="text-xl font-semibold mb-2">Your Feed Will Light Up Soon!</h3>
+          <p className="text-muted-foreground mb-6">
+            Your feed will come alive as you connect with others, join spaces, RSVP to events, and engage with the community.
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Button onClick={() => navigate('/dna/connect')}>
+              <Users className="w-4 h-4 mr-2" />
+              Discover Members
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/dna/collaborate/spaces')}>
+              Explore Spaces
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/dna/convene/events')}>
+              Browse Events
+            </Button>
+          </div>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {activities.map((activity) => {
+            switch (activity.activity_type) {
+              case 'post':
+                return (
+                  <div key={activity.id}>
+                    <PostCard
+                      post={activity.post!}
+                      onCommentClick={() => handleCommentClick(activity.post!.id)}
+                    />
+                    {expandedPostId === activity.post!.id && (
+                      <PostComments postId={activity.post!.id} />
+                    )}
+                  </div>
+                );
+              case 'connection':
+                return <FeedConnectionCard key={activity.id} activity={activity} />;
+              case 'space':
+                return <FeedSpaceCard key={activity.id} activity={activity} />;
+              case 'event':
+                return <FeedEventCard key={activity.id} activity={activity} />;
+              case 'contribution':
+                return <FeedContributionCard key={activity.id} activity={activity} />;
+              case 'story':
+                return <FeedStoryCard key={activity.id} activity={activity} />;
+              default:
+                return null;
+            }
+          })}
 
-          {/* Activity Feed */}
-          {isLoading ? (
-            <div className="space-y-4">
-              <SkeletonPostCard />
-              <SkeletonPostCard />
-              <SkeletonPostCard />
-            </div>
-          ) : activities.length > 0 ? (
-            <div className="space-y-4">
-              {activities.map((activity) => {
-                switch (activity.activity_type) {
-                  case 'post':
-                    return (
-                      <div key={activity.activity_id}>
-                        <PostCard
-                          post={{
-                            post_id: activity.entity_id,
-                            content: activity.entity_data?.content || '',
-                            post_type: (activity.entity_data?.post_type || 'update') as any,
-                            privacy_level: (activity.entity_data?.privacy_level || 'public') as any,
-                            created_at: activity.created_at,
-                            author_id: activity.actor_id,
-                            author_username: activity.actor_username,
-                            author_full_name: activity.actor_full_name,
-                            author_avatar_url: activity.actor_avatar_url,
-                            likes_count: activity.entity_data?.likes_count || 0,
-                            comments_count: activity.entity_data?.comments_count || 0,
-                            user_has_liked: activity.entity_data?.user_has_liked || false,
-                            is_connection: activity.entity_data?.is_connection || false,
-                          }}
-                          currentUserId={user.id}
-                          onUpdate={refetch}
-                          onCommentClick={() => handleCommentClick(activity.entity_id)}
-                          showComments={expandedPostId === activity.entity_id}
-                        />
-                        {expandedPostId === activity.entity_id && (
-                          <PostComments postId={activity.entity_id} currentUserId={user.id} />
-                        )}
-                      </div>
-                    );
-                  case 'connection':
-                    return <FeedConnectionCard key={activity.activity_id} activity={activity} />;
-                  case 'space':
-                    return <FeedSpaceCard key={activity.activity_id} activity={activity} />;
-                  case 'event':
-                    return <FeedEventCard key={activity.activity_id} activity={activity} />;
-                  case 'contribution':
-                    return <FeedContributionCard key={activity.activity_id} activity={activity} />;
-                  case 'story':
-                    return <FeedStoryCard key={activity.activity_id} activity={activity} />;
-                  default:
-                    return null;
-                }
-              })}
-
-              {/* Infinite Scroll Trigger */}
-              <LoadMoreTrigger
-                onLoadMore={fetchNextPage}
-                hasMore={hasNextPage || false}
-                isLoading={isFetchingNextPage}
-              />
-
-              {/* Loading Indicator */}
-              {isFetchingNextPage && (
-                <div className="flex justify-center py-6">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                </div>
-              )}
-            </div>
-          ) : (
-            /* Empty State with CTAs */
-            <Card className="p-12 text-center">
-              <Sparkles className="h-20 w-20 mx-auto text-dna-copper mb-6" />
-              <h3 className="text-2xl font-bold mb-3">Your Feed Will Light Up Soon!</h3>
-              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                Your feed will come alive as you connect with others, join spaces, RSVP to events, and engage with the community.
-              </p>
-              <div className="flex flex-wrap gap-3 justify-center">
-                <Button
-                  onClick={() => navigate('/dna/connect/discover')}
-                  className="bg-dna-copper hover:bg-dna-gold"
-                >
-                  <Users className="mr-2 h-4 w-4" />
-                  Discover Members
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/dna/collaborate/spaces')}
-                >
-                  Explore Spaces
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/dna/convene/events')}
-                >
-                  Browse Events
-                </Button>
-              </div>
-            </Card>
+          {hasNextPage && (
+            <LoadMoreTrigger
+              onLoadMore={fetchNextPage}
+              isLoading={isFetchingNextPage}
+            />
           )}
         </div>
+      )}
 
-        {/* Right Sidebar - Placeholder for future features */}
-        <aside className="hidden lg:block lg:col-span-4">
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4">Coming Soon</h3>
-            <p className="text-sm text-muted-foreground">
-              Trending topics, suggested connections, and more will appear here.
-            </p>
-          </Card>
-        </aside>
-      </div>
-      
-      {/* Enhanced Create Post Dialog */}
       <EnhancedCreatePostDialog
-        isOpen={showCreateDialog}
-        onClose={() => setShowCreateDialog(false)}
-        currentUserId={user.id}
-        onSuccess={() => {
-          refetch();
-          setShowCreateDialog(false);
-        }}
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
       />
     </div>
+  );
+
+  // Right Column: Widgets
+  const rightColumn = (
+    <div className="space-y-4">
+      <Card className="p-4">
+        <h3 className="font-semibold mb-3">Coming Soon</h3>
+        <p className="text-sm text-muted-foreground">
+          Trending topics, suggested connections, and more will appear here.
+        </p>
+      </Card>
+      <TrendingHashtags />
+    </div>
+  );
+
+  return (
+    <LayoutController
+      leftColumn={leftColumn}
+      centerColumn={centerColumn}
+      rightColumn={rightColumn}
+    />
   );
 };
 
