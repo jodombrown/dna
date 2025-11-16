@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import DetailViewLayout from '@/layouts/DetailViewLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -92,17 +92,25 @@ export default function SpaceDetail() {
 
   if (isLoading || membershipLoading) {
     return (
-      <FeedLayout>
+      <DetailViewLayout
+        title="Loading..."
+        backPath="/dna/collaborate/spaces"
+        backLabel="Back to Spaces"
+      >
         <div className="flex items-center justify-center min-h-[50vh]">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
-      </FeedLayout>
+      </DetailViewLayout>
     );
   }
 
   if (!space) {
     return (
-      <FeedLayout>
+      <DetailViewLayout
+        title="Space Not Found"
+        backPath="/dna/collaborate/spaces"
+        backLabel="Back to Spaces"
+      >
         <div className="container max-w-4xl mx-auto px-4 py-8">
           <Card>
             <CardContent className="pt-12 pb-12 text-center">
@@ -110,7 +118,7 @@ export default function SpaceDetail() {
             </CardContent>
           </Card>
         </div>
-      </FeedLayout>
+      </DetailViewLayout>
     );
   }
 
@@ -118,7 +126,16 @@ export default function SpaceDetail() {
   const isLead = membership?.role === 'lead';
 
   return (
-    <FeedLayout>
+    <DetailViewLayout
+      title={space.name}
+      backPath="/dna/collaborate/spaces"
+      backLabel="Back to Spaces"
+      breadcrumbs={[
+        { label: 'Home', path: '/dna/feed' },
+        { label: 'Collaborate', path: '/dna/collaborate/spaces' },
+        { label: space.name }
+      ]}
+    >
       <div className="container max-w-4xl mx-auto px-4 py-8 space-y-6">
         {/* Back Button */}
         <Button
@@ -342,6 +359,6 @@ export default function SpaceDetail() {
           </Tabs>
         )}
       </div>
-    </FeedLayout>
+    </DetailViewLayout>
   );
 }

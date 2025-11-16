@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
 import { supabaseClient } from '@/lib/supabaseHelpers';
-import UnifiedHeader from '@/components/UnifiedHeader';
-import Footer from '@/components/Footer';
+import DetailViewLayout from '@/layouts/DetailViewLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -75,50 +74,52 @@ const NeedDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <UnifiedHeader />
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-muted rounded w-1/3"></div>
-            <div className="h-64 bg-muted rounded"></div>
-          </div>
-        </main>
-      </div>
+      <DetailViewLayout
+        title="Loading..."
+        backPath="/dna/contribute/needs"
+        backLabel="Back to Needs"
+      >
+        <div className="animate-pulse space-y-8">
+          <div className="h-8 bg-muted rounded w-1/3"></div>
+          <div className="h-64 bg-muted rounded"></div>
+        </div>
+      </DetailViewLayout>
     );
   }
 
   if (!need) {
     return (
-      <div className="min-h-screen bg-background">
-        <UnifiedHeader />
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Card className="text-center py-12">
-            <CardContent>
-              <h2 className="text-xl font-semibold mb-2">Need not found</h2>
-              <p className="text-muted-foreground mb-4">This contribution need doesn't exist</p>
-              <Button asChild>
-                <Link to="/dna/contribute/needs">Browse All Needs</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </main>
-      </div>
+      <DetailViewLayout
+        title="Need Not Found"
+        backPath="/dna/contribute/needs"
+        backLabel="Back to Needs"
+      >
+        <Card className="text-center py-12">
+          <CardContent>
+            <h2 className="text-xl font-semibold mb-2">Need not found</h2>
+            <p className="text-muted-foreground mb-4">This contribution need doesn't exist</p>
+            <Button asChild>
+              <Link to="/dna/contribute/needs">Browse All Needs</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </DetailViewLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Button variant="ghost" asChild className="mb-6">
-          <Link to="/dna/contribute/needs">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Needs
-          </Link>
-        </Button>
-
-        <Card>
+    <DetailViewLayout
+      title={need.title}
+      backPath="/dna/contribute/needs"
+      backLabel="Back to Needs"
+      breadcrumbs={[
+        { label: 'Home', path: '/dna/feed' },
+        { label: 'Contribute', path: '/dna/contribute/needs' },
+        { label: need.title }
+      ]}
+    >
+        <div className="max-w-4xl mx-auto">
+          <Card>
           <CardHeader>
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -246,30 +247,28 @@ const NeedDetail = () => {
               </div>
             )}
           </CardContent>
-        </Card>
-      </main>
+          </Card>
 
-      <Footer />
-      
-      {isLead && need && (
-        <NeedFormDialog
-          isOpen={isEditOpen}
-          onClose={() => setIsEditOpen(false)}
-          spaceId={need.space_id}
-          existingNeed={need}
-        />
-      )}
+          {isLead && need && (
+            <NeedFormDialog
+              isOpen={isEditOpen}
+              onClose={() => setIsEditOpen(false)}
+              spaceId={need.space_id}
+              existingNeed={need}
+            />
+          )}
 
-      {!isLead && need && (
-        <OfferFormDialog
-          isOpen={isOfferOpen}
-          onClose={() => setIsOfferOpen(false)}
-          needId={need.id}
-          spaceId={need.space_id}
-          needType={need.type}
-        />
-      )}
-    </div>
+          {!isLead && need && (
+            <OfferFormDialog
+              isOpen={isOfferOpen}
+              onClose={() => setIsOfferOpen(false)}
+              needId={need.id}
+              spaceId={need.space_id}
+              needType={need.type}
+            />
+          )}
+        </div>
+    </DetailViewLayout>
   );
 };
 

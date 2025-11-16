@@ -387,8 +387,11 @@ function App() {
                  </OnboardingGuard>
                } />
                
-               {/* ========== LEGACY ROUTES ========== */}
-              <Route path="/dna/connect" element={<Navigate to="/dna/connect/network" replace />} />
+                {/* ========== LEGACY ROUTES ========== */}
+               {/* Legacy space route - redirect to canonical collaborate route */}
+               <Route path="/dna/space/:slug" element={<Navigate to="/dna/collaborate/spaces/:slug" replace />} />
+               
+               <Route path="/dna/connect" element={<Navigate to="/dna/connect/network" replace />} />
               <Route path="/dna/convene" element={<Navigate to="/dna/convene/events" replace />} />
               
               {/* ========== NOTIFICATIONS & NUDGES ========== */}

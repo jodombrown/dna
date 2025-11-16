@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import DetailViewLayout from '@/layouts/DetailViewLayout';
 import { formatDistanceToNow, format } from 'date-fns';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
@@ -181,17 +181,25 @@ const EventDetail = () => {
 
   if (isLoading) {
     return (
-      <FeedLayout>
+      <DetailViewLayout
+        title="Loading..."
+        backPath="/dna/convene/events"
+        backLabel="Back to Events"
+      >
         <div className="container max-w-4xl mx-auto px-4 py-8">
           <p className="text-center text-muted-foreground">Loading event...</p>
         </div>
-      </FeedLayout>
+      </DetailViewLayout>
     );
   }
 
   if (!event) {
     return (
-      <FeedLayout>
+      <DetailViewLayout
+        title="Event Not Found"
+        backPath="/dna/convene/events"
+        backLabel="Back to Events"
+      >
         <div className="container max-w-4xl mx-auto px-4 py-8">
           <Card>
             <CardContent className="py-12 text-center">
@@ -206,7 +214,7 @@ const EventDetail = () => {
             </CardContent>
           </Card>
         </div>
-      </FeedLayout>
+      </DetailViewLayout>
     );
   }
 
@@ -215,7 +223,16 @@ const EventDetail = () => {
   const currentRsvp = userRsvp?.status;
 
   return (
-    <FeedLayout>
+    <DetailViewLayout
+      title={event.title}
+      backPath="/dna/convene/events"
+      backLabel="Back to Events"
+      breadcrumbs={[
+        { label: 'Home', path: '/dna/feed' },
+        { label: 'Convene', path: '/dna/convene/events' },
+        { label: event.title }
+      ]}
+    >
       <div className="container max-w-4xl mx-auto px-4 py-8">
         {/* Hero */}
         {event.cover_image_url && (
@@ -463,7 +480,7 @@ const EventDetail = () => {
           </div>
         </div>
       </div>
-    </FeedLayout>
+    </DetailViewLayout>
   );
 };
 
