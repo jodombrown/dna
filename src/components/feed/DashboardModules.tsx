@@ -1,5 +1,6 @@
 import { DashboardModule } from '@/hooks/useDashboardPreferences';
 import { ResumeModule } from './ResumeModule';
+import { WhatsNextModule } from './WhatsNextModule';
 import { TrendingHashtags } from './TrendingHashtags';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -255,6 +256,9 @@ export function DashboardModules({ visibleModules, collapsedModules, density }: 
 
   return (
     <div className={`space-y-${isCompact ? '3' : '4'}`}>
+      {/* What's Next is always first and visible */}
+      <WhatsNextModule />
+      
       {visibleModules.map(renderModule)}
     </div>
   );
