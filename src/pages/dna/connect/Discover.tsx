@@ -31,7 +31,7 @@ export default function Discover() {
     try {
       setLoading(true);
       const offset = reset ? 0 : page * 20;
-      const { data } = await supabase.rpc('discover_members', {
+      const { data, error } = await supabase.rpc('discover_members', {
         p_current_user_id: user.id,
         p_focus_areas: filters.focus_areas || null,
         p_regional_expertise: filters.regional_expertise || null,
@@ -44,6 +44,11 @@ export default function Discover() {
         p_limit: 20,
         p_offset: offset,
       });
+      
+      if (error) {
+        console.error('Error loading members:', error);
+        return;
+      }
       
       if (reset) {
         setMembers(data || []);
