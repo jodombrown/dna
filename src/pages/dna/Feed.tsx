@@ -17,6 +17,7 @@ import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
 import LayoutController from '@/components/LayoutController';
+import UnifiedHeader from '@/components/UnifiedHeader';
 
 type FeedType = 'all' | 'connections' | 'my_posts';
 
@@ -224,11 +225,14 @@ const DnaFeed = () => {
   );
 
   return (
-    <LayoutController
-      leftColumn={leftColumn}
-      centerColumn={centerColumn}
-      rightColumn={rightColumn}
-    />
+    <div className="min-h-screen bg-background">
+      <UnifiedHeader />
+      <LayoutController
+        leftColumn={leftColumn}
+        centerColumn={centerColumn}
+        rightColumn={rightColumn}
+      />
+    </div>
   );
 };
 
