@@ -1,5 +1,4 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { FeedLayout } from '@/components/layout/FeedLayout';
 import { ConveyItemForm } from '@/components/convey/ConveyItemForm';
 import { useCreateConveyItem, useCheckExistingImpactDraft } from '@/hooks/useConveyMutations';
 import { useImpactSummary, generateImpactTitle, generateImpactSubtitle, generateImpactBody } from '@/hooks/useImpactSummary';
@@ -9,6 +8,9 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { ConveyItemType } from '@/types/conveyTypes';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 
 export default function CreateStory() {
   const navigate = useNavigate();

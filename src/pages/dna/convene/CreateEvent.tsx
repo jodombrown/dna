@@ -4,10 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import { Calendar, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import { FeedLayout } from '@/components/layout/legacy/FeedLayout';
 import { CreateEventForm } from '@/components/events/CreateEventForm';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 
 const CreateEvent = () => {
   const navigate = useNavigate();

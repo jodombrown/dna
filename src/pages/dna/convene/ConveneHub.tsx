@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { FeedLayout } from '@/components/layout/FeedLayout';
 import { formatDistanceToNow } from 'date-fns';
 import { EventRecommendations } from '@/components/events/EventRecommendations';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 
 const ConveneHub = () => {
   const navigate = useNavigate();
@@ -87,9 +89,8 @@ const ConveneHub = () => {
 
   const canHostEvent = profile && (profile.profile_completion_percentage ?? 0) >= 40;
 
-  return (
-    <FeedLayout>
-      <div className="container max-w-6xl mx-auto px-4 py-8">
+  const centerColumn = (
+    <div className="container max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Convene</h1>
@@ -259,7 +260,14 @@ const ConveneHub = () => {
           </Card>
         </section>
       </div>
-    </FeedLayout>
+  );
+
+  return (
+    <LayoutController
+      leftColumn={<LeftNav />}
+      centerColumn={centerColumn}
+      rightColumn={<RightWidgets variant="convene" />}
+    />
   );
 };
 
