@@ -121,16 +121,16 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
           <div className="space-y-2">
             <Label htmlFor="country_of_origin">Country of Origin</Label>
             <Select
-              value={filters.country_of_origin || ''}
+              value={filters.country_of_origin ?? 'all'}
               onValueChange={(value) => 
-                onFilterChange({ ...filters, country_of_origin: value || undefined })
+                onFilterChange({ ...filters, country_of_origin: value === 'all' ? undefined : value })
               }
             >
               <SelectTrigger id="country_of_origin">
                 <SelectValue placeholder="Any country" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any country</SelectItem>
+                <SelectItem value="all">Any country</SelectItem>
                 <SelectItem value="Nigeria">Nigeria</SelectItem>
                 <SelectItem value="Kenya">Kenya</SelectItem>
                 <SelectItem value="Ghana">Ghana</SelectItem>
@@ -143,16 +143,16 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
           <div className="space-y-2">
             <Label htmlFor="current_country">Current Country</Label>
             <Select
-              value={filters.current_country || ''}
+              value={filters.current_country ?? 'all'}
               onValueChange={(value) => 
-                onFilterChange({ ...filters, current_country: value || undefined })
+                onFilterChange({ ...filters, current_country: value === 'all' ? undefined : value })
               }
             >
               <SelectTrigger id="current_country">
                 <SelectValue placeholder="Any country" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any country</SelectItem>
+                <SelectItem value="all">Any country</SelectItem>
                 <SelectItem value="United States">United States</SelectItem>
                 <SelectItem value="United Kingdom">United Kingdom</SelectItem>
                 <SelectItem value="Canada">Canada</SelectItem>
