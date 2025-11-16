@@ -67,6 +67,8 @@ import PitchDeck from "./pages/PitchDeck";
 import ConveneHub from "./pages/dna/convene/ConveneHub";
 import EventsIndex from "./pages/dna/convene/EventsIndex";
 import EventDetail from "./pages/dna/convene/EventDetail";
+import Welcome from "./pages/dna/Welcome";
+import DashboardSettings from "./pages/dna/DashboardSettings";
 import CreateEvent from "./pages/dna/convene/CreateEvent";
 import MyEvents from "./pages/dna/convene/MyEvents";
 import EventAnalytics from "./pages/dna/convene/EventAnalytics";
@@ -182,8 +184,16 @@ function App() {
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
               
-              {/* Onboarding - NOT wrapped with OnboardingGuard */}
+              {/* Onboarding & Welcome - NOT wrapped with OnboardingGuard */}
               <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/dna/welcome" element={<Welcome />} />
+              
+              {/* Settings */}
+              <Route path="/dna/settings/dashboard" element={
+                <OnboardingGuard>
+                  <DashboardSettings />
+                </OnboardingGuard>
+              } />
               
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
               <Route path="/fact-sheet" element={<FactSheetPage />} />

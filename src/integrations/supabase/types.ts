@@ -4270,6 +4270,7 @@ export type Database = {
           industry_sectors: string[] | null
           instagram_url: string | null
           intentions: string[] | null
+          intents: string[] | null
           interest_tags: string[] | null
           interests: string[] | null
           intro_audio_url: string | null
@@ -4325,6 +4326,7 @@ export type Database = {
           twitter_handle: string | null
           twitter_url: string | null
           updated_at: string
+          user_role: string | null
           user_type: string | null
           username: string
           username_change_count: number | null
@@ -4414,6 +4416,7 @@ export type Database = {
           industry_sectors?: string[] | null
           instagram_url?: string | null
           intentions?: string[] | null
+          intents?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
           intro_audio_url?: string | null
@@ -4469,6 +4472,7 @@ export type Database = {
           twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
+          user_role?: string | null
           user_type?: string | null
           username: string
           username_change_count?: number | null
@@ -4558,6 +4562,7 @@ export type Database = {
           industry_sectors?: string[] | null
           instagram_url?: string | null
           intentions?: string[] | null
+          intents?: string[] | null
           interest_tags?: string[] | null
           interests?: string[] | null
           intro_audio_url?: string | null
@@ -4613,6 +4618,7 @@ export type Database = {
           twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
+          user_role?: string | null
           user_type?: string | null
           username?: string
           username_change_count?: number | null
@@ -5409,6 +5415,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_dashboard_preferences: {
+        Row: {
+          collapsed_modules: Json
+          density: string
+          updated_at: string
+          user_id: string
+          visible_modules: Json
+        }
+        Insert: {
+          collapsed_modules?: Json
+          density?: string
+          updated_at?: string
+          user_id: string
+          visible_modules?: Json
+        }
+        Update: {
+          collapsed_modules?: Json
+          density?: string
+          updated_at?: string
+          user_id?: string
+          visible_modules?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_dashboard_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_dna_points: {
         Row: {
           collaborate_score: number
@@ -5522,6 +5560,35 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      user_last_view_state: {
+        Row: {
+          context: Json | null
+          last_view_state: string
+          last_visited_at: string
+          user_id: string
+        }
+        Insert: {
+          context?: Json | null
+          last_view_state: string
+          last_visited_at?: string
+          user_id: string
+        }
+        Update: {
+          context?: Json | null
+          last_view_state?: string
+          last_visited_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_last_view_state_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_onboarding_selections: {
         Row: {
@@ -6195,6 +6262,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_dashboard_preferences: { Args: { p_user_id: string }; Returns: Json }
       get_engagement_rate: { Args: never; Returns: number }
       get_event_analytics: { Args: { p_event_id: string }; Returns: Json }
       get_event_attendees: {
@@ -7230,6 +7298,10 @@ export type Database = {
       }
       update_event_attendee_count: {
         Args: { p_event: string }
+        Returns: undefined
+      }
+      update_last_view_state: {
+        Args: { p_context?: Json; p_user_id: string; p_view_state: string }
         Returns: undefined
       }
       update_reminder_status: {

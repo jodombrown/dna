@@ -3,14 +3,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { PenSquare, Sparkles, Users, Newspaper } from 'lucide-react';
+import { PenSquare, Sparkles, Users, Newspaper, Settings } from 'lucide-react';
 import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { PostCard } from '@/components/posts/PostCard';
 import { PostComments } from '@/components/posts/PostComments';
 import { SkeletonPostCard } from '@/components/social-feed/SkeletonPostCard';
 import { PostWithAuthor } from '@/types/posts';
 import { supabase } from '@/integrations/supabase/client';
-import { TrendingHashtags } from '@/components/feed/TrendingHashtags';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -18,6 +17,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
 import LayoutController from '@/components/LayoutController';
 import UnifiedHeader from '@/components/UnifiedHeader';
+import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
+import { DashboardModules } from '@/components/feed/DashboardModules';
 
 type FeedType = 'all' | 'connections' | 'my_posts';
 
@@ -28,6 +29,7 @@ const DnaFeed = () => {
   const [activeTab, setActiveTab] = useState<FeedType>('all');
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
 
   const { data: posts, refetch, isLoading } = useQuery({
     queryKey: ['feed-posts', user?.id, activeTab],
@@ -81,6 +83,12 @@ const DnaFeed = () => {
     );
   }
 
+  // Redirect to welcome wizard if no role set
+  if (!profileLoading && profile && !profile.user_role) {
+    navigate('/dna/welcome', { replace: true });
+    return null;
+  }
+
   if (!user || !profile) {
     return null;
   }
@@ -114,6 +122,14 @@ const DnaFeed = () => {
           </h1>
           <p className="text-muted-foreground text-sm">Activity from across the network</p>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate('/dna/settings/dashboard')}
+        >
+          <Settings className="h-4 w-4 mr-2" />
+          Customize
+        </Button>
       </div>
 
       {/* Create Post Card */}
@@ -211,17 +227,18 @@ const DnaFeed = () => {
     </div>
   );
 
-  // Right Column: Widgets
-  const rightColumn = (
+  // Right Column: Personalized Modules
+  const rightColumn = prefsLoading ? (
     <div className="space-y-4">
-      <Card className="p-4">
-        <h3 className="font-semibold mb-3">Coming Soon</h3>
-        <p className="text-sm text-muted-foreground">
-          Trending topics, suggested connections, and more will appear here.
-        </p>
-      </Card>
-      <TrendingHashtags />
+      <div className="h-32 bg-muted animate-pulse rounded-lg" />
+      <div className="h-32 bg-muted animate-pulse rounded-lg" />
     </div>
+  ) : (
+    <DashboardModules
+      visibleModules={preferences.visible_modules}
+      collapsedModules={preferences.collapsed_modules}
+      density={preferences.density}
+    />
   );
 
   return (
