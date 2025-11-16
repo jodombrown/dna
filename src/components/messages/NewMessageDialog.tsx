@@ -68,7 +68,7 @@ export const NewMessageDialog: React.FC<NewMessageDialogProps> = ({ isOpen, onCl
       if (error) throw error;
 
       onClose();
-      navigate(`/dna/connect/messages/${data}`);
+      navigate(`/dna/messages/${data}`);
     } catch (error: any) {
       console.error('Error creating conversation:', error);
       toast({

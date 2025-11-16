@@ -80,7 +80,7 @@ const Connect = () => {
             </TabsTrigger>
             <TabsTrigger 
               value="messages"
-              onClick={() => navigate('/dna/connect/messages')}
+              onClick={() => navigate('/dna/messages')}
               className="flex items-center gap-2"
             >
               <MessageSquare className="h-4 w-4" />

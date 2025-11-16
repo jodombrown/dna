@@ -45,7 +45,7 @@ const pillars = [
     actions: [
       { label: 'Discover People', icon: Search, href: '/dna/discover/members' },
       { label: 'My Network', icon: Users, href: '/dna/connect/network' },
-      { label: 'Messages', icon: MessageSquare, href: '/dna/connect/messages' }
+      { label: 'Messages', icon: MessageSquare, href: '/dna/messages' }
     ]
   },
   {

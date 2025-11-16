@@ -43,7 +43,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
     
     try {
       const conversation = await messageService.getOrCreateConversation(connection.id);
-      navigate(`/dna/connect/messages/${conversation.id}`);
+      navigate(`/dna/messages/${conversation.id}`);
     } catch (error: any) {
       console.error('Error creating conversation:', error);
       toast({

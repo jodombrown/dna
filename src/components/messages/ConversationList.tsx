@@ -50,7 +50,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
             className={`cursor-pointer transition-all hover:shadow-md ${
               isUnread ? 'bg-accent/5 border-dna-copper/20' : ''
             }`}
-            onClick={() => navigate(`/dna/connect/messages/${conversation.conversation_id}`)}
+            onClick={() => navigate(`/dna/messages/${conversation.conversation_id}`)}
           >
             <CardContent className="p-4">
               <div className="flex items-start gap-3">

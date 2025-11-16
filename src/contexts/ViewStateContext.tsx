@@ -42,8 +42,12 @@ interface ViewStateProviderProps {
 }
 
 // Route to ViewState mapping
+// HOME ROUTE ARCHITECTURE:
+// - /dna/feed is the canonical home (DASHBOARD_HOME)
+// - /dna/me redirects to /dna/feed
+// - Login always lands on /dna/feed
 const routeToViewState = (pathname: string): ViewState => {
-  // DASHBOARD_HOME (default)
+  // DASHBOARD_HOME (canonical home)
   if (pathname === '/dna/feed') {
     return 'DASHBOARD_HOME';
   }
@@ -62,7 +66,9 @@ const routeToViewState = (pathname: string): ViewState => {
   }
   
   // MESSAGES_MODE
-  if (pathname.startsWith('/dna/messages')) {
+  // Canonical route: /dna/messages
+  // Legacy /dna/connect/messages redirects here (handled in App.tsx routing)
+  if (pathname.startsWith('/dna/messages') || pathname.startsWith('/dna/connect/messages')) {
     return 'MESSAGES_MODE';
   }
   
@@ -167,9 +173,11 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
       };
     
     case 'FOCUS_DETAIL_MODE':
+      // DetailViewLayout: Full-page focused view with breadcrumbs and optional context rail
+      // Used for: profiles, events, spaces, stories, needs, offers
       return {
-        type: 'modal-overlay',
-        showLeftNav: true,
+        type: 'modal-overlay', // Type name kept for backward compatibility
+        showLeftNav: false, // DetailViewLayout handles its own navigation
         showRightColumn: false,
       };
     
