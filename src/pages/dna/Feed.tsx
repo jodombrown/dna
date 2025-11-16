@@ -2,86 +2,63 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
-import { PenSquare, Sparkles, Users } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { PenSquare, Sparkles, Users, Newspaper } from 'lucide-react';
 import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { PostCard } from '@/components/posts/PostCard';
 import { PostComments } from '@/components/posts/PostComments';
-import { useActivityFeed } from '@/hooks/useActivityFeed';
-import { LoadMoreTrigger } from '@/components/social-feed/LoadMoreTrigger';
 import { SkeletonPostCard } from '@/components/social-feed/SkeletonPostCard';
+import { PostWithAuthor } from '@/types/posts';
+import { supabase } from '@/integrations/supabase/client';
 import { TrendingHashtags } from '@/components/feed/TrendingHashtags';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ActivityType } from '@/types/activity';
-import { 
-  FeedConnectionCard, 
-  FeedSpaceCard, 
-  FeedEventCard, 
-  FeedContributionCard, 
-  FeedStoryCard 
-} from '@/components/feed/activity-cards';
-import { supabase } from '@/integrations/supabase/client';
 import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
 import LayoutController from '@/components/LayoutController';
 
-type FeedFilterType = 'all' | 'posts' | 'connections' | 'spaces-events' | 'contributions-stories';
+type FeedType = 'all' | 'connections' | 'my_posts';
 
 const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const navigate = useNavigate();
-  const [filterType, setFilterType] = useState<FeedFilterType>('all');
+  const [activeTab, setActiveTab] = useState<FeedType>('all');
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  // Map filter type to activity types
-  const getActivityTypes = (): ActivityType[] | undefined => {
-    switch (filterType) {
-      case 'posts':
-        return ['post'];
-      case 'connections':
-        return ['connection'];
-      case 'spaces-events':
-        return ['space', 'event'];
-      case 'contributions-stories':
-        return ['contribution', 'story'];
-      default:
-        return undefined; // all
-    }
-  };
+  const { data: posts, refetch, isLoading } = useQuery({
+    queryKey: ['feed-posts', user?.id, activeTab],
+    queryFn: async () => {
+      if (!user) return [];
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    refetch,
-  } = useActivityFeed({
-    userId: user?.id,
-    activityTypes: getActivityTypes(),
+      const { data, error } = await supabase.rpc('get_feed_posts', {
+        p_user_id: user.id,
+        p_feed_type: activeTab,
+        p_limit: 20,
+        p_offset: 0,
+      });
+
+      if (error) throw error;
+      return (data || []) as PostWithAuthor[];
+    },
+    enabled: !!user,
   });
 
-  const activities = data?.pages.flatMap((page) => page.activities) || [];
-
-  // Real-time updates for new activity
+  // Real-time subscription for new posts
   useEffect(() => {
     if (!user) return;
 
     const channel = supabase
-      .channel('activity-feed-updates')
+      .channel('feed_posts')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
         refetch();
       })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'connections' }, () => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_likes' }, () => {
         refetch();
       })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'events' }, () => {
-        refetch();
-      })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'convey_items' }, () => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_comments' }, () => {
         refetch();
       })
       .subscribe();
@@ -158,13 +135,20 @@ const DnaFeed = () => {
       </Card>
 
       {/* Filter Tabs */}
-      <Tabs value={filterType} onValueChange={(v) => setFilterType(v as FeedFilterType)}>
-        <TabsList className="w-full grid grid-cols-5">
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="posts">Posts</TabsTrigger>
-          <TabsTrigger value="connections">Connections</TabsTrigger>
-          <TabsTrigger value="spaces-events">Spaces & Events</TabsTrigger>
-          <TabsTrigger value="contributions-stories">Contributions</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedType)}>
+        <TabsList className="w-full">
+          <TabsTrigger value="all" className="flex-1">
+            <Newspaper className="h-4 w-4 mr-2" />
+            All Posts
+          </TabsTrigger>
+          <TabsTrigger value="connections" className="flex-1">
+            <Users className="h-4 w-4 mr-2" />
+            Connections
+          </TabsTrigger>
+          <TabsTrigger value="my_posts" className="flex-1">
+            <Sparkles className="h-4 w-4 mr-2" />
+            My Posts
+          </TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -175,66 +159,45 @@ const DnaFeed = () => {
             <SkeletonPostCard key={i} />
           ))}
         </div>
-      ) : activities.length === 0 ? (
+      ) : posts && posts.length === 0 ? (
         <Card className="p-12 text-center">
-          <Sparkles className="w-12 h-12 mx-auto mb-4 text-primary opacity-50" />
-          <h3 className="text-xl font-semibold mb-2">Your Feed Will Light Up Soon!</h3>
+          <Newspaper className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+          <h3 className="text-xl font-semibold mb-2">
+            {activeTab === 'my_posts'
+              ? "You haven't posted anything yet"
+              : 'No posts to show'}
+          </h3>
           <p className="text-muted-foreground mb-6">
-            Your feed will come alive as you connect with others, join spaces, RSVP to events, and engage with the community.
+            {activeTab === 'my_posts'
+              ? 'Share your first update, article, question, or celebration'
+              : activeTab === 'connections'
+              ? "Your connections haven't posted yet"
+              : 'Be the first to share something!'}
           </p>
-          <div className="flex flex-wrap gap-3 justify-center">
-            <Button onClick={() => navigate('/dna/connect')}>
-              <Users className="w-4 h-4 mr-2" />
-              Discover Members
-            </Button>
-            <Button variant="outline" onClick={() => navigate('/dna/collaborate/spaces')}>
-              Explore Spaces
-            </Button>
-            <Button variant="outline" onClick={() => navigate('/dna/convene/events')}>
-              Browse Events
-            </Button>
-          </div>
+          <Button
+            onClick={() => setShowCreateDialog(true)}
+            className="bg-dna-emerald hover:bg-dna-emerald/90 text-white"
+          >
+            <PenSquare className="h-4 w-4 mr-2" />
+            Create Your First Post
+          </Button>
         </Card>
       ) : (
         <div className="space-y-4">
-          {activities.map((activity) => {
-            switch (activity.activity_type) {
-              case 'post':
-                const postData = activity.entity_data as any;
-                return (
-                  <div key={activity.activity_id}>
-                    <PostCard
-                      post={postData}
-                      currentUserId={user?.id || ''}
-                      onCommentClick={() => handleCommentClick(activity.entity_id)}
-                    />
-                    {expandedPostId === activity.entity_id && (
-                      <PostComments postId={activity.entity_id} currentUserId={user?.id || ''} />
-                    )}
-                  </div>
-                );
-              case 'connection':
-                return <FeedConnectionCard key={activity.activity_id} activity={activity} />;
-              case 'space':
-                return <FeedSpaceCard key={activity.activity_id} activity={activity} />;
-              case 'event':
-                return <FeedEventCard key={activity.activity_id} activity={activity} />;
-              case 'contribution':
-                return <FeedContributionCard key={activity.activity_id} activity={activity} />;
-              case 'story':
-                return <FeedStoryCard key={activity.activity_id} activity={activity} />;
-              default:
-                return null;
-            }
-          })}
-
-          {hasNextPage && (
-            <LoadMoreTrigger
-              onLoadMore={fetchNextPage}
-              hasMore={hasNextPage || false}
-              isLoading={isFetchingNextPage}
-            />
-          )}
+          {posts?.map((post) => (
+            <div key={post.post_id}>
+              <PostCard
+                post={post}
+                currentUserId={user?.id || ''}
+                onUpdate={refetch}
+                onCommentClick={() => handleCommentClick(post.post_id)}
+                showComments={expandedPostId === post.post_id}
+              />
+              {expandedPostId === post.post_id && (
+                <PostComments postId={post.post_id} currentUserId={user?.id || ''} />
+              )}
+            </div>
+          ))}
         </div>
       )}
 
