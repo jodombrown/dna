@@ -5,6 +5,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { NotificationCenter } from '@/components/notifications/NotificationCenter';
+import { cn } from '@/lib/utils';
 
 import { 
   Home,
@@ -25,7 +26,10 @@ import {
   Rocket,
   Briefcase,
   Shield,
-  Calendar
+  Calendar,
+  Handshake,
+  Heart,
+  BookOpen
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -161,14 +165,19 @@ const UnifiedHeader = () => {
   }
   const currentPath = location.pathname;
 
-  // Navigation items for authenticated users - Feed as Home
-  const authNavigationItems = [
-    { title: 'Home', view: 'feed', icon: Home, path: '/dna/feed', badge: 0 },
-    { title: 'Discover', view: 'discover', icon: Users, path: '/dna/connect/discover', badge: 0 },
-    { title: 'Network', view: 'network', icon: Users2, path: '/dna/connect/network', badge: 0 },
-    { title: 'Messages', view: 'messages', icon: MessageCircle, path: '/dna/messages', badge: unreadMessageCount },
-    { title: 'Events', view: 'events', icon: Calendar, path: '/dna/events', badge: 0 },
-    { title: 'Opportunities', view: 'opportunities', icon: Briefcase, path: '/dna/impact', badge: 0 },
+  // 5C Framework Navigation - PRIMARY for authenticated users
+  const fiveCNavigation = [
+    { title: 'Connect', pillar: 'connect', icon: Users, path: '/dna/connect', description: 'Build your network', badge: 0 },
+    { title: 'Convene', pillar: 'convene', icon: Calendar, path: '/dna/convene', description: 'Join events & gatherings', badge: 0 },
+    { title: 'Collaborate', pillar: 'collaborate', icon: Handshake, path: '/dna/collaborate', description: 'Work together on projects', badge: 0 },
+    { title: 'Contribute', pillar: 'contribute', icon: Heart, path: '/dna/contribute', description: 'Give back & support', badge: 0 },
+    { title: 'Convey', pillar: 'convey', icon: BookOpen, path: '/dna/convey', description: 'Share your story', badge: 0 },
+  ];
+
+  // Utility navigation - SECONDARY
+  const utilityNavigation = [
+    { title: 'Feed', icon: Home, path: '/dna/feed', badge: 0 },
+    { title: 'Messages', icon: MessageCircle, path: '/dna/messages', badge: unreadMessageCount },
   ];
 
   const handleSignOut = () => {
@@ -240,26 +249,63 @@ const UnifiedHeader = () => {
 
             {/* Right section - Navigation and Profile */}
             <div className="flex items-center space-x-4">
-              {/* Desktop Navigation - Authenticated Users */}
+              {/* Desktop Navigation - 5C Framework PRIMARY */}
               {isAuthenticated && (
-                <nav className="hidden md:flex items-center space-x-1">
-                  {authNavigationItems.map((item) => {
+                <nav className="hidden lg:flex items-center space-x-1 border-r pr-4 mr-4">
+                  {fiveCNavigation.map((item) => {
                     const Icon = item.icon;
-                    const isActive = location.pathname === item.path;
-                    const hasBadge = item.badge && item.badge > 0;
+                    const isActivePillar = location.pathname.includes(item.path);
                     return (
-                      <Tooltip key={item.view}>
+                      <Tooltip key={item.pillar}>
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => navigate(item.path)}
-                            className={`flex items-center gap-2 relative ${
-                              isActive ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:text-primary'
-                            }`}
+                            className={cn(
+                              "flex flex-col items-center gap-1 h-auto py-2 px-3 relative group",
+                              isActivePillar 
+                                ? 'bg-primary/10 text-primary' 
+                                : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+                            )}
                           >
                             <Icon className="w-5 h-5" />
-                            <span className="text-sm font-medium">{item.title}</span>
+                            <span className="text-xs font-medium">{item.title}</span>
+                            {isActivePillar && (
+                              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-0.5 bg-primary rounded-full" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">
+                          <p className="font-medium">{item.title}</p>
+                          <p className="text-xs text-muted-foreground">{item.description}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                </nav>
+              )}
+
+              {/* Desktop Utility Navigation - SECONDARY */}
+              {isAuthenticated && (
+                <div className="hidden md:flex items-center space-x-1">
+                  {utilityNavigation.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = location.pathname === item.path;
+                    const hasBadge = item.badge && item.badge > 0;
+                    return (
+                      <Tooltip key={item.title}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => navigate(item.path)}
+                            className={cn(
+                              "relative",
+                              isActive ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+                            )}
+                          >
+                            <Icon className="w-5 h-5" />
                             {hasBadge && (
                               <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                                 {item.badge > 9 ? '9+' : item.badge}
@@ -273,59 +319,60 @@ const UnifiedHeader = () => {
                       </Tooltip>
                     );
                   })}
+                </div>
+              )}
+              
+              {/* Admin Link - Only for admin users */}
+              {isAuthenticated && isAdmin && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => navigate('/app/admin')}
+                      className={cn(
+                        "flex items-center gap-2",
+                        location.pathname.startsWith('/app/admin') ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-primary'
+                      )}
+                    >
+                      <Shield className="w-5 h-5" />
+                      <span className="text-sm font-medium hidden lg:inline">Admin</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Admin Dashboard</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
                   
-                  {/* Admin Link - Only for admin users */}
-                  {isAdmin && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => navigate('/app/admin')}
-                          className={`flex items-center gap-2 ${
-                            location.pathname.startsWith('/app/admin') ? 'bg-primary/10 text-primary' : 'text-gray-700 hover:text-primary'
-                          }`}
-                        >
-                          <Shield className="w-5 h-5" />
-                          <span className="text-sm font-medium">Admin</span>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Admin Dashboard</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                  
-                  {/* Notifications Center */}
-                  {user && <NotificationCenter />}
-                  
-                  {/* User Profile Dropdown */}
-                  {profile && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="ml-2">
-                          <Avatar className="w-8 h-8">
-                            <AvatarImage src={profile.avatar_url || undefined} />
-                            <AvatarFallback>
-                              {profile.full_name?.charAt(0) || profile.username?.charAt(0) || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => navigate(profile?.username ? `/dna/${profile.username}` : '/dna/feed')}>
-                          <User className="w-4 h-4 mr-2" />
-                          Profile
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={handleSignOut}>
-                          <LogOut className="w-4 h-4 mr-2" />
-                          Sign Out
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )}
-                </nav>
+              {/* Notifications Center */}
+              {isAuthenticated && user && <NotificationCenter />}
+              
+              {/* User Profile Dropdown */}
+              {isAuthenticated && profile && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="ml-2">
+                      <Avatar className="w-8 h-8">
+                        <AvatarImage src={profile.avatar_url || undefined} />
+                        <AvatarFallback>
+                          {profile.full_name?.charAt(0) || profile.username?.charAt(0) || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => navigate(profile?.username ? `/dna/${profile.username}` : '/dna/feed')}>
+                      <User className="w-4 h-4 mr-2" />
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
               
               {/* Desktop Navigation - Public */}

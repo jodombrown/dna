@@ -38,57 +38,58 @@ const MobileBottomNav: React.FC = () => {
   // Only show on mobile
   if (!isMobile) return null;
 
+  // 5C Framework as PRIMARY navigation
   const navItems = [
+    { 
+      label: 'Connect', 
+      pillar: 'connect',
+      icon: Users, 
+      path: '/dna/connect', 
+      type: 'nav' as const,
+      description: 'Build network'
+    },
+    { 
+      label: 'Convene', 
+      pillar: 'convene',
+      icon: Calendar, 
+      path: '/dna/convene', 
+      type: 'nav' as const,
+      description: 'Join events'
+    },
     { 
       label: 'Feed', 
       icon: Home, 
       path: '/dna/feed', 
       type: 'nav' as const,
-      color: 'dna-forest'
+      description: 'Home'
     },
     { 
-      label: 'Connect', 
-      icon: Users, 
-      path: '/dna/connect', 
+      label: 'Collaborate', 
+      pillar: 'collaborate',
+      icon: Handshake, 
+      path: '/dna/collaborate', 
       type: 'nav' as const,
-      color: 'dna-emerald'
-    },
-    { 
-      label: 'Create', 
-      icon: Plus, 
-      type: 'action' as const,
-      color: 'dna-copper'
-    },
-    { 
-      label: 'Convene', 
-      icon: Calendar, 
-      path: '/dna/convene', 
-      type: 'nav' as const,
-      color: 'dna-copper'
+      description: 'Work together'
     },
     { 
       label: 'More', 
       icon: Menu, 
       type: 'menu' as const,
-      color: 'muted'
+      description: 'More options'
     },
   ];
 
   const moreMenuItems = [
     { 
-      label: 'Collaborate', 
-      icon: Handshake, 
-      path: '/dna/collaborate',
-      description: 'Join spaces & projects'
-    },
-    { 
       label: 'Contribute', 
+      pillar: 'contribute',
       icon: Heart, 
       path: '/dna/contribute',
-      description: 'Offer help & resources'
+      description: 'Give back & support'
     },
     { 
       label: 'Convey', 
+      pillar: 'convey',
       icon: BookOpen, 
       path: '/dna/convey',
       description: 'Share your story'
@@ -120,9 +121,7 @@ const MobileBottomNav: React.FC = () => {
   };
 
   const handleItemClick = (item: typeof navItems[0]) => {
-    if (item.type === 'action') {
-      setShowPostDialog(true);
-    } else if (item.type === 'menu') {
+    if (item.type === 'menu') {
       setShowMoreMenu(true);
     } else if (item.path) {
       navigate(item.path);
@@ -139,53 +138,33 @@ const MobileBottomNav: React.FC = () => {
               key={item.label}
               onClick={() => handleItemClick(item)}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[48px] flex-1 transition-all duration-200 relative",
-                item.type === 'action' 
-                  ? "scale-100 hover:scale-105" 
-                  : isActive(item.path)
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors relative",
+                isActive(item.path)
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-primary"
               )}
-              aria-label={item.label}
             >
-              {/* Icon container */}
-              <div className={cn(
-                "relative transition-all duration-200",
-                item.type === 'action' && "bg-primary rounded-full p-3 shadow-lg"
-              )}>
-                <item.icon 
-                  className={cn(
-                    "transition-all duration-200",
-                    item.type === 'action' 
-                      ? "w-5 h-5 text-primary-foreground" 
-                      : "w-6 h-6",
-                    isActive(item.path) && "scale-110"
-                  )} 
-                />
-                
-                {/* Notification badge for More menu */}
-                {item.type === 'menu' && unreadCount > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center p-0 text-[10px]"
-                  >
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </Badge>
-                )}
-              </div>
+              <item.icon className="w-5 h-5" strokeWidth={isActive(item.path) ? 2.5 : 2} />
+              <span className="text-[10px] font-medium">{item.label}</span>
               
-              {/* Label */}
-              <span className={cn(
-                "text-[10px] font-medium transition-colors duration-200",
-                item.type === 'action' && "text-primary",
-                isActive(item.path) && "text-primary font-semibold"
-              )}>
-                {item.label}
-              </span>
-
               {/* Active indicator */}
-              {isActive(item.path) && item.type !== 'action' && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full" />
+              {isActive(item.path) && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-primary rounded-b-full" />
+              )}
+              
+              {/* Pillar badge for 5C items */}
+              {'pillar' in item && item.pillar && isActive(item.path) && (
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full animate-pulse" />
+              )}
+              
+              {/* Notification badge for More menu */}
+              {item.type === 'menu' && unreadCount > 0 && (
+                <Badge 
+                  variant="destructive" 
+                  className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center p-0 text-[10px]"
+                >
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </Badge>
               )}
             </button>
           ))}
