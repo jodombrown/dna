@@ -14,6 +14,238 @@ export type Database = {
   }
   public: {
     Tables: {
+      ada_cohort_memberships: {
+        Row: {
+          cohort_id: string
+          computed_at: string
+          expires_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          cohort_id: string
+          computed_at?: string
+          expires_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          cohort_id?: string
+          computed_at?: string
+          expires_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ada_cohort_memberships_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "ada_cohorts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ada_cohorts: {
+        Row: {
+          created_at: string
+          criteria: Json
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          criteria?: Json
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          criteria?: Json
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ada_experiment_assignments: {
+        Row: {
+          assigned_at: string
+          experiment_id: string
+          id: string
+          user_id: string
+          variant_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          experiment_id: string
+          id?: string
+          user_id: string
+          variant_id: string
+        }
+        Update: {
+          assigned_at?: string
+          experiment_id?: string
+          id?: string
+          user_id?: string
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ada_experiment_assignments_experiment_id_fkey"
+            columns: ["experiment_id"]
+            isOneToOne: false
+            referencedRelation: "ada_experiments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ada_experiment_assignments_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "ada_experiment_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ada_experiment_variants: {
+        Row: {
+          allocation: number
+          created_at: string
+          experiment_id: string
+          id: string
+          name: string
+          policy_id: string
+          updated_at: string
+        }
+        Insert: {
+          allocation?: number
+          created_at?: string
+          experiment_id: string
+          id?: string
+          name: string
+          policy_id: string
+          updated_at?: string
+        }
+        Update: {
+          allocation?: number
+          created_at?: string
+          experiment_id?: string
+          id?: string
+          name?: string
+          policy_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ada_experiment_variants_experiment_id_fkey"
+            columns: ["experiment_id"]
+            isOneToOne: false
+            referencedRelation: "ada_experiments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ada_experiment_variants_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "ada_policies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ada_experiments: {
+        Row: {
+          cohort_id: string | null
+          created_at: string
+          description: string | null
+          end_at: string | null
+          id: string
+          name: string
+          start_at: string | null
+          status: string
+          target_policy_type: string
+          target_route: string | null
+          updated_at: string
+        }
+        Insert: {
+          cohort_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_at?: string | null
+          id?: string
+          name: string
+          start_at?: string | null
+          status?: string
+          target_policy_type: string
+          target_route?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cohort_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_at?: string | null
+          id?: string
+          name?: string
+          start_at?: string | null
+          status?: string
+          target_policy_type?: string
+          target_route?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ada_experiments_cohort_id_fkey"
+            columns: ["cohort_id"]
+            isOneToOne: false
+            referencedRelation: "ada_cohorts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ada_policies: {
+        Row: {
+          config: Json
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          scope: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          scope: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          scope?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       adin_contributor_requests: {
         Row: {
           admin_notes: string | null
@@ -6273,6 +6505,10 @@ export type Database = {
         Args: { p_email?: string; p_user: string }
         Returns: undefined
       }
+      evaluate_cohort_criteria: {
+        Args: { p_criteria: Json; p_user_id: string }
+        Returns: boolean
+      }
       event_owner_id: { Args: { p_event: string }; Returns: string }
       extract_and_create_hashtags: {
         Args: { p_content: string; p_post_id: string }
@@ -6946,6 +7182,13 @@ export type Database = {
         Returns: number
       }
       get_user_cohort: { Args: { target_user_id: string }; Returns: string }
+      get_user_cohorts: {
+        Args: { p_user_id: string }
+        Returns: {
+          cohort_id: string
+          cohort_name: string
+        }[]
+      }
       get_user_connections:
         | {
             Args: { p_limit?: number; p_offset?: number; p_user_id: string }
