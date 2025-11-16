@@ -102,58 +102,60 @@ const DetailViewLayout: React.FC<DetailViewLayoutProps> = ({
     );
   }
 
-  // Desktop: Two-column with main content + context rail
+  // Desktop: Two-column with independent scrolling
   return (
-    <div className={`flex min-h-screen bg-background ${className}`}>
+    <div className={`flex bg-background ${className}`} style={{ height: 'calc(100vh - 64px)' }}>
       {/* Main Content Column */}
-      <div className="flex-1 max-w-4xl mx-auto p-6">
-        {/* Header / Breadcrumbs */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleBack}
-            className="mb-3"
-          >
-            <ChevronLeft className="h-4 w-4 mr-1" />
-            {backLabel}
-          </Button>
+      <div className="flex-1 max-w-4xl mx-auto p-6 overflow-auto h-full" style={{ minWidth: 0 }}>
+        <div className="min-w-max">
+          {/* Header / Breadcrumbs */}
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBack}
+              className="mb-3"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              {backLabel}
+            </Button>
 
-          {breadcrumbs.length > 0 && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-              {breadcrumbs.map((crumb, idx) => (
-                <React.Fragment key={idx}>
-                  {crumb.path ? (
-                    <button
-                      onClick={() => navigate(crumb.path!)}
-                      className="hover:text-foreground transition-colors"
-                    >
-                      {crumb.label}
-                    </button>
-                  ) : (
-                    <span>{crumb.label}</span>
-                  )}
-                  {idx < breadcrumbs.length - 1 && <span>/</span>}
-                </React.Fragment>
-              ))}
-            </div>
-          )}
+            {breadcrumbs.length > 0 && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                {breadcrumbs.map((crumb, idx) => (
+                  <React.Fragment key={idx}>
+                    {crumb.path ? (
+                      <button
+                        onClick={() => navigate(crumb.path!)}
+                        className="hover:text-foreground transition-colors"
+                      >
+                        {crumb.label}
+                      </button>
+                    ) : (
+                      <span>{crumb.label}</span>
+                    )}
+                    {idx < breadcrumbs.length - 1 && <span>/</span>}
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
 
-          {title && (
-            <h1 className="text-3xl font-bold text-foreground">{title}</h1>
-          )}
-        </div>
+            {title && (
+              <h1 className="text-3xl font-bold text-foreground">{title}</h1>
+            )}
+          </div>
 
-        {/* Main Content */}
-        <div className="transition-all duration-300 ease-in-out">
-          {children}
+          {/* Main Content */}
+          <div className="transition-all duration-300 ease-in-out">
+            {children}
+          </div>
         </div>
       </div>
 
-      {/* Context Rail (Right Column) */}
+      {/* Context Rail (Right Column) - Independent scrolling */}
       {showContextPanel && contextPanel && (
-        <div className="w-80 border-l border-border bg-muted/10 p-6 overflow-y-auto">
-          <div className="sticky top-6">
+        <div className="w-80 border-l border-border bg-muted/10 p-6 overflow-auto h-full" style={{ minWidth: 0 }}>
+          <div className="min-w-max">
             {contextPanel}
           </div>
         </div>
