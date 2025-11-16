@@ -20,6 +20,7 @@ export function RecentPostsWidget({ currentUserId }: RecentPostsWidgetProps) {
       const { data, error } = await supabase.rpc('get_feed_posts', {
         p_user_id: currentUserId,
         p_feed_type: 'connections',
+        p_hashtag: null,
         p_limit: 5,
         p_offset: 0,
       });

@@ -18,6 +18,7 @@ export function useFeedPosts(feedType: FeedType = 'all', userId?: string) {
       const { data, error } = await supabase.rpc('get_feed_posts', {
         p_user_id: userId,
         p_feed_type: feedType,
+        p_hashtag: null,
         p_limit: 20,
         p_offset: 0,
       });
