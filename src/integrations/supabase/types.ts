@@ -6447,10 +6447,6 @@ export type Database = {
             }
             Returns: {
               avatar_url: string
-              banner_gradient: string
-              banner_overlay: boolean
-              banner_type: string
-              banner_url: string
               country_of_origin: string
               focus_areas: string[]
               full_name: string
@@ -6460,7 +6456,6 @@ export type Database = {
               location: string
               match_score: number
               profession: string
-              profile_completion_percentage: number
               regional_expertise: string[]
               skills: string[]
               username: string

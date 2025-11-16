@@ -31,6 +31,8 @@ export default function Discover() {
     try {
       setLoading(true);
       const offset = reset ? 0 : page * 20;
+
+      // Primary: call RPC for smart discovery
       const { data, error } = await supabase.rpc('discover_members', {
         p_current_user_id: user.id,
         p_focus_areas: filters.focus_areas || null,
@@ -44,18 +46,51 @@ export default function Discover() {
         p_limit: 20,
         p_offset: offset,
       });
-      
+
+      let rows = data as any[] | null;
+
       if (error) {
-        console.error('Error loading members:', error);
-        return;
+        console.error('Error loading members via RPC discover_members:', error);
+
+        // Hotfix fallback: simple profiles query so the page still works
+        let q = supabase
+          .from('profiles')
+          .select('id, full_name, username, avatar_url, headline, profession, location, country_of_origin, focus_areas, industries, skills, updated_at')
+          .neq('id', user.id)
+          .eq('is_public', true)
+          .gte('profile_completion_percentage', 40);
+
+        // Apply filters (best-effort)
+        if (filters?.focus_areas?.length) q = q.overlaps('focus_areas', filters.focus_areas);
+        if (filters?.regional_expertise?.length) q = q.overlaps('regional_expertise', filters.regional_expertise);
+        if (filters?.industries?.length) q = q.overlaps('industries', filters.industries);
+        if (filters?.skills?.length) q = q.overlaps('skills', filters.skills);
+        if (filters?.country_of_origin) q = q.ilike('country_of_origin', `%${filters.country_of_origin}%`);
+        if (filters?.current_country) q = q.ilike('current_country', `%${filters.current_country}%`);
+        if (searchQuery) {
+          q = q.or(
+            `full_name.ilike.%${searchQuery}%,headline.ilike.%${searchQuery}%,bio.ilike.%${searchQuery}%`
+          );
+        }
+
+        q = q.order('updated_at', { ascending: false }).range(offset, offset + 19);
+
+        const { data: fbData, error: fbError } = await q;
+        if (fbError) {
+          console.error('Fallback profiles query failed:', fbError);
+          rows = [];
+        } else {
+          // Map to expected shape with a default match_score
+          rows = (fbData || []).map((p: any) => ({ ...p, match_score: 0 }));
+        }
       }
-      
+
       if (reset) {
-        setMembers(data || []);
+        setMembers(rows || []);
       } else {
-        setMembers(prev => [...prev, ...(data || [])]);
+        setMembers(prev => [...prev, ...(rows || [])]);
       }
-      setHasMore((data || []).length === 20);
+      setHasMore((rows || []).length === 20);
     } finally {
       setLoading(false);
     }
