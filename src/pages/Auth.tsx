@@ -468,7 +468,7 @@ const Auth = () => {
       </div>
 
       {/* Right Side - Auth Form */}
-      <div className="lg:w-1/2 flex items-center justify-center p-4 pt-20 lg:pt-4 relative">
+      <div className="lg:w-1/2 flex items-center justify-center p-4 relative">
         {/* Back to Home Button - Outside the card */}
         <div className="absolute top-6 left-6 z-20">
           <Button 
