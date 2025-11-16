@@ -8,7 +8,7 @@ import ConversationListPanel from '@/components/messaging/ConversationListPanel'
 import ConversationThread from '@/components/messaging/ConversationThread';
 import EmptyConversationState from '@/components/messaging/EmptyConversationState';
 import { LayoutTransitionLoader } from '@/components/LayoutTransitionLoader';
-import UnifiedHeader from '@/components/UnifiedHeader';
+
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
 
@@ -41,9 +41,7 @@ const DnaMessages = () => {
   if (isMobile) {
     if (selectedConversationId) {
       return (
-        <div className="min-h-screen bg-background">
-          <UnifiedHeader />
-          
+        <div className="min-h-screen bg-background pt-20">
           <div className="border-b bg-card">
             <div className="container mx-auto px-4 py-3">
               <MessagesBreadcrumb 
@@ -64,8 +62,7 @@ const DnaMessages = () => {
 
     // Mobile: Conversation list
     return (
-      <div className="min-h-screen bg-background">
-        <UnifiedHeader />
+      <div className="min-h-screen bg-background pt-20">
         <div className="container mx-auto px-4 py-6">
           <ConversationListPanel
             conversations={conversations || []}
@@ -83,8 +80,7 @@ const DnaMessages = () => {
 
   // Desktop: Two-column layout
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
+    <div className="min-h-screen bg-background pt-20">
       
       <TwoColumnLayout
         leftWidth="35%"
