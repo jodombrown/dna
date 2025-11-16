@@ -1,6 +1,10 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import UserDashboardLayout from '@/components/dashboard/UserDashboardLayout';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
+import { Card } from '@/components/ui/card';
+import { Users } from 'lucide-react';
 
 const DnaNetwork = () => {
   const { user } = useAuth();
@@ -18,7 +22,25 @@ const DnaNetwork = () => {
     return null;
   }
 
-  return <UserDashboardLayout profile={profile} currentUser={user} viewMode="network" />;
+  const centerColumn = (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3 mb-6">
+        <Users className="w-6 h-6 text-primary" />
+        <h1 className="text-2xl font-bold">Network</h1>
+      </div>
+      <Card className="p-6">
+        <p className="text-muted-foreground">Network feed coming soon...</p>
+      </Card>
+    </div>
+  );
+
+  return (
+    <LayoutController
+      leftColumn={<LeftNav />}
+      centerColumn={centerColumn}
+      rightColumn={<RightWidgets variant="connect" />}
+    />
+  );
 };
 
 export default DnaNetwork;
