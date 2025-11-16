@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 
 const EventsIndex = () => {
   const navigate = useNavigate();

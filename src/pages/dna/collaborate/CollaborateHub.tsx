@@ -3,10 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useMySpaces } from '@/hooks/useSpaces';
 import { Link, useNavigate } from 'react-router-dom';
-import { FeedLayout } from '@/components/layout/FeedLayout';
 import { Plus, Search, Sparkles } from 'lucide-react';
 import { SpaceWithMembership } from '@/types/spaceTypes';
 import { SuggestedSpaces } from '@/components/collaboration/SuggestedSpaces';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 
 export default function CollaborateHub() {
   const navigate = useNavigate();
