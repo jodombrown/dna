@@ -361,7 +361,7 @@ function App() {
               {/* CONVEY M1-M4 - Story Feed, Details, Authoring & Analytics */}
               <Route path="/dna/convey" element={
                 <OnboardingGuard>
-                  <ConveyHub />
+                  <Convey />
                 </OnboardingGuard>
               } />
               <Route path="/dna/convey/new" element={
