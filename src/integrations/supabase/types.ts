@@ -1520,6 +1520,39 @@ export type Database = {
           },
         ]
       }
+      entity_vectors: {
+        Row: {
+          created_at: string
+          dimension: number
+          entity_id: string
+          entity_type: string
+          id: string
+          source: string
+          updated_at: string
+          vector: Json
+        }
+        Insert: {
+          created_at?: string
+          dimension?: number
+          entity_id: string
+          entity_type: string
+          id?: string
+          source: string
+          updated_at?: string
+          vector: Json
+        }
+        Update: {
+          created_at?: string
+          dimension?: number
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          source?: string
+          updated_at?: string
+          vector?: Json
+        }
+        Relationships: []
+      }
       error_logs: {
         Row: {
           component_stack: string | null
@@ -5602,6 +5635,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_interactions: {
+        Row: {
+          context_c: string | null
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          interaction_type: string
+          metadata: Json | null
+          user_id: string
+          weight: number
+        }
+        Insert: {
+          context_c?: string | null
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          interaction_type: string
+          metadata?: Json | null
+          user_id: string
+          weight?: number
+        }
+        Update: {
+          context_c?: string | null
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          interaction_type?: string
+          metadata?: Json | null
+          user_id?: string
+          weight?: number
+        }
+        Relationships: []
+      }
       user_last_view_state: {
         Row: {
           context: Json | null
@@ -5757,6 +5826,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_vectors: {
+        Row: {
+          created_at: string
+          dimension: number
+          source: string
+          updated_at: string
+          user_id: string
+          vector: Json
+        }
+        Insert: {
+          created_at?: string
+          dimension?: number
+          source: string
+          updated_at?: string
+          user_id: string
+          vector: Json
+        }
+        Update: {
+          created_at?: string
+          dimension?: number
+          source?: string
+          updated_at?: string
+          user_id?: string
+          vector?: Json
+        }
+        Relationships: []
       }
       username_history: {
         Row: {
@@ -6050,6 +6146,7 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: number
       }
+      cosine_similarity: { Args: { vec1: Json; vec2: Json }; Returns: number }
       create_admin_notification: {
         Args: {
           p_admin_id: string
@@ -6771,6 +6868,25 @@ export type Database = {
           org: string
           skills: string[]
           username: string
+        }[]
+      }
+      get_similar_entities: {
+        Args: {
+          limit_count?: number
+          target_entity_id: string
+          target_entity_type: string
+        }
+        Returns: {
+          entity_id: string
+          entity_type: string
+          similarity_score: number
+        }[]
+      }
+      get_similar_users: {
+        Args: { limit_count?: number; target_user_id: string }
+        Returns: {
+          similarity_score: number
+          user_id: string
         }[]
       }
       get_suggested_connections: {
