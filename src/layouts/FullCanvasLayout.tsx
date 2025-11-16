@@ -86,16 +86,21 @@ const FullCanvasLayout: React.FC<FullCanvasLayoutProps> = ({
     );
   }
 
-  // Desktop: Side-by-side layout with collapsible sidebar
+  // Desktop: Side-by-side layout with independent scrolling
   return (
-    <div className={cn("flex w-full h-full gap-4 p-4", className)}>
+    <div className={cn("flex w-full gap-4 p-4", className)} style={{ height: 'calc(100vh - 64px)' }}>
       {/* Sidebar */}
       {sidebar && !isCollapsed && (
         <aside 
-          className="transition-all duration-300 ease-in-out overflow-y-auto relative"
-          style={{ width: sidebarWidth }}
+          className="transition-all duration-300 ease-in-out overflow-auto relative h-full"
+          style={{ 
+            width: sidebarWidth,
+            minWidth: 0, // Allow shrinking below content width
+          }}
         >
-          {sidebar}
+          <div className="min-w-max">
+            {sidebar}
+          </div>
           
           {/* Collapse button */}
           {collapsible && (
@@ -103,7 +108,7 @@ const FullCanvasLayout: React.FC<FullCanvasLayoutProps> = ({
               variant="ghost"
               size="icon"
               onClick={toggleSidebar}
-              className="absolute top-2 right-2 h-8 w-8"
+              className="sticky top-2 right-2 h-8 w-8 ml-auto float-right"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -114,11 +119,14 @@ const FullCanvasLayout: React.FC<FullCanvasLayoutProps> = ({
       {/* Main content area */}
       <main 
         className={cn(
-          "flex-1 transition-all duration-300 ease-in-out overflow-y-auto relative",
+          "flex-1 transition-all duration-300 ease-in-out overflow-auto relative h-full",
           isCollapsed && "w-full"
         )}
+        style={{ minWidth: 0 }}
       >
-        {content}
+        <div className="min-w-max">
+          {content}
+        </div>
         
         {/* Expand button when sidebar is collapsed */}
         {sidebar && collapsible && isCollapsed && (
@@ -126,7 +134,7 @@ const FullCanvasLayout: React.FC<FullCanvasLayoutProps> = ({
             variant="outline"
             size="icon"
             onClick={toggleSidebar}
-            className="absolute top-4 left-4 shadow-md"
+            className="sticky top-4 left-4 shadow-md"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
