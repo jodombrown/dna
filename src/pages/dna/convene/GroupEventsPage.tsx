@@ -7,7 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { format } from 'date-fns';
 import { Event } from '@/types/events';
 
@@ -117,95 +119,99 @@ export default function GroupEventsPage() {
   };
 
   return (
-    <FeedLayout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(`/dna/convene/groups/${slug}`)}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Group
-          </Button>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">{group?.name} Events</h1>
-              <p className="text-muted-foreground mt-1">
-                Events hosted by this group
-              </p>
+    <LayoutController
+      leftColumn={<LeftNav />}
+      centerColumn={
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Header */}
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              onClick={() => navigate(`/dna/convene/groups/${slug}`)}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Group
+            </Button>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold">{group?.name} Events</h1>
+                <p className="text-muted-foreground mt-1">
+                  Events hosted by this group
+                </p>
+              </div>
+              {canHostEvent && (
+                <Button
+                  onClick={() => navigate('/dna/convene/events/new', { state: { groupId: group?.id } })}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Host Event
+                </Button>
+              )}
             </div>
-            {canHostEvent && (
-              <Button
-                onClick={() => navigate('/dna/convene/events/new', { state: { groupId: group?.id } })}
-                className="bg-primary hover:bg-primary/90"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Host Event
-              </Button>
-            )}
           </div>
+
+          {/* Events Tabs */}
+          <Tabs defaultValue="upcoming" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="upcoming">Upcoming ({upcomingEvents.length})</TabsTrigger>
+              <TabsTrigger value="past">Past ({pastEvents.length})</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="upcoming" className="space-y-4">
+              {isLoading ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  Loading events...
+                </div>
+              ) : upcomingEvents.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {upcomingEvents.map((event) => (
+                    <EventCard key={event.id} event={event} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-muted/30 rounded-lg">
+                  <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                  <h3 className="text-lg font-semibold mb-1">No upcoming events</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {canHostEvent ? 'Be the first to host an event for this group' : 'Check back later for new events'}
+                  </p>
+                  {canHostEvent && (
+                    <Button
+                      onClick={() => navigate('/dna/convene/events/new', { state: { groupId: group?.id } })}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Host Event
+                    </Button>
+                  )}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="past" className="space-y-4">
+              {pastEvents.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {pastEvents.map((event) => (
+                    <EventCard key={event.id} event={event} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-muted/30 rounded-lg">
+                  <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                  <h3 className="text-lg font-semibold mb-1">No past events</h3>
+                  <p className="text-sm text-muted-foreground">
+                    This group hasn't hosted any events yet
+                  </p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
-
-        {/* Events Tabs */}
-        <Tabs defaultValue="upcoming" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="upcoming">Upcoming ({upcomingEvents.length})</TabsTrigger>
-            <TabsTrigger value="past">Past ({pastEvents.length})</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="upcoming" className="space-y-4">
-            {isLoading ? (
-              <div className="text-center py-12 text-muted-foreground">
-                Loading events...
-              </div>
-            ) : upcomingEvents.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {upcomingEvents.map((event) => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 bg-muted/30 rounded-lg">
-                <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-                <h3 className="text-lg font-semibold mb-1">No upcoming events</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {canHostEvent ? 'Be the first to host an event for this group' : 'Check back later for new events'}
-                </p>
-                {canHostEvent && (
-                  <Button
-                    onClick={() => navigate('/dna/convene/events/new', { state: { groupId: group?.id } })}
-                    className="bg-primary hover:bg-primary/90"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Host Event
-                  </Button>
-                )}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="past" className="space-y-4">
-            {pastEvents.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {pastEvents.map((event) => (
-                  <EventCard key={event.id} event={event} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 bg-muted/30 rounded-lg">
-                <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-                <h3 className="text-lg font-semibold mb-1">No past events</h3>
-                <p className="text-sm text-muted-foreground">
-                  This group hasn't hosted any events yet
-                </p>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
-    </FeedLayout>
+      }
+      rightColumn={<RightWidgets variant="convene" />}
+    />
   );
 }

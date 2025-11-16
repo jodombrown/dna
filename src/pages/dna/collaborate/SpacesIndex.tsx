@@ -1,4 +1,6 @@
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -55,45 +57,49 @@ export default function SpacesIndex() {
   );
 
   return (
-    <FeedLayout>
-      <div className="container max-w-6xl mx-auto px-4 py-8 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">All Spaces</h1>
-            <p className="text-muted-foreground mt-1">
-              Explore collaborative workspaces and join projects
-            </p>
-          </div>
-          <Button onClick={() => navigate('/dna/collaborate/spaces/new')}>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Space
-          </Button>
-        </div>
-
-        {/* Spaces Grid */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        ) : spaces && spaces.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {spaces.map(renderSpaceCard)}
-          </div>
-        ) : (
-          <Card className="border-dashed">
-            <CardContent className="pt-12 pb-12 text-center">
-              <p className="text-muted-foreground mb-4">
-                No public spaces yet. Be the first to create one!
+    <LayoutController
+      leftColumn={<LeftNav />}
+      centerColumn={
+        <div className="container max-w-6xl mx-auto px-4 py-8 space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">All Spaces</h1>
+              <p className="text-muted-foreground mt-1">
+                Explore collaborative workspaces and join projects
               </p>
-              <Button onClick={() => navigate('/dna/collaborate/spaces/new')}>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Space
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </FeedLayout>
+            </div>
+            <Button onClick={() => navigate('/dna/collaborate/spaces/new')}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Space
+            </Button>
+          </div>
+
+          {/* Spaces Grid */}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : spaces && spaces.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {spaces.map(renderSpaceCard)}
+            </div>
+          ) : (
+            <Card className="border-dashed">
+              <CardContent className="pt-12 pb-12 text-center">
+                <p className="text-muted-foreground mb-4">
+                  No public spaces yet. Be the first to create one!
+                </p>
+                <Button onClick={() => navigate('/dna/collaborate/spaces/new')}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Space
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      }
+      rightColumn={<RightWidgets />}
+    />
   );
 }

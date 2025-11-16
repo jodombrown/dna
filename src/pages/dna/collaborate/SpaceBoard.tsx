@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DndContext, DragEndEvent, closestCorners } from '@dnd-kit/core';
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import LayoutController from '@/components/LayoutController';
+import { LeftNav } from '@/components/layout/columns/LeftNav';
+import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -251,54 +253,58 @@ export default function SpaceBoard() {
   }
 
   return (
-    <FeedLayout>
-      <div className="container max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/dna/collaborate/spaces/${slug}`)}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold">{space.name} - Board</h1>
-          </div>
-          <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All tasks</SelectItem>
-              <SelectItem value="me">My tasks</SelectItem>
-              {members.map(member => (
-                <SelectItem key={member.user_id} value={member.user_id}>
-                  {member.profile.full_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+    <LayoutController
+      leftColumn={<LeftNav />}
+      centerColumn={
+        <div className="container mx-auto px-4 py-6 max-w-7xl">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" onClick={() => navigate(-1)}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+              <h1 className="text-2xl font-bold">Task Board - {space?.name}</h1>
+            </div>
 
-        {/* Kanban Board */}
-        <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {columns.map(column => (
-              <div key={column.id} id={column.id} className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                  <h3 className="font-semibold">{column.title}</h3>
-                  <Badge variant="secondary">
-                    {filteredTasks.filter(t => t.status === column.status).length}
-                  </Badge>
-                </div>
-                <div className="space-y-3 min-h-[200px]">
-                  {filteredTasks
-                    .filter(task => task.status === column.status)
-                    .map(renderTask)}
-                </div>
-              </div>
-            ))}
+            <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Filter by assignee" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All tasks</SelectItem>
+                {members.map((member) => (
+                  <SelectItem key={member.user_id} value={member.user_id}>
+                    {member.profile.full_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        </DndContext>
-      </div>
-    </FeedLayout>
+
+          <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {columns.map((column) => (
+                <div key={column.id} className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <div className={`h-3 w-3 rounded-full ${column.color}`} />
+                    <h2 className="font-semibold text-lg">
+                      {column.title} ({filteredTasks.filter(t => t.status === column.id).length})
+                    </h2>
+                  </div>
+
+                  <div className="space-y-3 min-h-[200px]">
+                    {filteredTasks
+                      .filter(task => task.status === column.id)
+                      .map(renderTask)
+                    }
+                  </div>
+                </div>
+              ))}
+            </div>
+          </DndContext>
+        </div>
+      }
+      rightColumn={<RightWidgets />}
+    />
   );
 }
