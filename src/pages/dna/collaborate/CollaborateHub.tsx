@@ -63,91 +63,81 @@ export default function CollaborateHub() {
   );
 
   return (
-    <LayoutController
-      leftColumn={<LeftNav />}
-      centerColumn={
-        <div className="container max-w-6xl mx-auto px-4 py-8 space-y-8">
-          {/* Hero Section */}
-          <div className="text-center space-y-4 py-8">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="h-8 w-8 text-primary" />
-              <h1 className="text-4xl font-bold">COLLABORATE</h1>
-            </div>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Turn connections and conversations into real projects. Organize collaborative workspaces where ideas become impact.
-            </p>
-            
-            {/* Quick Actions */}
-            <div className="flex flex-wrap gap-3 justify-center pt-4">
-              <Button size="lg" onClick={() => navigate('/dna/collaborate/spaces/new')}>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Space
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => navigate('/dna/collaborate/spaces')}>
-                <Search className="mr-2 h-4 w-4" />
-                Find Spaces
-              </Button>
-            </div>
-          </div>
-
-          {/* Suggested Spaces */}
-          <SuggestedSpaces />
-
-          {/* My Spaces */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-semibold">My Spaces</h2>
-            
-            {/* Leading */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-medium text-muted-foreground">Leading</h3>
-              {mySpacesLoading ? (
-                <p className="text-sm text-muted-foreground">Loading...</p>
-              ) : mySpaces?.leading && mySpaces.leading.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {mySpaces.leading.map(renderSpaceCard)}
-                </div>
-              ) : (
-                <Card className="border-dashed">
-                  <CardContent className="pt-6 text-center">
-                    <p className="text-sm text-muted-foreground mb-3">
-                      You're not leading any spaces yet.
-                    </p>
-                    <Button size="sm" onClick={() => navigate('/dna/collaborate/spaces/new')}>
-                      <Plus className="mr-2 h-3 w-3" />
-                      Create your first space
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-
-            {/* Contributing */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-medium text-muted-foreground">Contributing</h3>
-              {mySpacesLoading ? (
-                <p className="text-sm text-muted-foreground">Loading...</p>
-              ) : mySpaces?.contributing && mySpaces.contributing.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {mySpaces.contributing.map(renderSpaceCard)}
-                </div>
-              ) : (
-                <Card className="border-dashed">
-                  <CardContent className="pt-6 text-center">
-                    <p className="text-sm text-muted-foreground mb-3">
-                      You're not contributing to any spaces yet.
-                    </p>
-                    <Button size="sm" variant="outline" onClick={() => navigate('/dna/collaborate/spaces')}>
-                      <Search className="mr-2 h-3 w-3" />
-                      Explore spaces
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
+    <div className="container max-w-6xl mx-auto px-4 py-8 space-y-8">
+      {/* Hero Section */}
+      <div className="text-center space-y-4 py-8">
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <Sparkles className="h-8 w-8 text-primary" />
+          <h1 className="text-4xl font-bold">COLLABORATE</h1>
         </div>
-      }
-      rightColumn={<RightWidgets />}
-    />
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          Turn connections and conversations into real projects. Organize collaborative workspaces where ideas become impact.
+        </p>
+        
+        {/* Quick Actions */}
+        <div className="flex flex-wrap gap-3 justify-center pt-4">
+          <Button size="lg" onClick={() => navigate('/dna/collaborate/spaces/new')}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create Space
+          </Button>
+          <Button size="lg" variant="outline" onClick={() => navigate('/dna/collaborate/spaces')}>
+            <Search className="mr-2 h-4 w-4" />
+            Find Spaces
+          </Button>
+        </div>
+      </div>
+
+      {/* Suggested Spaces */}
+      <SuggestedSpaces />
+
+      {/* My Spaces */}
+      <div className="space-y-6">
+        <h2 className="text-2xl font-semibold">My Spaces</h2>
+        
+        {/* Leading */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-muted-foreground">Leading</h3>
+          {mySpacesLoading ? (
+            <div className="text-center py-8 text-muted-foreground">Loading your spaces...</div>
+          ) : mySpaces?.leading && mySpaces.leading.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {mySpaces.leading.map(renderSpaceCard)}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="text-center py-8">
+                <p className="text-muted-foreground mb-4">You're not leading any spaces yet.</p>
+                <Button size="sm" onClick={() => navigate('/dna/collaborate/spaces/new')}>
+                  <Plus className="mr-2 h-3 w-3" />
+                  Create your first space
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Contributing */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-muted-foreground">Contributing</h3>
+          {mySpacesLoading ? (
+            <div className="text-center py-8 text-muted-foreground">Loading...</div>
+          ) : mySpaces?.contributing && mySpaces.contributing.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {mySpaces.contributing.map(renderSpaceCard)}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="text-center py-8">
+                <p className="text-muted-foreground mb-4">You're not contributing to any spaces yet.</p>
+                <Button size="sm" variant="outline" onClick={() => navigate('/dna/collaborate/spaces')}>
+                  <Search className="mr-2 h-3 w-3" />
+                  Explore spaces
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
