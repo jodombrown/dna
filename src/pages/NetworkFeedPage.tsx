@@ -24,7 +24,7 @@ export default function NetworkFeedPage() {
     if (!user) return;
 
     const channel = supabase
-      .channel(`network_feed_updates_${user.id}_${Date.now()}`)
+      .channel('network_feed_updates')
       .on(
         'postgres_changes',
         {

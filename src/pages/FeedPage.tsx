@@ -27,7 +27,6 @@ export default function FeedPage() {
       const { data, error } = await supabase.rpc('get_feed_posts', {
         p_user_id: user.id,
         p_feed_type: activeTab,
-        p_hashtag: null,
         p_limit: 20,
         p_offset: 0,
       });
@@ -43,7 +42,7 @@ export default function FeedPage() {
     if (!user) return;
 
     const channel = supabase
-      .channel(`feed_posts_${user.id}_${Date.now()}`)
+      .channel('feed_posts')
       .on(
         'postgres_changes',
         {

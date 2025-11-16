@@ -1,6 +1,5 @@
-import React, { createContext, useContext, ReactNode, useMemo, useEffect, useRef } from 'react';
+import React, { createContext, useContext, ReactNode, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAnalytics } from '@/hooks/useADAAnalytics';
 
 // Define all view states from Master Prompt
 export type ViewState = 

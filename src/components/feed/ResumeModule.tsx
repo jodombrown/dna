@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useLastViewState } from '@/hooks/useLastViewState';
-import { useAnalytics } from '@/hooks/useADAAnalytics';
 import { ArrowRight, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -42,7 +41,6 @@ const VIEW_STATE_LABELS: Record<string, { title: string; route: string; descript
 export function ResumeModule() {
   const navigate = useNavigate();
   const { lastState, isLoading } = useLastViewState();
-  const { trackResumeClick } = useAnalytics();
 
   if (isLoading || !lastState) {
     return null;
@@ -71,10 +69,7 @@ export function ResumeModule() {
           </p>
         </div>
         <Button
-          onClick={() => {
-            trackResumeClick(lastState.last_view_state, viewInfo.route, lastState.context);
-            navigate(viewInfo.route);
-          }}
+          onClick={() => navigate(viewInfo.route)}
           variant="default"
           size="sm"
           className="w-full"

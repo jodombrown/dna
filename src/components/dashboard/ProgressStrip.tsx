@@ -24,7 +24,7 @@ export default function ProgressStrip() {
     load();
     if (!channelRef.current) {
       channelRef.current = supabase
-        .channel(`dash-strip-${Date.now()}`) // Unique channel per mount
+        .channel('dash-strip')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, load)
         .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, load)
         .on('postgres_changes', { event: '*', schema: 'public', table: 'collaboration_memberships' }, load)

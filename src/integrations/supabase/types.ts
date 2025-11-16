@@ -1350,47 +1350,6 @@ export type Database = {
         }
         Relationships: []
       }
-      dashboard_analytics: {
-        Row: {
-          created_at: string
-          event_data: Json
-          event_type: string
-          id: string
-          route: string | null
-          session_id: string | null
-          user_id: string | null
-          user_role: string | null
-        }
-        Insert: {
-          created_at?: string
-          event_data?: Json
-          event_type: string
-          id?: string
-          route?: string | null
-          session_id?: string | null
-          user_id?: string | null
-          user_role?: string | null
-        }
-        Update: {
-          created_at?: string
-          event_data?: Json
-          event_type?: string
-          id?: string
-          route?: string | null
-          session_id?: string | null
-          user_id?: string | null
-          user_role?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "dashboard_analytics_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       diaspora_data: {
         Row: {
           country_id: string | null
@@ -6305,10 +6264,6 @@ export type Database = {
       }
       get_dashboard_preferences: { Args: { p_user_id: string }; Returns: Json }
       get_engagement_rate: { Args: never; Returns: number }
-      get_engine_loop_metrics: {
-        Args: { p_end_date?: string; p_start_date?: string }
-        Returns: Json
-      }
       get_event_analytics: { Args: { p_event_id: string }; Returns: Json }
       get_event_attendees: {
         Args: {
@@ -6790,28 +6745,6 @@ export type Database = {
           username: string
         }[]
       }
-      get_top_cross_transitions: {
-        Args: { p_end_date?: string; p_limit?: number; p_start_date?: string }
-        Returns: {
-          count: number
-          entity_type: string
-          from_pillar: string
-          to_pillar: string
-        }[]
-      }
-      get_top_transition_entities: {
-        Args: {
-          p_end_date?: string
-          p_entity_type: string
-          p_limit?: number
-          p_start_date?: string
-        }
-        Returns: {
-          entity_id: string
-          to_pillar: string
-          transition_count: number
-        }[]
-      }
       get_total_connections: { Args: never; Returns: number }
       get_total_events: { Args: never; Returns: number }
       get_total_posts: { Args: never; Returns: number }
@@ -6913,13 +6846,6 @@ export type Database = {
           full_name: string
           user_id: string
           username: string
-        }[]
-      }
-      get_view_state_distribution: {
-        Args: { p_end_date?: string; p_start_date?: string }
-        Returns: {
-          count: number
-          view_state: string
         }[]
       }
       handle_referral_signup: {

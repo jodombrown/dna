@@ -39,7 +39,6 @@ const DnaFeed = () => {
       const { data, error } = await supabase.rpc('get_feed_posts', {
         p_user_id: user.id,
         p_feed_type: activeTab,
-        p_hashtag: null,
         p_limit: 20,
         p_offset: 0,
       });
@@ -55,7 +54,7 @@ const DnaFeed = () => {
     if (!user) return;
 
     const channel = supabase
-      .channel(`feed_posts_${user.id}_${Date.now()}`) // Unique channel per mount
+      .channel('feed_posts')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
         refetch();
       })
@@ -64,19 +63,8 @@ const DnaFeed = () => {
       })
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_comments' }, () => {
         refetch();
-      });
-
-    try {
-      // Guard against duplicate subscribe in StrictMode
-      const anyChannel: any = channel as any;
-      if (anyChannel.state !== 'joined' && anyChannel.state !== 'joining') {
-        channel.subscribe();
-      }
-    } catch (err: any) {
-      if (!String(err?.message || '').includes("subscribe' can only be called a single time")) {
-        console.error('Realtime subscribe failed', err);
-      }
-    }
+      })
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);

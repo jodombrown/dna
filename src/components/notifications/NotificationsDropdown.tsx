@@ -17,15 +17,20 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
   
   const { notifications, isLoading, markAsRead, markAllAsRead } = useNotifications();
 
-  // Real-time subscription with StrictMode guard
+  // Real-time subscription
   useEffect(() => {
     if (!user) return;
 
     const channel = supabase
-      .channel(`user-notifications-${user.id}-${Date.now()}`)
+      .channel('user-notifications')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `recipient_id=eq.${user.id}` },
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `recipient_id=eq.${user.id}`
+        },
         () => {
           queryClient.invalidateQueries({ queryKey: ['notifications'] });
           queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
@@ -33,23 +38,18 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
       )
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'notifications', filter: `recipient_id=eq.${user.id}` },
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `recipient_id=eq.${user.id}`
+        },
         () => {
           queryClient.invalidateQueries({ queryKey: ['notifications'] });
           queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
         }
-      );
-
-    try {
-      const anyChannel: any = channel as any;
-      if (anyChannel.state !== 'joined' && anyChannel.state !== 'joining') {
-        channel.subscribe();
-      }
-    } catch (err: any) {
-      if (!String(err?.message || '').includes("subscribe' can only be called a single time")) {
-        console.error('Realtime subscribe failed', err);
-      }
-    }
+      )
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);

@@ -38,7 +38,7 @@ const ActivityFeed = () => {
 
     // Set up real-time subscriptions for posts, likes, and comments
     const channel = supabase
-      .channel(`activity-feed-updates_${user.id}_${Date.now()}`)
+      .channel('activity-feed-updates')
       .on(
         'postgres_changes',
         {

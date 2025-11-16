@@ -13,7 +13,6 @@ export async function fetchPosts(): Promise<PostWithAuthor[]> {
   const { data, error } = await supabase.rpc('get_feed_posts', {
     p_user_id: userId,
     p_feed_type: 'all',
-    p_hashtag: null,
     p_limit: 50,
     p_offset: 0
   });

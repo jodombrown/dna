@@ -20,7 +20,6 @@ export function NetworkFeedWidget({ currentUserId }: NetworkFeedWidgetProps) {
       const { data, error } = await supabase.rpc('get_feed_posts', {
         p_user_id: currentUserId,
         p_feed_type: 'connections',
-        p_hashtag: null,
         p_limit: 3,
         p_offset: 0,
       });

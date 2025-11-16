@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useWhatsNext } from '@/hooks/useWhatsNext';
-import { useAnalytics } from '@/hooks/useADAAnalytics';
 import { useNavigate } from 'react-router-dom';
 import { 
   Sparkles, Users, Calendar, FolderKanban, HandHeart, 
@@ -29,7 +28,6 @@ const ICON_MAP: Record<string, any> = {
 export function WhatsNextModule() {
   const navigate = useNavigate();
   const { data: recommendations, isLoading } = useWhatsNext();
-  const { trackWhatsNextClick } = useAnalytics();
 
   if (isLoading) {
     return (
@@ -77,13 +75,10 @@ export function WhatsNextModule() {
         {recommendations.map((rec) => {
           const Icon = ICON_MAP[rec.icon] || Sparkles;
           return (
-              <div
+            <div
               key={rec.id}
               className="group p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
-              onClick={() => {
-                trackWhatsNextClick(rec.id, rec.title, rec.pillar, rec.route);
-                navigate(rec.route);
-              }}
+              onClick={() => navigate(rec.route)}
             >
               <div className="flex items-start gap-3">
                 <div className="mt-0.5">
