@@ -42,6 +42,7 @@ import PlatformHealth from "./pages/admin/PlatformHealth";
 import ContentModeration from "./pages/admin/ContentModeration";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
 import FeedComingSoon from "./pages/FeedComingSoon";
+import ADAInsights from "./pages/admin/ADAInsights";
 
 // Static pages  
 import About from "./pages/About";
@@ -454,6 +455,7 @@ function App() {
                 <Route path="signals" element={<AdminSignals />} />
                 <Route path="moderation" element={<ContentModeration />} />
                 <Route path="convey" element={<ConveyAnalytics />} />
+                <Route path="ada-insights" element={<ADAInsights />} />
               </Route>
               <Route path="/app/admin/moderation" element={<Moderation />} />
 
