@@ -125,7 +125,7 @@ const DnaFeed = () => {
   // Center Column: Main Feed
   const centerColumn = (
     <div className="space-y-4">
-      <ProfileStrengthBanner userId={user.id} />
+      <ProfileStrengthBanner />
       
       {/* Feed Header */}
       <div className="flex items-center justify-between">
@@ -200,27 +200,29 @@ const DnaFeed = () => {
           {activities.map((activity) => {
             switch (activity.activity_type) {
               case 'post':
+                const postData = activity.entity_data as any;
                 return (
-                  <div key={activity.id}>
+                  <div key={activity.activity_id}>
                     <PostCard
-                      post={activity.post!}
-                      onCommentClick={() => handleCommentClick(activity.post!.id)}
+                      post={postData}
+                      currentUserId={user?.id || ''}
+                      onCommentClick={() => handleCommentClick(activity.entity_id)}
                     />
-                    {expandedPostId === activity.post!.id && (
-                      <PostComments postId={activity.post!.id} />
+                    {expandedPostId === activity.entity_id && (
+                      <PostComments postId={activity.entity_id} currentUserId={user?.id || ''} />
                     )}
                   </div>
                 );
               case 'connection':
-                return <FeedConnectionCard key={activity.id} activity={activity} />;
+                return <FeedConnectionCard key={activity.activity_id} activity={activity} />;
               case 'space':
-                return <FeedSpaceCard key={activity.id} activity={activity} />;
+                return <FeedSpaceCard key={activity.activity_id} activity={activity} />;
               case 'event':
-                return <FeedEventCard key={activity.id} activity={activity} />;
+                return <FeedEventCard key={activity.activity_id} activity={activity} />;
               case 'contribution':
-                return <FeedContributionCard key={activity.id} activity={activity} />;
+                return <FeedContributionCard key={activity.activity_id} activity={activity} />;
               case 'story':
-                return <FeedStoryCard key={activity.id} activity={activity} />;
+                return <FeedStoryCard key={activity.activity_id} activity={activity} />;
               default:
                 return null;
             }
@@ -229,6 +231,7 @@ const DnaFeed = () => {
           {hasNextPage && (
             <LoadMoreTrigger
               onLoadMore={fetchNextPage}
+              hasMore={hasNextPage || false}
               isLoading={isFetchingNextPage}
             />
           )}
@@ -236,8 +239,10 @@ const DnaFeed = () => {
       )}
 
       <EnhancedCreatePostDialog
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
+        isOpen={showCreateDialog}
+        onClose={() => setShowCreateDialog(false)}
+        currentUserId={user?.id || ''}
+        onSuccess={refetch}
       />
     </div>
   );
