@@ -84,7 +84,7 @@ export function ConveyFeedFilters({ filters, onFiltersChange }: ConveyFeedFilter
         {/* Focus Areas - placeholder for now */}
         <div className="space-y-2">
           <Label className="text-sm font-medium">Focus Areas</Label>
-          <Select disabled>
+          <Select disabled value="all">
             <SelectTrigger>
               <SelectValue placeholder="All focus areas" />
             </SelectTrigger>
