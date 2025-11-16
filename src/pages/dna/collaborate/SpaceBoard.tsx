@@ -175,9 +175,9 @@ export default function SpaceBoard() {
   });
 
   const columns = [
-    { id: 'open', title: 'To Do', status: 'open' as const },
-    { id: 'in_progress', title: 'In Progress', status: 'in_progress' as const },
-    { id: 'done', title: 'Done', status: 'done' as const },
+    { id: 'open', title: 'To Do', status: 'open' as const, color: 'bg-gray-400' },
+    { id: 'in_progress', title: 'In Progress', status: 'in_progress' as const, color: 'bg-blue-400' },
+    { id: 'done', title: 'Done', status: 'done' as const, color: 'bg-green-400' },
   ];
 
   const renderTask = (task: Task) => {
