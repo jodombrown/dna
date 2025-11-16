@@ -1,6 +1,7 @@
 import React from 'react';
 import { useViewState } from '@/contexts/ViewStateContext';
 import { cn } from '@/lib/utils';
+import UnifiedHeader from '@/components/UnifiedHeader';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -25,17 +26,20 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   // based on the layout configuration
   
   return (
-    <div 
-      className={cn(
-        "min-h-screen w-full max-w-full bg-background",
-        "transition-all duration-300 ease-in-out",
-        "overflow-x-hidden"
-      )}
-      data-view-state={viewState}
-      data-layout-type={layoutConfig.type}
-    >
-      {children}
-    </div>
+    <>
+      <UnifiedHeader />
+      <div 
+        className={cn(
+          "min-h-screen w-full max-w-full bg-background",
+          "transition-all duration-300 ease-in-out",
+          "overflow-x-hidden"
+        )}
+        data-view-state={viewState}
+        data-layout-type={layoutConfig.type}
+      >
+        {children}
+      </div>
+    </>
   );
 };
 

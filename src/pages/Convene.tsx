@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import ConnectEventsTab from '@/components/connect/tabs/ConnectEventsTab';
 import EventRegistrationSidebar from '@/components/connect/EventRegistrationSidebar';
@@ -100,8 +99,6 @@ const Convene = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
       <main className="container mx-auto px-4 py-8 pt-24">
         <ConnectEventsTab
           events={events as Event[]}
