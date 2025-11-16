@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { CROSS_ACTIONS, CrossActionType } from '@/config/crossActions';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAnalytics } from '@/hooks/useADAAnalytics';
 import { Zap } from 'lucide-react';
 
 interface CrossActionPanelProps {
@@ -14,6 +15,7 @@ interface CrossActionPanelProps {
 export function CrossActionPanel({ type, context, title = 'Quick Actions' }: CrossActionPanelProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { trackCross5CAction } = useAnalytics();
   const actions = (CROSS_ACTIONS[type] as any) || [];
 
   // Filter out actions that require auth if user is not logged in
@@ -40,7 +42,26 @@ export function CrossActionPanel({ type, context, title = 'Quick Actions' }: Cro
               variant="outline"
               size="sm"
               className="w-full justify-start text-left h-auto py-3"
-              onClick={() => navigate(action.route(context))}
+              onClick={() => {
+                // Determine source pillar from entity type
+                const sourcePillarMap: Record<string, any> = {
+                  event: 'convene',
+                  space: 'collaborate',
+                  need: 'contribute',
+                  story: 'convey',
+                  profile: 'connect',
+                };
+                const fromPillar = sourcePillarMap[type] || 'connect';
+                
+                trackCross5CAction(
+                  fromPillar,
+                  action.pillar,
+                  type,
+                  context?.eventId || context?.spaceId || context?.needId || context?.userId || 'unknown',
+                  action.id
+                );
+                navigate(action.route(context));
+              }}
             >
               <div className="flex items-start gap-3 w-full">
                 <Icon className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
