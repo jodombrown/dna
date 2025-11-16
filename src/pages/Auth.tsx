@@ -57,7 +57,7 @@ const Auth = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (user && !loading && !isResetMode) {
-      navigate('/dna/me');
+      navigate('/dna/feed');
     }
   }, [user, loading, navigate, isResetMode]);
 
@@ -148,7 +148,7 @@ const Auth = () => {
           description: 'Your password has been changed successfully.'
         });
         setIsResetMode(false);
-        navigate('/dna/me');
+        navigate('/dna/feed');
     } catch (err: any) {
       console.error('Update password error:', err);
       toast({

@@ -32,7 +32,7 @@ const EventsBreadcrumb: React.FC<EventsBreadcrumbProps> = ({
         {/* Dashboard */}
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link to="/dna/me">Dashboard</Link>
+            <Link to="/dna/feed">Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         

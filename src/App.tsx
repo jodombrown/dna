@@ -188,11 +188,9 @@ function App() {
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
               <Route path="/fact-sheet" element={<FactSheetPage />} />
               <Route path="/pitch-deck" element={<PitchDeck />} />
-              <Route path="/dna/me" element={
-                <OnboardingGuard>
-                  <DnaMe />
-                </OnboardingGuard>
-              } />
+              
+              {/* Redirect old /dna/me to user's profile */}
+              <Route path="/dna/me" element={<Navigate to="/dna/feed" replace />} />
               <Route path="/dna/:username" element={
                 <OnboardingGuard>
                   <PublicProfile />

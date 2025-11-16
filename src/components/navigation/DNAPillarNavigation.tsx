@@ -129,7 +129,7 @@ export const DNAPillarNavigation: React.FC<DNAPillarNavigationProps> = ({
   
   const isActivePillar = (href: string) => {
     if (href === '/dna/connect/feed') {
-      return location.pathname === '/dna/connect/feed' || location.pathname === '/dna/me';
+      return location.pathname === '/dna/connect/feed' || location.pathname === '/dna/feed';
     }
     return location.pathname.startsWith(href);
   };

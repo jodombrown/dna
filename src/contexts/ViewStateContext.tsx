@@ -44,7 +44,7 @@ interface ViewStateProviderProps {
 // Route to ViewState mapping
 const routeToViewState = (pathname: string): ViewState => {
   // DASHBOARD_HOME (default)
-  if (pathname === '/dna/me' || pathname === '/dna/feed') {
+  if (pathname === '/dna/feed') {
     return 'DASHBOARD_HOME';
   }
   

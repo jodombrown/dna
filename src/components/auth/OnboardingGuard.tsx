@@ -61,8 +61,8 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
 
     // If requirements met but trying to access onboarding page, redirect to dashboard
     if (meetsMinimumRequirement && location.pathname === '/onboarding') {
-      console.log('OnboardingGuard: Requirements met, redirecting to /dna/me');
-      navigate('/dna/me', { replace: true });
+      console.log('OnboardingGuard: Requirements met, redirecting to /dna/feed');
+      navigate('/dna/feed', { replace: true });
     }
   }, [profile, user, authLoading, profileLoading, navigate, location.pathname]);
 

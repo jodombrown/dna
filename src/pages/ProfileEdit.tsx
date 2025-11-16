@@ -151,7 +151,7 @@ const ProfileEdit = () => {
         description: `You're ${completionPercentage}% complete. ${completionPercentage >= 40 ? '✅ All features unlocked!' : `Complete ${40 - completionPercentage}% more to unlock all features.`}`,
       });
       
-      navigate('/dna/me');
+      navigate('/dna/feed');
     },
     onError: (error: any) => {
       toast({
@@ -252,7 +252,7 @@ const ProfileEdit = () => {
         <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate('/dna/me')}
+            onClick={() => navigate('/dna/feed')}
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -629,7 +629,7 @@ const ProfileEdit = () => {
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate('/dna/me')}
+              onClick={() => navigate('/dna/feed')}
             >
               Cancel
             </Button>
