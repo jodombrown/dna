@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
+import { format } from 'date-fns';
 
 const EventsIndex = () => {
   const navigate = useNavigate();
@@ -97,144 +98,151 @@ const EventsIndex = () => {
   });
 
   return (
-    <FeedLayout>
-      <div className="container max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Events</h1>
-          <p className="text-muted-foreground text-lg">
-            Discover and join events in the African diaspora community
-          </p>
-        </div>
+    <LayoutController
+      leftColumn={<LeftNav />}
+      centerColumn={
+        <div className="container max-w-6xl mx-auto px-4 py-8">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold mb-2">Events</h1>
+            <p className="text-muted-foreground">Discover and join events in your community</p>
+          </div>
 
-        {/* Filters */}
-        <Card className="mb-8">
-          <CardContent className="pt-6">
-            <div className="space-y-4">
-              {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search events..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9"
-                />
+          {/* Filters */}
+          <div className="mb-6 space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search events..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
               </div>
+              <Button variant="outline" onClick={() => navigate('/dna/convene/create')}>
+                Create Event
+              </Button>
+            </div>
 
-              {/* Filter Row */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Select value={timeFilter} onValueChange={setTimeFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Time" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="upcoming">Upcoming</SelectItem>
-                    <SelectItem value="today">Today</SelectItem>
-                    <SelectItem value="week">This Week</SelectItem>
-                    <SelectItem value="month">This Month</SelectItem>
-                  </SelectContent>
-                </Select>
+            <div className="flex flex-wrap gap-3">
+              <Select value={timeFilter} onValueChange={setTimeFilter}>
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="upcoming">Upcoming</SelectItem>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                </SelectContent>
+              </Select>
 
-                <Select value={formatFilter} onValueChange={setFormatFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Format" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Formats</SelectItem>
-                    <SelectItem value="in_person">In Person</SelectItem>
-                    <SelectItem value="virtual">Virtual</SelectItem>
-                    <SelectItem value="hybrid">Hybrid</SelectItem>
-                  </SelectContent>
-                </Select>
+              <Select value={formatFilter} onValueChange={setFormatFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Format" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Formats</SelectItem>
+                  <SelectItem value="in_person">In Person</SelectItem>
+                  <SelectItem value="virtual">Virtual</SelectItem>
+                  <SelectItem value="hybrid">Hybrid</SelectItem>
+                </SelectContent>
+              </Select>
 
-                <Select value={typeFilter} onValueChange={setTypeFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="conference">Conference</SelectItem>
-                    <SelectItem value="workshop">Workshop</SelectItem>
-                    <SelectItem value="meetup">Meetup</SelectItem>
-                    <SelectItem value="webinar">Webinar</SelectItem>
-                    <SelectItem value="networking">Networking</SelectItem>
-                    <SelectItem value="social">Social</SelectItem>
-                  </SelectContent>
-                </Select>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="conference">Conference</SelectItem>
+                  <SelectItem value="workshop">Workshop</SelectItem>
+                  <SelectItem value="meetup">Meetup</SelectItem>
+                  <SelectItem value="webinar">Webinar</SelectItem>
+                  <SelectItem value="networking">Networking</SelectItem>
+                  <SelectItem value="social">Social</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Events Grid */}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="text-muted-foreground">Loading events...</div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Events Grid */}
-        {isLoading ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading events...</p>
-          </div>
-        ) : events.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">No events found matching your filters</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event: any) => (
-              <Card
-                key={event.id}
-                className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => navigate(`/dna/convene/events/${event.id}`)}
-              >
-                {event.cover_image_url && (
-                  <div className="aspect-video w-full overflow-hidden rounded-t-lg">
-                    <img
-                      src={event.cover_image_url}
-                      alt={event.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <Badge variant="secondary" className="capitalize">
-                      {event.event_type}
-                    </Badge>
-                    <Badge variant="outline" className="capitalize">
-                      {event.format.replace('_', ' ')}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-lg line-clamp-2">{event.title}</CardTitle>
-                  <CardDescription className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>{new Date(event.start_time).toLocaleDateString()}</span>
+          ) : events.length === 0 ? (
+            <Card className="border-dashed">
+              <CardContent className="pt-12 pb-12 text-center">
+                <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-lg font-semibold mb-2">No events found</p>
+                <p className="text-muted-foreground mb-4">
+                  Try adjusting your filters or create a new event
+                </p>
+                <Button onClick={() => navigate('/dna/convene/create')}>
+                  Create Event
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {events.map((event: any) => (
+                <Card 
+                  key={event.id}
+                  className="hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => navigate(`/dna/convene/events/${event.id}`)}
+                >
+                  <CardHeader>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="secondary" className="capitalize">
+                        {event.event_type}
+                      </Badge>
+                      <Badge variant="outline" className="capitalize">
+                        {event.format.replace('_', ' ')}
+                      </Badge>
                     </div>
-                    {(event.location_city || event.meeting_url) && (
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
-                        <span>
-                          {event.format === 'virtual' 
-                            ? 'Online' 
-                            : `${event.location_city}, ${event.location_country}`
-                          }
-                        </span>
+                    <CardTitle className="text-lg line-clamp-2">{event.title}</CardTitle>
+                    <CardDescription className="line-clamp-2">
+                      {event.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        <span>{format(new Date(event.start_time), 'PPP')}</span>
                       </div>
-                    )}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>by {event.organizer?.full_name || 'Unknown'}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-    </FeedLayout>
+                      {(event.location_city || event.location_country) && (
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <MapPin className="h-4 w-4" />
+                          <span>
+                            {[event.location_city, event.location_country].filter(Boolean).join(', ')}
+                          </span>
+                        </div>
+                      )}
+                      {event.organizer && (
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <span className="text-xs">
+                            by {event.organizer.full_name || event.organizer.username}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      }
+      rightColumn={<RightWidgets />}
+    />
   );
 };
 

@@ -11,6 +11,7 @@ import { ConveyItemType } from '@/types/conveyTypes';
 import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export default function CreateStory() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function CreateStory() {
 
   const createMutation = useCreateConveyItem();
   const checkExistingDraft = useCheckExistingImpactDraft();
+  const { trackEvent } = useAnalytics();
 
   // Fetch space details if space_id is provided
   const { data: space, isLoading: isLoadingSpace } = useQuery({
@@ -151,13 +153,17 @@ export default function CreateStory() {
 
   if (isLoadingSpace || isLoadingEvent || (requestedType === 'impact' && isLoadingImpact)) {
     return (
-      <FeedLayout>
-        <div className="max-w-3xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <LayoutController
+        leftColumn={<LeftNav />}
+        centerColumn={
+          <div className="max-w-3xl mx-auto px-4 py-8">
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
           </div>
-        </div>
-      </FeedLayout>
+        }
+        rightColumn={<RightWidgets />}
+      />
     );
   }
 
@@ -174,44 +180,39 @@ export default function CreateStory() {
       : 'Share a story, update, or impact highlight with the DNA community.';
 
   return (
-    <FeedLayout>
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-6">
+    <LayoutController
+      leftColumn={<LeftNav />}
+      centerColumn={
+        <div className="container max-w-3xl mx-auto px-4 py-8">
           <Button
             variant="ghost"
-            onClick={handleCancel}
-            className="mb-4"
+            onClick={() => navigate('/dna/convey')}
+            className="mb-6"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Cancel
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Convey
           </Button>
 
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            {pageTitle}
-          </h1>
-          <p className="text-muted-foreground">
-            {pageDescription}
-          </p>
-        </div>
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold mb-2">Create Story</h1>
+            <p className="text-muted-foreground">
+              Share a story about diaspora impact, innovation, or connection
+            </p>
+          </div>
 
-        {/* Form */}
-        <div className="bg-card border border-border rounded-lg p-6">
           <ConveyItemForm
-            initialData={prefillData || undefined}
-            spaceId={spaceId || undefined}
-            spaceName={space?.name}
-            spaceVisibility={space?.visibility as any}
-            eventId={eventId || undefined}
-            eventTitle={event?.title}
-            needId={needId || undefined}
-            isAdmin={isAdmin}
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-            isLoading={createMutation.isPending}
+            onSubmit={async (formData) => {
+              createMutation.mutate(formData, {
+                onSuccess: (data) => {
+                  navigate(`/dna/convey/${data.slug || data.id}`);
+                },
+              });
+            }}
+            onCancel={() => navigate('/dna/convey')}
           />
         </div>
-      </div>
-    </FeedLayout>
+      }
+      rightColumn={<RightWidgets />}
+    />
   );
 }
