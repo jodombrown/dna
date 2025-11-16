@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import ConnectTabs from '@/components/connect/ConnectTabs';
@@ -93,10 +92,9 @@ const handleApplyPreset = (preset: { searchTerm: string; tab?: string; filters?:
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <UnifiedHeader />
       <PrototypeNotice />
       
-      <main className="max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-12 py-6 sm:py-8">
+      <main className="max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-12 py-6 sm:py-8 pt-20">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="sticky top-16 z-20 bg-gray-50 pb-4 pt-2 shadow-sm">
             <SearchSection
