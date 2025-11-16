@@ -378,7 +378,6 @@ function App() {
               {/* Legacy convene route redirects */}
               <Route path="/dna/events" element={<Navigate to="/dna/convene/events" replace />} />
               <Route path="/events" element={<Navigate to="/dna/convene/events" replace />} />
-              <Route path="/convene" element={<Navigate to="/dna/convene" replace />} />
               <Route path="/dna/convene-example" element={<Navigate to="/dna/convene" replace />} />
               
               {/* ========== CONTRIBUTE PILLAR (Future) ========== */}
