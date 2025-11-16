@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useModulePolicy, usePolicyConfig } from '@/hooks/useAdaptiveConfig';
 import { useViewState } from '@/contexts/ViewStateContext';
+import { getViewStateModulePreset } from '@/config/viewStateModules';
 
 interface ModulesConfig {
   modules: {
@@ -227,9 +228,16 @@ export function DashboardModules({
   const { user } = useAuth();
   const { viewState } = useViewState();
   
-  // Get adaptive module policy
-  const { data: modulePolicy } = useModulePolicy();
-  const modulesConfig = usePolicyConfig<ModulesConfig>(modulePolicy, DEFAULT_MODULES);
+  // Get adaptive module policy (now ViewState-aware)
+  const { data: modulePolicy } = useModulePolicy(viewState);
+  
+  // Resolution order:
+  // 1. Cohort/experiment policy from ADA (if exists)
+  // 2. ViewState-specific default
+  // 3. Global DEFAULT_MODULES constant
+  const viewStatePreset = getViewStateModulePreset(viewState);
+  const fallbackConfig = modulePolicy?.policy ? DEFAULT_MODULES : viewStatePreset;
+  const modulesConfig = usePolicyConfig<ModulesConfig>(modulePolicy, fallbackConfig);
   
   const { events: upcomingEvents } = useLiveEvents(3);
 

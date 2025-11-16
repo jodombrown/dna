@@ -36,18 +36,20 @@ export function useAdaptivePolicy(
 
 /**
  * Hook to get module configuration policy
+ * Now ViewState-aware
  */
-export function useModulePolicy(route?: string) {
+export function useModulePolicy(viewState?: string) {
   const { user } = useAuth();
   const location = useLocation();
 
   return useQuery({
-    queryKey: ['module-policy', user?.id, route || location.pathname],
+    queryKey: ['module-policy', user?.id, viewState, location.pathname],
     queryFn: async () => {
       if (!user) return null;
       return await adaptiveConfigService.resolveModulePolicy(
         user.id,
-        route || location.pathname
+        viewState,
+        location.pathname
       );
     },
     enabled: !!user,

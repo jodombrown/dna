@@ -133,9 +133,14 @@ export class AdaptiveConfigService {
 
   /**
    * Resolve module configuration policy
+   * Now ViewState-aware for 5C-specific module configurations
    */
-  async resolveModulePolicy(userId: string, route?: string): Promise<PolicyResolution> {
-    return this.getPolicyForUser(userId, 'modules', { route });
+  async resolveModulePolicy(
+    userId: string, 
+    viewState?: string,
+    route?: string
+  ): Promise<PolicyResolution> {
+    return this.getPolicyForUser(userId, 'modules', { viewState, route });
   }
 
   /**
