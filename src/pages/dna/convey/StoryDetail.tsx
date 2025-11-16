@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { FeedLayout } from '@/components/layout/FeedLayout';
+import DetailViewLayout from '@/layouts/DetailViewLayout';
 import { useConveyItemBySlug } from '@/hooks/useConveyFeed';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,16 @@ export default function StoryDetail() {
   };
 
   return (
-    <FeedLayout>
+    <DetailViewLayout
+      title={item?.title || 'Story'}
+      backPath="/dna/convey"
+      backLabel="Back to Stories"
+      breadcrumbs={item ? [
+        { label: 'Home', path: '/dna/feed' },
+        { label: 'Convey', path: '/dna/convey' },
+        { label: item.title }
+      ] : undefined}
+    >
       <div className="max-w-6xl mx-auto px-4 py-8">
         <Button
           variant="ghost"
@@ -201,6 +210,6 @@ export default function StoryDetail() {
           </div>
         )}
       </div>
-    </FeedLayout>
+    </DetailViewLayout>
   );
 }
