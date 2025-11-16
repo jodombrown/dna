@@ -101,7 +101,6 @@ import ConveyAnalytics from "./pages/dna/admin/ConveyAnalytics";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
-import OpportunityDetail from "./pages/OpportunityDetail";
 import MyApplications from "./pages/MyApplications";
 import CollaborationSpaces from "./pages/CollaborationSpaces";
 import SpaceDetail from "./pages/SpaceDetail";
