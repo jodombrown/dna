@@ -43,7 +43,7 @@ export default function FeedPage() {
     if (!user) return;
 
     const channel = supabase
-      .channel('feed_posts')
+      .channel(`feed_posts_${user.id}_${Date.now()}`)
       .on(
         'postgres_changes',
         {

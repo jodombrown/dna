@@ -55,7 +55,7 @@ const DnaFeed = () => {
     if (!user) return;
 
     const channel = supabase
-      .channel('feed_posts')
+      .channel(`feed_posts_${user.id}_${Date.now()}`) // Unique channel per mount
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
         refetch();
       })

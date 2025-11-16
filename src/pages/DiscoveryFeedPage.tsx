@@ -20,7 +20,7 @@ export default function DiscoveryFeedPage() {
     if (!user) return;
 
     const channel = supabase
-      .channel('discovery_feed_updates')
+      .channel(`discovery_feed_updates_${user.id}_${Date.now()}`)
       .on(
         'postgres_changes',
         {
