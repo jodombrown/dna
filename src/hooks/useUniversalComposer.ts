@@ -31,6 +31,7 @@ export interface ComposerFormData {
   eventTime?: string;
   eventEndDate?: string;
   eventEndTime?: string;
+  eventType?: 'conference' | 'workshop' | 'meetup' | 'webinar' | 'networking' | 'social' | 'other';
   location?: string;
   format?: 'in_person' | 'virtual' | 'hybrid';
   maxAttendees?: number;
@@ -162,19 +163,34 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
           break;
 
         case 'event':
+          // Combine date and time into ISO timestamp strings
+          const startTime = formData.eventDate && formData.eventTime 
+            ? `${formData.eventDate}T${formData.eventTime}:00`
+            : formData.eventDate 
+              ? `${formData.eventDate}T12:00:00`
+              : new Date().toISOString();
+          
+          const endTime = formData.eventEndDate && formData.eventEndTime
+            ? `${formData.eventEndDate}T${formData.eventEndTime}:00`
+            : formData.eventEndDate
+              ? `${formData.eventEndDate}T13:00:00`
+              : new Date(new Date(startTime).getTime() + 3600000).toISOString(); // +1 hour default
+
           const eventPayload = {
             title: formData.title || '',
             description: formData.content,
-            event_date: formData.eventDate,
-            event_time: formData.eventTime,
-            end_date: formData.eventEndDate,
-            end_time: formData.eventEndTime,
-            location: formData.location,
+            event_type: formData.eventType || 'meetup',
             format: formData.format || 'in_person',
+            start_time: startTime,
+            end_time: endTime,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            location_name: formData.format === 'virtual' ? undefined : formData.location,
+            meeting_url: formData.format === 'virtual' ? formData.location : undefined,
             max_attendees: formData.maxAttendees,
-            registration_required: formData.registrationRequired || false,
+            is_public: true,
+            requires_approval: false,
+            allow_guests: true,
             cover_image_url: formData.mediaUrl,
-            space_id: context.spaceId,
           };
 
           const { data: authData } = await supabase.auth.getSession();
