@@ -7254,119 +7254,44 @@ export type Database = {
           usage_count: number
         }[]
       }
-      get_universal_feed:
-        | {
-            Args: {
-              p_author_id?: string
-              p_cursor?: string
-              p_event_id?: string
-              p_limit?: number
-              p_offset?: number
-              p_ranking_mode?: string
-              p_space_id?: string
-              p_tab?: string
-              p_viewer_id: string
-            }
-            Returns: {
-              author_avatar_url: string
-              author_full_name: string
-              author_headline: string
-              author_id: string
-              comment_count: number
-              content: string
-              created_at: string
-              event_id: string
-              event_image_url: string
-              event_title: string
-              image_url: string
-              like_count: number
-              linked_entity_id: string
-              linked_entity_type: string
-              original_author_avatar_url: string
-              original_author_full_name: string
-              original_author_id: string
-              original_post_id: string
-              post_id: string
-              post_type: string
-              privacy_level: string
-              reshare_count: number
-              space_id: string
-              space_image_url: string
-              space_title: string
-              viewer_has_liked: boolean
-            }[]
-          }
-        | {
-            Args: {
-              p_author_id?: string
-              p_cursor?: string
-              p_event_id?: string
-              p_limit?: number
-              p_offset?: number
-              p_ranking_mode?: string
-              p_space_id?: string
-              p_tab?: string
-              p_viewer_id: string
-            }
-            Returns: {
-              author_avatar_url: string
-              author_display_name: string
-              author_id: string
-              author_username: string
-              bookmark_count: number
-              comment_count: number
-              content: string
-              created_at: string
-              event_id: string
-              event_title: string
-              has_bookmarked: boolean
-              has_liked: boolean
-              like_count: number
-              linked_entity_id: string
-              linked_entity_type: string
-              media_url: string
-              post_id: string
-              post_type: string
-              privacy_level: string
-              ranking_score: number
-              share_count: number
-              space_id: string
-              space_title: string
-              updated_at: string
-              view_count: number
-            }[]
-          }
-        | {
-            Args: {
-              p_author_id?: string
-              p_event_id?: string
-              p_feed_type?: string
-              p_hashtag?: string
-              p_limit?: number
-              p_offset?: number
-              p_space_id?: string
-              p_user_id: string
-            }
-            Returns: {
-              author_avatar_url: string
-              author_full_name: string
-              author_id: string
-              author_username: string
-              comment_count: number
-              content: string
-              created_at: string
-              event_id: string
-              id: string
-              image_url: string
-              is_deleted: boolean
-              is_liked_by_user: boolean
-              like_count: number
-              post_type: string
-              privacy_level: string
-              space_id: string
-              updated_at: string
-            }[]
-          }
+      get_universal_feed: {
+        Args: {
+          p_author_id?: string
+          p_event_id?: string
+          p_limit?: number
+          p_offset?: number
+          p_ranking_mode?: string
+          p_space_id?: string
+          p_tab?: string
+          p_viewer_id: string
+        }
+        Returns: {
+          author_avatar_url: string
+          author_display_name: string
+          author_id: string
+          author_username: string
+          bookmark_count: number
+          comment_count: number
+          content: string
+          created_at: string
+          event_id: string
+          event_title: string
+          has_bookmarked: boolean
+          has_liked: boolean
+          like_count: number
+          linked_entity_id: string
+          linked_entity_type: string
+          media_url: string
+          post_id: string
+          post_type: string
+          privacy_level: string
+          share_count: number
+          space_id: string
+          space_title: string
+          updated_at: string
+          view_count: number
+        }[]
+      }
       get_unread_notification_count: {
         Args: { p_user_id: string }
         Returns: number
