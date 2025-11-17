@@ -14,6 +14,7 @@ import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 import { DashboardModules } from '@/components/feed/DashboardModules';
 import { UniversalFeed } from '@/components/feed/UniversalFeed';
 import { FeedTab } from '@/types/feed';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 
 const DnaFeed = () => {
@@ -169,12 +170,13 @@ const DnaFeed = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <LayoutController
         leftColumn={leftColumn}
         centerColumn={centerColumn}
         rightColumn={rightColumn}
       />
+      <MobileBottomNav />
     </div>
   );
 };
