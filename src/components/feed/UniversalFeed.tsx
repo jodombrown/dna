@@ -102,57 +102,63 @@ export function UniversalFeed({
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // Real-time subscription
+  // Realtime: guard against double subscriptions
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const subscribedRef = useRef(false);
+
   useEffect(() => {
     if (!user?.id) return;
 
-    const channel = supabase
-      .channel(`universal_feed_${user.id}_${Date.now()}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'posts',
-        },
-        () => {
-          refetchRef.current?.();
-          onUpdateRef.current?.();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'post_likes',
-        },
-        () => {
-          refetchRef.current?.();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'post_comments',
-        },
-        () => {
-          refetchRef.current?.();
-        }
-      )
-      .subscribe();
+    // Cleanup any existing channel before creating a new one
+    if (channelRef.current) {
+      try {
+        supabase.removeChannel(channelRef.current);
+      } catch (e) {
+        console.warn('[UniversalFeed] removeChannel error', e);
+      }
+      channelRef.current = null;
+      subscribedRef.current = false;
+    }
+
+    const ch = supabase.channel(`universal_feed:${user.id}`);
+
+    ch
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
+        refetchRef.current?.();
+        onUpdateRef.current?.();
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_likes' }, () => {
+        refetchRef.current?.();
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_comments' }, () => {
+        refetchRef.current?.();
+      });
+
+    channelRef.current = ch;
+
+    if (!subscribedRef.current) {
+      ch.subscribe((status) => {
+        console.log('[UniversalFeed] channel status:', status);
+      });
+      subscribedRef.current = true;
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channelRef.current) {
+        try {
+          supabase.removeChannel(channelRef.current);
+        } catch (e) {
+          console.warn('[UniversalFeed] removeChannel error', e);
+        }
+        channelRef.current = null;
+        subscribedRef.current = false;
+      }
     };
   }, [user?.id]);
 
   const handleCommentClick = (postId: string) => {
     setExpandedPostId(expandedPostId === postId ? null : postId);
   };
-
   const allPosts = data?.pages.flatMap((page) => page.posts) || [];
 
   return (
