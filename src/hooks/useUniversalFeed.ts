@@ -27,7 +27,7 @@ export const useUniversalFeed = (filters: FeedFilters) => {
       });
 
       if (error) throw error;
-      return (data || []) as UniversalFeedItem[];
+      return (data || []) as unknown as UniversalFeedItem[];
     },
     enabled: !!filters.viewerId,
   });
