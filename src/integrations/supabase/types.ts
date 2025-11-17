@@ -7223,40 +7223,22 @@ export type Database = {
         Returns: {
           author_avatar_url: string
           author_full_name: string
-          author_headline: string
           author_id: string
           author_username: string
-          comments_count: number
+          comment_count: number
           content: string
           created_at: string
           event_id: string
-          image_url: string
-          is_connection: boolean
-          likes_count: number
-          link_description: string
-          link_title: string
-          link_url: string
-          linked_entity_id: string
-          linked_entity_type: string
-          original_author_avatar_url: string
-          original_author_full_name: string
-          original_author_headline: string
-          original_author_id: string
-          original_author_username: string
-          original_content: string
-          original_created_at: string
-          original_image_url: string
-          original_post_id: string
-          post_id: string
+          id: string
+          is_deleted: boolean
+          is_liked_by_user: boolean
+          like_count: number
+          media_type: string
+          media_url: string
           post_type: string
-          privacy_level: string
-          share_commentary: string
-          shared_by: string
-          shares_count: number
+          privacy: string
           space_id: string
-          user_has_liked: boolean
-          user_has_saved: boolean
-          views_count: number
+          updated_at: string
         }[]
       }
       get_unread_notification_count: {

@@ -72,7 +72,26 @@ export function useUniversalFeed(
         throw error;
       }
 
-      const posts = (data || []) as PostWithAuthor[];
+      // Map database response to PostWithAuthor format
+      const posts = (data || []).map((item: any) => ({
+        post_id: item.id,
+        author_id: item.author_id,
+        author_username: item.author_username,
+        author_full_name: item.author_full_name,
+        author_avatar_url: item.author_avatar_url,
+        content: item.content,
+        post_type: item.post_type,
+        privacy_level: item.privacy,
+        image_url: item.media_type === 'image' ? item.media_url : undefined,
+        space_id: item.space_id,
+        event_id: item.event_id,
+        created_at: item.created_at,
+        likes_count: Number(item.like_count || 0),
+        comments_count: Number(item.comment_count || 0),
+        user_has_liked: item.is_liked_by_user || false,
+        is_connection: false, // Will be determined by query logic
+      })) as PostWithAuthor[];
+      
       console.log('[UniversalFeed] Retrieved:', posts.length, 'items');
 
       const hasMore = posts.length === POSTS_PER_PAGE;
