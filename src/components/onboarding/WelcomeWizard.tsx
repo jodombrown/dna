@@ -85,7 +85,7 @@ export function WelcomeWizard() {
       // Create dashboard preferences
       const { error: prefsError } = await supabase
         .from('user_dashboard_preferences')
-        .insert({
+        .upsert({
           user_id: user.id,
           visible_modules: visibleModules,
           collapsed_modules: [],
