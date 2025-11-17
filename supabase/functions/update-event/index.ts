@@ -186,6 +186,39 @@ Deno.serve(async (req) => {
         await supabase.from('notifications').insert(notifications);
         console.log(`Created ${notifications.length} notifications for attendees`);
       }
+      
+      // Create feed post for the update
+      console.log('Creating feed post for event update');
+      
+      let updateSummary = 'Event updated';
+      if (updateData.is_cancelled) {
+        updateSummary = `Event cancelled${updateData.cancellation_reason ? `: ${updateData.cancellation_reason}` : ''}`;
+      } else if (updateData.title || updateData.description) {
+        updateSummary = 'Event details updated';
+      } else if (updateData.start_time || updateData.end_time) {
+        updateSummary = 'Event date/time changed';
+      } else if (updateData.location_name || updateData.meeting_url) {
+        updateSummary = 'Event location updated';
+      }
+      
+      const { error: feedError } = await supabase
+        .from('posts')
+        .insert({
+          author_id: user.id,
+          content: updateSummary,
+          post_type: 'event',
+          privacy_level: existingEvent.is_public ? 'public' : 'connections',
+          linked_entity_type: 'event',
+          linked_entity_id: updateData.event_id,
+          event_id: updateData.event_id,
+          media_url: updateData.cover_image_url || existingEvent.cover_image_url,
+        });
+      
+      if (feedError) {
+        console.error('Error creating feed post for event update:', feedError);
+      } else {
+        console.log('Feed post created for event update');
+      }
     }
 
     console.log('Event updated successfully');

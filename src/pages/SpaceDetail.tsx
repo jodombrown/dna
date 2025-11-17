@@ -8,6 +8,7 @@ import { SpaceOverview } from '@/components/collaboration/SpaceOverview';
 import { SpaceTasks } from '@/components/collaboration/SpaceTasks';
 import { SpaceMilestones } from '@/components/collaboration/SpaceMilestones';
 import { SpaceMembers } from '@/components/collaboration/SpaceMembers';
+import { SpaceActivityFeed } from '@/components/spaces/SpaceActivityFeed';
 
 export default function SpaceDetail() {
   const { id } = useParams<{ id: string }>();
@@ -103,6 +104,7 @@ export default function SpaceDetail() {
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="mb-8">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="activity">Activity</TabsTrigger>
               <TabsTrigger value="tasks">
                 <CheckSquare className="mr-2 h-4 w-4" />
                 Tasks
@@ -119,6 +121,14 @@ export default function SpaceDetail() {
 
             <TabsContent value="overview">
               <SpaceOverview spaceId={id!} />
+            </TabsContent>
+
+            <TabsContent value="activity">
+              <SpaceActivityFeed 
+                spaceId={id!}
+                spaceName={space.title}
+                canPost={isMember}
+              />
             </TabsContent>
 
             <TabsContent value="tasks">

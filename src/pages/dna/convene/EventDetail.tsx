@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -14,6 +15,7 @@ import DetailViewLayout from '@/layouts/DetailViewLayout';
 import { formatDistanceToNow, format } from 'date-fns';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
+import { EventActivityFeed } from '@/components/events/EventActivityFeed';
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -386,15 +388,34 @@ const EventDetail = () => {
               </CardContent>
             </Card>
 
-            {/* Description */}
-            <Card>
-              <CardHeader>
-                <CardTitle>About This Event</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="whitespace-pre-wrap">{event.description}</p>
-              </CardContent>
-            </Card>
+            {/* Tabs for Description and Activity */}
+            <Tabs defaultValue="description" className="w-full">
+              <TabsList>
+                <TabsTrigger value="description">Description</TabsTrigger>
+                <TabsTrigger value="activity">Activity</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="description">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>About This Event</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground whitespace-pre-wrap">
+                      {event.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="activity">
+                <EventActivityFeed
+                  eventId={event.id}
+                  eventTitle={event.title}
+                  canPost={!!userRsvp}
+                />
+              </TabsContent>
+            </Tabs>
 
             {/* Attendees */}
             {attendees.length > 0 && (
@@ -483,5 +504,4 @@ const EventDetail = () => {
     </DetailViewLayout>
   );
 };
-
 export default EventDetail;

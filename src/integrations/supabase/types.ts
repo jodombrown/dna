@@ -4393,6 +4393,7 @@ export type Database = {
           shared_by: string | null
           space_id: string | null
           updated_at: string
+          view_count: number | null
         }
         Insert: {
           author_id: string
@@ -4422,6 +4423,7 @@ export type Database = {
           shared_by?: string | null
           space_id?: string | null
           updated_at?: string
+          view_count?: number | null
         }
         Update: {
           author_id?: string
@@ -4451,6 +4453,7 @@ export type Database = {
           shared_by?: string | null
           space_id?: string | null
           updated_at?: string
+          view_count?: number | null
         }
         Relationships: [
           {
