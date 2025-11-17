@@ -378,7 +378,7 @@ export function PostCard({
       )}
 
       {/* Actions */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between gap-2 pt-3 border-t">
         {/* Simple Like Button */}
         <Button
           variant="ghost"
@@ -386,12 +386,13 @@ export function PostCard({
           onClick={() => toggleLike()}
           disabled={isLiking}
           className={cn(
-            'flex-1',
+            'flex-1 gap-1.5 px-2',
             userHasLiked && 'text-red-500 hover:text-red-600'
           )}
         >
-          <Heart className={cn('h-4 w-4 mr-2', userHasLiked && 'fill-red-500')} />
-          {userHasLiked ? 'Liked' : 'Like'}
+          <Heart className={cn('h-4 w-4', userHasLiked && 'fill-red-500')} />
+          <span className="hidden sm:inline">{userHasLiked ? 'Liked' : 'Like'}</span>
+          <span className="sm:hidden">{likeCount > 0 ? likeCount : ''}</span>
         </Button>
 
         {/* Emoji Reaction Picker */}
@@ -400,19 +401,10 @@ export function PostCard({
             variant="ghost"
             size="sm"
             disabled={isReacting}
-            className="flex-1"
+            className="flex-1 gap-1.5 px-2"
           >
-            {currentReaction ? (
-              <>
-                <span className="mr-2 text-base">{currentReaction}</span>
-                {getEmojiLabel(currentReaction)}
-              </>
-            ) : (
-              <>
-                <span className="mr-2 text-base">😊</span>
-                React
-              </>
-            )}
+            <span className="text-lg">{currentReaction || '😊'}</span>
+            <span className="hidden sm:inline">{currentReaction ? getEmojiLabel(currentReaction) : 'React'}</span>
           </Button>
         </ReactionPicker>
 
@@ -420,10 +412,11 @@ export function PostCard({
           variant="ghost"
           size="sm"
           onClick={onCommentClick}
-          className="flex-1"
+          className="flex-1 gap-1.5 px-2"
         >
-          <MessageCircle className="h-4 w-4 mr-2" />
-          Comment
+          <MessageCircle className="h-4 w-4" />
+          <span className="hidden sm:inline">Comment</span>
+          <span className="sm:hidden">{post.comments_count > 0 ? post.comments_count : ''}</span>
         </Button>
 
         <Button
@@ -432,13 +425,13 @@ export function PostCard({
           onClick={() => setShowShareDialog(true)}
           disabled={isSharing}
           className={cn(
-            'flex-1',
+            'flex-1 gap-1.5 px-2',
             userHasShared && 'text-green-600 hover:text-green-700'
           )}
           title="Share this post"
         >
-          <Share2 className={cn('h-4 w-4 mr-2', userHasShared && 'fill-green-600')} />
-          {userHasShared ? 'Shared' : 'Share'}
+          <Share2 className={cn('h-4 w-4', userHasShared && 'fill-green-600')} />
+          <span className="hidden sm:inline">{userHasShared ? 'Shared' : 'Share'}</span>
         </Button>
 
         {/* Bookmark Button */}
@@ -448,33 +441,14 @@ export function PostCard({
           onClick={() => toggleBookmark()}
           disabled={isBookmarking}
           className={cn(
-            'flex-1',
-            isBookmarked && 'text-primary'
+            'flex-1 gap-1.5 px-2',
+            isBookmarked && 'text-primary hover:text-primary/90'
           )}
           title={isBookmarked ? 'Remove bookmark' : 'Save post'}
         >
-          <Bookmark className={cn('h-4 w-4 mr-2', isBookmarked && 'fill-current')} />
-          {isBookmarked ? 'Saved' : 'Save'}
+          <Bookmark className={cn('h-4 w-4', isBookmarked && 'fill-primary')} />
+          <span className="hidden sm:inline">{isBookmarked ? 'Saved' : 'Save'}</span>
         </Button>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm">
-              <Share2 className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleShare}>
-              Copy link
-            </DropdownMenuItem>
-            {!isOwnPost && (
-              <DropdownMenuItem onClick={() => setShowRepostDialog(true)}>
-                <Repeat2 className="h-4 w-4 mr-2" />
-                Share to feed
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       {/* Liked By Modal */}
