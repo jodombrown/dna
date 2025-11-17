@@ -22,7 +22,7 @@ export function CreatePost() {
         .insert({
           author_id: user!.id,
           content: postContent,
-          post_type: 'post',
+          post_type: 'update',
           privacy_level: 'public',
           linked_entity_type: null,
           linked_entity_id: null,
@@ -41,9 +41,10 @@ export function CreatePost() {
       setContent('');
       toast.success('Post created successfully!');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error creating post:', error);
-      toast.error('Failed to create post. Please try again.');
+      const msg = (error?.message || error?.hint || error?.details || '').toString();
+      toast.error(msg ? `Post failed: ${msg}` : 'Post failed. Please try again.');
     },
   });
 
