@@ -8,7 +8,7 @@ interface FeedLayoutProps {
 export function FeedLayout({ children }: FeedLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
-      <main className="pb-20 md:pb-8">
+      <main className="pt-16 pb-20 md:pb-8">
         {children}
       </main>
       <MobileBottomNav />

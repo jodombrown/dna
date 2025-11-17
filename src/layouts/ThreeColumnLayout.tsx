@@ -66,7 +66,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
             minWidth: 0, // Allow shrinking below content width
           }}
         >
-          <div className="px-4 py-8">
+          <div className="min-w-max">
             {left}
           </div>
         </aside>
@@ -80,7 +80,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
             minWidth: 0, // Allow shrinking below content width
           }}
         >
-          <div className="px-6 py-8">
+          <div className="min-w-max">
             {center}
           </div>
         </main>
@@ -94,7 +94,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
             minWidth: 0, // Allow shrinking below content width
           }}
         >
-          <div className="px-4 py-8">
+          <div className="min-w-max">
             {right}
           </div>
         </aside>

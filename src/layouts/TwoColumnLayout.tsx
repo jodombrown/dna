@@ -62,7 +62,7 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
             minWidth: 0, // Allow shrinking below content width
           }}
         >
-          <div className="px-6 py-8">
+          <div className="min-w-max">
             {left}
           </div>
         </div>
@@ -76,7 +76,7 @@ const TwoColumnLayout: React.FC<TwoColumnLayoutProps> = ({
             minWidth: 0, // Allow shrinking below content width
           }}
         >
-          <div className="px-6 py-8">
+          <div className="min-w-max">
             {right}
           </div>
         </div>

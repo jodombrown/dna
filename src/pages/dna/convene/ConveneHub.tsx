@@ -91,7 +91,7 @@ const ConveneHub = () => {
   const canHostEvent = profile && (profile.profile_completion_percentage ?? 0) >= 40;
 
   const centerColumn = (
-    <div className="space-y-6">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
           <h1 className={`${TYPOGRAPHY.h1} mb-2`}>Convene</h1>
