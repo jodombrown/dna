@@ -7,7 +7,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 
-export type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';
+export type ErrorSeverity = 'warning' | 'error' | 'critical';
 
 export type ErrorCategory = 
   | 'database'
@@ -38,7 +38,7 @@ export async function logError(options: LogErrorOptions): Promise<void> {
   const {
     error,
     category,
-    severity = 'medium',
+    severity = 'error',
     context,
     metadata = {},
     componentStack,
@@ -102,13 +102,10 @@ export const logCriticalError = (error: Error | unknown, category: ErrorCategory
   logError({ error, category, severity: 'critical', context, metadata });
 
 export const logHighError = (error: Error | unknown, category: ErrorCategory, context?: string, metadata?: Record<string, any>) =>
-  logError({ error, category, severity: 'high', context, metadata });
+  logError({ error, category, severity: 'error', context, metadata });
 
-export const logMediumError = (error: Error | unknown, category: ErrorCategory, context?: string, metadata?: Record<string, any>) =>
-  logError({ error, category, severity: 'medium', context, metadata });
-
-export const logLowError = (error: Error | unknown, category: ErrorCategory, context?: string, metadata?: Record<string, any>) =>
-  logError({ error, category, severity: 'low', context, metadata });
+export const logWarningError = (error: Error | unknown, category: ErrorCategory, context?: string, metadata?: Record<string, any>) =>
+  logError({ error, category, severity: 'warning', context, metadata });
 
 /**
  * Database query error wrapper
@@ -134,7 +131,7 @@ export async function withErrorLogging<T>(
  * Use this in onError callbacks
  */
 export function handleQueryError(error: unknown, queryKey: string) {
-  logMediumError(error, 'api', `Query failed: ${queryKey}`, {
+  logHighError(error, 'api', `Query failed: ${queryKey}`, {
     queryKey,
   });
 }
