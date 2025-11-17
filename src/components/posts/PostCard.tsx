@@ -42,6 +42,8 @@ interface PostCardProps {
   onUpdate?: () => void;
   onCommentClick?: () => void;
   showComments?: boolean;
+  feedItem?: any; // UniversalFeedItem for reshare support
+  isReshare?: boolean;
 }
 
 export function PostCard({
@@ -50,6 +52,8 @@ export function PostCard({
   onUpdate,
   onCommentClick,
   showComments = false,
+  feedItem,
+  isReshare = false,
 }: PostCardProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -388,7 +392,6 @@ export function PostCard({
           size="sm"
           onClick={() => {
             toggleLike();
-            // Track engagement
             feedAnalytics[userHasLiked ? 'unlike' : 'like']({
               userId: currentUserId,
               postId: post.post_id,
@@ -415,17 +418,19 @@ export function PostCard({
             disabled={isReacting}
             className="flex-1 gap-1.5 px-2"
           >
-            <span className="text-lg">{currentReaction || '😊'}</span>
-            <span className="hidden sm:inline">{currentReaction ? getEmojiLabel(currentReaction) : 'React'}</span>
+            <span>😊</span>
+            <span className="hidden sm:inline">React</span>
           </Button>
         </ReactionPicker>
 
+        {/* Comment Button */}
         <Button
           variant="ghost"
           size="sm"
           onClick={() => {
-            if (onCommentClick) onCommentClick();
-            // Track engagement
+            if (onCommentClick) {
+              onCommentClick();
+            }
             feedAnalytics.comment({
               userId: currentUserId,
               postId: post.post_id,
@@ -440,60 +445,43 @@ export function PostCard({
           <span className="sm:hidden">{post.comments_count > 0 ? post.comments_count : ''}</span>
         </Button>
 
-        {/* Reshare Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowReshareDialog(true)}
-          className="flex-1 gap-1.5 px-2"
-          title="Reshare with your network"
-        >
-          <Repeat2 className="h-4 w-4" />
-          <span className="hidden sm:inline">Reshare</span>
-        </Button>
+        {/* Reshare Button - only show for UniversalFeed items */}
+        {feedItem && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowReshareDialog(true)}
+            className="flex-1 gap-1.5 px-2"
+          >
+            <Repeat2 className="h-4 w-4" />
+            <span className="hidden sm:inline">Share</span>
+            {feedItem.share_count > 0 && (
+              <span className="sm:hidden">{feedItem.share_count}</span>
+            )}
+          </Button>
+        )}
 
         {/* Bookmark Button */}
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => {
-            toggleBookmark();
-            // Track engagement
-            feedAnalytics[isBookmarked ? 'unbookmark' : 'bookmark']({
-              userId: currentUserId,
-              postId: post.post_id,
-              postType: post.post_type || 'post',
-              context: { surface: 'home' },
-            });
-          }}
+          onClick={() => toggleBookmark()}
           disabled={isBookmarking}
-          className={cn(
-            'flex-1 gap-1.5 px-2',
-            isBookmarked && 'text-primary hover:text-primary/90'
-          )}
-          title={isBookmarked ? 'Remove bookmark' : 'Save post'}
+          className={cn('gap-1.5 px-2', isBookmarked && 'text-primary')}
         >
-          <Bookmark className={cn('h-4 w-4', isBookmarked && 'fill-primary')} />
+          <Bookmark className={cn('h-4 w-4', isBookmarked && 'fill-current')} />
           <span className="hidden sm:inline">{isBookmarked ? 'Saved' : 'Save'}</span>
         </Button>
       </div>
 
-      {/* Liked By Modal */}
-      <LikedByModal
-        isOpen={showLikedByModal}
-        onClose={() => setShowLikedByModal(false)}
-        likedBy={likedBy}
-      />
-
-      {/* Repost Dialog */}
-      {profile && (
-        <RepostDialog
-          isOpen={showRepostDialog}
-          onClose={() => setShowRepostDialog(false)}
-          post={post}
-          currentUserName={profile.full_name}
-          currentUserAvatar={profile.avatar_url}
-          onRepost={handleRepost}
+      {/* Reshare Dialog */}
+      {feedItem && (
+        <ReshareDialog
+          open={showReshareDialog}
+          onOpenChange={setShowReshareDialog}
+          post={feedItem}
+          currentUserId={currentUserId}
+          onSuccess={onUpdate}
         />
       )}
 

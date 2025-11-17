@@ -65,12 +65,10 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
       );
     
     case 'post':
-    case 'reshare':
     case 'community_post':
     default:
-      // Use existing PostCard for standard posts and reshares
-      // Map feed types to PostCard's expected types
-      const mappedPostType = item.post_type === 'post' || item.post_type === 'reshare' || item.post_type === 'community_post' 
+      // Use existing PostCard for standard posts
+      const mappedPostType = item.post_type === 'post' || item.post_type === 'community_post' 
         ? 'text' 
         : 'text';
       
@@ -90,11 +88,40 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
             likes_count: item.like_count,
             comments_count: item.comment_count,
             user_has_liked: item.has_liked,
-            is_connection: false, // Will be determined by PostCard logic
+            is_connection: false,
           }}
           currentUserId={currentUserId}
           onUpdate={onUpdate}
           showComments={false}
+          feedItem={item}
+        />
+      );
+    
+    case 'reshare':
+      // Reshares are handled specially by PostCard
+      return (
+        <PostCard
+          post={{
+            post_id: item.post_id,
+            author_id: item.author_id,
+            author_username: item.author_username,
+            author_full_name: item.author_display_name,
+            author_avatar_url: item.author_avatar_url || undefined,
+            content: item.content,
+            post_type: 'text' as any,
+            privacy_level: item.privacy_level as any,
+            image_url: item.media_url || undefined,
+            created_at: item.created_at,
+            likes_count: item.like_count,
+            comments_count: item.comment_count,
+            user_has_liked: item.has_liked,
+            is_connection: false,
+          }}
+          currentUserId={currentUserId}
+          onUpdate={onUpdate}
+          showComments={false}
+          feedItem={item}
+          isReshare={true}
         />
       );
   }

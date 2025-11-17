@@ -8,53 +8,52 @@ import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { Loader2, Share2 } from 'lucide-react';
-import { UniversalFeedItem } from '@/types/feed';
 import { createResharePost } from '@/lib/feedWriter';
 import { toast } from 'sonner';
-import { useQueryClient } from '@tanstack/react-query';
+import { UniversalFeedItem } from '@/types/feed';
+import { formatDistanceToNow } from 'date-fns';
 
 interface ReshareDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  originalPost: UniversalFeedItem;
+  post: UniversalFeedItem;
   currentUserId: string;
+  onSuccess?: () => void;
 }
 
 export const ReshareDialog: React.FC<ReshareDialogProps> = ({
   open,
   onOpenChange,
-  originalPost,
+  post,
   currentUserId,
+  onSuccess,
 }) => {
   const [commentary, setCommentary] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const queryClient = useQueryClient();
 
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
+  const handleReshare = async () => {
     try {
+      setIsSubmitting(true);
+      
       await createResharePost({
-        originalPostId: originalPost.post_id,
+        originalPostId: post.post_id,
         authorId: currentUserId,
         commentary: commentary.trim() || undefined,
       });
 
-      // Invalidate feed queries
-      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
-
-      toast.success('Post reshared successfully');
+      toast.success('Post reshared successfully!');
       onOpenChange(false);
       setCommentary('');
+      onSuccess?.();
     } catch (error) {
       console.error('Error resharing post:', error);
       toast.error('Failed to reshare post');
@@ -67,85 +66,80 @@ export const ReshareDialog: React.FC<ReshareDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Share2 className="w-5 h-5" />
-            Reshare Post
-          </DialogTitle>
+          <DialogTitle>Share this post</DialogTitle>
           <DialogDescription>
-            Add your thoughts to this post before sharing with your network.
+            Add your thoughts (optional) and share with your network
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          {/* Commentary textarea */}
+        <div className="space-y-4 mt-4">
+          {/* Commentary Input */}
           <Textarea
-            placeholder="Add your commentary (optional)"
+            placeholder="What are your thoughts on this?"
             value={commentary}
             onChange={(e) => setCommentary(e.target.value)}
-            rows={3}
+            className="min-h-[100px] resize-none"
             maxLength={500}
-            className="resize-none"
           />
-          <div className="text-xs text-muted-foreground text-right">
+          <p className="text-xs text-muted-foreground text-right">
             {commentary.length}/500
-          </div>
+          </p>
 
-          {/* Original post preview */}
-          <Card className="p-4 bg-muted/50 border-l-4 border-primary">
-            <div className="flex items-start gap-3">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={originalPost.author_avatar_url || ''} />
-                <AvatarFallback>
-                  {originalPost.author_display_name?.[0] || originalPost.author_username?.[0] || 'U'}
-                </AvatarFallback>
+          {/* Original Post Preview */}
+          <Card className="p-4 bg-muted/50">
+            <div className="flex gap-3 mb-3">
+              <Avatar className="w-10 h-10">
+                <AvatarImage src={post.author_avatar_url || undefined} />
+                <AvatarFallback>{post.author_display_name[0]}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <div className="flex items-baseline gap-2">
-                  <p className="font-semibold text-sm">
-                    {originalPost.author_display_name || originalPost.author_username}
-                  </p>
-                  <span className="text-xs text-muted-foreground">
-                    @{originalPost.author_username}
-                  </span>
-                </div>
-                <p className="text-sm mt-1 line-clamp-3">
-                  {originalPost.content}
+                <p className="font-semibold text-sm truncate">
+                  {post.author_display_name}
                 </p>
-                {originalPost.media_url && (
-                  <div className="mt-2 text-xs text-muted-foreground flex items-center gap-1">
-                    📎 Has media attachment
-                  </div>
-                )}
+                <p className="text-xs text-muted-foreground">
+                  @{post.author_username} · {formatDistanceToNow(new Date(post.created_at))} ago
+                </p>
               </div>
             </div>
-          </Card>
-        </div>
-
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Sharing...
-              </>
-            ) : (
-              <>
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </>
+            
+            <p className="text-sm line-clamp-4">{post.content}</p>
+            
+            {post.media_url && (
+              <img
+                src={post.media_url}
+                alt="Post media"
+                className="mt-3 rounded-lg w-full max-h-[200px] object-cover"
+              />
             )}
-          </Button>
-        </DialogFooter>
+          </Card>
+
+          {/* Actions */}
+          <div className="flex justify-end gap-2 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleReshare}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Sharing...
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
