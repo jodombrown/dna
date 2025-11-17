@@ -21,8 +21,6 @@ import DnaUserDashboard from "./pages/dna/Username";
 import PublicProfile from "./pages/dna/PublicProfile";
 import ActivityFeed from "./pages/ActivityFeed";
 import SavedPostsPage from "./pages/SavedPostsPage";
-import NetworkFeedPage from "./pages/NetworkFeedPage";
-import DiscoveryFeedPage from "./pages/DiscoveryFeedPage";
 import DnaNetwork from "./pages/dna/Network";
 import DnaFeed from "./pages/dna/Feed";
 import DnaEvents from "./pages/dna/Events";
