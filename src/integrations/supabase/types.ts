@@ -7844,7 +7844,15 @@ export type Database = {
         Returns: boolean
       }
       update_username: { Args: { new_username: string }; Returns: Json }
+      user_group_role: {
+        Args: { p_group_id: string; p_user_id: string }
+        Returns: string
+      }
       user_has_profile: { Args: { user_id: string }; Returns: boolean }
+      user_is_group_member: {
+        Args: { p_group_id: string; p_user_id: string }
+        Returns: boolean
+      }
       validate_invite_code: { Args: { invite_code: string }; Returns: Json }
       validate_prelaunch_access: {
         Args: { user_email: string }
