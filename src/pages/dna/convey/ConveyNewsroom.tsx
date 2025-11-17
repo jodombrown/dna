@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TrendingUp, Newspaper, Star, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 
 export default function ConveyNewsroom() {
   const { user } = useAuth();
@@ -27,10 +28,10 @@ export default function ConveyNewsroom() {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
       {/* Hero Section */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-3">
+        <h1 className={`${TYPOGRAPHY.h1} mb-3`}>
           Your DNA Newsroom
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className={`${TYPOGRAPHY.bodyLarge} text-muted-foreground`}>
           Stay connected with curated stories, industry insights, and track your impact across the network.
         </p>
       </div>
@@ -62,8 +63,8 @@ export default function ConveyNewsroom() {
             <div className="flex items-start gap-3 mb-4">
               <Star className="h-6 w-6 text-primary" />
               <div>
-                <h2 className="text-2xl font-bold text-foreground mb-2">Featured Story</h2>
-                <p className="text-muted-foreground">Handpicked stories making waves in the DNA community</p>
+                <h2 className={`${TYPOGRAPHY.h2} mb-2`}>Featured Story</h2>
+                <p className={TYPOGRAPHY.body}>Handpicked stories making waves in the DNA community</p>
               </div>
             </div>
             {featuredData?.data[0] ? (
@@ -79,11 +80,11 @@ export default function ConveyNewsroom() {
         {/* Top Industry News */}
         <TabsContent value="industry" className="space-y-4">
           <div className="mb-4">
-            <h2 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
+            <h2 className={`${TYPOGRAPHY.h2} mb-2 flex items-center gap-2`}>
               <TrendingUp className="h-6 w-6 text-primary" />
               Top Industry News
             </h2>
-            <p className="text-muted-foreground">Breaking stories and insights from across the diaspora</p>
+            <p className={TYPOGRAPHY.body}>Breaking stories and insights from across the diaspora</p>
           </div>
           {industryData?.data && industryData.data.length > 0 ? (
             <div className="space-y-4">

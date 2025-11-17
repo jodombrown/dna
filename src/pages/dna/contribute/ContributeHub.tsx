@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, DollarSign, Users, Clock, Key, Package } from 'lucide-react';
 import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 
 const typeIcons = {
   funding: DollarSign,
@@ -42,10 +43,10 @@ const ContributeHub = () => {
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Hero Section */}
       <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+        <h1 className={`${TYPOGRAPHY.h1} mb-4`}>
           Contribute to Africa's Future
         </h1>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+        <p className={`${TYPOGRAPHY.bodyLarge} text-muted-foreground max-w-3xl mx-auto mb-8`}>
           Fund, mentor, volunteer, and open doors for projects building across the continent and diaspora
         </p>
         <div className="flex gap-4 justify-center flex-wrap">
@@ -61,8 +62,8 @@ const ContributeHub = () => {
       <section className="mb-16">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">Active Needs</h2>
-            <p className="text-muted-foreground">
+            <h2 className={`${TYPOGRAPHY.h2} mb-2`}>Active Needs</h2>
+            <p className={TYPOGRAPHY.body}>
               Projects and initiatives currently seeking support
             </p>
           </div>

@@ -9,6 +9,7 @@ import { SuggestedSpaces } from '@/components/collaboration/SuggestedSpaces';
 import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 
 export default function CollaborateHub() {
   const navigate = useNavigate();
@@ -68,9 +69,9 @@ export default function CollaborateHub() {
       <div className="text-center space-y-4 py-8">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Sparkles className="h-8 w-8 text-primary" />
-          <h1 className="text-4xl font-bold">COLLABORATE</h1>
+          <h1 className={TYPOGRAPHY.h1}>COLLABORATE</h1>
         </div>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        <p className={`${TYPOGRAPHY.bodyLarge} text-muted-foreground max-w-2xl mx-auto`}>
           Turn connections and conversations into real projects. Organize collaborative workspaces where ideas become impact.
         </p>
         
@@ -92,7 +93,7 @@ export default function CollaborateHub() {
 
       {/* My Spaces */}
       <div className="space-y-6">
-        <h2 className="text-2xl font-semibold">My Spaces</h2>
+        <h2 className={TYPOGRAPHY.h2}>My Spaces</h2>
         
         {/* Leading */}
         <div className="space-y-3">

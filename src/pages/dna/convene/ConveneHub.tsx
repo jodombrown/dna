@@ -11,6 +11,7 @@ import { EventRecommendations } from '@/components/events/EventRecommendations';
 import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 
 const ConveneHub = () => {
   const navigate = useNavigate();
@@ -93,8 +94,8 @@ const ConveneHub = () => {
     <div className="container max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Convene</h1>
-          <p className="text-muted-foreground text-lg">
+          <h1 className={`${TYPOGRAPHY.h1} mb-2`}>Convene</h1>
+          <p className={`${TYPOGRAPHY.bodyLarge} text-muted-foreground`}>
             Discover events and join groups in the African diaspora community
           </p>
         </div>
