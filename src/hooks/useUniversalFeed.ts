@@ -81,15 +81,15 @@ export function useUniversalFeed(
         author_avatar_url: item.author_avatar_url,
         content: item.content,
         post_type: item.post_type,
-        privacy_level: item.privacy,
-        image_url: item.media_type === 'image' ? item.media_url : undefined,
+        privacy_level: item.privacy_level,
+        image_url: item.image_url,
         space_id: item.space_id,
         event_id: item.event_id,
         created_at: item.created_at,
         likes_count: Number(item.like_count || 0),
         comments_count: Number(item.comment_count || 0),
         user_has_liked: item.is_liked_by_user || false,
-        is_connection: false, // Will be determined by query logic
+        is_connection: false, // Calculated by DB filter for now
       })) as PostWithAuthor[];
       
       console.log('[UniversalFeed] Retrieved:', posts.length, 'items');

@@ -7230,13 +7230,12 @@ export type Database = {
           created_at: string
           event_id: string
           id: string
+          image_url: string
           is_deleted: boolean
           is_liked_by_user: boolean
           like_count: number
-          media_type: string
-          media_url: string
           post_type: string
-          privacy: string
+          privacy_level: string
           space_id: string
           updated_at: string
         }[]
