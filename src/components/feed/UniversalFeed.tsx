@@ -1,30 +1,9 @@
-/**
- * DNA | FEED - Universal Feed Component
- * 
- * The canonical feed component used across all feed surfaces:
- * - Home feed (/dna/feed)
- * - Profile activity feed
- * - Space feed
- * - Event feed
- */
-
-import React, { useState } from 'react';
+// src/components/feed/UniversalFeed.tsx
+import React from 'react';
 import { useUniversalFeed } from '@/hooks/useUniversalFeed';
 import { UniversalFeedItemComponent } from './UniversalFeedItem';
-import { SkeletonPostCard } from '@/components/social-feed/SkeletonPostCard';
-import { Card } from '@/components/ui/card';
-import { Newspaper } from 'lucide-react';
-import { FeedTab } from '@/types/feed';
-
-interface UniversalFeedProps {
-  viewerId: string;
-  tab?: FeedTab;
-  authorId?: string;
-  spaceId?: string;
-  eventId?: string;
-  emptyMessage?: string;
-  emptyAction?: React.ReactNode;
-}
+import { Skeleton } from '@/components/ui/skeleton';
+import { UniversalFeedProps } from '@/types/feed';
 
 export const UniversalFeed: React.FC<UniversalFeedProps> = ({
   viewerId,
@@ -35,7 +14,7 @@ export const UniversalFeed: React.FC<UniversalFeedProps> = ({
   emptyMessage,
   emptyAction,
 }) => {
-  const { feedItems, isLoading, refetch } = useUniversalFeed({
+  const { feedItems, isLoading } = useUniversalFeed({
     viewerId,
     tab,
     authorId,
@@ -43,11 +22,15 @@ export const UniversalFeed: React.FC<UniversalFeedProps> = ({
     eventId,
   });
 
+  if (!viewerId) {
+    return null;
+  }
+
   if (isLoading) {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <SkeletonPostCard key={i} />
+          <Skeleton key={i} className="h-40 w-full" />
         ))}
       </div>
     );
@@ -55,13 +38,12 @@ export const UniversalFeed: React.FC<UniversalFeedProps> = ({
 
   if (feedItems.length === 0) {
     return (
-      <Card className="p-12 text-center">
-        <Newspaper className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-        <h3 className="text-xl font-semibold mb-2">
-          {emptyMessage || 'No posts to show'}
-        </h3>
+      <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
+        <p className="text-sm text-muted-foreground">
+          {emptyMessage || 'No posts to show yet.'}
+        </p>
         {emptyAction}
-      </Card>
+      </div>
     );
   }
 
@@ -72,7 +54,7 @@ export const UniversalFeed: React.FC<UniversalFeedProps> = ({
           key={item.post_id}
           item={item}
           currentUserId={viewerId}
-          onUpdate={refetch}
+          onUpdate={() => {}}
         />
       ))}
     </div>
