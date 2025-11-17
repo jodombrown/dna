@@ -5,73 +5,50 @@
  * Supports all filter contexts: home, profile, space, event.
  */
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { UniversalFeedItem, FeedFilters } from '@/types/feed';
-import { useEffect } from 'react';
-import { logHighError, withErrorLogging } from '@/lib/errorLogger';
+import { logHighError } from '@/lib/errorLogger';
 
-export const useUniversalFeed = (filters: FeedFilters) => {
-  const queryClient = useQueryClient();
-  const invalidateFeed = () => {
-    queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
-  };
-  
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['universal-feed', filters],
+export function useUniversalFeed(filters: FeedFilters) {
+  const { viewerId, tab = 'all', authorId, spaceId, eventId, rankingMode = 'latest', limit = 30 } = filters;
+
+  const queryKey = ['universal-feed', { viewerId, tab, authorId, spaceId, eventId, rankingMode }];
+
+  const query = useQuery({
+    queryKey,
+    enabled: !!viewerId,
     queryFn: async () => {
       try {
         const { data, error } = await supabase.rpc('get_universal_feed', {
-          p_viewer_id: filters.viewerId,
-          p_tab: filters.tab || 'all',
-          p_author_id: filters.authorId || null,
-          p_space_id: filters.spaceId || null,
-          p_event_id: filters.eventId || null,
-          p_limit: filters.limit || 20,
-          p_offset: filters.offset || 0,
+          p_viewer_id: viewerId,
+          p_tab: tab,
+          p_author_id: authorId || null,
+          p_space_id: spaceId || null,
+          p_event_id: eventId || null,
+          p_limit: limit,
+          p_offset: 0,
+          p_ranking_mode: rankingMode,
         });
 
         if (error) {
-          logHighError(error, 'feed', 'get_universal_feed RPC failed', { filters });
+          logHighError(error, 'feed', 'get_universal_feed failed', { filters });
           throw error;
         }
-        
-        return (data || []) as unknown as UniversalFeedItem[];
-      } catch (error) {
-        logHighError(error, 'feed', 'Universal feed query failed', { filters });
-        throw error;
+
+        return (data || []) as UniversalFeedItem[];
+      } catch (err: any) {
+        logHighError(err, 'feed', 'get_universal_feed threw', { filters });
+        throw err;
       }
     },
-    enabled: !!filters.viewerId,
   });
 
-  // Real-time subscription for feed updates
-  useEffect(() => {
-    if (!filters.viewerId) return;
-
-    const channelName = `universal_feed_updates_${filters.viewerId}`;
-    const channel = supabase
-      .channel(channelName)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
-        invalidateFeed();
-      })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_likes' }, () => {
-        invalidateFeed();
-      })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_comments' }, () => {
-        invalidateFeed();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [filters.viewerId]);
-
   return {
-    feedItems: data || [],
-    isLoading,
-    error,
-    refetch,
+    feedItems: query.data || [],
+    isLoading: query.isLoading,
+    isError: query.isError,
+    error: query.error,
+    refetch: query.refetch,
   };
-};
+}
