@@ -1,79 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { PenSquare, Sparkles, Users, Newspaper, Settings } from 'lucide-react';
 import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
-import { PostCard } from '@/components/posts/PostCard';
-import { PostComments } from '@/components/posts/PostComments';
-import { SkeletonPostCard } from '@/components/social-feed/SkeletonPostCard';
-import { PostWithAuthor } from '@/types/posts';
-import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
 import LayoutController from '@/components/LayoutController';
-
 import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 import { DashboardModules } from '@/components/feed/DashboardModules';
+import { UniversalFeed } from '@/components/feed/UniversalFeed';
+import { FeedTab } from '@/types/feed';
 
-type FeedType = 'all' | 'connections' | 'my_posts';
 
 const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<FeedType>('all');
-  const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<FeedTab>('all');
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
 
-  const { data: posts, refetch, isLoading } = useQuery({
-    queryKey: ['feed-posts', user?.id, activeTab],
-    queryFn: async () => {
-      if (!user) return [];
-
-      const { data, error } = await supabase.rpc('get_feed_posts', {
-        p_user_id: user.id,
-        p_feed_type: activeTab,
-        p_limit: 20,
-        p_offset: 0,
-      });
-
-      if (error) throw error;
-      return (data || []) as PostWithAuthor[];
-    },
-    enabled: !!user,
-  });
-
-  // Real-time subscription for new posts
-  useEffect(() => {
-    if (!user) return;
-
-    const channel = supabase
-      .channel('feed_posts')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
-        refetch();
-      })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_likes' }, () => {
-        refetch();
-      })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_comments' }, () => {
-        refetch();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user, refetch]);
-
-  const handleCommentClick = (postId: string) => {
-    setExpandedPostId(expandedPostId === postId ? null : postId);
-  };
 
   if (profileLoading) {
     return (
@@ -152,15 +102,15 @@ const DnaFeed = () => {
       </Card>
 
       {/* Filter Tabs */}
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedType)}>
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
         <TabsList className="w-full">
           <TabsTrigger value="all" className="flex-1">
             <Newspaper className="h-4 w-4 mr-2" />
             All Posts
           </TabsTrigger>
-          <TabsTrigger value="connections" className="flex-1">
+          <TabsTrigger value="network" className="flex-1">
             <Users className="h-4 w-4 mr-2" />
-            Connections
+            Network
           </TabsTrigger>
           <TabsTrigger value="my_posts" className="flex-1">
             <Sparkles className="h-4 w-4 mr-2" />
@@ -169,60 +119,37 @@ const DnaFeed = () => {
         </TabsList>
       </Tabs>
 
-      {/* Feed Content */}
-      {isLoading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <SkeletonPostCard key={i} />
-          ))}
-        </div>
-      ) : posts && posts.length === 0 ? (
-        <Card className="p-12 text-center">
-          <Newspaper className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-          <h3 className="text-xl font-semibold mb-2">
-            {activeTab === 'my_posts'
-              ? "You haven't posted anything yet"
-              : 'No posts to show'}
-          </h3>
-          <p className="text-muted-foreground mb-6">
-            {activeTab === 'my_posts'
-              ? 'Share your first update, article, question, or celebration'
-              : activeTab === 'connections'
-              ? "Your connections haven't posted yet"
-              : 'Be the first to share something!'}
-          </p>
+      {/* Universal Feed */}
+      <UniversalFeed
+        viewerId={user.id}
+        tab={activeTab}
+        emptyMessage={
+          activeTab === 'my_posts'
+            ? "You haven't posted anything yet"
+            : activeTab === 'network'
+            ? "Your connections haven't posted yet"
+            : 'No posts to show'
+        }
+        emptyAction={
           <Button
             onClick={() => setShowCreateDialog(true)}
-            className="bg-dna-emerald hover:bg-dna-emerald/90 text-white"
+            className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
           >
             <PenSquare className="h-4 w-4 mr-2" />
             Create Your First Post
           </Button>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {posts?.map((post) => (
-            <div key={post.post_id}>
-              <PostCard
-                post={post}
-                currentUserId={user?.id || ''}
-                onUpdate={refetch}
-                onCommentClick={() => handleCommentClick(post.post_id)}
-                showComments={expandedPostId === post.post_id}
-              />
-              {expandedPostId === post.post_id && (
-                <PostComments postId={post.post_id} currentUserId={user?.id || ''} />
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+        }
+      />
+
 
       <EnhancedCreatePostDialog
         isOpen={showCreateDialog}
         onClose={() => setShowCreateDialog(false)}
         currentUserId={user?.id || ''}
-        onSuccess={refetch}
+        onSuccess={() => {
+          setShowCreateDialog(false);
+          // Feed will auto-refresh via real-time subscription
+        }}
       />
     </div>
   );
