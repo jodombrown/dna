@@ -242,7 +242,7 @@ const DnaFeed = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background pt-20">
+    <div className="min-h-screen bg-background">
       <LayoutController
         leftColumn={leftColumn}
         centerColumn={centerColumn}
