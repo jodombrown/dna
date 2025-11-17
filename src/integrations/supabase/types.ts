@@ -7269,6 +7269,47 @@ export type Database = {
             }
             Returns: {
               author_avatar_url: string
+              author_full_name: string
+              author_headline: string
+              author_id: string
+              comment_count: number
+              content: string
+              created_at: string
+              event_id: string
+              event_image_url: string
+              event_title: string
+              image_url: string
+              like_count: number
+              linked_entity_id: string
+              linked_entity_type: string
+              original_author_avatar_url: string
+              original_author_full_name: string
+              original_author_id: string
+              original_post_id: string
+              post_id: string
+              post_type: string
+              privacy_level: string
+              reshare_count: number
+              space_id: string
+              space_image_url: string
+              space_title: string
+              viewer_has_liked: boolean
+            }[]
+          }
+        | {
+            Args: {
+              p_author_id?: string
+              p_cursor?: string
+              p_event_id?: string
+              p_limit?: number
+              p_offset?: number
+              p_ranking_mode?: string
+              p_space_id?: string
+              p_tab?: string
+              p_viewer_id: string
+            }
+            Returns: {
+              author_avatar_url: string
               author_display_name: string
               author_id: string
               author_username: string
