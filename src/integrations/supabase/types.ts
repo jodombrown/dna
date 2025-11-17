@@ -2596,6 +2596,48 @@ export type Database = {
         }
         Relationships: []
       }
+      feed_engagement_events: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          linked_entity_id: string | null
+          linked_entity_type: string | null
+          metadata: Json | null
+          post_id: string
+          post_type: string
+          surface: string
+          tab: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          linked_entity_id?: string | null
+          linked_entity_type?: string | null
+          metadata?: Json | null
+          post_id: string
+          post_type: string
+          surface: string
+          tab?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          linked_entity_id?: string | null
+          linked_entity_type?: string | null
+          metadata?: Json | null
+          post_id?: string
+          post_type?: string
+          surface?: string
+          tab?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       feed_research_responses: {
         Row: {
           check_frequency: string
@@ -7254,15 +7296,16 @@ export type Database = {
             Returns: {
               author_avatar_url: string
               author_display_name: string
-              author_full_name: string
               author_id: string
               author_username: string
+              bookmark_count: number
               comment_count: number
               content: string
               created_at: string
               event_id: string
-              id: string
-              image_url: string
+              event_title: string
+              has_bookmarked: boolean
+              has_liked: boolean
               like_count: number
               linked_entity_id: string
               linked_entity_type: string
@@ -7270,8 +7313,11 @@ export type Database = {
               post_id: string
               post_type: string
               privacy_level: string
+              share_count: number
               space_id: string
+              space_title: string
               updated_at: string
+              view_count: number
             }[]
           }
       get_unread_notification_count: {
