@@ -27,7 +27,8 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
     queryKey: ['universal-feed-infinite', filters],
     queryFn: async ({ pageParam }) => {
       try {
-        const { data, error } = await supabase.rpc('get_universal_feed', {
+        // Build RPC params without p_cursor when it's undefined to avoid PostgREST overload (300)
+        const params: Record<string, any> = {
           p_viewer_id: filters.viewerId,
           p_tab: filters.tab || 'all',
           p_author_id: filters.authorId || null,
@@ -35,9 +36,13 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           p_event_id: filters.eventId || null,
           p_limit: PAGE_SIZE,
           p_offset: 0,
-          p_cursor: pageParam || null,
           p_ranking_mode: filters.rankingMode || 'latest',
-        });
+        };
+        if (pageParam) {
+          params.p_cursor = pageParam;
+        }
+
+        const { data, error } = await supabase.rpc('get_universal_feed', params as any);
 
         if (error) {
           logHighError(error, 'feed', 'get_universal_feed RPC failed', { filters });
