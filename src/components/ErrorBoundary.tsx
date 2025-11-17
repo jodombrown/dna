@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { logCriticalError } from '@/lib/errorLogger';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -37,8 +38,11 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       errorInfo,
     });
 
-    // Future: Send to analytics service
-    // logErrorToAnalytics(error, errorInfo);
+    // Log to database with full context
+    logCriticalError(error, 'ui', 'React Error Boundary', {
+      componentStack: errorInfo.componentStack,
+      errorInfo: errorInfo,
+    });
   }
 
   handleReload = (): void => {
