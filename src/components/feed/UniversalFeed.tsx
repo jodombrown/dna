@@ -184,7 +184,7 @@ export function UniversalFeed({
                 (effectiveFeedType === 'my_posts'
                   ? "You haven't posted anything yet"
                   : effectiveFeedType === 'network'
-                  ? 'Your network hasn\'t posted yet'
+                  ? "Your network hasn't posted yet"
                   : 'Be the first to share something!')}
             </p>
           </div>
