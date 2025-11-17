@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { createCommunityFeedPost } from '@/lib/feedWriter';
 
 // Helper function to trigger ADIN prompt
 const triggerAdinPrompt = async (userId: string, eventType: string) => {
@@ -116,17 +117,14 @@ export const createCommunityPost = async (postData: CreateCommunityPostData): Pr
     throw error;
   }
 
-  // Create feed post for community post
+  // Create feed post for community post using feedWriter
   try {
-    await supabase.from('posts').insert({
-      author_id: user.id,
-      post_type: 'community_post',
+    await createCommunityFeedPost({
+      communityPostId: newPost.id,
       content: postData.content,
-      linked_entity_type: 'community_post',
-      linked_entity_id: newPost.id,
-      space_id: postData.community_id, // Communities map to space_id context
-      image_url: postData.media_url,
-      privacy_level: 'public',
+      authorId: user.id,
+      communityId: postData.community_id,
+      mediaUrl: postData.media_url,
     });
   } catch (feedError) {
     console.error('Failed to create feed post for community post:', feedError);
