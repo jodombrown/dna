@@ -15,12 +15,13 @@ import { DashboardModules } from '@/components/feed/DashboardModules';
 import { UniversalFeed } from '@/components/feed/UniversalFeed';
 import { FeedTab } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
-
+import { useQueryClient } from '@tanstack/react-query';
 
 const DnaFeed = () => {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<FeedTab>('all');
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
@@ -159,7 +160,8 @@ const DnaFeed = () => {
         currentUserId={user?.id || ''}
         onSuccess={() => {
           setShowCreateDialog(false);
-          // Feed will auto-refresh via real-time subscription
+          // Ensure feed refreshes immediately
+          queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
         }}
       />
     </div>
