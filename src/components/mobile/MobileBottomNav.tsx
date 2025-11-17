@@ -11,8 +11,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -31,9 +32,9 @@ const MobileBottomNav: React.FC = () => {
   const location = useLocation();
   const { isMobile } = useMobile();
   const { user, profile, signOut } = useAuth();
-  const [showPostDialog, setShowPostDialog] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
+  const composer = useUniversalComposer();
 
   // Only show on mobile
   if (!isMobile) return null;
@@ -171,14 +172,15 @@ const MobileBottomNav: React.FC = () => {
         </div>
       </nav>
 
-      {/* Create Post Dialog */}
-      <EnhancedCreatePostDialog
-        isOpen={showPostDialog}
-        onClose={() => setShowPostDialog(false)}
-        currentUserId={user?.id || ''}
-        onSuccess={() => {
-          setShowPostDialog(false);
-        }}
+      {/* Universal Composer */}
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        onClose={composer.close}
+        onModeChange={composer.switchMode}
+        onSubmit={composer.submit}
       />
 
       {/* More Menu Sheet */}
