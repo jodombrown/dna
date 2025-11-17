@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface RealtimeReactionPayload {
@@ -26,19 +26,23 @@ export const useRealtimeReactions = ({
   onLikeUpdate 
 }: UseRealtimeReactionsProps = {}) => {
   
-  const handleReactionChange = useCallback((payload: any, event: 'INSERT' | 'DELETE') => {
-    onReactionUpdate?.(payload.new || payload.old, event);
+  // Use refs to keep callbacks stable and avoid re-subscribing
+  const onReactionUpdateRef = useRef(onReactionUpdate);
+  const onLikeUpdateRef = useRef(onLikeUpdate);
+  
+  useEffect(() => {
+    onReactionUpdateRef.current = onReactionUpdate;
   }, [onReactionUpdate]);
-
-  const handleLikeChange = useCallback((payload: any, event: 'INSERT' | 'DELETE') => {
-    onLikeUpdate?.(payload.new || payload.old, event);
+  
+  useEffect(() => {
+    onLikeUpdateRef.current = onLikeUpdate;
   }, [onLikeUpdate]);
 
   useEffect(() => {
     console.log('Setting up real-time reactions subscriptions...');
     
-    // Create unique channel names to avoid conflicts with feed realtime
-    const channelId = `reactions-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    // Create unique channel names to avoid conflicts
+    const channelId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     // Subscribe to post reactions
     const reactionsChannel = supabase
@@ -49,7 +53,8 @@ export const useRealtimeReactions = ({
         table: "post_reactions"
       }, (payload) => {
         console.log('Real-time reaction INSERT:', payload);
-        handleReactionChange(payload, 'INSERT');
+        const data = (payload.new || payload.old) as RealtimeReactionPayload;
+        if (data) onReactionUpdateRef.current?.(data, 'INSERT');
       })
       .on("postgres_changes", {
         event: "DELETE", 
@@ -57,7 +62,8 @@ export const useRealtimeReactions = ({
         table: "post_reactions"
       }, (payload) => {
         console.log('Real-time reaction DELETE:', payload);
-        handleReactionChange(payload, 'DELETE');
+        const data = (payload.new || payload.old) as RealtimeReactionPayload;
+        if (data) onReactionUpdateRef.current?.(data, 'DELETE');
       })
       .subscribe((status) => {
         console.log('Reactions channel status:', status);
@@ -72,7 +78,8 @@ export const useRealtimeReactions = ({
         table: "post_likes"
       }, (payload) => {
         console.log('Real-time like INSERT:', payload);
-        handleLikeChange(payload, 'INSERT');
+        const data = (payload.new || payload.old) as RealtimeLikePayload;
+        if (data) onLikeUpdateRef.current?.(data, 'INSERT');
       })
       .on("postgres_changes", {
         event: "DELETE",
@@ -80,7 +87,8 @@ export const useRealtimeReactions = ({
         table: "post_likes" 
       }, (payload) => {
         console.log('Real-time like DELETE:', payload);
-        handleLikeChange(payload, 'DELETE');
+        const data = (payload.new || payload.old) as RealtimeLikePayload;
+        if (data) onLikeUpdateRef.current?.(data, 'DELETE');
       })
       .subscribe((status) => {
         console.log('Likes channel status:', status);
@@ -91,5 +99,5 @@ export const useRealtimeReactions = ({
       supabase.removeChannel(reactionsChannel);
       supabase.removeChannel(likesChannel);
     };
-  }, [handleReactionChange, handleLikeChange]);
+  }, []); // Empty deps - only run once
 };
