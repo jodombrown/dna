@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { toast } from 'sonner';
 import { SpaceMemberRole } from '@/types/spaceTypes';
+import { createSpacePost } from '@/lib/feedWriter';
 
 export const useJoinSpace = () => {
   const queryClient = useQueryClient();
@@ -122,9 +123,26 @@ export const useCreateSpace = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async (space) => {
+      // Create feed post for new space
+      try {
+        const { data: user } = await supabaseClient.auth.getUser();
+        if (user.user && space) {
+          await createSpacePost({
+            spaceId: space.id,
+            spaceTitle: space.name,
+            spaceDescription: space.description || undefined,
+            authorId: user.user.id,
+            imageUrl: space.cover_image || undefined,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to create feed post for space:', error);
+      }
+
       queryClient.invalidateQueries({ queryKey: ['my-spaces'] });
       queryClient.invalidateQueries({ queryKey: ['public-spaces'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success('Space created successfully');
     },
     onError: (error: any) => {

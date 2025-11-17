@@ -3,6 +3,7 @@ import { supabaseClient } from '@/lib/supabaseHelpers';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { checkRateLimit } from '@/lib/rateLimit';
+import { createNeedPost } from '@/lib/feedWriter';
 
 interface CreateNeedVariables {
   spaceId: string;
@@ -71,9 +72,26 @@ export function useCreateNeed() {
       if (error) throw error;
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      // Create feed post for new need
+      try {
+        if (user) {
+          await createNeedPost({
+            needId: data.id,
+            needTitle: data.title,
+            needDescription: data.description,
+            needType: data.type as any,
+            authorId: user.id,
+            spaceId: data.space_id,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to create feed post for need:', error);
+      }
+
       queryClient.invalidateQueries({ queryKey: ['contribution-needs'] });
       queryClient.invalidateQueries({ queryKey: ['space-needs', data.space_id] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast({
         title: 'Need created',
         description: 'Your contribution need has been posted.',
