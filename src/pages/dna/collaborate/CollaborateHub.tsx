@@ -64,7 +64,8 @@ export default function CollaborateHub() {
   );
 
   return (
-    <div className="container max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <div className="min-h-screen bg-background pt-16">
+      <div className="container mx-auto px-4 py-8 max-w-7xl space-y-8">
       {/* Hero Section */}
       <div className="text-center space-y-4 py-8">
         <div className="flex items-center justify-center gap-2 mb-4">
@@ -138,6 +139,7 @@ export default function CollaborateHub() {
             </Card>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

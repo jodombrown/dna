@@ -40,7 +40,7 @@ const ContributeHub = () => {
   });
 
   const centerContent = (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Hero Section */}
       <div className="text-center mb-16">
         <h1 className={`${TYPOGRAPHY.h1} mb-4`}>
