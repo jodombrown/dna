@@ -17,19 +17,33 @@ export function ProfilePosts({ profileUserId, currentUserId }: ProfilePostsProps
   const { data: posts, refetch, isLoading } = useQuery({
     queryKey: ['profile-posts', profileUserId],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_feed_posts', {
-        p_user_id: currentUserId,
-        p_feed_type: 'my_posts',
+      const { data, error } = await supabase.rpc('get_universal_feed', {
+        p_viewer_id: currentUserId,
+        p_tab: 'my_posts',
+        p_author_id: profileUserId,
+        p_space_id: null,
+        p_event_id: null,
         p_limit: 50,
         p_offset: 0,
+        p_ranking_mode: 'latest',
       });
 
       if (error) throw error;
       
-      // Filter to only show this profile's posts
-      return ((data || []) as PostWithAuthor[]).filter(
-        (post) => post.author_id === profileUserId
-      );
+      // Map UniversalFeedItem to PostWithAuthor
+      return (data || []).map((item: any) => ({
+        post_id: item.post_id,
+        author_id: item.author_id,
+        content: item.content,
+        post_type: 'text',
+        created_at: item.created_at,
+        author_username: item.author_username,
+        author_full_name: item.author_display_name,
+        author_avatar_url: item.author_avatar_url,
+        likes_count: item.like_count,
+        comments_count: item.comment_count,
+        image_url: item.media_url,
+      })) as PostWithAuthor[];
     },
   });
 
