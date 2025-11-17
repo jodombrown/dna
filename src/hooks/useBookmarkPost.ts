@@ -41,10 +41,11 @@ export const useBookmarkPost = (postId: string, viewerId: string, initialBookmar
       setIsBookmarked(bookmark);
     },
     onSuccess: (_, bookmark) => {
-      // Invalidate feed queries
+      // Invalidate feed queries to refresh bookmark counts
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['post-bookmark'] });
       
-      toast.success(bookmark ? 'Post bookmarked' : 'Bookmark removed');
+      toast.success(bookmark ? 'Post saved' : 'Bookmark removed');
     },
     onError: (error, bookmark) => {
       // Rollback on error

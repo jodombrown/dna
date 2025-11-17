@@ -24,6 +24,12 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
   currentUserId,
   onUpdate,
 }) => {
+  // Defensive guards
+  if (!item || !item.post_id || !item.author_id) {
+    console.warn('Invalid feed item:', item);
+    return null;
+  }
+
   // For linked entities, we might want to show them differently
   // For MVP, we route based on post_type
   
@@ -77,17 +83,17 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
           post={{
             post_id: item.post_id,
             author_id: item.author_id,
-            author_username: item.author_username,
-            author_full_name: item.author_display_name,
+            author_username: item.author_username || 'unknown',
+            author_full_name: item.author_display_name || 'Unknown User',
             author_avatar_url: item.author_avatar_url || undefined,
-            content: item.content,
+            content: item.content || '',
             post_type: mappedPostType as any,
             privacy_level: item.privacy_level as any,
             image_url: item.media_url || undefined,
             created_at: item.created_at,
-            likes_count: item.like_count,
-            comments_count: item.comment_count,
-            user_has_liked: item.has_liked,
+            likes_count: item.like_count || 0,
+            comments_count: item.comment_count || 0,
+            user_has_liked: item.has_liked || false,
             is_connection: false,
           }}
           currentUserId={currentUserId}
