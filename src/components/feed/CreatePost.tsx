@@ -22,8 +22,12 @@ export function CreatePost() {
         .insert({
           author_id: user!.id,
           content: postContent,
-          post_type: 'text',
+          post_type: 'post',
           privacy_level: 'public',
+          linked_entity_type: null,
+          linked_entity_id: null,
+          space_id: null,
+          event_id: null,
         })
         .select()
         .single();
@@ -32,13 +36,14 @@ export function CreatePost() {
       return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
       setContent('');
       toast.success('Post created successfully!');
     },
     onError: (error) => {
       console.error('Error creating post:', error);
-      toast.error('Failed to create post');
+      toast.error('Failed to create post. Please try again.');
     },
   });
 
