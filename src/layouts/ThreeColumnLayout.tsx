@@ -37,17 +37,26 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
     return (
       <div className={cn("flex flex-col w-full gap-4 p-4", className)} style={{ paddingTop: 'var(--header-h, 96px)' }}>
         {left && (
-          <div className="w-full transition-all duration-300 ease-in-out">
+          <div 
+            className="w-full transition-all duration-300 ease-in-out overflow-y-auto"
+            style={{ maxHeight: 'calc(100vh - var(--header-h, 96px) - 2rem)' }}
+          >
             {left}
           </div>
         )}
         {center && (
-          <div className="w-full transition-all duration-300 ease-in-out">
+          <div 
+            className="w-full transition-all duration-300 ease-in-out overflow-y-auto"
+            style={{ maxHeight: 'calc(100vh - var(--header-h, 96px) - 2rem)' }}
+          >
             {center}
           </div>
         )}
         {right && (
-          <div className="w-full transition-all duration-300 ease-in-out">
+          <div 
+            className="w-full transition-all duration-300 ease-in-out overflow-y-auto"
+            style={{ maxHeight: 'calc(100vh - var(--header-h, 96px) - 2rem)' }}
+          >
             {right}
           </div>
         )}
