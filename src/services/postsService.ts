@@ -8,13 +8,17 @@ import type { CreatePostInput, PostWithAuthor, PostComment, PostLiker } from '@/
  */
 export async function fetchPosts(): Promise<PostWithAuthor[]> {
   const { data: { user } } = await supabase.auth.getUser();
-  const userId = user?.id || '00000000-0000-0000-0000-000000000000'; // Fallback for unauthenticated users
+  const userId = user?.id || '00000000-0000-0000-0000-000000000000';
 
-  const { data, error } = await supabase.rpc('get_feed_posts', {
-    p_user_id: userId,
-    p_feed_type: 'all',
+  const { data, error } = await supabase.rpc('get_universal_feed', {
+    p_viewer_id: userId,
+    p_tab: 'all',
+    p_author_id: null,
+    p_space_id: null,
+    p_event_id: null,
     p_limit: 50,
-    p_offset: 0
+    p_offset: 0,
+    p_ranking_mode: 'latest',
   });
 
   if (error) {
@@ -22,7 +26,20 @@ export async function fetchPosts(): Promise<PostWithAuthor[]> {
     throw error;
   }
 
-  return (data || []) as unknown as PostWithAuthor[];
+  // Map UniversalFeedItem to PostWithAuthor
+  return (data || []).map((item: any) => ({
+    post_id: item.post_id,
+    author_id: item.author_id,
+    content: item.content,
+    post_type: 'text',
+    created_at: item.created_at,
+    author_username: item.author_username,
+    author_full_name: item.author_display_name,
+    author_avatar_url: item.author_avatar_url,
+    likes_count: item.like_count,
+    comments_count: item.comment_count,
+    image_url: item.media_url,
+  })) as PostWithAuthor[];
 }
 
 /**

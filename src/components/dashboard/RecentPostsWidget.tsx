@@ -17,15 +17,33 @@ export function RecentPostsWidget({ currentUserId }: RecentPostsWidgetProps) {
   const { data: posts } = useQuery({
     queryKey: ['recent-posts-widget', currentUserId],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_feed_posts', {
-        p_user_id: currentUserId,
-        p_feed_type: 'connections',
+      const { data, error } = await supabase.rpc('get_universal_feed', {
+        p_viewer_id: currentUserId,
+        p_tab: 'network',
+        p_author_id: null,
+        p_space_id: null,
+        p_event_id: null,
         p_limit: 5,
         p_offset: 0,
+        p_ranking_mode: 'latest',
       });
 
       if (error) throw error;
-      return (data || []) as PostWithAuthor[];
+      
+      // Map UniversalFeedItem to PostWithAuthor for widget compatibility
+      return (data || []).map((item: any) => ({
+        post_id: item.post_id,
+        author_id: item.author_id,
+        content: item.content,
+        post_type: 'text',
+        created_at: item.created_at,
+        author_username: item.author_username,
+        author_full_name: item.author_display_name,
+        author_avatar_url: item.author_avatar_url,
+        likes_count: item.like_count,
+        comments_count: item.comment_count,
+        image_url: item.media_url,
+      })) as PostWithAuthor[];
     },
   });
 
