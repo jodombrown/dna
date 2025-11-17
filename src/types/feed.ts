@@ -22,6 +22,7 @@ export type LinkedEntityType =
   | 'community_post';
 
 export type FeedTab = 'all' | 'network' | 'my_posts' | 'bookmarks';
+export type RankingMode = 'latest' | 'top';
 
 /**
  * Normalized feed item returned from the universal feed query.
@@ -65,6 +66,8 @@ export interface FeedFilters {
   eventId?: string;
   limit?: number;
   offset?: number;
+  cursor?: string;
+  rankingMode?: RankingMode;
 }
 
 /**

@@ -7258,6 +7258,46 @@ export type Database = {
         | {
             Args: {
               p_author_id?: string
+              p_cursor?: string
+              p_event_id?: string
+              p_limit?: number
+              p_offset?: number
+              p_ranking_mode?: string
+              p_space_id?: string
+              p_tab?: string
+              p_viewer_id: string
+            }
+            Returns: {
+              author_avatar_url: string
+              author_display_name: string
+              author_id: string
+              author_username: string
+              bookmark_count: number
+              comment_count: number
+              content: string
+              created_at: string
+              event_id: string
+              event_title: string
+              has_bookmarked: boolean
+              has_liked: boolean
+              like_count: number
+              linked_entity_id: string
+              linked_entity_type: string
+              media_url: string
+              post_id: string
+              post_type: string
+              privacy_level: string
+              ranking_score: number
+              share_count: number
+              space_id: string
+              space_title: string
+              updated_at: string
+              view_count: number
+            }[]
+          }
+        | {
+            Args: {
+              p_author_id?: string
               p_event_id?: string
               p_feed_type?: string
               p_hashtag?: string
@@ -7284,43 +7324,6 @@ export type Database = {
               privacy_level: string
               space_id: string
               updated_at: string
-            }[]
-          }
-        | {
-            Args: {
-              p_author_id?: string
-              p_event_id?: string
-              p_limit?: number
-              p_offset?: number
-              p_space_id?: string
-              p_tab?: string
-              p_viewer_id: string
-            }
-            Returns: {
-              author_avatar_url: string
-              author_display_name: string
-              author_id: string
-              author_username: string
-              bookmark_count: number
-              comment_count: number
-              content: string
-              created_at: string
-              event_id: string
-              event_title: string
-              has_bookmarked: boolean
-              has_liked: boolean
-              like_count: number
-              linked_entity_id: string
-              linked_entity_type: string
-              media_url: string
-              post_id: string
-              post_type: string
-              privacy_level: string
-              share_count: number
-              space_id: string
-              space_title: string
-              updated_at: string
-              view_count: number
             }[]
           }
       get_unread_notification_count: {

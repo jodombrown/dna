@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
-import { PenSquare, Sparkles, Users, Newspaper, Settings } from 'lucide-react';
+import { PenSquare, Sparkles, Users, Newspaper, Settings, TrendingUp } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -11,8 +11,8 @@ import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner
 import LayoutController from '@/components/LayoutController';
 import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 import { DashboardModules } from '@/components/feed/DashboardModules';
-import { UniversalFeed } from '@/components/feed/UniversalFeed';
-import { FeedTab } from '@/types/feed';
+import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
+import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { useQueryClient } from '@tanstack/react-query';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
@@ -24,6 +24,7 @@ const DnaFeed = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<FeedTab>('all');
+  const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
   const composer = useUniversalComposer();
 
@@ -75,14 +76,29 @@ const DnaFeed = () => {
           </h1>
           <p className="text-muted-foreground text-sm">Activity from across the network</p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => navigate('/dna/settings/dashboard')}
-        >
-          <Settings className="h-4 w-4 mr-2" />
-          Customize
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Top/Latest Toggle */}
+          <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
+            <TabsList>
+              <TabsTrigger value="top" className="flex items-center gap-1.5">
+                <TrendingUp className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Top</span>
+              </TabsTrigger>
+              <TabsTrigger value="latest" className="flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Latest</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/dna/settings/dashboard')}
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Customize
+          </Button>
+        </div>
       </div>
 
       {/* Create Post Card */}
@@ -132,10 +148,11 @@ const DnaFeed = () => {
         </TabsList>
       </Tabs>
 
-      {/* Universal Feed */}
-      <UniversalFeed
+      {/* Universal Feed - Infinite Scroll */}
+      <UniversalFeedInfinite
         viewerId={user.id}
         tab={activeTab}
+        rankingMode={rankingMode}
         emptyMessage={
           activeTab === 'my_posts'
             ? "You haven't posted anything yet"
