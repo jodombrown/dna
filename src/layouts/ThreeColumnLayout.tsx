@@ -35,7 +35,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
   // On mobile/tablet, stack columns vertically
   if (isMobile || isTablet) {
     return (
-      <div className={cn("flex flex-col w-full gap-4 p-4", className)}>
+      <div className={cn("flex flex-col w-full gap-4 p-4", className)} style={{ paddingTop: 'var(--header-h, 96px)' }}>
         {left && (
           <div className="w-full transition-all duration-300 ease-in-out">
             {left}
@@ -57,7 +57,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
 
   // Desktop: 3-column grid with independent scrolling
   return (
-    <div className={cn("flex w-full gap-6 px-4 py-6", className)}>
+    <div className={cn("flex w-full gap-6 px-4 py-6", className)} style={{ paddingTop: 'calc(var(--header-h, 96px) + 1.5rem)' }}>
       {left && (
         <aside 
           className="transition-all duration-300 ease-in-out overflow-y-auto"
@@ -65,7 +65,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
             width: leftWidth,
             maxWidth: leftWidth,
             minWidth: leftWidth,
-            maxHeight: 'calc(100vh - 80px - 3rem)',
+            maxHeight: 'calc(100vh - var(--header-h, 96px) - 3rem)',
           }}
         >
           {left}
@@ -79,7 +79,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
             width: centerWidth,
             maxWidth: centerWidth,
             minWidth: centerWidth,
-            maxHeight: 'calc(100vh - 80px - 3rem)',
+            maxHeight: 'calc(100vh - var(--header-h, 96px) - 3rem)',
           }}
         >
           {center}
@@ -93,7 +93,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
             width: rightWidth,
             maxWidth: rightWidth,
             minWidth: rightWidth,
-            maxHeight: 'calc(100vh - 80px - 3rem)',
+            maxHeight: 'calc(100vh - var(--header-h, 96px) - 3rem)',
           }}
         >
           {right}
