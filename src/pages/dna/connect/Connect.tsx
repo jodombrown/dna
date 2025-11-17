@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, Network, MessageSquare } from 'lucide-react';
 import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
 import { calculateProfileCompletion } from '@/components/profile/ProfileCompletionBar';
+import { TYPOGRAPHY } from '@/lib/typography.config';
 
 const Connect = () => {
   const navigate = useNavigate();
@@ -39,15 +40,15 @@ const Connect = () => {
   const completionScore = calculateProfileCompletion(profile);
 
   return (
-    <div className="min-h-screen bg-background pt-20">
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
+    <div className="min-h-screen bg-background pt-16">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header with Profile Strength */}
-        <div className="flex items-start justify-between mb-6 gap-4">
+        <div className="flex items-start justify-between mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
+            <h1 className={`${TYPOGRAPHY.h1} mb-2`}>
               Connect
             </h1>
-            <p className="text-muted-foreground">
+            <p className={TYPOGRAPHY.body}>
               Discover, connect, and engage with your network
             </p>
           </div>
