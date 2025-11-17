@@ -12,6 +12,9 @@ import { useEffect } from 'react';
 
 export const useUniversalFeed = (filters: FeedFilters) => {
   const queryClient = useQueryClient();
+  const invalidateFeed = () => {
+    queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+  };
   
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['universal-feed', filters],
@@ -36,35 +39,24 @@ export const useUniversalFeed = (filters: FeedFilters) => {
   useEffect(() => {
     if (!filters.viewerId) return;
 
+    const channelName = `universal_feed_updates_${filters.viewerId}`;
     const channel = supabase
-      .channel('universal_feed_updates')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'posts' },
-        () => {
-          refetch();
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'post_likes' },
-        () => {
-          refetch();
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'post_comments' },
-        () => {
-          refetch();
-        }
-      )
+      .channel(channelName)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, () => {
+        invalidateFeed();
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_likes' }, () => {
+        invalidateFeed();
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'post_comments' }, () => {
+        invalidateFeed();
+      })
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [filters.viewerId, refetch]);
+  }, [filters.viewerId]);
 
   return {
     feedItems: data || [],
