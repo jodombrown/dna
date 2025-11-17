@@ -4,10 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
+import { UniversalFeed } from '@/components/feed/UniversalFeed';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function DNAProfile() {
   const { username } = useParams();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [bundle, setBundle] = useState<any>(null);
   const [type, setType] = useState<'all'|'task'|'milestone'|'post'|'opportunity'>('all');
