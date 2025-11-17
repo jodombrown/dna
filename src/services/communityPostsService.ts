@@ -116,6 +116,23 @@ export const createCommunityPost = async (postData: CreateCommunityPostData): Pr
     throw error;
   }
 
+  // Create feed post for community post
+  try {
+    await supabase.from('posts').insert({
+      author_id: user.id,
+      post_type: 'community_post',
+      content: postData.content,
+      linked_entity_type: 'community_post',
+      linked_entity_id: newPost.id,
+      space_id: postData.community_id, // Communities map to space_id context
+      image_url: postData.media_url,
+      privacy_level: 'public',
+    });
+  } catch (feedError) {
+    console.error('Failed to create feed post for community post:', feedError);
+    // Don't fail the request if feed post creation fails
+  }
+
   // Trigger ADIN prompt for community post creation
   triggerAdinPrompt(user.id, 'community_post_created');
 

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { ConveyItemType, ConveyItemVisibility, ConveyItemStatus } from '@/types/conveyTypes';
 import { useToast } from '@/hooks/use-toast';
+import { createStoryPost } from '@/lib/feedWriter';
 
 interface CreateConveyItemData {
   type: ConveyItemType;
@@ -55,10 +56,30 @@ export function useCreateConveyItem() {
 
       return item;
     },
-    onSuccess: (item) => {
+    onSuccess: async (item) => {
+      // Create feed post when story is published
+      if (item.status === 'published') {
+        try {
+          const { data: user } = await supabaseClient.auth.getUser();
+          if (user.user) {
+            await createStoryPost({
+              storyId: item.id,
+              storyTitle: item.title,
+              storySubtitle: item.subtitle || undefined,
+              authorId: user.user.id,
+              spaceId: item.primary_space_id || undefined,
+              eventId: item.primary_event_id || undefined,
+            });
+          }
+        } catch (error) {
+          console.error('Failed to create feed post for story:', error);
+        }
+      }
+
       queryClient.invalidateQueries({ queryKey: ['convey-feed'] });
       queryClient.invalidateQueries({ queryKey: ['space-convey-items'] });
       queryClient.invalidateQueries({ queryKey: ['event-convey-items'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
 
       toast({
         title: item.status === 'published' ? 'Story published' : 'Draft saved',
@@ -107,11 +128,31 @@ export function useUpdateConveyItem() {
 
       return data;
     },
-    onSuccess: (item) => {
+    onSuccess: async (item) => {
+      // Create feed post when draft is published
+      if (item.status === 'published') {
+        try {
+          const { data: user } = await supabaseClient.auth.getUser();
+          if (user.user) {
+            await createStoryPost({
+              storyId: item.id,
+              storyTitle: item.title,
+              storySubtitle: item.subtitle || undefined,
+              authorId: user.user.id,
+              spaceId: item.primary_space_id || undefined,
+              eventId: item.primary_event_id || undefined,
+            });
+          }
+        } catch (error) {
+          console.error('Failed to create feed post for story:', error);
+        }
+      }
+
       queryClient.invalidateQueries({ queryKey: ['convey-feed'] });
       queryClient.invalidateQueries({ queryKey: ['space-convey-items'] });
       queryClient.invalidateQueries({ queryKey: ['event-convey-items'] });
       queryClient.invalidateQueries({ queryKey: ['convey-item', item.slug] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
 
       toast({
         title: 'Story updated',
