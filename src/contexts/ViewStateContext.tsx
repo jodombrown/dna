@@ -109,9 +109,9 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
     case 'DASHBOARD_HOME':
       return {
         type: 'three-column',
-        leftWidth: '15%',
-        centerWidth: '70%',
-        rightWidth: '15%',
+        leftWidth: '20%',
+        centerWidth: '60%',
+        rightWidth: '20%',
         showLeftNav: true,
         showRightColumn: true,
       };
