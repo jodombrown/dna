@@ -1,0 +1,139 @@
+/**
+ * DNA Platform Error Logger
+ * 
+ * Centralized error logging to database with categorization and severity levels.
+ * Helps catch issues early before users report them.
+ */
+
+import { supabase } from '@/integrations/supabase/client';
+
+export type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';
+
+export type ErrorCategory = 
+  | 'database'
+  | 'authentication'
+  | 'api'
+  | 'ui'
+  | 'navigation'
+  | 'feed'
+  | 'post_creation'
+  | 'file_upload'
+  | 'network'
+  | 'unknown';
+
+interface LogErrorOptions {
+  error: Error | unknown;
+  category: ErrorCategory;
+  severity?: ErrorSeverity;
+  context?: string;
+  metadata?: Record<string, any>;
+  componentStack?: string;
+}
+
+/**
+ * Main error logging function - sends errors to database
+ */
+export async function logError(options: LogErrorOptions): Promise<void> {
+  const {
+    error,
+    category,
+    severity = 'medium',
+    context,
+    metadata = {},
+    componentStack,
+  } = options;
+
+  try {
+    // Extract error details
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    const errorType = error instanceof Error ? error.name : typeof error;
+
+    // Get user info if available
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Prepare metadata
+    const enrichedMetadata = {
+      ...metadata,
+      category,
+      context,
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+      userId: user?.id || null,
+    };
+
+    // Log to database
+    const { error: dbError } = await supabase.from('error_logs').insert({
+      error_message: errorMessage,
+      error_stack: errorStack || null,
+      error_type: errorType,
+      severity,
+      metadata: enrichedMetadata,
+      component_stack: componentStack || null,
+      user_id: user?.id || null,
+      url: window.location.href,
+      user_agent: navigator.userAgent,
+    });
+
+    if (dbError) {
+      // If database logging fails, at least log to console
+      console.error('Failed to log error to database:', dbError);
+    }
+
+    // Also log to console for development
+    console.error(`[${severity.toUpperCase()}] ${category}:`, errorMessage, {
+      stack: errorStack,
+      metadata: enrichedMetadata,
+    });
+
+  } catch (loggingError) {
+    // Fail silently but log to console
+    console.error('Error logger failed:', loggingError);
+    console.error('Original error:', error);
+  }
+}
+
+/**
+ * Convenience functions for different severity levels
+ */
+export const logCriticalError = (error: Error | unknown, category: ErrorCategory, context?: string, metadata?: Record<string, any>) =>
+  logError({ error, category, severity: 'critical', context, metadata });
+
+export const logHighError = (error: Error | unknown, category: ErrorCategory, context?: string, metadata?: Record<string, any>) =>
+  logError({ error, category, severity: 'high', context, metadata });
+
+export const logMediumError = (error: Error | unknown, category: ErrorCategory, context?: string, metadata?: Record<string, any>) =>
+  logError({ error, category, severity: 'medium', context, metadata });
+
+export const logLowError = (error: Error | unknown, category: ErrorCategory, context?: string, metadata?: Record<string, any>) =>
+  logError({ error, category, severity: 'low', context, metadata });
+
+/**
+ * Database query error wrapper
+ * Use this to wrap all Supabase queries
+ */
+export async function withErrorLogging<T>(
+  operation: () => Promise<T>,
+  context: string,
+  category: ErrorCategory = 'database'
+): Promise<T> {
+  try {
+    return await operation();
+  } catch (error) {
+    await logHighError(error, category, context, {
+      operation: context,
+    });
+    throw error; // Re-throw so the UI can handle it
+  }
+}
+
+/**
+ * React Query error handler
+ * Use this in onError callbacks
+ */
+export function handleQueryError(error: unknown, queryKey: string) {
+  logMediumError(error, 'api', `Query failed: ${queryKey}`, {
+    queryKey,
+  });
+}

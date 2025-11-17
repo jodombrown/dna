@@ -9,6 +9,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { UniversalFeedItem, FeedFilters } from '@/types/feed';
 import { useEffect } from 'react';
+import { logHighError, withErrorLogging } from '@/lib/errorLogger';
 
 export const useUniversalFeed = (filters: FeedFilters) => {
   const queryClient = useQueryClient();
@@ -19,18 +20,27 @@ export const useUniversalFeed = (filters: FeedFilters) => {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['universal-feed', filters],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_universal_feed', {
-        p_viewer_id: filters.viewerId,
-        p_tab: filters.tab || 'all',
-        p_author_id: filters.authorId || null,
-        p_space_id: filters.spaceId || null,
-        p_event_id: filters.eventId || null,
-        p_limit: filters.limit || 20,
-        p_offset: filters.offset || 0,
-      });
+      try {
+        const { data, error } = await supabase.rpc('get_universal_feed', {
+          p_viewer_id: filters.viewerId,
+          p_tab: filters.tab || 'all',
+          p_author_id: filters.authorId || null,
+          p_space_id: filters.spaceId || null,
+          p_event_id: filters.eventId || null,
+          p_limit: filters.limit || 20,
+          p_offset: filters.offset || 0,
+        });
 
-      if (error) throw error;
-      return (data || []) as unknown as UniversalFeedItem[];
+        if (error) {
+          logHighError(error, 'feed', 'get_universal_feed RPC failed', { filters });
+          throw error;
+        }
+        
+        return (data || []) as unknown as UniversalFeedItem[];
+      } catch (error) {
+        logHighError(error, 'feed', 'Universal feed query failed', { filters });
+        throw error;
+      }
     },
     enabled: !!filters.viewerId,
   });

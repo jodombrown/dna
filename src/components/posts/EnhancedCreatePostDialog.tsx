@@ -22,6 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { uploadMedia as uploadMediaUtil } from '@/lib/uploadMedia';
 import { Globe, Users, Image as ImageIcon, Video, FileText, X } from 'lucide-react';
+import { logHighError, withErrorLogging } from '@/lib/errorLogger';
 
 interface EnhancedCreatePostDialogProps {
   isOpen: boolean;
@@ -127,21 +128,32 @@ export function EnhancedCreatePostDialog({
 
       // Upload media if present
       if (mediaFile) {
-        imageUrl = await uploadMedia(mediaFile);
-        if (!imageUrl) {
-          throw new Error('Failed to upload media');
-        }
+        imageUrl = await withErrorLogging(
+          async () => {
+            const url = await uploadMedia(mediaFile);
+            if (!url) throw new Error('Failed to upload media');
+            return url;
+          },
+          'Post media upload',
+          'file_upload'
+        );
       }
 
-      const { error } = await supabase.from('posts').insert({
-        author_id: currentUserId,
-        content: trimmedContent,
-        post_type: postType,
-        privacy_level: privacyLevel,
-        image_url: imageUrl,
-      });
+      await withErrorLogging(
+        async () => {
+          const { error } = await supabase.from('posts').insert({
+            author_id: currentUserId,
+            content: trimmedContent,
+            post_type: postType,
+            privacy_level: privacyLevel,
+            image_url: imageUrl,
+          });
 
-      if (error) throw error;
+          if (error) throw error;
+        },
+        'Create post',
+        'post_creation'
+      );
 
       toast({
         title: 'Post created!',
@@ -158,6 +170,11 @@ export function EnhancedCreatePostDialog({
       removeMedia();
     } catch (error) {
       console.error('Error creating post:', error);
+      logHighError(error, 'post_creation', 'Failed to create post', {
+        postType,
+        privacyLevel,
+        hasMedia: !!mediaFile,
+      });
       toast({
         title: 'Error',
         description: 'Failed to create post',
