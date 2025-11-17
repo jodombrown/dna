@@ -88,3 +88,16 @@ export interface FeedContext {
   id: string | null;
   title: string | null;
 }
+
+/**
+ * Props for UniversalFeed component
+ */
+export interface UniversalFeedProps {
+  viewerId: string;
+  tab?: FeedTab;
+  authorId?: string;
+  spaceId?: string;
+  eventId?: string;
+  emptyMessage?: string;
+  emptyAction?: React.ReactNode;
+}
