@@ -23,7 +23,7 @@ export function CreatePost() {
           author_id: user!.id,
           content: postContent,
           post_type: 'text',
-          visibility: 'public',
+          privacy_level: 'public',
         })
         .select()
         .single();
