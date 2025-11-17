@@ -57,32 +57,30 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
 
   // Desktop: 3-column grid with independent scrolling
   return (
-    <div className={cn("flex w-full gap-4 p-4", className)} style={{ height: 'calc(100vh - 64px)' }}>
+    <div className={cn("flex w-full gap-6 px-4", className)} style={{ height: 'calc(100vh - 64px)' }}>
       {left && (
         <aside 
           className="transition-all duration-300 ease-in-out overflow-auto h-full"
           style={{ 
             width: leftWidth,
-            minWidth: 0, // Allow shrinking below content width
+            maxWidth: leftWidth,
+            minWidth: leftWidth,
           }}
         >
-          <div className="min-w-max">
-            {left}
-          </div>
+          {left}
         </aside>
       )}
       
       {center && (
         <main 
-          className="transition-all duration-300 ease-in-out overflow-auto flex-1 h-full"
+          className="transition-all duration-300 ease-in-out overflow-auto h-full"
           style={{ 
             width: centerWidth,
-            minWidth: 0, // Allow shrinking below content width
+            maxWidth: centerWidth,
+            minWidth: centerWidth,
           }}
         >
-          <div className="min-w-max">
-            {center}
-          </div>
+          {center}
         </main>
       )}
       
@@ -91,12 +89,11 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
           className="transition-all duration-300 ease-in-out overflow-auto h-full"
           style={{ 
             width: rightWidth,
-            minWidth: 0, // Allow shrinking below content width
+            maxWidth: rightWidth,
+            minWidth: rightWidth,
           }}
         >
-          <div className="min-w-max">
-            {right}
-          </div>
+          {right}
         </aside>
       )}
     </div>
