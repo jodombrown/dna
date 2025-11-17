@@ -21,7 +21,7 @@ export type LinkedEntityType =
   | 'story' 
   | 'community_post';
 
-export type FeedTab = 'all' | 'network' | 'my_posts';
+export type FeedTab = 'all' | 'network' | 'my_posts' | 'bookmarks';
 
 /**
  * Normalized feed item returned from the universal feed query.

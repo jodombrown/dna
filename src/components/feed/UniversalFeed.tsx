@@ -24,6 +24,7 @@ interface UniversalFeedProps {
   eventId?: string;
   emptyMessage?: string;
   emptyAction?: React.ReactNode;
+  surface?: 'home' | 'profile' | 'space' | 'event' | 'mobile';
 }
 
 export const UniversalFeed: React.FC<UniversalFeedProps> = ({
@@ -34,6 +35,7 @@ export const UniversalFeed: React.FC<UniversalFeedProps> = ({
   eventId,
   emptyMessage,
   emptyAction,
+  surface = 'home',
 }) => {
   const { feedItems, isLoading, refetch } = useUniversalFeed({
     viewerId,
@@ -73,6 +75,7 @@ export const UniversalFeed: React.FC<UniversalFeedProps> = ({
           item={item}
           currentUserId={viewerId}
           onUpdate={refetch}
+          surface={surface}
         />
       ))}
     </div>

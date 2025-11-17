@@ -104,18 +104,21 @@ const DnaFeed = () => {
 
       {/* Filter Tabs */}
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-        <TabsList className="w-full">
-          <TabsTrigger value="all" className="flex-1">
+        <TabsList className="w-full grid grid-cols-4">
+          <TabsTrigger value="all">
             <Newspaper className="h-4 w-4 mr-2" />
             All Posts
           </TabsTrigger>
-          <TabsTrigger value="network" className="flex-1">
+          <TabsTrigger value="network">
             <Users className="h-4 w-4 mr-2" />
             Network
           </TabsTrigger>
-          <TabsTrigger value="my_posts" className="flex-1">
+          <TabsTrigger value="my_posts">
             <Sparkles className="h-4 w-4 mr-2" />
             My Posts
+          </TabsTrigger>
+          <TabsTrigger value="bookmarks">
+            📑 Bookmarks
           </TabsTrigger>
         </TabsList>
       </Tabs>
@@ -124,21 +127,26 @@ const DnaFeed = () => {
       <UniversalFeed
         viewerId={user.id}
         tab={activeTab}
+        surface="home"
         emptyMessage={
           activeTab === 'my_posts'
             ? "You haven't posted anything yet"
             : activeTab === 'network'
             ? "Your connections haven't posted yet"
+            : activeTab === 'bookmarks'
+            ? "You haven't bookmarked anything yet"
             : 'No posts to show'
         }
         emptyAction={
-          <Button
-            onClick={() => setShowCreateDialog(true)}
-            className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
-          >
-            <PenSquare className="h-4 w-4 mr-2" />
-            Create Your First Post
-          </Button>
+          activeTab === 'bookmarks' ? null : (
+            <Button
+              onClick={() => setShowCreateDialog(true)}
+              className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
+            >
+              <PenSquare className="h-4 w-4 mr-2" />
+              Create Your First Post
+            </Button>
+          )
         }
       />
 
