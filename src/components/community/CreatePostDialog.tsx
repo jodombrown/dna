@@ -14,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { createCommunityPost, getUserCommunities } from '@/services/communityPostsService';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface CreatePostDialogProps {
   open: boolean;
@@ -28,6 +29,7 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({
 }) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [communities, setCommunities] = useState<any[]>([]);
   const [formData, setFormData] = useState({
@@ -80,6 +82,10 @@ const CreatePostDialog: React.FC<CreatePostDialogProps> = ({
         community_id: formData.community_id,
         post_type: formData.post_type
       });
+
+      // Invalidate universal feed to show new community post
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['community-posts'] });
 
       toast({
         title: "Success",
