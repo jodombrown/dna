@@ -30,10 +30,18 @@ export interface PostWithAuthor {
   link_url?: string;
   link_title?: string;
   link_description?: string;
+  // Unified feed fields
+  linked_entity_type?: string | null;
+  linked_entity_id?: string | null;
+  space_id?: string | null;
+  event_id?: string | null;
   created_at: string;
   likes_count: number;
   comments_count: number;
+  shares_count?: number;
+  views_count?: number;
   user_has_liked: boolean;
+  user_has_saved?: boolean;
   is_connection: boolean;
   // Repost/share fields
   original_post_id?: string;
