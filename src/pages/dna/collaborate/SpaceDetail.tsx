@@ -327,14 +327,11 @@ export default function SpaceDetail() {
             </TabsContent>
 
             <TabsContent value="updates">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Updates</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <SpaceUpdates spaceId={space.id} canEdit={isLead} />
-                </CardContent>
-              </Card>
+              <SpaceUpdates 
+                spaceId={space.id} 
+                canEdit={isLead || isMember}
+                spaceName={space.name}
+              />
             </TabsContent>
 
             <TabsContent value="contribute">
