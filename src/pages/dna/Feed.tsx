@@ -25,6 +25,12 @@ const DnaFeed = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
 
+  // Redirect to welcome wizard if no role set - MUST be before any returns
+  useEffect(() => {
+    if (!profileLoading && profile && !profile.user_role) {
+      navigate('/dna/welcome', { replace: true });
+    }
+  }, [profileLoading, profile, navigate]);
 
   if (profileLoading) {
     return (
@@ -33,13 +39,6 @@ const DnaFeed = () => {
       </div>
     );
   }
-
-  // Redirect to welcome wizard if no role set
-  useEffect(() => {
-    if (!profileLoading && profile && !profile.user_role) {
-      navigate('/dna/welcome', { replace: true });
-    }
-  }, [profileLoading, profile, navigate]);
 
   if (!user || !profile) {
     return null;
