@@ -455,7 +455,7 @@ export function PostCard({
           >
             <Repeat2 className="h-4 w-4" />
             <span className="hidden sm:inline">Share</span>
-            {feedItem.share_count > 0 && (
+            {feedItem?.share_count && feedItem.share_count > 0 && (
               <span className="sm:hidden">{feedItem.share_count}</span>
             )}
           </Button>
