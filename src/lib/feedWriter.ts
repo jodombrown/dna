@@ -205,7 +205,8 @@ export async function createStandardPost(params: {
   const { authorId, content, mediaUrl, spaceId, eventId, privacyLevel } = params;
 
   try {
-    const { data, error } = await supabase
+    // Insert the post
+    const { data: postData, error: postError } = await supabase
       .from('posts')
       .insert({
         author_id: authorId,
@@ -216,46 +217,43 @@ export async function createStandardPost(params: {
         event_id: eventId || null,
         privacy_level: privacyLevel || 'public',
       })
-      .select(
-        `
-        id,
-        author_id,
-        content,
-        post_type,
-        image_url,
-        created_at,
-        author:profiles!author_id (
-          username,
-          display_name,
-          avatar_url
-        )
-      `
-      )
+      .select('id, author_id, content, post_type, image_url, created_at')
       .single();
 
-    if (error) {
-      logHighError(error, 'composer', 'createStandardPost failed', params);
-      throw error;
+    if (postError) {
+      logHighError(postError, 'composer', 'createStandardPost failed', params);
+      throw postError;
     }
 
-    if (!data) {
+    if (!postData) {
       throw new Error('No data returned from insert');
+    }
+
+    // Fetch author profile separately
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('username, display_name, avatar_url')
+      .eq('id', authorId)
+      .single();
+
+    if (profileError) {
+      console.error('Failed to fetch author profile:', profileError);
     }
 
     // Map to PostWithAuthor shape
     const mapped: PostWithAuthor = {
-      post_id: data.id,
-      author_id: data.author_id,
-      content: data.content,
+      post_id: postData.id,
+      author_id: postData.author_id,
+      content: postData.content,
       post_type: 'text' as any,
       privacy_level: 'public',
-      image_url: data.image_url || undefined,
-      created_at: data.created_at,
+      image_url: postData.image_url || undefined,
+      created_at: postData.created_at,
       likes_count: 0,
       comments_count: 0,
-      author_username: (data.author as any)?.username || '',
-      author_full_name: (data.author as any)?.display_name || '',
-      author_avatar_url: (data.author as any)?.avatar_url || undefined,
+      author_username: profileData?.username || '',
+      author_full_name: profileData?.display_name || '',
+      author_avatar_url: profileData?.avatar_url || undefined,
       user_has_liked: false,
       is_connection: false,
     };
