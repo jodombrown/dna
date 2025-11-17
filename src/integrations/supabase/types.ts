@@ -4327,6 +4327,7 @@ export type Database = {
           author_id: string
           content: string
           created_at: string
+          event_id: string | null
           flag_reason: string | null
           flagged_at: string | null
           flagged_by: string | null
@@ -4336,6 +4337,8 @@ export type Database = {
           link_description: string | null
           link_title: string | null
           link_url: string | null
+          linked_entity_id: string | null
+          linked_entity_type: string | null
           metadata: Json | null
           moderated_at: string | null
           moderated_by: string | null
@@ -4346,12 +4349,14 @@ export type Database = {
           privacy_level: string
           share_commentary: string | null
           shared_by: string | null
+          space_id: string | null
           updated_at: string
         }
         Insert: {
           author_id: string
           content: string
           created_at?: string
+          event_id?: string | null
           flag_reason?: string | null
           flagged_at?: string | null
           flagged_by?: string | null
@@ -4361,6 +4366,8 @@ export type Database = {
           link_description?: string | null
           link_title?: string | null
           link_url?: string | null
+          linked_entity_id?: string | null
+          linked_entity_type?: string | null
           metadata?: Json | null
           moderated_at?: string | null
           moderated_by?: string | null
@@ -4371,12 +4378,14 @@ export type Database = {
           privacy_level?: string
           share_commentary?: string | null
           shared_by?: string | null
+          space_id?: string | null
           updated_at?: string
         }
         Update: {
           author_id?: string
           content?: string
           created_at?: string
+          event_id?: string | null
           flag_reason?: string | null
           flagged_at?: string | null
           flagged_by?: string | null
@@ -4386,6 +4395,8 @@ export type Database = {
           link_description?: string | null
           link_title?: string | null
           link_url?: string | null
+          linked_entity_id?: string | null
+          linked_entity_type?: string | null
           metadata?: Json | null
           moderated_at?: string | null
           moderated_by?: string | null
@@ -4396,9 +4407,17 @@ export type Database = {
           privacy_level?: string
           share_commentary?: string | null
           shared_by?: string | null
+          space_id?: string | null
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "posts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "posts_original_post_id_fkey"
             columns: ["original_post_id"]
@@ -4411,6 +4430,13 @@ export type Database = {
             columns: ["shared_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
             referencedColumns: ["id"]
           },
         ]
@@ -6404,6 +6430,17 @@ export type Database = {
         }
         Returns: string
       }
+      create_entity_feed_post: {
+        Args: {
+          p_author_id: string
+          p_content: string
+          p_entity_id: string
+          p_entity_type: string
+          p_event_id?: string
+          p_space_id?: string
+        }
+        Returns: string
+      }
       create_notification:
         | {
             Args: {
@@ -7170,6 +7207,56 @@ export type Database = {
           recent_usage_count: number
           tag: string
           usage_count: number
+        }[]
+      }
+      get_universal_feed: {
+        Args: {
+          p_author_id?: string
+          p_event_id?: string
+          p_feed_type?: string
+          p_hashtag?: string
+          p_limit?: number
+          p_offset?: number
+          p_space_id?: string
+          p_user_id: string
+        }
+        Returns: {
+          author_avatar_url: string
+          author_full_name: string
+          author_headline: string
+          author_id: string
+          author_username: string
+          comments_count: number
+          content: string
+          created_at: string
+          event_id: string
+          image_url: string
+          is_connection: boolean
+          likes_count: number
+          link_description: string
+          link_title: string
+          link_url: string
+          linked_entity_id: string
+          linked_entity_type: string
+          original_author_avatar_url: string
+          original_author_full_name: string
+          original_author_headline: string
+          original_author_id: string
+          original_author_username: string
+          original_content: string
+          original_created_at: string
+          original_image_url: string
+          original_post_id: string
+          post_id: string
+          post_type: string
+          privacy_level: string
+          share_commentary: string
+          shared_by: string
+          shares_count: number
+          space_id: string
+          user_has_liked: boolean
+          user_has_saved: boolean
+          views_count: number
         }[]
       }
       get_unread_notification_count: {
