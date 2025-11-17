@@ -5,6 +5,8 @@ import { ComposerBody } from './ComposerBody';
 import { ComposerFooter } from './ComposerFooter';
 import { useState } from 'react';
 import { ComposerFormData } from '@/hooks/useUniversalComposer';
+import { Badge } from '@/components/ui/badge';
+import { Hash, Calendar, Users, Building2 } from 'lucide-react';
 
 interface UniversalComposerProps {
   isOpen: boolean;
@@ -63,9 +65,13 @@ export const UniversalComposer = ({
           <DialogTitle className="text-2xl">
             Share something with the diaspora
           </DialogTitle>
-          <p className="text-sm text-muted-foreground">
-            {getSubheader(mode)}
-          </p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm text-muted-foreground">
+              {getSubheader(mode)}
+            </p>
+            {/* Context Badge */}
+            {getContextBadge(context)}
+          </div>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -105,4 +111,37 @@ function getSubheader(mode: ComposerMode): string {
     case 'community': return 'Share with your community';
     default: return '';
   }
+}
+
+function getContextBadge(context: ComposerContext): React.ReactNode {
+  if (context.spaceId) {
+    return (
+      <Badge variant="secondary" className="gap-1.5">
+        <Building2 className="h-3 w-3" />
+        Posting in Space
+      </Badge>
+    );
+  }
+  if (context.eventId) {
+    return (
+      <Badge variant="secondary" className="gap-1.5">
+        <Calendar className="h-3 w-3" />
+        Posting in Event
+      </Badge>
+    );
+  }
+  if (context.communityId) {
+    return (
+      <Badge variant="secondary" className="gap-1.5">
+        <Users className="h-3 w-3" />
+        Posting in Community
+      </Badge>
+    );
+  }
+  return (
+    <Badge variant="outline" className="gap-1.5">
+      <Hash className="h-3 w-3" />
+      Posting to Home Feed
+    </Badge>
+  );
 }

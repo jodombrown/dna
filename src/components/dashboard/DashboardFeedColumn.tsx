@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { PostCard } from '@/components/posts/PostCard';
 import { PostComments } from '@/components/posts/PostComments';
-import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useInfiniteFeedPosts } from '@/hooks/useInfiniteFeedPosts';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { PenSquare, Users, Sparkles, Image as ImageIcon, Video, FileText, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Profile } from '@/services/profilesService';
+import { useInfiniteUniversalFeed } from '@/hooks/useInfiniteUniversalFeed';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
-type FeedFilter = 'connections' | 'my_posts';
+type FeedFilter = 'network' | 'my_posts';
 
 interface DashboardFeedColumnProps {
   profile: Profile;
@@ -20,19 +21,20 @@ interface DashboardFeedColumnProps {
 
 export default function DashboardFeedColumn({ profile, isOwnProfile }: DashboardFeedColumnProps) {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<FeedFilter>('connections');
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<FeedFilter>('network');
+  const composer = useUniversalComposer();
 
   const {
-    data,
+    feedItems,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    error,
     refetch,
-  } = useInfiniteFeedPosts(activeTab, user?.id);
+  } = useInfiniteUniversalFeed({
+    viewerId: user?.id || '',
+    tab: activeTab,
+  });
 
   // Infinite scroll observer
   const observerTarget = useRef<HTMLDivElement>(null);
@@ -58,9 +60,6 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
       }
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // Flatten all pages into a single posts array
-  const posts = data?.pages.flatMap((page) => page.posts) ?? [];
 
   useEffect(() => {
     if (!user) return;
@@ -123,7 +122,7 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
         </div>
         {isOwnProfile && (
           <Button
-            onClick={() => setShowCreateDialog(true)}
+            onClick={() => composer.open('post')}
             className="bg-primary hover:bg-primary/90"
             size="lg"
           >
@@ -137,7 +136,7 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
       {isOwnProfile && (
         <Card className="p-4 mb-4">
           <button
-            onClick={() => setShowCreateDialog(true)}
+            onClick={() => composer.open('post')}
             className="w-full text-left px-4 py-3 rounded-full border border-input bg-background hover:bg-accent transition-colors text-muted-foreground"
           >
             Start a post...
