@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +28,13 @@ const DnaFeed = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
 
+  // Safe redirect to welcome if role missing
+  useEffect(() => {
+    if (!profileLoading && profile && !profile.user_role) {
+      navigate('/dna/welcome', { replace: true });
+    }
+  }, [profileLoading, profile, navigate]);
+
   if (profileLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -37,10 +44,9 @@ const DnaFeed = () => {
   }
 
   // Redirect to welcome wizard if no role set
-  if (!profileLoading && profile && !profile.user_role) {
-    navigate('/dna/welcome', { replace: true });
-    return null;
-  }
+  // (move navigate to useEffect to avoid render-time navigation)
+  // handled below in useEffect
+
 
   if (!user || !profile) {
     return null;
