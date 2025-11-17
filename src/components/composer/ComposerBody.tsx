@@ -1,0 +1,302 @@
+import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniversalComposer';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ImagePlus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+interface ComposerBodyProps {
+  mode: ComposerMode;
+  formData: ComposerFormData;
+  context: ComposerContext;
+  onChange: (updates: Partial<ComposerFormData>) => void;
+}
+
+export const ComposerBody = ({
+  mode,
+  formData,
+  context,
+  onChange,
+}: ComposerBodyProps) => {
+  const { user } = useAuth();
+  const { data: profile } = useProfile();
+
+  return (
+    <div className="space-y-4">
+      {/* Author Info */}
+      <div className="flex items-center gap-3">
+        <Avatar className="h-10 w-10">
+          <AvatarImage src={profile?.avatar_url || ''} />
+          <AvatarFallback>
+            {profile?.display_name?.[0] || profile?.username?.[0] || 'U'}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <p className="font-medium">
+            {profile?.display_name || profile?.username || 'User'}
+          </p>
+          {context.spaceId && (
+            <p className="text-xs text-muted-foreground">
+              Posting in Space
+            </p>
+          )}
+          {context.eventId && (
+            <p className="text-xs text-muted-foreground">
+              Posting in Event
+            </p>
+          )}
+          {context.communityId && (
+            <p className="text-xs text-muted-foreground">
+              Posting in Community
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Mode-specific fields */}
+      {renderModeFields(mode, formData, onChange)}
+    </div>
+  );
+};
+
+function renderModeFields(
+  mode: ComposerMode,
+  formData: ComposerFormData,
+  onChange: (updates: Partial<ComposerFormData>) => void
+) {
+  switch (mode) {
+    case 'post':
+      return (
+        <>
+          <Textarea
+            placeholder="What's on your mind?"
+            value={formData.content}
+            onChange={(e) => onChange({ content: e.target.value })}
+            className="min-h-[120px] resize-none"
+          />
+          <MediaUploadButton onUpload={(url) => onChange({ mediaUrl: url })} />
+        </>
+      );
+
+    case 'story':
+      return (
+        <>
+          <div>
+            <Label>Title *</Label>
+            <Input
+              placeholder="Story title"
+              value={formData.title || ''}
+              onChange={(e) => onChange({ title: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label>Subtitle (optional)</Label>
+            <Input
+              placeholder="Brief subtitle"
+              value={formData.subtitle || ''}
+              onChange={(e) => onChange({ subtitle: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label>Content *</Label>
+            <Textarea
+              placeholder="Tell your story..."
+              value={formData.content}
+              onChange={(e) => onChange({ content: e.target.value })}
+              className="min-h-[200px] resize-none"
+            />
+          </div>
+          <MediaUploadButton label="Hero Image" onUpload={(url) => onChange({ heroImage: url })} />
+        </>
+      );
+
+    case 'event':
+      return (
+        <>
+          <div>
+            <Label>Event Title *</Label>
+            <Input
+              placeholder="Event name"
+              value={formData.title || ''}
+              onChange={(e) => onChange({ title: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label>Description *</Label>
+            <Textarea
+              placeholder="Event details..."
+              value={formData.content}
+              onChange={(e) => onChange({ content: e.target.value })}
+              className="min-h-[100px] resize-none"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Date *</Label>
+              <Input
+                type="date"
+                value={formData.eventDate || ''}
+                onChange={(e) => onChange({ eventDate: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Time *</Label>
+              <Input
+                type="time"
+                value={formData.eventTime || ''}
+                onChange={(e) => onChange({ eventTime: e.target.value })}
+              />
+            </div>
+          </div>
+          <div>
+            <Label>Location</Label>
+            <Input
+              placeholder="Event location or virtual link"
+              value={formData.location || ''}
+              onChange={(e) => onChange({ location: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label>Format</Label>
+            <Select
+              value={formData.format || 'in_person'}
+              onValueChange={(value: any) => onChange({ format: value })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="in_person">In Person</SelectItem>
+                <SelectItem value="virtual">Virtual</SelectItem>
+                <SelectItem value="hybrid">Hybrid</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <MediaUploadButton label="Cover Image" onUpload={(url) => onChange({ mediaUrl: url })} />
+        </>
+      );
+
+    case 'need':
+      return (
+        <>
+          <div>
+            <Label>Title *</Label>
+            <Input
+              placeholder="What do you need?"
+              value={formData.title || ''}
+              onChange={(e) => onChange({ title: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label>Type</Label>
+            <Select
+              value={formData.needType || 'expertise'}
+              onValueChange={(value: any) => onChange({ needType: value })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="funding">Funding</SelectItem>
+                <SelectItem value="expertise">Expertise</SelectItem>
+                <SelectItem value="resources">Resources</SelectItem>
+                <SelectItem value="volunteers">Volunteers</SelectItem>
+                <SelectItem value="partnership">Partnership</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Description *</Label>
+            <Textarea
+              placeholder="Describe what you need..."
+              value={formData.content}
+              onChange={(e) => onChange({ content: e.target.value })}
+              className="min-h-[120px] resize-none"
+            />
+          </div>
+        </>
+      );
+
+    case 'space':
+      return (
+        <>
+          <div>
+            <Label>Space Name *</Label>
+            <Input
+              placeholder="Name your space or project"
+              value={formData.title || ''}
+              onChange={(e) => onChange({ title: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label>Description *</Label>
+            <Textarea
+              placeholder="What is this space about?"
+              value={formData.content}
+              onChange={(e) => onChange({ content: e.target.value })}
+              className="min-h-[120px] resize-none"
+            />
+          </div>
+          <div>
+            <Label>Visibility</Label>
+            <Select
+              value={formData.visibility || 'public'}
+              onValueChange={(value: any) => onChange({ visibility: value })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="public">Public</SelectItem>
+                <SelectItem value="private">Private</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <MediaUploadButton label="Space Image" onUpload={(url) => onChange({ mediaUrl: url })} />
+        </>
+      );
+
+    case 'community':
+      return (
+        <>
+          <div>
+            <Label>Title (optional)</Label>
+            <Input
+              placeholder="Post title"
+              value={formData.title || ''}
+              onChange={(e) => onChange({ title: e.target.value })}
+            />
+          </div>
+          <Textarea
+            placeholder="Share with your community..."
+            value={formData.content}
+            onChange={(e) => onChange({ content: e.target.value })}
+            className="min-h-[120px] resize-none"
+          />
+          <MediaUploadButton onUpload={(url) => onChange({ mediaUrl: url })} />
+        </>
+      );
+
+    default:
+      return null;
+  }
+}
+
+function MediaUploadButton({ 
+  label = 'Add Media', 
+  onUpload 
+}: { 
+  label?: string; 
+  onUpload: (url: string) => void;
+}) {
+  return (
+    <Button variant="outline" size="sm" className="w-full" disabled>
+      <ImagePlus className="w-4 h-4 mr-2" />
+      {label} (Coming Soon)
+    </Button>
+  );
+}

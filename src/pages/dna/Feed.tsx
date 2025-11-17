@@ -3,7 +3,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
 import { PenSquare, Sparkles, Users, Newspaper, Settings } from 'lucide-react';
-import { EnhancedCreatePostDialog } from '@/components/posts/EnhancedCreatePostDialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -16,6 +15,8 @@ import { UniversalFeed } from '@/components/feed/UniversalFeed';
 import { FeedTab } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { useQueryClient } from '@tanstack/react-query';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 const DnaFeed = () => {
   const { user } = useAuth();
@@ -23,8 +24,8 @@ const DnaFeed = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<FeedTab>('all');
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
+  const composer = useUniversalComposer();
 
   // Redirect to welcome wizard if no role set - MUST be before any returns
   useEffect(() => {
@@ -87,7 +88,7 @@ const DnaFeed = () => {
       {/* Create Post Card */}
       <Card 
         className="p-4 cursor-pointer hover:border-primary/50 transition-colors"
-        onClick={() => setShowCreateDialog(true)}
+        onClick={() => composer.open('post')}
       >
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10">
@@ -144,7 +145,7 @@ const DnaFeed = () => {
         }
         emptyAction={
           <Button
-            onClick={() => setShowCreateDialog(true)}
+            onClick={() => composer.open('post')}
             className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
           >
             <PenSquare className="h-4 w-4 mr-2" />
@@ -153,16 +154,14 @@ const DnaFeed = () => {
         }
       />
 
-
-      <EnhancedCreatePostDialog
-        isOpen={showCreateDialog}
-        onClose={() => setShowCreateDialog(false)}
-        currentUserId={user?.id || ''}
-        onSuccess={() => {
-          setShowCreateDialog(false);
-          // Ensure feed refreshes immediately
-          queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
-        }}
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        onClose={composer.close}
+        onModeChange={composer.switchMode}
+        onSubmit={composer.submit}
       />
     </div>
   );
