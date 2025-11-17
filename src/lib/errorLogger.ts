@@ -19,6 +19,7 @@ export type ErrorCategory =
   | 'post_creation'
   | 'file_upload'
   | 'network'
+  | 'composer'
   | 'unknown';
 
 interface LogErrorOptions {
