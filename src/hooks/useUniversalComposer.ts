@@ -12,6 +12,7 @@ import {
   createCommunityFeedPost 
 } from '@/lib/feedWriter';
 import { logHighError } from '@/lib/errorLogger';
+import type { UniversalFeedItem } from '@/types/feed';
 
 export type ComposerMode = 'post' | 'story' | 'event' | 'need' | 'space' | 'community';
 
@@ -81,19 +82,55 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
       return;
     }
 
+    if (!formData.content || !formData.content.trim()) {
+      toast({ variant: 'destructive', description: 'Please write something before posting.' });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      let createdPost: UniversalFeedItem | null = null;
+
       switch (mode) {
-        case 'post':
-          await createStandardPost({
+        case 'post': {
+          const post = await createStandardPost({
             authorId: user.id,
             content: formData.content,
             mediaUrl: formData.mediaUrl,
             spaceId: context.spaceId,
             eventId: context.eventId,
           });
+
+          // Map to UniversalFeedItem so it shows up instantly
+          createdPost = {
+            post_id: post.post_id,
+            author_id: post.author_id,
+            author_username: post.author_username,
+            author_display_name: post.author_full_name,
+            author_avatar_url: post.author_avatar_url || null,
+            content: post.content,
+            media_url: post.image_url || null,
+            post_type: 'post',
+            privacy_level: 'public',
+            linked_entity_type: null,
+            linked_entity_id: null,
+            space_id: context.spaceId || null,
+            space_title: null,
+            event_id: context.eventId || null,
+            event_title: null,
+            created_at: post.created_at,
+            updated_at: post.created_at,
+            like_count: 0,
+            comment_count: 0,
+            share_count: 0,
+            view_count: 0,
+            bookmark_count: 0,
+            has_liked: false,
+            has_bookmarked: false,
+          };
           break;
+        }
 
         case 'story':
           // Use Supabase client with type casting for new table
@@ -233,7 +270,27 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
           break;
       }
 
-      // Invalidate feed queries
+      // 🔥 Optimistically inject into home feed cache
+      if (createdPost) {
+        queryClient.setQueryData(
+          ['universal-feed', { viewerId: user.id, tab: 'all', authorId: undefined, spaceId: undefined, eventId: undefined, rankingMode: 'latest' }],
+          (old: UniversalFeedItem[] | undefined) => {
+            const existing = old || [];
+            return [createdPost!, ...existing];
+          }
+        );
+
+        // Also inject into "My Posts" feed cache
+        queryClient.setQueryData(
+          ['universal-feed', { viewerId: user.id, tab: 'my_posts', authorId: user.id, spaceId: undefined, eventId: undefined, rankingMode: 'latest' }],
+          (old: UniversalFeedItem[] | undefined) => {
+            const existing = old || [];
+            return [createdPost!, ...existing];
+          }
+        );
+      }
+
+      // Invalidate feed queries as backup so server state catches up
       await queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
 
       // Track submission
