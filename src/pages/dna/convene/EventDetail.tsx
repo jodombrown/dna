@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import DetailViewLayout from '@/layouts/DetailViewLayout';
 import { formatDistanceToNow, format } from 'date-fns';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
@@ -23,6 +25,7 @@ const EventDetail = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const composer = useUniversalComposer({ eventId: id });
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
 
   // Fetch event details
@@ -501,6 +504,17 @@ const EventDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Universal Composer for event context */}
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        onClose={composer.close}
+        onModeChange={composer.switchMode}
+        onSubmit={composer.submit}
+      />
     </DetailViewLayout>
   );
 };
