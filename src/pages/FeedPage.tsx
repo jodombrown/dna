@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FeedLayout } from '@/components/layout/FeedLayout';
 import { PostCard } from '@/components/posts/PostCard';
@@ -36,13 +36,16 @@ export default function FeedPage() {
     },
     enabled: !!user,
   });
-
-  // Real-time subscription for new posts
+  // Keep latest refetch in a ref to avoid resubscribing
+  const refetchRef = useRef(refetch);
   useEffect(() => {
-    if (!user) return;
+    refetchRef.current = refetch;
+  }, [refetch]);
+  useEffect(() => {
+    if (!user?.id) return;
 
     const channel = supabase
-      .channel('feed_posts')
+      .channel(`feed_posts_${user.id}_${Date.now()}`)
       .on(
         'postgres_changes',
         {
@@ -51,7 +54,7 @@ export default function FeedPage() {
           table: 'posts',
         },
         () => {
-          refetch();
+          refetchRef.current?.();
         }
       )
       .on(
@@ -62,7 +65,7 @@ export default function FeedPage() {
           table: 'post_likes',
         },
         () => {
-          refetch();
+          refetchRef.current?.();
         }
       )
       .on(
@@ -73,7 +76,7 @@ export default function FeedPage() {
           table: 'post_comments',
         },
         () => {
-          refetch();
+          refetchRef.current?.();
         }
       )
       .subscribe();
@@ -81,7 +84,7 @@ export default function FeedPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, refetch]);
+  }, [user?.id]);
 
   const handleCommentClick = (postId: string) => {
     setExpandedPostId(expandedPostId === postId ? null : postId);

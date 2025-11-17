@@ -69,6 +69,15 @@ export function UniversalFeed({
     eventId,
     hashtag,
   });
+  // Keep latest callbacks in refs to avoid re-subscribing
+  const refetchRef = useRef(refetch);
+  const onUpdateRef = useRef(onUpdate);
+  useEffect(() => {
+    refetchRef.current = refetch;
+  }, [refetch]);
+  useEffect(() => {
+    onUpdateRef.current = onUpdate;
+  }, [onUpdate]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -95,10 +104,10 @@ export function UniversalFeed({
 
   // Real-time subscription
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
 
     const channel = supabase
-      .channel('universal_feed')
+      .channel(`universal_feed_${user.id}_${Date.now()}`)
       .on(
         'postgres_changes',
         {
@@ -107,8 +116,8 @@ export function UniversalFeed({
           table: 'posts',
         },
         () => {
-          refetch();
-          onUpdate?.();
+          refetchRef.current?.();
+          onUpdateRef.current?.();
         }
       )
       .on(
@@ -119,7 +128,7 @@ export function UniversalFeed({
           table: 'post_likes',
         },
         () => {
-          refetch();
+          refetchRef.current?.();
         }
       )
       .on(
@@ -130,7 +139,7 @@ export function UniversalFeed({
           table: 'post_comments',
         },
         () => {
-          refetch();
+          refetchRef.current?.();
         }
       )
       .subscribe();
@@ -138,7 +147,7 @@ export function UniversalFeed({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, refetch, onUpdate]);
+  }, [user?.id]);
 
   const handleCommentClick = (postId: string) => {
     setExpandedPostId(expandedPostId === postId ? null : postId);
