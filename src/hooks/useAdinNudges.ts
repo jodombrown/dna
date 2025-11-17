@@ -71,8 +71,11 @@ export function useAdinNudges(statusFilter?: 'sent' | 'all') {
     fetchNudges();
 
     // Subscribe to realtime changes
+    const instanceId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    const channelName = `adin_nudges_changes_${user?.id || 'anon'}_${statusFilter || 'all'}_${instanceId}`;
+
     const channel = supabase
-      .channel('adin_nudges_changes')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -90,7 +93,7 @@ export function useAdinNudges(statusFilter?: 'sent' | 'all') {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, statusFilter]);
+  }, [user?.id, statusFilter]);
 
   const acceptNudge = async (nudgeId: string) => {
     const { error } = await supabase

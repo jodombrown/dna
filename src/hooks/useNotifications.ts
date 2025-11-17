@@ -66,10 +66,13 @@ export function useNotifications(
 
   // Real-time subscription
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
+
+    const instanceId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    const channelName = `notifications_updates_${user.id}_${instanceId}`;
 
     const channel = supabase
-      .channel('notifications_updates')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -101,7 +104,7 @@ export function useNotifications(
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, queryClient]);
+  }, [user?.id, queryClient]);
 
   // Mark single notification as read
   const markAsRead = useMutation({
