@@ -22,7 +22,7 @@ export function CreatePost() {
         .insert({
           author_id: user!.id,
           content: postContent,
-          post_type: 'update',
+          post_type: 'post',
           privacy_level: 'public',
           linked_entity_type: null,
           linked_entity_id: null,
