@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
@@ -34,11 +34,10 @@ const DnaFeed = () => {
   }
 
   // Redirect to welcome wizard if no role set
-  useEffect(() => {
-    if (!profileLoading && profile && !profile.user_role) {
-      navigate('/dna/welcome', { replace: true });
-    }
-  }, [profileLoading, profile, navigate]);
+  if (!profileLoading && profile && !profile.user_role) {
+    navigate('/dna/welcome', { replace: true });
+    return null;
+  }
 
   if (!user || !profile) {
     return null;
@@ -104,21 +103,18 @@ const DnaFeed = () => {
 
       {/* Filter Tabs */}
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-        <TabsList className="w-full grid grid-cols-4">
-          <TabsTrigger value="all">
+        <TabsList className="w-full">
+          <TabsTrigger value="all" className="flex-1">
             <Newspaper className="h-4 w-4 mr-2" />
             All Posts
           </TabsTrigger>
-          <TabsTrigger value="network">
+          <TabsTrigger value="network" className="flex-1">
             <Users className="h-4 w-4 mr-2" />
             Network
           </TabsTrigger>
-          <TabsTrigger value="my_posts">
+          <TabsTrigger value="my_posts" className="flex-1">
             <Sparkles className="h-4 w-4 mr-2" />
             My Posts
-          </TabsTrigger>
-          <TabsTrigger value="bookmarks">
-            📑 Bookmarks
           </TabsTrigger>
         </TabsList>
       </Tabs>
@@ -127,26 +123,21 @@ const DnaFeed = () => {
       <UniversalFeed
         viewerId={user.id}
         tab={activeTab}
-        surface="home"
         emptyMessage={
           activeTab === 'my_posts'
             ? "You haven't posted anything yet"
             : activeTab === 'network'
             ? "Your connections haven't posted yet"
-            : activeTab === 'bookmarks'
-            ? "You haven't bookmarked anything yet"
             : 'No posts to show'
         }
         emptyAction={
-          activeTab === 'bookmarks' ? null : (
-            <Button
-              onClick={() => setShowCreateDialog(true)}
-              className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
-            >
-              <PenSquare className="h-4 w-4 mr-2" />
-              Create Your First Post
-            </Button>
-          )
+          <Button
+            onClick={() => setShowCreateDialog(true)}
+            className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
+          >
+            <PenSquare className="h-4 w-4 mr-2" />
+            Create Your First Post
+          </Button>
         }
       />
 

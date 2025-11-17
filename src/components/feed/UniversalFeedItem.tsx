@@ -12,33 +12,22 @@ import { EventCard } from './cards/EventCard';
 import { SpaceCard } from './cards/SpaceCard';
 import { NeedCard } from './cards/NeedCard';
 import { StoryCard } from './cards/StoryCard';
-import { ReshareCard } from './cards/ReshareCard';
 
 interface UniversalFeedItemProps {
   item: UniversalFeedItem;
   currentUserId: string;
   onUpdate: () => void;
-  surface?: 'home' | 'profile' | 'space' | 'event' | 'mobile';
 }
 
 export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
   item,
   currentUserId,
   onUpdate,
-  surface = 'home',
 }) => {
-  // Route based on post_type
+  // For linked entities, we might want to show them differently
+  // For MVP, we route based on post_type
   
   switch (item.post_type) {
-    case 'reshare':
-      return (
-        <ReshareCard
-          item={item}
-          currentUserId={currentUserId}
-          onUpdate={onUpdate}
-          surface={surface}
-        />
-      );
     case 'event':
       return (
         <EventCard
@@ -76,11 +65,12 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
       );
     
     case 'post':
+    case 'reshare':
     case 'community_post':
     default:
-      // Use existing PostCard for standard posts and community posts
+      // Use existing PostCard for standard posts and reshares
       // Map feed types to PostCard's expected types
-      const mappedPostType = item.post_type === 'post' || item.post_type === 'community_post' 
+      const mappedPostType = item.post_type === 'post' || item.post_type === 'reshare' || item.post_type === 'community_post' 
         ? 'text' 
         : 'text';
       
