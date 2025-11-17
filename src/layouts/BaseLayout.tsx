@@ -30,7 +30,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
       <UnifiedHeader />
       <div 
         className={cn(
-          "min-h-screen w-full max-w-full bg-background",
+          "min-h-screen w-full max-w-full bg-background pt-16",
           "transition-all duration-300 ease-in-out",
           "overflow-x-hidden"
         )}
