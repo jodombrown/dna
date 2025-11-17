@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
@@ -34,10 +34,11 @@ const DnaFeed = () => {
   }
 
   // Redirect to welcome wizard if no role set
-  if (!profileLoading && profile && !profile.user_role) {
-    navigate('/dna/welcome', { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    if (!profileLoading && profile && !profile.user_role) {
+      navigate('/dna/welcome', { replace: true });
+    }
+  }, [profileLoading, profile, navigate]);
 
   if (!user || !profile) {
     return null;
