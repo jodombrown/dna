@@ -8,6 +8,8 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { FeedItemType, LinkedEntityType } from '@/types/feed';
+import type { PostWithAuthor } from '@/types/posts';
+import { logHighError } from '@/lib/errorLogger';
 
 interface CreateFeedPostOptions {
   authorId: string;
@@ -190,7 +192,7 @@ export async function createResharePost(params: {
 }
 
 /**
- * Create a standard text/media post
+ * Create a standard text/media post and return it
  */
 export async function createStandardPost(params: {
   authorId: string;
@@ -199,14 +201,68 @@ export async function createStandardPost(params: {
   privacyLevel?: 'public' | 'connections';
   spaceId?: string;
   eventId?: string;
-}) {
-  await createFeedPost({
-    authorId: params.authorId,
-    postType: 'post',
-    content: params.content,
-    mediaUrl: params.mediaUrl,
-    privacyLevel: params.privacyLevel,
-    spaceId: params.spaceId,
-    eventId: params.eventId,
-  });
+}): Promise<PostWithAuthor> {
+  const { authorId, content, mediaUrl, spaceId, eventId, privacyLevel } = params;
+
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .insert({
+        author_id: authorId,
+        content: content.trim(),
+        post_type: 'post',
+        image_url: mediaUrl || null,
+        space_id: spaceId || null,
+        event_id: eventId || null,
+        privacy_level: privacyLevel || 'public',
+      })
+      .select(
+        `
+        id,
+        author_id,
+        content,
+        post_type,
+        image_url,
+        created_at,
+        author:profiles!author_id (
+          username,
+          display_name,
+          avatar_url
+        )
+      `
+      )
+      .single();
+
+    if (error) {
+      logHighError(error, 'composer', 'createStandardPost failed', params);
+      throw error;
+    }
+
+    if (!data) {
+      throw new Error('No data returned from insert');
+    }
+
+    // Map to PostWithAuthor shape
+    const mapped: PostWithAuthor = {
+      post_id: data.id,
+      author_id: data.author_id,
+      content: data.content,
+      post_type: 'text' as any,
+      privacy_level: 'public',
+      image_url: data.image_url || undefined,
+      created_at: data.created_at,
+      likes_count: 0,
+      comments_count: 0,
+      author_username: (data.author as any)?.username || '',
+      author_full_name: (data.author as any)?.display_name || '',
+      author_avatar_url: (data.author as any)?.avatar_url || undefined,
+      user_has_liked: false,
+      is_connection: false,
+    };
+
+    return mapped;
+  } catch (err) {
+    logHighError(err, 'composer', 'createStandardPost threw', params);
+    throw err;
+  }
 }
