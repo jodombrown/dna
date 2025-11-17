@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { MobileViewContainer } from './MobileViewContainer';
-import { useInfiniteFeedPosts } from '@/hooks/useInfiniteFeedPosts';
-import { PostCard } from '@/components/posts/PostCard';
+import { UniversalFeed } from '@/components/feed/UniversalFeed';
 import { useAuth } from '@/contexts/AuthContext';
 import { Filter, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { FeedTab } from '@/types/feed';
 import {
   Sheet,
   SheetContent,
@@ -19,24 +19,20 @@ import {
  * Optimized feed experience for mobile with tabs and filters
  */
 export const MobileFeedView: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'all' | 'connections' | 'my_posts'>('all');
+  const [activeTab, setActiveTab] = useState<FeedTab>('all');
   const [showFilters, setShowFilters] = useState(false);
   const { user } = useAuth();
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading
-  } = useInfiniteFeedPosts(activeTab, user?.id);
-
-  const allPosts = data?.pages.flatMap(page => page.posts) || [];
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-6 h-6 animate-spin" />
+      </div>
+    );
+  }
 
   const handleTabChange = (value: string) => {
-    if (value === 'all' || value === 'connections' || value === 'my_posts') {
-      setActiveTab(value);
-    }
+    setActiveTab(value as FeedTab);
   };
 
   const headerActions = (
@@ -68,97 +64,47 @@ export const MobileFeedView: React.FC = () => {
     >
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <div className="sticky top-14 z-30 bg-background border-b border-border px-4">
-          <TabsList className="w-full justify-start h-12 bg-transparent border-0 rounded-none">
+          <TabsList className="w-full justify-start h-12 bg-transparent border-0 rounded-none overflow-x-auto">
             <TabsTrigger 
               value="all" 
-              className="flex-1 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+              className="flex-1 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none whitespace-nowrap"
             >
               All
             </TabsTrigger>
             <TabsTrigger 
-              value="connections" 
-              className="flex-1 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+              value="network" 
+              className="flex-1 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none whitespace-nowrap"
             >
               Network
             </TabsTrigger>
             <TabsTrigger 
               value="my_posts" 
-              className="flex-1 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none"
+              className="flex-1 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none whitespace-nowrap"
             >
               My Posts
+            </TabsTrigger>
+            <TabsTrigger 
+              value="bookmarks" 
+              className="flex-1 data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none whitespace-nowrap"
+            >
+              Bookmarks
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <div className="px-4 pt-4">
-          <TabsContent value="all" className="mt-0">
-            {isLoading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {allPosts.map((post) => (
-                  <PostCard
-                    key={post.post_id}
-                    post={post}
-                    currentUserId={user?.id || ''}
-                  />
-                ))}
-                {hasNextPage && (
-                  <button
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
-                    className="w-full py-3 text-sm text-muted-foreground"
-                  >
-                    {isFetchingNextPage ? 'Loading...' : 'Load more'}
-                  </button>
-                )}
-              </div>
-            )}
-          </TabsContent>
-          <TabsContent value="connections" className="mt-0">
-            {isLoading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-              </div>
-            ) : allPosts.length === 0 ? (
-              <p className="text-center py-8 text-muted-foreground">
-                No posts from your connections yet
-              </p>
-            ) : (
-              <div className="space-y-4">
-                {allPosts.map((post) => (
-                  <PostCard
-                    key={post.post_id}
-                    post={post}
-                    currentUserId={user?.id || ''}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-          <TabsContent value="my_posts" className="mt-0">
-            {isLoading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-              </div>
-            ) : allPosts.length === 0 ? (
-              <p className="text-center py-8 text-muted-foreground">
-                You haven't created any posts yet
-              </p>
-            ) : (
-              <div className="space-y-4">
-                {allPosts.map((post) => (
-                  <PostCard
-                    key={post.post_id}
-                    post={post}
-                    currentUserId={user?.id || ''}
-                  />
-                ))}
-              </div>
-            )}
-          </TabsContent>
+        <div className="px-4 pt-4 pb-20">
+          {/* All tabs use UniversalFeed now */}
+          <UniversalFeed
+            viewerId={user.id}
+            tab={activeTab}
+            emptyMessage={
+              activeTab === 'bookmarks' 
+                ? "You haven't bookmarked any posts yet"
+                : activeTab === 'my_posts'
+                ? "You haven't shared anything yet"
+                : "No posts to show"
+            }
+          />
         </div>
       </Tabs>
     </MobileViewContainer>

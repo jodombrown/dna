@@ -17,6 +17,7 @@ import { RepostDialog } from './RepostDialog';
 import { SharedPostCard } from './SharedPostCard';
 import { LikedByModal } from './LikedByModal';
 import { ShareDialog } from './ShareDialog';
+import { ReshareDialog } from '@/components/feed/dialogs/ReshareDialog';
 import { usePostReactions } from '@/hooks/usePostReactions';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmark } from '@/hooks/usePostBookmark';
@@ -27,6 +28,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { usePostViewTracker } from '@/hooks/usePostViewTracker';
 import { PostAnalytics } from './PostAnalytics';
+import { feedAnalytics } from '@/lib/feedAnalytics';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,6 +59,7 @@ export function PostCard({
   const [showRepostDialog, setShowRepostDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showLikedByModal, setShowLikedByModal] = useState(false);
+  const [showReshareDialog, setShowReshareDialog] = useState(false);
   
   // Post reactions (emoji reactions)
   const {
@@ -383,7 +386,16 @@ export function PostCard({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => toggleLike()}
+          onClick={() => {
+            toggleLike();
+            // Track engagement
+            feedAnalytics[userHasLiked ? 'unlike' : 'like']({
+              userId: currentUserId,
+              postId: post.post_id,
+              postType: post.post_type || 'post',
+              context: { surface: 'home' },
+            });
+          }}
           disabled={isLiking}
           className={cn(
             'flex-1 gap-1.5 px-2',
@@ -411,7 +423,16 @@ export function PostCard({
         <Button
           variant="ghost"
           size="sm"
-          onClick={onCommentClick}
+          onClick={() => {
+            if (onCommentClick) onCommentClick();
+            // Track engagement
+            feedAnalytics.comment({
+              userId: currentUserId,
+              postId: post.post_id,
+              postType: post.post_type || 'post',
+              context: { surface: 'home' },
+            });
+          }}
           className="flex-1 gap-1.5 px-2"
         >
           <MessageCircle className="h-4 w-4" />
@@ -419,26 +440,32 @@ export function PostCard({
           <span className="sm:hidden">{post.comments_count > 0 ? post.comments_count : ''}</span>
         </Button>
 
+        {/* Reshare Button */}
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => setShowShareDialog(true)}
-          disabled={isSharing}
-          className={cn(
-            'flex-1 gap-1.5 px-2',
-            userHasShared && 'text-green-600 hover:text-green-700'
-          )}
-          title="Share this post"
+          onClick={() => setShowReshareDialog(true)}
+          className="flex-1 gap-1.5 px-2"
+          title="Reshare with your network"
         >
-          <Share2 className={cn('h-4 w-4', userHasShared && 'fill-green-600')} />
-          <span className="hidden sm:inline">{userHasShared ? 'Shared' : 'Share'}</span>
+          <Repeat2 className="h-4 w-4" />
+          <span className="hidden sm:inline">Reshare</span>
         </Button>
 
         {/* Bookmark Button */}
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => toggleBookmark()}
+          onClick={() => {
+            toggleBookmark();
+            // Track engagement
+            feedAnalytics[isBookmarked ? 'unbookmark' : 'bookmark']({
+              userId: currentUserId,
+              postId: post.post_id,
+              postType: post.post_type || 'post',
+              context: { surface: 'home' },
+            });
+          }}
           disabled={isBookmarking}
           className={cn(
             'flex-1 gap-1.5 px-2',
