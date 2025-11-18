@@ -16,21 +16,21 @@ const HeroSection = () => {
   return (
     <>
       {/* Main Hero Section with Kente pattern */}
-      <PatternBackground pattern="kente" intensity="subtle" className="relative bg-gradient-to-br from-dna-terra-light/20 via-white to-dna-ochre-light/10 pt-2">
+      <PatternBackground pattern="kente" intensity="subtle" className="relative bg-gradient-to-br from-dna-terra-light/20 via-white to-dna-ochre-light/10">
         <div className="w-full mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 2xl:px-24">
-          <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[60vh] py-6">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center min-h-[60vh] py-8 lg:py-12">
             
             {/* Left Column, Main Content */}
-            <div className="space-y-6 lg:space-y-10">
+            <div className="space-y-4 lg:space-y-8">
               {/* Main Headline */}
               <div className="text-center lg:text-left">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-serif text-dna-forest mb-6 lg:mb-10 leading-[1.1] lg:leading-[1.05]">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-serif text-dna-forest mb-4 lg:mb-6 leading-[1.1] lg:leading-[1.05]">
                   Welcome to the
                   <br />
                   <span className="text-dna-copper">Diaspora Network of Africa</span>
                 </h1>
                 
-                <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-700 mb-8 lg:mb-12 leading-relaxed">
+                <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-gray-700 mb-6 lg:mb-8 leading-relaxed">
                   Connecting Africa's diaspora professionals for transformative global impact through 
                   <span className="font-semibold text-dna-emerald"> capacity building</span>, 
                   <span className="font-semibold text-dna-copper"> venture building</span>, and 
@@ -38,7 +38,7 @@ const HeroSection = () => {
                 </p>
 
                 {/* LinkedIn-style Auth Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center lg:justify-start mb-6 lg:mb-10">
+                <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center lg:justify-start mb-4 lg:mb-6">
                   <Button 
                     variant="outline"
                     size="lg" 
@@ -66,7 +66,7 @@ const HeroSection = () => {
                 </div>
 
                 {/* Legal Disclaimer */}
-                <p className="text-sm lg:text-lg text-gray-600 mb-6 text-center lg:text-left leading-relaxed">
+                <p className="text-xs sm:text-sm text-gray-600 text-center lg:text-left leading-relaxed">
                   By clicking Continue to join or sign in, you agree to DNA's{' '}
                   <a href="/legal/user-agreement" className="text-dna-copper hover:underline font-medium">
                     User Agreement
