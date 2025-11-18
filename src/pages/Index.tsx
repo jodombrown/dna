@@ -26,7 +26,7 @@ const Index = () => {
   }, [user, loading, navigate]);
 
   return (
-    <div className="min-h-screen bg-white pt-16">
+    <div className="min-h-screen bg-white">
 
       {/* Prototype Banner */}
       <PrototypeBanner />
