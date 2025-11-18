@@ -1,29 +1,42 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, MapPin, Search, Filter } from 'lucide-react';
+import { Calendar, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import LayoutController from '@/components/LayoutController';
-import { LeftNav } from '@/components/layout/columns/LeftNav';
-import { RightWidgets } from '@/components/layout/columns/RightWidgets';
-import { format } from 'date-fns';
+import ModernEventCard from '@/components/connect/ModernEventCard';
 
 const EventsIndex = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [formatFilter, setFormatFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [timeFilter, setTimeFilter] = useState<string>('upcoming');
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Initialize filters from URL params
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+  const [formatFilter, setFormatFilter] = useState(searchParams.get('format') || 'all');
+  const [typeFilter, setTypeFilter] = useState(searchParams.get('type') || 'all');
+  const [timeFilter, setTimeFilter] = useState(searchParams.get('time_range') || 'upcoming');
+  const [countryFilter, setCountryFilter] = useState(searchParams.get('country') || '');
+  const [categoryFilter, setCategoryFilter] = useState(searchParams.get('category') || '');
+
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set('search', searchTerm);
+    if (formatFilter !== 'all') params.set('format', formatFilter);
+    if (typeFilter !== 'all') params.set('type', typeFilter);
+    if (timeFilter !== 'upcoming') params.set('time_range', timeFilter);
+    if (countryFilter) params.set('country', countryFilter);
+    if (categoryFilter) params.set('category', categoryFilter);
+    setSearchParams(params, { replace: true });
+  }, [searchTerm, formatFilter, typeFilter, timeFilter, countryFilter, categoryFilter, setSearchParams]);
 
   // Fetch events with filters
   const { data: events = [], isLoading } = useQuery({
-    queryKey: ['events-index', searchTerm, formatFilter, typeFilter, timeFilter],
+    queryKey: ['events-index', searchTerm, formatFilter, typeFilter, timeFilter, countryFilter, categoryFilter],
     queryFn: async () => {
       let query = supabase
         .from('events')
@@ -40,13 +53,13 @@ const EventsIndex = () => {
         query = query
           .gte('start_time', now)
           .lte('start_time', endOfDay.toISOString());
-      } else if (timeFilter === 'week') {
+      } else if (timeFilter === 'this_week') {
         const weekFromNow = new Date();
         weekFromNow.setDate(weekFromNow.getDate() + 7);
         query = query
           .gte('start_time', now)
           .lte('start_time', weekFromNow.toISOString());
-      } else if (timeFilter === 'month') {
+      } else if (timeFilter === 'this_month') {
         const monthFromNow = new Date();
         monthFromNow.setMonth(monthFromNow.getMonth() + 1);
         query = query
@@ -56,14 +69,22 @@ const EventsIndex = () => {
 
       // Format filter
       if (formatFilter !== 'all') {
-        const formatValue = formatFilter as 'in_person' | 'virtual' | 'hybrid';
-        query = query.eq('format', formatValue);
+        query = query.eq('format', formatFilter as 'in_person' | 'virtual' | 'hybrid');
       }
 
       // Type filter
       if (typeFilter !== 'all') {
-        const typeValue = typeFilter as 'conference' | 'workshop' | 'meetup' | 'webinar' | 'networking' | 'social' | 'other';
-        query = query.eq('event_type', typeValue);
+        query = query.eq('event_type', typeFilter as 'conference' | 'workshop' | 'meetup' | 'webinar' | 'networking' | 'social' | 'other');
+      }
+
+      // Country filter
+      if (countryFilter) {
+        query = query.eq('location_country', countryFilter);
+      }
+
+      // Category filter
+      if (categoryFilter) {
+        query = query.contains('tags', [categoryFilter]);
       }
 
       // Search
@@ -78,171 +99,177 @@ const EventsIndex = () => {
         .limit(50);
 
       if (error) throw error;
-      
-      // Fetch organizer profiles separately
-      if (!data || data.length === 0) return [];
-      
-      const organizerIds = [...new Set(data.map(e => e.organizer_id))];
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, username, full_name, avatar_url')
-        .in('id', organizerIds);
-      
-      const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
-      
-      return data.map(event => ({
-        ...event,
-        organizer: profileMap.get(event.organizer_id)
-      }));
+      return data || [];
     },
   });
 
+  const clearFilters = () => {
+    setSearchTerm('');
+    setFormatFilter('all');
+    setTypeFilter('all');
+    setTimeFilter('upcoming');
+    setCountryFilter('');
+    setCategoryFilter('');
+  };
+
+  const activeFilterCount = [
+    searchTerm,
+    formatFilter !== 'all' ? formatFilter : null,
+    typeFilter !== 'all' ? typeFilter : null,
+    timeFilter !== 'upcoming' ? timeFilter : null,
+    countryFilter,
+    categoryFilter
+  ].filter(Boolean).length;
+
   return (
-    <LayoutController
-      leftColumn={<LeftNav />}
-      centerColumn={
-        <div className="container max-w-6xl mx-auto px-4 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2">Events</h1>
-            <p className="text-muted-foreground">Discover and join events in your community</p>
+    <div className="w-full h-full overflow-auto p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">All Events</h1>
+            <p className="text-muted-foreground">
+              Discover and join convenings across the diaspora network
+            </p>
+          </div>
+          <Button onClick={() => navigate('/dna/convene/events/new')}>
+            <Calendar className="w-4 h-4 mr-2" />
+            Host an Event
+          </Button>
+        </div>
+
+        {/* Filters */}
+        <Card className="p-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search events..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+
+            {/* Time Range */}
+            <Select value={timeFilter} onValueChange={setTimeFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Time range" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="upcoming">Upcoming</SelectItem>
+                <SelectItem value="today">Today</SelectItem>
+                <SelectItem value="this_week">This Week</SelectItem>
+                <SelectItem value="this_month">This Month</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Format */}
+            <Select value={formatFilter} onValueChange={setFormatFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Format" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Formats</SelectItem>
+                <SelectItem value="in_person">In-Person</SelectItem>
+                <SelectItem value="virtual">Virtual</SelectItem>
+                <SelectItem value="hybrid">Hybrid</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Event Type */}
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="conference">Conference</SelectItem>
+                <SelectItem value="workshop">Workshop</SelectItem>
+                <SelectItem value="meetup">Meetup</SelectItem>
+                <SelectItem value="webinar">Webinar</SelectItem>
+                <SelectItem value="networking">Networking</SelectItem>
+                <SelectItem value="social">Social</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Filters */}
-          <div className="mb-6 space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search events..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9"
-                  />
-                </div>
-              </div>
-              <Button variant="outline" onClick={() => navigate('/dna/convene/create')}>
-                Create Event
+          {/* Active Filters */}
+          {activeFilterCount > 0 && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-sm text-muted-foreground">{activeFilterCount} active filters:</span>
+              {searchTerm && (
+                <Badge variant="secondary" className="gap-1">
+                  Search: {searchTerm}
+                  <X className="w-3 h-3 cursor-pointer" onClick={() => setSearchTerm('')} />
+                </Badge>
+              )}
+              {formatFilter !== 'all' && (
+                <Badge variant="secondary" className="gap-1">
+                  {formatFilter}
+                  <X className="w-3 h-3 cursor-pointer" onClick={() => setFormatFilter('all')} />
+                </Badge>
+              )}
+              {typeFilter !== 'all' && (
+                <Badge variant="secondary" className="gap-1">
+                  {typeFilter}
+                  <X className="w-3 h-3 cursor-pointer" onClick={() => setTypeFilter('all')} />
+                </Badge>
+              )}
+              {timeFilter !== 'upcoming' && (
+                <Badge variant="secondary" className="gap-1">
+                  {timeFilter.replace('_', ' ')}
+                  <X className="w-3 h-3 cursor-pointer" onClick={() => setTimeFilter('upcoming')} />
+                </Badge>
+              )}
+              <Button variant="ghost" size="sm" onClick={clearFilters}>
+                Clear all
               </Button>
             </div>
+          )}
+        </Card>
 
-            <div className="flex flex-wrap gap-3">
-              <Select value={timeFilter} onValueChange={setTimeFilter}>
-                <SelectTrigger className="w-[160px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="upcoming">Upcoming</SelectItem>
-                  <SelectItem value="today">Today</SelectItem>
-                  <SelectItem value="week">This Week</SelectItem>
-                  <SelectItem value="month">This Month</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={formatFilter} onValueChange={setFormatFilter}>
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Format" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Formats</SelectItem>
-                  <SelectItem value="in_person">In Person</SelectItem>
-                  <SelectItem value="virtual">Virtual</SelectItem>
-                  <SelectItem value="hybrid">Hybrid</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-[150px]">
-                  <SelectValue placeholder="Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="conference">Conference</SelectItem>
-                  <SelectItem value="workshop">Workshop</SelectItem>
-                  <SelectItem value="meetup">Meetup</SelectItem>
-                  <SelectItem value="webinar">Webinar</SelectItem>
-                  <SelectItem value="networking">Networking</SelectItem>
-                  <SelectItem value="social">Social</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        {/* Results */}
+        {isLoading ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <Card key={i} className="p-6 animate-pulse">
+                <div className="h-4 bg-muted rounded w-3/4 mb-4" />
+                <div className="h-3 bg-muted rounded w-1/2" />
+              </Card>
+            ))}
           </div>
-
-          {/* Events Grid */}
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="text-muted-foreground">Loading events...</div>
-              </div>
+        ) : events.length === 0 ? (
+          <Card className="p-12 text-center">
+            <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-semibold mb-2">No events found</h3>
+            <p className="text-muted-foreground mb-4">
+              Try adjusting your filters or be the first to host an event.
+            </p>
+            <Button onClick={() => navigate('/dna/convene/events/new')}>
+              Host an Event
+            </Button>
+          </Card>
+        ) : (
+          <>
+            <div className="text-sm text-muted-foreground mb-2">
+              {events.length} event{events.length !== 1 ? 's' : ''} found
             </div>
-          ) : events.length === 0 ? (
-            <Card className="border-dashed">
-              <CardContent className="pt-12 pb-12 text-center">
-                <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-lg font-semibold mb-2">No events found</p>
-                <p className="text-muted-foreground mb-4">
-                  Try adjusting your filters or create a new event
-                </p>
-                <Button onClick={() => navigate('/dna/convene/create')}>
-                  Create Event
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {events.map((event: any) => (
-                <Card 
+                <ModernEventCard
                   key={event.id}
-                  className="hover:shadow-lg transition-shadow cursor-pointer"
-                  onClick={() => navigate(`/dna/convene/events/${event.id}`)}
-                >
-                  <CardHeader>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary" className="capitalize">
-                        {event.event_type}
-                      </Badge>
-                      <Badge variant="outline" className="capitalize">
-                        {event.format.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-lg line-clamp-2">{event.title}</CardTitle>
-                    <CardDescription className="line-clamp-2">
-                      {event.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Calendar className="h-4 w-4" />
-                        <span>{format(new Date(event.start_time), 'PPP')}</span>
-                      </div>
-                      {(event.location_city || event.location_country) && (
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <MapPin className="h-4 w-4" />
-                          <span>
-                            {[event.location_city, event.location_country].filter(Boolean).join(', ')}
-                          </span>
-                        </div>
-                      )}
-                      {event.organizer && (
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <span className="text-xs">
-                            by {event.organizer.full_name || event.organizer.username}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                  event={event}
+                  onEventClick={() => navigate(`/dna/convene/events/${event.id}`)}
+                  onRegisterEvent={() => navigate(`/dna/convene/events/${event.id}`)}
+                />
               ))}
             </div>
-          )}
-        </div>
-      }
-      rightColumn={<RightWidgets />}
-    />
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 
