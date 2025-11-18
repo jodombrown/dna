@@ -43,8 +43,8 @@ const MobileGrid: React.FC<MobileGridProps> = ({
     const gapMap = {
       none: 'gap-0',
       sm: 'gap-2 md:gap-3',
-      md: 'gap-3 md:gap-4 lg:gap-6',
-      lg: 'gap-4 md:gap-6 lg:gap-8',
+      md: 'gap-3 md:gap-4',
+      lg: 'gap-4 md:gap-6',
     };
     return gapMap[gap];
   };

@@ -36,8 +36,8 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
     
     const spacingMap = {
       sm: isMobile ? 'py-2' : 'py-3',
-      md: isMobile ? 'py-4' : 'py-6',
-      lg: isMobile ? 'py-6' : 'py-8',
+      md: isMobile ? 'py-3' : 'py-4',
+      lg: isMobile ? 'py-4' : 'py-6',
     };
     
     return spacingMap[spacing];

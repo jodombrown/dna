@@ -31,7 +31,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
       <div 
         className={cn(
           "min-h-screen w-full max-w-full bg-background",
-          "pt-16",
+          "pt-14 sm:pt-16",
           "transition-all duration-300 ease-in-out",
           "overflow-x-hidden"
         )}
