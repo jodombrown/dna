@@ -41,8 +41,8 @@ const MobileCard: React.FC<MobileCardProps> = ({
     const paddingMap = {
       none: '',
       sm: isMobile ? 'p-3' : 'p-4',
-      md: isMobile ? 'p-4' : 'p-6',
-      lg: isMobile ? 'p-6' : 'p-8',
+      md: isMobile ? 'p-3 sm:p-4' : 'p-5',
+      lg: isMobile ? 'p-4 sm:p-5' : 'p-6',
     };
     return paddingMap[padding];
   };
