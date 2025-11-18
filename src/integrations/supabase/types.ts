@@ -4481,7 +4481,7 @@ export type Database = {
             foreignKeyName: "posts_space_id_fkey"
             columns: ["space_id"]
             isOneToOne: false
-            referencedRelation: "spaces"
+            referencedRelation: "collaboration_spaces"
             referencedColumns: ["id"]
           },
         ]
