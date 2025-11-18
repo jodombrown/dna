@@ -12,9 +12,9 @@ const EventCategoriesSection: React.FC = () => {
   const navigate = useNavigate();
   
   const handleCategoryClick = (category: any) => {
-    // Navigate to category preview page for marketing
+    // Navigate to events page with category filter
     const categorySlug = category.id.toLowerCase();
-    navigate(`/convene/category/${categorySlug}`);
+    navigate(`/dna/convene/events?category=${categorySlug}`);
   };
 
   return (
