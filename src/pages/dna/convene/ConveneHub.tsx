@@ -3,6 +3,7 @@ import { WelcomeStrip } from '@/components/convene/WelcomeStrip';
 import { EventRecommendations } from '@/components/events/EventRecommendations';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
 import { YourCommunitiesSection } from '@/components/convene/YourCommunitiesSection';
+import { EventsNearYouSection } from '@/components/convene/EventsNearYouSection';
 import { FlagshipEventsSection } from '@/components/convene/FlagshipEventsSection';
 import EventCategoriesSection from '@/components/connect/EventCategoriesSection';
 
@@ -21,6 +22,9 @@ const ConveneHub = () => {
 
         {/* Your Communities & Their Upcoming Events */}
         <YourCommunitiesSection />
+
+        {/* Events Near You */}
+        <EventsNearYouSection />
 
         {/* Flagship DNA Events */}
         <FlagshipEventsSection />
