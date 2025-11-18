@@ -2374,6 +2374,7 @@ export type Database = {
           group_id: string | null
           id: string
           is_cancelled: boolean
+          is_flagship: boolean | null
           is_public: boolean
           location_address: string | null
           location_city: string | null
@@ -2403,6 +2404,7 @@ export type Database = {
           group_id?: string | null
           id?: string
           is_cancelled?: boolean
+          is_flagship?: boolean | null
           is_public?: boolean
           location_address?: string | null
           location_city?: string | null
@@ -2432,6 +2434,7 @@ export type Database = {
           group_id?: string | null
           id?: string
           is_cancelled?: boolean
+          is_flagship?: boolean | null
           is_public?: boolean
           location_address?: string | null
           location_city?: string | null
