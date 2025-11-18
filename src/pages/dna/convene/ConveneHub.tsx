@@ -1,7 +1,6 @@
 import React from 'react';
-import LayoutController from '@/components/LayoutController';
+import FullCanvasLayout from '@/layouts/FullCanvasLayout';
 import { ConveneLeftNav } from '@/components/convene/ConveneLeftNav';
-import { ConveneRightWidgets } from '@/components/convene/ConveneRightWidgets';
 import { WelcomeStrip } from '@/components/convene/WelcomeStrip';
 import { EventRecommendations } from '@/components/events/EventRecommendations';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
@@ -10,27 +9,29 @@ import EventCategoriesSection from '@/components/connect/EventCategoriesSection'
 
 const ConveneHub = () => {
   return (
-    <LayoutController
-      leftColumn={<ConveneLeftNav />}
-      rightColumn={<ConveneRightWidgets />}
-    >
-      <div className="space-y-8">
-        {/* Welcome Strip & Quick Actions */}
-        <WelcomeStrip />
+    <FullCanvasLayout
+      sidebar={<ConveneLeftNav />}
+      sidebarWidth="20%"
+      collapsible={true}
+      content={
+        <div className="space-y-8 max-w-7xl mx-auto">
+          {/* Welcome Strip & Quick Actions */}
+          <WelcomeStrip />
 
-        {/* For You – Suggested Events (AI/ADIN) */}
-        <EventRecommendations />
+          {/* For You – Suggested Events (AI/ADIN) */}
+          <EventRecommendations />
 
-        {/* Your Upcoming Events (Hosting & Attending) */}
-        <UpcomingEventsSection />
+          {/* Your Upcoming Events (Hosting & Attending) */}
+          <UpcomingEventsSection />
 
-        {/* Flagship DNA Events */}
-        <FlagshipEventsSection />
+          {/* Flagship DNA Events */}
+          <FlagshipEventsSection />
 
-        {/* Browse by Format & Theme */}
-        <EventCategoriesSection />
-      </div>
-    </LayoutController>
+          {/* Browse by Format & Theme */}
+          <EventCategoriesSection />
+        </div>
+      }
+    />
   );
 };
 
