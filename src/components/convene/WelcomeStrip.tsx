@@ -86,7 +86,7 @@ export const WelcomeStrip = () => {
             )}
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <Button
             onClick={() => navigate('/dna/convene/events/new')}
             className="bg-dna-emerald hover:bg-dna-forest"
