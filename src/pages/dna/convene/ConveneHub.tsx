@@ -11,35 +11,37 @@ import EventCategoriesSection from '@/components/connect/EventCategoriesSection'
 const ConveneHub = () => {
   return (
     <div className="w-full h-full overflow-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 p-6 max-w-[1600px] mx-auto">
-        {/* Main Content Column */}
-        <div className="space-y-8">
-          {/* Welcome Strip & Quick Actions */}
-          <WelcomeStrip />
+      <div className="container max-w-[1400px] mx-auto px-4 sm:px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
+          {/* Main Content Column */}
+          <div className="space-y-8 min-w-0">
+            {/* Welcome Strip & Quick Actions */}
+            <WelcomeStrip />
 
-          {/* For You – Suggested Events (AI/ADIN) */}
-          <EventRecommendations />
+            {/* For You – Suggested Events (AI/ADIN) */}
+            <EventRecommendations />
 
-          {/* Your Upcoming Events (Hosting & Attending) */}
-          <UpcomingEventsSection />
+            {/* Your Upcoming Events (Hosting & Attending) */}
+            <UpcomingEventsSection />
 
-          {/* Your Communities & Their Upcoming Events */}
-          <YourCommunitiesSection />
+            {/* Your Communities & Their Upcoming Events */}
+            <YourCommunitiesSection />
 
-          {/* Events Near You */}
-          <EventsNearYouSection />
+            {/* Events Near You */}
+            <EventsNearYouSection />
 
-          {/* Flagship DNA Events */}
-          <FlagshipEventsSection />
+            {/* Flagship DNA Events */}
+            <FlagshipEventsSection />
 
-          {/* Browse by Format & Theme */}
-          <EventCategoriesSection />
-        </div>
+            {/* Browse by Format & Theme */}
+            <EventCategoriesSection />
+          </div>
 
-        {/* Context Widgets Column (hidden on mobile, visible on desktop) */}
-        <div className="hidden lg:block">
-          <div className="sticky top-6">
-            <ConveneContextWidgets />
+          {/* Context Widgets Column (hidden on mobile, visible on desktop) */}
+          <div className="hidden lg:block min-w-0">
+            <div className="sticky top-6">
+              <ConveneContextWidgets />
+            </div>
           </div>
         </div>
       </div>
