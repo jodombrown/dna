@@ -1,12 +1,54 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Calendar, Rocket } from 'lucide-react';
+import { ArrowLeft, Calendar, Rocket, LogIn } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { BetaWaitlist } from '@/components/auth/BetaWaitlist';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 const Auth = () => {
   useScrollToTop();
+  const navigate = useNavigate();
+  const { signIn } = useAuth();
+  const { toast } = useToast();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const { error } = await signIn(email, password);
+      
+      if (error) {
+        toast({
+          title: 'Sign in failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Welcome back!',
+          description: 'Successfully signed in.',
+        });
+        navigate('/');
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'An unexpected error occurred',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10 flex items-center justify-center px-3 sm:px-4 py-6">
@@ -59,10 +101,52 @@ const Auth = () => {
           </CardContent>
         </Card>
 
-        {/* Footer Note */}
-        <p className="text-xs text-center text-muted-foreground px-4">
-          Already have early access? Check your email for your invitation link.
-        </p>
+        {/* Existing Users Sign In */}
+        <Card className="border-dna-copper/30">
+          <CardHeader className="text-center pb-3">
+            <div className="mx-auto mb-3 w-12 h-12 rounded-full bg-gradient-to-br from-dna-copper to-dna-emerald flex items-center justify-center">
+              <LogIn className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-xl font-bold text-dna-forest">
+              Existing User Sign In
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Signing in...' : 'Sign In'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
