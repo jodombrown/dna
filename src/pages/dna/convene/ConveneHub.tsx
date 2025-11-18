@@ -7,6 +7,7 @@ import { EventsNearYouSection } from '@/components/convene/EventsNearYouSection'
 import { FlagshipEventsSection } from '@/components/convene/FlagshipEventsSection';
 import { ConveneContextWidgets } from '@/components/convene/ConveneContextWidgets';
 import EventCategoriesSection from '@/components/connect/EventCategoriesSection';
+import { CreateLeadSection } from '@/components/convene/CreateLeadSection';
 
 const ConveneHub = () => {
   return (
@@ -35,6 +36,9 @@ const ConveneHub = () => {
 
             {/* Browse by Format & Theme */}
             <EventCategoriesSection />
+
+            {/* Create & Lead - Empty State Leadership Nudges */}
+            <CreateLeadSection />
           </div>
 
           {/* Context Widgets Column (hidden on mobile, visible on desktop) */}

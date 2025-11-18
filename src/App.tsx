@@ -399,7 +399,11 @@ function App() {
                <Route path="/dna/space/:slug" element={<Navigate to="/dna/collaborate/spaces/:slug" replace />} />
                
                <Route path="/dna/connect" element={<Navigate to="/dna/connect/network" replace />} />
-              <Route path="/dna/convene" element={<Navigate to="/dna/convene/events" replace />} />
+              <Route path="/dna/convene" element={
+                <OnboardingGuard>
+                  <ConveneHub />
+                </OnboardingGuard>
+              } />
               
               {/* ========== NOTIFICATIONS & NUDGES ========== */}
               <Route path="/dna/notifications" element={

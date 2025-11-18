@@ -12,8 +12,6 @@ export const FlagshipEventsSection = () => {
   const { data: flagshipEvents = [], isLoading } = useQuery({
     queryKey: ['flagship-events'],
     queryFn: async () => {
-      // For now, we'll fetch featured events as "flagship"
-      // In the future, add is_flagship boolean to events table
       const { data, error } = await supabase
         .from('events')
         .select(`
@@ -28,6 +26,7 @@ export const FlagshipEventsSection = () => {
           cover_image_url
         `)
         .eq('is_cancelled', false)
+        .eq('is_flagship', true)
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
         .limit(6);
