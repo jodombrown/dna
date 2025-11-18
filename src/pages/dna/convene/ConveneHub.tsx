@@ -2,6 +2,7 @@ import React from 'react';
 import { WelcomeStrip } from '@/components/convene/WelcomeStrip';
 import { EventRecommendations } from '@/components/events/EventRecommendations';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
+import { YourCommunitiesSection } from '@/components/convene/YourCommunitiesSection';
 import { FlagshipEventsSection } from '@/components/convene/FlagshipEventsSection';
 import EventCategoriesSection from '@/components/connect/EventCategoriesSection';
 
@@ -17,6 +18,9 @@ const ConveneHub = () => {
 
         {/* Your Upcoming Events (Hosting & Attending) */}
         <UpcomingEventsSection />
+
+        {/* Your Communities & Their Upcoming Events */}
+        <YourCommunitiesSection />
 
         {/* Flagship DNA Events */}
         <FlagshipEventsSection />
