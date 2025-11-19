@@ -60,6 +60,8 @@ import FeaturedCalendarsPage from "./pages/FeaturedCalendarsPage";
 import LocalEventsPage from "./pages/LocalEventsPage";
 import FactSheetPage from "./pages/FactSheetPage";
 import PitchDeck from "./pages/PitchDeck";
+import FeaturesHub from "./pages/documentation/FeaturesHub";
+import FeatureDetail from "./pages/documentation/FeatureDetail";
 
 // Convene M1-M3 pages
 import ConveneHub from "./pages/dna/convene/ConveneHub";
@@ -196,6 +198,10 @@ function App() {
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
               <Route path="/fact-sheet" element={<FactSheetPage />} />
               <Route path="/pitch-deck" element={<PitchDeck />} />
+              
+              {/* Documentation Routes */}
+              <Route path="/documentation/features" element={<FeaturesHub />} />
+              <Route path="/documentation/features/:slug" element={<FeatureDetail />} />
               
               {/* Redirect old /dna/me to user's profile */}
               <Route path="/dna/me" element={<Navigate to="/dna/feed" replace />} />
