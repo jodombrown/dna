@@ -431,4 +431,139 @@ export const featureContentBySlug: Record<string, FeatureContent> = {
       },
     ],
   },
+  contribute: {
+    hero: {
+      title: "DNA | CONTRIBUTE",
+      oneLiner:
+        "CONTRIBUTE matches skills, resources, and support to real needs across the diaspora — turning goodwill into meaningful action.",
+      whoItsFor:
+        "Members, supporters, experts, partners, funders, and anyone who wants to offer something — time, knowledge, resources, or access — toward real opportunities and challenges.",
+    },
+    whatItIs:
+      "People are eager to help. Organizations have needs. Projects get stuck because the right support isn't visible or accessible. CONTRIBUTE fixes that. CONTRIBUTE is DNA's matching layer — where needs are posted, offers are made, and contributions turn into momentum. Whether someone needs design help for a pitch deck, mentorship for a founder, support for a community event, or resources for a project, CONTRIBUTE creates the pathway. Every contribution leads to progress. Every offer builds trust. Every need shared strengthens the ecosystem.",
+    whatYouCanDo: [
+      "Post needs for skills, mentorship, funding, tools, partnerships, or support.",
+      "Offer what they have — expertise, time, resources, introductions, or access.",
+      "Respond to needs inside spaces and across the platform.",
+      "Track and validate contributions, earning recognition and badges.",
+      "See where they've made an impact through contribution history.",
+      "Find opportunities aligned with their skills, experience, or interests.",
+      "Activate Projects & Spaces by linking needs to specific initiatives.",
+      "Mobilize support during events, launches, or community moments.",
+    ],
+    howItWorks: [
+      "Needs are attached to Spaces, so context is clear and organized.",
+      "Offers can be made by anyone, with safety checks and rate limits to keep things respectful.",
+      "Validation unlocks badges, giving contributors recognition from Project Leads.",
+      "ADIN will personalize needs and opportunities, surfacing relevant ways to help.",
+      "Safety rules protect against spam, misuse, or overwhelming creators with offers.",
+      "Impact is visible, helping contributors build reputation and helping Projects stay resourced.",
+    ],
+    stepByStep: [
+      {
+        title: "If you're looking to offer value:",
+        steps: [
+          "Browse needs across spaces or check recommended opportunities.",
+          "Use filters like 'skills,' 'location,' or 'project type.'",
+          "Make an offer that clearly describes how you can help.",
+          "If accepted, follow up with the project lead via messages or a working session.",
+        ],
+      },
+      {
+        title: "If you're leading a project and need support:",
+        steps: [
+          "Post a clear need inside your space — short, specific, actionable.",
+          "Tag it with the right categories so the right contributors find it.",
+          "Review offers and accept the ones that match your priorities.",
+          "Validate contributions when completed so supporters earn recognition.",
+          "Share the story of what their contribution helped unlock.",
+        ],
+      },
+      {
+        title: "If you want to build long-term contribution habits:",
+        steps: [
+          "Complete your profile, especially skills and focus areas.",
+          "Follow spaces or topics that matter to you.",
+          "Check CONTRIBUTE weekly for new needs that match your strengths.",
+          "Build a streak — consistent contributions earn badges and visibility.",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're a UX designer in Johannesburg",
+        description:
+          "You browse 'Design' needs and find a Kenyan founder needing help with onboarding screens. You offer support, jump on a quick call, deliver a mockup, and receive a validated contribution badge. Your contribution gets featured in CONVEY, inspiring others to help too.",
+      },
+      {
+        title: "You're running a community project in Accra",
+        description:
+          "You need volunteers for a youth workshop. You post three needs: facilitator, photographer, and logistics support. Within days, diaspora members from the UK and Ghana offer help. The event runs smoothly — and contributors get recognized inside your space.",
+      },
+      {
+        title: "You're a mentor in Atlanta",
+        description:
+          "You filter needs by 'Mentorship' and 'Startups.' You find a team in Kigali preparing for a pitch competition. Your one-hour coaching session leads to major improvements — and the team wins second place.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "Spaces",
+        description: "Needs and offers live inside communities and project hubs.",
+        icon: FolderOpen,
+      },
+      {
+        name: "Tasks (COLLABORATE)",
+        description: "Some contributions can become tasks.",
+        icon: FolderOpen,
+      },
+      {
+        name: "Stories (CONVEY)",
+        description: "Showcasing contributions creates network-wide momentum.",
+        icon: Megaphone,
+      },
+      {
+        name: "CONNECT",
+        description: "Helps identify people who may be the right match for your need.",
+        icon: Users2,
+      },
+      {
+        name: "Events (CONVENE)",
+        description: "Events often generate opportunities for contributions or volunteering.",
+        icon: Calendar,
+      },
+    ],
+    faqs: [
+      {
+        question: "What counts as a 'need'?",
+        answer:
+          "Anything a project or space genuinely requires — skills, mentorship, resources, volunteers, or support.",
+      },
+      {
+        question: "Can anyone post a need?",
+        answer:
+          "Only Space Leads or authorized project members. This keeps things organized and reduces spam.",
+      },
+      {
+        question: "Can anyone offer support?",
+        answer:
+          "Yes — as long as they follow community guidelines.",
+      },
+      {
+        question: "What is a validated contribution?",
+        answer:
+          "When a project lead confirms that a contributor's offer was completed, creating a badge and recording the moment in your contribution history.",
+      },
+      {
+        question: "What about financial contributions or payments?",
+        answer:
+          "This is coming in a future phase. The current version focuses on skills, time, and resource support.",
+      },
+      {
+        question: "How do I track my impact?",
+        answer:
+          "Your profile shows all past contributions, badges, and validated support you've offered.",
+      },
+    ],
+  },
 };
