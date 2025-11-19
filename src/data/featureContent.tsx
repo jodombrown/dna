@@ -707,4 +707,146 @@ export const featureContentBySlug: Record<string, FeatureContent> = {
       },
     ],
   },
+  "connect-feed": {
+    hero: {
+      title: "CONNECT Feed",
+      oneLiner:
+        "Your personalized home feed showing activity from your network, spaces, events, and contributions across DNA.",
+      whoItsFor:
+        "Every member. Whether you're new, exploring, or deeply active — the CONNECT Feed helps you see what's happening and where to plug in next.",
+    },
+    whatItIs:
+      "Most people arrive on DNA with a simple question: 'Where should I focus? What's happening right now?' The CONNECT Feed answers that instantly. It gathers activity from people you follow, spaces you've joined, events related to your interests, projects and tasks you're connected to, contributions across your network, stories from CONVEY, and updates from ADIN recommendations. It's your personalized doorway into opportunity, community, and momentum. If CONNECT is 'who's in the network,' the CONNECT Feed is 'what your network is doing.'",
+    whatYouCanDo: [
+      "See what your network is up to — new connections, updates, events, stories.",
+      "Browse recommended content based on interests, skills, and activity.",
+      "Jump into events directly from the feed.",
+      "Join spaces you discover through posts.",
+      "Respond to contributions or needs you see.",
+      "Follow new members, organizers, and builders.",
+      "Share updates through the Universal Composer.",
+      "React and comment, building relationships and visibility.",
+    ],
+    howItWorks: [
+      "ADIN curates what you see based on your profile, history, and behavior.",
+      "Content from spaces/events you follow is boosted, so you don't miss key moments.",
+      "Posts from people you've connected with float to the top.",
+      "New member introductions are shown sparingly, so the feed doesn't become noisy.",
+      "Stories, contributions, and events all flow into one consistent timeline.",
+      "Safety filters remove blocked-content visibility, keeping the environment healthy.",
+      "Activity you engage with teaches the system what to show more of.",
+    ],
+    stepByStep: [
+      {
+        title: "If you're new to DNA:",
+        steps: [
+          "Scroll your feed for a few minutes — get a feel for the rhythm.",
+          "Tap into a story that interests you.",
+          "Follow the person or space behind it.",
+          "Join one event or space — just one is enough to start momentum.",
+          "Post your introduction or your first update.",
+        ],
+      },
+      {
+        title: "If you're building a project:",
+        steps: [
+          "Share weekly updates through the feed.",
+          "Highlight tasks completed or progress made.",
+          "Post calls for contributors and volunteers.",
+          "Engage with other builders to grow your visibility.",
+          "Use reactions and comments to spark conversations.",
+        ],
+      },
+      {
+        title: "If you're exploring opportunities:",
+        steps: [
+          "Follow people and spaces that match your skills or heritage.",
+          "Browse recommended events and join at least one.",
+          "Look for needs posted in CONTRIBUTE and see where you can plug in.",
+          "Use your feed daily — it keeps your finger on the pulse.",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're a data analyst in Paris",
+        description:
+          "Your feed shows a story from a diaspora health-tech space. You follow the organizer, see their upcoming working session, and join. One comment leads to a conversation — and eventually to a role as a volunteer data advisor.",
+      },
+      {
+        title: "You're a founder in Nairobi",
+        description:
+          "Your updates about your prototype show up in the feed. A UX designer in Lagos comments with suggestions. A mentor in London reaches out. Within days, you have a micro-team supporting your next milestone.",
+      },
+      {
+        title: "You're exploring creative communities",
+        description:
+          "You see event recaps in your feed — photos, quotes, highlights. You follow the space, join the next meetup, and meet collaborators. Your feed slowly becomes curated around your creative journey.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "CONVEY",
+        description: "Stories and updates appear directly in the feed.",
+        icon: Megaphone,
+      },
+      {
+        name: "CONVENE Events",
+        description: "Events you follow, join, or might like.",
+        icon: Calendar,
+      },
+      {
+        name: "COLLABORATE Spaces & Projects",
+        description: "Small wins and big milestones.",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONTRIBUTE",
+        description: "Needs and validated contributions.",
+        icon: Heart,
+      },
+      {
+        name: "CONNECT",
+        description: "New members, connection activity, recommendations.",
+        icon: Users2,
+      },
+      {
+        name: "ADIN",
+        description: "Personalization in the background.",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "Is my feed the same as everyone else's?",
+        answer:
+          "No — your feed is completely personalized based on your activity, profile, and network.",
+      },
+      {
+        question: "Can I control what I see?",
+        answer:
+          "You can follow or unfollow people and spaces at any time. ADIN will adjust what you see.",
+      },
+      {
+        question: "How often does the feed update?",
+        answer:
+          "Real-time or near real-time, depending on the activity.",
+      },
+      {
+        question: "Can I post directly from the feed?",
+        answer:
+          "Yes — the Universal Composer lets you share updates, stories, or links in seconds.",
+      },
+      {
+        question: "What if I only want to see updates from my spaces?",
+        answer:
+          "You can filter your feed by 'Spaces,' 'Events,' 'Stories,' or 'All.'",
+      },
+      {
+        question: "Is the feed public?",
+        answer:
+          "No — your feed is personalized, and visibility respects space privacy settings.",
+      },
+    ],
+  },
 };
