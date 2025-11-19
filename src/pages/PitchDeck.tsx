@@ -566,58 +566,7 @@ const PitchDeck = () => {
   ];
 
   const handlePrint = () => {
-    // Save current slide
-    const originalSlide = currentSlide;
-    
-    // Set to first slide and trigger print after a brief delay to ensure rendering
-    setCurrentSlide(0);
-    
-    // Add print styles for a full-page 8.5 x 11 landscape layout
-    const style = document.createElement('style');
-    style.id = 'pitch-deck-print-styles';
-    style.innerHTML = `
-      @page {
-        size: 11in 8.5in;
-        margin: 0.5in;
-      }
-      @media print {
-        html, body {
-          width: 11in;
-          height: 8.5in;
-          margin: 0;
-          padding: 0;
-        }
-        body {
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
-        .print\\:hidden {
-          display: none !important;
-        }
-        #pitch-deck-print-root {
-          background: white !important;
-        }
-        #pitch-deck-print-root .deck-slide {
-          width: 100% !important;
-          height: auto !important;
-          page-break-after: always !important;
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-    
-    setTimeout(() => {
-      window.print();
-      
-      // Clean up and restore
-      setTimeout(() => {
-        const styleEl = document.getElementById('pitch-deck-print-styles');
-        if (styleEl) styleEl.remove();
-        setCurrentSlide(originalSlide);
-      }, 100);
-    }, 300);
+    window.print();
   };
 
   const handleShare = async () => {
@@ -788,13 +737,13 @@ const PitchDeck = () => {
             ))}
           </div>
         ) : (
-          // Desktop: Horizontal scroll
+          // Desktop: Horizontal scroll with native scroll support
           <div
             ref={scrollContainerRef}
-            className="flex overflow-x-auto snap-x snap-mandatory h-[calc(100vh-5rem)] scroll-smooth print:block print:overflow-visible print:h-auto"
+            className="flex overflow-x-scroll snap-x snap-mandatory h-[calc(100vh-5rem)] scroll-smooth"
             style={{ 
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none',
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'hsl(var(--muted-foreground)) transparent',
             }}
             onScroll={(e) => {
               const slideWidth = e.currentTarget.offsetWidth;
@@ -808,9 +757,9 @@ const PitchDeck = () => {
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className="deck-slide min-w-full h-full snap-center flex items-center justify-center px-8 py-4 print:min-w-0 print:w-full print:h-auto print:page-break-after-always print:snap-none"
+                className="min-w-full h-full snap-center flex items-center justify-center px-8 py-4"
               >
-                <div className="w-full aspect-video max-h-full bg-card rounded-lg shadow-2xl p-8 md:p-12 flex flex-col overflow-hidden relative print:shadow-none print:max-h-none print:h-screen print:page-break-inside-avoid">
+                <div className="w-full aspect-video max-h-full bg-card rounded-lg shadow-2xl p-8 md:p-12 flex flex-col overflow-hidden relative">
                   {slide.showHeader && (
                     <div className="flex items-start justify-between mb-8 animate-fade-in">
                       <div className="flex-1">
@@ -861,18 +810,68 @@ const PitchDeck = () => {
       <style>{`
         @media print {
           @page {
-            size: landscape;
-            margin: 0;
+            size: 11in 8.5in landscape;
+            margin: 0.5in;
           }
-          body {
+          
+          body, html {
             print-color-adjust: exact;
             -webkit-print-color-adjust: exact;
           }
+          
+          /* Hide navigation and controls */
+          .print\\:hidden {
+            display: none !important;
+          }
+          
+          /* Make container block for printing */
+          .overflow-x-scroll {
+            display: block !important;
+            overflow: visible !important;
+            height: auto !important;
+          }
+          
+          /* Each slide becomes a page */
+          .snap-center {
+            page-break-after: always;
+            page-break-inside: avoid;
+            min-width: 100% !important;
+            height: 7.5in !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+          
+          /* Last slide shouldn't force a blank page */
+          .snap-center:last-child {
+            page-break-after: auto;
+          }
+          
+          /* Slide content should fill the page properly */
+          .snap-center > div {
+            width: 10in !important;
+            height: 7in !important;
+            max-height: none !important;
+            aspect-ratio: auto !important;
+          }
         }
         
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .overflow-x-auto::-webkit-scrollbar {
-          display: none;
+        /* Scrollbar styling */
+        .overflow-x-scroll::-webkit-scrollbar {
+          height: 8px;
+        }
+        
+        .overflow-x-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        
+        .overflow-x-scroll::-webkit-scrollbar-thumb {
+          background: hsl(var(--muted-foreground) / 0.3);
+          border-radius: 4px;
+        }
+        
+        .overflow-x-scroll::-webkit-scrollbar-thumb:hover {
+          background: hsl(var(--muted-foreground) / 0.5);
         }
       `}</style>
     </div>

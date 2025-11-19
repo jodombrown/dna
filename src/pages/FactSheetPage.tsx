@@ -23,60 +23,7 @@ const FactSheetPage = () => {
   });
 
   const handlePrint = () => {
-    // Add print styles for a full-page 8.5 x 11 portrait layout
-    const style = document.createElement('style');
-    style.id = 'print-all-content';
-    style.innerHTML = `
-      @page {
-        size: 8.5in 11in;
-        margin: 0.5in;
-      }
-      @media print {
-        html, body {
-          width: 8.5in;
-          height: 11in;
-          margin: 0;
-          padding: 0;
-        }
-        body {
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
-        .print\\:hidden {
-          display: none !important;
-        }
-        #fact-sheet-print-root {
-          background: white !important;
-        }
-        #fact-sheet-print-root .container,
-        #fact-sheet-print-root .max-w-5xl,
-        #fact-sheet-print-root .max-w-3xl {
-          max-width: 100% !important;
-          width: 100% !important;
-        }
-        /* Ensure all sections print cleanly */
-        #fact-sheet-print-root .fact-sheet-section {
-          page-break-inside: avoid !important;
-          break-inside: avoid !important;
-          display: block !important;
-        }
-        /* Add page breaks between major sections */
-        #fact-sheet-print-root .fact-sheet-divider {
-          page-break-after: always !important;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-    
-    setTimeout(() => {
-      window.print();
-      
-      // Clean up after print
-      setTimeout(() => {
-        const styleEl = document.getElementById('print-all-content');
-        if (styleEl) styleEl.remove();
-      }, 100);
-    }, 100);
+    window.print();
   };
 
   const handleShare = async () => {
@@ -192,10 +139,10 @@ const FactSheetPage = () => {
           </div>
         </Card>
 
-        <div className="fact-sheet-divider" />
+        <Separator className="mb-12 print:hidden" />
 
         {/* Who We Are */}
-        <section className="fact-sheet-section mb-12">
+        <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Users className="h-8 w-8 text-dna-emerald" />
             Who We Are
@@ -231,10 +178,10 @@ const FactSheetPage = () => {
           </Card>
         </section>
 
-        <div className="fact-sheet-divider" />
+        <Separator className="mb-12 print:hidden" />
 
         {/* What We Do - The 5 Cs */}
-        <section className="fact-sheet-section mb-12">
+        <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Target className="h-8 w-8 text-dna-copper" />
             Our Methodology: The 5 Cs Cycle
@@ -313,10 +260,10 @@ const FactSheetPage = () => {
           </Card>
         </section>
 
-        <div className="fact-sheet-divider" />
+        <Separator className="mb-12 print:hidden" />
 
         {/* Why It Matters */}
-        <section className="fact-sheet-section mb-12">
+        <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Globe className="h-8 w-8 text-dna-gold" />
             Why It Matters: The Opportunity
@@ -352,10 +299,10 @@ const FactSheetPage = () => {
           </div>
         </section>
 
-        <div className="fact-sheet-divider" />
+        <Separator className="mb-12 print:hidden" />
 
         {/* How We're Different */}
-        <section className="fact-sheet-section mb-12">
+        <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <TrendingUp className="h-8 w-8 text-dna-emerald" />
             How We're Different: Our Positioning
@@ -402,10 +349,10 @@ const FactSheetPage = () => {
           </Card>
         </section>
 
-        <div className="fact-sheet-divider" />
+        <Separator className="mb-12 print:hidden" />
 
         {/* Call to Action for Different Stakeholders */}
-        <section className="fact-sheet-section mb-12">
+        <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Heart className="h-8 w-8 text-dna-copper" />
             Join the Movement
