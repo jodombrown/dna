@@ -2198,4 +2198,178 @@ It's not about pinging you constantly. It's about helping you stay connected to 
       },
     ],
   },
+  "search-and-discovery": {
+    hero: {
+      title: "Search & Discovery",
+      oneLiner:
+        "Search & Discovery helps you find people, communities, events, opportunities, and stories across the entire African diaspora — all from one intelligent interface.",
+      whoItsFor:
+        "Everyone. New members looking for their people, active contributors searching for opportunities, founders exploring collaborators, or community builders looking for talent.",
+    },
+    whatItIs: `When people join DNA, they're stepping into a global ecosystem. But without a clear way to explore it, they can feel lost.
+
+**Search & Discovery fixes that.**
+
+It's the universal window into the entire DNA world — people, spaces, events, tasks, needs, offers, and stories — all organized, searchable, and relevant.
+
+Instead of "browsing everything," users explore what matters to them.`,
+    whatYouCanDo: [
+      "Members — By name, skills, location, heritage, focus areas, industry, or space/project involvement",
+      "Spaces — Communities by theme, Regional or interest-driven hubs, Program or project spaces, Public or recommended groups",
+      "Events — Virtual, hybrid, or in-person; By category (tech, culture, creative, climate, policy); By date, location, or popularity; Recommended gatherings",
+      "Opportunities — Needs requiring specific skills, Offers you can support, Tasks with open ownership, Volunteer or mentorship moments",
+      "Stories & Updates — Space highlights, Project progress, Member stories, Regional or thematic content",
+    ],
+    howItWorks: [
+      "Smart search across multiple data types — Members, spaces, events, needs, tasks, stories — all indexed",
+      "Contextual suggestions — If you search 'Ghana,' you might see: Spaces with Ghana focus, Members with Ghanaian heritage, Events happening in Ghana, Stories tagged 'Ghana'",
+      "Personalized ranking — ADIN rearranges results based on: Your profile, spaces, interests, past activity, and contributions",
+      "Filters for precision — Skills, sector, location, format, tags, experience level, etc.",
+      "Trending sections — What's rising across the diaspora — curated, not chaotic",
+      "Respectful privacy — Private spaces don't appear in search results; Blocked users are excluded",
+    ],
+    stepByStep: [
+      {
+        title: "If you're new to DNA",
+        steps: [
+          "Search your heritage — 'Nigerian,' 'Somali,' 'Haitian,' 'Cape Verdean,' etc.",
+          "Explore Spaces tied to your identity or interests",
+          "Follow members whose stories inspire you",
+          "Attend one recommended event",
+          "Offer support where your skills match a need",
+        ],
+      },
+      {
+        title: "If you're looking for collaborators",
+        steps: [
+          "Search by skill — 'developer,' 'writer,' 'data,' 'designer'",
+          "Filter by region or experience",
+          "Message people directly or invite them into your Space",
+          "Use ADIN's suggested collaborators",
+          "Explore Spaces where builders gather",
+        ],
+      },
+      {
+        title: "If you're exploring opportunities",
+        steps: [
+          "Search for needs in your skill areas",
+          "Filter by 'urgent,' 'time needed,' or 'remote-friendly'",
+          "Make offers and follow up via Messaging",
+          "Track your contributions through your profile",
+        ],
+      },
+      {
+        title: "If you're leading a Space",
+        steps: [
+          "Use Search to find potential members",
+          "Invite collaborators across regions",
+          "Discover events to recommend to your community",
+          "Spot stories you can amplify inside your Space",
+        ],
+      },
+      {
+        title: "If you're running a project",
+        steps: [
+          "Search for people with complementary abilities",
+          "Look for contributors in nearby or diaspora regions",
+          "Use search filters to find mentors or advisors",
+          "Explore similar projects for inspiration",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're a founder in Johannesburg",
+        description:
+          "You search 'React developer.' ADIN surfaces members in Lagos, Nairobi, and Accra. You message two of them — one joins your MVP project.",
+      },
+      {
+        title: "You're a creative in Toronto",
+        description:
+          "You search 'Afrofuturism.' You discover a global creative Space, join it, and attend an upcoming virtual meetup. That meetup leads to collaboration on a digital art series.",
+      },
+      {
+        title: "You're a student in Paris curious about climate innovation",
+        description:
+          "You search 'climate.' You find a Space, a regional event, and two active projects. Within a week, you're contributing to a research task.",
+      },
+      {
+        title: "You're hosting a diaspora community event",
+        description:
+          "You search for members in your city. You gather a list and invite them — turnout doubles.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "CONNECT",
+        description: "Member discovery",
+        icon: Users2,
+      },
+      {
+        name: "Spaces",
+        description: "Finding communities and teams",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONVENE",
+        description: "Event discovery",
+        icon: Calendar,
+      },
+      {
+        name: "COLLABORATE",
+        description: "Finding collaborators & experts",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONTRIBUTE",
+        description: "Matching needs and offers",
+        icon: Heart,
+      },
+      {
+        name: "CONVEY",
+        description: "Surfacing stories and updates",
+        icon: Megaphone,
+      },
+      {
+        name: "CONNECT Feed",
+        description: "Personalized follow suggestions",
+        icon: Users2,
+      },
+      {
+        name: "ADIN",
+        description: "Ranking and suggestions layer",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "Does search show everything?",
+        answer:
+          "No — only public information. Private spaces and blocked users are excluded.",
+      },
+      {
+        question: "How does ADIN influence search results?",
+        answer:
+          "It reorders results based on what's relevant to your profile, interests, and past actions.",
+      },
+      {
+        question: "Can I search by region?",
+        answer: "Yes — city, country, region, or diaspora community.",
+      },
+      {
+        question: "Can I filter results?",
+        answer:
+          "Absolutely — skills, roles, interests, event type, tags, and more.",
+      },
+      {
+        question: "Does search work across all content types?",
+        answer: "Yes — members, spaces, events, needs, tasks, and stories.",
+      },
+      {
+        question: "Will search improve over time?",
+        answer:
+          "Yes — ADIN Phase 2 includes even deeper personalization and context awareness.",
+      },
+    ],
+  },
 };
