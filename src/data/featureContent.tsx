@@ -298,125 +298,148 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
     whatItIs:
       "Sometimes people are ready, inspired, or curious… but they don't know where to show up. CONVENE solves that by giving the global African diaspora a place to gather at scale. CONVENE helps you host and discover gatherings that move people from interest → action. Whether it's a virtual meetup, a workshop, a panel, a festival, or a project sprint, you can create the space — and the network will find it. These gatherings become the beats of momentum inside DNA's mobilization engine. Every event is fuel for connection, collaboration, and contribution.",
     whatYouCanDo: [
-      "Host events for your community, project, city, or ecosystem.",
-      "Discover gatherings across regions, topics, and industries.",
-      "Filter by format — virtual, in-person, hybrid.",
-      "Follow organizers and stay updated on new events they create.",
-      "RSVP and check in, so your presence strengthens future recommendations.",
-      "Learn what's happening across the diaspora through curated highlights and categories.",
-      "Create recurring gatherings (weekly workshops, monthly meetups, annual conferences).",
-      "Build momentum around a space or project by inviting members to join your event directly.",
+      "Host gatherings for your Space, project, or community",
+      "Discover events across regions, industries, and interests",
+      "Use filters to find what matters: Virtual, In-Person, Hybrid",
+      "Explore categories and themes like climate, creativity, startups, culture",
+      "RSVP and check in, making your participation visible",
+      "Follow organizers so you don't miss new events",
+      "Join working sessions tied to COLLABORATE tasks",
+      "Share recaps and highlights through CONVEY",
     ],
     howItWorks: [
-      "Events are indexed globally, so your meetup in Nairobi can be discovered just as easily by someone in Toronto or Kigali.",
-      "We prioritize events that match your interests, based on your heritage, skills, focus areas, spaces you joined, and people you follow.",
-      "Organizers with strong track records get elevated, making it easier for the community to find quality gatherings.",
-      "Safety is always on: blocked users won't see or interact with your events, and organizers control privacy (open, space-only, invite-only).",
-      "As ADIN grows, CONVENE becomes even more personalized — surfacing events that truly match your goals.",
+      "All events belong to a Space, so context and community are always clear",
+      "Organizers choose visibility: Public, Private, or Invite-Only",
+      "ADIN personalizes recommendations, showing you events aligned to your interests",
+      "Event activity flows into the CONNECT Feed, increasing visibility",
+      "Event tags and focus areas help discovery, especially across regions",
+      "Recaps push into CONVEY, keeping momentum going",
+      "Check-ins matter — they help ADIN improve recommendations over time",
     ],
     stepByStep: [
       {
-        title: "If you're new to DNA:",
+        title: "If you're attending",
         steps: [
-          "Browse the Events Hub to see what people are organizing across the diaspora.",
-          "Use filters like 'virtual,' 'career,' or 'creative industries.'",
-          "RSVP to an event just to experience how gatherings work on DNA.",
-          "Follow an organizer or space you enjoy so you don't miss future events.",
+          "Scroll the Events Hub to see what's happening this week",
+          "Filter by 'Virtual' if you want global access",
+          "RSVP to at least one event — movement starts with showing up",
+          "Engage during the event or follow up with organizers",
+          "Check out related Spaces or projects afterward",
+          "Look for recap stories in CONVEY",
         ],
       },
       {
-        title: "If you're a community builder or organizer:",
+        title: "If you're organizing",
         steps: [
-          "Create your first event — even something small like a 30-minute meetup.",
-          "Select the right format: virtual, hybrid, or in-person.",
-          "Promote it through CONNECT by sending invites to your network.",
-          "Engage after the event: share updates, post insights, or invite new people to your space.",
+          "Choose a Space to host your event",
+          "Create a clear title and purpose — 'What should people expect to leave with?'",
+          "Select the right format: Virtual, In-Person, Hybrid",
+          "Tag the event with topics so the right people find it",
+          "Post a short pre-event update or invitation",
+          "Host with intention — and post highlights afterward",
+          "Turn attendees into members, contributors, or collaborators",
         ],
       },
       {
-        title: "If you're running a project or initiative:",
+        title: "If you're running a community or program",
         steps: [
-          "Use CONVENE for working sessions, office hours, or milestone check-ins.",
-          "Link your event to a space so members can join the project community.",
-          "Turn attendees into collaborators by connecting them through CONNECT.",
-          "Share updates in CONVEY to show progress and invite contribution.",
+          "Create recurring events — monthly check-ins, weekly sprints, learning circles",
+          "Use events as engagement anchors",
+          "Post highlights in CONVEY",
+          "Encourage attendees to introduce themselves in the Space",
+          "Use events to direct people toward tasks, needs, or opportunities",
         ],
       },
     ],
     examples: [
       {
-        title: "You're in Lagos hosting a climate tech meetup",
+        title: "You're in London exploring African creative communities",
         description:
-          "You create an event, tag 'Climate' and 'Startups,' and choose hybrid format. Diaspora builders in Nairobi, Berlin, and Accra discover it through their feeds. Some join virtually, a few in-person — and suddenly your meetup becomes a cross-continental conversation.",
+          "You browse the Events Hub and find a virtual 'AfroCreative Meetup.' You join, meet a filmmaker from Dakar, and follow their Space. That Space becomes your creative home on DNA.",
       },
       {
-        title: "You're a student in Toronto preparing for a study-abroad program in Ghana",
+        title: "You're co-leading a tech project in Nairobi",
         description:
-          "You search for Ghana-related events, find an Accra meetup, and attend virtually. You meet a DNA organizer who shares resources and connects you to a space for Ghana travelers.",
+          "You host weekly design sprints using Events. Contributors from Lagos, Berlin, and Johannesburg join. Your event recaps in CONVEY spark new interest and grow your team.",
       },
       {
-        title: "You're growing a project team in Addis Ababa",
+        title: "You're a community builder in Toronto",
         description:
-          "You create weekly 'Project Fridays' and link them to your space. Your teammates across the diaspora join, contribute, and help move tasks forward. What started as a project becomes a community.",
+          "You create a diaspora book club. Monthly meetups lead to friendships, collaborations, and new Spaces. Your consistent events build a vibrant little ecosystem inside DNA.",
       },
     ],
     relatedFeatures: [
       {
-        name: "CONNECT Feed",
-        description: "Shows event activity from people and spaces you follow.",
-        icon: Users2,
-      },
-      {
         name: "Spaces",
-        description: "Organizers can tie events to specific communities or projects.",
+        description: "Every event belongs somewhere",
         icon: FolderOpen,
       },
       {
-        name: "Messages",
-        description: "Where attendees and organizers coordinate details.",
+        name: "CONVENE Hub",
+        description: "The global directory of gatherings",
+        icon: Calendar,
+      },
+      {
+        name: "CONNECT Feed",
+        description: "Where event activity is surfaced",
         icon: Users2,
       },
       {
-        name: "Contributions (CONTRIBUTE)",
-        description: "Use events to rally support around needs.",
+        name: "CONTRIBUTE",
+        description: "Events often create opportunities for support",
         icon: Heart,
       },
       {
-        name: "Stories (CONVEY)",
-        description: "Post highlights and recaps so the network learns what happened.",
+        name: "COLLABORATE",
+        description: "Project working sessions live as events",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONVEY",
+        description: "Recaps and highlights keep the story alive",
         icon: Megaphone,
+      },
+      {
+        name: "ADIN",
+        description: "Personalization and relevance engine",
+        icon: Users2,
       },
     ],
     faqs: [
       {
-        question: "Are CONVENE events public?",
-        answer:
-          "They can be. Organizers choose: Public, Space-only, or Invite-only.",
-      },
-      {
-        question: "Do I need to follow someone to see their events?",
-        answer:
-          "No. You can discover events by location, topic, region, or category.",
-      },
-      {
-        question: "How are events recommended?",
-        answer:
-          "We use your interests, skills, heritage, focus areas, and network activity to surface relevant gatherings. (More personalization coming as ADIN expands.)",
-      },
-      {
         question: "Can anyone create an event?",
         answer:
-          "Yes — as long as your profile meets basic completeness + integrity checks. This keeps events meaningful and safe.",
+          "Yes — once your profile meets the integrity requirements and you are a Space Lead.",
       },
       {
-        question: "What about payments or ticketing?",
+        question: "Are events always public?",
         answer:
-          "These integrations are planned for future phases, especially for major convenings, conferences, and partner-led events.",
+          "No. Organizers choose visibility: Public, Private, or Invite-Only.",
       },
       {
-        question: "What counts as a 'good' event on DNA?",
+        question: "Do events support virtual links?",
         answer:
-          "Clear intention, a welcoming description, and a focus on connection or action. The best gatherings move people closer to building, learning, or contributing.",
+          "Yes — you can add Zoom, Google Meet, or custom links.",
+      },
+      {
+        question: "How do people discover events?",
+        answer:
+          "Through: The Events Hub, CONNECT Feed, Space pages, Recommendations, and Filters and tags.",
+      },
+      {
+        question: "Can events be recurring?",
+        answer:
+          "Yes — weekly, monthly, quarterly, or custom.",
+      },
+      {
+        question: "Do events have analytics?",
+        answer:
+          "Leads can see RSVPs, check-ins, and general engagement.",
+      },
+      {
+        question: "Are recordings supported?",
+        answer:
+          "Not yet — but you can link external recordings.",
       },
     ],
   },
