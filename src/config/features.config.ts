@@ -93,4 +93,16 @@ export const features: FeatureSummary[] = [
     audience: ["Members", "Storytellers", "Community Leaders"],
     overviewOrder: 6,
   },
+  {
+    slug: "onboarding",
+    name: "New Member Onboarding",
+    pillar: "Platform",
+    category: "System",
+    status: "live",
+    shortTagline: "Welcome to DNA — your guided first steps.",
+    oneLiner:
+      "Onboarding helps new members feel at home immediately — guiding them to complete their profile, join their first spaces, make their first connections, and discover where they belong.",
+    audience: ["New Members", "All Users"],
+    overviewOrder: 20,
+  },
 ];
