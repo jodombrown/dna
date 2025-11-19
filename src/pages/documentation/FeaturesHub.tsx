@@ -44,9 +44,12 @@ export default function FeaturesHub() {
       {/* Header */}
       <div className="bg-gradient-to-r from-dna-forest to-dna-emerald text-white py-16">
         <div className="container mx-auto px-4 max-w-4xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Explore DNA Features</h1>
-          <p className="text-lg text-white/90">
-            Your guide to what you can actually do on the Diaspora Network of Africa
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Explore DNA Features</h1>
+          <p className="text-lg md:text-xl text-white/90 leading-relaxed">
+            When you step into DNA, you're entering a global ecosystem built to help the African diaspora connect, collaborate, convene, contribute, and share our stories. This page is your guide to everything you can do here — every tool, every capability, every way to participate.
+          </p>
+          <p className="text-base text-white/80 mt-4">
+            Whether you're new or returning, this hub helps you quickly understand how DNA works and how to put its features to use.
           </p>
         </div>
       </div>
@@ -54,40 +57,28 @@ export default function FeaturesHub() {
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         {/* Why this page exists */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4 text-foreground">Why this page exists</h2>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">Why This Page Exists</h2>
           <div className="prose prose-lg max-w-none text-muted-foreground">
-            <p>
-              Diaspora Network of Africa (DNA) is a mobilization engine for the global African diaspora — built around
-              five pillars: <strong className="text-foreground">Connect, Convene, Collaborate, Contribute, and Convey</strong>.
+            <p className="text-lg leading-relaxed">
+              DNA is big. You shouldn't have to guess how it works.
+              This page explains each major feature, why it matters, and how to use it — in simple, clear language.
+              Click any feature to see a full deep-dive guide.
             </p>
-            <p>
-              This page is your <strong className="text-foreground">guide to what you can actually do</strong> on DNA. You'll find the
-              key features of the platform, how they work, and how they help you move from curiosity… to connection… to
-              real action.
+            <p className="mt-4">
+              <strong className="text-foreground">This helps:</strong> Members, Organizers, Contributors, Partners, Investors, and Curious Visitors — everyone understands what DNA actually is.
             </p>
           </div>
         </section>
 
         {/* How to use this page */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4 text-foreground">How to use this page</h2>
+          <h2 className="text-2xl font-bold mb-4 text-foreground">How to Use This Page</h2>
           <div className="prose prose-lg max-w-none text-muted-foreground">
-            <p>Use this Features Hub to:</p>
-            <ul className="space-y-2">
-              <li>
-                <strong className="text-foreground">Browse the full picture</strong> of what DNA offers today and what's coming next.
-              </li>
-              <li>
-                <strong className="text-foreground">Scan the cards below</strong> to see a quick summary of each feature.
-              </li>
-              <li>
-                <strong className="text-foreground">Click "Learn how it works"</strong> on any feature to open a deep-dive page with
-                examples, step-by-step guides, and FAQs.
-              </li>
-              <li>
-                <strong className="text-foreground">Check back regularly</strong> — we'll keep this space updated as DNA grows and new
-                capabilities go live.
-              </li>
+            <ul className="space-y-2 list-disc pl-6">
+              <li>Browse the list of features below</li>
+              <li>Filter by the 5Cs or by system features</li>
+              <li>Click any feature to see how it works and how to use it</li>
+              <li>Check back often — we update this page as DNA evolves</li>
             </ul>
           </div>
         </section>
