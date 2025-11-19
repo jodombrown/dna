@@ -1518,4 +1518,179 @@ Projects become the organizing brain. Tasks become the heartbeat.`,
       },
     ],
   },
+  "profile-and-identity": {
+    hero: {
+      title: "Profile & Identity (DNA | CONNECT)",
+      oneLiner:
+        "Your DNA profile tells your story — your heritage, your skills, your interests, and the journey that brought you here — so the right people and opportunities can find you.",
+      whoItsFor:
+        "Every member on DNA. Community builders, founders, creators, organizers, professionals, students, mentors, and supporters.",
+    },
+    whatItIs: `When people join DNA, they bring a history, a culture, a skillset, and a purpose. Your profile is the home for all of that.
+
+**Your profile is your identity inside the global African world** — helping people understand your background, your voice, your talents, and your intentions.
+
+Unlike traditional platforms, DNA profiles aren't just résumés. They're cultural, personal, relational, and purpose-driven.
+
+A profile includes:
+- Name & username
+- Location
+- Diaspora / heritage roots
+- Skills & expertise
+- Focus areas & interests
+- Professional background
+- Social links
+- Spaces you belong to
+- Projects you contribute to
+- Events you attend
+- Contributions you've made
+- Stories you've shared
+
+Each part helps the network understand who you are and where you belong.`,
+    whatYouCanDo: [
+      "Share their identity — who they are, where they're from, what they care about",
+      "Highlight skills & experience so the right opportunities find them",
+      "Showcase cultural and diaspora roots",
+      "Join communities (Spaces) aligned with their purpose",
+      "Document contributions and impact",
+      "Display badges earned through validated support",
+      "Track events and collaborations",
+      "Show created projects or leadership roles",
+      "Control privacy settings",
+      "Edit profile fields anytime",
+      "Grow their credibility through meaningful activity",
+    ],
+    howItWorks: [
+      "Profile completeness unlocks features (Example: you need 40% to send connection requests)",
+      "ADIN uses your profile to personalize: Connection recommendations, Event suggestions, Space discovery, Needs & contribution opportunities, Content relevance in your feed",
+      "Profile views generate insight — You can see who's looked at your profile",
+      "Username history is tracked — You have limited changes to maintain identity consistency",
+      "Safety tools apply here — You can block users or hide select information",
+      "Your contributions and activity are automatically reflected — Tasks, validated contributions, stories, and events appear on your profile timeline",
+    ],
+    stepByStep: [
+      {
+        title: "If you're new to DNA",
+        steps: [
+          "Add your name, photo, and location",
+          "Add your heritage or diaspora roots",
+          "Fill out your skills and focus areas",
+          "Add a short bio that shares who you are",
+          "Join one Space that matches your interests",
+          "Make one connection or post one update",
+        ],
+      },
+      {
+        title: "If you're looking to build opportunities",
+        steps: [
+          "Highlight your projects or experience",
+          "Add detailed skills and past work",
+          "Join Spaces where your abilities matter",
+          "Follow people with overlapping goals",
+          "Create or contribute to tasks",
+          "Share stories or updates",
+          "Post your availability through CONTRIBUTE",
+        ],
+      },
+      {
+        title: "If you're building your reputation",
+        steps: [
+          "Complete your profile",
+          "Contribute to Spaces",
+          "Get contributions validated",
+          "Participate in Events",
+          "Share consistent updates",
+          "Add your wins and outcomes",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're a software engineer in Lagos",
+        description:
+          "You list your skills (React, Node, API design), join a Startup Space, and share your background. A founder in Nairobi finds your profile, reaches out, and you start collaborating on tasks.",
+      },
+      {
+        title: "You're a creative in New York",
+        description:
+          "You list heritage (Ghanaian), focus areas (art, culture, storytelling), and join a creative collective. Someone sees your work in your profile and invites you to contribute to a project.",
+      },
+      {
+        title: "You're a community builder in Accra",
+        description:
+          "Your profile highlights the Spaces you lead, events you host, and contributions you've validated. People begin following your work — your reach multiplies.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "CONNECT",
+        description: "Discovery, introductions, recommendations",
+        icon: Users2,
+      },
+      {
+        name: "CONNECT Feed",
+        description: "Activity tied to your identity",
+        icon: Users2,
+      },
+      {
+        name: "CONVENE",
+        description: "Events you've attended or created",
+        icon: Calendar,
+      },
+      {
+        name: "COLLABORATE",
+        description: "Tasks and projects you own",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONTRIBUTE",
+        description: "Needs you've posted, offers you've made",
+        icon: Heart,
+      },
+      {
+        name: "CONVEY",
+        description: "Stories you've shared",
+        icon: Megaphone,
+      },
+      {
+        name: "Spaces",
+        description: "Membership and leadership roles",
+        icon: FolderOpen,
+      },
+      {
+        name: "ADIN",
+        description: "Personalization engine",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "Why do I need a complete profile?",
+        answer:
+          "It increases your visibility, improves recommendations, and unlocks features.",
+      },
+      {
+        question: "Can I change my username?",
+        answer: "Yes, but only a limited number of times.",
+      },
+      {
+        question: "Who can see my profile?",
+        answer:
+          "Your profile is visible to DNA members, with respect to privacy settings.",
+      },
+      {
+        question: "Can I hide certain details?",
+        answer: "Yes — you control what is public or private.",
+      },
+      {
+        question: "How do contributions appear on my profile?",
+        answer:
+          "Validated contributions automatically show up as badges and activity.",
+      },
+      {
+        question: "Can I link external work?",
+        answer: "Yes — you can add portfolio links or social profiles.",
+      },
+    ],
+  },
 };
