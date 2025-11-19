@@ -1693,4 +1693,183 @@ Each part helps the network understand who you are and where you belong.`,
       },
     ],
   },
+  "messaging": {
+    hero: {
+      title: "Messaging (DNA | CONNECT)",
+      oneLiner:
+        "Messaging lets you talk directly with members, collaborators, and project teams — helping conversations flow across spaces, events, and contributions.",
+      whoItsFor:
+        "Everyone. New members, community organizers, founders, contributors, space leads, and anyone who wants to connect, coordinate, or communicate.",
+    },
+    whatItIs: `People join DNA looking for connection, support, and belonging — and none of that happens without real conversations.
+
+**Messaging is the private communication layer that makes relationship-building natural.**
+
+Messaging turns connections into collaboration — and collaboration into impact.
+
+This is where you:
+- Follow up after connecting
+- Coordinate project tasks
+- Chat with event organizers
+- Ask questions
+- Offer help
+- Share ideas or reflections
+- Build trust
+- Stay in touch as you work across continents
+
+It's simple, human, and central to the entire DNA experience.`,
+    whatYouCanDo: [
+      "Send private 1:1 messages to any member they've connected with",
+      "Message contributors, collaborators, or space members",
+      "Follow up after events",
+      "Coordinate tasks inside COLLABORATE",
+      "Ask for clarity on needs or offers",
+      "Share files or links",
+      "Start group conversations for small teams",
+      "Stay notified about new messages or replies",
+      "Control message requests for safety and boundaries",
+    ],
+    howItWorks: [
+      "You can only message people you're connected to, unless you're in the same Space or Project",
+      "Message requests protect privacy, giving you control over who can reach you",
+      "Safety filters apply, blocking unwanted or inappropriate content",
+      "Attachments and links are supported depending on your role and settings",
+      "ADIN improves relevance, suggesting when to reach out (e.g., after you join a Space)",
+      "Conversation history stays in sync across your devices",
+      "Notifications keep you updated, but you can mute conversations anytime",
+    ],
+    stepByStep: [
+      {
+        title: "If you're connecting with someone new",
+        steps: [
+          "Visit their profile",
+          "Click 'Message'",
+          "Introduce yourself briefly",
+          "Share why you reached out or what sparked your interest",
+          "Suggest one small next step — a question, a link, or an invitation",
+        ],
+      },
+      {
+        title: "If you're collaborating on a project",
+        steps: [
+          "Create a group chat for your core contributors",
+          "Use messaging to clarify tasks or blockers",
+          "Share drafts, links, or context",
+          "Host working sessions (via Events) and coordinate in the chat",
+          "Celebrate progress as tasks are completed",
+        ],
+      },
+      {
+        title: "If you're leading a Space",
+        steps: [
+          "Welcome new members with a friendly message",
+          "Use broadcast messages sparingly for important updates",
+          "Encourage contributors to message leads with questions",
+          "Direct people to tasks, needs, or events",
+          "Maintain a safe, respectful communication culture",
+        ],
+      },
+      {
+        title: "If you're supporting a need or offer",
+        steps: [
+          "After making an offer, send a follow-up message",
+          "Confirm expectations and timing",
+          "Share progress",
+          "Coordinate validation",
+          "Stay connected even after the contribution ends",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're a UX designer in Nairobi",
+        description:
+          "After seeing a founder's update in the Feed, you message them: 'Loved your prototype — want feedback?' A simple DM leads to a deeper collaboration.",
+      },
+      {
+        title: "You're attending an event",
+        description:
+          "You meet a speaker whose work inspires you. You message them after the event with a thank-you and a question. This becomes the start of a mentorship relationship.",
+      },
+      {
+        title: "You're contributing to a project in Johannesburg",
+        description:
+          "You message the lead to clarify a task. A quick conversation unlocks exactly what you needed — and your contribution gets validated.",
+      },
+      {
+        title: "You're a creative in Paris",
+        description:
+          "You message other creatives in a Space to propose a weekend collaboration session. You end up forming a small team that creates a short film together.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "CONNECT",
+        description: "Talk to people you connect with",
+        icon: Users2,
+      },
+      {
+        name: "Spaces",
+        description: "Message members or contributors",
+        icon: FolderOpen,
+      },
+      {
+        name: "COLLABORATE",
+        description: "Coordinate tasks and project work",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONTRIBUTE",
+        description: "Follow up on needs, offers, and contributions",
+        icon: Heart,
+      },
+      {
+        name: "CONVENE",
+        description: "Coordinate before and after events",
+        icon: Calendar,
+      },
+      {
+        name: "CONVEY",
+        description: "Message people whose stories inspire you",
+        icon: Megaphone,
+      },
+      {
+        name: "ADIN",
+        description: "Suggests relevant people to talk to",
+        icon: Users2,
+      },
+      {
+        name: "CONNECT Feed",
+        description: "Messaging entry points from activity",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "Can I message anyone on DNA?",
+        answer:
+          "You can message people you're connected to, and—depending on settings—members of Spaces you belong to.",
+      },
+      {
+        question: "Are messages private?",
+        answer: "Yes — all messages are private between you and the other member(s).",
+      },
+      {
+        question: "Can I block someone?",
+        answer: "Absolutely. Blocking prevents messaging and profile visibility.",
+      },
+      {
+        question: "Do you support attachments?",
+        answer: "Yes — images, files, and links are supported.",
+      },
+      {
+        question: "Are there group chats?",
+        answer: "Yes — small groups can message together.",
+      },
+      {
+        question: "Can I mute conversations?",
+        answer: "Yes. You can mute or leave any conversation.",
+      },
+    ],
+  },
 };
