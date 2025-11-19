@@ -1003,4 +1003,195 @@ Whatever the form, a Space gives people a place to belong, build, and mobilize.`
       },
     ],
   },
+  "universal-composer": {
+    hero: {
+      title: "Universal Composer",
+      oneLiner:
+        "The Universal Composer lets you create anything on DNA — updates, stories, events, tasks, needs, offers, and more — all from one simple tool.",
+      whoItsFor:
+        "Every member. Builders, organizers, contributors, space leads, event hosts, community members, and newcomers who want to share or take action instantly.",
+    },
+    whatItIs: `People often feel overwhelmed by platforms with too many creation tools.
+Multiple modals.
+Different buttons.
+Confusing options.
+
+DNA avoids that.
+
+**The Universal Composer is one simple, adaptive entry point for everything you can create on DNA.**
+
+Depending on where you are and what you're trying to do, the Composer transforms itself to let you:
+- Post an update
+- Create a story
+- Start a conversation
+- Add a task
+- Post a need
+- Make an offer
+- Create an event
+- Share progress from a Space
+- Add resources or attachments
+- Or write something simple — a thought, insight, or idea
+
+One tool. Many possibilities. Always intuitive.`,
+    whatYouCanDo: [
+      "Share updates in the CONNECT Feed",
+      "Tell stories that flow into CONVEY",
+      "Create events for CONVENE",
+      "Add tasks or milestones to COLLABORATE",
+      "Post needs for CONTRIBUTE",
+      "Offer support where needed",
+      "Upload files and resources",
+      "Tag spaces and people",
+      "Add categories and focus areas",
+      "Attach links, images, or media",
+      "Preview the post before publishing",
+      "Choose visibility settings (public, private, space-only)",
+    ],
+    howItWorks: [
+      "It adapts based on context — If you're in a Space → it suggests space-specific items; If you're on an Event → it suggests posting an update or recap; If you're on a Task → it offers progress or attachments",
+      "It pulls from ADIN — The Composer suggests what type of content you might want to create based on your recent actions",
+      "It connects to every pillar — One tool powering content across CONNECT, CONVENE, COLLABORATE, CONTRIBUTE, and CONVEY",
+      "It supports safe posting — Visibility controls, content guidelines, and reporting",
+      "It uses templates — For needs, events, tasks, and updates — making creation faster",
+    ],
+    stepByStep: [
+      {
+        title: "If you're posting an update",
+        steps: [
+          "Click 'What's happening?'",
+          "Share progress, thoughts, photos, or insights",
+          "Choose where it belongs — your profile, a Space, or public view",
+          "Tag collaborators if relevant",
+          "Post and let the feed amplify your voice",
+        ],
+      },
+      {
+        title: "If you're creating an event",
+        steps: [
+          "Select 'Create Event' in the Composer",
+          "Add title, description, date/time, and format (virtual/in-person/hybrid)",
+          "Choose the Space it belongs to",
+          "Publish and invite members",
+        ],
+      },
+      {
+        title: "If you're adding a task to a project",
+        steps: [
+          "Select 'Add Task'",
+          "Write a clear title and description",
+          "Assign an owner or leave it unassigned",
+          "Add due dates or attachments",
+          "Save it inside the project Space",
+        ],
+      },
+      {
+        title: "If you're posting a need",
+        steps: [
+          "Select 'Post a Need'",
+          "Describe what you need and why",
+          "Tag relevant categories (skills, resources, mentorship)",
+          "Add context through the Space",
+          "Publish so contributors can offer support",
+        ],
+      },
+      {
+        title: "If you're offering support",
+        steps: [
+          "Tap 'Offer Support'",
+          "Share your skills, resources, or availability",
+          "Wait for project leads to accept or follow up",
+          "Track your contribution as it evolves",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're a founder in Accra",
+        description:
+          "You use the Composer to post a 'Progress Update' about your prototype. It shows up in the CONNECT Feed. An engineer in Ghana and a designer in Europe follow up — your team grows overnight.",
+      },
+      {
+        title: "You're organizing a meetup in D.C.",
+        description:
+          "You create a virtual + in-person hybrid event using the Composer. You attach the location, tags, and a cover image. Members discover it and RSVP through the feed.",
+      },
+      {
+        title: "You're a mentor in Nairobi",
+        description:
+          "You use the Composer to make an offer: '1-hour mentorship for early-stage founders.' A project lead sees it, reaches out, and validates your contribution after the session. You earn a badge and build your reputation.",
+      },
+      {
+        title: "You're part of a community collective",
+        description:
+          "You share a weekly 'week-in-review' in your Space through the Composer. This becomes a ritual that brings your team closer and keeps members aligned.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "CONNECT Feed",
+        description: "Posts appear immediately",
+        icon: Users2,
+      },
+      {
+        name: "CONVEY",
+        description: "Turns updates into stories",
+        icon: Megaphone,
+      },
+      {
+        name: "COLLABORATE",
+        description: "Creates tasks, project updates, attachments",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONTRIBUTE",
+        description: "Posts needs/offers directly",
+        icon: Heart,
+      },
+      {
+        name: "CONVENE",
+        description: "Event creation and promotion",
+        icon: Calendar,
+      },
+      {
+        name: "Spaces",
+        description: "Contextual posting to hubs and projects",
+        icon: FolderOpen,
+      },
+      {
+        name: "ADIN",
+        description: "Learns from your actions to optimize suggestions",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "Is the Composer available everywhere?",
+        answer:
+          "Yes — it's always available at the top of the Feed and inside key Spaces.",
+      },
+      {
+        question: "Why does the Composer look different depending on where I am?",
+        answer:
+          "It adapts based on context — making creation simpler and faster.",
+      },
+      {
+        question: "Can I schedule posts?",
+        answer: "Scheduling will come in future versions.",
+      },
+      {
+        question: "Can I create tasks without being a Space Lead?",
+        answer:
+          "You need Contributor access to add tasks inside a Space or Project.",
+      },
+      {
+        question: "Are there limits on posting?",
+        answer:
+          "Normal members can post freely. Needs/offers have rate limits for quality control.",
+      },
+      {
+        question: "Can I attach files or media?",
+        answer: "Yes — attachments, images, and links are supported.",
+      },
+    ],
+  },
 };
