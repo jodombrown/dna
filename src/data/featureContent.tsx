@@ -2372,4 +2372,157 @@ Instead of "browsing everything," users explore what matters to them.`,
       },
     ],
   },
+  onboarding: {
+    hero: {
+      title: "New Member Onboarding",
+      oneLiner: "Onboarding helps new members feel at home immediately — guiding them to complete their profile, join their first spaces, make their first connections, and discover where they belong.",
+      whoItsFor: "Every new member across the global African diaspora. Students, professionals, founders, creatives, community organizers, contributors, and returnees.",
+    },
+    whatItIs: `People arrive on DNA excited, curious, hopeful — but often unsure about where to start.
+
+**Onboarding removes that uncertainty.**
+
+Onboarding is a guided experience that introduces new members to the DNA ecosystem and helps them take their first meaningful steps.
+
+By the end of onboarding, a new member:
+- Understands the purpose of DNA
+- Knows how to navigate CONNECT, CONVENE, COLLABORATE, CONTRIBUTE, and CONVEY
+- Has a profile strong enough for relevant recommendations
+- Joins their first Spaces
+- Sees events they care about
+- Makes their first connection
+- Feels oriented rather than overwhelmed
+
+**Onboarding is where the journey begins.**`,
+    whatYouCanDo: [
+      "Warm Welcome Screen — A simple introduction that answers: What DNA is, what you can do here, and what to expect next",
+      "Profile Setup (Identity Foundation) — Complete name, photo, location, diaspora/heritage roots, skills & expertise, focus areas, bio, and optional links",
+      "First Recommendations (Powered by ADIN) — See recommended Spaces, members who share your roots or interests, upcoming events tailored to your region or focus areas",
+      "Joining First Spaces — Pick 1 community Space, 1 interest Space, and 1 project or initiative to anchor your identity",
+      "Your First Connection — Connect with 1–3 people who share heritage, skills, are in the same region, or are active collaborators",
+      "Your First Event — RSVP to an upcoming virtual meetup or thematic event to have something to look forward to",
+      "Your First Action — Post your first update, introduce yourself in a Space, react to a story, or explore needs you can contribute to",
+      "Home Tour (Optional) — Quick walkthrough of CONNECT Feed, Spaces, Events, Composer, Messages, and Profile",
+    ],
+    howItWorks: [
+      "ADIN personalizes everything once your profile has enough signal",
+      "Spaces shape your experience, giving you community from day one",
+      "Events nudge you into participation, not passivity",
+      "Connect suggestions introduce your first network nodes",
+      "Profile completeness unlocks more platform functionality",
+      "Your actions refine recommendations instantly",
+      "The CONNECT Feed adapts in real time, reflecting your identity and interests",
+      "The entire onboarding is designed to move you from: New → Oriented → Connected → Active → Contributing",
+    ],
+    stepByStep: [
+      {
+        title: "If you're a new member",
+        steps: [
+          "Complete your profile to at least 40%",
+          "Join 2–3 Spaces",
+          "RSVP to one event you care about",
+          "Connect with a few people",
+          "Share your first update",
+        ],
+      },
+      {
+        title: "If you're a builder or organizer",
+        steps: [
+          "Make your Space welcoming to new members",
+          "Post a weekly 'welcome update'",
+          "Highlight events newcomers can join",
+          "Invite new members to jump into a small task",
+          "Encourage profile completeness",
+        ],
+      },
+      {
+        title: "If you're a contributor",
+        steps: [
+          "Complete your skills",
+          "Follow Spaces with needs you can support",
+          "Make your first offer early",
+          "Message project leads",
+          "Validate contributions when complete",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're a student in the UK",
+        description: "You join DNA. Onboarding recommends a 'Young African Innovators' Space. You join, introduce yourself, and get invited to a virtual meetup. By the end of the week, you've made two meaningful connections.",
+      },
+      {
+        title: "You're a founder in Nairobi",
+        description: "You fill out your skills and project background. ADIN recommends collaborators in Ghana and SA. You join a Startup Space. You post your first need — and get offers within hours.",
+      },
+      {
+        title: "You're a creative in New York",
+        description: "You join a creative Space and find a cross-continental storytelling workshop. Your profile recommendations start filling with inspiration, stories, and creative collaborators.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "Profiles",
+        description: "Identity foundation",
+        icon: Users2,
+      },
+      {
+        name: "CONNECT",
+        description: "Discovery and connections",
+        icon: Users2,
+      },
+      {
+        name: "Spaces",
+        description: "Communities and belonging",
+        icon: FolderOpen,
+      },
+      {
+        name: "Events",
+        description: "First engagement moments",
+        icon: Calendar,
+      },
+      {
+        name: "COLLABORATE",
+        description: "Tasks and project discovery",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONTRIBUTE",
+        description: "First needs to support",
+        icon: Heart,
+      },
+      {
+        name: "CONVEY",
+        description: "Stories that inspire new members",
+        icon: Megaphone,
+      },
+      {
+        name: "ADIN",
+        description: "Personalization and recommendations",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "How long does onboarding take?",
+        answer: "2–5 minutes, depending on how much you want to share.",
+      },
+      {
+        question: "Why do I need to complete my profile?",
+        answer: "It improves discovery, connections, and recommendations.",
+      },
+      {
+        question: "Do I need to join Spaces?",
+        answer: "It's optional, but joining Spaces dramatically improves your experience.",
+      },
+      {
+        question: "Will onboarding change over time?",
+        answer: "Yes — ADIN Phase 2 will adapt onboarding in real time.",
+      },
+      {
+        question: "Can I skip onboarding?",
+        answer: "You can skip steps, but you'll miss personalized recommendations.",
+      },
+    ],
+  },
 };
