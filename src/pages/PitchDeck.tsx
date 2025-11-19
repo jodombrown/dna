@@ -566,7 +566,45 @@ const PitchDeck = () => {
   ];
 
   const handlePrint = () => {
-    window.print();
+    // Save current slide
+    const originalSlide = currentSlide;
+    
+    // Set to first slide and trigger print after a brief delay to ensure rendering
+    setCurrentSlide(0);
+    
+    // Use CSS to show all slides in print mode
+    const style = document.createElement('style');
+    style.id = 'print-all-slides';
+    style.innerHTML = `
+      @media print {
+        .slide-container {
+          display: block !important;
+          page-break-after: always !important;
+          page-break-inside: avoid !important;
+        }
+        .slide-item {
+          display: flex !important;
+          opacity: 1 !important;
+          height: 100vh !important;
+          width: 100% !important;
+        }
+        .print\\:hidden {
+          display: none !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    setTimeout(() => {
+      window.print();
+      
+      // Clean up and restore
+      setTimeout(() => {
+        const styleEl = document.getElementById('print-all-slides');
+        if (styleEl) styleEl.remove();
+        setCurrentSlide(originalSlide);
+      }, 100);
+    }, 300);
   };
 
   const handleShare = async () => {
@@ -740,7 +778,7 @@ const PitchDeck = () => {
           // Desktop: Horizontal scroll
           <div
             ref={scrollContainerRef}
-            className="flex overflow-x-auto snap-x snap-mandatory h-[calc(100vh-5rem)] scroll-smooth print:block print:overflow-visible"
+            className="flex overflow-x-auto snap-x snap-mandatory h-[calc(100vh-5rem)] scroll-smooth print:block print:overflow-visible print:h-auto"
             style={{ 
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
@@ -757,9 +795,9 @@ const PitchDeck = () => {
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className="min-w-full h-full snap-center flex items-center justify-center px-8 py-4 print:min-w-0 print:page-break-after-always"
+                className="min-w-full h-full snap-center flex items-center justify-center px-8 py-4 print:min-w-0 print:w-full print:h-auto print:page-break-after-always print:snap-none"
               >
-                <div className="w-full aspect-video max-h-full bg-card rounded-lg shadow-2xl p-8 md:p-12 flex flex-col overflow-hidden relative">
+                <div className="w-full aspect-video max-h-full bg-card rounded-lg shadow-2xl p-8 md:p-12 flex flex-col overflow-hidden relative print:shadow-none print:max-h-none print:h-screen print:page-break-inside-avoid">
                   {slide.showHeader && (
                     <div className="flex items-start justify-between mb-8 animate-fade-in">
                       <div className="flex-1">
