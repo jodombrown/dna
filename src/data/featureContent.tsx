@@ -1359,4 +1359,163 @@ Together, they power DNA's contribution engine — simple, transparent, and acti
       },
     ],
   },
+  "tasks-and-projects": {
+    hero: {
+      title: "Tasks & Projects (DNA | COLLABORATE)",
+      oneLiner:
+        "Tasks & Projects help you turn ideas into organized, trackable execution — with clear steps, shared ownership, and visible progress.",
+      whoItsFor:
+        "Project leads, contributors, organizers, founders, teams, and anyone moving from early ideas to real action.",
+    },
+    whatItIs: `Every great initiative — no matter how inspiring — only moves when someone takes the next step.
+
+But people often feel stuck because work feels too big, too unclear, or too scattered.
+
+**Tasks & Projects solve that.**
+
+- **A Project** is a focused initiative inside a Space
+- **Tasks** are the small steps that move the project forward
+- **Boards & Lists** help you see progress at a glance
+
+Together, they help teams collaborate with clarity and momentum.
+
+Projects become the organizing brain. Tasks become the heartbeat.`,
+    whatYouCanDo: [
+      "Create Projects — Set a clear purpose, Define goals or outcomes, Add contributors or collaborators, Attach events or milestones, Share updates and progress",
+      "Break Work into Tasks — Create task lists, Add descriptions and attachments, Assign owners or leave unassigned, Set due dates and priority, Add dependencies, Track status with one click",
+      "Organize Work Visually — Switch between list view and Kanban board, Drag and drop tasks, Organize tasks by stage, priority, or theme, Check off tasks as they're completed",
+      "Keep Everyone in Sync — Post project updates, Tag teammates, Host working sessions from task boards, Use analytics to track activity and momentum, Turn key updates into stories through CONVEY",
+    ],
+    howItWorks: [
+      "Projects live inside Spaces, keeping work organized by community or initiative",
+      "Tasks can belong to a Space or directly to a Project",
+      "Boards update instantly for all team members",
+      "ADIN learns your working patterns, helping recommend collaborators",
+      "Task dependencies prevent misalignment",
+      "Analytics help leads see what's moving and what's stuck",
+      "Updates flow into the CONNECT Feed, making progress visible",
+      "Completion can feed into contributions, allowing validated support",
+    ],
+    stepByStep: [
+      {
+        title: "If you're starting a new project",
+        steps: [
+          "Open or create a Space",
+          "Click 'Create Project'",
+          "Add a title, purpose, and description",
+          "Add your first 5–10 tasks",
+          "Assign owners — or keep tasks open for contributors",
+          "Share an update to invite people to participate",
+          "Host your first working session",
+        ],
+      },
+      {
+        title: "If you're contributing to someone else's project",
+        steps: [
+          "Join the Space where the project lives",
+          "Browse the task board",
+          "Choose one unassigned task",
+          "Introduce yourself in the comments or messages",
+          "Complete the task and post a progress update",
+          "Keep an eye on new tasks as the project grows",
+        ],
+      },
+      {
+        title: "If you're a project lead",
+        steps: [
+          "Use tasks to break big goals into small steps",
+          "Keep your board simple — 3–5 columns max",
+          "Review progress weekly",
+          "Validate completed work",
+          "Convert completed tasks into CONVEY stories",
+          "Post monthly progress summaries",
+          "Use events for sprint reviews or working sessions",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're a founder in Nairobi",
+        description:
+          "You create a project for your MVP. Design tasks go in one column, testing tasks in another. A designer in Lagos takes two tasks; a developer in Accra takes another. Within weeks, your prototype is real.",
+      },
+      {
+        title: "You're running a climate initiative",
+        description:
+          "Your project board has tasks for outreach, fieldwork, and communications. Contributors self-assign tasks. You track progress with Kanban and use monthly working sessions to stay aligned. CONVEY stories share your impact across the platform.",
+      },
+      {
+        title: "You're organizing a community festival",
+        description:
+          "Tasks include logistics, promotions, partnerships, and volunteers. Offers come in from CONTRIBUTE. Validation creates badges. Your festival becomes a cross-diaspora collaboration.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "Spaces",
+        description: "Home for all collaboration",
+        icon: FolderOpen,
+      },
+      {
+        name: "COLLABORATE",
+        description: "Project management at the core",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONTRIBUTE",
+        description: "Needs and offers support tasks",
+        icon: Heart,
+      },
+      {
+        name: "CONVENE",
+        description: "Events become project working sessions",
+        icon: Calendar,
+      },
+      {
+        name: "CONVEY",
+        description: "Stories and updates document progress",
+        icon: Megaphone,
+      },
+      {
+        name: "CONNECT Feed",
+        description: "Surface visible activity",
+        icon: Users2,
+      },
+      {
+        name: "ADIN",
+        description: "Relevance and recommendations",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "Do I need to be a Space Lead to create a project?",
+        answer:
+          "Usually yes, but contributors may be allowed depending on settings.",
+      },
+      {
+        question: "Can I assign multiple owners to a task?",
+        answer:
+          "Tasks typically have one owner for clarity, but teams can coordinate in comments.",
+      },
+      {
+        question: "Do tasks have notifications?",
+        answer:
+          "Yes — owners get updates for assignments, changes, and completions.",
+      },
+      {
+        question: "Can I attach files or resources?",
+        answer: "Yes — tasks support attachments, links, and media.",
+      },
+      {
+        question: "Can tasks be private?",
+        answer: "Tasks respect Space and project visibility settings.",
+      },
+      {
+        question: "Is there analytics for tasks and projects?",
+        answer:
+          "Yes — activity charts, completion trends, and contributor stats.",
+      },
+    ],
+  },
 };
