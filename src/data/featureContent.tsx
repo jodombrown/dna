@@ -566,4 +566,145 @@ export const featureContentBySlug: Record<string, FeatureContent> = {
       },
     ],
   },
+  convey: {
+    hero: {
+      title: "DNA | CONVEY",
+      oneLiner:
+        "CONVEY turns activity across DNA into stories, updates, and highlights that inspire people — and help the whole network see what's possible.",
+      whoItsFor:
+        "Members, project leads, organizers, media partners, and anyone who wants to share progress, celebrate wins, or help the network learn from what's happening.",
+    },
+    whatItIs:
+      "People don't mobilize around silence. They mobilize around stories. CONVEY gives the diaspora a shared narrative — one built from updates, highlights, progress, and real examples of people doing meaningful work. CONVEY is the storytelling layer of DNA — turning raw activity into visible momentum. It helps members see which spaces are active, what progress projects are making, how contributions are making a difference, what events are happening and what came out of them, and how people across the diaspora are building, solving, and showing up. CONVEY brings the heartbeat of the platform to life.",
+    whatYouCanDo: [
+      "Post updates about work happening inside spaces or projects.",
+      "Share highlights from events, collaborations, or contributions.",
+      "Tell your story so others understand your journey and mission.",
+      "Document wins and progress — even the small ones.",
+      "Spotlight contributors and elevate community effort.",
+      "Learn from other builders, organizers, and spaces.",
+      "Follow updates from your network inside the CONNECT feed.",
+      "Build visibility for projects, initiatives, and impact stories.",
+    ],
+    howItWorks: [
+      "Updates flow from spaces, events, tasks, and contributions into a unified storytelling layer.",
+      "Stories show up in CONNECT feeds, helping people discover new opportunities.",
+      "Project activity creates automatic narrative moments, so members don't have to manually document everything.",
+      "ADIN tailors what you see, showing updates most relevant to your interests and history.",
+      "Safety rules prevent harmful or misleading content, while reporting tools keep things respectful.",
+      "Every update fuels discovery, inspiring members to join spaces, contribute skills, or attend events.",
+    ],
+    stepByStep: [
+      {
+        title: "If you're part of a space or project:",
+        steps: [
+          "Post short updates after meetings, milestones, or breakthroughs.",
+          "Share context, even if small — 'we drafted the outline,' 'met for the first time,' 'completed a design.'",
+          "Tag relevant themes so others can find it easily.",
+          "Highlight contributors to build trust and encourage participation.",
+          "Share outcomes — what changed because of the work?",
+        ],
+      },
+      {
+        title: "If you're a project lead or organizer:",
+        steps: [
+          "Use weekly or monthly updates to keep your community aligned.",
+          "Post event recaps — photos, insights, recordings, next steps.",
+          "Celebrate progress publicly to attract collaborators or supporters.",
+          "Document impact so partners and funders understand the work.",
+          "Link updates back to tasks, contributions, or events for clarity.",
+        ],
+      },
+      {
+        title: "If you're a member looking to follow the pulse:",
+        steps: [
+          "Browse CONVEY for stories across the diaspora.",
+          "Follow spaces, people, and topics you care about.",
+          "Use stories as jumping-off points — join the space, show up to the event, make a contribution.",
+          "Share stories that inspire you to help others discover them too.",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're part of a creative collective in Accra",
+        description:
+          "After a workshop, you post a recap with photos and key insights. Members from London and Lagos respond, leading to a cross-border collab. Your update inspires a new group of creatives to join your space.",
+      },
+      {
+        title: "You're running a climate tech project",
+        description:
+          "You share weekly updates documenting design progress, field tests, and stakeholder meetings. An engineer in Nairobi sees your story, reaches out, and joins as a contributor. Your updates become a living archive of the project's growth.",
+      },
+      {
+        title: "You're a mentor in Atlanta",
+        description:
+          "You spotlight a founder you've supported, telling the story of their pitch improvements. CONVEY surfaces it in CONNECT feeds across the diaspora. Several new mentors volunteer for other founders — momentum multiplies.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "CONNECT Feed",
+        description: "Distributes your updates to your network and followers.",
+        icon: Users2,
+      },
+      {
+        name: "Spaces",
+        description: "Most stories emerge from community and project hubs.",
+        icon: FolderOpen,
+      },
+      {
+        name: "COLLABORATE Tasks & Boards",
+        description: "Work progress turns into updates.",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONTRIBUTE",
+        description: "Validated support becomes visible stories.",
+        icon: Heart,
+      },
+      {
+        name: "CONVENE",
+        description: "Event recaps amplify engagement.",
+        icon: Calendar,
+      },
+      {
+        name: "ADIN",
+        description: "Helps surface relevant stories, learning, and insights.",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "What counts as a 'story' on DNA?",
+        answer:
+          "Anything that captures progress, learning, or impact — especially things that help others understand what's happening behind the scenes.",
+      },
+      {
+        question: "Who can post updates?",
+        answer:
+          "Members with access to a space or project can post. Leads can highlight or pin key updates.",
+      },
+      {
+        question: "Are stories public?",
+        answer:
+          "It depends on the space's visibility settings. Public spaces → public stories; private spaces → internal only.",
+      },
+      {
+        question: "Where do CONVEY stories show up?",
+        answer:
+          "Primarily in: The CONNECT feed, The CONVEY hub page, Space activity streams, and Project timelines.",
+      },
+      {
+        question: "How do stories help with mobilization?",
+        answer:
+          "Visibility inspires action. Stories help people find where to plug in, see what's working, join events or spaces, offer contributions, and celebrate progress.",
+      },
+      {
+        question: "Is multimedia supported?",
+        answer:
+          "Yes — photos, links, attachments, and video (depending on your build phase).",
+      },
+    ],
+  },
 };
