@@ -2033,4 +2033,169 @@ ADIN is the connective tissue behind DNA's 5Cs.`,
       },
     ],
   },
+  "notifications": {
+    hero: {
+      title: "Notifications & Activity System",
+      oneLiner:
+        "Notifications keep you informed about the things that matter — messages, events, contributions, tasks, stories, and activity from your spaces and connections.",
+      whoItsFor:
+        "Every member, especially those active in multiple spaces, projects, or collaborations.",
+    },
+    whatItIs: `When people join DNA, they step into a living ecosystem. Spaces grow. Events happen. Contributions get validated. New stories appear. But no one can check everything all the time.
+
+**Notifications solve that.**
+
+Notifications are your personal activity guide — surfacing updates that matter most, at the right time, and in the right way.
+
+It's not about pinging you constantly. It's about helping you stay connected to your communities, collaborators, and opportunities.`,
+    whatYouCanDo: [
+      "Messages — Direct messages, Group conversations, Message requests",
+      "Events — New events from Spaces you follow, Reminders before an event starts, Updates or changes from organizers, Follow-up messages after events",
+      "Needs & Contributions — A lead accepted your offer, Someone responded to your need, Your contribution was validated, New needs posted in your Spaces",
+      "Tasks & Projects — You were assigned a task, A task you follow changes, Project updates from collaborators, Milestones, achievements, or progress",
+      "Spaces — New members joining, Announcements from Space Leads, New updates, stories, or highlights, Important changes to visibility",
+      "Feed Activity — Someone reacts to your update, Comments and mentions, Follow activity, Story highlights",
+      "Profile — Someone viewed your profile (if enabled), Follow requests, Username / profile change confirmations",
+    ],
+    howItWorks: [
+      "ADIN prioritizes relevance — You see what aligns with your identity, spaces, and current work",
+      "DNA groups similar notifications — So you don't get overwhelmed by noise",
+      "Notifications respect privacy — Anything from private or invite-only spaces stays protected",
+      "Push + in-app system — You get updates inside DNA, with optional email/push alerts",
+      "You control what you receive — Members can mute conversations, disable categories, or turn off certain alerts",
+      "Quiet hours coming soon — Future versions will include do-not-disturb windows",
+      "Safety first — Inappropriate or unwanted interactions are blocked or muted instantly",
+    ],
+    stepByStep: [
+      {
+        title: "If you're new to DNA",
+        steps: [
+          "Check the notification icon daily",
+          "Respond to message requests",
+          "RSVP to any relevant events",
+          "Follow the Spaces that send you updates",
+          "Turn off categories that feel distracting",
+        ],
+      },
+      {
+        title: "If you're collaborating on a project",
+        steps: [
+          "Keep notifications ON for: Tasks, Messages, Project updates",
+          "Mute channels that aren't part of your work",
+          "Act quickly on assigned tasks or clarifications",
+          "Share updates to keep your collaborators aligned",
+        ],
+      },
+      {
+        title: "If you're leading a Space",
+        steps: [
+          "Turn notifications ON for: New members, Needs/offers, Space updates, Event engagement",
+          "Respond promptly to contributors",
+          "Use notifications to keep your community warm and engaged",
+        ],
+      },
+      {
+        title: "If you're contributing",
+        steps: [
+          "Keep notifications ON for needs you're supporting",
+          "Follow up with project leads",
+          "Track validation and badge updates",
+          "Turn off categories you don't need (e.g., broad feed reactions)",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're contributing from London",
+        description:
+          "You get a notification: 'Your offer was accepted.' You hop into Messaging, clarify details, complete the contribution, and get validated. Your badge appears instantly — visible across your profile.",
+      },
+      {
+        title: "You're building a Space in Johannesburg",
+        description:
+          "Notifications alert you to: New members, Updated tasks, Event RSVPs. You respond quickly, keep momentum alive, and your Space grows stronger.",
+      },
+      {
+        title: "You're exploring opportunities",
+        description:
+          "You get a notification about a new Space aligned with your skills. You join, meet collaborators, and end up contributing to a project.",
+      },
+      {
+        title: "You're coordinating a global working session",
+        description:
+          "Notifications help your team stay aligned across Accra, Toronto, Lagos, and Berlin. Everyone arrives ready — no one is lost.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "Messaging",
+        description: "Direct and group conversations",
+        icon: Users2,
+      },
+      {
+        name: "Events",
+        description: "RSVPs, reminders, updates",
+        icon: Calendar,
+      },
+      {
+        name: "Spaces",
+        description: "Member activity, announcements",
+        icon: FolderOpen,
+      },
+      {
+        name: "COLLABORATE",
+        description: "Tasks, project activity",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONTRIBUTE",
+        description: "Needs, offers, validations",
+        icon: Heart,
+      },
+      {
+        name: "CONVEY",
+        description: "Comments and interactions",
+        icon: Megaphone,
+      },
+      {
+        name: "CONNECT",
+        description: "New followers, profile views",
+        icon: Users2,
+      },
+      {
+        name: "ADIN",
+        description: "Relevance + prioritization",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "Can I customize notifications?",
+        answer:
+          "Yes — members can turn on/off categories or mute specific conversations.",
+      },
+      {
+        question: "Do I get notifications for everything?",
+        answer: "No — DNA prioritizes relevance, not noise.",
+      },
+      {
+        question: "Are notifications real-time?",
+        answer: "Yes, with fallback email/push options.",
+      },
+      {
+        question: "What about safety?",
+        answer: "Blocked users cannot send notifications or messages.",
+      },
+      {
+        question: "Can I mute an entire Space?",
+        answer:
+          "Yes — you can mute Space notifications without leaving the Space.",
+      },
+      {
+        question: "Do notifications affect recommendations?",
+        answer:
+          "Engagement with notifications makes ADIN smarter about what you value.",
+      },
+    ],
+  },
 };
