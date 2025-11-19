@@ -23,7 +23,42 @@ const FactSheetPage = () => {
   });
 
   const handlePrint = () => {
-    window.print();
+    // Add print styles to ensure everything is visible
+    const style = document.createElement('style');
+    style.id = 'print-all-content';
+    style.innerHTML = `
+      @media print {
+        body * {
+          visibility: visible !important;
+        }
+        .print\\:hidden {
+          display: none !important;
+        }
+        .container {
+          max-width: 100% !important;
+        }
+        /* Ensure all sections print */
+        .fact-sheet-section {
+          page-break-inside: avoid !important;
+          display: block !important;
+        }
+        /* Add page breaks between major sections */
+        .fact-sheet-divider {
+          page-break-after: always !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    setTimeout(() => {
+      window.print();
+      
+      // Clean up after print
+      setTimeout(() => {
+        const styleEl = document.getElementById('print-all-content');
+        if (styleEl) styleEl.remove();
+      }, 100);
+    }, 100);
   };
 
   const handleShare = async () => {
@@ -124,7 +159,7 @@ const FactSheetPage = () => {
         <Separator className="mb-12" />
 
         {/* Executive Summary */}
-        <Card className="p-8 mb-8 bg-card border-2">
+        <Card className="fact-sheet-section p-8 mb-8 bg-card border-2">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Sparkles className="h-8 w-8 text-dna-copper" />
             Executive Summary
@@ -139,8 +174,10 @@ const FactSheetPage = () => {
           </div>
         </Card>
 
+        <div className="fact-sheet-divider" />
+
         {/* Who We Are */}
-        <section className="mb-12">
+        <section className="fact-sheet-section mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Users className="h-8 w-8 text-dna-emerald" />
             Who We Are
@@ -176,10 +213,10 @@ const FactSheetPage = () => {
           </Card>
         </section>
 
-        <Separator className="mb-12" />
+        <div className="fact-sheet-divider" />
 
         {/* What We Do - The 5 Cs */}
-        <section className="mb-12">
+        <section className="fact-sheet-section mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Target className="h-8 w-8 text-dna-copper" />
             Our Methodology: The 5 Cs Cycle
@@ -258,10 +295,10 @@ const FactSheetPage = () => {
           </Card>
         </section>
 
-        <Separator className="mb-12" />
+        <div className="fact-sheet-divider" />
 
         {/* Why It Matters */}
-        <section className="mb-12">
+        <section className="fact-sheet-section mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Globe className="h-8 w-8 text-dna-gold" />
             Why It Matters: The Opportunity
@@ -297,10 +334,10 @@ const FactSheetPage = () => {
           </div>
         </section>
 
-        <Separator className="mb-12" />
+        <div className="fact-sheet-divider" />
 
         {/* How We're Different */}
-        <section className="mb-12">
+        <section className="fact-sheet-section mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <TrendingUp className="h-8 w-8 text-dna-emerald" />
             How We're Different: Our Positioning
@@ -347,10 +384,10 @@ const FactSheetPage = () => {
           </Card>
         </section>
 
-        <Separator className="mb-12" />
+        <div className="fact-sheet-divider" />
 
         {/* Call to Action for Different Stakeholders */}
-        <section className="mb-12">
+        <section className="fact-sheet-section mb-12">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
             <Heart className="h-8 w-8 text-dna-copper" />
             Join the Movement
