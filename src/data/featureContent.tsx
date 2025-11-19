@@ -1194,4 +1194,169 @@ One tool. Many possibilities. Always intuitive.`,
       },
     ],
   },
+  "needs-and-offers": {
+    hero: {
+      title: "Needs & Offers (DNA | CONTRIBUTE)",
+      oneLiner:
+        "Needs & Offers is the matching system that connects people who need support with those who have the skills, time, resources, or access to help.",
+      whoItsFor:
+        "Project leads, space organizers, community builders, founders, volunteers, mentors, supporters — everyone who wants to ask for help or offer it.",
+    },
+    whatItIs: `Almost every project — no matter how magical — gets stuck at the same question:
+
+"What do you need right now?"
+
+Most communities struggle because needs remain invisible. People want to support, but they don't know how or where.
+
+**Needs & Offers solve that.**
+
+- **A Need** = a clear request for support
+- **An Offer** = someone stepping up with skills, time, resources, or help
+- **A Validated Contribution** = recognition for completed support
+
+Together, they power DNA's contribution engine — simple, transparent, and action-driven.`,
+    whatYouCanDo: [
+      "Post Needs — Skills (design, engineering, writing, research), Time (mentorship, coaching, support), Resources (tools, assets, access, space), Partnerships and opportunities, Volunteers for events or projects, Feedback, testing, or user insights",
+      "Make Offers — Quickly respond to needs, Share expertise, Offer time or mentorship, Offer resources, space, tools, or access, Support teams and communities",
+      "Track Progress — Leads manage offers, Contributors follow their submissions, Conversations happen through CONNECT or Messages, Updates flow into CONVEY",
+      "Validate Contributions — When complete, Leads validate, Contributors receive badges, Contribution counts grow, Stories can be created to celebrate impact",
+    ],
+    howItWorks: [
+      "Needs live inside Spaces, so context is always clear",
+      "ADIN recommends contributors, based on skills, interests, or past contributions",
+      "Rate limits prevent spam, keeping the system high-quality",
+      "Validation triggers badges, creating reputation and recognition",
+      "Needs flow into CONNECT Feed, increasing discovery",
+      "Story prompts encourage users to post highlights, fueling CONVEY",
+      "Offers are private at first, until accepted by a lead",
+    ],
+    stepByStep: [
+      {
+        title: "If you're posting a need",
+        steps: [
+          "Click 'Post a Need' in the Universal Composer",
+          "Describe what you need in one clear sentence",
+          "Add context in the description",
+          "Tag skills, topics, and urgency",
+          "Publish it inside the right Space",
+          "Review offers and choose the best fit",
+          "Validate once complete — celebrate your contributor!",
+        ],
+      },
+      {
+        title: "If you're offering help",
+        steps: [
+          "Browse needs posted across DNA",
+          "Filter by skills, region, or Space",
+          "Click 'Offer Support'",
+          "Add a short note explaining how you can help",
+          "Wait for acceptance and follow up with the lead",
+          "Complete the contribution",
+          "Earn your badge!",
+        ],
+      },
+      {
+        title: "If you're leading a team or community",
+        steps: [
+          "Post needs early — don't wait",
+          "Keep needs small and actionable",
+          "Consider creating multiple small needs",
+          "Encourage members to post offers",
+          "Validate contributions promptly",
+          "Share updates on progress in your Space or via CONVEY",
+          "Use needs to regularly energize your community",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're a founder in Lagos",
+        description:
+          "You post a need for 'Pitch deck design help.' Within hours, a designer in London offers support. You jump on a call, redesign the deck, and validate the contribution. The story gets shared through CONVEY — inspiring more offers.",
+      },
+      {
+        title: "You're supporting a community project in Accra",
+        description:
+          "You post a need for volunteers to help with logistics. Two diaspora members traveling home see it and step in. The event runs smoothly — and your contributors feel deeply connected.",
+      },
+      {
+        title: "You're a mentor in Atlanta",
+        description:
+          "You see a 'Need: 30-minute pitch feedback' in your feed. You offer help. The founder grows stronger, and your mentorship becomes a badge on your profile.",
+      },
+      {
+        title: "You're in a creative Space",
+        description:
+          "Someone posts a need for help editing a short film. A member in Nairobi offers their editing skills. The project gets completed and screened at an event.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "CONTRIBUTE Hub",
+        description: "All contribution activity",
+        icon: Heart,
+      },
+      {
+        name: "Spaces",
+        description: "Context and community for each need",
+        icon: FolderOpen,
+      },
+      {
+        name: "COLLABORATE",
+        description: "Tasks, progress, attachments",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONNECT Feed",
+        description: "Visibility and discovery",
+        icon: Users2,
+      },
+      {
+        name: "CONVEY",
+        description: "Storytelling and highlights",
+        icon: Megaphone,
+      },
+      {
+        name: "ADIN",
+        description: "Matching and relevance suggestions",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "Who can post needs?",
+        answer:
+          "Space Leads and authorized contributors — depending on Space settings.",
+      },
+      {
+        question: "Can anyone make an offer?",
+        answer: "Yes — any DNA member can offer support.",
+      },
+      {
+        question: "What happens when I make an offer?",
+        answer:
+          "The project or space lead will review and respond. You might get a follow-up message.",
+      },
+      {
+        question: "Are offers visible to everyone?",
+        answer:
+          "Not initially — only after acceptance (depending on settings).",
+      },
+      {
+        question: "Can needs be closed or updated?",
+        answer:
+          "Absolutely — leads can update, pause, or close needs anytime.",
+      },
+      {
+        question: "How do I track my contributions?",
+        answer:
+          "Your profile displays your badges and validated contributions.",
+      },
+      {
+        question: "Do contributions expire?",
+        answer:
+          "No — they remain part of your permanent impact history.",
+      },
+    ],
+  },
 };
