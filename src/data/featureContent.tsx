@@ -29,6 +29,137 @@ export interface FeatureContent {
 }
 
 export const featureContentBySlug: Record<string, FeatureContent> = {
+  spaces: {
+    hero: {
+      title: "DNA | Spaces",
+      oneLiner: "Spaces are the home for communities, projects, and initiatives on DNA — where people gather, work, contribute, and grow together.",
+      whoItsFor: "Members, organizers, founders, project leads, community builders, programs, and teams across the global African diaspora."
+    },
+    whatItIs: `Most platforms treat groups or communities as isolated islands.
+But in DNA, Spaces are something deeper:
+
+**Spaces are living hubs where the 5Cs come together** — Connect, Convene, Collaborate, Contribute, and Convey.
+
+A Space can be:
+- A community
+- A project
+- A venture
+- A program
+- A cause
+- A creative collective
+- A research group
+- A diaspora-interest hub
+- A local chapter or global network
+
+Whatever the form, a Space gives people a place to belong, build, and mobilize.`,
+    whatYouCanDo: [
+      "Build community with people who share your interests, heritage, or mission",
+      "Create and manage projects through COLLABORATE",
+      "Post needs and offers through CONTRIBUTE",
+      "Host events through CONVENE",
+      "Share updates and tell stories through CONVEY",
+      "Create recurring routines (weekly standups, monthly gatherings, project sprints)",
+      "Invite members who can help or contribute",
+      "Track progress through tasks, analytics, and updates",
+      "Organize your ecosystem across regions, industries, and causes",
+      "Make your work visible to the broader diaspora"
+    ],
+    howItWorks: [
+      "Each Space has roles: Lead, Contributor, Member, Follower",
+      "Permissions adapt — Leads create events, tasks, and needs; Contributors support; Members participate",
+      "Privacy settings determine visibility: Public / Private / Invite-only",
+      "Activities inside a Space flow out into the CONNECT Feed and CONVEY",
+      "ADIN uses Space activity to personalize recommendations",
+      "Spaces integrate all 5Cs, so members don't have to jump between tools",
+      "Tasks, events, needs, and updates are all tied back to a Space, so context is always clear",
+      "Spaces grow naturally as more collaborators join or contribute"
+    ],
+    stepByStep: [
+      {
+        title: "If you're starting a new Space",
+        steps: [
+          "Choose a clear name that shows purpose ('Diaspora Creators Hub', 'Ghana Climate Tech', etc.)",
+          "Add a strong description — what the Space is for, who it's for, and what success looks like",
+          "Set the right visibility: Public for open communities, Private for focused teams, Invite-only for premium or sensitive groups",
+          "Create your first project or event to give members something to engage with",
+          "Post a welcome update to set the tone",
+          "Invite your first ten people — enough to create momentum"
+        ]
+      },
+      {
+        title: "If you're joining a Space",
+        steps: [
+          "Introduce yourself or react to the latest update",
+          "Look at open tasks or needs",
+          "Follow other members you find interesting",
+          "Join upcoming events or working sessions",
+          "Share something — even a small insight or resource"
+        ]
+      },
+      {
+        title: "If you're running an active Space",
+        steps: [
+          "Use events and updates to keep people engaged",
+          "Post regular progress summaries",
+          "Validate contributions to recognize your supporters",
+          "Create a healthy mix of tasks: easy wins + core milestones",
+          "Use analytics to see what's working"
+        ]
+      }
+    ],
+    examples: [
+      {
+        title: "You start a Space for African EdTech builders",
+        description: "You create the Space, add a description, post your first update, and create three tasks. Members from Ghana, Kenya, and the UK join within a week. Soon you're hosting monthly virtual meetups and shipping early prototypes."
+      },
+      {
+        title: "You join a Space for African creatives in the diaspora",
+        description: "You skim the updates, react to a story, and join the next meetup. A filmmaker in Joburg messages you, and you end up collaborating on a project. Your Space becomes the home for your creative journey."
+      },
+      {
+        title: "You run a community project in Lagos",
+        description: "Your Space organizes volunteers, posts event updates, and manages contributions. Members from abroad offer mentorship and funding. Progress is visible, and your initiative grows beyond your neighborhood."
+      }
+    ],
+    relatedFeatures: [
+      { name: "COLLABORATE", description: "Tasks, projects, boards, attachments", icon: FolderOpen },
+      { name: "CONVENE", description: "Events tied to the Space", icon: Calendar },
+      { name: "CONTRIBUTE", description: "Needs and offers connected to your mission", icon: Heart },
+      { name: "CONVEY", description: "Updates, stories, and highlights", icon: Megaphone },
+      { name: "CONNECT", description: "Members and collaborators inside the Space", icon: Users2 },
+      { name: "CONNECT Feed", description: "Activity flows to your followers", icon: Users2 }
+    ],
+    faqs: [
+      {
+        question: "Are Spaces free to create?",
+        answer: "Yes — any member can create a Space once their profile meets the basic completeness threshold."
+      },
+      {
+        question: "What types of Spaces work best on DNA?",
+        answer: "Communities, projects, initiatives, collectives, startups, diaspora groups, chapters, and thematic hubs."
+      },
+      {
+        question: "Can Spaces be private?",
+        answer: "Yes — Spaces can be Public, Private, or Invite-Only."
+      },
+      {
+        question: "Can I run multiple projects inside one Space?",
+        answer: "Absolutely. Spaces can have multiple projects, tasks, and events running simultaneously."
+      },
+      {
+        question: "How do people discover my Space?",
+        answer: "Through CONNECT recommendations, feed activity, search, events, and featured stories."
+      },
+      {
+        question: "Can Spaces have multiple leads?",
+        answer: "Yes — Leads can be shared for balanced governance."
+      },
+      {
+        question: "Do Spaces support multimedia?",
+        answer: "Yes — attachments, images, links, and more."
+      }
+    ]
+  },
   connect: {
     hero: {
       title: "DNA | CONNECT",
