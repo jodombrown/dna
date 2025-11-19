@@ -572,24 +572,37 @@ const PitchDeck = () => {
     // Set to first slide and trigger print after a brief delay to ensure rendering
     setCurrentSlide(0);
     
-    // Use CSS to show all slides in print mode
+    // Add print styles for a full-page 8.5 x 11 landscape layout
     const style = document.createElement('style');
-    style.id = 'print-all-slides';
+    style.id = 'pitch-deck-print-styles';
     style.innerHTML = `
+      @page {
+        size: 11in 8.5in;
+        margin: 0.5in;
+      }
       @media print {
-        .slide-container {
-          display: block !important;
-          page-break-after: always !important;
-          page-break-inside: avoid !important;
+        html, body {
+          width: 11in;
+          height: 8.5in;
+          margin: 0;
+          padding: 0;
         }
-        .slide-item {
-          display: flex !important;
-          opacity: 1 !important;
-          height: 100vh !important;
-          width: 100% !important;
+        body {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
         .print\\:hidden {
           display: none !important;
+        }
+        #pitch-deck-print-root {
+          background: white !important;
+        }
+        #pitch-deck-print-root .deck-slide {
+          width: 100% !important;
+          height: auto !important;
+          page-break-after: always !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
         }
       }
     `;
@@ -600,7 +613,7 @@ const PitchDeck = () => {
       
       // Clean up and restore
       setTimeout(() => {
-        const styleEl = document.getElementById('print-all-slides');
+        const styleEl = document.getElementById('pitch-deck-print-styles');
         if (styleEl) styleEl.remove();
         setCurrentSlide(originalSlide);
       }, 100);
@@ -665,7 +678,7 @@ const PitchDeck = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div id="pitch-deck-print-root" className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <UnifiedHeader />
       
       {/* Header Actions */}
@@ -729,7 +742,7 @@ const PitchDeck = () => {
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className="aspect-video bg-card rounded-lg shadow-lg p-6 md:p-8 flex flex-col relative"
+                className="deck-slide aspect-video bg-card rounded-lg shadow-lg p-6 md:p-8 flex flex-col relative"
               >
                 {slide.showHeader && (
                   <div className="flex items-start justify-between mb-6 animate-fade-in">
@@ -795,7 +808,7 @@ const PitchDeck = () => {
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className="min-w-full h-full snap-center flex items-center justify-center px-8 py-4 print:min-w-0 print:w-full print:h-auto print:page-break-after-always print:snap-none"
+                className="deck-slide min-w-full h-full snap-center flex items-center justify-center px-8 py-4 print:min-w-0 print:w-full print:h-auto print:page-break-after-always print:snap-none"
               >
                 <div className="w-full aspect-video max-h-full bg-card rounded-lg shadow-2xl p-8 md:p-12 flex flex-col overflow-hidden relative print:shadow-none print:max-h-none print:h-screen print:page-break-inside-avoid">
                   {slide.showHeader && (

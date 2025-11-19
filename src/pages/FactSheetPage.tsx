@@ -23,27 +23,45 @@ const FactSheetPage = () => {
   });
 
   const handlePrint = () => {
-    // Add print styles to ensure everything is visible
+    // Add print styles for a full-page 8.5 x 11 portrait layout
     const style = document.createElement('style');
     style.id = 'print-all-content';
     style.innerHTML = `
+      @page {
+        size: 8.5in 11in;
+        margin: 0.5in;
+      }
       @media print {
-        body * {
-          visibility: visible !important;
+        html, body {
+          width: 8.5in;
+          height: 11in;
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
         .print\\:hidden {
           display: none !important;
         }
-        .container {
-          max-width: 100% !important;
+        #fact-sheet-print-root {
+          background: white !important;
         }
-        /* Ensure all sections print */
-        .fact-sheet-section {
+        #fact-sheet-print-root .container,
+        #fact-sheet-print-root .max-w-5xl,
+        #fact-sheet-print-root .max-w-3xl {
+          max-width: 100% !important;
+          width: 100% !important;
+        }
+        /* Ensure all sections print cleanly */
+        #fact-sheet-print-root .fact-sheet-section {
           page-break-inside: avoid !important;
+          break-inside: avoid !important;
           display: block !important;
         }
         /* Add page breaks between major sections */
-        .fact-sheet-divider {
+        #fact-sheet-print-root .fact-sheet-divider {
           page-break-after: always !important;
         }
       }
@@ -122,7 +140,7 @@ const FactSheetPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div id="fact-sheet-print-root" className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <UnifiedHeader />
       
       <div className="container mx-auto px-4 py-8 max-w-5xl pt-24">
