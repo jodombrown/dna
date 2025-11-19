@@ -1872,4 +1872,165 @@ It's simple, human, and central to the entire DNA experience.`,
       },
     ],
   },
+  "adin": {
+    hero: {
+      title: "ADIN — African Diaspora Intelligence Network",
+      oneLiner:
+        "ADIN is DNA's intelligence engine — the layer that personalizes your experience, connects the dots, and helps the diaspora move with clarity and purpose.",
+      whoItsFor:
+        "Everyone. Members, organizers, contributors, partners, teams — anyone who benefits from smarter discovery, better recommendations, and a more meaningful platform experience.",
+    },
+    whatItIs: `Most platforms drown people in noise. Endless lists, random content, irrelevant suggestions — the opposite of empowerment.
+
+**ADIN flips that completely.**
+
+ADIN is the personalization and intelligence system that helps every member see what matters most — people, spaces, events, contributions, and stories aligned with their identity, interests, skills, and goals.
+
+Its purpose is simple:
+- Reduce noise
+- Increase meaning
+- Guide users toward action
+- Strengthen diaspora-wide mobilization
+- Help contributions and collaborations happen faster
+
+ADIN is the connective tissue behind DNA's 5Cs.`,
+    whatYouCanDo: [
+      "Smarter Discovery — Relevant members to connect with, Spaces you'll love, Diaspora communities tied to your identity, Opportunities based on your skills and focus areas",
+      "Meaningful Event Recommendations — Events tied to your interests, Gathering suggestions based on who you follow, Cross-regional convenings you wouldn't have found otherwise",
+      "Better Collaboration Matches — People with complementary skills, Contributors who can support your needs, Potential teammates for your projects, Recommendations for task ownership",
+      "Contribution Alignment — Needs that match your expertise, Opportunities for mentorship or support, Offers you're uniquely suited for",
+      "Feed Personalization — Stories and updates that matter, Highlights from Spaces and projects you care about, A daily pulse that reflects your world",
+      "Safety & Integrity — Reducing spam, Filtering inappropriate content, Preventing unwanted interactions",
+    ],
+    howItWorks: [
+      "Your profile powers your recommendations — Heritage, skills, focus areas, and spaces form your 'identity graph'",
+      "Your activity trains the system — Every Space you join, story you read, event you attend, and need you respond to tells ADIN what you value",
+      "Your connections shape what you see — The more relationships you build, the more relevant your feed becomes",
+      "Your contributions expand your opportunities — People who support others get surfaced more often",
+      "Your engagement guides personalization — ADIN learns quietly — always adapting, never overwhelming",
+      "Privacy and safety controls are always respected — Blocked users, private spaces, and sensitive data stay protected",
+    ],
+    stepByStep: [
+      {
+        title: "If you're new to DNA",
+        steps: [
+          "Fill out your profile — the more you share, the smarter ADIN becomes",
+          "Join one or two Spaces that feel aligned",
+          "Attend at least one event",
+          "Follow people whose work inspires you",
+          "Engage with your feed (reactions, comments, updates)",
+        ],
+      },
+      {
+        title: "If you're a builder or organizer",
+        steps: [
+          "Keep your Space active — ADIN boosts engaged communities",
+          "Post clear tasks for contributors",
+          "Tag your needs accurately",
+          "Share updates for visibility in CONNECT Feed",
+          "Invite collaborators with complementary skills",
+        ],
+      },
+      {
+        title: "If you're exploring opportunities",
+        steps: [
+          "Update your skills and focus areas",
+          "Follow topics that matter to you",
+          "Offer support through CONTRIBUTE",
+          "Attend cross-regional events",
+          "React to stories that resonate",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're a creative in Nairobi",
+        description:
+          "ADIN notices you engaging with art and storytelling Spaces. Your feed starts showing you: Creative workshops, Filmmakers in the diaspora, Events in your region, Needs related to design. Soon, you're collaborating across continents.",
+      },
+      {
+        title: "You're a founder in Accra",
+        description:
+          "ADIN sees your skills, interests, and contributions. Your feed features: Mentors in your industry, Technical collaborators, Startup spaces in the diaspora, Needs that match your expertise. A support ecosystem forms around your project.",
+      },
+      {
+        title: "You're a student in Toronto",
+        description:
+          "You explore African heritage topics. ADIN surfaces: Cultural Spaces, Creative events, Stories that match your roots, People who share your background. You slowly find your community.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "CONNECT",
+        description: "Member matching, connection suggestions",
+        icon: Users2,
+      },
+      {
+        name: "CONNECT Feed",
+        description: "Personalized updates and stories",
+        icon: Users2,
+      },
+      {
+        name: "CONVENE",
+        description: "Event recommendations",
+        icon: Calendar,
+      },
+      {
+        name: "COLLABORATE",
+        description: "Project contributor suggestions",
+        icon: FolderOpen,
+      },
+      {
+        name: "CONTRIBUTE",
+        description: "Need/offer matching",
+        icon: Heart,
+      },
+      {
+        name: "CONVEY",
+        description: "Relevant stories surfaced",
+        icon: Megaphone,
+      },
+      {
+        name: "Spaces",
+        description: "Discovery and engagement routing",
+        icon: FolderOpen,
+      },
+      {
+        name: "Profile System",
+        description: "Identity graph foundation",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "Is ADIN an algorithm?",
+        answer:
+          "Yes, but a transparent one — built to support real mobilization, not vanity metrics.",
+      },
+      {
+        question: "Does ADIN use my data?",
+        answer:
+          "Only with your consent and only to improve your experience. Sensitive or private data is never exposed.",
+      },
+      {
+        question: "Do I have control over what I see?",
+        answer:
+          "Absolutely — you can follow/unfollow, join/leave Spaces, or adjust your profile anytime.",
+      },
+      {
+        question: "Does ADIN make decisions for me?",
+        answer: "No — it suggests. You choose.",
+      },
+      {
+        question: "Does ADIN replace human relationships?",
+        answer:
+          "No. It amplifies them by removing guesswork and friction.",
+      },
+      {
+        question: "Will ADIN improve over time?",
+        answer:
+          "Yes — Phase 2 introduces real-time intelligence, experimentation, cohort segmentation, and adaptation.",
+      },
+    ],
+  },
 };
