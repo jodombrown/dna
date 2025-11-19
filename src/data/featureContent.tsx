@@ -289,4 +289,146 @@ export const featureContentBySlug: Record<string, FeatureContent> = {
       },
     ],
   },
+  collaborate: {
+    hero: {
+      title: "DNA | COLLABORATE",
+      oneLiner:
+        "COLLABORATE turns ideas, teams, and projects into organized execution — with the tools to move from intention to impact.",
+      whoItsFor:
+        "Project leads, founders, community organizers, innovators, students, and anyone building something that needs structure and teamwork across the diaspora.",
+    },
+    whatItIs:
+      "It's easy to get inspired. The hard part is bringing people together around the work — and keeping everything organized so momentum doesn't fade. COLLABORATE solves that. COLLABORATE is DNA's project engine. It gives you a place to create a project, gather people, break down tasks, track progress, share updates, and move real work forward — across borders, time zones, and communities. Whether you're building a startup, running a community initiative, managing a research project, or organizing a creative collaboration, this is where the work lives.",
+    whatYouCanDo: [
+      "Create project spaces for teams, programs, or initiatives.",
+      "Break work into tasks with deadlines, owners, attachments, and statuses.",
+      "Track progress visually with lists, boards, or milestones.",
+      "Post updates, share context, and keep everyone aligned.",
+      "Manage roles (Leads, Contributors, Members).",
+      "Share resources and files through attachments.",
+      "Use project analytics to see activity, bottlenecks, and team engagement.",
+      "Connect team members with relevant skills, regions, or backgrounds using CONNECT.",
+      "Run working sessions via CONVENE events linked to your project.",
+    ],
+    howItWorks: [
+      "Projects live inside Spaces, which gives them structure and community support.",
+      "Tasks can be assigned or unassigned, so new contributors can jump in anytime.",
+      "Your activity influences recommendations, helping ADIN surface relevant collaborators.",
+      "Contributions (skills, time, resources) inside a project can unlock badges and recognition.",
+      "Progress is transparent, meaning anyone in your space can see where help is needed.",
+      "Updates flow into CONVEY, turning your project's work into a story the network can follow.",
+    ],
+    stepByStep: [
+      {
+        title: "If you're starting a new project:",
+        steps: [
+          "Create a Space with a clear name, description, and purpose.",
+          "Add collaborators or invite people through CONNECT.",
+          "List out your first 5–10 tasks — small, clear, and easy to start.",
+          "Assign owners or leave some tasks open for volunteers.",
+          "Share an update so your team knows what's happening next.",
+        ],
+      },
+      {
+        title: "If you're joining someone else's project:",
+        steps: [
+          "Introduce yourself in the space or message the lead directly.",
+          "Check the tasks board to find where you can add value.",
+          "Join a working session if events are linked to the project.",
+          "Share updates on what you're taking on or finishing.",
+        ],
+      },
+      {
+        title: "If you're running a growing team:",
+        steps: [
+          "Use dashboards or boards to keep work organized.",
+          "Post regular updates so the team stays aligned.",
+          "Host recurring check-ins using CONVENE.",
+          "Celebrate wins and share progress through CONVEY.",
+          "Invite contributors from CONNECT who have skills your project needs.",
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: "You're building a pan-African storytelling project",
+        description:
+          "You create a space, add a few passionate writers, and drop your first set of tasks. A designer from Kigali sees your updates on the CONNECT feed and joins. Soon you're hosting weekly writing sessions through CONVENE — and pushing out stories through CONVEY.",
+      },
+      {
+        title: "You're a founder in Nairobi prototyping an app",
+        description:
+          "You set up a project space, post your design tasks, and add your first collaborators. A UX designer in Stockholm jumps in after discovering your project. A developer from Accra contributes to key tasks, and within weeks, your MVP starts taking shape.",
+      },
+      {
+        title: "You're organizing a community initiative in D.C.",
+        description:
+          "You create tasks for outreach, partnerships, and logistics. Contributors self-assign tasks as they join the space. You host weekly meetings, track everything inside COLLABORATE, and share recaps through CONVEY.",
+      },
+    ],
+    relatedFeatures: [
+      {
+        name: "Spaces",
+        description: "The home for projects and community build-outs.",
+        icon: FolderOpen,
+      },
+      {
+        name: "Tasks",
+        description: "Your building blocks for execution.",
+        icon: FolderOpen,
+      },
+      {
+        name: "Updates & Highlights (CONVEY)",
+        description: "Turn your work into visibility.",
+        icon: Megaphone,
+      },
+      {
+        name: "Contributions (CONTRIBUTE)",
+        description: "Offer or request skills/resources tied to your project.",
+        icon: Heart,
+      },
+      {
+        name: "Events (CONVENE)",
+        description: "Host working sessions, project kickoffs, and milestone reviews.",
+        icon: Calendar,
+      },
+      {
+        name: "CONNECT",
+        description: "Meet potential contributors and collaborators.",
+        icon: Users2,
+      },
+    ],
+    faqs: [
+      {
+        question: "Do I need to be a project lead to use COLLABORATE?",
+        answer:
+          "No. Anyone can join a space, volunteer for tasks, or contribute to ongoing projects.",
+      },
+      {
+        question: "What's the difference between a Space and a Project?",
+        answer:
+          "A Space is the community or container. A Project is the specific initiative inside that space. COLLABORATE sits inside Spaces to help those projects move.",
+      },
+      {
+        question: "Can I invite collaborators who aren't on DNA?",
+        answer:
+          "Right now, they need a DNA account — but public collaboration options are planned.",
+      },
+      {
+        question: "Can I manage private projects?",
+        answer:
+          "Yes. Spaces and projects can be public, private, or invite-only.",
+      },
+      {
+        question: "Do tasks send notifications?",
+        answer:
+          "Owners receive notifications when tasks are assigned, updated, or completed.",
+      },
+      {
+        question: "Does COLLABORATE include Kanban boards or analytics?",
+        answer:
+          "Yes — boards, lists, attachments, dependencies, and analytics are part of COLLABORATE's advanced toolset.",
+      },
+    ],
+  },
 };
