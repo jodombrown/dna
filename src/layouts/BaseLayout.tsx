@@ -1,5 +1,6 @@
 import React from 'react';
 import { useViewState } from '@/contexts/ViewStateContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
 
@@ -20,6 +21,7 @@ interface BaseLayoutProps {
  */
 const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   const { viewState, layoutConfig } = useViewState();
+  const { user } = useAuth();
 
   // For now, we render children directly
   // In Phase 2, this will intelligently distribute content to columns
@@ -30,7 +32,10 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
       <UnifiedHeader />
       <div 
         className={cn(
-          "min-h-screen w-full max-w-full bg-background",
+          "min-h-screen w-full max-w-full",
+          user 
+            ? "bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10" 
+            : "bg-background",
           "pt-14 sm:pt-16",
           "transition-all duration-300 ease-in-out",
           "overflow-x-hidden"
