@@ -1,16 +1,23 @@
 
 import { Linkedin, Instagram } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white py-6 lg:py-8">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
-          {/* Copyright */}
+          {/* Copyright and Documentation Link */}
           <div className="mb-4 md:mb-0 text-center md:text-left">
             <p className="text-gray-400 text-sm">
               © 2025 DNA - Diaspora Network of Africa. All rights reserved.
             </p>
+            <Link 
+              to="/documentation" 
+              className="text-gray-400 hover:text-dna-copper transition-colors text-sm inline-block mt-1"
+            >
+              DNA | Documentation Hub
+            </Link>
           </div>
 
           {/* Social Media Links */}
