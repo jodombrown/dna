@@ -31,7 +31,7 @@ Useful for big releases:
 
 ## 5. Add Screenshots / Visual Examples
 
-Later — once DNA's UI stabilizes.
+Later, once DNA's UI stabilizes.
 
 ## 6. "Related Feature Cards"
 
@@ -39,7 +39,7 @@ At the bottom of each page:
 - CONNECT Feed
 - Profile & Identity
 - Messaging
-…etc.
+and more.
 
 ## 7. Collapsible FAQ Blocks
 
@@ -56,7 +56,7 @@ You could run:
 pnpm generate feature my-new-feature
 ```
 
-…and it creates:
+It would automatically create:
 - Registry entry
 - Markdown file
 - Template skeleton
