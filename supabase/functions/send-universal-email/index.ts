@@ -102,12 +102,8 @@ const handler = async (req: Request): Promise<Response> => {
     // Get email content based on form type using sanitized data
     const emailContent = getEmailContent(formType, sanitizedFormData);
 
-    // Set admin recipients based on form type
-    let adminRecipients: string[] | undefined;
-    
-    if (formType === 'demo_request' || formType === 'beta_request') {
-      adminRecipients = ['aweh@diasporanetwork.africa', 'jaune@diasporanetwork.africa'];
-    }
+    // Set admin recipients - always send to both emails
+    const adminRecipients = ['aweh@diasporanetwork.africa', 'jaune@diasporanetwork.africa'];
 
     // Send email to admin(s)
     const adminEmailResponse = await emailService.sendAdminEmail(emailContent, adminRecipients);
