@@ -5,8 +5,10 @@ import { featureContentBySlug } from "@/data/featureContent";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 export default function FeatureDetail() {
+  useScrollToTop();
   const { slug } = useParams<{ slug: string }>();
 
   const feature = features.find((f) => f.slug === slug);
