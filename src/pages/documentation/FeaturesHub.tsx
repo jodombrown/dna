@@ -5,10 +5,12 @@ import { features, FeaturePillar } from "@/config/features.config";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const pillars: (FeaturePillar | "All")[] = ["All", "Connect", "Convene", "Collaborate", "Contribute", "Convey", "Platform"];
 
 export default function FeaturesHub() {
+  useScrollToTop();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPillar, setSelectedPillar] = useState<FeaturePillar | "All">("All");
 
