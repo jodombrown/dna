@@ -1,6 +1,6 @@
 # DNA Documentation Enhancement Roadmap
 
-**Turning your documentation system from complete → premium**
+**Turning your documentation system from complete to premium**
 
 This roadmap outlines the enhancements that will make the DNA documentation experience clearer, more polished, and more scalable. These improvements build trust with users, partners, and investors while keeping the system easy to maintain as the platform grows.
 
@@ -20,7 +20,7 @@ This roadmap focuses on enhancements that increase usability, professionalism, a
 
 ---
 
-## 🚀 HIGH PRIORITY — Next Sprint (Do These First)
+## 🚀 HIGH PRIORITY: Next Sprint (Do These First)
 
 These deliver the biggest UX lift with minimal development effort.
 
@@ -74,7 +74,7 @@ Updated: Jan 2025
 
 ---
 
-## 🌿 MEDIUM PRIORITY — Next Quarter
+## 🌿 MEDIUM PRIORITY: Next Quarter
 
 Useful once the documentation grows and stabilizes.
 
@@ -119,7 +119,7 @@ Useful once the documentation grows and stabilizes.
 
 ---
 
-## 🌍 LOW PRIORITY — Future Enhancements
+## 🌍 LOW PRIORITY: Future Enhancements
 
 Polish and automation improvements for long-term scaling.
 
@@ -140,7 +140,7 @@ Polish and automation improvements for long-term scaling.
 
 ### 8. Search Across Documentation
 
-**Why**: Useful when docs hit 50–100+ pages.
+**Why**: Useful when docs hit 50 to 100+ pages.
 
 **Impact**:
 - Big UX improvement

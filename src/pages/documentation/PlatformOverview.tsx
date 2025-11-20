@@ -8,31 +8,31 @@ const PlatformOverview = () => {
     {
       icon: Users2,
       color: "text-blue-500",
-      name: "CONNECT — Find Your People",
+      name: "CONNECT: Find Your People",
       description: "Discover members based on heritage, identity, skills, interests, and purpose. Build meaningful relationships that unlock collaboration, opportunity, and community.",
     },
     {
       icon: Calendar,
       color: "text-purple-500",
-      name: "CONVENE — Gather with Purpose",
-      description: "Host or join events across the diaspora — virtual, in-person, or hybrid. Every gathering becomes a moment of connection, discovery, and movement.",
+      name: "CONVENE: Gather with Purpose",
+      description: "Host or join events across the diaspora (virtual, in-person, or hybrid). Every gathering becomes a moment of connection, discovery, and movement.",
     },
     {
       icon: FolderKanban,
       color: "text-yellow-500",
-      name: "COLLABORATE — Build What Matters",
-      description: "Spaces and projects bring people together to do real work. Tasks, boards, events, updates — everything needed to turn ideas into progress.",
+      name: "COLLABORATE: Build What Matters",
+      description: "Spaces and projects bring people together to do real work. Tasks, boards, events, updates: everything needed to turn ideas into progress.",
     },
     {
       icon: Heart,
       color: "text-green-500",
-      name: "CONTRIBUTE — Support Each Other",
+      name: "CONTRIBUTE: Support Each Other",
       description: "Needs and Offers match people who need help with those ready to support. Contributions become visible, validated, and celebrated.",
     },
     {
       icon: MessageSquare,
       color: "text-red-500",
-      name: "CONVEY — Share Stories & Impact",
+      name: "CONVEY: Share Stories & Impact",
       description: "Updates and stories create a living narrative of diaspora mobilization. Your journey becomes part of our collective story.",
     },
   ];
@@ -53,7 +53,7 @@ const PlatformOverview = () => {
         {/* Introduction */}
         <div className="prose prose-lg max-w-none text-foreground/90">
           <p className="text-lg leading-relaxed">
-            When millions of people across the global African world each take small actions — connect, gather, collaborate, contribute, share — something extraordinary happens. DNA exists to organize that energy into a coordinated, global force for progress.
+            When millions of people across the global African world each take small actions (connect, gather, collaborate, contribute, share), something extraordinary happens. DNA exists to organize that energy into a coordinated, global force for progress.
           </p>
           <p className="text-lg leading-relaxed mt-4">
             DNA is built around the <strong>5 Pillars of Mobilization</strong>:
