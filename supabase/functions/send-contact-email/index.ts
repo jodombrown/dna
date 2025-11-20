@@ -78,7 +78,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const adminEmailResponse = await resend.emails.send({
       from: "DNA Platform <aweh@diasporanetwork.africa>",
-      to: ["aweh@diasporanetwork.africa"],
+      to: ["aweh@diasporanetwork.africa", "jaune@diasporanetwork.africa"],
       subject: "New Contact Form Submission - DNA Platform",
       html: adminHtml,
     });

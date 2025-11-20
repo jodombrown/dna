@@ -84,7 +84,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: 'DNA Platform <noreply@roadmap.africa>',
-        to: [recipient_email],
+        to: ['aweh@diasporanetwork.africa', 'jaune@diasporanetwork.africa'],
         subject: 'New DNA Market Validation Survey Response',
         html: htmlContent,
       }),
