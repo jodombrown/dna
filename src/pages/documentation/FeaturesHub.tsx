@@ -46,7 +46,9 @@ export default function FeaturesHub() {
         <div className="container mx-auto px-4 max-w-4xl">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Explore DNA Features</h1>
           <p className="text-lg md:text-xl text-white/90 leading-relaxed">
-            When you step into DNA, you're entering a global ecosystem built to help the African diaspora connect, collaborate, convene, contribute, and share our stories. This page is your guide to everything you can do here — every tool, every capability, every way to participate.
+            When you step into DNA, you're entering a global ecosystem built to help the African diaspora connect,
+            collaborate, convene, contribute, and share our stories. This page is your guide to everything you can do
+            here: every tool, every capability, every way to participate.
           </p>
           <p className="text-base text-white/80 mt-4">
             Whether you're new or returning, this hub helps you quickly understand how DNA works and how to put its features to use.
@@ -60,12 +62,12 @@ export default function FeaturesHub() {
           <h2 className="text-2xl font-bold mb-4 text-foreground">Why This Page Exists</h2>
           <div className="prose prose-lg max-w-none text-muted-foreground">
             <p className="text-lg leading-relaxed">
-              DNA is big. You shouldn't have to guess how it works.
-              This page explains each major feature, why it matters, and how to use it — in simple, clear language.
-              Click any feature to see a full deep-dive guide.
+              DNA is big. You shouldn't have to guess how it works. This page explains each major feature, why it matters,
+              and how to use it in simple, clear language. Click any feature to see a full deep-dive guide.
             </p>
             <p className="mt-4">
-              <strong className="text-foreground">This helps:</strong> Members, Organizers, Contributors, Partners, Investors, and Curious Visitors — everyone understands what DNA actually is.
+              <strong className="text-foreground">This helps:</strong> Members, Organizers, Contributors, Partners,
+              Investors, and Curious Visitors; everyone understands what DNA actually is.
             </p>
           </div>
         </section>
@@ -78,7 +80,7 @@ export default function FeaturesHub() {
               <li>Browse the list of features below</li>
               <li>Filter by the 5Cs or by system features</li>
               <li>Click any feature to see how it works and how to use it</li>
-              <li>Check back often — we update this page as DNA evolves</li>
+              <li>Check back often; we update this page as DNA evolves</li>
             </ul>
           </div>
         </section>

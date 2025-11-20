@@ -195,7 +195,7 @@ export const features: FeatureSummary[] = [
     pillar: "Platform",
     category: "System",
     status: "live",
-    shortTagline: "Create anything — updates, events, tasks, needs, and stories — from one tool.",
+    shortTagline: "Create anything you need from one tool: updates, events, tasks, needs, and stories.",
     oneLiner:
       "Universal Composer is adaptive across pillars, simple and powerful, serving as the voice of the ecosystem.",
     audience: ["All Users"],
@@ -231,9 +231,9 @@ export const features: FeatureSummary[] = [
     pillar: "Platform",
     category: "System",
     status: "live",
-    shortTagline: "Welcome to DNA — your guided first steps.",
+    shortTagline: "Welcome to DNA, your guided first steps.",
     oneLiner:
-      "Onboarding helps new members feel at home immediately — guiding them to complete their profile, join their first spaces, make their first connections, and discover where they belong.",
+      "Onboarding helps new members feel at home immediately by guiding them to complete their profile, join their first spaces, make their first connections, and discover where they belong.",
     audience: ["New Members", "All Users"],
     overviewOrder: 20,
   },
