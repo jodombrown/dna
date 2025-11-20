@@ -13,7 +13,7 @@ const Footer = () => {
               © 2025 DNA - Diaspora Network of Africa. All rights reserved.
             </p>
             <Link 
-              to="/documentation" 
+              to="/documentation/features" 
               className="text-gray-400 hover:text-dna-copper transition-colors text-sm inline-block mt-1"
             >
               DNA | Documentation Hub
