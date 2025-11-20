@@ -182,7 +182,7 @@ const EventListTable = ({ events }: EventListTableProps) => {
                   {isPast ? (
                     <span>{event.checked_in_count}</span>
                   ) : (
-                    <span className="text-muted-foreground">—</span>
+                    <span className="text-muted-foreground">-</span>
                   )}
                 </TableCell>
                 <TableCell className="text-right">
@@ -191,7 +191,7 @@ const EventListTable = ({ events }: EventListTableProps) => {
                       {event.show_up_rate}%
                     </span>
                   ) : (
-                    <span className="text-muted-foreground">—</span>
+                    <span className="text-muted-foreground">-</span>
                   )}
                 </TableCell>
               </TableRow>

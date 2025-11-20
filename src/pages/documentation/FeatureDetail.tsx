@@ -28,6 +28,8 @@ export default function FeatureDetail() {
     );
   }
 
+  const cleanText = (text: string) => text.replace(/—/g, "-").replace(/–/g, "-");
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "live":
@@ -61,9 +63,9 @@ export default function FeatureDetail() {
           </div>
 
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{content.hero.title}</h1>
-          <p className="text-xl text-white/90 mb-4">{content.hero.oneLiner}</p>
+          <p className="text-xl text-white/90 mb-4">{cleanText(content.hero.oneLiner)}</p>
           <p className="text-lg text-white/80">
-            <strong>Who it's for:</strong> {content.hero.whoItsFor}
+            <strong>Who it's for:</strong> {cleanText(content.hero.whoItsFor)}
           </p>
         </div>
       </div>
@@ -72,7 +74,7 @@ export default function FeatureDetail() {
         {/* What it is */}
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-4 text-foreground">What is {feature.name}?</h2>
-          <p className="text-lg text-muted-foreground leading-relaxed">{content.whatItIs}</p>
+          <p className="text-lg text-muted-foreground leading-relaxed">{cleanText(content.whatItIs)}</p>
         </section>
 
         {/* What you can do */}
@@ -82,7 +84,7 @@ export default function FeatureDetail() {
             {content.whatYouCanDo.map((item, index) => (
               <div key={index} className="flex items-start gap-3">
                 <CheckCircle2 className="h-6 w-6 text-dna-emerald flex-shrink-0 mt-0.5" />
-                <p className="text-muted-foreground">{item}</p>
+                <p className="text-muted-foreground">{cleanText(item)}</p>
               </div>
             ))}
           </div>
@@ -96,7 +98,7 @@ export default function FeatureDetail() {
             {content.howItWorks.map((item, index) => (
               <div key={index} className="flex items-start gap-3">
                 <div className="h-2 w-2 rounded-full bg-dna-emerald flex-shrink-0 mt-2" />
-                <p className="text-muted-foreground">{item}</p>
+                <p className="text-muted-foreground">{cleanText(item)}</p>
               </div>
             ))}
           </div>
@@ -109,13 +111,13 @@ export default function FeatureDetail() {
             {content.stepByStep.map((section, index) => (
               <Card key={index}>
                 <CardHeader>
-                  <CardTitle className="text-xl">{section.title}</CardTitle>
+                  <CardTitle className="text-xl">{cleanText(section.title)}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ol className="list-decimal list-inside space-y-3">
                     {section.steps.map((step, stepIndex) => (
                       <li key={stepIndex} className="text-muted-foreground pl-2">
-                        {step}
+                        {cleanText(step)}
                       </li>
                     ))}
                   </ol>
@@ -132,10 +134,10 @@ export default function FeatureDetail() {
             {content.examples.map((example, index) => (
               <Card key={index} className="bg-muted/50">
                 <CardHeader>
-                  <CardTitle className="text-lg">{example.title}</CardTitle>
+                  <CardTitle className="text-lg">{cleanText(example.title)}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">{example.description}</p>
+                  <p className="text-muted-foreground">{cleanText(example.description)}</p>
                 </CardContent>
               </Card>
             ))}
@@ -156,11 +158,11 @@ export default function FeatureDetail() {
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <Icon className="h-5 w-5 text-dna-emerald" />
-                      <CardTitle className="text-lg">{related.name}</CardTitle>
+                      <CardTitle className="text-lg">{cleanText(related.name)}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground">{related.description}</p>
+                    <p className="text-sm text-muted-foreground">{cleanText(related.description)}</p>
                   </CardContent>
                 </Card>
               );
@@ -174,8 +176,8 @@ export default function FeatureDetail() {
           <Accordion type="single" collapsible className="w-full">
             {content.faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
+                <AccordionTrigger className="text-left">{cleanText(faq.question)}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">{cleanText(faq.answer)}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>

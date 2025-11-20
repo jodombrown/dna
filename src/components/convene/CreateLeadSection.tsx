@@ -106,7 +106,7 @@ export function CreateLeadSection() {
         </div>
 
         <p className="text-xs text-muted-foreground mt-4">
-          "The work will not save us. The work is the love made public." — Toni Morrison
+          "The work will not save us. The work is the love made public." - Toni Morrison
         </p>
       </div>
     </Card>
