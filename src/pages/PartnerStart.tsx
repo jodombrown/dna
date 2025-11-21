@@ -22,17 +22,30 @@ const PartnerStart = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // TODO: Connect to actual form submission endpoint or email service
-    console.log('Partnership form submitted:', formData);
-    
-    trackEvent('connect_discovery_filter_applied' as any, { 
-      action: 'partnership-form-submit',
-      sector: formData.sector
+    trackEvent('partner_form_submitted', { 
+      sector: formData.sector,
+      page: 'partner-start'
     });
+    
+    // Create mailto body
+    const mailtoBody = `
+Partnership Inquiry from ${formData.organization}
+
+Name: ${formData.name}
+Organization: ${formData.organization}
+Email: ${formData.email}
+Sector: ${formData.sector}
+
+What they're interested in:
+${formData.interest}
+    `.trim();
+    
+    // Open mailto link
+    window.location.href = `mailto:aweh@diasporanetwork.africa,jaune@diasporanetwork.africa?subject=DNA Partnership Inquiry - ${formData.organization}&body=${encodeURIComponent(mailtoBody)}`;
     
     toast({
       title: 'Thank you for your interest!',
-      description: 'Our team will reach out to you within 2 business days.',
+      description: 'Your email client should open. Our team will reach out within 2 business days.',
     });
     
     // Reset form
@@ -45,10 +58,18 @@ const PartnerStart = () => {
     });
   };
 
-  const handleCTAClick = (ctaType: string) => {
-    trackEvent('connect_discovery_filter_applied' as any, { 
-      action: `partner-start-${ctaType}` 
+  const handleCTAClick = (ctaType: string, href?: string) => {
+    trackEvent('partner_page_cta_clicked', { 
+      cta_name: ctaType,
+      page: 'partner-start'
     });
+    if (href) {
+      if (href.startsWith('#')) {
+        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.location.href = href;
+      }
+    }
   };
 
   return (
@@ -98,10 +119,7 @@ const PartnerStart = () => {
               variant="dna" 
               size="lg" 
               className="w-full"
-              onClick={() => {
-                handleCTAClick('get-started');
-                document.getElementById('form')?.scrollIntoView({ behavior: 'smooth' });
-              }}
+              onClick={() => handleCTAClick('get-started', '#form')}
             >
               Get Started
             </EnhancedButton>
@@ -109,17 +127,16 @@ const PartnerStart = () => {
               variant="dna-outline" 
               size="lg" 
               className="w-full"
-              asChild
-              onClick={() => handleCTAClick('request-meeting')}
+              onClick={() => handleCTAClick('request-meeting', '#call')}
             >
-              <a href="#call">Request a Meeting</a>
+              Request a Meeting
             </EnhancedButton>
             <EnhancedButton 
               variant="outline" 
               size="lg" 
               className="w-full"
               asChild
-              onClick={() => handleCTAClick('join-dna')}
+              onClick={() => handleCTAClick('join-dna', '/auth')}
             >
               <Link to="/auth">Partner With DNA Today</Link>
             </EnhancedButton>
@@ -225,12 +242,9 @@ const PartnerStart = () => {
           <EnhancedButton 
             variant="dna" 
             size="lg"
-            asChild
-            onClick={() => handleCTAClick('book-call')}
+            onClick={() => handleCTAClick('book-call', 'mailto:aweh@diasporanetwork.africa,jaune@diasporanetwork.africa?subject=Partnership%20Call%20Request')}
           >
-            <a href="mailto:aweh@diasporanetwork.africa?subject=Partnership%20Call%20Request">
-              Request a Partnership Call
-            </a>
+            Request a Partnership Call
           </EnhancedButton>
           <p className="text-sm text-muted-foreground mt-4">
             Or email us directly at aweh@diasporanetwork.africa

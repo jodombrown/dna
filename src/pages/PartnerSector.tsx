@@ -27,10 +27,18 @@ const PartnerSector = () => {
   }
 
   const handleCTAClick = () => {
-    trackEvent('connect_discovery_filter_applied' as any, { 
-      sector: sector.slug, 
-      action: 'sector-cta-click' 
+    trackEvent('partner_sector_cta_clicked', { 
+      sector: sector.slug,
+      page: 'partner-sector'
     });
+  };
+
+  const fiveCLabels: Record<string, string> = {
+    connect: 'CONNECT',
+    convene: 'CONVENE',
+    collaborate: 'COLLABORATE',
+    contribute: 'CONTRIBUTE',
+    convey: 'CONVEY',
   };
 
   return (
@@ -76,7 +84,7 @@ const PartnerSector = () => {
             {Object.entries(sector.fiveCsBullets).map(([key, value]) => (
               <div key={key} className="p-6 bg-card border border-border rounded-lg">
                 <h3 className="text-lg font-bold mb-3 text-dna-emerald uppercase">
-                  {key}
+                  {fiveCLabels[key] || key}
                 </h3>
                 <p className="text-sm text-muted-foreground">{value}</p>
               </div>

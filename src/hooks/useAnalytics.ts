@@ -24,7 +24,11 @@ export type ConnectEventName =
   | 'convey_item_published'
   | 'convey_item_viewed'
   | 'convey_item_cta_clicked'
-  | 'convey_feed_filtered';
+  | 'convey_feed_filtered'
+  | 'partner_page_cta_clicked'
+  | 'partner_sector_cta_clicked'
+  | 'partner_models_cta_clicked'
+  | 'partner_form_submitted';
 
 export function useAnalytics() {
   const trackEvent = async (eventName: ConnectEventName, metadata?: any, route?: string) => {
