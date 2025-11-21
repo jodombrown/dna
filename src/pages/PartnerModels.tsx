@@ -6,10 +6,13 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 const PartnerModels = () => {
   const { trackEvent } = useAnalytics();
 
-  const handleCTAClick = () => {
-    trackEvent('connect_discovery_filter_applied' as any, { 
-      action: 'partnership-models-cta' 
+  const handleCTAClick = (href?: string) => {
+    trackEvent('partner_models_cta_clicked', { 
+      page: 'partner-models'
     });
+    if (href) {
+      window.location.href = href;
+    }
   };
 
   return (
@@ -110,7 +113,7 @@ const PartnerModels = () => {
             variant="dna" 
             size="lg" 
             asChild
-            onClick={handleCTAClick}
+            onClick={() => handleCTAClick('/partner-with-dna/start')}
           >
             <Link to="/partner-with-dna/start">
               Start a Conversation

@@ -7,8 +7,18 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 const PartnerWithDna = () => {
   const { trackEvent } = useAnalytics();
 
-  const handleCTAClick = (ctaName: string) => {
-    trackEvent('connect_discovery_filter_applied' as any, { cta_name: ctaName, page: 'partner-with-dna' });
+  const handleCTAClick = (ctaName: string, href?: string) => {
+    trackEvent('partner_page_cta_clicked', { 
+      cta_name: ctaName,
+      page: 'partner-with-dna'
+    });
+    if (href) {
+      if (href.startsWith('#')) {
+        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+      } else if (href.startsWith('/')) {
+        window.location.href = href;
+      }
+    }
   };
 
   return (
@@ -28,10 +38,7 @@ const PartnerWithDna = () => {
                 <EnhancedButton 
                   variant="dna" 
                   size="lg"
-                  onClick={() => {
-                    handleCTAClick('explore-pathways');
-                    document.getElementById('who-we-partner')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
+                  onClick={() => handleCTAClick('explore-pathways', '#who-we-partner')}
                 >
                   Explore Partnership Pathways
                 </EnhancedButton>
@@ -39,7 +46,7 @@ const PartnerWithDna = () => {
                   variant="dna-outline" 
                   size="lg"
                   asChild
-                  onClick={() => handleCTAClick('book-call')}
+                  onClick={() => handleCTAClick('book-call', '/partner-with-dna/start#call')}
                 >
                   <Link to="/partner-with-dna/start#call">
                     Book a Strategic Call
@@ -49,7 +56,7 @@ const PartnerWithDna = () => {
                   variant="outline" 
                   size="lg"
                   asChild
-                  onClick={() => handleCTAClick('join-dna')}
+                  onClick={() => handleCTAClick('join-dna', '/auth')}
                 >
                   <Link to="/auth">
                     Join DNA Today
@@ -147,7 +154,7 @@ const PartnerWithDna = () => {
                 key={sector.slug}
                 to={`/partner-with-dna/sectors/${sector.slug}`}
                 className="group p-6 bg-card border border-border rounded-lg hover:border-dna-emerald hover:shadow-lg transition-all"
-                onClick={() => trackEvent('connect_discovery_filter_applied' as any, { sector: sector.slug })}
+                onClick={() => trackEvent('partner_page_cta_clicked', { cta_name: 'view-sector', sector: sector.slug })}
               >
                 <div className="h-12 w-12 mb-4 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-lg flex items-center justify-center">
                   {sector.iconImageUrl ? (
@@ -202,7 +209,7 @@ const PartnerWithDna = () => {
               variant="dna" 
               size="lg"
               asChild
-              onClick={() => handleCTAClick('book-partnership-call')}
+              onClick={() => handleCTAClick('book-partnership-call', '/partner-with-dna/start#call')}
             >
               <Link to="/partner-with-dna/start#call">
                 Book a Partnership Call
@@ -212,7 +219,7 @@ const PartnerWithDna = () => {
               variant="dna-outline" 
               size="lg"
               asChild
-              onClick={() => handleCTAClick('submit-partnership-form')}
+              onClick={() => handleCTAClick('submit-partnership-form', '/partner-with-dna/start#form')}
             >
               <Link to="/partner-with-dna/start#form">
                 Submit a Partnership Form
@@ -222,7 +229,7 @@ const PartnerWithDna = () => {
               variant="outline" 
               size="lg"
               asChild
-              onClick={() => handleCTAClick('join-now')}
+              onClick={() => handleCTAClick('join-now', '/auth')}
             >
               <Link to="/auth">
                 Join DNA Now
