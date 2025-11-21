@@ -143,6 +143,12 @@ import BetaValidationPhase from "./pages/BetaValidationPhase";
 import GoToMarketPhase from "./pages/GoToMarketPhase";
 import Moderation from "./pages/admin/Moderation";
 
+// Partner With DNA pages
+import PartnerWithDna from "./pages/PartnerWithDna";
+import PartnerSector from "./pages/PartnerSector";
+import PartnerModels from "./pages/PartnerModels";
+import PartnerStart from "./pages/PartnerStart";
+
 
 const queryClient = new QueryClient();
 
@@ -476,6 +482,12 @@ function App() {
               <Route path="/phase-4/mvp" element={<MvpPhase />} />
               <Route path="/phase-5/beta-validation" element={<BetaValidationPhase />} />
               <Route path="/phase-6/go-to-market" element={<GoToMarketPhase />} />
+              
+              {/* Partner With DNA pages */}
+              <Route path="/partner-with-dna" element={<PartnerWithDna />} />
+              <Route path="/partner-with-dna/sectors/:slug" element={<PartnerSector />} />
+              <Route path="/partner-with-dna/models" element={<PartnerModels />} />
+              <Route path="/partner-with-dna/start" element={<PartnerStart />} />
               
               {/* Static pages */}
               <Route path="/contact" element={<Contact />} />
