@@ -1,3 +1,6 @@
+import partnerHeroImage from '@/assets/partner-hero.jpg';
+import fiveCEngineImage from '@/assets/5c-engine.jpg';
+
 export type FiveCContent = {
   id: string;
   title: string;
@@ -36,8 +39,7 @@ export const partnerPageContent = {
   hero: {
     headline: 'Partner With DNA: Mobilize What\'s Possible for Africa and the Diaspora',
     subheadline: 'Every sector wants to unlock impact across the African world, but no single institution can do it alone. DNA gives leaders a shared home to connect people, align efforts, and turn good intentions into coordinated action through a 5C engine built for our global community.',
-    // TODO: Replace with AI-generated image representing global African diaspora network with connected hubs
-    heroImageUrl: undefined,
+    heroImageUrl: partnerHeroImage,
     heroImageAlt: 'Global African diaspora network visualization'
   },
   whyPartner: {
@@ -66,8 +68,7 @@ export const partnerPageContent = {
         description: 'Share your progress, outcomes, and lessons with a global audience inspired to build alongside you.'
       }
     ],
-    // TODO: Replace with AI-generated image illustrating the 5C mobilization engine loop
-    imageUrl: undefined,
+    imageUrl: fiveCEngineImage,
     imageAlt: '5C Mobilization Engine visual diagram'
   },
   advantage: {
