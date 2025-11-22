@@ -8,7 +8,7 @@ export const fiveCsContent: FiveCContent[] = [
   {
     id: 'connect',
     title: 'CONNECT',
-    description: 'Map your people, partners, talent, and opportunities across the diaspora and the continent—and build the relationships that make everything else possible.'
+    description: 'Map your people, partners, talent, and opportunities across the diaspora and the continent, then build the relationships that make everything else possible.'
   },
   {
     id: 'convene',
@@ -28,26 +28,26 @@ export const fiveCsContent: FiveCContent[] = [
   {
     id: 'convey',
     title: 'CONVEY',
-    description: 'Tell the story—showcase outcomes, document lessons, and inspire the next wave of diaspora action.'
+    description: 'Tell the story. Showcase outcomes, document lessons, and inspire the next wave of diaspora action.'
   }
 ];
 
 export const partnerPageContent = {
   hero: {
-    headline: 'Partner With DNA — Mobilize What\'s Possible for Africa and the Diaspora',
-    subheadline: 'Every sector wants to unlock impact across the African world—but no single institution can do it alone. DNA gives leaders a shared home to connect people, align efforts, and turn good intentions into coordinated action through a 5C engine built for our global community.',
+    headline: 'Partner With DNA: Mobilize What\'s Possible for Africa and the Diaspora',
+    subheadline: 'Every sector wants to unlock impact across the African world, but no single institution can do it alone. DNA gives leaders a shared home to connect people, align efforts, and turn good intentions into coordinated action through a 5C engine built for our global community.',
     // TODO: Replace with AI-generated image representing global African diaspora network with connected hubs
     heroImageUrl: undefined,
     heroImageAlt: 'Global African diaspora network visualization'
   },
   whyPartner: {
     title: 'Why Partner With DNA?',
-    problem: 'Every leader who cares about Africa feels the same pressure: the talent is scattered, the opportunities are fragmented, and the systems to bring people together simply aren\'t built yet. Governments, companies, universities, investors, and NGOs all see the potential—but coordinating across borders, time zones, and institutions is exhausting.',
-    solution: 'DNA solves the coordination problem. We connect the diaspora and the continent through one mobilization engine—giving partners a shared platform to map talent, run programs, launch initiatives, mobilize resources, and tell the story of what\'s being built. No need to create infrastructure from scratch. No more working in silos.',
+    problem: 'Every leader who cares about Africa feels the same pressure: the talent is scattered, the opportunities are fragmented, and the systems to bring people together simply aren\'t built yet. Governments, companies, universities, investors, and NGOs all see the potential, but coordinating across borders, time zones, and institutions is exhausting.',
+    solution: 'DNA solves the coordination problem. We connect the diaspora and the continent through one mobilization engine, giving partners a shared platform to map talent, run programs, launch initiatives, mobilize resources, and tell the story of what\'s being built. No need to create infrastructure from scratch. No more working in silos.',
     values: [
       {
         title: 'Access to a Global African Network',
-        description: 'Verified talent, institutions, and partners across the diaspora and the continent—all discoverable in one place.'
+        description: 'Verified talent, institutions, and partners across the diaspora and the continent, all discoverable in one place.'
       },
       {
         title: 'A Shared Platform for Cross-Sector Alignment',
@@ -87,7 +87,7 @@ export const partnerPageContent = {
       },
       {
         title: 'Global Visibility',
-        description: 'Your work becomes part of a global narrative about Africa\'s progress—shared across the diaspora and the world.'
+        description: 'Your work becomes part of a global narrative about Africa\'s progress, shared across the diaspora and the world.'
       }
     ]
   }
@@ -102,7 +102,7 @@ export const onboardingSteps = [
   {
     number: 2,
     title: 'Review Partnership Models',
-    description: 'Choose a structure that matches your goals, capacity, and timeline—from city partnerships to innovation pipelines.'
+    description: 'Choose a structure that matches your goals, capacity, and timeline, from city partnerships to innovation pipelines.'
   },
   {
     number: 3,

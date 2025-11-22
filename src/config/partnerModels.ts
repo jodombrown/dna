@@ -60,7 +60,7 @@ export const partnershipModels: PartnershipModel[] = [
   {
     id: 'hbcu-anchor-partner',
     name: 'HBCU Anchor Partner',
-    purpose: 'Deepen the HBCU-Africa connection through structured student exchange, collaborative research, and lifelong alumni engagement—anchored in the broader diaspora mobilization engine.',
+    purpose: 'Deepen the HBCU-Africa connection through structured student exchange, collaborative research, and lifelong alumni engagement, anchored in the broader diaspora mobilization engine.',
     partnerProvides: [
       'Academic infrastructure, credibility, and institutional legacy',
       'Student and faculty talent ready for global engagement',
@@ -84,7 +84,7 @@ export const partnershipModels: PartnershipModel[] = [
   {
     id: 'hub-network-partner',
     name: 'Hub Network Partner',
-    purpose: 'Link innovation hubs, accelerators, and startup ecosystems across the diaspora and the continent—creating pathways for deal flow, mentorship, capital, and market access.',
+    purpose: 'Link innovation hubs, accelerators, and startup ecosystems across the diaspora and the continent, creating pathways for deal flow, mentorship, capital, and market access.',
     partnerProvides: [
       'Pipeline of high-potential ventures and entrepreneurs',
       'Acceleration, incubation, and ecosystem support infrastructure',
@@ -108,7 +108,7 @@ export const partnershipModels: PartnershipModel[] = [
   {
     id: 'capital-network-partner',
     name: 'Capital Network Partner',
-    purpose: 'Deploy capital efficiently through curated deal flow, co-investment networks, and portfolio acceleration—backed by a mobilization engine that supports ventures from connection to scale.',
+    purpose: 'Deploy capital efficiently through curated deal flow, co-investment networks, and portfolio acceleration, backed by a mobilization engine that supports ventures from connection to scale.',
     partnerProvides: [
       'Investment capital and flexible deployment capacity',
       'Due diligence expertise and investment decision-making',
@@ -132,7 +132,7 @@ export const partnershipModels: PartnershipModel[] = [
   {
     id: 'sdg-catalyst-partner',
     name: 'SDG Catalyst Partner',
-    purpose: 'Leverage diaspora networks as a strategic asset for achieving Sustainable Development Goals—turning global frameworks into locally-rooted, diaspora-mobilized action.',
+    purpose: 'Leverage diaspora networks as a strategic asset for achieving Sustainable Development Goals, turning global frameworks into locally-rooted, diaspora-mobilized action.',
     partnerProvides: [
       'Global development frameworks, goals, and priority areas',
       'Funding, technical assistance, and programmatic resources',
