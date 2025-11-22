@@ -5,7 +5,7 @@ import universityHero from '@/assets/sectors/university-hero.jpg';
 import ngoHero from '@/assets/sectors/ngo-hero.jpg';
 import innovationHero from '@/assets/sectors/innovation-hero.jpg';
 import investorHero from '@/assets/sectors/investor-hero.jpg';
-import multilateralHero from '@/assets/sectors/multilateral-hero.jpg';
+import multilateralHero from '@/assets/sectors/sdgs-goals.jpg';
 import publicSectorIcon from '@/assets/sectors/public-sector-icon.png';
 import privateIndustryIcon from '@/assets/sectors/private-industry-icon.png';
 import hbcuIcon from '@/assets/sectors/hbcu-icon.png';
