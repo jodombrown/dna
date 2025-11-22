@@ -101,9 +101,14 @@ const PartnerSector = () => {
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
             {sector.roles.map((role, index) => (
-              <div key={index} className="p-6 bg-card border border-border rounded-lg flex items-start gap-4">
-                <div className="w-2 h-2 bg-dna-emerald rounded-full mt-2 flex-shrink-0" />
-                <p className="text-muted-foreground">{role}</p>
+              <div key={index} className="p-6 bg-card border border-border rounded-lg">
+                <div className="flex items-start gap-4">
+                  <div className="w-2 h-2 bg-dna-emerald rounded-full mt-2 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-2">{role.title}</h3>
+                    <p className="text-muted-foreground">{role.description}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
