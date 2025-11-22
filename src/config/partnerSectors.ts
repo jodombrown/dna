@@ -9,13 +9,13 @@ export type SectorConfig = {
   iconAlt?: string;
   shortDescription: string;
   fiveCsBullets: {
-    connect: string;
-    convene: string;
-    collaborate: string;
-    contribute: string;
-    convey: string;
+    connect: string | string[];
+    convene: string | string[];
+    collaborate: string | string[];
+    contribute: string | string[];
+    convey: string | string[];
   };
-  roles: string[];
+  roles: { title: string; description: string }[];
   brings: string[];
   receives: string[];
   partnershipModels: { name: string; shortDescription: string }[];
@@ -43,361 +43,354 @@ export const partnerSectors: SectorConfig[] = [
       convey: 'Share progress, celebrate wins, and inspire the next wave of diaspora engagement through storytelling'
     },
     roles: [
-      'Define diaspora engagement priorities and strategic outcomes',
-      'Provide regulatory clarity, policy frameworks, and institutional backing',
-      'Convene stakeholders and validate diaspora-led initiatives',
-      'Co-fund strategic programs and provide implementation support'
+      { title: 'Government Officials', description: 'Ministers, directors, and policy leaders shaping diaspora engagement strategy' },
+      { title: 'Economic Development Agencies', description: 'Professionals attracting investment, talent, and partnerships for national growth' },
+      { title: 'Diaspora Affairs Offices', description: 'Teams coordinating government engagement with diaspora communities' },
+      { title: 'City & Regional Leaders', description: 'Mayors and administrators building local diaspora connections' }
     ],
     brings: [
-      'Policy mandate and government legitimacy',
-      'Access to domestic institutions, markets, and stakeholders',
-      'Convening power across public and private sectors',
-      'Long-term commitment to diaspora engagement'
+      'Policy frameworks, regulatory clarity, and institutional credibility',
+      'Government convening power and access to domestic institutions',
+      'Co-funding capacity for strategic programs and initiatives',
+      'Access to domestic markets, stakeholders, and implementation pathways'
     ],
     receives: [
-      'Turnkey platform infrastructure for diaspora mobilization',
-      'Access to verified diaspora talent, capital, and networks',
-      'Program design, execution support, and impact measurement',
-      'Global visibility and storytelling that showcases your leadership'
+      'A turnkey platform to mobilize diaspora talent, capital, and networks',
+      'Access to verified diaspora professionals, investors, and institutions',
+      'Program design support and capacity building for diaspora engagement',
+      'Impact measurement, storytelling, and global visibility for your initiatives'
     ],
     partnershipModels: [
-      { name: 'National DNA Partner', shortDescription: 'Country-level partnership to build a national diaspora mobilization hub' },
-      { name: 'City DNA Partner', shortDescription: 'City-level partnership for urban innovation and diaspora engagement' }
+      { name: 'National / City DNA Partner', shortDescription: 'Co-create diaspora engagement infrastructure for your city or country' }
     ],
     programs: [
-      { name: 'National Diaspora Strategy Co-Design', shortDescription: 'Collaborative development of comprehensive engagement frameworks and execution roadmaps' },
-      { name: 'Diaspora Investment Attraction Program', shortDescription: 'Structured initiatives to channel diaspora capital into priority sectors and opportunities' },
-      { name: 'Skills Transfer & Mentorship Initiatives', shortDescription: 'Programs connecting diaspora expertise with local talent, institutions, and capacity building' }
+      { name: 'National Diaspora Engagement Strategy', shortDescription: 'Design and implement comprehensive diaspora mobilization frameworks' },
+      { name: 'Diaspora Bond Programs', shortDescription: 'Structure and execute diaspora investment attraction initiatives' },
+      { name: 'City-Based Innovation Hubs', shortDescription: 'Build local talent pipelines and entrepreneurship ecosystems' }
     ],
-    ctaLabel: 'Start a Conversation',
+    ctaLabel: 'Partner With DNA',
     ctaLink: '/partner-with-dna/start'
   },
   {
     slug: 'private-industry',
     name: 'Private Industry',
     shortDescription: 'Access diaspora talent, markets, and innovation networks to drive business growth and deliver measurable social impact.',
-    heroTitle: 'Private Industry & Corporate Partners',
-    heroSubtitle: 'Corporations want to tap diaspora markets and talent—but lack the networks to do it well. DNA connects you to diaspora professionals, innovators, and customers ready to partner.',
+    heroTitle: 'Your Business Strategy Needs a Diaspora Advantage',
+    heroSubtitle: 'Corporations want access to African markets, diaspora talent, and innovation pipelines—but fragmented networks make it expensive and slow. DNA gives you a shared platform to mobilize partnerships, talent, and market intelligence across the 5Cs.',
     heroImageUrl: undefined,
-    heroImageAlt: 'Private industry corporate partnership',
+    heroImageAlt: 'Private industry partnership',
     iconImageUrl: undefined,
     iconAlt: 'Private industry icon',
     fiveCsBullets: {
-      connect: 'Access skilled diaspora professionals, executive networks, and innovation communities',
-      convene: 'Host corporate-sponsored challenges, showcase events, and strategic gatherings',
-      collaborate: 'Co-create products, services, market strategies, and innovation programs',
-      contribute: 'Provide capital, expertise, mentorship, and technology to diaspora-led ventures',
-      convey: 'Build authentic brand affinity through diaspora storytelling and impact narratives'
+      connect: 'Access diaspora talent for recruitment, market insights for expansion, and partners for innovation',
+      convene: 'Host corporate innovation challenges, executive roundtables, and market entry missions',
+      collaborate: 'Co-design accelerator programs, market strategies, and ESG initiatives with measurable outcomes',
+      contribute: 'Deploy capital, mentorship, and technical expertise to diaspora entrepreneurs and communities',
+      convey: 'Tell your impact story to global audiences and position your brand as a diaspora development leader'
     },
     roles: [
-      'Sponsor innovation programs, challenges, and diaspora-focused events',
-      'Provide market access, distribution channels, and customer connections',
-      'Offer technical expertise, mentorship, and industry knowledge',
-      'Co-invest in high-potential diaspora ventures and programs'
+      { title: 'Corporate Innovation Teams', description: 'Leaders exploring new markets, partnerships, and growth opportunities in Africa' },
+      { title: 'Talent Acquisition', description: 'HR professionals seeking diaspora talent for specialized roles and leadership pipelines' },
+      { title: 'ESG & Impact Officers', description: 'Teams designing and measuring social impact and corporate responsibility programs' },
+      { title: 'Market Expansion Leaders', description: 'Executives entering or scaling operations in African and diaspora markets' }
     ],
     brings: [
-      'Capital, resources, and strategic investment capacity',
-      'Market access, distribution networks, and customer pipelines',
-      'Technical expertise, R&D capabilities, and innovation infrastructure',
-      'Brand credibility, visibility, and corporate reach'
+      'Capital to sponsor innovation programs, challenges, and strategic initiatives',
+      'Market access, distribution networks, and customer channels',
+      'Technical expertise, mentorship, and industry knowledge',
+      'Brand visibility and corporate credibility'
     ],
     receives: [
-      'Access to global diaspora talent pools and consumer markets',
-      'Innovation pipeline, market insights, and competitive intelligence',
-      'ESG/CSR impact stories and measurable social outcomes',
-      'Network effects across sectors, geographies, and ecosystems'
+      'Direct access to global diaspora talent and innovation networks',
+      'End-to-end design and execution of innovation challenges and accelerators',
+      'Strategic guidance for market entry, expansion, and partnership development',
+      'ESG/CSR impact measurement and authentic storytelling'
     ],
     partnershipModels: [
-      { name: 'Corporate Innovation Partner', shortDescription: 'Multi-year partnership to build innovation pipelines and talent access programs' }
+      { name: 'Corporate Innovation Partner', shortDescription: 'Multi-year partnership for talent access, innovation, and market expansion' }
     ],
     programs: [
-      { name: 'Diaspora Talent Pipeline Program', shortDescription: 'Structured recruitment and development pathways for diaspora professionals' },
-      { name: 'Corporate Innovation Challenges', shortDescription: 'Sponsored competitions solving business challenges with diaspora innovators' },
-      { name: 'Market Entry Acceleration', shortDescription: 'Collaborative programs entering African markets with diaspora guidance and networks' }
+      { name: 'Diaspora Talent Recruitment Pipeline', shortDescription: 'Access verified diaspora professionals for executive and technical roles' },
+      { name: 'Corporate Innovation Challenges', shortDescription: 'Design and execute sponsored innovation programs with diaspora entrepreneurs' },
+      { name: 'Market Entry Strategy Support', shortDescription: 'Leverage diaspora networks for African market intelligence and partnerships' }
     ],
-    ctaLabel: 'Explore Corporate Partnership',
+    ctaLabel: 'Partner With DNA',
     ctaLink: '/partner-with-dna/start'
   },
   {
     slug: 'hbcus',
     name: 'HBCUs',
-    shortDescription: 'Build Africa-diaspora bridges through student exchange, research collaboration, and alumni engagement.',
-    heroTitle: 'Historically Black Colleges & Universities',
-    heroSubtitle: 'Strengthen the HBCU-Africa connection through student mobility, research, and lifelong alumni engagement.',
-    // TODO: Replace with AI-generated image representing HBCU campus and student collaboration
+    shortDescription: 'Connect your students and alumni to global opportunities, research collaborations, and leadership pathways.',
+    heroTitle: 'HBCUs: Tap Into Your Global Alumni Network',
+    heroSubtitle: 'HBCUs want to extend their global reach, create new opportunities for students, and build stronger alumni networks—but fragmented connections make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: undefined,
-    heroImageAlt: 'HBCU partnership and student collaboration',
+    heroImageAlt: 'HBCU partnership',
     iconImageUrl: undefined,
     iconAlt: 'HBCU icon',
     fiveCsBullets: {
-      connect: 'Link HBCU students and faculty with African counterparts and diaspora networks',
-      convene: 'Host exchange programs, research symposia, and alumni gatherings',
-      collaborate: 'Co-design curricula, research projects, and career pathways',
-      contribute: 'Channel alumni expertise and resources toward institutional development',
-      convey: 'Tell the HBCU story as part of the broader African diaspora narrative'
+      connect: 'Map alumni expertise, research interests, and professional networks worldwide',
+      convene: 'Host virtual career fairs, research conferences, and alumni networking events',
+      collaborate: 'Co-design global exchange programs, research partnerships, and leadership development initiatives',
+      contribute: 'Channel alumni giving, mentorship, and expertise back to your institution',
+      convey: 'Showcase HBCU success stories, global impact, and leadership contributions'
     },
     roles: [
-      'Provide academic infrastructure and credibility',
-      'Host student and faculty exchanges',
-      'Conduct research and knowledge creation',
-      'Mobilize alumni networks'
+      { title: 'University Presidents', description: 'Leaders setting the vision for global engagement and alumni relations' },
+      { title: 'Provosts & Deans', description: 'Academic leaders driving international research and exchange programs' },
+      { title: 'Alumni Affairs Directors', description: 'Professionals building and engaging global alumni networks' },
+      { title: 'Career Services Teams', description: 'Staff connecting students to global career opportunities' }
     ],
     brings: [
-      'Academic excellence and institutional legacy',
-      'Student and faculty talent pools',
-      'Research capacity and knowledge production',
-      'Powerful alumni networks'
+      'Access to diverse student and alumni talent',
+      'Research capabilities and academic expertise',
+      'A legacy of leadership development and social impact',
+      'Convening power within the HBCU community'
     ],
     receives: [
-      'Global network for students and faculty',
-      'Research collaboration opportunities',
-      'Alumni engagement platform',
-      'Visibility in diaspora and African ecosystems'
+      'A global platform to connect with alumni, partners, and opportunities',
+      'Tools to map alumni expertise and engagement',
+      'Support for designing and executing global programs',
+      'Increased visibility and recognition for HBCU achievements'
     ],
     partnershipModels: [
-      { name: 'HBCU Anchor Partner', shortDescription: 'Institutional partnership to build sustained Africa-HBCU connections' }
+      { name: 'HBCU Global Engagement Partner', shortDescription: 'Multi-year partnership for student success, alumni engagement, and global impact' }
     ],
     programs: [
-      { name: 'Student Exchange & Study Abroad', shortDescription: 'Structured programs connecting HBCU students with African institutions' },
-      { name: 'Joint Research Initiatives', shortDescription: 'Collaborative research projects addressing Africa-diaspora priorities' },
-      { name: 'Alumni Network Activation', shortDescription: 'Programs to engage HBCU alumni in diaspora mobilization' }
+      { name: 'Global Alumni Mapping & Engagement', shortDescription: 'Identify and activate alumni networks worldwide' },
+      { name: 'Student Global Exchange Programs', shortDescription: 'Create opportunities for students to study and work abroad' },
+      { name: 'Research Collaboration Initiatives', shortDescription: 'Connect faculty with international research partners' }
     ],
-    ctaLabel: 'Build HBCU Partnership',
+    ctaLabel: 'Partner With DNA',
     ctaLink: '/partner-with-dna/start'
   },
   {
     slug: 'global-universities',
     name: 'Global Universities & Education Systems',
-    shortDescription: 'Connect research, curriculum, and student opportunities to the global African diaspora ecosystem.',
-    heroTitle: 'Global Universities & Education Systems',
-    heroSubtitle: 'Integrate diaspora studies, research collaboration, and global talent mobility into your institutional strategy.',
-    // TODO: Replace with AI-generated image representing global university campus and international collaboration
+    shortDescription: 'Mobilize your diaspora alumni, research, and innovation to address global challenges and build international partnerships.',
+    heroTitle: 'Global Universities: Mobilize Your Diaspora Networks',
+    heroSubtitle: 'Universities want to extend their global impact, attract international students, and build stronger research partnerships—but fragmented networks make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: undefined,
     heroImageAlt: 'Global university partnership',
     iconImageUrl: undefined,
     iconAlt: 'Global university icon',
     fiveCsBullets: {
-      connect: 'Link students and faculty with diaspora professionals and African institutions',
-      convene: 'Host global convenings on diaspora and Africa-related research',
-      collaborate: 'Co-create curricula, research agendas, and student experiences',
-      contribute: 'Provide research, expertise, and platforms for knowledge exchange',
-      convey: 'Amplify research findings and institutional thought leadership'
+      connect: 'Map diaspora alumni expertise, research interests, and professional networks worldwide',
+      convene: 'Host virtual career fairs, research conferences, and alumni networking events',
+      collaborate: 'Co-design global exchange programs, research partnerships, and curriculum development initiatives',
+      contribute: 'Channel alumni giving, mentorship, and expertise back to your institution',
+      convey: 'Showcase university success stories, global impact, and leadership contributions'
     },
     roles: [
-      'Conduct research on diaspora and development',
-      'Educate the next generation of global leaders',
-      'Provide platforms for knowledge exchange',
-      'Validate and credential diaspora expertise'
+      { title: 'University Presidents', description: 'Leaders setting the vision for global engagement and alumni relations' },
+      { title: 'Provosts & Deans', description: 'Academic leaders driving international research and exchange programs' },
+      { title: 'International Affairs Directors', description: 'Professionals building and managing global partnerships' },
+      { title: 'Research & Innovation Teams', description: 'Staff connecting researchers to international funding and collaboration' }
     ],
     brings: [
-      'Research excellence and academic credibility',
-      'Global student and faculty networks',
-      'Institutional infrastructure and resources',
-      'Knowledge creation and dissemination capacity'
+      'Access to diverse student and alumni talent',
+      'Research capabilities and academic expertise',
+      'A legacy of leadership development and social impact',
+      'Convening power within the university community'
     ],
     receives: [
-      'Access to global diaspora research networks',
-      'Real-world application of academic work',
-      'Student recruitment and engagement opportunities',
-      'Visibility in diaspora and African ecosystems'
+      'A global platform to connect with alumni, partners, and opportunities',
+      'Tools to map alumni expertise and engagement',
+      'Support for designing and executing global programs',
+      'Increased visibility and recognition for university achievements'
     ],
     partnershipModels: [
-      { name: 'Research Network Partner', shortDescription: 'Multi-institution partnership for diaspora-focused research collaboration' }
+      { name: 'University Global Engagement Partner', shortDescription: 'Multi-year partnership for student success, alumni engagement, and global impact' }
     ],
     programs: [
-      { name: 'Diaspora Studies Programs', shortDescription: 'Academic programs focused on African diaspora history, culture, and impact' },
-      { name: 'Global Research Collaborations', shortDescription: 'Joint research initiatives with African and diaspora institutions' },
-      { name: 'Student Mobility & Exchange', shortDescription: 'Programs facilitating student movement across diaspora networks' }
+      { name: 'Global Alumni Mapping & Engagement', shortDescription: 'Identify and activate alumni networks worldwide' },
+      { name: 'Student Global Exchange Programs', shortDescription: 'Create opportunities for students to study and work abroad' },
+      { name: 'Research Collaboration Initiatives', shortDescription: 'Connect faculty with international research partners' }
     ],
-    ctaLabel: 'Partner With Us',
+    ctaLabel: 'Partner With DNA',
     ctaLink: '/partner-with-dna/start'
   },
   {
     slug: 'ngos-civil-society',
     name: 'NGOs & Civil Society',
-    shortDescription: 'Scale your impact by mobilizing diaspora networks for advocacy, funding, and program delivery.',
-    heroTitle: 'NGOs & Civil Society Organizations',
-    heroSubtitle: 'Amplify your mission by connecting with diaspora advocates, funders, and implementers worldwide.',
-    // TODO: Replace with AI-generated image representing NGO community work and civil society
+    shortDescription: 'Amplify your impact, mobilize diaspora volunteers, and build sustainable community development programs.',
+    heroTitle: 'NGOs & Civil Society: Mobilize Your Diaspora Networks',
+    heroSubtitle: 'NGOs want to extend their reach, mobilize diaspora volunteers, and build stronger community programs—but fragmented networks make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: undefined,
-    heroImageAlt: 'NGO and civil society partnership',
+    heroImageAlt: 'NGO partnership',
     iconImageUrl: undefined,
     iconAlt: 'NGO icon',
     fiveCsBullets: {
-      connect: 'Link your organization with diaspora volunteers, donors, and partners',
-      convene: 'Host advocacy campaigns, fundraising events, and community dialogues',
-      collaborate: 'Co-design programs that leverage diaspora networks and resources',
-      contribute: 'Channel diaspora funding, expertise, and advocacy toward your mission',
-      convey: 'Tell your story to global diaspora audiences and amplify your impact'
+      connect: 'Map diaspora expertise, volunteer interests, and community networks worldwide',
+      convene: 'Host virtual town halls, community forums, and volunteer recruitment events',
+      collaborate: 'Co-design community development programs, advocacy campaigns, and fundraising initiatives',
+      contribute: 'Channel diaspora giving, volunteerism, and expertise back to your organization',
+      convey: 'Showcase NGO success stories, community impact, and volunteer contributions'
     },
     roles: [
-      'Define program priorities and impact areas',
-      'Provide on-ground implementation capacity',
-      'Mobilize local communities and stakeholders',
-      'Measure and report program outcomes'
+      { title: 'Executive Directors', description: 'Leaders setting the vision for community impact and diaspora engagement' },
+      { title: 'Program Managers', description: 'Professionals designing and managing community development programs' },
+      { title: 'Volunteer Coordinators', description: 'Staff recruiting and managing diaspora volunteers' },
+      { title: 'Development & Fundraising Teams', description: 'Staff raising funds and building donor relationships' }
     ],
     brings: [
-      'Deep local knowledge and community trust',
-      'Implementation capacity and program expertise',
-      'Issue-specific credibility and networks',
-      'Advocacy platforms and mobilization capability'
+      'A deep understanding of community needs and challenges',
+      'A network of local partners and stakeholders',
+      'A commitment to social impact and community development',
+      'Convening power within the community'
     ],
     receives: [
-      'Access to global diaspora networks and resources',
-      'Funding and partnership opportunities',
-      'Volunteer and expertise pipelines',
-      'Platform for visibility and storytelling'
+      'A global platform to connect with diaspora volunteers, donors, and partners',
+      'Tools to map diaspora expertise and engagement',
+      'Support for designing and executing community programs',
+      'Increased visibility and recognition for NGO achievements'
     ],
     partnershipModels: [
-      { name: 'Program Collaboration Partner', shortDescription: 'Joint program design and delivery with diaspora network support' }
+      { name: 'NGO Community Impact Partner', shortDescription: 'Multi-year partnership for volunteer mobilization, program development, and community impact' }
     ],
     programs: [
-      { name: 'Diaspora Volunteer Mobilization', shortDescription: 'Programs connecting diaspora volunteers with on-ground initiatives' },
-      { name: 'Funding Network Access', shortDescription: 'Connecting NGOs with diaspora donors and funding networks' },
-      { name: 'Advocacy Campaign Amplification', shortDescription: 'Leveraging diaspora networks to scale advocacy efforts' }
+      { name: 'Diaspora Volunteer Mobilization', shortDescription: 'Recruit and manage diaspora volunteers for community programs' },
+      { name: 'Community Development Programs', shortDescription: 'Design and implement programs to address community needs' },
+      { name: 'Fundraising & Donor Engagement', shortDescription: 'Raise funds and build relationships with diaspora donors' }
     ],
-    ctaLabel: 'Amplify Your Impact',
+    ctaLabel: 'Partner With DNA',
     ctaLink: '/partner-with-dna/start'
   },
   {
     slug: 'innovation-ecosystems',
     name: 'Innovation Ecosystems',
-    shortDescription: 'Connect startups, accelerators, and innovation hubs to diaspora talent, capital, and markets.',
-    heroTitle: 'Innovation Ecosystems & Entrepreneurship',
-    heroSubtitle: 'Build bridges between diaspora innovators and Africa\'s fastest-growing startup ecosystems.',
-    // TODO: Replace with AI-generated image representing startup ecosystem and innovation hub
+    shortDescription: 'Connect your hub, startups, and talent to global markets, investors, and knowledge networks.',
+    heroTitle: 'Innovation Ecosystems: Go Global With Your Hub',
+    heroSubtitle: 'Innovation hubs want to extend their global reach, attract international startups, and build stronger investor networks—but fragmented connections make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: undefined,
     heroImageAlt: 'Innovation ecosystem partnership',
     iconImageUrl: undefined,
     iconAlt: 'Innovation ecosystem icon',
     fiveCsBullets: {
-      connect: 'Link African startups with diaspora mentors, investors, and customers',
-      convene: 'Host pitch events, demo days, and innovation showcases',
-      collaborate: 'Co-create accelerator programs and market entry strategies',
-      contribute: 'Channel diaspora investment and expertise into venture pipelines',
-      convey: 'Tell startup success stories to global diaspora audiences'
+      connect: 'Map diaspora expertise, investor interests, and startup networks worldwide',
+      convene: 'Host virtual pitch events, investor roundtables, and startup networking events',
+      collaborate: 'Co-design accelerator programs, mentorship initiatives, and market entry strategies',
+      contribute: 'Channel diaspora investment, mentorship, and expertise back to your hub',
+      convey: 'Showcase hub success stories, startup impact, and innovation contributions'
     },
     roles: [
-      'Identify and support high-potential ventures',
-      'Provide acceleration and incubation services',
-      'Connect startups with local markets and resources',
-      'Build vibrant innovation communities'
+      { title: 'Hub Directors', description: 'Leaders setting the vision for global engagement and startup success' },
+      { title: 'Accelerator Managers', description: 'Professionals designing and managing accelerator programs' },
+      { title: 'Investor Relations Teams', description: 'Staff building relationships with diaspora investors' },
+      { title: 'Startup Mentors', description: 'Experts providing guidance and support to startups' }
     ],
     brings: [
-      'Pipeline of innovative ventures',
-      'Acceleration and support infrastructure',
-      'Local market knowledge and access',
-      'Community building and ecosystem development'
+      'A vibrant community of startups and innovators',
+      'Access to local markets and talent',
+      'A supportive ecosystem for entrepreneurship',
+      'Convening power within the innovation community'
     ],
     receives: [
-      'Access to diaspora investors and mentors',
-      'Market expansion opportunities',
-      'Technical expertise and advisory support',
-      'Global visibility and network effects'
+      'A global platform to connect with diaspora investors, mentors, and partners',
+      'Tools to map diaspora expertise and engagement',
+      'Support for designing and executing accelerator programs',
+      'Increased visibility and recognition for hub achievements'
     ],
     partnershipModels: [
-      { name: 'Hub Network Partner', shortDescription: 'Multi-hub partnership to connect innovation ecosystems across the diaspora' }
+      { name: 'Innovation Hub Global Partner', shortDescription: 'Multi-year partnership for startup acceleration, investor engagement, and global impact' }
     ],
     programs: [
-      { name: 'Diaspora Mentor Network', shortDescription: 'Connecting African startups with diaspora mentors and advisors' },
-      { name: 'Investor Access Programs', shortDescription: 'Structured pathways to diaspora angel and VC networks' },
-      { name: 'Market Entry Acceleration', shortDescription: 'Programs helping diaspora startups enter African markets and vice versa' }
+      { name: 'Diaspora Investor Network', shortDescription: 'Connect startups with diaspora investors' },
+      { name: 'Global Accelerator Program', shortDescription: 'Design and implement accelerator programs for startups' },
+      { name: 'Mentorship & Expert Support', shortDescription: 'Provide startups with mentorship and expert guidance' }
     ],
-    ctaLabel: 'Connect Your Ecosystem',
+    ctaLabel: 'Partner With DNA',
     ctaLink: '/partner-with-dna/start'
   },
   {
     slug: 'investors',
     name: 'Investors',
-    shortDescription: 'Access high-quality deal flow and co-investment opportunities across the African diaspora.',
-    heroTitle: 'Investors & Capital Networks',
-    heroSubtitle: 'Deploy capital efficiently through curated deal flow, co-investment networks, and impact measurement.',
-    // TODO: Replace with AI-generated image representing investment and capital networks
+    shortDescription: 'Access vetted investment opportunities, talent pipelines, and market intelligence in emerging economies.',
+    heroTitle: 'Investors: Find Your Next Deal in the Diaspora',
+    heroSubtitle: 'Investors want to access vetted deals, tap into new markets, and find promising talent in emerging economies—but fragmented networks make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: undefined,
     heroImageAlt: 'Investor partnership',
     iconImageUrl: undefined,
     iconAlt: 'Investor icon',
     fiveCsBullets: {
-      connect: 'Access vetted entrepreneurs, co-investors, and portfolio support networks',
-      convene: 'Participate in investor forums, demo days, and diligence circles',
-      collaborate: 'Co-design investment theses and portfolio acceleration programs',
-      contribute: 'Deploy capital, expertise, and networks to high-potential ventures',
-      convey: 'Share success stories and thought leadership with global audiences'
+      connect: 'Map diaspora expertise, investment interests, and startup networks worldwide',
+      convene: 'Host virtual pitch events, investor roundtables, and deal-sourcing events',
+      collaborate: 'Co-design investment funds, mentorship initiatives, and market entry strategies',
+      contribute: 'Channel diaspora investment, mentorship, and expertise to promising startups',
+      convey: 'Showcase investment success stories, portfolio impact, and market opportunities'
     },
     roles: [
-      'Provide risk capital and investment expertise',
-      'Support portfolio companies with networks and resources',
-      'Co-create investment frameworks and standards',
-      'Measure and communicate impact'
+      { title: 'Venture Capitalists', description: 'Investors seeking high-growth startups in emerging markets' },
+      { title: 'Angel Investors', description: 'Individuals investing in early-stage companies' },
+      { title: 'Impact Investors', description: 'Investors seeking social and environmental impact' },
+      { title: 'Fund Managers', description: 'Professionals managing investment funds' }
     ],
     brings: [
-      'Investment capital and deployment capacity',
-      'Due diligence and investment expertise',
-      'Portfolio support and value-add services',
-      'Network effects and co-investment opportunities'
+      'Capital to invest in promising startups',
+      'Expertise in finance, business, and technology',
+      'A network of industry contacts and partners',
+      'A commitment to supporting entrepreneurship'
     ],
     receives: [
-      'Curated deal flow and investment opportunities',
-      'Co-investment networks and syndication',
-      'Portfolio acceleration support',
-      'Impact measurement and storytelling'
+      'Access to vetted investment opportunities in emerging markets',
+      'Tools to map diaspora expertise and engagement',
+      'Support for designing and executing investment strategies',
+      'Increased visibility and recognition for investment achievements'
     ],
     partnershipModels: [
-      { name: 'Capital Network Partner', shortDescription: 'Structured partnership for deal flow access and co-investment' }
+      { name: 'Diaspora Investment Partner', shortDescription: 'Multi-year partnership for deal sourcing, investment management, and portfolio impact' }
     ],
     programs: [
-      { name: 'Investor Circle Membership', shortDescription: 'Exclusive access to curated deal flow and co-investment opportunities' },
-      { name: 'Portfolio Acceleration Program', shortDescription: 'Support services for portfolio companies leveraging DNA network' },
-      { name: 'Impact Investment Framework', shortDescription: 'Collaborative development of diaspora-focused impact measurement' }
+      { name: 'Diaspora Investment Fund', shortDescription: 'Invest in promising startups in emerging markets' },
+      { name: 'Deal Sourcing & Due Diligence', shortDescription: 'Identify and evaluate investment opportunities' },
+      { name: 'Mentorship & Expert Support', shortDescription: 'Provide startups with mentorship and expert guidance' }
     ],
-    ctaLabel: 'Join Our Network',
+    ctaLabel: 'Partner With DNA',
     ctaLink: '/partner-with-dna/start'
   },
   {
-    slug: 'multilaterals-sdg',
+    slug: 'un-sdg-multilaterals',
     name: 'UN / SDG & Multilaterals',
-    shortDescription: 'Mobilize diaspora as a strategic asset for achieving Sustainable Development Goals in Africa.',
-    heroTitle: 'UN, SDG & Multilateral Organizations',
-    heroSubtitle: 'Leverage diaspora networks as a force multiplier for sustainable development and global goal achievement.',
-    // TODO: Replace with AI-generated image representing UN and multilateral partnership
+    shortDescription: 'Mobilize diaspora resources, expertise, and partnerships to achieve the Sustainable Development Goals.',
+    heroTitle: 'UN / SDG & Multilaterals: Mobilize the Diaspora for Global Impact',
+    heroSubtitle: 'Multilateral organizations want to mobilize diaspora resources, expertise, and partnerships to achieve the SDGs—but fragmented networks make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: undefined,
-    heroImageAlt: 'Multilateral organization partnership',
+    heroImageAlt: 'UN/SDG partnership',
     iconImageUrl: undefined,
-    iconAlt: 'Multilateral icon',
+    iconAlt: 'UN/SDG icon',
     fiveCsBullets: {
-      connect: 'Link development priorities with diaspora expertise and implementation capacity',
-      convene: 'Host global forums on diaspora and sustainable development',
-      collaborate: 'Co-design programs that mobilize diaspora for SDG achievement',
-      contribute: 'Channel diaspora resources toward development priorities',
-      convey: 'Amplify success stories and development progress to global audiences'
+      connect: 'Map diaspora expertise, SDG interests, and partnership networks worldwide',
+      convene: 'Host virtual forums, SDG roundtables, and partnership-building events',
+      collaborate: 'Co-design SDG programs, advocacy campaigns, and resource mobilization strategies',
+      contribute: 'Channel diaspora resources, expertise, and partnerships to achieve the SDGs',
+      convey: 'Showcase SDG success stories, impact metrics, and partnership achievements'
     },
     roles: [
-      'Set global development frameworks and priorities',
-      'Provide funding and technical assistance',
-      'Convene stakeholders and validate approaches',
-      'Measure and report on development progress'
+      { title: 'UN Agency Directors', description: 'Leaders setting the vision for SDG achievement and diaspora engagement' },
+      { title: 'SDG Program Managers', description: 'Professionals designing and managing SDG programs' },
+      { title: 'Partnership Coordinators', description: 'Staff building and managing partnerships with diaspora organizations' },
+      { title: 'Resource Mobilization Teams', description: 'Staff raising funds and mobilizing resources for SDG programs' }
     ],
     brings: [
-      'Global legitimacy and convening power',
-      'Development expertise and frameworks',
-      'Funding and resource mobilization capacity',
-      'Measurement and reporting infrastructure'
+      'A global mandate to achieve the Sustainable Development Goals',
+      'A network of international partners and stakeholders',
+      'Expertise in development, policy, and advocacy',
+      'Convening power within the international community'
     ],
     receives: [
-      'Mobilized diaspora as development actor',
-      'Scalable implementation capacity',
-      'Innovation and private sector engagement',
-      'Grassroots legitimacy and community trust'
+      'A global platform to connect with diaspora experts, partners, and resources',
+      'Tools to map diaspora expertise and engagement',
+      'Support for designing and executing SDG programs',
+      'Increased visibility and recognition for SDG achievements'
     ],
     partnershipModels: [
-      { name: 'SDG Catalyst Partner', shortDescription: 'Strategic partnership to mobilize diaspora for specific SDG targets' }
+      { name: 'SDG Diaspora Mobilization Partner', shortDescription: 'Multi-year partnership for resource mobilization, program development, and SDG impact' }
     ],
     programs: [
-      { name: 'Diaspora SDG Mobilization Program', shortDescription: 'Structured initiatives linking diaspora with SDG achievement' },
-      { name: 'Development Finance Innovation', shortDescription: 'Programs to channel diaspora capital toward development priorities' },
-      { name: 'Knowledge Exchange & South-South Cooperation', shortDescription: 'Facilitating diaspora-led knowledge transfer and collaboration' }
+      { name: 'Diaspora SDG Fund', shortDescription: 'Mobilize diaspora resources for SDG programs' },
+      { name: 'SDG Program Development', shortDescription: 'Design and implement programs to achieve the SDGs' },
+      { name: 'Partnership Building & Engagement', shortDescription: 'Build and manage partnerships with diaspora organizations' }
     ],
-    ctaLabel: 'Partner for Impact',
+    ctaLabel: 'Partner With DNA',
     ctaLink: '/partner-with-dna/start'
   }
 ];
