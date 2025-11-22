@@ -6478,17 +6478,28 @@ export type Database = {
         }
         Returns: string
       }
-      create_entity_feed_post: {
-        Args: {
-          p_author_id: string
-          p_content: string
-          p_entity_id: string
-          p_entity_type: string
-          p_event_id?: string
-          p_space_id?: string
-        }
-        Returns: string
-      }
+      create_entity_feed_post:
+        | {
+            Args: {
+              p_author_id: string
+              p_content: string
+              p_entity_id: string
+              p_entity_type: string
+              p_event_id: string
+              p_space_id: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_author_id: string
+              p_content: string
+              p_entity_id: string
+              p_entity_type: string
+              p_metadata?: Json
+            }
+            Returns: string
+          }
       create_notification:
         | {
             Args: {
@@ -6527,36 +6538,6 @@ export type Database = {
               p_offset?: number
               p_regional_expertise?: string[]
               p_search_query?: string
-              p_skills?: string[]
-              p_sort_by?: string
-            }
-            Returns: {
-              avatar_url: string
-              country_of_origin: string
-              focus_areas: string[]
-              full_name: string
-              headline: string
-              id: string
-              industries: string[]
-              location: string
-              match_score: number
-              profession: string
-              regional_expertise: string[]
-              skills: string[]
-              username: string
-            }[]
-          }
-        | {
-            Args: {
-              p_country_of_origin?: string
-              p_current_user_id: string
-              p_focus_areas?: string[]
-              p_industries?: string[]
-              p_limit?: number
-              p_location_country?: string
-              p_offset?: number
-              p_regional_expertise?: string[]
-              p_search_query?: string
               p_sort_by?: string
             }
             Returns: {
@@ -6576,6 +6557,36 @@ export type Database = {
               profession: string
               profile_completion_percentage: number
               regional_expertise: string[]
+              username: string
+            }[]
+          }
+        | {
+            Args: {
+              p_country_of_origin?: string
+              p_current_user_id: string
+              p_focus_areas?: string[]
+              p_industries?: string[]
+              p_limit?: number
+              p_location_country?: string
+              p_offset?: number
+              p_regional_expertise?: string[]
+              p_search_query?: string
+              p_skills?: string[]
+              p_sort_by?: string
+            }
+            Returns: {
+              avatar_url: string
+              country_of_origin: string
+              focus_areas: string[]
+              full_name: string
+              headline: string
+              id: string
+              industries: string[]
+              is_connected: boolean
+              location_country: string
+              match_score: number
+              regional_expertise: string[]
+              skills: string[]
               username: string
             }[]
           }
@@ -6646,18 +6657,17 @@ export type Database = {
           p_user_id: string
         }
         Returns: {
+          action_text: string
           activity_id: string
           activity_type: string
-          actor_avatar_url: string
-          actor_full_name: string
+          actor_avatar: string
           actor_id: string
+          actor_name: string
           actor_username: string
           created_at: string
-          entity_data: Json
-          entity_id: string
-          entity_title: string
-          entity_type: string
           metadata: Json
+          target_id: string
+          target_name: string
         }[]
       }
       get_blocked_users: {
@@ -6718,10 +6728,9 @@ export type Database = {
       }
       get_dashboard_preferences: { Args: { p_user_id: string }; Returns: Json }
       get_engagement_rate: { Args: never; Returns: number }
-      get_engine_loop_metrics: {
-        Args: { p_end_date?: string; p_start_date?: string }
-        Returns: Json
-      }
+      get_engine_loop_metrics:
+        | { Args: { p_end_date: string; p_start_date: string }; Returns: Json }
+        | { Args: never; Returns: Json }
       get_event_analytics: { Args: { p_event_id: string }; Returns: Json }
       get_event_attendees: {
         Args: {
@@ -7084,10 +7093,12 @@ export type Database = {
         Args: { user1_id: string; user2_id: string }
         Returns: string
       }
-      get_organizer_analytics: {
-        Args: { p_days_back?: number; p_organizer_id: string }
-        Returns: Json
-      }
+      get_organizer_analytics:
+        | { Args: { p_organizer_id: string }; Returns: Json }
+        | {
+            Args: { p_days_back: number; p_organizer_id: string }
+            Returns: Json
+          }
       get_pending_reminders: {
         Args: { batch_size?: number }
         Returns: {
@@ -7222,28 +7233,45 @@ export type Database = {
           username: string
         }[]
       }
-      get_top_cross_transitions: {
-        Args: { p_end_date?: string; p_limit?: number; p_start_date?: string }
-        Returns: {
-          count: number
-          entity_type: string
-          from_pillar: string
-          to_pillar: string
-        }[]
-      }
-      get_top_transition_entities: {
-        Args: {
-          p_end_date?: string
-          p_entity_type: string
-          p_limit?: number
-          p_start_date?: string
-        }
-        Returns: {
-          entity_id: string
-          to_pillar: string
-          transition_count: number
-        }[]
-      }
+      get_top_cross_transitions:
+        | {
+            Args: { p_limit?: number }
+            Returns: {
+              from_state: string
+              to_state: string
+              transition_count: number
+            }[]
+          }
+        | {
+            Args: { p_end_date: string; p_limit: number; p_start_date: string }
+            Returns: {
+              from_state: string
+              to_state: string
+              transition_count: number
+            }[]
+          }
+      get_top_transition_entities:
+        | {
+            Args: {
+              p_end_date: string
+              p_entity_type: string
+              p_limit: number
+              p_start_date: string
+            }
+            Returns: {
+              entity_id: string
+              entity_type: string
+              transition_count: number
+            }[]
+          }
+        | {
+            Args: { p_from_state: string; p_limit?: number }
+            Returns: {
+              entity_id: string
+              entity_type: string
+              transition_count: number
+            }[]
+          }
       get_total_connections: { Args: never; Returns: number }
       get_total_events: { Args: never; Returns: number }
       get_total_posts: { Args: never; Returns: number }
@@ -7305,6 +7333,7 @@ export type Database = {
         Returns: {
           cohort_id: string
           cohort_name: string
+          is_active: boolean
         }[]
       }
       get_user_connections:
@@ -7392,13 +7421,21 @@ export type Database = {
           username: string
         }[]
       }
-      get_view_state_distribution: {
-        Args: { p_end_date?: string; p_start_date?: string }
-        Returns: {
-          count: number
-          view_state: string
-        }[]
-      }
+      get_view_state_distribution:
+        | {
+            Args: { p_end_date: string; p_start_date: string }
+            Returns: {
+              user_count: number
+              view_state: string
+            }[]
+          }
+        | {
+            Args: never
+            Returns: {
+              user_count: number
+              view_state: string
+            }[]
+          }
       handle_referral_signup: {
         Args: { new_user_id: string; referral_code_param: string }
         Returns: undefined

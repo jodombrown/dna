@@ -34,7 +34,7 @@ export const useActivityFeed = ({
       if (error) throw error;
 
       return {
-        activities: (data || []) as Activity[],
+        activities: (data || []) as unknown as Activity[],
         nextPage: data && data.length === limit ? (pageParam as number) + 1 : undefined,
       };
     },

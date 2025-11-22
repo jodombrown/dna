@@ -214,8 +214,8 @@ export default function Discover() {
           if (otherUser.industries?.length > 0) {
             reasons.push('Industry alignment');
           }
-          if (profile.location && otherUser.location === profile.location) {
-            reasons.push('Same location');
+          if (otherUser.country_of_origin) {
+            reasons.push('Regional connection');
           }
 
           return {
@@ -226,7 +226,7 @@ export default function Discover() {
               skills: otherUser.focus_areas?.length || 0,
               interests: otherUser.regional_expertise?.length || 0,
               impactAreas: otherUser.industries?.length || 0,
-              location: profile.location === otherUser.location
+              location: !!otherUser.country_of_origin
             }
           };
         })
@@ -471,7 +471,7 @@ export default function Discover() {
                         <div className="flex-1 min-w-0">
                           <p className={`${TYPOGRAPHY.h5} truncate`}>{user.full_name || 'Unknown'}</p>
                           <p className={`${TYPOGRAPHY.bodySmall} text-muted-foreground truncate`}>
-                            {user.headline || user.profession || ''}
+                            {user.headline || ''}
                           </p>
                         </div>
                         <TooltipProvider>
