@@ -24,6 +24,7 @@ import { EventType, EventFormat, CreateEventInput } from '@/types/events';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 
 interface CreateEventDialogProps {
   isOpen: boolean;
@@ -292,36 +293,36 @@ export function CreateEventDialog({
             {(formData.format === 'in_person' || formData.format === 'hybrid') && (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="location-name">Location Name *</Label>
+                  <Label htmlFor="location-name">Venue/Location Name *</Label>
                   <Input
                     id="location-name"
-                    placeholder="e.g., WeWork Lagos"
+                    placeholder="e.g., WeWork Lagos, Central Park"
                     value={formData.location_name}
                     onChange={(e) => setFormData({ ...formData, location_name: e.target.value })}
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input
-                      id="city"
-                      placeholder="e.g., Lagos"
-                      value={formData.location_city}
-                      onChange={(e) => setFormData({ ...formData, location_city: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="country">Country</Label>
-                    <Input
-                      id="country"
-                      placeholder="e.g., Nigeria"
-                      value={formData.location_country}
-                      onChange={(e) => setFormData({ ...formData, location_country: e.target.value })}
-                    />
-                  </div>
-                </div>
+                <ComprehensiveLocationInput
+                  id="event-location"
+                  label="City & Country *"
+                  value={formData.location_city && formData.location_country 
+                    ? `${formData.location_city}, ${formData.location_country}` 
+                    : ''}
+                  onChange={(value) => {
+                    const parts = value.split(',').map(s => s.trim());
+                    if (parts.length >= 2) {
+                      setFormData({ 
+                        ...formData, 
+                        location_city: parts[0],
+                        location_country: parts.slice(1).join(', ')
+                      });
+                    } else {
+                      setFormData({ ...formData, location_city: value, location_country: '' });
+                    }
+                  }}
+                  placeholder="Search for city and country..."
+                  required={false}
+                />
               </>
             )}
 
