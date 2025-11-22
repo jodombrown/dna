@@ -12,144 +12,144 @@ export const partnershipModels: PartnershipModel[] = [
   {
     id: 'national-city-partner',
     name: 'National / City DNA Partner',
-    purpose: 'Build a country or city-level hub for diaspora mobilization, co-designed with government and anchored in local ecosystems.',
+    purpose: 'Mobilize diaspora talent, investment, and collaboration for your city or country using shared digital infrastructure that turns scattered networks into coordinated action.',
     partnerProvides: [
-      'Policy alignment and regulatory support',
-      'Government convening power and legitimacy',
-      'Co-funding for strategic initiatives',
-      'Access to domestic institutions and resources'
+      'Policy frameworks and regulatory alignment',
+      'Government convening power and institutional credibility',
+      'Co-funding for strategic programs and initiatives',
+      'Access to domestic institutions, markets, and stakeholders'
     ],
     dnaProvides: [
       'Platform infrastructure and 5C mobilization engine',
-      'Global diaspora network access',
-      'Program design and implementation support',
-      'Measurement, storytelling, and visibility'
+      'Access to verified diaspora talent and capital networks',
+      'Program design, execution support, and capacity building',
+      'Impact measurement, storytelling, and global visibility'
     ],
     useCases: [
-      'National diaspora strategy implementation',
-      'Diaspora investment attraction programs',
-      'City-level innovation and talent hubs',
-      'Skills transfer and mentorship initiatives'
+      'National diaspora engagement strategy implementation',
+      'Diaspora bond programs and investment attraction',
+      'City-based innovation hubs and talent pipelines',
+      'Skills transfer, mentorship, and capacity building initiatives'
     ],
     timeHorizon: '12–36 months'
   },
   {
     id: 'corporate-innovation-partner',
     name: 'Corporate Innovation Partner',
-    purpose: 'Multi-year partnership to access diaspora talent, innovation pipelines, and market opportunities while delivering corporate social impact.',
+    purpose: 'Access diaspora talent, innovation pipelines, and market insights through a multi-year partnership that drives business growth and delivers measurable social impact.',
     partnerProvides: [
-      'Capital for innovation programs and events',
-      'Market access and distribution channels',
-      'Technical expertise and mentorship',
-      'Brand credibility and reach'
+      'Capital to sponsor innovation programs, challenges, and events',
+      'Market access, distribution networks, and customer channels',
+      'Technical expertise, mentorship, and industry knowledge',
+      'Brand visibility and corporate credibility'
     ],
     dnaProvides: [
-      'Access to global diaspora talent pools',
-      'Innovation challenge design and execution',
-      'Market entry strategies and guidance',
-      'ESG/CSR storytelling and impact measurement'
+      'Direct access to global diaspora talent and innovation networks',
+      'End-to-end design and execution of innovation challenges',
+      'Strategic guidance for market entry and expansion',
+      'ESG/CSR impact measurement and authentic storytelling'
     ],
     useCases: [
-      'Diaspora talent recruitment programs',
-      'Corporate-sponsored innovation challenges',
-      'Market entry into African ecosystems',
-      'Product co-creation with diaspora innovators'
+      'Diaspora talent recruitment and executive pipeline development',
+      'Corporate-sponsored innovation challenges and accelerators',
+      'Market entry strategies for African and diaspora markets',
+      'Co-creation labs with diaspora entrepreneurs and innovators'
     ],
     timeHorizon: '24–48 months'
   },
   {
     id: 'hbcu-anchor-partner',
     name: 'HBCU Anchor Partner',
-    purpose: 'Institutional partnership to strengthen HBCU-Africa connections through student exchange, research, and lifelong alumni engagement.',
+    purpose: 'Deepen the HBCU-Africa connection through structured student exchange, collaborative research, and lifelong alumni engagement—anchored in the broader diaspora mobilization engine.',
     partnerProvides: [
-      'Academic infrastructure and credibility',
-      'Student and faculty talent pools',
-      'Research capacity and knowledge production',
-      'Alumni network mobilization'
+      'Academic infrastructure, credibility, and institutional legacy',
+      'Student and faculty talent ready for global engagement',
+      'Research capacity and knowledge creation',
+      'Alumni networks eager to connect with Africa and the diaspora'
     ],
     dnaProvides: [
-      'Global network for student and faculty exchange',
-      'Research collaboration opportunities',
-      'Alumni engagement platform and tools',
-      'Visibility in diaspora ecosystems'
+      'Global network for seamless student and faculty exchange',
+      'Research partnerships with African institutions and diaspora scholars',
+      'Alumni engagement platform with built-in mobilization tools',
+      'Visibility and storytelling across the diaspora ecosystem'
     ],
     useCases: [
-      'Student study abroad and exchange programs',
-      'Joint research on diaspora and development',
-      'Alumni network activation for mentorship',
-      'Curriculum development on Africa-diaspora topics'
+      'Student study abroad and faculty exchange programs',
+      'Collaborative research on diaspora development and Africa',
+      'Alumni mentorship and professional network activation',
+      'Curriculum co-creation on diaspora entrepreneurship and innovation'
     ],
     timeHorizon: '18–36 months'
   },
   {
     id: 'hub-network-partner',
     name: 'Hub Network Partner',
-    purpose: 'Connect innovation hubs, accelerators, and entrepreneurship ecosystems across the diaspora for deal flow, mentorship, and market access.',
+    purpose: 'Link innovation hubs, accelerators, and startup ecosystems across the diaspora and the continent—creating pathways for deal flow, mentorship, capital, and market access.',
     partnerProvides: [
-      'Pipeline of innovative ventures',
-      'Acceleration and incubation infrastructure',
-      'Local market knowledge and access',
-      'Ecosystem development expertise'
+      'Pipeline of high-potential ventures and entrepreneurs',
+      'Acceleration, incubation, and ecosystem support infrastructure',
+      'Local market knowledge, networks, and on-ground access',
+      'Community building and ecosystem development expertise'
     ],
     dnaProvides: [
-      'Access to diaspora investors and mentors',
-      'Cross-hub collaboration and deal flow',
-      'Market expansion support',
-      'Global visibility and storytelling'
+      'Direct access to diaspora investors, mentors, and advisors',
+      'Cross-hub collaboration, deal flow sharing, and co-investment',
+      'Market expansion strategies and partnership facilitation',
+      'Global visibility, storytelling, and ecosystem amplification'
     ],
     useCases: [
-      'Cross-border accelerator programs',
-      'Diaspora mentor matching',
-      'Investor network access for startups',
-      'Market entry programs (Africa ↔ Diaspora)'
+      'Cross-border accelerator programs and cohort collaboration',
+      'Mentor and advisor matching across diaspora networks',
+      'Investor network access and pitch event coordination',
+      'Bi-directional market entry programs (Africa ↔ Diaspora)'
     ],
     timeHorizon: '12–24 months'
   },
   {
     id: 'capital-network-partner',
     name: 'Capital Network Partner',
-    purpose: 'Structured partnership for investors to access curated deal flow, co-investment opportunities, and portfolio acceleration support.',
+    purpose: 'Deploy capital efficiently through curated deal flow, co-investment networks, and portfolio acceleration—backed by a mobilization engine that supports ventures from connection to scale.',
     partnerProvides: [
-      'Investment capital and deployment capacity',
-      'Due diligence and investment expertise',
-      'Portfolio support services',
-      'Co-investment network effects'
+      'Investment capital and flexible deployment capacity',
+      'Due diligence expertise and investment decision-making',
+      'Portfolio support services and value-add resources',
+      'Co-investment networks and syndication power'
     ],
     dnaProvides: [
-      'Curated deal flow and investment opportunities',
-      'Co-investment syndication and networks',
-      'Portfolio company acceleration support',
-      'Impact measurement and reporting'
+      'Curated, vetted deal flow aligned with your investment thesis',
+      'Co-investment syndication and investor network coordination',
+      'Portfolio company acceleration through the DNA platform',
+      'Impact measurement, reporting, and storytelling infrastructure'
     ],
     useCases: [
-      'Investor circle membership',
-      'Portfolio acceleration programs',
-      'Thematic investment fund development',
-      'Impact investing framework co-creation'
+      'Investor circle membership with exclusive deal access',
+      'Portfolio acceleration programs leveraging the DNA network',
+      'Thematic investment fund co-creation and management',
+      'Impact investing framework development and measurement'
     ],
     timeHorizon: '24–60 months'
   },
   {
     id: 'sdg-catalyst-partner',
     name: 'SDG Catalyst Partner',
-    purpose: 'Strategic partnership with multilateral organizations to mobilize diaspora resources for achieving specific Sustainable Development Goals.',
+    purpose: 'Leverage diaspora networks as a strategic asset for achieving Sustainable Development Goals—turning global frameworks into locally-rooted, diaspora-mobilized action.',
     partnerProvides: [
-      'Global development frameworks and priorities',
-      'Funding and technical assistance',
-      'Convening power and stakeholder access',
-      'Measurement and reporting infrastructure'
+      'Global development frameworks, goals, and priority areas',
+      'Funding, technical assistance, and programmatic resources',
+      'Convening power and access to government stakeholders',
+      'Measurement, reporting, and accountability infrastructure'
     ],
     dnaProvides: [
-      'Mobilized diaspora as development actor',
-      'Scalable implementation capacity',
-      'Private sector and innovation engagement',
-      'Grassroots legitimacy and community trust'
+      'Mobilized diaspora as a development implementation actor',
+      'Scalable execution capacity across borders and sectors',
+      'Private sector engagement and innovation partnerships',
+      'Grassroots legitimacy, community trust, and local knowledge'
     ],
     useCases: [
-      'Diaspora-led SDG achievement programs',
-      'Development finance innovation',
-      'South-South cooperation facilitation',
-      'Climate action and green economy initiatives'
+      'Diaspora-led programs targeting specific SDG outcomes',
+      'Development finance innovation and blended capital models',
+      'South-South cooperation and knowledge exchange facilitation',
+      'Climate action, green economy, and just transition initiatives'
     ],
     timeHorizon: '18–48 months'
   }

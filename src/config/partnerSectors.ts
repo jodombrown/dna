@@ -28,47 +28,46 @@ export const partnerSectors: SectorConfig[] = [
   {
     slug: 'public-sector',
     name: 'Public Sector & Economic Development',
-    shortDescription: 'Partner with governments and development agencies to mobilize diaspora talent and capital for national development.',
+    shortDescription: 'Your policies, programs, and people need a connected diaspora. DNA gives governments a single engine to mobilize citizens, investors, and global African talent.',
     heroTitle: 'Public Sector & Economic Development',
-    heroSubtitle: 'Mobilize diaspora expertise, capital, and networks to accelerate national development priorities.',
-    // TODO: Replace with AI-generated image representing government buildings and economic development
+    heroSubtitle: 'Governments everywhere want to engage the diaspora—but coordination gaps and fragmented networks make it difficult. DNA gives you a shared engine to mobilize talent, investment, and collaboration at scale.',
     heroImageUrl: undefined,
     heroImageAlt: 'Public sector and economic development partnership',
     iconImageUrl: undefined,
     iconAlt: 'Public sector icon',
     fiveCsBullets: {
-      connect: 'Link diaspora professionals with government initiatives and local talent pools',
-      convene: 'Host policy dialogues, investment forums, and stakeholder convenings',
-      collaborate: 'Co-design national diaspora strategies and sector-specific programs',
-      contribute: 'Channel diaspora investment, expertise, and advocacy toward development goals',
-      convey: 'Amplify success stories and communicate progress to global diaspora communities'
+      connect: 'Map and activate diaspora professionals, investors, and institutions aligned with your development priorities',
+      convene: 'Host policy dialogues, investment forums, and stakeholder gatherings that turn plans into partnerships',
+      collaborate: 'Co-design national diaspora strategies, sector roadmaps, and pilot programs with execution clarity',
+      contribute: 'Channel diaspora capital, expertise, policy advocacy, and technical support toward your goals',
+      convey: 'Share progress, celebrate wins, and inspire the next wave of diaspora engagement through storytelling'
     },
     roles: [
-      'Set national diaspora engagement priorities',
-      'Provide regulatory clarity and investment frameworks',
-      'Host convenings and validation events',
-      'Co-fund strategic initiatives'
+      'Define diaspora engagement priorities and strategic outcomes',
+      'Provide regulatory clarity, policy frameworks, and institutional backing',
+      'Convene stakeholders and validate diaspora-led initiatives',
+      'Co-fund strategic programs and provide implementation support'
     ],
     brings: [
-      'Policy alignment and government mandate',
-      'Access to domestic institutions and resources',
-      'Legitimacy and credibility for diaspora engagement',
-      'Convening power across sectors'
+      'Policy mandate and government legitimacy',
+      'Access to domestic institutions, markets, and stakeholders',
+      'Convening power across public and private sectors',
+      'Long-term commitment to diaspora engagement'
     ],
     receives: [
-      'Ready-to-deploy diaspora network and platform',
-      'Cross-sector coordination and program support',
-      'Global visibility and storytelling',
-      'Impact measurement and reporting'
+      'Turnkey platform infrastructure for diaspora mobilization',
+      'Access to verified diaspora talent, capital, and networks',
+      'Program design, execution support, and impact measurement',
+      'Global visibility and storytelling that showcases your leadership'
     ],
     partnershipModels: [
       { name: 'National DNA Partner', shortDescription: 'Country-level partnership to build a national diaspora mobilization hub' },
       { name: 'City DNA Partner', shortDescription: 'City-level partnership for urban innovation and diaspora engagement' }
     ],
     programs: [
-      { name: 'National Diaspora Strategy Co-Design', shortDescription: 'Collaborative development of comprehensive diaspora engagement frameworks' },
-      { name: 'Diaspora Investment Attraction Program', shortDescription: 'Structured initiatives to channel diaspora capital into priority sectors' },
-      { name: 'Skills Transfer & Mentorship Initiatives', shortDescription: 'Programs connecting diaspora expertise with local talent development' }
+      { name: 'National Diaspora Strategy Co-Design', shortDescription: 'Collaborative development of comprehensive engagement frameworks and execution roadmaps' },
+      { name: 'Diaspora Investment Attraction Program', shortDescription: 'Structured initiatives to channel diaspora capital into priority sectors and opportunities' },
+      { name: 'Skills Transfer & Mentorship Initiatives', shortDescription: 'Programs connecting diaspora expertise with local talent, institutions, and capacity building' }
     ],
     ctaLabel: 'Start a Conversation',
     ctaLink: '/partner-with-dna/start'
@@ -76,46 +75,45 @@ export const partnerSectors: SectorConfig[] = [
   {
     slug: 'private-industry',
     name: 'Private Industry',
-    shortDescription: 'Unlock diaspora markets, talent pipelines, and innovation partnerships for corporate growth.',
+    shortDescription: 'Access diaspora talent, markets, and innovation networks to drive business growth and deliver measurable social impact.',
     heroTitle: 'Private Industry & Corporate Partners',
-    heroSubtitle: 'Access diaspora talent, markets, and innovation networks to drive business growth and social impact.',
-    // TODO: Replace with AI-generated image representing corporate innovation and partnership
+    heroSubtitle: 'Corporations want to tap diaspora markets and talent—but lack the networks to do it well. DNA connects you to diaspora professionals, innovators, and customers ready to partner.',
     heroImageUrl: undefined,
     heroImageAlt: 'Private industry corporate partnership',
     iconImageUrl: undefined,
     iconAlt: 'Private industry icon',
     fiveCsBullets: {
-      connect: 'Access skilled diaspora talent pools and executive networks',
-      convene: 'Host corporate-sponsored innovation challenges and showcase events',
-      collaborate: 'Co-create products, services, and market entry strategies',
-      contribute: 'Provide capital, expertise, and technology to diaspora-led ventures',
-      convey: 'Build brand affinity through authentic diaspora storytelling'
+      connect: 'Access skilled diaspora professionals, executive networks, and innovation communities',
+      convene: 'Host corporate-sponsored challenges, showcase events, and strategic gatherings',
+      collaborate: 'Co-create products, services, market strategies, and innovation programs',
+      contribute: 'Provide capital, expertise, mentorship, and technology to diaspora-led ventures',
+      convey: 'Build authentic brand affinity through diaspora storytelling and impact narratives'
     },
     roles: [
-      'Sponsor innovation programs and events',
-      'Provide market access and distribution channels',
-      'Offer technical expertise and mentorship',
-      'Co-invest in diaspora ventures'
+      'Sponsor innovation programs, challenges, and diaspora-focused events',
+      'Provide market access, distribution channels, and customer connections',
+      'Offer technical expertise, mentorship, and industry knowledge',
+      'Co-invest in high-potential diaspora ventures and programs'
     ],
     brings: [
-      'Capital and resources',
-      'Market access and distribution networks',
-      'Technical expertise and innovation capabilities',
-      'Brand credibility and reach'
+      'Capital, resources, and strategic investment capacity',
+      'Market access, distribution networks, and customer pipelines',
+      'Technical expertise, R&D capabilities, and innovation infrastructure',
+      'Brand credibility, visibility, and corporate reach'
     ],
     receives: [
-      'Access to global diaspora talent and consumers',
-      'Innovation pipeline and market insights',
-      'ESG/CSR impact and storytelling',
-      'Network effects across sectors and geographies'
+      'Access to global diaspora talent pools and consumer markets',
+      'Innovation pipeline, market insights, and competitive intelligence',
+      'ESG/CSR impact stories and measurable social outcomes',
+      'Network effects across sectors, geographies, and ecosystems'
     ],
     partnershipModels: [
-      { name: 'Corporate Innovation Partner', shortDescription: 'Multi-year partnership to build innovation pipelines and talent access' }
+      { name: 'Corporate Innovation Partner', shortDescription: 'Multi-year partnership to build innovation pipelines and talent access programs' }
     ],
     programs: [
-      { name: 'Diaspora Talent Pipeline Program', shortDescription: 'Structured recruitment and development of diaspora professionals' },
-      { name: 'Corporate Innovation Challenges', shortDescription: 'Sponsored competitions to solve business challenges with diaspora innovators' },
-      { name: 'Market Entry Acceleration', shortDescription: 'Collaborative programs to enter African markets with diaspora guidance' }
+      { name: 'Diaspora Talent Pipeline Program', shortDescription: 'Structured recruitment and development pathways for diaspora professionals' },
+      { name: 'Corporate Innovation Challenges', shortDescription: 'Sponsored competitions solving business challenges with diaspora innovators' },
+      { name: 'Market Entry Acceleration', shortDescription: 'Collaborative programs entering African markets with diaspora guidance and networks' }
     ],
     ctaLabel: 'Explore Corporate Partnership',
     ctaLink: '/partner-with-dna/start'
