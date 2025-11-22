@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 
 const PartnerStart = () => {
   const { toast } = useToast();
@@ -15,6 +16,7 @@ const PartnerStart = () => {
     name: '',
     organization: '',
     email: '',
+    location: '',
     sector: '',
     interest: ''
   });
@@ -34,6 +36,7 @@ Partnership Inquiry from ${formData.organization}
 Name: ${formData.name}
 Organization: ${formData.organization}
 Email: ${formData.email}
+Location: ${formData.location || 'Not specified'}
 Sector: ${formData.sector}
 
 What they're interested in:
@@ -53,6 +56,7 @@ ${formData.interest}
       name: '',
       organization: '',
       email: '',
+      location: '',
       sector: '',
       interest: ''
     });
@@ -188,6 +192,15 @@ ${formData.interest}
                 placeholder="jane@organization.com"
               />
             </div>
+
+            <ComprehensiveLocationInput
+              id="location"
+              label="Location"
+              value={formData.location}
+              onChange={(value) => setFormData({ ...formData, location: value })}
+              placeholder="City, State/Province, Country"
+              required={false}
+            />
 
             <div>
               <Label htmlFor="sector">Sector *</Label>

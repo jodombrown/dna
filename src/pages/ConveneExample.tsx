@@ -17,6 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import FeedbackPanel from '@/components/FeedbackPanel';
@@ -611,10 +612,14 @@ const ConveneExample = () => {
                 </Select>
               </div>
               
-              <div>
-                <Label htmlFor="event-location">Location/Platform</Label>
-                <Input id="event-location" placeholder="City, Country or Platform URL" />
-              </div>
+              <ComprehensiveLocationInput
+                id="event-location"
+                label="Location/Platform"
+                value=""
+                onChange={() => {}}
+                placeholder="Search for city and country or enter platform URL"
+                required={false}
+              />
             </div>
             
             <div className="pt-4 flex gap-3">
