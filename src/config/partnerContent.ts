@@ -1,5 +1,5 @@
 import partnerHeroImage from '@/assets/partner-hero.jpg';
-import fiveCEngineImage from '@/assets/5c-engine.jpg';
+import fiveCEngineImage from '@/assets/5c-engine-new.jpg';
 
 export type FiveCContent = {
   id: string;

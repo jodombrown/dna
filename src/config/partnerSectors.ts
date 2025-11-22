@@ -6,6 +6,14 @@ import ngoHero from '@/assets/sectors/ngo-hero.jpg';
 import innovationHero from '@/assets/sectors/innovation-hero.jpg';
 import investorHero from '@/assets/sectors/investor-hero.jpg';
 import multilateralHero from '@/assets/sectors/multilateral-hero.jpg';
+import publicSectorIcon from '@/assets/sectors/public-sector-icon.png';
+import privateIndustryIcon from '@/assets/sectors/private-industry-icon.png';
+import hbcuIcon from '@/assets/sectors/hbcu-icon.png';
+import universityIcon from '@/assets/sectors/university-icon.png';
+import ngoIcon from '@/assets/sectors/ngo-icon.png';
+import innovationIcon from '@/assets/sectors/innovation-icon.png';
+import investorIcon from '@/assets/sectors/investor-icon.png';
+import multilateralIcon from '@/assets/sectors/multilateral-icon.png';
 
 export type SectorConfig = {
   slug: string;
@@ -42,7 +50,7 @@ export const partnerSectors: SectorConfig[] = [
     heroSubtitle: 'Governments everywhere want to engage the diaspora, but coordination gaps and fragmented networks make it difficult. DNA gives you a shared engine to mobilize talent, investment, and collaboration at scale.',
     heroImageUrl: publicSectorHero,
     heroImageAlt: 'Public sector and economic development partnership',
-    iconImageUrl: undefined,
+    iconImageUrl: publicSectorIcon,
     iconAlt: 'Public sector icon',
     fiveCsBullets: {
       connect: 'Map and activate diaspora professionals, investors, and institutions aligned with your development priorities',
@@ -88,7 +96,7 @@ export const partnerSectors: SectorConfig[] = [
     heroSubtitle: 'Corporations want access to African markets, diaspora talent, and innovation pipelines, but fragmented networks make it expensive and slow. DNA gives you a shared platform to mobilize partnerships, talent, and market intelligence across the 5Cs.',
     heroImageUrl: privateIndustryHero,
     heroImageAlt: 'Private industry partnership',
-    iconImageUrl: undefined,
+    iconImageUrl: privateIndustryIcon,
     iconAlt: 'Private industry icon',
     fiveCsBullets: {
       connect: 'Access diaspora talent for recruitment, market insights for expansion, and partners for innovation',
@@ -134,7 +142,7 @@ export const partnerSectors: SectorConfig[] = [
     heroSubtitle: 'HBCUs want to extend their global reach, create new opportunities for students, and build stronger alumni networks, but fragmented connections make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: hbcuHero,
     heroImageAlt: 'HBCU partnership',
-    iconImageUrl: undefined,
+    iconImageUrl: hbcuIcon,
     iconAlt: 'HBCU icon',
     fiveCsBullets: {
       connect: 'Map alumni expertise, research interests, and professional networks worldwide',
@@ -180,7 +188,7 @@ export const partnerSectors: SectorConfig[] = [
     heroSubtitle: 'Universities want to extend their global impact, attract international students, and build stronger research partnerships, but fragmented networks make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: universityHero,
     heroImageAlt: 'Global university partnership',
-    iconImageUrl: undefined,
+    iconImageUrl: universityIcon,
     iconAlt: 'Global university icon',
     fiveCsBullets: {
       connect: 'Map diaspora alumni expertise, research interests, and professional networks worldwide',
@@ -226,7 +234,7 @@ export const partnerSectors: SectorConfig[] = [
     heroSubtitle: 'NGOs want to extend their reach, mobilize diaspora volunteers, and build stronger community programs, but fragmented networks make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: ngoHero,
     heroImageAlt: 'NGO partnership',
-    iconImageUrl: undefined,
+    iconImageUrl: ngoIcon,
     iconAlt: 'NGO icon',
     fiveCsBullets: {
       connect: 'Map diaspora expertise, volunteer interests, and community networks worldwide',
@@ -272,7 +280,7 @@ export const partnerSectors: SectorConfig[] = [
     heroSubtitle: 'Innovation hubs want to extend their global reach, attract international startups, and build stronger investor networks, but fragmented connections make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: innovationHero,
     heroImageAlt: 'Innovation ecosystem partnership',
-    iconImageUrl: undefined,
+    iconImageUrl: innovationIcon,
     iconAlt: 'Innovation ecosystem icon',
     fiveCsBullets: {
       connect: 'Map diaspora expertise, investor interests, and startup networks worldwide',
@@ -318,7 +326,7 @@ export const partnerSectors: SectorConfig[] = [
     heroSubtitle: 'Investors want to access vetted deals, tap into new markets, and find promising talent in emerging economies, but fragmented networks make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: investorHero,
     heroImageAlt: 'Investor partnership',
-    iconImageUrl: undefined,
+    iconImageUrl: investorIcon,
     iconAlt: 'Investor icon',
     fiveCsBullets: {
       connect: 'Map diaspora expertise, investment interests, and startup networks worldwide',
@@ -364,7 +372,7 @@ export const partnerSectors: SectorConfig[] = [
     heroSubtitle: 'Multilateral organizations want to mobilize diaspora resources, expertise, and partnerships to achieve the SDGs, but fragmented networks make it difficult. DNA gives you a shared platform to mobilize partnerships, talent, and resources across the 5Cs.',
     heroImageUrl: multilateralHero,
     heroImageAlt: 'UN/SDG partnership',
-    iconImageUrl: undefined,
+    iconImageUrl: multilateralIcon,
     iconAlt: 'UN/SDG icon',
     fiveCsBullets: {
       connect: 'Map diaspora expertise, SDG interests, and partnership networks worldwide',
