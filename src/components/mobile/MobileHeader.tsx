@@ -72,17 +72,23 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
             </div>
           )}
 
-          {/* Right: Notification + Profile */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <NotificationBell />
-            <Avatar 
-              className="h-8 w-8 cursor-pointer" 
-              onClick={() => navigate('/dna/profile')}
-            >
-              <AvatarImage src={profile.avatar_url || ''} />
-              <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
-            </Avatar>
-          </div>
+      {/* Right: Notification + Profile */}
+       <div className="flex items-center gap-2 flex-shrink-0">
+         <NotificationBell />
+         <Avatar 
+           className="h-8 w-8 cursor-pointer" 
+           onClick={() => {
+             if (profile?.username) {
+               navigate(`/dna/${profile.username}`);
+             } else {
+               navigate('/dna/feed');
+             }
+           }}
+         >
+           <AvatarImage src={profile.avatar_url || ''} />
+           <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
+         </Avatar>
+       </div>
         </div>
       </header>
     );

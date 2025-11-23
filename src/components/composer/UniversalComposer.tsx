@@ -1,12 +1,13 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ComposerMode, ComposerContext } from '@/hooks/useUniversalComposer';
+import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniversalComposer';
 import { ComposerModeSelector } from './ComposerModeSelector';
 import { ComposerBody } from './ComposerBody';
 import { ComposerFooter } from './ComposerFooter';
 import { useState } from 'react';
-import { ComposerFormData } from '@/hooks/useUniversalComposer';
 import { Badge } from '@/components/ui/badge';
 import { Hash, Calendar, Users, Building2 } from 'lucide-react';
+import { useMobile } from '@/hooks/useMobile';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 interface UniversalComposerProps {
   isOpen: boolean;
@@ -30,6 +31,7 @@ export const UniversalComposer = ({
   const [formData, setFormData] = useState<ComposerFormData>({
     content: '',
   });
+  const { isMobile } = useMobile();
 
   const handleSubmit = () => {
     onSubmit(formData);
@@ -58,6 +60,51 @@ export const UniversalComposer = ({
     }
   };
 
+  // Mobile: slide-in sheet from the right
+  if (isMobile) {
+    return (
+      <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <SheetContent side="right" className="w-full max-w-md sm:max-w-lg">
+          <SheetHeader>
+            <SheetTitle className="text-2xl">
+              Share something with the diaspora
+            </SheetTitle>
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm text-muted-foreground">
+                {getSubheader(mode)}
+              </p>
+              {getContextBadge(context)}
+            </div>
+          </SheetHeader>
+
+          <div className="space-y-6 mt-4">
+            <ComposerModeSelector
+              currentMode={mode}
+              onModeChange={onModeChange}
+              context={context}
+            />
+
+            <ComposerBody
+              mode={mode}
+              formData={formData}
+              context={context}
+              onChange={updateFormData}
+            />
+
+            <ComposerFooter
+              mode={mode}
+              isSubmitting={isSubmitting}
+              isValid={isValid()}
+              onCancel={onClose}
+              onSubmit={handleSubmit}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Desktop: existing centered dialog
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">

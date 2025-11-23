@@ -180,8 +180,8 @@ const DnaFeed = () => {
           }
         `}</style>
         <div className="min-h-screen bg-background" data-mobile-feed="true">
-          {/* Sticky header + tabs container */}
-          <div className="sticky top-0 z-40 bg-background border-b border-border">
+          {/* Fixed header + tabs container (mobile feed only) */}
+          <div className="fixed top-0 left-0 right-0 z-40 bg-background border-b border-border">
             <MobileHeader 
               variant="feed"
               onComposerClick={() => composer.open('post')}
@@ -217,7 +217,8 @@ const DnaFeed = () => {
             </div>
           </div>
 
-          <main className="pb-16 px-3 pt-2">
+          {/* Add top padding to account for fixed header height */}
+          <main className="pb-16 px-3 pt-[7.25rem]">
             <UniversalFeedInfinite
               viewerId={user.id}
               tab={activeTab}
