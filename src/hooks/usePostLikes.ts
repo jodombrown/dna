@@ -19,7 +19,7 @@ export function usePostLikes(postId: string, userId?: string) {
     queryKey: ['post-likes', postId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('post_reactions')
+        .from('post_likes')
         .select(`
           user_id,
           profiles:user_id (
@@ -29,8 +29,7 @@ export function usePostLikes(postId: string, userId?: string) {
             headline
           )
         `)
-        .eq('post_id', postId)
-        .eq('emoji', 'like');
+        .eq('post_id', postId);
 
       if (error) throw error;
 
@@ -61,21 +60,19 @@ export function usePostLikes(postId: string, userId?: string) {
       if (likeData?.userHasLiked) {
         // Unlike
         const { error } = await supabase
-          .from('post_reactions')
+          .from('post_likes')
           .delete()
           .eq('post_id', postId)
-          .eq('user_id', userId)
-          .eq('emoji', 'like');
+          .eq('user_id', userId);
 
         if (error) throw error;
       } else {
         // Like
         const { error } = await supabase
-          .from('post_reactions')
+          .from('post_likes')
           .insert({
             post_id: postId,
             user_id: userId,
-            emoji: 'like',
           });
 
         if (error) throw error;
@@ -83,8 +80,8 @@ export function usePostLikes(postId: string, userId?: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['post-likes', postId] });
-      queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
-      queryClient.invalidateQueries({ queryKey: ['infinite-feed-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
       refetch();
     },
     onError: (error) => {
