@@ -1,5 +1,6 @@
 import { ComposerMode, ComposerContext } from '@/hooks/useUniversalComposer';
 import { Button } from '@/components/ui/button';
+import { COMPOSER_MODE_CONFIG } from '@/config/composerModes';
 import { 
   MessageSquare, 
   FileText, 
@@ -20,19 +21,45 @@ export const ComposerModeSelector = ({
   onModeChange,
   context,
 }: ComposerModeSelectorProps) => {
+  // Mode icon mapping
+  const modeIcons: Record<ComposerMode, any> = {
+    post: MessageSquare,
+    story: FileText,
+    event: Calendar,
+    need: HandHeart,
+    space: Rocket,
+    community: Users,
+  };
+
+  // Mode label mapping
+  const modeLabels: Record<ComposerMode, string> = {
+    post: 'Post',
+    story: 'Story',
+    event: 'Event',
+    need: 'Need/Offer',
+    space: 'Space',
+    community: 'Community',
+  };
+
+  // Build modes array from config - only show enabled modes
   const modes: Array<{
     id: ComposerMode;
     label: string;
     icon: any;
     disabled?: boolean;
-  }> = [
-    { id: 'post', label: 'Post', icon: MessageSquare },
-    { id: 'story', label: 'Story', icon: FileText },
-    { id: 'event', label: 'Event', icon: Calendar, disabled: !!context.eventId },
-    { id: 'need', label: 'Need/Offer', icon: HandHeart },
-    { id: 'space', label: 'Space', icon: Rocket, disabled: !!context.spaceId },
-    { id: 'community', label: 'Community', icon: Users, disabled: !context.communityId },
-  ];
+  }> = Object.values(COMPOSER_MODE_CONFIG)
+    .filter((config) => config.enabled)
+    .map((config) => ({
+      id: config.id,
+      label: modeLabels[config.id],
+      icon: modeIcons[config.id],
+      // Context-based disabling
+      disabled: 
+        (config.id === 'event' && !!context.eventId) ||
+        (config.id === 'space' && !!context.spaceId) ||
+        (config.id === 'community' && !context.communityId) ||
+        (config.id === 'need' && !context.spaceId),
+    }));
 
   return (
     <div className="flex flex-wrap gap-2">
