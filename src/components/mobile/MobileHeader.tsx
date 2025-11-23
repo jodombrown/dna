@@ -1,10 +1,8 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Search, PenSquare, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { useMessage } from '@/contexts/MessageContext';
 
 interface MobileHeaderProps {
   title?: string;
@@ -13,8 +11,6 @@ interface MobileHeaderProps {
   onSearchClick?: () => void;
   actions?: React.ReactNode;
   className?: string;
-  showCompose?: boolean;
-  showMessages?: boolean;
 }
 
 /**
@@ -27,14 +23,10 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
   showSearch = false,
   onSearchClick,
   actions,
-  className,
-  showCompose = false,
-  showMessages = false,
+  className
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const composer = useUniversalComposer();
-  const { openMessageOverlay } = useMessage();
 
   // Auto-detect if we should show back button based on route depth
   const shouldShowBack = showBack || (
@@ -79,27 +71,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
         )}
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-1">
-          {showCompose && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => composer.open('post')}
-              className="px-2"
-            >
-              <PenSquare className="w-5 h-5" />
-            </Button>
-          )}
-          {showMessages && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => openMessageOverlay('')}
-              className="px-2"
-            >
-              <MessageCircle className="w-5 h-5" />
-            </Button>
-          )}
+        <div className="flex items-center gap-2">
           {showSearch && (
             <Button
               variant="ghost"
