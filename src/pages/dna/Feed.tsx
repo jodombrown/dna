@@ -180,43 +180,44 @@ const DnaFeed = () => {
           }
         `}</style>
         <div className="min-h-screen bg-background" data-mobile-feed="true">
-          <MobileHeader 
-            variant="feed"
-            onComposerClick={() => composer.open('post')}
-          />
-          
-          {/* Sticky Filter Tabs */}
-          <div className="sticky top-14 z-30 bg-background border-b border-border px-3 pt-2 pb-2">
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-              <TabsList className="w-full grid grid-cols-4">
-                <TabsTrigger value="all">
-                  <Newspaper className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">All Posts</span>
-                  <span className="sm:hidden">All</span>
-                </TabsTrigger>
-                <TabsTrigger value="network">
-                  <Users className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">Network</span>
-                  <span className="sm:hidden">Network</span>
-                </TabsTrigger>
-                <TabsTrigger value="my_posts">
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  <span className="hidden sm:inline">My Posts</span>
-                  <span className="sm:hidden">Mine</span>
-                </TabsTrigger>
-                <TabsTrigger value="bookmarks">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                  </svg>
-                  <span className="hidden sm:inline">Bookmarks</span>
-                  <span className="sm:hidden">Saved</span>
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+          {/* Sticky header + tabs container */}
+          <div className="sticky top-0 z-40 bg-background border-b border-border">
+            <MobileHeader 
+              variant="feed"
+              onComposerClick={() => composer.open('post')}
+              className="border-b-0"
+            />
+            <div className="px-3 pb-2 pt-1">
+              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
+                <TabsList className="w-full grid grid-cols-4">
+                  <TabsTrigger value="all">
+                    <Newspaper className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">All Posts</span>
+                    <span className="sm:hidden">All</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="network">
+                    <Users className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">Network</span>
+                    <span className="sm:hidden">Network</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="my_posts">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    <span className="hidden sm:inline">My Posts</span>
+                    <span className="sm:hidden">Mine</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="bookmarks">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    </svg>
+                    <span className="hidden sm:inline">Bookmarks</span>
+                    <span className="sm:hidden">Saved</span>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
           </div>
 
-          <main className="pb-16 px-3">
-            {/* Universal Feed - Infinite Scroll */}
+          <main className="pb-16 px-3 pt-2">
             <UniversalFeedInfinite
               viewerId={user.id}
               tab={activeTab}
@@ -253,7 +254,7 @@ const DnaFeed = () => {
       </>
     );
   }
-
+ 
   // Desktop layout
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
@@ -275,5 +276,5 @@ const DnaFeed = () => {
     </div>
   );
 };
-
+ 
 export default DnaFeed;
