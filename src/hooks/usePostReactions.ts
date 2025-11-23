@@ -75,11 +75,11 @@ export function usePostReactions(postId: string, userId?: string) {
       queryClient.invalidateQueries({ queryKey: ['post-reactions', postId] });
     },
     onError: (error: any) => {
-      // TRUST-FIRST: Silent log, gentle message
+      // DNA v1.0 LOCKDOWN: Gentle feedback only
       console.warn('Failed to add reaction:', error);
       toast({
         description: 'Could not add reaction. Please try again.',
-        variant: 'destructive',
+        variant: 'default',
       });
     },
   });
@@ -102,11 +102,11 @@ export function usePostReactions(postId: string, userId?: string) {
       queryClient.invalidateQueries({ queryKey: ['post-reactions', postId] });
     },
     onError: (error: any) => {
-      // TRUST-FIRST: Silent log, gentle message
+      // DNA v1.0 LOCKDOWN: Gentle feedback only
       console.warn('Failed to remove reaction:', error);
       toast({
         description: 'Could not remove reaction. Please try again.',
-        variant: 'destructive',
+        variant: 'default',
       });
     },
   });

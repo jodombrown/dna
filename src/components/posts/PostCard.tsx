@@ -410,8 +410,8 @@ export function PostCard({
           <span className="sm:hidden">{likeCount > 0 ? likeCount : ''}</span>
         </Button>
 
-        {/* Emoji Reaction Picker */}
-        <ReactionPicker onReactionSelect={handleReactionSelect}>
+        {/* DNA v1.0 LOCKDOWN: Emoji Reactions hidden until stable */}
+        {/* <ReactionPicker onReactionSelect={handleReactionSelect}>
           <Button
             variant="ghost"
             size="sm"
@@ -421,7 +421,7 @@ export function PostCard({
             <span>😊</span>
             <span className="hidden sm:inline">React</span>
           </Button>
-        </ReactionPicker>
+        </ReactionPicker> */}
 
         {/* Comment Button */}
         <Button

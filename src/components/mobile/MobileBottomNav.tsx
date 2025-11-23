@@ -96,12 +96,13 @@ const MobileBottomNav: React.FC = () => {
       path: '/dna/convey',
       description: 'Share your story'
     },
-    { 
-      label: 'Messages', 
-      icon: MessageSquare, 
-      path: '/dna/messages',
-      description: 'Direct conversations'
-    },
+    // DNA v1.0 LOCKDOWN: Messages hidden until messaging MVP ready
+    // { 
+    //   label: 'Messages', 
+    //   icon: MessageSquare, 
+    //   path: '/dna/messages',
+    //   description: 'Direct conversations'
+    // },
     { 
       label: 'Notifications', 
       icon: Bell, 
