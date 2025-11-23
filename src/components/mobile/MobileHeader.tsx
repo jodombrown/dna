@@ -53,27 +53,31 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
           className
         )}
       >
-        <div className="flex items-center justify-between h-14 px-4">
+        <div className="flex items-center justify-between h-14 px-3 gap-2">
           {/* DNA Logo */}
           <img 
             src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
             alt="DNA" 
-            className="h-8 w-auto cursor-pointer"
+            className="h-8 w-auto cursor-pointer flex-shrink-0"
             onClick={() => navigate('/dna/feed')}
           />
 
-          {/* Right: Composer + Notification + Profile */}
-          <div className="flex items-center gap-3">
-            {onComposerClick && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onComposerClick}
-                className="h-9 w-9"
-              >
-                <PenSquare className="w-5 h-5" />
-              </Button>
-            )}
+          {/* Composer Bubble - "What's on your mind?" */}
+          {onComposerClick && (
+            <div 
+              onClick={onComposerClick}
+              className="flex-1 bg-muted rounded-full px-3 py-1.5 text-sm text-muted-foreground cursor-pointer hover:bg-muted/80 transition-colors flex items-center gap-2"
+            >
+              <Avatar className="h-6 w-6 flex-shrink-0">
+                <AvatarImage src={profile.avatar_url || ''} />
+                <AvatarFallback className="text-xs">{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
+              </Avatar>
+              <span className="truncate">What's on your mind?</span>
+            </div>
+          )}
+
+          {/* Right: Notification + Profile */}
+          <div className="flex items-center gap-2 flex-shrink-0">
             <NotificationBell />
             <Avatar 
               className="h-8 w-8 cursor-pointer" 
