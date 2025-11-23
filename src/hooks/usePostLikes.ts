@@ -88,10 +88,10 @@ export function usePostLikes(postId: string, userId?: string) {
       refetch();
     },
     onError: (error) => {
-      console.error('Error toggling like:', error);
+      // TRUST-FIRST: Silent log, gentle message
+      console.warn('Failed to update like:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to update like',
+        description: 'Could not update like. Please try again.',
         variant: 'destructive',
       });
     },

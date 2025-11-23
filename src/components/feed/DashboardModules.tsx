@@ -29,7 +29,32 @@ interface ModulesProps {
 }
 
 // Extracted module components
-function UpcomingEventsModule({ isCompact, navigate, events }: any) {
+function UpcomingEventsModule({ isCompact, navigate, events, error }: any) {
+  // TRUST-FIRST: Silent failure - don't show red banner if events fail
+  if (error) {
+    return (
+      <Card>
+        <CardHeader className={isCompact ? 'pb-3' : ''}>
+          <CardTitle className={`flex items-center gap-2 ${isCompact ? 'text-sm' : 'text-base'}`}>
+            <Calendar className={isCompact ? 'h-4 w-4' : 'h-5 w-5'} />
+            Upcoming Events
+          </CardTitle>
+        </CardHeader>
+        <CardContent className={isCompact ? 'pt-0' : ''}>
+          <p className="text-sm text-muted-foreground">No upcoming events yet.</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full mt-3"
+            onClick={() => navigate('/dna/convene')}
+          >
+            Browse Events
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader className={isCompact ? 'pb-3' : ''}>
@@ -55,7 +80,7 @@ function UpcomingEventsModule({ isCompact, navigate, events }: any) {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">No upcoming events</p>
+          <p className="text-sm text-muted-foreground">No upcoming events yet.</p>
         )}
         <Button
           variant="outline"
@@ -239,7 +264,7 @@ export function DashboardModules({
   const fallbackConfig = modulePolicy?.policy ? DEFAULT_MODULES : viewStatePreset;
   const modulesConfig = usePolicyConfig<ModulesConfig>(modulePolicy, fallbackConfig);
   
-  const { events: upcomingEvents } = useLiveEvents(3);
+  const { events: upcomingEvents, error: eventsError } = useLiveEvents(3);
 
   // Determine which modules should load data based on adaptive config
   const shouldLoadSpaces = modulesConfig.modules.some(m => m.id === 'recommended_spaces' && m.visible);
@@ -309,6 +334,7 @@ export function DashboardModules({
           isCompact,
           navigate,
           events: upcomingEvents,
+          error: eventsError,
           spaces: recommendedSpaces,
           needs: openNeeds,
           people: suggestedPeople,
