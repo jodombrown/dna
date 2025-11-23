@@ -54,6 +54,8 @@ export function usePostBookmark(postId: string, userId?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['post-bookmark', postId, userId] });
       queryClient.invalidateQueries({ queryKey: ['user-bookmarks', userId] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
       refetch();
       
       toast({
