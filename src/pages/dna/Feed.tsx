@@ -52,54 +52,25 @@ const DnaFeed = () => {
 
   // Center Column: Main Feed
   const centerColumn = (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <ProfileStrengthBanner />
       
       {/* Compact Feed Header */}
-      <div className="flex items-center justify-between py-2">
-        <h1 className="text-lg font-semibold">Your Feed</h1>
-        <div className="flex items-center gap-2">
-          <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
-            <TabsList className="h-8">
-              <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-2">
-                <TrendingUp className="h-3 w-3" />
-                <span className="hidden sm:inline">Top</span>
-              </TabsTrigger>
-              <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-2">
-                <Sparkles className="h-3 w-3" />
-                <span className="hidden sm:inline">Latest</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8"
-            onClick={() => navigate('/dna/settings/dashboard')}
-          >
-            <Settings className="h-3.5 w-3.5" />
-          </Button>
-        </div>
+      <div className="flex items-center justify-between py-1">
+        <h1 className="text-xl font-semibold">Feed</h1>
+        <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
+          <TabsList className="h-8">
+            <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-2">
+              <TrendingUp className="h-3 w-3" />
+              <span className="hidden sm:inline">Top</span>
+            </TabsTrigger>
+            <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-2">
+              <Sparkles className="h-3 w-3" />
+              <span className="hidden sm:inline">Latest</span>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
-
-      {/* Compact Create Post Card */}
-      <Card 
-        className="p-3 cursor-pointer hover:border-primary/50 transition-colors"
-        onClick={() => composer.open('post')}
-      >
-        <div className="flex items-center gap-3">
-          <Avatar className="h-9 w-9">
-            <AvatarImage src={profile.avatar_url || ''} />
-            <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 bg-muted rounded-full px-4 py-2 text-sm text-muted-foreground">
-            What's on your mind?
-          </div>
-          <Button size="icon" variant="ghost" className="h-8 w-8">
-            <PenSquare className="w-4 h-4" />
-          </Button>
-        </div>
-      </Card>
 
       {/* Filter Tabs */}
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
@@ -128,6 +99,25 @@ const DnaFeed = () => {
           </TabsTrigger>
         </TabsList>
       </Tabs>
+
+      {/* Compact Create Post Card */}
+      <Card 
+        className="p-2.5 cursor-pointer hover:border-primary/50 transition-colors"
+        onClick={() => composer.open('post')}
+      >
+        <div className="flex items-center gap-2.5">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={profile.avatar_url || ''} />
+            <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 bg-muted rounded-full px-3 py-1.5 text-sm text-muted-foreground">
+            What's on your mind?
+          </div>
+          <Button size="icon" variant="ghost" className="h-7 w-7">
+            <PenSquare className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      </Card>
 
       {/* Universal Feed - Infinite Scroll */}
       <UniversalFeedInfinite
