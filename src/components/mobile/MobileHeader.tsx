@@ -66,12 +66,8 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
           {onComposerClick && (
             <div 
               onClick={onComposerClick}
-              className="flex-1 bg-muted rounded-full px-3 py-1.5 text-sm text-muted-foreground cursor-pointer hover:bg-muted/80 transition-colors flex items-center gap-2"
+              className="flex-1 bg-muted rounded-full px-4 py-2 text-sm text-muted-foreground cursor-pointer hover:bg-muted/80 transition-colors"
             >
-              <Avatar className="h-6 w-6 flex-shrink-0">
-                <AvatarImage src={profile.avatar_url || ''} />
-                <AvatarFallback className="text-xs">{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
-              </Avatar>
               <span className="truncate">What's on your mind?</span>
             </div>
           )}
