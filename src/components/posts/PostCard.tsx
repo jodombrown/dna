@@ -445,8 +445,8 @@ export function PostCard({
           <span className="sm:hidden">{post.comments_count > 0 ? post.comments_count : ''}</span>
         </Button>
 
-        {/* Reshare Button - only show for UniversalFeed items */}
-        {feedItem && (
+        {/* Reshare Button - TEMPORARILY HIDDEN for Lockdown v1 */}
+        {/* {feedItem && (
           <Button
             variant="ghost"
             size="sm"
@@ -459,7 +459,7 @@ export function PostCard({
               <span className="sm:hidden">{feedItem.share_count}</span>
             )}
           </Button>
-        )}
+        )} */}
 
         {/* Bookmark Button */}
         <Button
@@ -474,8 +474,8 @@ export function PostCard({
         </Button>
       </div>
 
-      {/* Reshare Dialog */}
-      {feedItem && (
+      {/* Reshare Dialog - TEMPORARILY HIDDEN for Lockdown v1 */}
+      {/* {feedItem && (
         <ReshareDialog
           open={showReshareDialog}
           onOpenChange={setShowReshareDialog}
@@ -483,7 +483,7 @@ export function PostCard({
           currentUserId={currentUserId}
           onSuccess={onUpdate}
         />
-      )}
+      )} */}
 
       {/* Share Dialog */}
       {profile && (
