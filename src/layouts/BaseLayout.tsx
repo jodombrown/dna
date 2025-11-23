@@ -26,6 +26,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   const location = useLocation();
 
   // Unique gradient for each of the 5 Cs + Feed when logged in
+  // All using DNA brand colors: mint, terra, ochre, sunset, purple, copper
   const getAuthGradient = () => {
     if (!user) return "bg-background";
     
@@ -46,19 +47,19 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
       return "bg-gradient-to-br from-dna-sunset/15 via-background to-dna-purple/10";
     }
     
-    // Collaborate - Ocean trust (blue tones)
+    // Collaborate - Earth to mint (terra/mint growth)
     if (path.includes('/collaborate') || path.includes('/spaces')) {
-      return "bg-gradient-to-br from-blue-500/15 via-background to-blue-600/10";
-    }
-    
-    // Contribute - Earth growth (green/brown)
-    if (path.includes('/contribute') || path.includes('/impact') || path.includes('/opportunities')) {
       return "bg-gradient-to-br from-dna-terra/15 via-background to-dna-mint/10";
     }
     
-    // Convey - Royal storytelling (purple/gold)
+    // Contribute - Copper warmth (copper/ochre)
+    if (path.includes('/contribute') || path.includes('/impact') || path.includes('/opportunities')) {
+      return "bg-gradient-to-br from-dna-copper/15 via-background to-dna-ochre/10";
+    }
+    
+    // Convey - Royal storytelling (purple/sunset)
     if (path.includes('/convey')) {
-      return "bg-gradient-to-br from-dna-purple/15 via-background to-dna-ochre/10";
+      return "bg-gradient-to-br from-dna-purple/15 via-background to-dna-sunset/10";
     }
     
     // Default - DNA mint green
