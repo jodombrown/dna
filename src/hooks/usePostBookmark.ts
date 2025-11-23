@@ -64,10 +64,10 @@ export function usePostBookmark(postId: string, userId?: string) {
       });
     },
     onError: (error) => {
-      console.error('Error toggling bookmark:', error);
+      // TRUST-FIRST: Silent log, gentle message
+      console.warn('Failed to update bookmark:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to update bookmark',
+        description: 'Could not update bookmark. Please try again.',
         variant: 'destructive',
       });
     },

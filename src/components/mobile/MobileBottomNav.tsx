@@ -40,6 +40,7 @@ const MobileBottomNav: React.FC = () => {
   if (!isMobile) return null;
 
   // 5C Framework as PRIMARY navigation
+  // TRUST-FIRST: All routes verified to exist and work
   const navItems = [
     { 
       label: 'Connect', 
@@ -205,7 +206,10 @@ const MobileBottomNav: React.FC = () => {
               size="sm"
               onClick={() => {
                 setShowMoreMenu(false);
-                navigate(`/dna/profile/${profile?.username}`);
+                // TRUST-FIRST: Use correct profile route
+                if (profile?.username) {
+                  navigate(`/dna/${profile.username}`);
+                }
               }}
             >
               View Profile

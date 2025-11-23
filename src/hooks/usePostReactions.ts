@@ -75,9 +75,10 @@ export function usePostReactions(postId: string, userId?: string) {
       queryClient.invalidateQueries({ queryKey: ['post-reactions', postId] });
     },
     onError: (error: any) => {
+      // TRUST-FIRST: Silent log, gentle message
+      console.warn('Failed to add reaction:', error);
       toast({
-        title: 'Failed to add reaction',
-        description: error.message,
+        description: 'Could not add reaction. Please try again.',
         variant: 'destructive',
       });
     },
@@ -101,9 +102,10 @@ export function usePostReactions(postId: string, userId?: string) {
       queryClient.invalidateQueries({ queryKey: ['post-reactions', postId] });
     },
     onError: (error: any) => {
+      // TRUST-FIRST: Silent log, gentle message
+      console.warn('Failed to remove reaction:', error);
       toast({
-        title: 'Failed to remove reaction',
-        description: error.message,
+        description: 'Could not remove reaction. Please try again.',
         variant: 'destructive',
       });
     },

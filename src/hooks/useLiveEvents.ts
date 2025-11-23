@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 export interface LiveEvent {
   id: string;
@@ -29,7 +28,6 @@ export const useLiveEvents = (limit: number = 10) => {
   const [events, setEvents] = useState<LiveEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -45,13 +43,10 @@ export const useLiveEvents = (limit: number = 10) => {
           .limit(limit);
 
         if (fetchError) {
-          console.error('Error fetching events:', fetchError);
+          // TRUST-FIRST: Log but don't toast - this is a widget failure, not critical
+          console.warn('Failed to load events in widget:', fetchError);
           setError(fetchError.message);
-          toast({
-            title: "Error",
-            description: "Failed to load events",
-            variant: "destructive",
-          });
+          setEvents([]); // Set empty array to allow graceful widget rendering
           return;
         }
 
@@ -67,15 +62,16 @@ export const useLiveEvents = (limit: number = 10) => {
 
         setEvents(transformedEvents);
       } catch (err: any) {
-        console.error('Unexpected error:', err);
+        console.warn('Unexpected error loading events:', err);
         setError(err.message);
+        setEvents([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchEvents();
-  }, [limit, toast]);
+  }, [limit]);
 
   return { events, loading, error, refetch: () => window.location.reload() };
 };
