@@ -17,6 +17,9 @@ import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { useQueryClient } from '@tanstack/react-query';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { MobileComposerDrawer } from '@/components/composer/MobileComposerDrawer';
+import { MobileViewContainer } from '@/components/mobile/MobileViewContainer';
+import { useMobile } from '@/hooks/useMobile';
 
 const DnaFeed = () => {
   const { user } = useAuth();
@@ -27,6 +30,7 @@ const DnaFeed = () => {
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
   const composer = useUniversalComposer();
+  const { isMobile } = useMobile();
 
   // Redirect to welcome wizard if no role set - MUST be before any returns
   useEffect(() => {
@@ -45,6 +49,63 @@ const DnaFeed = () => {
 
   if (!user || !profile) {
     return null;
+  }
+
+  // Mobile-specific layout
+  if (isMobile) {
+    return (
+      <>
+        <MobileViewContainer
+          title="Feed"
+          showCompose={true}
+          showMessages={true}
+          noPadding={true}
+        >
+          <div className="px-3 py-3 space-y-3">
+            {/* Profile Strength Banner */}
+            <ProfileStrengthBanner />
+
+            {/* Ranking Mode Tabs */}
+            <div className="flex items-center justify-between">
+              <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)}>
+                <TabsList className="grid w-[180px] grid-cols-2 h-8">
+                  <TabsTrigger value="top" className="text-xs">Top</TabsTrigger>
+                  <TabsTrigger value="latest" className="text-xs">Latest</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
+            {/* Feed Filter Tabs */}
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as FeedTab)}>
+              <TabsList className="grid w-full grid-cols-4 h-9">
+                <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
+                <TabsTrigger value="network" className="text-xs">Network</TabsTrigger>
+                <TabsTrigger value="my_posts" className="text-xs">Mine</TabsTrigger>
+                <TabsTrigger value="bookmarks" className="text-xs">Saved</TabsTrigger>
+              </TabsList>
+            </Tabs>
+
+            {/* Universal Feed */}
+            <UniversalFeedInfinite
+              viewerId={user.id}
+              tab={activeTab}
+              rankingMode={rankingMode}
+            />
+          </div>
+        </MobileViewContainer>
+
+        {/* Mobile Composer Drawer */}
+        <MobileComposerDrawer
+          isOpen={composer.isOpen}
+          mode={composer.mode}
+          context={composer.context}
+          isSubmitting={composer.isSubmitting}
+          onClose={composer.close}
+          onModeChange={composer.switchMode}
+          onSubmit={composer.submit}
+        />
+      </>
+    );
   }
 
   // Left Column: Hidden for Feed Header Cleanup v1

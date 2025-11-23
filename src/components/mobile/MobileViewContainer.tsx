@@ -14,6 +14,8 @@ interface MobileViewContainerProps {
   fullHeight?: boolean;
   noPadding?: boolean;
   className?: string;
+  showCompose?: boolean;
+  showMessages?: boolean;
 }
 
 /**
@@ -29,7 +31,9 @@ export const MobileViewContainer: React.FC<MobileViewContainerProps> = ({
   headerActions,
   fullHeight = false,
   noPadding = false,
-  className
+  className,
+  showCompose = false,
+  showMessages = false,
 }) => {
   const { isMobile } = useMobile();
 
@@ -46,6 +50,8 @@ export const MobileViewContainer: React.FC<MobileViewContainerProps> = ({
         showSearch={showSearch}
         onSearchClick={onSearchClick}
         actions={headerActions}
+        showCompose={showCompose}
+        showMessages={showMessages}
       />
       
       <main 
