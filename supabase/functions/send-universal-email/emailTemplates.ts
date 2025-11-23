@@ -828,6 +828,44 @@ export const getEmailContent = (formType: string, formData: any): EmailContent =
         `
       };
 
+    case 'waitlist':
+      return {
+        subject: "New Waitlist Signup - DNA Platform",
+        adminHtml: `
+          <h2>New Waitlist Signup</h2>
+          <p><strong>Name:</strong> ${formData.name}</p>
+          <p><strong>Email:</strong> ${formData.email}</p>
+          ${formData.location ? `<p><strong>Location:</strong> ${formData.location}</p>` : ''}
+          ${formData.role ? `<p><strong>Role:</strong> ${formData.role}</p>` : ''}
+          <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+        `,
+        userSubject: "Welcome to the DNA Waitlist!",
+        userHtml: `
+          <h1>Thank you for joining the DNA waitlist!</h1>
+          <p>Hi ${formData.name},</p>
+          <p>We're thrilled to have you on our waitlist for the Diaspora Network of Africa platform.</p>
+          
+          <p><strong>What happens next:</strong></p>
+          <ul>
+            <li>You'll be among the first to know when we launch</li>
+            <li>We'll keep you updated on our progress</li>
+            <li>You'll receive priority access when we open beta testing</li>
+            <li>We'll share exclusive updates about the platform development</li>
+          </ul>
+          
+          <p>In the meantime, stay connected with us:</p>
+          <ul>
+            <li>Follow our journey on social media</li>
+            <li>Share DNA with others who might be interested</li>
+            <li>Reply to this email if you have any questions</li>
+          </ul>
+          
+          <p>Thank you for believing in our vision to connect and mobilize the African diaspora!</p>
+          
+          <p>Best regards,<br>The DNA Team</p>
+        `
+      };
+
     default:
       throw new Error(`Unknown form type: ${formType}`);
   }
