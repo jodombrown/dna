@@ -15,7 +15,7 @@ export function usePostLikes(postId: string, userId?: string) {
   const queryClient = useQueryClient();
 
   // Fetch like count and whether current user liked
-  const { data: likeData, refetch } = useQuery({
+  const { data: likeData, isLoading } = useQuery({
     queryKey: ['post-likes', postId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -67,7 +67,7 @@ export function usePostLikes(postId: string, userId?: string) {
 
         if (error) throw error;
       } else {
-        // Like
+        // Like - using insert, duplicate will be handled by RLS
         const { error } = await supabase
           .from('post_likes')
           .insert({
@@ -82,14 +82,13 @@ export function usePostLikes(postId: string, userId?: string) {
       queryClient.invalidateQueries({ queryKey: ['post-likes', postId] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
-      refetch();
     },
     onError: (error) => {
-      // TRUST-FIRST: Silent log, gentle message
+      // DNA v1.0 LOCKDOWN: Gentle feedback only, no red banners
       console.warn('Failed to update like:', error);
       toast({
         description: 'Could not update like. Please try again.',
-        variant: 'destructive',
+        variant: 'default',
       });
     },
   });
