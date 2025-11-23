@@ -94,6 +94,16 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
       let createdPost: UniversalFeedItem | null = null;
 
       switch (mode) {
+        case 'story': {
+          // LOCKDOWN v1: Story mode disabled
+          console.warn('[Lockdown v1] Story mode disabled');
+          toast({ 
+            variant: 'destructive', 
+            description: 'Story mode is temporarily unavailable. Please use Post instead.' 
+          });
+          return;
+        }
+
         case 'post': {
           const post = await createStandardPost({
             authorId: user.id,
@@ -133,69 +143,6 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
           break;
         }
 
-        case 'story': {
-          // Use Supabase client with type casting for new table
-          const { data: storyData, error: storyError } = await (supabase as any)
-            .from('convey_items')
-            .insert({
-              title: formData.title || 'Untitled Story',
-              subtitle: formData.subtitle,
-              content: formData.content,
-              author_id: user.id,
-              item_type: 'story',
-              status: 'published',
-              hero_image: formData.heroImage || formData.mediaUrl,
-            })
-            .select()
-            .single();
-
-          if (storyError) throw storyError;
-
-          await createStoryPost({
-            storyId: storyData.id,
-            storyTitle: formData.title || 'Untitled Story',
-            storySubtitle: formData.subtitle,
-            authorId: user.id,
-            spaceId: context.spaceId,
-            eventId: context.eventId,
-            imageUrl: formData.heroImage || formData.mediaUrl,
-          });
-
-          // Fetch author for optimistic display
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('username, display_name, avatar_url')
-            .eq('id', user.id)
-            .single();
-
-          createdPost = {
-            post_id: storyData.id,
-            author_id: user.id,
-            author_username: profileData?.username || '',
-            author_display_name: profileData?.display_name || '',
-            author_avatar_url: profileData?.avatar_url || null,
-            content: formData.title || 'Untitled Story',
-            media_url: formData.heroImage || formData.mediaUrl || null,
-            post_type: 'story',
-            privacy_level: 'public',
-            linked_entity_type: 'story',
-            linked_entity_id: storyData.id,
-            space_id: context.spaceId || null,
-            space_title: null,
-            event_id: context.eventId || null,
-            event_title: null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            like_count: 0,
-            comment_count: 0,
-            share_count: 0,
-            view_count: 0,
-            bookmark_count: 0,
-            has_liked: false,
-            has_bookmarked: false,
-          };
-          break;
-        }
 
         case 'event':
           // Combine date and time into ISO timestamp strings
