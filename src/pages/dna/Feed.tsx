@@ -47,75 +47,56 @@ const DnaFeed = () => {
     return null;
   }
 
-  // Left Column: Navigation placeholder
-  const leftColumn = (
-    <div className="space-y-4">
-      <Card className="p-4">
-        <h3 className="font-semibold mb-2">Quick Nav</h3>
-        <div className="space-y-2 text-sm">
-          <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/dna/connect')}>
-            <Users className="w-4 h-4 mr-2" />
-            Network
-          </Button>
-        </div>
-      </Card>
-    </div>
-  );
+  // Left Column: Hidden for Feed Header Cleanup v1
+  const leftColumn = null;
 
   // Center Column: Main Feed
   const centerColumn = (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <ProfileStrengthBanner />
       
-      {/* Feed Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-primary" />
-            Your DNA Feed
-          </h1>
-          <p className="text-muted-foreground text-sm">Activity from across the network</p>
-        </div>
+      {/* Compact Feed Header */}
+      <div className="flex items-center justify-between py-2">
+        <h1 className="text-lg font-semibold">Your Feed</h1>
         <div className="flex items-center gap-2">
-          {/* Top/Latest Toggle */}
           <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
-            <TabsList>
-              <TabsTrigger value="top" className="flex items-center gap-1.5">
-                <TrendingUp className="h-3.5 w-3.5" />
+            <TabsList className="h-8">
+              <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-2">
+                <TrendingUp className="h-3 w-3" />
                 <span className="hidden sm:inline">Top</span>
               </TabsTrigger>
-              <TabsTrigger value="latest" className="flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5" />
+              <TabsTrigger value="latest" className="flex items-center gap-1.5 text-xs px-2">
+                <Sparkles className="h-3 w-3" />
                 <span className="hidden sm:inline">Latest</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
+            className="h-8"
             onClick={() => navigate('/dna/settings/dashboard')}
           >
-            <Settings className="h-4 w-4 mr-2" />
-            Customize
+            <Settings className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>
 
-      {/* Create Post Card */}
+      {/* Compact Create Post Card */}
       <Card 
-        className="p-4 cursor-pointer hover:border-primary/50 transition-colors"
+        className="p-3 cursor-pointer hover:border-primary/50 transition-colors"
         onClick={() => composer.open('post')}
       >
         <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10">
+          <Avatar className="h-9 w-9">
             <AvatarImage src={profile.avatar_url || ''} />
             <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
           </Avatar>
-          <div className="flex-1 bg-muted rounded-full px-4 py-2 text-muted-foreground">
+          <div className="flex-1 bg-muted rounded-full px-4 py-2 text-sm text-muted-foreground">
             What's on your mind?
           </div>
-          <Button size="icon" variant="ghost">
-            <PenSquare className="w-5 h-5" />
+          <Button size="icon" variant="ghost" className="h-8 w-8">
+            <PenSquare className="w-4 h-4" />
           </Button>
         </div>
       </Card>
