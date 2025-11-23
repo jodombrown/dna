@@ -1,6 +1,7 @@
 import React from 'react';
 import { useViewState } from '@/contexts/ViewStateContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
 
@@ -22,10 +23,47 @@ interface BaseLayoutProps {
 const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   const { viewState, layoutConfig } = useViewState();
   const { user } = useAuth();
+  const location = useLocation();
 
-  // For now, we render children directly
-  // In Phase 2, this will intelligently distribute content to columns
-  // based on the layout configuration
+  // Unique gradient for each of the 5 Cs + Feed when logged in
+  const getAuthGradient = () => {
+    if (!user) return "bg-background";
+    
+    const path = location.pathname;
+    
+    // Feed - DNA mint green
+    if (path.includes('/feed')) {
+      return "bg-gradient-to-br from-dna-mint/20 via-background to-dna-mint/10";
+    }
+    
+    // Connect - Cultural warmth (terra/ochre)
+    if (path.includes('/connect') || path.includes('/network') || path.includes('/discover')) {
+      return "bg-gradient-to-br from-dna-terra/15 via-background to-dna-ochre/10";
+    }
+    
+    // Convene - Sunset celebration (orange/purple)
+    if (path.includes('/convene') || path.includes('/events')) {
+      return "bg-gradient-to-br from-dna-sunset/15 via-background to-dna-purple/10";
+    }
+    
+    // Collaborate - Ocean trust (blue tones)
+    if (path.includes('/collaborate') || path.includes('/spaces')) {
+      return "bg-gradient-to-br from-blue-500/15 via-background to-blue-600/10";
+    }
+    
+    // Contribute - Earth growth (green/brown)
+    if (path.includes('/contribute') || path.includes('/impact') || path.includes('/opportunities')) {
+      return "bg-gradient-to-br from-dna-terra/15 via-background to-dna-mint/10";
+    }
+    
+    // Convey - Royal storytelling (purple/gold)
+    if (path.includes('/convey')) {
+      return "bg-gradient-to-br from-dna-purple/15 via-background to-dna-ochre/10";
+    }
+    
+    // Default - DNA mint green
+    return "bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10";
+  };
   
   return (
     <>
@@ -33,9 +71,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
       <div 
         className={cn(
           "min-h-screen w-full max-w-full",
-          user 
-            ? "bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10" 
-            : "bg-background",
+          getAuthGradient(),
           "pt-14 sm:pt-16",
           "transition-all duration-300 ease-in-out",
           "overflow-x-hidden"
