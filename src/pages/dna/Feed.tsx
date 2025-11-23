@@ -149,16 +149,6 @@ const DnaFeed = () => {
           </Button>
         }
       />
-
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        onSubmit={composer.submit}
-      />
     </div>
   );
 
@@ -184,10 +174,19 @@ const DnaFeed = () => {
           variant="feed"
           onComposerClick={() => composer.open('post')}
         />
-        <main className="pb-16 px-3 py-3">
+        <main className="pb-16 pt-2 px-3">
           {centerColumn}
         </main>
         <MobileBottomNav />
+        <UniversalComposer
+          isOpen={composer.isOpen}
+          mode={composer.mode}
+          context={composer.context}
+          isSubmitting={composer.isSubmitting}
+          onClose={composer.close}
+          onModeChange={composer.switchMode}
+          onSubmit={composer.submit}
+        />
       </div>
     );
   }
@@ -201,6 +200,15 @@ const DnaFeed = () => {
         rightColumn={rightColumn}
       />
       <MobileBottomNav />
+      <UniversalComposer
+        isOpen={composer.isOpen}
+        mode={composer.mode}
+        context={composer.context}
+        isSubmitting={composer.isSubmitting}
+        onClose={composer.close}
+        onModeChange={composer.switchMode}
+        onSubmit={composer.submit}
+      />
     </div>
   );
 };
