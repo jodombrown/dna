@@ -33,10 +33,10 @@ export const COMPOSER_MODE_CONFIG: Record<ComposerMode, ComposerModeConfig> = {
   },
   story: {
     id: 'story',
-    enabled: true,
-    tested: true,
-    optimisticFeedInjection: true,
-    notes: 'Fully working - creates convey_items + feed post, optimistic injection complete',
+    enabled: false,
+    tested: false,
+    optimisticFeedInjection: false,
+    notes: 'DISABLED: Story mode temporarily disabled pending full runtime testing and reliability fixes',
   },
   event: {
     id: 'event',
