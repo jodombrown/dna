@@ -14,9 +14,12 @@ import { DashboardModules } from '@/components/feed/DashboardModules';
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { MobileViewContainer } from '@/components/mobile/MobileViewContainer';
+import { MobileHeader } from '@/components/mobile/MobileHeader';
 import { useQueryClient } from '@tanstack/react-query';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useMobile } from '@/hooks/useMobile';
 
 const DnaFeed = () => {
   const { user } = useAuth();
@@ -27,6 +30,7 @@ const DnaFeed = () => {
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
   const composer = useUniversalComposer();
+  const { isMobile } = useMobile();
 
   // Redirect to welcome wizard if no role set - MUST be before any returns
   useEffect(() => {
@@ -168,6 +172,23 @@ const DnaFeed = () => {
     />
   );
 
+  // Mobile layout with custom header
+  if (isMobile) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MobileHeader 
+          variant="feed"
+          onComposerClick={() => composer.open('post')}
+        />
+        <main className="pb-16 px-3 py-3">
+          {centerColumn}
+        </main>
+        <MobileBottomNav />
+      </div>
+    );
+  }
+
+  // Desktop layout
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <LayoutController
