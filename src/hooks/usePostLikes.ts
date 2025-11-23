@@ -20,27 +20,27 @@ export function usePostLikes(postId: string, userId?: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('post_likes')
-        .select(`
-          user_id,
-          profiles:user_id (
-            full_name,
-            username,
-            avatar_url,
-            headline
-          )
-        `)
+        .select('user_id')
         .eq('post_id', postId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Failed to load post likes:', error);
+        return {
+          likeCount: 0,
+          userHasLiked: false,
+          likedBy: [] as LikeUser[],
+        };
+      }
 
-      const likeCount = data?.length || 0;
-      const userHasLiked = userId ? data?.some((like) => like.user_id === userId) : false;
-      const likedBy: LikeUser[] = (data || []).map((like: any) => ({
+      const rows = (data || []) as any[];
+      const likeCount = rows.length;
+      const userHasLiked = userId ? rows.some((like) => like.user_id === userId) : false;
+      const likedBy: LikeUser[] = rows.map((like) => ({
         user_id: like.user_id,
-        full_name: like.profiles?.full_name || 'Unknown',
-        username: like.profiles?.username || '',
-        avatar_url: like.profiles?.avatar_url,
-        headline: like.profiles?.headline,
+        full_name: '',
+        username: '',
+        avatar_url: undefined,
+        headline: undefined,
       }));
 
       return {
@@ -81,8 +81,16 @@ export function usePostLikes(postId: string, userId?: string) {
           .single();
 
         if (error) {
-          console.error('Like failed:', error);
-          throw error;
+          const code = (error as any).code || (error as any).details;
+          const message = (error as any).message || '';
+
+          // Treat unique constraint violations as success (idempotent like)
+          if (code === '23505' || message.includes('duplicate key value')) {
+            console.warn('Like already exists, treating as success:', error);
+          } else {
+            console.error('Like failed:', error);
+            throw error;
+          }
         }
       }
     },
