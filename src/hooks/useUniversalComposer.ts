@@ -133,7 +133,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
           break;
         }
 
-        case 'story':
+        case 'story': {
           // Use Supabase client with type casting for new table
           const { data: storyData, error: storyError } = await (supabase as any)
             .from('convey_items')
@@ -160,7 +160,42 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             eventId: context.eventId,
             imageUrl: formData.heroImage || formData.mediaUrl,
           });
+
+          // Fetch author for optimistic display
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('username, display_name, avatar_url')
+            .eq('id', user.id)
+            .single();
+
+          createdPost = {
+            post_id: storyData.id,
+            author_id: user.id,
+            author_username: profileData?.username || '',
+            author_display_name: profileData?.display_name || '',
+            author_avatar_url: profileData?.avatar_url || null,
+            content: formData.title || 'Untitled Story',
+            media_url: formData.heroImage || formData.mediaUrl || null,
+            post_type: 'story',
+            privacy_level: 'public',
+            linked_entity_type: 'story',
+            linked_entity_id: storyData.id,
+            space_id: context.spaceId || null,
+            space_title: null,
+            event_id: context.eventId || null,
+            event_title: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            like_count: 0,
+            comment_count: 0,
+            share_count: 0,
+            view_count: 0,
+            bookmark_count: 0,
+            has_liked: false,
+            has_bookmarked: false,
+          };
           break;
+        }
 
         case 'event':
           // Combine date and time into ISO timestamp strings
@@ -286,28 +321,63 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
           break;
       }
 
-      // 🔥 Optimistically inject into home feed cache
+      // 🔥 TRUST-FIRST: Optimistically inject into ALL relevant feed caches
       if (createdPost) {
+        // 1. All Posts feed
         queryClient.setQueryData(
-          ['universal-feed', { viewerId: user.id, tab: 'all', authorId: undefined, spaceId: undefined, eventId: undefined, rankingMode: 'latest' }],
-          (old: UniversalFeedItem[] | undefined) => {
-            const existing = old || [];
-            return [createdPost!, ...existing];
+          ['universal-feed-infinite', { viewerId: user.id, tab: 'all', authorId: undefined, spaceId: undefined, eventId: undefined, rankingMode: 'latest' }],
+          (old: any) => {
+            if (!old?.pages) return old;
+            return {
+              ...old,
+              pages: [{ items: [createdPost, ...(old.pages[0]?.items || [])], nextCursor: old.pages[0]?.nextCursor }, ...old.pages.slice(1)]
+            };
           }
         );
 
-        // Also inject into "My Posts" feed cache
+        // 2. My Posts feed
         queryClient.setQueryData(
-          ['universal-feed', { viewerId: user.id, tab: 'my_posts', authorId: user.id, spaceId: undefined, eventId: undefined, rankingMode: 'latest' }],
-          (old: UniversalFeedItem[] | undefined) => {
-            const existing = old || [];
-            return [createdPost!, ...existing];
+          ['universal-feed-infinite', { viewerId: user.id, tab: 'my_posts', authorId: user.id, spaceId: undefined, eventId: undefined, rankingMode: 'latest' }],
+          (old: any) => {
+            if (!old?.pages) return old;
+            return {
+              ...old,
+              pages: [{ items: [createdPost, ...(old.pages[0]?.items || [])], nextCursor: old.pages[0]?.nextCursor }, ...old.pages.slice(1)]
+            };
           }
         );
+
+        // 3. Context-specific feeds (Space/Event/Community)
+        if (context.spaceId) {
+          queryClient.setQueryData(
+            ['universal-feed-infinite', { viewerId: user.id, tab: 'all', authorId: undefined, spaceId: context.spaceId, eventId: undefined, rankingMode: 'latest' }],
+            (old: any) => {
+              if (!old?.pages) return old;
+              return {
+                ...old,
+                pages: [{ items: [createdPost, ...(old.pages[0]?.items || [])], nextCursor: old.pages[0]?.nextCursor }, ...old.pages.slice(1)]
+              };
+            }
+          );
+        }
+
+        if (context.eventId) {
+          queryClient.setQueryData(
+            ['universal-feed-infinite', { viewerId: user.id, tab: 'all', authorId: undefined, spaceId: undefined, eventId: context.eventId, rankingMode: 'latest' }],
+            (old: any) => {
+              if (!old?.pages) return old;
+              return {
+                ...old,
+                pages: [{ items: [createdPost, ...(old.pages[0]?.items || [])], nextCursor: old.pages[0]?.nextCursor }, ...old.pages.slice(1)]
+              };
+            }
+          );
+        }
       }
 
-      // Invalidate feed queries as backup so server state catches up
+      // Invalidate as backup so server state reconciles
       await queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      await queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
 
       // Track submission
       trackComposerEvent('submit', mode, {
@@ -321,11 +391,25 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
 
       setIsOpen(false);
     } catch (error) {
-      logHighError(error, 'composer', `Failed to create ${mode}`, { mode, context });
+      logHighError(error, 'composer', `Failed to create ${mode}`, { mode, context, formData });
+      
+      // TRUST-FIRST: Clear, mode-specific error messages
+      const errorMessages: Record<ComposerMode, string> = {
+        post: 'We couldn\'t publish this post. Your text is safe—please try again.',
+        story: 'We couldn\'t publish this Story. Your content is safe—please try again.',
+        event: 'We couldn\'t create this Event. Your details are safe—please try again.',
+        need: 'We couldn\'t post this Need. Your request is safe—please try again.',
+        space: 'We couldn\'t create this Space. Your information is safe—please try again.',
+        community: 'We couldn\'t share to this Community. Your post is safe—please try again.',
+      };
+
       toast({
         variant: 'destructive',
-        description: 'Something went wrong. Please try again.',
+        title: 'Publishing failed',
+        description: errorMessages[mode],
       });
+      
+      // DO NOT close composer or clear content - preserve user's work
     } finally {
       setIsSubmitting(false);
     }
