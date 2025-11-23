@@ -166,28 +166,39 @@ const DnaFeed = () => {
     />
   );
 
-  // Mobile layout with custom header
+  // Mobile layout with custom header - hide UnifiedHeader
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-background">
-        <MobileHeader 
-          variant="feed"
-          onComposerClick={() => composer.open('post')}
-        />
-        <main className="pb-16 pt-2 px-3">
-          {centerColumn}
-        </main>
-        <MobileBottomNav />
-        <UniversalComposer
-          isOpen={composer.isOpen}
-          mode={composer.mode}
-          context={composer.context}
-          isSubmitting={composer.isSubmitting}
-          onClose={composer.close}
-          onModeChange={composer.switchMode}
-          onSubmit={composer.submit}
-        />
-      </div>
+      <>
+        {/* Hide BaseLayout's UnifiedHeader for mobile feed */}
+        <style>{`
+          body:has([data-mobile-feed="true"]) header[data-unified-header] {
+            display: none !important;
+          }
+          body:has([data-mobile-feed="true"]) > div > div {
+            padding-top: 0 !important;
+          }
+        `}</style>
+        <div className="min-h-screen bg-background" data-mobile-feed="true">
+          <MobileHeader 
+            variant="feed"
+            onComposerClick={() => composer.open('post')}
+          />
+          <main className="pb-16 pt-2 px-3">
+            {centerColumn}
+          </main>
+          <MobileBottomNav />
+          <UniversalComposer
+            isOpen={composer.isOpen}
+            mode={composer.mode}
+            context={composer.context}
+            isSubmitting={composer.isSubmitting}
+            onClose={composer.close}
+            onModeChange={composer.switchMode}
+            onSubmit={composer.submit}
+          />
+        </div>
+      </>
     );
   }
 
