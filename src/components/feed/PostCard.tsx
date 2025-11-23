@@ -131,8 +131,15 @@ export function PostCard({ post }: PostCardProps) {
           .insert({ post_id: post.id, user_id: user.id });
         
         if (error) {
-          console.error('Like error:', error);
-          throw error;
+          const code = (error as any).code || (error as any).details;
+          const message = (error as any).message || '';
+
+          if (code === '23505' || message.includes('duplicate key value')) {
+            console.warn('Like already exists, treating as success:', error);
+          } else {
+            console.error('Like error:', error);
+            throw error;
+          }
         }
       }
     },
@@ -143,7 +150,7 @@ export function PostCard({ post }: PostCardProps) {
     },
     onError: (error) => {
       console.error('Like toggle failed:', error);
-      toast.error('Could not update like. Please try again.');
+      toast('Could not update like. Please try again.');
     },
   });
 
