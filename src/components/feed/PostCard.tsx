@@ -115,20 +115,35 @@ export function PostCard({ post }: PostCardProps) {
       if (!user) throw new Error('Not authenticated');
       
       if (hasLiked) {
-        await supabase
+        const { error } = await supabase
           .from('post_likes')
           .delete()
           .eq('post_id', post.id)
           .eq('user_id', user.id);
+        
+        if (error) {
+          console.error('Unlike error:', error);
+          throw error;
+        }
       } else {
-        await supabase
+        const { error } = await supabase
           .from('post_likes')
           .insert({ post_id: post.id, user_id: user.id });
+        
+        if (error) {
+          console.error('Like error:', error);
+          throw error;
+        }
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['post-likes-count', post.id] });
       queryClient.invalidateQueries({ queryKey: ['post-user-liked', post.id] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+    },
+    onError: (error) => {
+      console.error('Like toggle failed:', error);
+      toast.error('Could not update like. Please try again.');
     },
   });
 

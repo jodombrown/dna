@@ -205,23 +205,28 @@ export async function createStandardPost(params: {
   const { authorId, content, mediaUrl, spaceId, eventId, privacyLevel } = params;
 
   try {
-    // Insert the post
+    // Insert the post with correct post_type value
+    const insertPayload = {
+      author_id: authorId,
+      content: content.trim(),
+      post_type: 'status', // Use 'status' to match schema default
+      image_url: mediaUrl || null,
+      space_id: spaceId || null,
+      event_id: eventId || null,
+      privacy_level: privacyLevel || 'public',
+    };
+
+    console.log('createStandardPost inserting:', insertPayload);
+
     const { data: postData, error: postError } = await supabase
       .from('posts')
-      .insert({
-        author_id: authorId,
-        content: content.trim(),
-        post_type: 'post',
-        image_url: mediaUrl || null,
-        space_id: spaceId || null,
-        event_id: eventId || null,
-        privacy_level: privacyLevel || 'public',
-      })
+      .insert(insertPayload)
       .select('id, author_id, content, post_type, image_url, created_at')
       .single();
 
     if (postError) {
-      logHighError(postError, 'composer', 'createStandardPost failed', params);
+      console.error('createStandardPost DB error:', postError);
+      logHighError(postError, 'composer', 'createStandardPost failed', { params, insertPayload });
       throw postError;
     }
 

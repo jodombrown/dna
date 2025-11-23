@@ -65,17 +65,25 @@ export function usePostLikes(postId: string, userId?: string) {
           .eq('post_id', postId)
           .eq('user_id', userId);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Unlike failed:', error);
+          throw error;
+        }
       } else {
-        // Like - using insert, duplicate will be handled by RLS
+        // Like - insert with conflict handling
         const { error } = await supabase
           .from('post_likes')
           .insert({
             post_id: postId,
             user_id: userId,
-          });
+          })
+          .select()
+          .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Like failed:', error);
+          throw error;
+        }
       }
     },
     onSuccess: () => {
