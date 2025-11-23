@@ -184,8 +184,60 @@ const DnaFeed = () => {
             variant="feed"
             onComposerClick={() => composer.open('post')}
           />
-          <main className="pb-16 pt-2 px-3">
-            {centerColumn}
+          
+          {/* Sticky Filter Tabs */}
+          <div className="sticky top-14 z-30 bg-background border-b border-border px-3 pt-2 pb-2">
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
+              <TabsList className="w-full grid grid-cols-4">
+                <TabsTrigger value="all">
+                  <Newspaper className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">All Posts</span>
+                  <span className="sm:hidden">All</span>
+                </TabsTrigger>
+                <TabsTrigger value="network">
+                  <Users className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Network</span>
+                  <span className="sm:hidden">Network</span>
+                </TabsTrigger>
+                <TabsTrigger value="my_posts">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">My Posts</span>
+                  <span className="sm:hidden">Mine</span>
+                </TabsTrigger>
+                <TabsTrigger value="bookmarks">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                  <span className="hidden sm:inline">Bookmarks</span>
+                  <span className="sm:hidden">Saved</span>
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          <main className="pb-16 px-3">
+            {/* Universal Feed - Infinite Scroll */}
+            <UniversalFeedInfinite
+              viewerId={user.id}
+              tab={activeTab}
+              rankingMode={rankingMode}
+              emptyMessage={
+                activeTab === 'my_posts'
+                  ? "You haven't posted anything yet"
+                  : activeTab === 'network'
+                  ? "Your connections haven't posted yet"
+                  : 'No posts to show'
+              }
+              emptyAction={
+                <Button
+                  onClick={() => composer.open('post')}
+                  className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
+                >
+                  <PenSquare className="h-4 w-4 mr-2" />
+                  Create Your First Post
+                </Button>
+              }
+            />
           </main>
           <MobileBottomNav />
           <UniversalComposer
