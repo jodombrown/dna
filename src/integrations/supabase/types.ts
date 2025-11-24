@@ -7288,44 +7288,86 @@ export type Database = {
           usage_count: number
         }[]
       }
-      get_universal_feed: {
-        Args: {
-          p_author_id?: string
-          p_event_id?: string
-          p_limit?: number
-          p_offset?: number
-          p_ranking_mode?: string
-          p_space_id?: string
-          p_tab?: string
-          p_viewer_id: string
-        }
-        Returns: {
-          author_avatar_url: string
-          author_display_name: string
-          author_id: string
-          author_username: string
-          bookmark_count: number
-          comment_count: number
-          content: string
-          created_at: string
-          event_id: string
-          event_title: string
-          has_bookmarked: boolean
-          has_liked: boolean
-          like_count: number
-          linked_entity_id: string
-          linked_entity_type: string
-          media_url: string
-          post_id: string
-          post_type: string
-          privacy_level: string
-          share_count: number
-          space_id: string
-          space_title: string
-          updated_at: string
-          view_count: number
-        }[]
-      }
+      get_universal_feed:
+        | {
+            Args: {
+              p_author_id?: string
+              p_event_id?: string
+              p_limit?: number
+              p_offset?: number
+              p_ranking_mode?: string
+              p_space_id?: string
+              p_tab?: string
+              p_viewer_id: string
+            }
+            Returns: {
+              author_avatar_url: string
+              author_full_name: string
+              author_headline: string
+              author_id: string
+              author_username: string
+              comments_count: number
+              content: string
+              created_at: string
+              event_id: string
+              id: string
+              image_url: string
+              is_connection: boolean
+              likes_count: number
+              link_description: string
+              link_title: string
+              link_url: string
+              linked_entity_id: string
+              linked_entity_type: string
+              post_type: string
+              privacy_level: string
+              space_id: string
+              title: string
+              updated_at: string
+              user_has_bookmarked: boolean
+              user_has_liked: boolean
+            }[]
+          }
+        | {
+            Args: {
+              p_author_id?: string
+              p_cursor?: string
+              p_event_id?: string
+              p_limit?: number
+              p_offset?: number
+              p_ranking_mode?: string
+              p_space_id?: string
+              p_tab?: string
+              p_viewer_id: string
+            }
+            Returns: {
+              author_avatar_url: string
+              author_display_name: string
+              author_id: string
+              author_username: string
+              bookmark_count: number
+              comment_count: number
+              content: string
+              created_at: string
+              event_id: string
+              event_title: string
+              has_bookmarked: boolean
+              has_liked: boolean
+              like_count: number
+              linked_entity_id: string
+              linked_entity_type: string
+              media_url: string
+              post_id: string
+              post_type: string
+              privacy_level: string
+              share_count: number
+              space_id: string
+              space_title: string
+              title: string
+              updated_at: string
+              view_count: number
+            }[]
+          }
       get_unread_notification_count: {
         Args: { p_user_id: string }
         Returns: number

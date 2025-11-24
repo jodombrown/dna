@@ -35,6 +35,7 @@ export interface UniversalFeedItem {
   author_display_name: string;
   author_avatar_url: string | null;
   content: string;
+  title: string | null;
   media_url: string | null;
   post_type: FeedItemType;
   privacy_level: string;
