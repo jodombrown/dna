@@ -98,6 +98,7 @@ import ConveyHub from "./pages/dna/convey/ConveyHub";
 import StoryDetail from "./pages/dna/convey/StoryDetail";
 import CreateStory from "./pages/dna/convey/CreateStory";
 import ConveyAnalytics from "./pages/dna/admin/ConveyAnalytics";
+import StoryDetailPage from "./pages/dna/story/StoryDetailPage";
 
 // Feature pages
 import Opportunities from "./pages/Opportunities";
@@ -382,6 +383,11 @@ function App() {
               <Route path="/dna/convey/stories/:slug" element={
                 <OnboardingGuard>
                   <StoryDetail />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/story/:id" element={
+                <OnboardingGuard>
+                  <StoryDetailPage />
                 </OnboardingGuard>
               } />
               
