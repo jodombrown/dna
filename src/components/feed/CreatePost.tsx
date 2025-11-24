@@ -17,12 +17,19 @@ export function CreatePost() {
 
   const createPostMutation = useMutation({
     mutationFn: async (postContent: string) => {
+      console.log('CreatePost: inserting post with payload:', {
+        author_id: user!.id,
+        content: postContent,
+        post_type: 'post',
+        privacy_level: 'public',
+      });
+
       const { data, error } = await supabase
         .from('posts')
         .insert({
           author_id: user!.id,
           content: postContent,
-          post_type: 'post',
+          post_type: 'post', // Valid post_type per database constraint
           privacy_level: 'public',
           linked_entity_type: null,
           linked_entity_id: null,
@@ -32,17 +39,23 @@ export function CreatePost() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('CreatePost: insert error:', error);
+        throw error;
+      }
+      
+      console.log('CreatePost: insert successful, data:', data);
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
       setContent('');
       toast.success('Post created successfully!');
     },
     onError: (error: any) => {
-      console.error('Error creating post:', error);
+      console.error('CreatePost: mutation error:', error);
       const msg = (error?.message || error?.hint || error?.details || '').toString();
       toast.error(msg ? `Post failed: ${msg}` : 'Post failed. Please try again.');
     },

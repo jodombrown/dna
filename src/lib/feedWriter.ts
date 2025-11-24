@@ -209,7 +209,7 @@ export async function createStandardPost(params: {
     const insertPayload = {
       author_id: authorId,
       content: content.trim(),
-      post_type: 'status', // Use 'status' to match schema default
+      post_type: 'post', // Valid post_type per database constraint
       image_url: mediaUrl || null,
       space_id: spaceId || null,
       event_id: eventId || null,
@@ -237,7 +237,7 @@ export async function createStandardPost(params: {
     // Fetch author profile separately
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
-      .select('username, display_name, avatar_url')
+      .select('username, full_name, avatar_url')
       .eq('id', authorId)
       .single();
 
@@ -257,7 +257,7 @@ export async function createStandardPost(params: {
       likes_count: 0,
       comments_count: 0,
       author_username: profileData?.username || '',
-      author_full_name: profileData?.display_name || '',
+      author_full_name: profileData?.full_name || '',
       author_avatar_url: profileData?.avatar_url || undefined,
       user_has_liked: false,
       is_connection: false,
