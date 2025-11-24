@@ -63,8 +63,8 @@ export function useCreateConveyItem() {
           const { data: user } = await supabaseClient.auth.getUser();
           if (user.user) {
             await createStoryPost({
-              storyId: item.id,
               storyTitle: item.title,
+              storyBody: item.content || '',
               storySubtitle: item.subtitle || undefined,
               authorId: user.user.id,
               spaceId: item.primary_space_id || undefined,
@@ -135,8 +135,8 @@ export function useUpdateConveyItem() {
           const { data: user } = await supabaseClient.auth.getUser();
           if (user.user) {
             await createStoryPost({
-              storyId: item.id,
               storyTitle: item.title,
+              storyBody: item.content || '',
               storySubtitle: item.subtitle || undefined,
               authorId: user.user.id,
               spaceId: item.primary_space_id || undefined,
