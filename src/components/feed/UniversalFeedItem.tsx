@@ -34,6 +34,15 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
   // For MVP, we route based on post_type
   
   switch (item.post_type) {
+    case 'story':
+      return (
+        <StoryCard
+          item={item}
+          currentUserId={currentUserId}
+          onUpdate={onUpdate}
+        />
+      );
+
     case 'event':
       return (
         <EventCard
@@ -55,15 +64,6 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
     case 'need':
       return (
         <NeedCard
-          item={item}
-          currentUserId={currentUserId}
-          onUpdate={onUpdate}
-        />
-      );
-    
-    case 'story':
-      return (
-        <StoryCard
           item={item}
           currentUserId={currentUserId}
           onUpdate={onUpdate}

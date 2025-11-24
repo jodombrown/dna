@@ -95,13 +95,49 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
 
       switch (mode) {
         case 'story': {
-          // LOCKDOWN v1: Story mode disabled
-          console.warn('[Lockdown v1] Story mode disabled');
-          toast({ 
-            variant: 'destructive', 
-            description: 'Story mode is temporarily unavailable. Please use Post instead.' 
+          if (!formData.title) {
+            toast({ variant: 'destructive', description: 'Story title is required' });
+            return;
+          }
+
+          const story = await createStoryPost({
+            authorId: user.id,
+            storyTitle: formData.title,
+            storyBody: formData.content,
+            storySubtitle: formData.subtitle,
+            imageUrl: formData.heroImage || formData.mediaUrl,
+            spaceId: context.spaceId,
+            eventId: context.eventId,
           });
-          return;
+
+          // Map to UniversalFeedItem so it shows up instantly
+          createdPost = {
+            post_id: story.post_id,
+            author_id: story.author_id,
+            author_username: story.author_username,
+            author_display_name: story.author_full_name,
+            author_avatar_url: story.author_avatar_url || null,
+            content: story.content,
+            media_url: story.image_url || null,
+            post_type: 'story',
+            privacy_level: 'public',
+            linked_entity_type: null,
+            linked_entity_id: null,
+            space_id: context.spaceId || null,
+            space_title: null,
+            event_id: context.eventId || null,
+            event_title: null,
+            created_at: story.created_at,
+            updated_at: story.created_at,
+            like_count: 0,
+            comment_count: 0,
+            share_count: 0,
+            view_count: 0,
+            bookmark_count: 0,
+            has_liked: false,
+            has_bookmarked: false,
+          };
+          break;
         }
 
         case 'post': {

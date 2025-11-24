@@ -124,30 +124,87 @@ export async function createNeedPost(params: {
 
 /**
  * Create feed post for a published story/article
+ * NOW RETURNS the created post for optimistic injection
  */
 export async function createStoryPost(params: {
-  storyId: string;
   storyTitle: string;
+  storyBody: string;
   storySubtitle?: string;
   authorId: string;
   spaceId?: string;
   eventId?: string;
   imageUrl?: string;
-}) {
-  const content = params.storySubtitle 
-    ? `${params.storyTitle}\n${params.storySubtitle}`
-    : params.storyTitle;
-  
-  await createFeedPost({
-    authorId: params.authorId,
-    postType: 'story',
-    content,
-    linkedEntityType: 'story',
-    linkedEntityId: params.storyId,
-    spaceId: params.spaceId,
-    eventId: params.eventId,
-    mediaUrl: params.imageUrl,
-  });
+}): Promise<any> {
+  const { authorId, storyTitle, storyBody, storySubtitle, spaceId, eventId, imageUrl } = params;
+
+  try {
+    // Insert story post with title
+    const insertPayload = {
+      author_id: authorId,
+      title: storyTitle,
+      content: storyBody,
+      post_type: 'story',
+      image_url: imageUrl || null,
+      space_id: spaceId || null,
+      event_id: eventId || null,
+      privacy_level: 'public' as const,
+      linked_entity_type: null,
+      linked_entity_id: null,
+    };
+
+    console.log('createStoryPost inserting:', insertPayload);
+
+    const { data: postData, error: postError } = await supabase
+      .from('posts')
+      .insert(insertPayload)
+      .select('id, author_id, title, content, post_type, image_url, created_at')
+      .single();
+
+    if (postError) {
+      console.error('createStoryPost DB error:', postError);
+      logHighError(postError, 'composer', 'createStoryPost failed', { params, insertPayload });
+      throw postError;
+    }
+
+    if (!postData) {
+      throw new Error('No data returned from insert');
+    }
+
+    // Fetch author profile separately
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('username, full_name, avatar_url')
+      .eq('id', authorId)
+      .single();
+
+    if (profileError) {
+      console.error('Failed to fetch author profile:', profileError);
+    }
+
+    // Map to post shape for return
+    const mapped = {
+      post_id: postData.id,
+      author_id: postData.author_id,
+      title: postData.title,
+      content: postData.content,
+      post_type: 'story',
+      privacy_level: 'public',
+      image_url: postData.image_url || undefined,
+      created_at: postData.created_at,
+      likes_count: 0,
+      comments_count: 0,
+      author_username: profileData?.username || '',
+      author_full_name: profileData?.full_name || '',
+      author_avatar_url: profileData?.avatar_url || undefined,
+      user_has_liked: false,
+      is_connection: false,
+    };
+
+    return mapped;
+  } catch (err) {
+    logHighError(err, 'composer', 'createStoryPost threw', params);
+    throw err;
+  }
 }
 
 /**

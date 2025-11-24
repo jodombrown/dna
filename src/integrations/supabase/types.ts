@@ -4395,6 +4395,7 @@ export type Database = {
           share_commentary: string | null
           shared_by: string | null
           space_id: string | null
+          title: string | null
           updated_at: string
           view_count: number | null
         }
@@ -4425,6 +4426,7 @@ export type Database = {
           share_commentary?: string | null
           shared_by?: string | null
           space_id?: string | null
+          title?: string | null
           updated_at?: string
           view_count?: number | null
         }
@@ -4455,6 +4457,7 @@ export type Database = {
           share_commentary?: string | null
           shared_by?: string | null
           space_id?: string | null
+          title?: string | null
           updated_at?: string
           view_count?: number | null
         }
