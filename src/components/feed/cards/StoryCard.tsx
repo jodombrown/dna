@@ -123,27 +123,16 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
         {item.media_url && (
           <img
             src={item.media_url}
-            alt={item.title || 'Story image'}
-            className="w-full h-64 object-cover rounded-lg cursor-pointer"
-            onClick={() => navigate(`/dna/story/${item.post_id}`)}
+            alt="Story banner"
+            className="w-full h-64 object-cover rounded-lg"
           />
         )}
 
-        {/* Title */}
-        <h3
-          className="text-2xl font-bold leading-tight hover:underline cursor-pointer"
-          onClick={() => navigate(`/dna/story/${item.post_id}`)}
-        >
-          {item.title || 'Untitled Story'}
+        {/* Title - from UniversalFeedItem, fallback to extracting from content */}
+        <h3 className="text-2xl font-bold leading-tight">
+          {/* Title would come from item.title if we add it to UniversalFeedItem type */}
+          Featured Story
         </h3>
-
-
-        {/* Subtitle/Summary */}
-        {item.summary && (
-          <p className="text-lg text-muted-foreground italic">
-            {item.summary}
-          </p>
-        )}
 
         {/* Body Preview */}
         <div className="prose prose-sm max-w-none">

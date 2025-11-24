@@ -54,7 +54,7 @@ export const UniversalComposer = ({
       case 'space':
         return !!formData.title;
       case 'story':
-        return !!formData.title?.trim() && formData.content.trim().length >= 200;
+        return !!formData.title;
       default:
         return true;
     }
