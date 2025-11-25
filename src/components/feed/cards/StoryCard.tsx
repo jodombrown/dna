@@ -9,7 +9,7 @@ import { UniversalFeedItem } from '@/types/feed';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Bookmark, MoreVertical, FileText } from 'lucide-react';
+import { Heart, MessageCircle, Bookmark, MoreVertical, FileText, BookOpen } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -179,13 +179,13 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
           className="flex items-center gap-2"
           onClick={() => toggleLike()}
         >
-          <Heart
+          <BookOpen
             className={cn(
               'h-4 w-4',
               userHasLiked ? 'fill-dna-amber text-dna-amber' : 'text-muted-foreground'
             )}
           />
-          <span>{likeCount > 0 ? likeCount : 'Like'}</span>
+          <span>{likeCount > 0 ? likeCount : 'Appreciate'}</span>
         </Button>
         <Button variant="ghost" size="sm" className="flex items-center gap-2">
           <MessageCircle className="h-4 w-4" />
