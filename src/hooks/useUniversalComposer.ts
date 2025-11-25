@@ -88,6 +88,12 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
       return;
     }
 
+    // Validate Story-specific requirements before starting submission
+    if (mode === 'story' && (!formData.title || !formData.title.trim())) {
+      toast({ variant: 'destructive', description: 'Story title is required' });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -95,11 +101,6 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
 
       switch (mode) {
         case 'story': {
-          if (!formData.title) {
-            toast({ variant: 'destructive', description: 'Story title is required' });
-            return;
-          }
-
           const story = await createStoryPost({
             authorId: user.id,
             storyTitle: formData.title,
