@@ -182,7 +182,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
           <BookOpen
             className={cn(
               'h-4 w-4',
-              userHasLiked ? 'fill-dna-amber text-dna-amber' : 'text-muted-foreground'
+              userHasLiked ? 'fill-dna-gold text-dna-gold' : 'text-muted-foreground'
             )}
           />
           <span>{likeCount > 0 ? likeCount : 'Appreciate'}</span>
