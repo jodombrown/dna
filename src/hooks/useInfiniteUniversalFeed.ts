@@ -34,6 +34,7 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           p_author_id: filters.authorId || null,
           p_space_id: filters.spaceId || null,
           p_event_id: filters.eventId || null,
+          p_post_type: filters.postType || null,
           p_limit: PAGE_SIZE,
           p_offset: 0,
           p_ranking_mode: filters.rankingMode || 'latest',

@@ -65,6 +65,7 @@ export interface FeedFilters {
   authorId?: string;
   spaceId?: string;
   eventId?: string;
+  postType?: FeedItemType;
   limit?: number;
   offset?: number;
   cursor?: string;

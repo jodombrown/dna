@@ -136,12 +136,22 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
           {item.title || 'Featured Story'}
         </h3>
 
-        {/* Body Preview */}
+        {/* Body Preview with Paragraph Formatting */}
         <div className="prose prose-sm max-w-none">
-          <p className={cn('text-muted-foreground', !isExpanded && 'line-clamp-4')}>
-            {isExpanded ? item.content : bodyPreview}
-            {needsExpansion && !isExpanded && '...'}
-          </p>
+          {isExpanded ? (
+            <div className="text-muted-foreground space-y-4">
+              {item.content.split('\n\n').map((paragraph, idx) => (
+                <p key={idx} className="whitespace-pre-line">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          ) : (
+            <p className="text-muted-foreground line-clamp-4 whitespace-pre-line">
+              {bodyPreview}
+              {needsExpansion && '...'}
+            </p>
+          )}
         </div>
 
         {/* Read More Button */}

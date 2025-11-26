@@ -139,15 +139,12 @@ export default function ConveyStoryHub() {
         </p>
       </div>
 
-      {/* Story Stream
-          Note: Currently shows all post types from the universal feed.
-          Stories render with StoryCard, other post types render with their respective cards.
-          Future enhancement: Add post_type filter to get_universal_feed RPC to show stories only.
-      */}
+      {/* Story Stream - Stories Only */}
       <UniversalFeedInfinite
         viewerId={user.id}
         tab={feedTab}
         authorId={activeTab === 'my_stories' ? user.id : undefined}
+        postType="story"
         rankingMode="latest"
         emptyMessage={
           activeTab === 'my_stories'
@@ -172,7 +169,7 @@ export default function ConveyStoryHub() {
   );
 
   const rightColumn = (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-visible">
       {/* Why Stories Matter */}
       <Card className="border-dna-gold/20 bg-gradient-to-br from-dna-gold/5 to-transparent">
         <CardHeader>
