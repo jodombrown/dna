@@ -66,8 +66,15 @@ export default function StoryDetail() {
         )}
 
         {error && (
-          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 text-center">
-            <p className="text-destructive">Failed to load story. Please try again.</p>
+          <div className="bg-muted/50 border border-border rounded-lg p-8 text-center space-y-4">
+            <BookOpen className="h-12 w-12 mx-auto text-muted-foreground" />
+            <div>
+              <h2 className="text-xl font-semibold mb-2">Story not available</h2>
+              <p className="text-muted-foreground">This story may have been removed or is no longer accessible.</p>
+            </div>
+            <Button onClick={() => navigate('/dna/feed')} variant="outline">
+              Back to Feed
+            </Button>
           </div>
         )}
 

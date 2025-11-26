@@ -36,7 +36,7 @@ export const COMPOSER_MODE_CONFIG: Record<ComposerMode, ComposerModeConfig> = {
     enabled: true,
     tested: true,
     optimisticFeedInjection: true,
-    notes: 'Story mode enabled - creates story posts with title + body, full optimistic injection',
+    notes: 'Story Engine v1.2 – QA Complete. Fully tested end-to-end: creation, feed injection (All/Network/Mine/Saved/Profile), detail page, routing consistency, error handling, auth guards. Trust-First guarantees met.',
   },
   event: {
     id: 'event',
