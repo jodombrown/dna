@@ -10,7 +10,7 @@ import { UniversalFeedItemComponent } from './UniversalFeedItem';
 import { SkeletonPostCard } from '@/components/social-feed/SkeletonPostCard';
 import { Card } from '@/components/ui/card';
 import { Newspaper, Loader2 } from 'lucide-react';
-import { FeedTab, RankingMode } from '@/types/feed';
+import { FeedTab, RankingMode, FeedItemType } from '@/types/feed';
 import { supabase } from '@/integrations/supabase/client';
 
 type FeedSurface = 'home' | 'profile' | 'space' | 'event' | 'mobile';
@@ -21,6 +21,7 @@ interface UniversalFeedInfiniteProps {
   authorId?: string;
   spaceId?: string;
   eventId?: string;
+  postType?: FeedItemType;
   rankingMode?: RankingMode;
   surface?: FeedSurface;
   emptyMessage?: string;
@@ -33,6 +34,7 @@ export const UniversalFeedInfinite: React.FC<UniversalFeedInfiniteProps> = ({
   authorId,
   spaceId,
   eventId,
+  postType,
   rankingMode = 'latest',
   surface = 'home',
   emptyMessage,
@@ -51,6 +53,7 @@ export const UniversalFeedInfinite: React.FC<UniversalFeedInfiniteProps> = ({
     authorId,
     spaceId,
     eventId,
+    postType,
     rankingMode,
   });
 

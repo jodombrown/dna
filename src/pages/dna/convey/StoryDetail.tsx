@@ -133,9 +133,11 @@ export default function StoryDetail() {
                 </div>
               )}
 
-              <div className="prose prose-lg max-w-none">
+              <div className="prose prose-lg max-w-none space-y-4">
                 {item.body.split('\n\n').map((paragraph, idx) => (
-                  <p key={idx} className="text-foreground/90 mb-4 leading-relaxed">{paragraph}</p>
+                  <p key={idx} className="text-foreground/90 leading-relaxed whitespace-pre-line">
+                    {paragraph}
+                  </p>
                 ))}
               </div>
             </article>
