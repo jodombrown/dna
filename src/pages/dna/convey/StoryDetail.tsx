@@ -4,7 +4,7 @@ import { useConveyItemBySlug } from '@/hooks/useConveyFeed';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Loader2, ExternalLink, Calendar, Sparkles } from 'lucide-react';
+import { ArrowLeft, Loader2, ExternalLink, Calendar, Sparkles, BookOpen } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function StoryDetail() {
@@ -75,7 +75,9 @@ export default function StoryDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <article className="lg:col-span-2 bg-card border border-border rounded-lg p-8">
               <Badge variant={getTypeBadgeVariant(item.type)} className="mb-4">
-                {item.type === 'impact' ? (
+                {item.type === 'story' ? (
+                  <><BookOpen className="h-3 w-3 mr-1 inline" />Story</>
+                ) : item.type === 'impact' ? (
                   <><Sparkles className="h-3 w-3 mr-1 inline" />{getTypeLabel(item.type)}</>
                 ) : (
                   getTypeLabel(item.type)
@@ -85,7 +87,7 @@ export default function StoryDetail() {
               <h1 className="text-4xl font-bold text-foreground mb-3">{item.title}</h1>
 
               {item.subtitle && (
-                <p className="text-xl text-muted-foreground mb-6">{item.subtitle}</p>
+                <p className="text-xl text-muted-foreground italic mb-6">{item.subtitle}</p>
               )}
 
               <div className="flex flex-wrap items-center gap-4 pb-6 mb-6 border-b border-border">
