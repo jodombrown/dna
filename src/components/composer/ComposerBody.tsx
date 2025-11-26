@@ -86,7 +86,7 @@ function renderModeFields(
       return (
         <>
           <div>
-            <Label>Title *</Label>
+            <Label>Story title *</Label>
             <Input
               placeholder="Story title"
               value={formData.title || ''}
@@ -96,7 +96,7 @@ function renderModeFields(
           <div>
             <Label>Subtitle (optional)</Label>
             <Input
-              placeholder="Brief subtitle"
+              placeholder="Optional short line to frame your story"
               value={formData.subtitle || ''}
               onChange={(e) => onChange({ subtitle: e.target.value })}
             />
@@ -104,7 +104,7 @@ function renderModeFields(
           <div>
             <Label>Content *</Label>
             <Textarea
-              placeholder="Tell your story..."
+              placeholder="Your story (minimum 200 characters)"
               value={formData.content}
               onChange={(e) => onChange({ content: e.target.value })}
               className="min-h-[200px] resize-none"
