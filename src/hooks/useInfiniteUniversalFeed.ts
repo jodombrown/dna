@@ -50,7 +50,34 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           throw error;
         }
         
-        const items = (data || []) as unknown as UniversalFeedItem[];
+        // Map RPC response to UniversalFeedItem
+        const items = (data || []).map((item: any) => ({
+          post_id: item.id,
+          author_id: item.author_id,
+          author_username: item.author_username,
+          author_display_name: item.author_full_name,
+          author_avatar_url: item.author_avatar_url,
+          content: item.content,
+          title: item.title,
+          media_url: item.image_url,
+          post_type: item.post_type,
+          privacy_level: item.privacy_level,
+          linked_entity_type: item.linked_entity_type,
+          linked_entity_id: item.linked_entity_id,
+          space_id: item.space_id,
+          space_title: null, // Not returned by RPC yet
+          event_id: item.event_id,
+          event_title: null, // Not returned by RPC yet
+          created_at: item.created_at,
+          updated_at: item.updated_at,
+          like_count: Number(item.likes_count),
+          comment_count: Number(item.comments_count),
+          share_count: 0, // Not implemented yet
+          view_count: 0, // Not implemented yet
+          bookmark_count: 0, // Not returned by RPC
+          has_liked: item.user_has_liked,
+          has_bookmarked: item.user_has_bookmarked,
+        })) as UniversalFeedItem[];
         
         // Calculate next cursor from last item
         const nextCursor = items.length === PAGE_SIZE && items[items.length - 1]
