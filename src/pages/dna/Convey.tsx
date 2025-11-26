@@ -1,5 +1,5 @@
-import ConveyNewsroom from './convey/ConveyNewsroom';
+import ConveyStoryHub from './convey/ConveyStoryHub';
 
 export default function Convey() {
-  return <ConveyNewsroom />;
+  return <ConveyStoryHub />;
 }
