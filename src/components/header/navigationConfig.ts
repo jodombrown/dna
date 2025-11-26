@@ -54,6 +54,13 @@ export const pillarNavigation = {
     items: [],
     badge: 'Soon',
   },
+  convey: {
+    label: 'Convey',
+    icon: 'BookOpen',
+    items: [
+      { name: 'Stories', path: '/dna/convey' },
+    ],
+  },
   commerce: {
     label: 'Commerce',
     icon: 'ShoppingBag',

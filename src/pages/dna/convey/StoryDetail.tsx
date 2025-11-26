@@ -72,8 +72,8 @@ export default function StoryDetail() {
               <h2 className="text-xl font-semibold mb-2">Story not available</h2>
               <p className="text-muted-foreground">This story may have been removed or is no longer accessible.</p>
             </div>
-            <Button onClick={() => navigate('/dna/feed')} variant="outline">
-              Back to Feed
+            <Button onClick={() => navigate('/dna/convey')} variant="outline">
+              Back to Stories
             </Button>
           </div>
         )}
