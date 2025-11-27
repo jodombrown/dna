@@ -1,14 +1,17 @@
+import { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import LayoutController from '@/components/LayoutController';
-import { LeftNav } from '@/components/layout/columns/LeftNav';
-import { RightWidgets } from '@/components/layout/columns/RightWidgets';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { Card } from '@/components/ui/card';
 import { Bell } from 'lucide-react';
 
 const DnaNotifications = () => {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (isLoading) {
     return (
@@ -22,24 +25,19 @@ const DnaNotifications = () => {
     return null;
   }
 
-  const centerColumn = (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3 mb-6">
-        <Bell className="w-6 h-6 text-primary" />
-        <h1 className="text-2xl font-bold">Notifications</h1>
-      </div>
-      <Card className="p-6">
-        <p className="text-muted-foreground">Notifications feed coming soon...</p>
-      </Card>
-    </div>
-  );
-
   return (
-    <LayoutController
-      leftColumn={<LeftNav />}
-      centerColumn={centerColumn}
-      rightColumn={<RightWidgets variant="default" />}
-    />
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-4 pb-20 md:pb-8 max-w-3xl">
+        <div className="flex items-center gap-3 mb-6">
+          <Bell className="w-6 h-6 text-primary" />
+          <h1 className="text-2xl font-bold">Notifications</h1>
+        </div>
+        <Card className="p-6">
+          <p className="text-muted-foreground">Notifications feed coming soon...</p>
+        </Card>
+      </div>
+      <MobileBottomNav />
+    </div>
   );
 };
 
