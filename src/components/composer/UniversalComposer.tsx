@@ -54,7 +54,8 @@ export const UniversalComposer = ({
       case 'space':
         return !!formData.title;
       case 'story':
-        return !!formData.title;
+        // Story-specific validation: title required, content >= 400 chars
+        return !!formData.title?.trim() && formData.content.length >= 400;
       default:
         return true;
     }

@@ -3,11 +3,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ImagePlus } from 'lucide-react';
+import { ImagePlus, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useState, useRef } from 'react';
+import { uploadMedia } from '@/lib/uploadMedia';
+import { useToast } from '@/hooks/use-toast';
 
 interface ComposerBodyProps {
   mode: ComposerMode;
@@ -104,13 +107,30 @@ function renderModeFields(
           <div>
             <Label>Content *</Label>
             <Textarea
-              placeholder="Your story (minimum 200 characters)"
+              placeholder="Your story (minimum 400 characters)"
               value={formData.content}
-              onChange={(e) => onChange({ content: e.target.value })}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.length <= 4000) {
+                  onChange({ content: value });
+                }
+              }}
               className="min-h-[200px] resize-none"
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              {formData.content.length < 400 
+                ? `${formData.content.length}/400 characters (minimum for Stories)`
+                : formData.content.length > 3500
+                  ? `${formData.content.length}/4,000 characters (nearing limit)`
+                  : `${formData.content.length} characters (400–2,500 recommended)`
+              }
+            </p>
           </div>
-          <MediaUploadButton label="Hero Image" onUpload={(url) => onChange({ heroImage: url })} />
+          <StoryImageUpload 
+            currentImageUrl={formData.heroImage}
+            onUpload={(url) => onChange({ heroImage: url })}
+            onRemove={() => onChange({ heroImage: undefined })}
+          />
         </>
       );
 
@@ -298,5 +318,140 @@ function MediaUploadButton({
       <ImagePlus className="w-4 h-4 mr-2" />
       {label} (Coming Soon)
     </Button>
+  );
+}
+
+function StoryImageUpload({ 
+  currentImageUrl,
+  onUpload,
+  onRemove
+}: { 
+  currentImageUrl?: string;
+  onUpload: (url: string) => void;
+  onRemove: () => void;
+}) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please upload a JPG, PNG, or WebP image.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please upload an image smaller than 5MB.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const url = await uploadMedia(file, user.id, 'story-hero-images');
+      onUpload(url);
+      toast({
+        description: 'Hero image uploaded successfully.',
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: 'Upload failed',
+        description: 'We couldn\'t upload that image. Try a smaller JPG or PNG.',
+      });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  if (currentImageUrl) {
+    return (
+      <div className="space-y-2">
+        <Label>Hero Image (optional)</Label>
+        <div className="relative rounded-lg border border-border overflow-hidden">
+          <img 
+            src={currentImageUrl} 
+            alt="Story hero" 
+            className="w-full h-40 object-cover"
+          />
+          <div className="absolute top-2 right-2 flex gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              Change
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="destructive"
+              onClick={onRemove}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/jpg,image/png,image/webp"
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <Label>Hero Image (optional)</Label>
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        disabled={isUploading}
+        className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <div className="flex flex-col items-center gap-2 text-muted-foreground">
+          {isUploading ? (
+            <>
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <p className="text-sm">Uploading...</p>
+            </>
+          ) : (
+            <>
+              <ImagePlus className="h-8 w-8" />
+              <p className="text-sm font-medium">Add Hero Image</p>
+              <p className="text-xs">Landscape photos work best. JPG/PNG up to 5MB.</p>
+            </>
+          )}
+        </div>
+      </button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/jpg,image/png,image/webp"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+    </div>
   );
 }
