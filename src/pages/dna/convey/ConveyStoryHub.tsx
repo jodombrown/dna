@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
@@ -22,6 +22,10 @@ export default function ConveyStoryHub() {
   const [activeTab, setActiveTab] = useState<StoryTab>('all');
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (!user) {
     return (
@@ -130,7 +134,7 @@ export default function ConveyStoryHub() {
   );
 
   const centerColumn = (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">

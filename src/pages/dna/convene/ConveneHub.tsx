@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { WelcomeStrip } from '@/components/convene/WelcomeStrip';
 import { EventRecommendations } from '@/components/events/EventRecommendations';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
@@ -8,10 +8,15 @@ import { FlagshipEventsSection } from '@/components/convene/FlagshipEventsSectio
 import { ConveneContextWidgets } from '@/components/convene/ConveneContextWidgets';
 import EventCategoriesSection from '@/components/connect/EventCategoriesSection';
 import { CreateLeadSection } from '@/components/convene/CreateLeadSection';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 const ConveneHub = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <div className="w-full h-full overflow-auto">
+    <div className="w-full h-full overflow-auto pb-20 md:pb-0">
       <div className="container max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4 lg:gap-6">
           {/* Main Content Column */}
@@ -49,6 +54,7 @@ const ConveneHub = () => {
           </div>
         </div>
       </div>
+      <MobileBottomNav />
     </div>
   );
 };

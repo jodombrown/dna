@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,14 +7,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Search, Sparkles } from 'lucide-react';
 import { SpaceWithMembership } from '@/types/spaceTypes';
 import { SuggestedSpaces } from '@/components/collaboration/SuggestedSpaces';
-import LayoutController from '@/components/LayoutController';
-import { LeftNav } from '@/components/layout/columns/LeftNav';
-import { RightWidgets } from '@/components/layout/columns/RightWidgets';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { TYPOGRAPHY } from '@/lib/typography.config';
 
 export default function CollaborateHub() {
   const navigate = useNavigate();
   const { data: mySpaces, isLoading: mySpacesLoading } = useMySpaces();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const renderSpaceCard = (space: SpaceWithMembership) => (
     <Card 
@@ -64,10 +67,10 @@ export default function CollaborateHub() {
   );
 
   return (
-    <div className="min-h-screen bg-background pt-16">
-      <div className="container mx-auto px-4 py-8 max-w-7xl space-y-8">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-4 pb-20 md:pb-8 max-w-7xl space-y-8">
       {/* Hero Section */}
-      <div className="text-center space-y-4 py-8">
+      <div className="text-center space-y-4 py-4">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Sparkles className="h-8 w-8 text-primary" />
           <h1 className={TYPOGRAPHY.h1}>COLLABORATE</h1>
@@ -141,6 +144,7 @@ export default function CollaborateHub() {
         </div>
       </div>
       </div>
+      <MobileBottomNav />
     </div>
   );
 }

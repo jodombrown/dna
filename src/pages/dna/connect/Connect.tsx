@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, Network, MessageSquare } from 'lucide-react';
@@ -39,9 +40,13 @@ const Connect = () => {
 
   const completionScore = calculateProfileCompletion(profile);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background pt-16">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-4 pb-20 md:pb-8 max-w-7xl">
         {/* Header with Profile Strength */}
         <div className="flex items-start justify-between mb-8 gap-4">
           <div>
@@ -93,6 +98,7 @@ const Connect = () => {
           <Outlet />
         </div>
       </div>
+      <MobileBottomNav />
     </div>
   );
 };
