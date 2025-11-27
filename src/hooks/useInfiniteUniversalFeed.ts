@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { logHighError } from '@/lib/errorLogger';
 
 const PAGE_SIZE = 20;
+const DEBUG_FEED = true; // set to false later when stable
 
 export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'offset'>) => {
   const queryClient = useQueryClient();
@@ -42,7 +43,15 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           params.p_cursor = pageParam;
         }
 
+        if (DEBUG_FEED) {
+          console.log('[DEBUG_FEED] Calling get_universal_feed with params:', params);
+        }
+
         const { data, error } = await supabase.rpc('get_universal_feed', params as any);
+
+        if (DEBUG_FEED) {
+          console.log('[DEBUG_FEED] RPC result:', { error, rawData: data });
+        }
 
         if (error) {
           logHighError(error, 'feed', 'get_universal_feed RPC failed', { filters });
@@ -79,15 +88,30 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           has_bookmarked: item.user_has_bookmarked,
         })) as UniversalFeedItem[];
 
+        if (DEBUG_FEED) {
+          console.log('[DEBUG_FEED] Mapped items length:', items.length);
+        }
+
         // Apply client-side postType filter ONLY when explicitly specified (e.g., for Convey hub)
         const filteredItems = filters.postType
           ? items.filter((item) => item.post_type === filters.postType)
           : items;
+
+        if (DEBUG_FEED) {
+          console.log('[DEBUG_FEED] Filtered items length:', filteredItems.length, 'postType:', filters.postType);
+        }
         
         // Calculate next cursor from last filtered item
         const nextCursor = filteredItems.length === PAGE_SIZE && filteredItems[filteredItems.length - 1]
           ? filteredItems[filteredItems.length - 1].created_at
           : null;
+
+        if (DEBUG_FEED) {
+          console.log('[DEBUG_FEED] Returning from useInfiniteUniversalFeed:', {
+            nextCursor,
+            sampleItem: filteredItems[0] || null,
+          });
+        }
 
         return {
           items: filteredItems,
