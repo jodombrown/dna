@@ -37,7 +37,7 @@ export function useUniversalFeed(filters: FeedFilters) {
         }
 
         // Map RPC response to UniversalFeedItem
-        return (data || []).map((item: any) => ({
+        const items = (data || []).map((item: any) => ({
           post_id: item.id,
           author_id: item.author_id,
           author_username: item.author_username,
@@ -64,6 +64,11 @@ export function useUniversalFeed(filters: FeedFilters) {
           has_liked: item.user_has_liked,
           has_bookmarked: item.user_has_bookmarked,
         })) as UniversalFeedItem[];
+
+        // Apply client-side postType filter as extra safety
+        return filters.postType
+          ? items.filter((item) => item.post_type === filters.postType)
+          : items;
       } catch (err: any) {
         logHighError(err, 'feed', 'get_universal_feed threw', { filters });
         throw err;
