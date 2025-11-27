@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
+import { AccountDrawer } from '@/components/navigation/AccountDrawer';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -69,7 +70,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   return (
     <>
       <UnifiedHeader />
-      <div 
+      <AccountDrawer />
+      <div
         className={cn(
           "min-h-screen w-full max-w-full",
           getAuthGradient(),

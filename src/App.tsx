@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
 import { MessageProvider } from "@/contexts/MessageContext";
+import { AccountDrawerProvider } from "@/contexts/AccountDrawerContext";
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import BaseLayout from "@/layouts/BaseLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -183,9 +184,10 @@ function App() {
           <Sonner />
           <BrowserRouter>
             <AuthProvider>
-              <ViewStateProvider>
-                <MessageProvider>
-                  <BaseLayout>
+              <AccountDrawerProvider>
+                <ViewStateProvider>
+                  <MessageProvider>
+                    <BaseLayout>
                   <Routes>
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
@@ -522,6 +524,7 @@ function App() {
               </BaseLayout>
                 </MessageProvider>
               </ViewStateProvider>
+              </AccountDrawerProvider>
             </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>
