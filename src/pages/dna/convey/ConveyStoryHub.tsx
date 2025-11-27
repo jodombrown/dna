@@ -11,6 +11,8 @@ import { BookOpen, Heart, Lightbulb, TrendingUp, Users, PenSquare, Sparkles } fr
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { Badge } from '@/components/ui/badge';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { useMobile } from '@/hooks/useMobile';
 
 type StoryTab = 'all' | 'my_stories' | 'saved';
 
@@ -19,6 +21,7 @@ export default function ConveyStoryHub() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<StoryTab>('all');
   const composer = useUniversalComposer();
+  const { isMobile } = useMobile();
 
   if (!user) {
     return (
@@ -127,14 +130,14 @@ export default function ConveyStoryHub() {
   );
 
   const centerColumn = (
-    <div className="space-y-4">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <BookOpen className="h-7 w-7 text-dna-gold" />
-          <h1 className="text-3xl font-bold">Stories from the Diaspora</h1>
+          <BookOpen className="h-6 w-6 md:h-7 md:w-7 text-dna-gold" />
+          <h1 className="text-2xl md:text-3xl font-bold">Stories from the Diaspora</h1>
         </div>
-        <p className="text-muted-foreground text-lg">
+        <p className="text-muted-foreground text-base md:text-lg">
           Longer narratives of how we're building, learning, and giving back.
         </p>
       </div>
@@ -238,11 +241,14 @@ export default function ConveyStoryHub() {
 
   return (
     <>
-      <LayoutController
-        leftColumn={leftColumn}
-        centerColumn={centerColumn}
-        rightColumn={rightColumn}
-      />
+      <div className="min-h-screen bg-background pb-16 md:pb-0">
+        <LayoutController
+          leftColumn={leftColumn}
+          centerColumn={centerColumn}
+          rightColumn={rightColumn}
+        />
+      </div>
+      <MobileBottomNav />
       <UniversalComposer
         isOpen={composer.isOpen}
         mode={composer.mode}

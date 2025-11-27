@@ -74,11 +74,11 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
   };
 
   return (
-    <Card className="p-6 hover:border-primary/20 transition-colors bg-gradient-to-br from-background via-background to-muted/10">
+    <Card className="p-4 sm:p-5 md:p-6 hover:border-primary/20 transition-colors bg-gradient-to-br from-background via-background to-muted/10">
       {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <Avatar
-          className="h-10 w-10 cursor-pointer"
+          className="h-10 w-10 cursor-pointer flex-shrink-0"
           onClick={() => navigate(`/dna/${item.author_username}`)}
         >
           <AvatarImage src={item.author_avatar_url || ''} />
@@ -87,7 +87,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span
-              className="font-semibold hover:underline cursor-pointer"
+              className="font-semibold text-sm hover:underline cursor-pointer"
               onClick={() => navigate(`/dna/${item.author_username}`)}
             >
               {item.author_display_name || item.author_username}
@@ -104,7 +104,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
         {isOwner && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -118,10 +118,10 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
       </div>
 
       {/* Story Content */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* Title - navigates to full story view */}
         <h3 
-          className="text-2xl font-bold leading-tight cursor-pointer hover:text-primary transition-colors"
+          className="text-lg md:text-xl font-semibold leading-tight cursor-pointer hover:text-primary transition-colors"
           onClick={() => navigate(`/dna/story/${item.post_id}`)}
         >
           {item.title || 'Featured Story'}
@@ -129,7 +129,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
 
         {/* Subtitle */}
         {item.subtitle && (
-          <p className="text-base text-muted-foreground italic -mt-2">
+          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
             {item.subtitle}
           </p>
         )}
@@ -137,7 +137,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
         {/* Hero Image - navigates to full story view */}
         {item.media_url && (
           <div 
-            className="w-full h-48 rounded-lg overflow-hidden cursor-pointer"
+            className="w-full h-44 sm:h-48 rounded-lg overflow-hidden cursor-pointer"
             onClick={() => navigate(`/dna/story/${item.post_id}`)}
           >
             <img
@@ -151,15 +151,15 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
         {/* Body Preview with Paragraph Formatting */}
         <div className="prose prose-sm max-w-none">
           {isExpanded ? (
-            <div className="text-muted-foreground space-y-4">
+            <div className="text-sm md:text-base text-muted-foreground space-y-3">
               {item.content.split('\n\n').map((paragraph, idx) => (
-                <p key={idx} className="whitespace-pre-line">
+                <p key={idx} className="whitespace-pre-line leading-relaxed">
                   {paragraph}
                 </p>
               ))}
             </div>
           ) : (
-            <p className="text-muted-foreground line-clamp-4 whitespace-pre-line">
+            <p className="text-sm md:text-base text-muted-foreground line-clamp-4 whitespace-pre-line leading-relaxed">
               {bodyPreview}
               {needsExpansion && '...'}
             </p>
@@ -206,11 +206,11 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
       </div>
 
       {/* Engagement Footer */}
-      <div className="flex items-center gap-4 pt-4 mt-4 border-t">
+      <div className="flex items-center gap-3 md:gap-4 pt-3 mt-4 border-t">
         <Button
           variant="ghost"
           size="sm"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 text-xs sm:text-sm"
           onClick={() => toggleLike()}
         >
           <BookOpen
@@ -219,11 +219,13 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
               userHasLiked ? 'fill-dna-gold text-dna-gold' : 'text-muted-foreground'
             )}
           />
-          <span>{likeCount > 0 ? likeCount : 'Appreciate'}</span>
+          <span className="hidden xs:inline">{likeCount > 0 ? likeCount : 'Appreciate'}</span>
+          <span className="xs:hidden">{likeCount > 0 ? likeCount : ''}</span>
         </Button>
-        <Button variant="ghost" size="sm" className="flex items-center gap-2">
+        <Button variant="ghost" size="sm" className="flex items-center gap-2 text-xs sm:text-sm">
           <MessageCircle className="h-4 w-4" />
-          <span>{item.comment_count > 0 ? item.comment_count : 'Comment'}</span>
+          <span className="hidden xs:inline">{item.comment_count > 0 ? item.comment_count : 'Comment'}</span>
+          <span className="xs:hidden">{item.comment_count > 0 ? item.comment_count : ''}</span>
         </Button>
         <Button
           variant="ghost"
