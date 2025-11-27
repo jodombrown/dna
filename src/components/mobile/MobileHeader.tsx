@@ -7,6 +7,7 @@ import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
 
 interface MobileHeaderProps {
   title?: string;
@@ -37,6 +38,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
   const location = useLocation();
   const { user } = useAuth();
   const { data: profile } = useProfile();
+  const { open: openAccountDrawer } = useAccountDrawer();
 
   // Auto-detect if we should show back button based on route depth
   const shouldShowBack = showBack || (
@@ -77,13 +79,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
          <NotificationBell />
          <Avatar 
            className="h-8 w-8 cursor-pointer" 
-           onClick={() => {
-             if (profile?.username) {
-               navigate(`/dna/${profile.username}`);
-             } else {
-               navigate('/dna/feed');
-             }
-           }}
+           onClick={openAccountDrawer}
          >
            <AvatarImage src={profile.avatar_url || ''} />
            <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>

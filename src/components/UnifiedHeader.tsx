@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDashboard } from '@/contexts/DashboardContext';
+import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -55,6 +56,7 @@ import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
 
 const UnifiedHeader = () => {
   const { user, profile, signOut, loading } = useAuth();
+  const { open: openAccountDrawer } = useAccountDrawer();
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -365,7 +367,7 @@ const UnifiedHeader = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => navigate(profile?.username ? `/dna/${profile.username}` : '/dna/feed')}>
+                    <DropdownMenuItem onClick={openAccountDrawer}>
                       <User className="w-4 h-4 mr-2" />
                       Profile
                     </DropdownMenuItem>
