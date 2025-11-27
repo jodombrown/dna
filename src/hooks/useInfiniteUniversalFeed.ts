@@ -79,19 +79,14 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           has_liked: item.user_has_liked,
           has_bookmarked: item.user_has_bookmarked,
         })) as UniversalFeedItem[];
-
-        // Apply client-side postType filter as extra safety
-        const filteredItems = filters.postType
-          ? items.filter((item) => item.post_type === filters.postType)
-          : items;
         
         // Calculate next cursor from last item
-        const nextCursor = filteredItems.length === PAGE_SIZE && filteredItems[filteredItems.length - 1]
-          ? filteredItems[filteredItems.length - 1].created_at
+        const nextCursor = items.length === PAGE_SIZE && items[items.length - 1]
+          ? items[items.length - 1].created_at
           : null;
 
         return {
-          items: filteredItems,
+          items,
           nextCursor,
         };
       } catch (error) {
