@@ -97,6 +97,7 @@ import MyContributions from "./pages/dna/contribute/MyContributions";
 import Convey from "./pages/dna/Convey";
 import ConveyHub from "./pages/dna/convey/ConveyHub";
 import StoryDetail from "./pages/dna/convey/StoryDetail";
+import FeedStoryDetail from "./pages/dna/FeedStoryDetail";
 import CreateStory from "./pages/dna/convey/CreateStory";
 import ConveyAnalytics from "./pages/dna/admin/ConveyAnalytics";
 
@@ -386,6 +387,13 @@ function App() {
                   <CreateStory />
                 </OnboardingGuard>
               } />
+              {/* Feed Stories - unified post_id based detail view */}
+              <Route path="/dna/story/:id" element={
+                <OnboardingGuard>
+                  <FeedStoryDetail />
+                </OnboardingGuard>
+              } />
+              {/* Convey Items - legacy slug-based detail view */}
               <Route path="/dna/convey/stories/:slug" element={
                 <OnboardingGuard>
                   <StoryDetail />
