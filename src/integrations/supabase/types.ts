@@ -7371,13 +7371,13 @@ export type Database = {
           }
         | {
             Args: {
-              p_author_id?: string
-              p_event_id?: string
-              p_limit?: number
-              p_offset?: number
-              p_ranking_mode?: string
-              p_space_id?: string
-              p_tab?: string
+              p_author_id: string
+              p_event_id: string
+              p_limit: number
+              p_offset: number
+              p_ranking_mode: string
+              p_space_id: string
+              p_tab: string
               p_viewer_id: string
             }
             Returns: {
