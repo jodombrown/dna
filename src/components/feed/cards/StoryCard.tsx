@@ -127,6 +127,13 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
           {item.title || 'Featured Story'}
         </h3>
 
+        {/* Subtitle */}
+        {item.subtitle && (
+          <p className="text-base text-muted-foreground italic -mt-2">
+            {item.subtitle}
+          </p>
+        )}
+
         {/* Hero Image */}
         {item.media_url && (
           <div 
