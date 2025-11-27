@@ -27,14 +27,13 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
     queryKey: ['universal-feed-infinite', filters],
     queryFn: async ({ pageParam }) => {
       try {
-        // Build RPC params without p_cursor when it's undefined to avoid PostgREST overload (300)
+        // Build RPC params - DO NOT include p_post_type as it doesn't exist in the DB function
         const params: Record<string, any> = {
           p_viewer_id: filters.viewerId,
           p_tab: filters.tab || 'all',
           p_author_id: filters.authorId || null,
           p_space_id: filters.spaceId || null,
           p_event_id: filters.eventId || null,
-          p_post_type: filters.postType || null,
           p_limit: PAGE_SIZE,
           p_offset: 0,
           p_ranking_mode: filters.rankingMode || 'latest',
@@ -79,14 +78,19 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           has_liked: item.user_has_liked,
           has_bookmarked: item.user_has_bookmarked,
         })) as UniversalFeedItem[];
+
+        // Apply client-side postType filter ONLY when explicitly specified (e.g., for Convey hub)
+        const filteredItems = filters.postType
+          ? items.filter((item) => item.post_type === filters.postType)
+          : items;
         
-        // Calculate next cursor from last item
-        const nextCursor = items.length === PAGE_SIZE && items[items.length - 1]
-          ? items[items.length - 1].created_at
+        // Calculate next cursor from last filtered item
+        const nextCursor = filteredItems.length === PAGE_SIZE && filteredItems[filteredItems.length - 1]
+          ? filteredItems[filteredItems.length - 1].created_at
           : null;
 
         return {
-          items,
+          items: filteredItems,
           nextCursor,
         };
       } catch (error) {
