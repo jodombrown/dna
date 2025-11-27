@@ -122,7 +122,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
         {/* Title - from UniversalFeedItem, fallback to extracting from content */}
         <h3 
           className="text-2xl font-bold leading-tight cursor-pointer hover:text-primary transition-colors"
-          onClick={() => navigate(`/dna/convey/story/${item.post_id}`)}
+          onClick={() => setIsExpanded((prev) => !prev)}
         >
           {item.title || 'Featured Story'}
         </h3>
@@ -138,7 +138,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
         {item.media_url && (
           <div 
             className="w-full h-48 rounded-lg overflow-hidden cursor-pointer"
-            onClick={() => navigate(`/dna/convey/story/${item.post_id}`)}
+            onClick={() => setIsExpanded((prev) => !prev)}
           >
             <img
               src={item.media_url}
