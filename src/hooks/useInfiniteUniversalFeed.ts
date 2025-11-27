@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 import { logHighError } from '@/lib/errorLogger';
 
 const PAGE_SIZE = 20;
-const DEBUG_FEED = true; // set to false later when stable
+const DEBUG_FEED = false; // Enable for troubleshooting only
 
 export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'offset'>) => {
   const queryClient = useQueryClient();
@@ -93,29 +93,31 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
         }
 
         // Apply client-side postType filter ONLY when explicitly specified (e.g., for Convey hub)
+        // Use case-insensitive comparison to handle any database inconsistencies
         const filteredItems = filters.postType
-          ? items.filter((item) => item.post_type === filters.postType)
+          ? items.filter((item) => item.post_type?.toLowerCase() === filters.postType.toLowerCase())
           : items;
 
         if (DEBUG_FEED) {
           console.log('[DEBUG_FEED] Filtered items length:', filteredItems.length, 'postType:', filters.postType);
         }
         
-        // Calculate next cursor from last filtered item
-        const nextCursor = filteredItems.length === PAGE_SIZE && filteredItems[filteredItems.length - 1]
-          ? filteredItems[filteredItems.length - 1].created_at
-          : null;
+        // CRITICAL FIX: Calculate nextOffset from RAW items, not filtered
+        // This prevents premature pagination stops when filtering (e.g., Convey stories-only view)
+        const currentOffset = typeof pageParam === 'number' ? pageParam : 0;
+        const nextOffset = items.length === PAGE_SIZE ? currentOffset + PAGE_SIZE : null;
 
         if (DEBUG_FEED) {
-          console.log('[DEBUG_FEED] Returning from useInfiniteUniversalFeed:', {
-            nextCursor,
-            sampleItem: filteredItems[0] || null,
+          console.log('[DEBUG_FEED] Pagination:', {
+            nextOffset,
+            rawItemsLength: items.length,
+            filteredItemsLength: filteredItems.length,
           });
         }
 
         return {
           items: filteredItems,
-          nextCursor,
+          nextCursor: nextOffset,
         };
       } catch (error) {
         logHighError(error, 'feed', 'Universal feed infinite query failed', { filters });
@@ -123,7 +125,7 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
       }
     },
     getNextPageParam: (lastPage) => lastPage.nextCursor,
-    initialPageParam: null as string | null,
+    initialPageParam: 0 as number,
     enabled: !!filters.viewerId,
   });
 
