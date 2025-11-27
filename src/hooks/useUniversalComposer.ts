@@ -89,9 +89,18 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
     }
 
     // Validate Story-specific requirements before starting submission
-    if (mode === 'story' && (!formData.title || !formData.title.trim())) {
-      toast({ variant: 'destructive', description: 'Story title is required' });
-      return;
+    if (mode === 'story') {
+      if (!formData.title || !formData.title.trim()) {
+        toast({ variant: 'destructive', description: 'Story title is required' });
+        return;
+      }
+      if (formData.content.length < 400) {
+        toast({ 
+          variant: 'destructive', 
+          description: 'Stories on DNA are meant to go deeper. Add a bit more detail (at least 400 characters).' 
+        });
+        return;
+      }
     }
 
     setIsSubmitting(true);
