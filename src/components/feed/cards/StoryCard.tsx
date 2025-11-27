@@ -119,26 +119,19 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
 
       {/* Story Content */}
       <div className="space-y-4">
-        {/* Title - navigates to full story view */}
+        {/* Title - from UniversalFeedItem, fallback to extracting from content */}
         <h3 
           className="text-2xl font-bold leading-tight cursor-pointer hover:text-primary transition-colors"
-          onClick={() => navigate(`/dna/story/${item.post_id}`)}
+          onClick={() => navigate(`/dna/convey/story/${item.post_id}`)}
         >
           {item.title || 'Featured Story'}
         </h3>
 
-        {/* Subtitle */}
-        {item.subtitle && (
-          <p className="text-base text-muted-foreground italic -mt-2">
-            {item.subtitle}
-          </p>
-        )}
-
-        {/* Hero Image - navigates to full story view */}
+        {/* Hero Image */}
         {item.media_url && (
           <div 
             className="w-full h-48 rounded-lg overflow-hidden cursor-pointer"
-            onClick={() => navigate(`/dna/story/${item.post_id}`)}
+            onClick={() => navigate(`/dna/convey/story/${item.post_id}`)}
           >
             <img
               src={item.media_url}
@@ -166,25 +159,15 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
           )}
         </div>
 
-        {/* Read Full Story Button */}
-        {needsExpansion && !isExpanded && (
+        {/* Read More Button */}
+        {needsExpansion && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate(`/dna/story/${item.post_id}`)}
+            onClick={() => setIsExpanded(!isExpanded)}
             className="text-primary"
           >
-            Read Full Story
-          </Button>
-        )}
-        {isExpanded && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsExpanded(false)}
-            className="text-primary"
-          >
-            Show Less
+            {isExpanded ? 'Show Less' : 'Read More'}
           </Button>
         )}
 

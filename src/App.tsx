@@ -23,7 +23,6 @@ import ActivityFeed from "./pages/ActivityFeed";
 import SavedPostsPage from "./pages/SavedPostsPage";
 import DnaNetwork from "./pages/dna/Network";
 import DnaFeed from "./pages/dna/Feed";
-import DebugUniversalFeed from "./pages/dna/DebugUniversalFeed";
 import DnaEvents from "./pages/dna/Events";
 import DnaMessages from "./pages/dna/Messages";
 import DnaImpact from "./pages/dna/Impact";
@@ -97,7 +96,6 @@ import MyContributions from "./pages/dna/contribute/MyContributions";
 import Convey from "./pages/dna/Convey";
 import ConveyHub from "./pages/dna/convey/ConveyHub";
 import StoryDetail from "./pages/dna/convey/StoryDetail";
-import FeedStoryDetail from "./pages/dna/FeedStoryDetail";
 import CreateStory from "./pages/dna/convey/CreateStory";
 import ConveyAnalytics from "./pages/dna/admin/ConveyAnalytics";
 
@@ -239,19 +237,13 @@ function App() {
               <Route path="/dna/discover/feed" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/dna/network" element={<Navigate to="/dna/connect/network" replace />} />
               <Route path="/dna/network/feed" element={<Navigate to="/dna/connect/discover" replace />} />
-               {/* Feed is the multi-C activity stream home */}
-               <Route path="/dna/feed" element={
-                 <OnboardingGuard>
-                   <DnaFeed />
-                 </OnboardingGuard>
-               } />
-               {/* Debug feed page */}
-               <Route path="/dna/debug/feed" element={
-                 <OnboardingGuard>
-                   <DebugUniversalFeed />
-                 </OnboardingGuard>
-               } />
-               {/* Messages: Canonical routes */}
+              {/* Feed is the multi-C activity stream home */}
+              <Route path="/dna/feed" element={
+                <OnboardingGuard>
+                  <DnaFeed />
+                </OnboardingGuard>
+              } />
+              {/* Messages: Canonical routes */}
               <Route path="/dna/messages" element={
                 <OnboardingGuard>
                   <DnaMessages />
@@ -387,13 +379,6 @@ function App() {
                   <CreateStory />
                 </OnboardingGuard>
               } />
-              {/* Feed Stories - unified post_id based detail view */}
-              <Route path="/dna/story/:id" element={
-                <OnboardingGuard>
-                  <FeedStoryDetail />
-                </OnboardingGuard>
-              } />
-              {/* Convey Items - legacy slug-based detail view */}
               <Route path="/dna/convey/stories/:slug" element={
                 <OnboardingGuard>
                   <StoryDetail />
