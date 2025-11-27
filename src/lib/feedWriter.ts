@@ -142,6 +142,7 @@ export async function createStoryPost(params: {
     const insertPayload = {
       author_id: authorId,
       title: storyTitle,
+      subtitle: storySubtitle || null,
       content: storyBody,
       post_type: 'story',
       image_url: imageUrl || null,
@@ -157,7 +158,7 @@ export async function createStoryPost(params: {
     const { data: postData, error: postError } = await supabase
       .from('posts')
       .insert(insertPayload)
-      .select('id, author_id, title, content, post_type, image_url, created_at')
+      .select('id, author_id, title, subtitle, content, post_type, image_url, created_at')
       .single();
 
     if (postError) {
@@ -186,6 +187,7 @@ export async function createStoryPost(params: {
       post_id: postData.id,
       author_id: postData.author_id,
       title: postData.title,
+      subtitle: postData.subtitle || undefined,
       content: postData.content,
       post_type: 'story',
       privacy_level: 'public',

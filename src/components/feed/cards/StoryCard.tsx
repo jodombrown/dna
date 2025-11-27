@@ -119,19 +119,26 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
 
       {/* Story Content */}
       <div className="space-y-4">
-        {/* Title - from UniversalFeedItem, fallback to extracting from content */}
+        {/* Title - navigates to full story view */}
         <h3 
           className="text-2xl font-bold leading-tight cursor-pointer hover:text-primary transition-colors"
-          onClick={() => navigate(`/dna/convey/story/${item.post_id}`)}
+          onClick={() => navigate(`/dna/story/${item.post_id}`)}
         >
           {item.title || 'Featured Story'}
         </h3>
 
-        {/* Hero Image */}
+        {/* Subtitle */}
+        {item.subtitle && (
+          <p className="text-base text-muted-foreground italic -mt-2">
+            {item.subtitle}
+          </p>
+        )}
+
+        {/* Hero Image - navigates to full story view */}
         {item.media_url && (
           <div 
             className="w-full h-48 rounded-lg overflow-hidden cursor-pointer"
-            onClick={() => navigate(`/dna/convey/story/${item.post_id}`)}
+            onClick={() => navigate(`/dna/story/${item.post_id}`)}
           >
             <img
               src={item.media_url}
@@ -159,15 +166,25 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
           )}
         </div>
 
-        {/* Read More Button */}
-        {needsExpansion && (
+        {/* Read Full Story Button */}
+        {needsExpansion && !isExpanded && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={() => navigate(`/dna/story/${item.post_id}`)}
             className="text-primary"
           >
-            {isExpanded ? 'Show Less' : 'Read More'}
+            Read Full Story
+          </Button>
+        )}
+        {isExpanded && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsExpanded(false)}
+            className="text-primary"
+          >
+            Show Less
           </Button>
         )}
 
