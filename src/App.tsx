@@ -23,6 +23,7 @@ import ActivityFeed from "./pages/ActivityFeed";
 import SavedPostsPage from "./pages/SavedPostsPage";
 import DnaNetwork from "./pages/dna/Network";
 import DnaFeed from "./pages/dna/Feed";
+import DebugUniversalFeed from "./pages/dna/DebugUniversalFeed";
 import DnaEvents from "./pages/dna/Events";
 import DnaMessages from "./pages/dna/Messages";
 import DnaImpact from "./pages/dna/Impact";
@@ -237,13 +238,19 @@ function App() {
               <Route path="/dna/discover/feed" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/dna/network" element={<Navigate to="/dna/connect/network" replace />} />
               <Route path="/dna/network/feed" element={<Navigate to="/dna/connect/discover" replace />} />
-              {/* Feed is the multi-C activity stream home */}
-              <Route path="/dna/feed" element={
-                <OnboardingGuard>
-                  <DnaFeed />
-                </OnboardingGuard>
-              } />
-              {/* Messages: Canonical routes */}
+               {/* Feed is the multi-C activity stream home */}
+               <Route path="/dna/feed" element={
+                 <OnboardingGuard>
+                   <DnaFeed />
+                 </OnboardingGuard>
+               } />
+               {/* Debug feed page */}
+               <Route path="/dna/debug/feed" element={
+                 <OnboardingGuard>
+                   <DebugUniversalFeed />
+                 </OnboardingGuard>
+               } />
+               {/* Messages: Canonical routes */}
               <Route path="/dna/messages" element={
                 <OnboardingGuard>
                   <DnaMessages />
