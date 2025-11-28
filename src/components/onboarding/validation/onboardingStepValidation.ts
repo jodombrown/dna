@@ -46,11 +46,8 @@ export const validateIdentityStep = (data: any): ValidationError[] => {
     errors.push({ field: 'current_country', message: 'Current country is required' });
   }
 
-  if (!data.headline?.trim()) {
-    errors.push({ field: 'headline', message: 'Professional headline is required' });
-  } else if (data.headline.trim().length < 10) {
-    errors.push({ field: 'headline', message: 'Headline must be at least 10 characters' });
-  } else if (data.headline.trim().length > 200) {
+  // Professional headline is optional but validate length if provided
+  if (data.headline?.trim() && data.headline.trim().length > 200) {
     errors.push({ field: 'headline', message: 'Headline must be less than 200 characters' });
   }
 

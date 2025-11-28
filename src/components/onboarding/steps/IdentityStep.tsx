@@ -83,7 +83,7 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, onUpdate, errors = {}
 
           {/* Headline */}
           <div className="space-y-2">
-            <Label htmlFor="headline" className="text-base">Professional Headline *</Label>
+            <Label htmlFor="headline" className="text-base">Professional Headline</Label>
             <Input
               id="headline"
               value={data.headline}
@@ -93,7 +93,7 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, onUpdate, errors = {}
               className={errors.headline ? 'border-destructive' : ''}
             />
             <p className="text-xs text-muted-foreground">
-              A one-line summary of who you are professionally (10-200 characters)
+              Recommended: Help others understand your professional focus
             </p>
             {errors.headline && (
               <p className="text-sm text-destructive">{errors.headline}</p>
