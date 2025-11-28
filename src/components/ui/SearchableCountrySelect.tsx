@@ -15,8 +15,22 @@ export default function SearchableCountrySelect({ value, onChange }: SearchableC
   const [open, setOpen] = useState(false);
 
   const selectedCountry = useMemo(() => {
-    return COUNTRIES.find(c => c.code === value);
+    if (!value) return null;
+    return COUNTRIES.find(c => c.name === value || c.code === value);
   }, [value]);
+
+  const handleSelect = (countryName: string) => {
+    try {
+      const country = COUNTRIES.find(c => c.name === countryName);
+      if (country) {
+        onChange(country.code, country.name);
+        setOpen(false);
+      }
+    } catch (error) {
+      console.error('Error selecting country:', error);
+      setOpen(false);
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -33,7 +47,13 @@ export default function SearchableCountrySelect({ value, onChange }: SearchableC
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[calc(100vw-2rem)] sm:w-[460px] p-0" align="start">
+      <PopoverContent 
+        className="w-[calc(100vw-2rem)] sm:w-[460px] p-0" 
+        align="start"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+      >
         <Command>
           <CommandInput placeholder="Search countries..." className="h-11" />
           <CommandEmpty>No country found.</CommandEmpty>
@@ -42,17 +62,14 @@ export default function SearchableCountrySelect({ value, onChange }: SearchableC
               <CommandItem
                 key={country.code}
                 value={country.name}
-                onSelect={() => {
-                  onChange(country.code, country.name);
-                  setOpen(false);
-                }}
+                onSelect={handleSelect}
                 className="px-3 py-2"
               >
                 {country.name}
                 <Check
                   className={cn(
                     "ml-auto h-4 w-4",
-                    value === country.code ? "opacity-100" : "opacity-0"
+                    selectedCountry?.code === country.code ? "opacity-100" : "opacity-0"
                   )}
                 />
               </CommandItem>

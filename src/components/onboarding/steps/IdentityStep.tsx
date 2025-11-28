@@ -39,7 +39,7 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, onUpdate, errors = {}
                 onUploaded={(url) => onUpdate('avatar_url', url)}
               />
               <p className="text-xs text-muted-foreground text-center">
-                JPG or PNG, up to 5MB. A square or screenshot-style image works best.
+                JPG or PNG, up to 5MB.
               </p>
             </div>
             {errors.avatar_url && (
