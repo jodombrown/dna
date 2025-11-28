@@ -15,12 +15,26 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ value, onUploaded }) =>
 
   const onFile = async (file: File) => {
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      toast({ title: "Invalid file", description: "Please select an image.", variant: "destructive" });
+    
+    // Check file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!validTypes.includes(file.type.toLowerCase())) {
+      toast({ 
+        title: "Invalid file type", 
+        description: "Please upload a JPG or PNG image.", 
+        variant: "destructive" 
+      });
       return;
     }
+    
+    // Check file size
     if (file.size > MAX_SIZE) {
-      toast({ title: "Too large", description: "Max size is 5MB.", variant: "destructive" });
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      toast({ 
+        title: "Image too large", 
+        description: `This image is ${sizeMB}MB. Please upload a JPG or PNG under 5MB.`, 
+        variant: "destructive" 
+      });
       return;
     }
 
@@ -54,18 +68,18 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ value, onUploaded }) =>
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex flex-col sm:flex-row items-center gap-3">
       <img
         src={value || "/placeholder.svg"}
         alt="Profile photo preview"
-        className="w-12 h-12 rounded-full object-cover border border-border"
+        className="w-20 h-20 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-border"
         loading="lazy"
       />
-      <label className="inline-flex items-center px-3 py-2 rounded-md border border-input bg-background text-sm cursor-pointer hover:bg-muted">
+      <label className="inline-flex items-center justify-center px-4 py-2 rounded-md border border-input bg-background text-sm font-medium cursor-pointer hover:bg-muted transition-colors min-h-[44px] w-full sm:w-auto">
         {uploading ? "Uploading..." : "Choose photo"}
         <input
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/jpg,image/png"
           className="hidden"
           onChange={(e) => {
             const f = e.target.files?.[0];

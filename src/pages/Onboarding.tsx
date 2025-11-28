@@ -330,46 +330,47 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10">
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="mb-6">
+          <div className="mb-4">
             <img 
               src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
               alt="DNA Logo" 
-              className="w-16 h-16 mx-auto mb-4"
+              className="w-12 h-12 sm:w-16 sm:h-16 mx-auto"
             />
           </div>
-        <OnboardingProgressBar
-          currentStep={currentStep + 1}
-          totalSteps={5}
-          completionPercentage={estimateCompletion()}
-        />
+          <OnboardingProgressBar
+            currentStep={currentStep + 1}
+            totalSteps={5}
+            completionPercentage={estimateCompletion()}
+          />
         </div>
 
         {/* Step Content */}
-        <div className="mb-8">
+        <div className="mb-6">
           {currentStepComponent()}
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 px-4 sm:px-0">
           <Button
             variant="outline"
             onClick={handleBack}
             disabled={currentStep === 0 || isSubmitting}
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2 min-h-[44px] w-full sm:w-auto"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             {currentStep === 4 && (
               <Button
                 variant="ghost"
                 onClick={handleSkip}
                 disabled={isSubmitting}
+                className="min-h-[44px] w-full sm:w-auto"
               >
                 Complete Later
               </Button>
@@ -377,7 +378,7 @@ const Onboarding = () => {
             <Button
               onClick={handleNext}
               disabled={isSubmitting}
-              className="bg-dna-copper hover:bg-dna-gold text-white flex items-center gap-2 px-6"
+              className="bg-dna-copper hover:bg-dna-gold text-white flex items-center justify-center gap-2 px-6 min-h-[44px] w-full sm:w-auto"
             >
               {isSubmitting ? (
                 "Saving..."
