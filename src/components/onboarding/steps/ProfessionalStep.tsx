@@ -91,11 +91,11 @@ const ProfessionalStep: React.FC<ProfessionalStepProps> = ({ data, onUpdate, err
               options={SECTOR_OPTIONS}
               selected={data.professional_sectors}
               onChange={(value) => onUpdate('professional_sectors', value)}
-              placeholder="Select at least 2 sectors you work in"
+              placeholder="Select or type your sectors (at least 1)"
               colorClass="bg-dna-copper/10 text-dna-copper border-dna-copper/20"
             />
             <p className="text-xs text-muted-foreground">
-              Select the industries or sectors where you have experience
+              Select from the list or type your own sectors where you have experience
             </p>
             {errors.professional_sectors && (
               <p className="text-sm text-destructive">{errors.professional_sectors}</p>
@@ -109,11 +109,11 @@ const ProfessionalStep: React.FC<ProfessionalStepProps> = ({ data, onUpdate, err
               options={SKILL_OPTIONS}
               selected={data.skills}
               onChange={(value) => onUpdate('skills', value)}
-              placeholder="Select at least 3 skills"
+              placeholder="Select or type your skills (at least 1)"
               colorClass="bg-dna-emerald/10 text-dna-emerald border-dna-emerald/20"
             />
             <p className="text-xs text-muted-foreground">
-              Choose the skills you're strongest in or most passionate about
+              Select from the list or type your own skills you're strongest in or most passionate about
             </p>
             {errors.skills && (
               <p className="text-sm text-destructive">{errors.skills}</p>
@@ -131,11 +131,11 @@ const ProfessionalStep: React.FC<ProfessionalStepProps> = ({ data, onUpdate, err
                 <SelectValue placeholder="Select your experience level" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="0-2">0-2 years (Entry Level)</SelectItem>
-                <SelectItem value="3-5">3-5 years (Mid-Level)</SelectItem>
-                <SelectItem value="6-10">6-10 years (Senior)</SelectItem>
-                <SelectItem value="11-15">11-15 years (Expert)</SelectItem>
-                <SelectItem value="16+">16+ years (Veteran)</SelectItem>
+                <SelectItem value="0-2">0-2 years</SelectItem>
+                <SelectItem value="3-5">3-5 years</SelectItem>
+                <SelectItem value="6-10">6-10 years</SelectItem>
+                <SelectItem value="11-15">11-15 years</SelectItem>
+                <SelectItem value="16+">16+ years</SelectItem>
               </SelectContent>
             </Select>
             {errors.years_experience && (

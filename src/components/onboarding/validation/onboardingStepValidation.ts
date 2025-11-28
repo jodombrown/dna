@@ -61,17 +61,17 @@ export const validateProfessionalStep = (data: any): ValidationError[] => {
     errors.push({ field: 'profession', message: 'Profession or role is required' });
   }
 
-  if (!data.professional_sectors || data.professional_sectors.length < 2) {
+  if (!data.professional_sectors || data.professional_sectors.length < 1) {
     errors.push({ 
       field: 'professional_sectors', 
-      message: 'Please select at least 2 professional sectors' 
+      message: 'Please select or type at least 1 professional sector' 
     });
   }
 
-  if (!data.skills || data.skills.length < 3) {
+  if (!data.skills || data.skills.length < 1) {
     errors.push({ 
       field: 'skills', 
-      message: 'Please select at least 3 skills' 
+      message: 'Please select or type at least 1 skill' 
     });
   }
 
