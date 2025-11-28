@@ -4597,6 +4597,7 @@ export type Database = {
           africa_focus_areas: string[] | null
           agrees_to_values: boolean | null
           availability_hours_per_month: number | null
+          availability_tags: Json | null
           availability_visible: boolean | null
           available_for: string[] | null
           available_hours_per_month: number | null
@@ -4614,9 +4615,11 @@ export type Database = {
           beta_status: string | null
           bio: string | null
           collaboration_needs: string[] | null
+          collaboration_tags: Json | null
           company: string | null
           connection_count: number | null
           contribution_style: string | null
+          contribution_tags: Json | null
           contribution_types: string[] | null
           country_of_origin: string | null
           country_of_origin_id: string | null
@@ -4634,10 +4637,12 @@ export type Database = {
           diaspora_origin: string | null
           diaspora_status: string | null
           diaspora_story: string | null
+          diaspora_tags: Json | null
           display_name: string | null
           email: string | null
           email_notifications: boolean | null
           email_visible: boolean | null
+          event_interest_tags: Json | null
           facebook_url: string | null
           first_action_completed: boolean | null
           first_action_type: string | null
@@ -4647,6 +4652,7 @@ export type Database = {
           fundraising_status: string | null
           github_url: string | null
           headline: string | null
+          hidden_activity_ids: Json | null
           id: string
           impact_areas: string[] | null
           impact_goals: string[] | null
@@ -4655,6 +4661,7 @@ export type Database = {
           industry: string | null
           industry_sectors: string[] | null
           instagram_url: string | null
+          intent_tags: Json | null
           intentions: string[] | null
           intents: string[] | null
           interest_tags: string[] | null
@@ -4665,6 +4672,7 @@ export type Database = {
           is_admin: boolean | null
           is_beta_tester: boolean | null
           is_public: boolean | null
+          language_tags: Json | null
           languages: string[] | null
           last_active: string | null
           last_active_at: string | null
@@ -4689,6 +4697,7 @@ export type Database = {
           open_to_opportunities: boolean | null
           origin_country_code: string | null
           origin_country_name: string | null
+          pinned_activity_ids: Json | null
           preferred_contact: string | null
           profession: string | null
           professional_role: string | null
@@ -4698,15 +4707,19 @@ export type Database = {
           profile_completion_score: number | null
           profile_picture_url: string | null
           profile_views_count: number | null
+          profile_visibility_settings: Json | null
           recent_searches: string[] | null
           referral_code: string | null
           referrer_id: string | null
+          region_tags: Json | null
           regional_expertise: string[] | null
           roles: string[] | null
           sdg_focus: string[] | null
+          sector_tags: Json | null
           sectors: string[] | null
           seeking_mentorship: boolean | null
           selected_pillars: string[] | null
+          skill_tags: Json | null
           skills: string[] | null
           support_areas: string[] | null
           twitter_handle: string | null
@@ -4723,6 +4736,10 @@ export type Database = {
           venture_name: string | null
           venture_stage: string | null
           verification_method: string | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          verification_updated_at: string | null
           verified: boolean | null
           verified_at: string | null
           visibility: Json | null
@@ -4743,6 +4760,7 @@ export type Database = {
           africa_focus_areas?: string[] | null
           agrees_to_values?: boolean | null
           availability_hours_per_month?: number | null
+          availability_tags?: Json | null
           availability_visible?: boolean | null
           available_for?: string[] | null
           available_hours_per_month?: number | null
@@ -4760,9 +4778,11 @@ export type Database = {
           beta_status?: string | null
           bio?: string | null
           collaboration_needs?: string[] | null
+          collaboration_tags?: Json | null
           company?: string | null
           connection_count?: number | null
           contribution_style?: string | null
+          contribution_tags?: Json | null
           contribution_types?: string[] | null
           country_of_origin?: string | null
           country_of_origin_id?: string | null
@@ -4780,10 +4800,12 @@ export type Database = {
           diaspora_origin?: string | null
           diaspora_status?: string | null
           diaspora_story?: string | null
+          diaspora_tags?: Json | null
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
           email_visible?: boolean | null
+          event_interest_tags?: Json | null
           facebook_url?: string | null
           first_action_completed?: boolean | null
           first_action_type?: string | null
@@ -4793,6 +4815,7 @@ export type Database = {
           fundraising_status?: string | null
           github_url?: string | null
           headline?: string | null
+          hidden_activity_ids?: Json | null
           id: string
           impact_areas?: string[] | null
           impact_goals?: string[] | null
@@ -4801,6 +4824,7 @@ export type Database = {
           industry?: string | null
           industry_sectors?: string[] | null
           instagram_url?: string | null
+          intent_tags?: Json | null
           intentions?: string[] | null
           intents?: string[] | null
           interest_tags?: string[] | null
@@ -4811,6 +4835,7 @@ export type Database = {
           is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          language_tags?: Json | null
           languages?: string[] | null
           last_active?: string | null
           last_active_at?: string | null
@@ -4835,6 +4860,7 @@ export type Database = {
           open_to_opportunities?: boolean | null
           origin_country_code?: string | null
           origin_country_name?: string | null
+          pinned_activity_ids?: Json | null
           preferred_contact?: string | null
           profession?: string | null
           professional_role?: string | null
@@ -4844,15 +4870,19 @@ export type Database = {
           profile_completion_score?: number | null
           profile_picture_url?: string | null
           profile_views_count?: number | null
+          profile_visibility_settings?: Json | null
           recent_searches?: string[] | null
           referral_code?: string | null
           referrer_id?: string | null
+          region_tags?: Json | null
           regional_expertise?: string[] | null
           roles?: string[] | null
           sdg_focus?: string[] | null
+          sector_tags?: Json | null
           sectors?: string[] | null
           seeking_mentorship?: boolean | null
           selected_pillars?: string[] | null
+          skill_tags?: Json | null
           skills?: string[] | null
           support_areas?: string[] | null
           twitter_handle?: string | null
@@ -4869,6 +4899,10 @@ export type Database = {
           venture_name?: string | null
           venture_stage?: string | null
           verification_method?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          verification_updated_at?: string | null
           verified?: boolean | null
           verified_at?: string | null
           visibility?: Json | null
@@ -4889,6 +4923,7 @@ export type Database = {
           africa_focus_areas?: string[] | null
           agrees_to_values?: boolean | null
           availability_hours_per_month?: number | null
+          availability_tags?: Json | null
           availability_visible?: boolean | null
           available_for?: string[] | null
           available_hours_per_month?: number | null
@@ -4906,9 +4941,11 @@ export type Database = {
           beta_status?: string | null
           bio?: string | null
           collaboration_needs?: string[] | null
+          collaboration_tags?: Json | null
           company?: string | null
           connection_count?: number | null
           contribution_style?: string | null
+          contribution_tags?: Json | null
           contribution_types?: string[] | null
           country_of_origin?: string | null
           country_of_origin_id?: string | null
@@ -4926,10 +4963,12 @@ export type Database = {
           diaspora_origin?: string | null
           diaspora_status?: string | null
           diaspora_story?: string | null
+          diaspora_tags?: Json | null
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
           email_visible?: boolean | null
+          event_interest_tags?: Json | null
           facebook_url?: string | null
           first_action_completed?: boolean | null
           first_action_type?: string | null
@@ -4939,6 +4978,7 @@ export type Database = {
           fundraising_status?: string | null
           github_url?: string | null
           headline?: string | null
+          hidden_activity_ids?: Json | null
           id?: string
           impact_areas?: string[] | null
           impact_goals?: string[] | null
@@ -4947,6 +4987,7 @@ export type Database = {
           industry?: string | null
           industry_sectors?: string[] | null
           instagram_url?: string | null
+          intent_tags?: Json | null
           intentions?: string[] | null
           intents?: string[] | null
           interest_tags?: string[] | null
@@ -4957,6 +4998,7 @@ export type Database = {
           is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          language_tags?: Json | null
           languages?: string[] | null
           last_active?: string | null
           last_active_at?: string | null
@@ -4981,6 +5023,7 @@ export type Database = {
           open_to_opportunities?: boolean | null
           origin_country_code?: string | null
           origin_country_name?: string | null
+          pinned_activity_ids?: Json | null
           preferred_contact?: string | null
           profession?: string | null
           professional_role?: string | null
@@ -4990,15 +5033,19 @@ export type Database = {
           profile_completion_score?: number | null
           profile_picture_url?: string | null
           profile_views_count?: number | null
+          profile_visibility_settings?: Json | null
           recent_searches?: string[] | null
           referral_code?: string | null
           referrer_id?: string | null
+          region_tags?: Json | null
           regional_expertise?: string[] | null
           roles?: string[] | null
           sdg_focus?: string[] | null
+          sector_tags?: Json | null
           sectors?: string[] | null
           seeking_mentorship?: boolean | null
           selected_pillars?: string[] | null
+          skill_tags?: Json | null
           skills?: string[] | null
           support_areas?: string[] | null
           twitter_handle?: string | null
@@ -5015,6 +5062,10 @@ export type Database = {
           venture_name?: string | null
           venture_stage?: string | null
           verification_method?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          verification_updated_at?: string | null
           verified?: boolean | null
           verified_at?: string | null
           visibility?: Json | null
@@ -6458,6 +6509,12 @@ export type Database = {
         Args: { target_user_id: string }
         Returns: number
       }
+      compute_profile_completion_score: {
+        Args: {
+          profile_record: Database["public"]["Tables"]["profiles"]["Row"]
+        }
+        Returns: number
+      }
       cosine_similarity: { Args: { vec1: Json; vec2: Json }; Returns: number }
       create_admin_notification: {
         Args: {
@@ -7707,6 +7764,10 @@ export type Database = {
         Args: { p_event: string; p_user?: string }
         Returns: string
       }
+      rpc_get_profile_bundle: {
+        Args: { p_username: string; p_viewer_id?: string }
+        Returns: Json
+      }
       rpc_health_snapshot: { Args: never; Returns: Json }
       rpc_log_contribution:
         | {
@@ -7966,6 +8027,10 @@ export type Database = {
       rsvp_status: "going" | "maybe" | "not_going" | "pending" | "waitlist"
       space_update_type: "manual_update" | "milestone" | "auto_task_event"
       task_status: "open" | "in_progress" | "done"
+      verification_status:
+        | "pending_verification"
+        | "soft_verified"
+        | "fully_verified"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -8137,6 +8202,11 @@ export const Constants = {
       rsvp_status: ["going", "maybe", "not_going", "pending", "waitlist"],
       space_update_type: ["manual_update", "milestone", "auto_task_event"],
       task_status: ["open", "in_progress", "done"],
+      verification_status: [
+        "pending_verification",
+        "soft_verified",
+        "fully_verified",
+      ],
     },
   },
 } as const
