@@ -148,7 +148,7 @@ const Auth = () => {
                 <Calendar className="w-6 h-6 text-dna-emerald" />
                 <div>
                   <p className="text-sm text-muted-foreground">Official Beta Launch</p>
-                  <p className="text-xl sm:text-2xl font-bold text-dna-forest">December 1, 2024</p>
+                  <p className="text-xl sm:text-2xl font-bold text-dna-forest">December 15, 2024</p>
                 </div>
               </div>
             </div>

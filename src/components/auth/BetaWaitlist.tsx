@@ -68,7 +68,7 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
       } else {
         toast({
           title: "You're on the list! 🎉",
-          description: "We'll email you when DNA launches our free beta on December 1st, 2025.",
+          description: "We'll email you when DNA launches our free beta on December 15th, 2024.",
         });
         
         // Clear form and close dialog
@@ -98,7 +98,7 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
         </h2>
         <p className="text-base text-muted-foreground">
           We're launching our free beta to a select group of users on{' '}
-          <span className="font-semibold text-dna-copper">December 1, 2025</span>.
+          <span className="font-semibold text-dna-copper">December 15, 2024</span>.
         </p>
       </div>
       <div className="mb-6 p-4 bg-dna-mint/10 border border-dna-mint/30 rounded-lg">
