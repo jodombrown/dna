@@ -1,0 +1,138 @@
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Edit, Plus, X } from 'lucide-react';
+import { ProfileV2Tags, ProfileV2Visibility } from '@/types/profileV2';
+import { Input } from '@/components/ui/input';
+
+interface ProfileV2SkillsProps {
+  tags: ProfileV2Tags;
+  visibility: ProfileV2Visibility;
+  isOwner: boolean;
+  onUpdate?: (skills: string[]) => Promise<void>;
+}
+
+const ProfileV2Skills: React.FC<ProfileV2SkillsProps> = ({
+  tags,
+  visibility,
+  isOwner,
+  onUpdate,
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [skillsList, setSkillsList] = useState<string[]>(tags.skills || []);
+  const [newSkill, setNewSkill] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  if (visibility.skills === 'hidden' && !isOwner) {
+    return null;
+  }
+
+  const handleAddSkill = () => {
+    const trimmed = newSkill.trim();
+    if (trimmed && !skillsList.includes(trimmed)) {
+      setSkillsList([...skillsList, trimmed]);
+      setNewSkill('');
+    }
+  };
+
+  const handleRemoveSkill = (skill: string) => {
+    setSkillsList(skillsList.filter(s => s !== skill));
+  };
+
+  const handleSave = async () => {
+    if (!onUpdate) return;
+    setIsSaving(true);
+    try {
+      await onUpdate(skillsList);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to update skills:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setSkillsList(tags.skills || []);
+    setNewSkill('');
+    setIsEditing(false);
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardTitle className="text-xl">Skills</CardTitle>
+        {isOwner && !isEditing && (
+          <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>
+            <Edit className="w-4 h-4" />
+          </Button>
+        )}
+      </CardHeader>
+      <CardContent>
+        {isEditing ? (
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                value={newSkill}
+                onChange={(e) => setNewSkill(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddSkill();
+                  }
+                }}
+                placeholder="Add a skill..."
+                className="flex-1"
+              />
+              <Button size="sm" onClick={handleAddSkill} disabled={!newSkill.trim()}>
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              {skillsList.map((skill, idx) => (
+                <Badge key={idx} variant="secondary" className="gap-1">
+                  {skill}
+                  <button
+                    onClick={() => handleRemoveSkill(skill)}
+                    className="ml-1 hover:text-destructive"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" size="sm" onClick={handleCancel} disabled={isSaving}>
+                Cancel
+              </Button>
+              <Button size="sm" onClick={handleSave} disabled={isSaving}>
+                Save
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {(tags.skills || []).length > 0 ? (
+              tags.skills.map((skill, idx) => (
+                <Badge key={idx} variant="secondary" className="bg-primary/10 text-primary">
+                  {skill}
+                </Badge>
+              ))
+            ) : (
+              isOwner && (
+                <p className="text-muted-foreground italic text-sm">
+                  Add skills to showcase your expertise and get better matches.
+                </p>
+              )
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ProfileV2Skills;

@@ -7957,6 +7957,43 @@ export type Database = {
         Args: { p_context?: Json; p_user_id: string; p_view_state: string }
         Returns: undefined
       }
+      update_profile_about: {
+        Args: { p_bio: string; p_user_id: string }
+        Returns: Json
+      }
+      update_profile_contributions: {
+        Args: { p_contribution_tags: Json; p_user_id: string }
+        Returns: Json
+      }
+      update_profile_diaspora: {
+        Args: {
+          p_country_of_origin?: string
+          p_current_country?: string
+          p_diaspora_origin?: string
+          p_diaspora_tags?: Json
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      update_profile_identity: {
+        Args: {
+          p_company?: string
+          p_full_name?: string
+          p_headline?: string
+          p_location?: string
+          p_professional_role?: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      update_profile_interests: {
+        Args: { p_interest_tags?: Json; p_interests: Json; p_user_id: string }
+        Returns: Json
+      }
+      update_profile_skills: {
+        Args: { p_skills: Json; p_user_id: string }
+        Returns: Json
+      }
       update_reminder_status: {
         Args: {
           error_message?: string

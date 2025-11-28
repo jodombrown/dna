@@ -1,0 +1,141 @@
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Edit, Plus, X, Sparkles } from 'lucide-react';
+import { ProfileV2Tags, ProfileV2Visibility } from '@/types/profileV2';
+import { Input } from '@/components/ui/input';
+
+interface ProfileV2InterestsProps {
+  tags: ProfileV2Tags;
+  visibility: ProfileV2Visibility;
+  isOwner: boolean;
+  onUpdate?: (interests: string[]) => Promise<void>;
+}
+
+const ProfileV2Interests: React.FC<ProfileV2InterestsProps> = ({
+  tags,
+  visibility,
+  isOwner,
+  onUpdate,
+}) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [interestsList, setInterestsList] = useState<string[]>(tags.interests || []);
+  const [newInterest, setNewInterest] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  if (visibility.interests === 'hidden' && !isOwner) {
+    return null;
+  }
+
+  const handleAddInterest = () => {
+    const trimmed = newInterest.trim();
+    if (trimmed && !interestsList.includes(trimmed)) {
+      setInterestsList([...interestsList, trimmed]);
+      setNewInterest('');
+    }
+  };
+
+  const handleRemoveInterest = (interest: string) => {
+    setInterestsList(interestsList.filter(i => i !== interest));
+  };
+
+  const handleSave = async () => {
+    if (!onUpdate) return;
+    setIsSaving(true);
+    try {
+      await onUpdate(interestsList);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to update interests:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setInterestsList(tags.interests || []);
+    setNewInterest('');
+    setIsEditing(false);
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-primary" />
+          <CardTitle className="text-xl">Interests & Focus Areas</CardTitle>
+        </div>
+        {isOwner && !isEditing && (
+          <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>
+            <Edit className="w-4 h-4" />
+          </Button>
+        )}
+      </CardHeader>
+      <CardContent>
+        {isEditing ? (
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                value={newInterest}
+                onChange={(e) => setNewInterest(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddInterest();
+                  }
+                }}
+                placeholder="Add an interest or focus area..."
+                className="flex-1"
+              />
+              <Button size="sm" onClick={handleAddInterest} disabled={!newInterest.trim()}>
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              {interestsList.map((interest, idx) => (
+                <Badge key={idx} variant="secondary" className="gap-1">
+                  {interest}
+                  <button
+                    onClick={() => handleRemoveInterest(interest)}
+                    className="ml-1 hover:text-destructive"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" size="sm" onClick={handleCancel} disabled={isSaving}>
+                Cancel
+              </Button>
+              <Button size="sm" onClick={handleSave} disabled={isSaving}>
+                Save
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {(tags.interests || []).length > 0 ? (
+              tags.interests.map((interest, idx) => (
+                <Badge key={idx} variant="secondary" className="bg-secondary">
+                  {interest}
+                </Badge>
+              ))
+            ) : (
+              isOwner && (
+                <p className="text-muted-foreground italic text-sm">
+                  Add interests to connect with like-minded community members.
+                </p>
+              )
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ProfileV2Interests;
