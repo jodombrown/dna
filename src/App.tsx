@@ -20,6 +20,7 @@ import Onboarding from "./pages/Onboarding";
 import DnaMe from "./pages/dna/Me";
 import DnaUserDashboard from "./pages/dna/Username";
 import PublicProfile from "./pages/dna/PublicProfile";
+import ProfileV2 from "./pages/ProfileV2";
 import ActivityFeed from "./pages/ActivityFeed";
 import SavedPostsPage from "./pages/SavedPostsPage";
 import DnaNetwork from "./pages/dna/Network";
@@ -217,7 +218,7 @@ function App() {
               <Route path="/dna/me" element={<Navigate to="/dna/feed" replace />} />
               <Route path="/dna/:username" element={
                 <OnboardingGuard>
-                  <PublicProfile />
+                  <ProfileV2 />
                 </OnboardingGuard>
               } />
               
