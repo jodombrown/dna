@@ -331,15 +331,8 @@ const Onboarding = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10">
       <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div className="mb-4">
-            <img 
-              src="/lovable-uploads/2768ac69-7468-4ee5-a1aa-3f241d1b7b25.png" 
-              alt="DNA Logo" 
-              className="w-12 h-12 sm:w-16 sm:h-16 mx-auto"
-            />
-          </div>
+        {/* Progress Bar */}
+        <div className="mb-6">
           <OnboardingProgressBar
             currentStep={currentStep + 1}
             totalSteps={5}
