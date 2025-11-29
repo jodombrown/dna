@@ -18,23 +18,26 @@ interface TagMultiSelectProps {
 export function TagMultiSelect({ 
   label, 
   options, 
-  selected, 
+  selected = [], 
   onChange, 
   colorClass = "bg-dna-emerald/10 text-dna-emerald border-dna-emerald/20",
   placeholder
 }: TagMultiSelectProps) {
   const [open, setOpen] = useState(false);
+  
+  // Ensure selected is always an array
+  const safeSelected = Array.isArray(selected) ? selected : [];
 
   const handleSelect = (option: string) => {
-    if (selected.includes(option)) {
-      onChange(selected.filter(item => item !== option));
+    if (safeSelected.includes(option)) {
+      onChange(safeSelected.filter(item => item !== option));
     } else {
-      onChange([...selected, option]);
+      onChange([...safeSelected, option]);
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    onChange(selected.filter(tag => tag !== tagToRemove));
+    onChange(safeSelected.filter(tag => tag !== tagToRemove));
   };
 
   return (
@@ -44,13 +47,13 @@ export function TagMultiSelect({
         <PopoverTrigger asChild>
           <Button 
             variant="outline" 
-            className="w-full justify-start text-left font-normal"
+            className="w-full justify-start text-left font-normal min-h-[44px]"
             role="combobox"
             aria-expanded={open}
           >
-            {selected.length === 0 
+            {safeSelected.length === 0 
               ? (placeholder || `Select ${label.toLowerCase()}...`)
-              : `${selected.length} selected`
+              : `${safeSelected.length} selected`
             }
           </Button>
         </PopoverTrigger>
@@ -60,11 +63,12 @@ export function TagMultiSelect({
             <CommandEmpty>No options found.</CommandEmpty>
             <CommandGroup className="max-h-64 overflow-auto">
               {options.map(option => {
-                const isSelected = selected.includes(option);
+                const isSelected = safeSelected.includes(option);
                 return (
                   <CommandItem 
                     key={option} 
-                    onSelect={() => handleSelect(option)}
+                    value={option}
+                    onSelect={(value) => handleSelect(value)}
                     className="cursor-pointer"
                   >
                     <div className={cn(
@@ -84,9 +88,9 @@ export function TagMultiSelect({
         </PopoverContent>
       </Popover>
       
-      {selected.length > 0 && (
+      {safeSelected.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-2">
-          {selected.map(item => (
+          {safeSelected.map(item => (
             <Badge key={item} className={cn("pr-1", colorClass)}>
               {item}
               <button
