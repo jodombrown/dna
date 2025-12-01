@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Globe, Lightbulb, Heart, Target, Zap, Quote } from 'lucide-react';
+import { Users, Globe, Lightbulb, Heart, Target, Zap, Quote, Linkedin } from 'lucide-react';
 import JoinDNADialog from '@/components/auth/JoinDNADialog';
 import SurveyDialog from '@/components/survey/SurveyDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -163,7 +163,17 @@ const About = () => {
             {/* Bio Content */}
             <div className="space-y-8">
               <div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-4">Jaûne L. Odombrown</h3>
+                <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                  <a 
+                    href="https://www.linkedin.com/in/jaunelamarr/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="hover:text-dna-copper inline-flex items-center gap-2 transition-colors"
+                  >
+                    Jaûne L. Odombrown
+                    <Linkedin className="w-6 h-6" />
+                  </a>
+                </h3>
                 <p className="text-xl text-dna-copper font-semibold mb-6">Founder & Chief Executive Officer</p>
                 
                 <div className="space-y-6 text-gray-700 text-lg leading-relaxed">
