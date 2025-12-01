@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { Linkedin } from 'lucide-react';
 
 const HeroIntroduction = () => {
   return (
@@ -10,9 +10,10 @@ const HeroIntroduction = () => {
           href="https://www.linkedin.com/in/jaunelamarr/" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="text-dna-copper hover:text-dna-gold underline font-semibold"
+          className="text-dna-copper hover:text-dna-gold underline font-semibold inline-flex items-center gap-1"
         >
           Jaune Odombrown
+          <Linkedin className="w-4 h-4 inline-block" />
         </a>
         , an ecosystem builder and entrepreneur committed to uniting visionary leaders, builders, and changemakers across the African diaspora. These are individuals driven by purpose, rich in talent, and ready to accelerate Africa's transformation.
       </p>
