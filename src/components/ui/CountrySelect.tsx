@@ -14,9 +14,11 @@ interface CountrySelectProps {
 export default function CountrySelect({ value, onChange }: CountrySelectProps) {
   const [open, setOpen] = useState(false);
 
-  // Find the currently selected country by code (case-insensitive for resilience)
+  // Find the currently selected country by code OR name (case-insensitive for resilience)
+  // This supports both code-based and name-based value storage
   const selectedCountry = COUNTRIES.find((c) => 
-    c.code.toLowerCase() === (value || '').toLowerCase()
+    c.code.toLowerCase() === (value || '').toLowerCase() ||
+    c.name.toLowerCase() === (value || '').toLowerCase()
   );
 
   // CRITICAL FIX: Command component normalizes values to lowercase
