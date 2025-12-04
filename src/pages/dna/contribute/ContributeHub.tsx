@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Link } from 'react-router-dom';
@@ -9,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, DollarSign, Users, Clock, Key, Package } from 'lucide-react';
 import type { ContributionNeedWithSpace } from '@/types/contributeTypes';
 import { TYPOGRAPHY } from '@/lib/typography.config';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const typeIcons = {
   funding: DollarSign,
@@ -19,9 +19,7 @@ const typeIcons = {
 };
 
 const ContributeHub = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  useScrollToTop();
 
   const { data: featuredNeeds, isLoading } = useQuery({
     queryKey: ['featured-needs'],

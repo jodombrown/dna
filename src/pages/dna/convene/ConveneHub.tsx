@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { WelcomeStrip } from '@/components/convene/WelcomeStrip';
 import { EventRecommendations } from '@/components/events/EventRecommendations';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
@@ -9,11 +9,10 @@ import { ConveneContextWidgets } from '@/components/convene/ConveneContextWidget
 import EventCategoriesSection from '@/components/connect/EventCategoriesSection';
 import { CreateLeadSection } from '@/components/convene/CreateLeadSection';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const ConveneHub = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  useScrollToTop();
 
   return (
     <div className="w-full h-full overflow-auto pb-20 md:pb-0">

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
@@ -9,8 +9,10 @@ import { Users, Network, MessageSquare } from 'lucide-react';
 import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
 import { calculateProfileCompletion } from '@/components/profile/ProfileCompletionBar';
 import { TYPOGRAPHY } from '@/lib/typography.config';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const Connect = () => {
+  useScrollToTop();
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
@@ -39,10 +41,6 @@ const Connect = () => {
   }
 
   const completionScore = calculateProfileCompletion(profile);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   return (
     <div className="min-h-screen bg-background">

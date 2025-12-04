@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,14 +8,12 @@ import { SpaceWithMembership } from '@/types/spaceTypes';
 import { SuggestedSpaces } from '@/components/collaboration/SuggestedSpaces';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { TYPOGRAPHY } from '@/lib/typography.config';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 export default function CollaborateHub() {
+  useScrollToTop();
   const navigate = useNavigate();
   const { data: mySpaces, isLoading: mySpacesLoading } = useMySpaces();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   const renderSpaceCard = (space: SpaceWithMembership) => (
     <Card 
