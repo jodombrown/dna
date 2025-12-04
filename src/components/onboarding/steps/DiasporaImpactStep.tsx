@@ -37,16 +37,16 @@ interface DiasporaImpactStepProps {
 
 const DiasporaImpactStep: React.FC<DiasporaImpactStepProps> = ({ data, onUpdate, errors = {} }) => {
   return (
-    <div className="space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-dna-forest">Your Diaspora Story</h2>
-        <p className="text-muted-foreground">
+    <div className="space-y-6 max-w-2xl mx-auto px-4">
+      <div className="text-center space-y-2 pt-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-dna-forest">Your Diaspora Story</h2>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Share your connection to Africa and what brings you to this community.
         </p>
       </div>
 
       <Card>
-        <CardContent className="pt-6 space-y-6">
+        <CardContent className="p-4 sm:p-6 space-y-6">
           {/* Country of Origin */}
           <div className="space-y-2">
             <Label htmlFor="country_of_origin">Country of Origin *</Label>

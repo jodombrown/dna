@@ -20,8 +20,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { useMobile } from '@/hooks/useMobile';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 const DnaFeed = () => {
+  useScrollToTop();
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const navigate = useNavigate();

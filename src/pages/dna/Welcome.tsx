@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { WelcomeWizard } from '@/components/onboarding/WelcomeWizard';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 export default function Welcome() {
+  useScrollToTop();
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
   const navigate = useNavigate();

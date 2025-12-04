@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -44,6 +44,11 @@ export function WelcomeWizard() {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [selectedIntents, setSelectedIntents] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
 
   const handleIntentToggle = (intentId: string) => {
     setSelectedIntents(prev =>

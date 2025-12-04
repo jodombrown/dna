@@ -11,8 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import type { ConveyItemType } from '@/types/conveyTypes';
 import { useConveyAnalytics } from '@/hooks/useConveyAnalytics';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 
 export default function ConveyHub() {
+  useScrollToTop();
   const { logConveyEvent } = useConveyAnalytics();
   const [selectedType, setSelectedType] = useState<ConveyItemType | ''>('');
   const [selectedRegion, setSelectedRegion] = useState('');

@@ -56,16 +56,16 @@ interface ProfessionalStepProps {
 
 const ProfessionalStep: React.FC<ProfessionalStepProps> = ({ data, onUpdate, errors = {} }) => {
   return (
-    <div className="space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-dna-forest">Your Professional Identity</h2>
-        <p className="text-muted-foreground">
+    <div className="space-y-6 max-w-2xl mx-auto px-4">
+      <div className="text-center space-y-2 pt-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-dna-forest">Your Professional Identity</h2>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Help us understand your expertise and how you can contribute to the network.
         </p>
       </div>
 
       <Card>
-        <CardContent className="pt-6 space-y-6">
+        <CardContent className="p-4 sm:p-6 space-y-6">
           {/* Profession/Role */}
           <div className="space-y-2">
             <Label htmlFor="profession">Primary Profession or Role *</Label>
