@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Check, ChevronsUpDown } from 'lucide-react';
@@ -14,8 +14,10 @@ interface SearchableCountrySelectProps {
 export default function SearchableCountrySelect({ value, onChange }: SearchableCountrySelectProps) {
   const [open, setOpen] = useState(false);
 
-  // Find the currently selected country by name (value is the country name)
-  const selectedCountry = COUNTRIES.find((c) => c.name === value);
+  // Find the currently selected country by name (case-insensitive for resilience)
+  const selectedCountry = COUNTRIES.find((c) => 
+    c.name.toLowerCase() === (value || '').toLowerCase()
+  );
 
   // CRITICAL FIX: Command component normalizes values to lowercase
   // We must do case-insensitive lookup to find the original country
@@ -46,28 +48,30 @@ export default function SearchableCountrySelect({ value, onChange }: SearchableC
       <PopoverContent className="w-full p-0 bg-background border shadow-lg z-50" align="start">
         <Command>
           <CommandInput placeholder="Search countries..." />
-          <CommandEmpty>No country found.</CommandEmpty>
-          <CommandGroup className="max-h-64 overflow-auto">
-            {COUNTRIES.map((country) => {
-              const isSelected = selectedCountry?.code === country.code;
-              return (
-                <CommandItem
-                  key={country.code}
-                  value={country.name}
-                  onSelect={handleSelect}
-                  className="cursor-pointer"
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      isSelected ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {country.name}
-                </CommandItem>
-              );
-            })}
-          </CommandGroup>
+          <CommandList className="max-h-64 overflow-auto">
+            <CommandEmpty>No country found.</CommandEmpty>
+            <CommandGroup>
+              {COUNTRIES.map((country) => {
+                const isSelected = selectedCountry?.code === country.code;
+                return (
+                  <CommandItem
+                    key={country.code}
+                    value={country.name}
+                    onSelect={handleSelect}
+                    className="cursor-pointer"
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        isSelected ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {country.name}
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
