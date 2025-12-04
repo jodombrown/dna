@@ -86,7 +86,7 @@ const DiscoveryStep: React.FC<DiscoveryStepProps> = ({ data, onUpdate }) => {
             options={FOCUS_AREAS}
             selected={data.focus_areas}
             onChange={(value) => onUpdate('focus_areas', value)}
-            placeholder="Select areas where you want to make an impact (recommended: 2+)"
+            placeholder="Select areas (recommended: 2+)"
             colorClass="bg-dna-emerald/10 text-dna-emerald border-dna-emerald/20"
           />
 
@@ -96,7 +96,7 @@ const DiscoveryStep: React.FC<DiscoveryStepProps> = ({ data, onUpdate }) => {
             options={REGIONAL_EXPERTISE}
             selected={data.regional_expertise}
             onChange={(value) => onUpdate('regional_expertise', value)}
-            placeholder="Select regions where you have experience or interest (recommended: 1+)"
+            placeholder="Select regions (recommended: 1+)"
             colorClass="bg-cultural-terra/10 text-cultural-terra border-cultural-terra/20"
           />
 
@@ -106,7 +106,7 @@ const DiscoveryStep: React.FC<DiscoveryStepProps> = ({ data, onUpdate }) => {
             options={INDUSTRIES}
             selected={data.industries}
             onChange={(value) => onUpdate('industries', value)}
-            placeholder="Select industries you're involved in or interested in (recommended: 1+)"
+            placeholder="Select industries (recommended: 1+)"
             colorClass="bg-dna-copper/10 text-dna-copper border-dna-copper/20"
           />
 
