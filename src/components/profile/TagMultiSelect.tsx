@@ -28,11 +28,16 @@ export function TagMultiSelect({
   // Ensure selected is always an array
   const safeSelected = Array.isArray(selected) ? selected : [];
 
-  const handleSelect = (option: string) => {
-    if (safeSelected.includes(option)) {
-      onChange(safeSelected.filter(item => item !== option));
+  const handleSelect = (normalizedValue: string) => {
+    // Command component normalizes values to lowercase, so we need to find the original option
+    const originalOption = options.find(opt => opt.toLowerCase() === normalizedValue.toLowerCase());
+
+    if (!originalOption) return;
+
+    if (safeSelected.includes(originalOption)) {
+      onChange(safeSelected.filter(item => item !== originalOption));
     } else {
-      onChange([...safeSelected, option]);
+      onChange([...safeSelected, originalOption]);
     }
   };
 
