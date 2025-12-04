@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { X, Check } from "lucide-react";
@@ -68,30 +68,32 @@ export function TagMultiSelect({
         <PopoverContent className="w-full p-0 bg-background border shadow-lg z-50" align="start">
           <Command>
             <CommandInput placeholder={`Search ${label.toLowerCase()}...`} />
-            <CommandEmpty>No options found.</CommandEmpty>
-            <CommandGroup className="max-h-64 overflow-auto">
-              {options.map(option => {
-                const isSelected = safeSelected.includes(option);
-                return (
-                  <CommandItem 
-                    key={option} 
-                    value={option}
-                    onSelect={handleSelect}
-                    className="cursor-pointer"
-                  >
-                    <div className={cn(
-                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                      isSelected
-                        ? "bg-dna-emerald text-white"
-                        : "opacity-50 [&_svg]:invisible"
-                    )}>
-                      <Check className="h-4 w-4" />
-                    </div>
-                    <span>{option}</span>
-                  </CommandItem>
-                );
-              })}
-            </CommandGroup>
+            <CommandList className="max-h-64 overflow-auto">
+              <CommandEmpty>No options found.</CommandEmpty>
+              <CommandGroup>
+                {options.map(option => {
+                  const isSelected = safeSelected.includes(option);
+                  return (
+                    <CommandItem 
+                      key={option} 
+                      value={option}
+                      onSelect={handleSelect}
+                      className="cursor-pointer"
+                    >
+                      <div className={cn(
+                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                        isSelected
+                          ? "bg-dna-emerald text-white"
+                          : "opacity-50 [&_svg]:invisible"
+                      )}>
+                        <Check className="h-4 w-4" />
+                      </div>
+                      <span>{option}</span>
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>
