@@ -101,7 +101,7 @@ export function TagMultiSelect({
             }
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0 bg-background border shadow-lg z-50" align="start">
+        <PopoverContent className="w-[calc(100vw-2rem)] max-w-sm p-0 bg-background border shadow-lg z-50" align="start" sideOffset={4}>
           <Command shouldFilter={false}>
             <CommandInput 
               placeholder={`Search ${label.toLowerCase()}...`} 

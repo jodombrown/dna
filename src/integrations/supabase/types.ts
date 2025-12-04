@@ -4642,6 +4642,7 @@ export type Database = {
           email: string | null
           email_notifications: boolean | null
           email_visible: boolean | null
+          engagement_intentions: string[] | null
           event_interest_tags: Json | null
           facebook_url: string | null
           first_action_completed: boolean | null
@@ -4805,6 +4806,7 @@ export type Database = {
           email?: string | null
           email_notifications?: boolean | null
           email_visible?: boolean | null
+          engagement_intentions?: string[] | null
           event_interest_tags?: Json | null
           facebook_url?: string | null
           first_action_completed?: boolean | null
@@ -4968,6 +4970,7 @@ export type Database = {
           email?: string | null
           email_notifications?: boolean | null
           email_visible?: boolean | null
+          engagement_intentions?: string[] | null
           event_interest_tags?: Json | null
           facebook_url?: string | null
           first_action_completed?: boolean | null
