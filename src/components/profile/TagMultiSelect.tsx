@@ -25,14 +25,22 @@ export function TagMultiSelect({
 }: TagMultiSelectProps) {
   const [open, setOpen] = useState(false);
   
-  // Ensure selected is always an array
+  // Defensive: Ensure selected is always an array
   const safeSelected = Array.isArray(selected) ? selected : [];
 
-  const handleSelect = (option: string) => {
-    if (safeSelected.includes(option)) {
-      onChange(safeSelected.filter(item => item !== option));
+  // CRITICAL FIX: Command component normalizes values to lowercase
+  // We must do case-insensitive lookup to find the original option
+  const handleSelect = (normalizedValue: string) => {
+    const originalOption = options.find(
+      opt => opt.toLowerCase() === normalizedValue.toLowerCase()
+    );
+
+    if (!originalOption) return; // Guard clause
+
+    if (safeSelected.includes(originalOption)) {
+      onChange(safeSelected.filter(item => item !== originalOption));
     } else {
-      onChange([...safeSelected, option]);
+      onChange([...safeSelected, originalOption]);
     }
   };
 
@@ -47,7 +55,7 @@ export function TagMultiSelect({
         <PopoverTrigger asChild>
           <Button 
             variant="outline" 
-            className="w-full justify-start text-left font-normal min-h-[44px]"
+            className="w-full justify-start text-left font-normal min-h-[44px] bg-background"
             role="combobox"
             aria-expanded={open}
           >
@@ -57,7 +65,7 @@ export function TagMultiSelect({
             }
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
+        <PopoverContent className="w-full p-0 bg-background border shadow-lg z-50" align="start">
           <Command>
             <CommandInput placeholder={`Search ${label.toLowerCase()}...`} />
             <CommandEmpty>No options found.</CommandEmpty>
@@ -68,7 +76,7 @@ export function TagMultiSelect({
                   <CommandItem 
                     key={option} 
                     value={option}
-                    onSelect={(value) => handleSelect(value)}
+                    onSelect={handleSelect}
                     className="cursor-pointer"
                   >
                     <div className={cn(
