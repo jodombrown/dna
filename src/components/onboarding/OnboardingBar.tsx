@@ -98,23 +98,28 @@ const OnboardingBar: React.FC = () => {
 
   return (
     <Card className="p-4 border border-border shadow-sm">
-      <div className="flex items-start justify-between gap-4 flex-col lg:flex-row">
+      <div className="space-y-4">
+        {/* Header */}
         <div className="space-y-1">
-          <h3 className="text-base font-semibold text-foreground">Finish these quick steps to personalize your profile</h3>
-          <p className="text-sm text-muted-foreground">Required: name, location, photo</p>
+          <h3 className="text-sm sm:text-base font-semibold text-foreground">Complete your profile</h3>
+          <p className="text-xs sm:text-sm text-muted-foreground">Name, location & photo required</p>
         </div>
-        <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
-          <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" aria-label="First name" />
-          <Input value={middleInitial} onChange={(e) => setMiddleInitial(e.target.value.slice(0,1).toUpperCase())} placeholder="M" aria-label="Middle initial" />
-          <Input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" aria-label="Last name" />
+        
+        {/* Form Fields - stacked on mobile, grid on larger screens */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" aria-label="First name" className="w-full" />
+          <Input value={middleInitial} onChange={(e) => setMiddleInitial(e.target.value.slice(0,1).toUpperCase())} placeholder="M" aria-label="Middle initial" className="w-full sm:w-16 lg:w-full" />
+          <Input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" aria-label="Last name" className="w-full" />
           <LocationTypeahead value={location} onChange={setLocation} />
           <AvatarUploader value={avatar} onUploaded={(url) => setAvatar(url)} />
         </div>
-        <div className="flex items-center gap-3">
-          <Button onClick={onSave} disabled={saving || !isValid}>
+        
+        {/* Actions - stacked on mobile */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <Button onClick={onSave} disabled={saving || !isValid} className="w-full sm:w-auto">
             {saving ? "Saving..." : "Save & Continue"}
           </Button>
-          <a href="/app/profile" className="text-sm text-primary underline">Edit full profile</a>
+          <a href="/dna/feed" className="text-sm text-primary underline text-center sm:text-left">Skip for now</a>
         </div>
       </div>
     </Card>
