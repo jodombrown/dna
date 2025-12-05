@@ -4685,6 +4685,7 @@ export type Database = {
           mentorship_interest: string[] | null
           mentorship_offering: boolean | null
           middle_initial: string | null
+          my_dna_statement: string | null
           needs: string[] | null
           networking_goals: string[] | null
           newsletter_emails: boolean | null
@@ -4849,6 +4850,7 @@ export type Database = {
           mentorship_interest?: string[] | null
           mentorship_offering?: boolean | null
           middle_initial?: string | null
+          my_dna_statement?: string | null
           needs?: string[] | null
           networking_goals?: string[] | null
           newsletter_emails?: boolean | null
@@ -5013,6 +5015,7 @@ export type Database = {
           mentorship_interest?: string[] | null
           mentorship_offering?: boolean | null
           middle_initial?: string | null
+          my_dna_statement?: string | null
           needs?: string[] | null
           networking_goals?: string[] | null
           newsletter_emails?: boolean | null
