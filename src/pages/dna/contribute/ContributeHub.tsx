@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabaseHelpers';
 import { Link } from 'react-router-dom';
@@ -19,10 +19,6 @@ const typeIcons = {
 };
 
 const ContributeHub = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   const { data: featuredNeeds, isLoading } = useQuery({
     queryKey: ['featured-needs'],
     queryFn: async () => {
@@ -43,8 +39,8 @@ const ContributeHub = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-4 pb-20 md:pb-8 max-w-7xl">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-7xl">
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className={`${TYPOGRAPHY.h1} mb-4`}>

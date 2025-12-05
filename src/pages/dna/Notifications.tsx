@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
@@ -8,10 +8,6 @@ import { Bell } from 'lucide-react';
 const DnaNotifications = () => {
   const { user } = useAuth();
   const { data: profile, isLoading } = useProfile();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   if (isLoading) {
     return (
@@ -26,8 +22,8 @@ const DnaNotifications = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-4 pb-20 md:pb-8 max-w-3xl">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-3xl">
         <div className="flex items-center gap-3 mb-6">
           <Bell className="w-6 h-6 text-primary" />
           <h1 className="text-2xl font-bold">Notifications</h1>
