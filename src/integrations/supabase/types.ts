@@ -4591,11 +4591,13 @@ export type Database = {
       profiles: {
         Row: {
           account_visibility: string | null
+          achievements: string | null
           adin_mode: string | null
           adin_prompt_status: string | null
           advocacy_interests: string[] | null
           africa_focus_areas: string[] | null
           agrees_to_values: boolean | null
+          availability_for_mentoring: boolean | null
           availability_hours_per_month: number | null
           availability_tags: Json | null
           availability_visible: boolean | null
@@ -4614,8 +4616,11 @@ export type Database = {
           beta_signup_data: Json | null
           beta_status: string | null
           bio: string | null
+          certifications: string | null
+          city: string | null
           collaboration_needs: string[] | null
           collaboration_tags: Json | null
+          community_involvement: string | null
           company: string | null
           connection_count: number | null
           contribution_style: string | null
@@ -4634,11 +4639,13 @@ export type Database = {
           current_region: string | null
           dashboard_version: string | null
           deleted_at: string | null
+          diaspora_networks: string[] | null
           diaspora_origin: string | null
           diaspora_status: string | null
           diaspora_story: string | null
           diaspora_tags: Json | null
           display_name: string | null
+          education: string | null
           email: string | null
           email_notifications: boolean | null
           email_visible: boolean | null
@@ -4652,8 +4659,10 @@ export type Database = {
           full_name: string | null
           fundraising_status: string | null
           github_url: string | null
+          giving_back_initiatives: string | null
           headline: string | null
           hidden_activity_ids: Json | null
+          home_country_projects: string | null
           id: string
           impact_areas: string[] | null
           impact_goals: string[] | null
@@ -4661,6 +4670,7 @@ export type Database = {
           industries: string[] | null
           industry: string | null
           industry_sectors: string[] | null
+          innovation_pathways: string | null
           instagram_url: string | null
           intent_tags: Json | null
           intentions: string[] | null
@@ -4682,13 +4692,17 @@ export type Database = {
           linkedin_url: string | null
           location: string | null
           location_preference: string | null
+          looking_for_opportunities: boolean | null
+          mentorship_areas: string[] | null
           mentorship_interest: string[] | null
           mentorship_offering: boolean | null
           middle_initial: string | null
+          my_dna_statement: string | null
           needs: string[] | null
           networking_goals: string[] | null
           newsletter_emails: boolean | null
           notification_preferences: Json | null
+          notifications_enabled: boolean | null
           offers: string[] | null
           onboarding_completed: boolean | null
           onboarding_completed_at: string | null
@@ -4696,12 +4710,18 @@ export type Database = {
           onboarding_recommendations_viewed: boolean | null
           onboarding_stage: string | null
           open_to_opportunities: boolean | null
+          organization: string | null
+          organization_category: string | null
+          organization_name: string | null
           origin_country_code: string | null
           origin_country_name: string | null
+          past_contributions: string | null
+          phone: string | null
           pinned_activity_ids: Json | null
           preferred_contact: string | null
           profession: string | null
           professional_role: string | null
+          professional_sectors: string[] | null
           professional_summary: string | null
           profile_completeness_score: number | null
           profile_completion_percentage: number | null
@@ -4722,6 +4742,8 @@ export type Database = {
           selected_pillars: string[] | null
           skill_tags: Json | null
           skills: string[] | null
+          skills_needed: string[] | null
+          skills_offered: string[] | null
           support_areas: string[] | null
           twitter_handle: string | null
           twitter_url: string | null
@@ -4744,6 +4766,7 @@ export type Database = {
           verified: boolean | null
           verified_at: string | null
           visibility: Json | null
+          volunteer_experience: string | null
           website_url: string | null
           what_to_give: string[] | null
           what_to_receive: string[] | null
@@ -4755,11 +4778,13 @@ export type Database = {
         }
         Insert: {
           account_visibility?: string | null
+          achievements?: string | null
           adin_mode?: string | null
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           africa_focus_areas?: string[] | null
           agrees_to_values?: boolean | null
+          availability_for_mentoring?: boolean | null
           availability_hours_per_month?: number | null
           availability_tags?: Json | null
           availability_visible?: boolean | null
@@ -4778,8 +4803,11 @@ export type Database = {
           beta_signup_data?: Json | null
           beta_status?: string | null
           bio?: string | null
+          certifications?: string | null
+          city?: string | null
           collaboration_needs?: string[] | null
           collaboration_tags?: Json | null
+          community_involvement?: string | null
           company?: string | null
           connection_count?: number | null
           contribution_style?: string | null
@@ -4798,11 +4826,13 @@ export type Database = {
           current_region?: string | null
           dashboard_version?: string | null
           deleted_at?: string | null
+          diaspora_networks?: string[] | null
           diaspora_origin?: string | null
           diaspora_status?: string | null
           diaspora_story?: string | null
           diaspora_tags?: Json | null
           display_name?: string | null
+          education?: string | null
           email?: string | null
           email_notifications?: boolean | null
           email_visible?: boolean | null
@@ -4816,8 +4846,10 @@ export type Database = {
           full_name?: string | null
           fundraising_status?: string | null
           github_url?: string | null
+          giving_back_initiatives?: string | null
           headline?: string | null
           hidden_activity_ids?: Json | null
+          home_country_projects?: string | null
           id: string
           impact_areas?: string[] | null
           impact_goals?: string[] | null
@@ -4825,6 +4857,7 @@ export type Database = {
           industries?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
+          innovation_pathways?: string | null
           instagram_url?: string | null
           intent_tags?: Json | null
           intentions?: string[] | null
@@ -4846,13 +4879,17 @@ export type Database = {
           linkedin_url?: string | null
           location?: string | null
           location_preference?: string | null
+          looking_for_opportunities?: boolean | null
+          mentorship_areas?: string[] | null
           mentorship_interest?: string[] | null
           mentorship_offering?: boolean | null
           middle_initial?: string | null
+          my_dna_statement?: string | null
           needs?: string[] | null
           networking_goals?: string[] | null
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
+          notifications_enabled?: boolean | null
           offers?: string[] | null
           onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
@@ -4860,12 +4897,18 @@ export type Database = {
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
           open_to_opportunities?: boolean | null
+          organization?: string | null
+          organization_category?: string | null
+          organization_name?: string | null
           origin_country_code?: string | null
           origin_country_name?: string | null
+          past_contributions?: string | null
+          phone?: string | null
           pinned_activity_ids?: Json | null
           preferred_contact?: string | null
           profession?: string | null
           professional_role?: string | null
+          professional_sectors?: string[] | null
           professional_summary?: string | null
           profile_completeness_score?: number | null
           profile_completion_percentage?: number | null
@@ -4886,6 +4929,8 @@ export type Database = {
           selected_pillars?: string[] | null
           skill_tags?: Json | null
           skills?: string[] | null
+          skills_needed?: string[] | null
+          skills_offered?: string[] | null
           support_areas?: string[] | null
           twitter_handle?: string | null
           twitter_url?: string | null
@@ -4908,6 +4953,7 @@ export type Database = {
           verified?: boolean | null
           verified_at?: string | null
           visibility?: Json | null
+          volunteer_experience?: string | null
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
@@ -4919,11 +4965,13 @@ export type Database = {
         }
         Update: {
           account_visibility?: string | null
+          achievements?: string | null
           adin_mode?: string | null
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           africa_focus_areas?: string[] | null
           agrees_to_values?: boolean | null
+          availability_for_mentoring?: boolean | null
           availability_hours_per_month?: number | null
           availability_tags?: Json | null
           availability_visible?: boolean | null
@@ -4942,8 +4990,11 @@ export type Database = {
           beta_signup_data?: Json | null
           beta_status?: string | null
           bio?: string | null
+          certifications?: string | null
+          city?: string | null
           collaboration_needs?: string[] | null
           collaboration_tags?: Json | null
+          community_involvement?: string | null
           company?: string | null
           connection_count?: number | null
           contribution_style?: string | null
@@ -4962,11 +5013,13 @@ export type Database = {
           current_region?: string | null
           dashboard_version?: string | null
           deleted_at?: string | null
+          diaspora_networks?: string[] | null
           diaspora_origin?: string | null
           diaspora_status?: string | null
           diaspora_story?: string | null
           diaspora_tags?: Json | null
           display_name?: string | null
+          education?: string | null
           email?: string | null
           email_notifications?: boolean | null
           email_visible?: boolean | null
@@ -4980,8 +5033,10 @@ export type Database = {
           full_name?: string | null
           fundraising_status?: string | null
           github_url?: string | null
+          giving_back_initiatives?: string | null
           headline?: string | null
           hidden_activity_ids?: Json | null
+          home_country_projects?: string | null
           id?: string
           impact_areas?: string[] | null
           impact_goals?: string[] | null
@@ -4989,6 +5044,7 @@ export type Database = {
           industries?: string[] | null
           industry?: string | null
           industry_sectors?: string[] | null
+          innovation_pathways?: string | null
           instagram_url?: string | null
           intent_tags?: Json | null
           intentions?: string[] | null
@@ -5010,13 +5066,17 @@ export type Database = {
           linkedin_url?: string | null
           location?: string | null
           location_preference?: string | null
+          looking_for_opportunities?: boolean | null
+          mentorship_areas?: string[] | null
           mentorship_interest?: string[] | null
           mentorship_offering?: boolean | null
           middle_initial?: string | null
+          my_dna_statement?: string | null
           needs?: string[] | null
           networking_goals?: string[] | null
           newsletter_emails?: boolean | null
           notification_preferences?: Json | null
+          notifications_enabled?: boolean | null
           offers?: string[] | null
           onboarding_completed?: boolean | null
           onboarding_completed_at?: string | null
@@ -5024,12 +5084,18 @@ export type Database = {
           onboarding_recommendations_viewed?: boolean | null
           onboarding_stage?: string | null
           open_to_opportunities?: boolean | null
+          organization?: string | null
+          organization_category?: string | null
+          organization_name?: string | null
           origin_country_code?: string | null
           origin_country_name?: string | null
+          past_contributions?: string | null
+          phone?: string | null
           pinned_activity_ids?: Json | null
           preferred_contact?: string | null
           profession?: string | null
           professional_role?: string | null
+          professional_sectors?: string[] | null
           professional_summary?: string | null
           profile_completeness_score?: number | null
           profile_completion_percentage?: number | null
@@ -5050,6 +5116,8 @@ export type Database = {
           selected_pillars?: string[] | null
           skill_tags?: Json | null
           skills?: string[] | null
+          skills_needed?: string[] | null
+          skills_offered?: string[] | null
           support_areas?: string[] | null
           twitter_handle?: string | null
           twitter_url?: string | null
@@ -5072,6 +5140,7 @@ export type Database = {
           verified?: boolean | null
           verified_at?: string | null
           visibility?: Json | null
+          volunteer_experience?: string | null
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null

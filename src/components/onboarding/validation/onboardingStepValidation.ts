@@ -54,55 +54,34 @@ export const validateIdentityStep = (data: any): ValidationError[] => {
   return errors;
 };
 
-export const validateProfessionalStep = (data: any): ValidationError[] => {
+// Username validation for step 2
+export const validateUsernameStep = (data: any): ValidationError[] => {
   const errors: ValidationError[] = [];
 
-  if (!data.profession?.trim()) {
-    errors.push({ field: 'profession', message: 'Profession or role is required' });
-  }
-
-  if (!data.professional_sectors || data.professional_sectors.length < 1) {
-    errors.push({ 
-      field: 'professional_sectors', 
-      message: 'Please select or type at least 1 professional sector' 
-    });
-  }
-
-  if (!data.skills || data.skills.length < 1) {
-    errors.push({ 
-      field: 'skills', 
-      message: 'Please select or type at least 1 skill' 
-    });
-  }
-
-  if (!data.years_experience) {
-    errors.push({ field: 'years_experience', message: 'Years of experience is required' });
+  if (!data.username?.trim()) {
+    errors.push({ field: 'username', message: 'Please choose a username' });
+  } else if (data.username.trim().length < 3) {
+    errors.push({ field: 'username', message: 'Username must be at least 3 characters' });
+  } else if (data.username.trim().length > 20) {
+    errors.push({ field: 'username', message: 'Username must be less than 20 characters' });
+  } else if (!/^[a-z0-9._-]+$/.test(data.username.trim())) {
+    errors.push({ field: 'username', message: 'Username can only contain lowercase letters, numbers, dots, underscores, and hyphens' });
   }
 
   return errors;
 };
 
+// Professional fields are now optional - deferred to in-app completion
+export const validateProfessionalStep = (data: any): ValidationError[] => {
+  return []; // All fields optional - deferred to profile completion
+};
+
+// Simplified - only country_of_origin required now
 export const validateDiasporaImpactStep = (data: any): ValidationError[] => {
   const errors: ValidationError[] = [];
 
   if (!data.country_of_origin?.trim()) {
     errors.push({ field: 'country_of_origin', message: 'Country of origin is required' });
-  }
-
-  if (!data.interests || data.interests.length < 2) {
-    errors.push({ 
-      field: 'interests', 
-      message: 'Please select at least 2 areas of interest' 
-    });
-  }
-
-  if (!data.my_dna_statement?.trim()) {
-    errors.push({ field: 'my_dna_statement', message: 'DNA statement is required' });
-  } else if (data.my_dna_statement.trim().length < 50) {
-    errors.push({ 
-      field: 'my_dna_statement', 
-      message: 'DNA statement must be at least 50 characters' 
-    });
   }
 
   return errors;
@@ -120,11 +99,9 @@ export const validateStep = (step: number, data: any): ValidationError[] => {
     case 1:
       return validateIdentityStep(data);
     case 2:
-      return validateProfessionalStep(data);
+      return validateUsernameStep(data);
     case 3:
       return validateDiasporaImpactStep(data);
-    case 4:
-      return validateDiscoveryStep(data);
     default:
       return [];
   }
