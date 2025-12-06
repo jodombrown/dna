@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const uploadMedia = async (
   file: File, 
   userId: string, 
-  bucket: 'user-posts' | 'profile-pictures' | 'profile-images' | 'event-images' | 'story-hero-images'
+  bucket: 'user-posts' | 'profile-pictures' | 'profile-images' | 'event-images' | 'story-hero-images' | 'post-media'
 ) => {
   // Sanitize filename to avoid storage InvalidKey errors (remove diacritics/spaces)
   const normalize = (str: string) =>
