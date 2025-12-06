@@ -4698,6 +4698,7 @@ export type Database = {
           onboarding_stage: string | null
           open_to_opportunities: boolean | null
           organization_category: string | null
+          organization_name: string | null
           origin_country_code: string | null
           origin_country_name: string | null
           pinned_activity_ids: Json | null
@@ -4864,6 +4865,7 @@ export type Database = {
           onboarding_stage?: string | null
           open_to_opportunities?: boolean | null
           organization_category?: string | null
+          organization_name?: string | null
           origin_country_code?: string | null
           origin_country_name?: string | null
           pinned_activity_ids?: Json | null
@@ -5030,6 +5032,7 @@ export type Database = {
           onboarding_stage?: string | null
           open_to_opportunities?: boolean | null
           organization_category?: string | null
+          organization_name?: string | null
           origin_country_code?: string | null
           origin_country_name?: string | null
           pinned_activity_ids?: Json | null
