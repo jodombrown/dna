@@ -20,7 +20,7 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
       
       const { data, error } = await supabase
         .from('profiles')
-        .select('onboarding_completed_at, username, profile_completion_percentage')
+        .select('onboarding_completed_at, username')
         .eq('id', user.id)
         .single();
       
@@ -45,23 +45,18 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
       return;
     }
 
-    const completionPercentage = profile?.profile_completion_percentage || 0;
-    const hasCompletedOnboarding = profile?.onboarding_completed_at;
+    const hasCompletedOnboarding = !!profile?.onboarding_completed_at;
 
-    // CRITICAL: Enforce 40% minimum profile completion
-    // Users must complete onboarding AND reach 40% completion to access platform
-    const meetsMinimumRequirement = hasCompletedOnboarding && completionPercentage >= 40;
-
-    // If requirements not met and not already on onboarding page, redirect
-    if (!meetsMinimumRequirement && location.pathname !== '/onboarding') {
-      console.log(`OnboardingGuard: Requirements not met (completed: ${hasCompletedOnboarding}, completion: ${completionPercentage}%), redirecting to /onboarding`);
+    // If onboarding not completed and not already on onboarding page, redirect
+    if (!hasCompletedOnboarding && location.pathname !== '/onboarding') {
+      console.log('OnboardingGuard: Onboarding not completed, redirecting to /onboarding');
       navigate('/onboarding', { replace: true });
       return;
     }
 
-    // If requirements met but trying to access onboarding page, redirect to dashboard
-    if (meetsMinimumRequirement && location.pathname === '/onboarding') {
-      console.log('OnboardingGuard: Requirements met, redirecting to /dna/feed');
+    // If onboarding completed but trying to access onboarding page, redirect to feed
+    if (hasCompletedOnboarding && location.pathname === '/onboarding') {
+      console.log('OnboardingGuard: Onboarding already completed, redirecting to /dna/feed');
       navigate('/dna/feed', { replace: true });
     }
   }, [profile, user, authLoading, profileLoading, navigate, location.pathname]);
