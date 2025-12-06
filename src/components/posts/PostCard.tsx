@@ -29,6 +29,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { usePostViewTracker } from '@/hooks/usePostViewTracker';
 import { PostAnalytics } from './PostAnalytics';
 import { feedAnalytics } from '@/lib/feedAnalytics';
+import { MediaLightbox } from '@/components/feed/MediaLightbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,6 +65,7 @@ export function PostCard({
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showLikedByModal, setShowLikedByModal] = useState(false);
   const [showReshareDialog, setShowReshareDialog] = useState(false);
+  const [showMediaLightbox, setShowMediaLightbox] = useState(false);
   
   // Post reactions (emoji reactions)
   const {
@@ -308,15 +310,21 @@ export function PostCard({
             <p className="whitespace-pre-wrap break-words">{post.content}</p>
           </div>
 
-          {/* Media Display - Image or Video */}
+          {/* Media Display - Image or Video - Clickable to open lightbox */}
           {post.image_url && (
-            <div className="mb-4 rounded-lg overflow-hidden border">
+            <div 
+              className="mb-4 rounded-lg overflow-hidden border cursor-pointer hover:opacity-95 transition-opacity"
+              onClick={() => setShowMediaLightbox(true)}
+            >
               {/* Check if it's a video based on file extension */}
               {post.image_url.match(/\.(mp4|webm|mov|quicktime)$/i) ? (
                 <video
                   src={post.image_url}
-                  controls
                   className="w-full h-auto max-h-[32rem] object-cover"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowMediaLightbox(true);
+                  }}
                 >
                   Your browser does not support the video tag.
                 </video>
@@ -496,6 +504,16 @@ export function PostCard({
             full_name: profile.full_name,
             avatar_url: profile.avatar_url,
           }}
+        />
+      )}
+
+      {/* Media Lightbox */}
+      {post.image_url && (
+        <MediaLightbox
+          open={showMediaLightbox}
+          onOpenChange={setShowMediaLightbox}
+          mediaUrl={post.image_url}
+          alt={`Media from ${post.author_full_name}'s post`}
         />
       )}
     </Card>
