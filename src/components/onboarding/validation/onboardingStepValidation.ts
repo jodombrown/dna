@@ -7,19 +7,10 @@ export const validateUserTypeStep = (data: any): ValidationError[] => {
   const errors: ValidationError[] = [];
 
   if (!data.user_type) {
-    errors.push({ field: 'user_type', message: 'Please select whether you are joining as an individual or organization' });
+    errors.push({ field: 'user_type', message: 'Please select how you are joining DNA' });
   }
 
-  // If organization, require organization details
-  if (data.user_type === 'organization') {
-    if (!data.organization_name?.trim()) {
-      errors.push({ field: 'organization_name', message: 'Organization name is required' });
-    }
-    if (!data.organization_category?.trim()) {
-      errors.push({ field: 'organization_category', message: 'Organization category is required' });
-    }
-  }
-
+  // Organization type is disabled for now, so no org-specific validation needed
   return errors;
 };
 

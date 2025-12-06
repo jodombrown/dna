@@ -1,10 +1,8 @@
 import { useState } from 'react';
 
 export interface OnboardingFormData {
-  // Step 0: User Type
-  user_type: 'individual' | 'organization';
-  organization_name: string;
-  organization_category: string;
+  // Step 0: User Type (must match DB constraint: individual, organization, diaspora_professional, founder, ally)
+  user_type: 'individual' | 'organization' | 'diaspora_professional' | 'founder' | 'ally';
 
   // Step 1: Identity
   first_name: string;
@@ -13,12 +11,8 @@ export interface OnboardingFormData {
   current_country: string;
   headline: string;
 
-  // Step 2: Professional
-  profession: string;
-  professional_role: string;
-  professional_sectors: string[];
-  skills: string[];
-  years_experience: string;
+  // Step 2: Username
+  username: string;
 
   // Step 3: Diaspora & Impact
   country_of_origin: string;
@@ -26,7 +20,12 @@ export interface OnboardingFormData {
   interests: string[];
   my_dna_statement: string;
 
-  // Step 4: Discovery (Optional)
+  // Deferred fields (for later profile completion)
+  profession: string;
+  professional_role: string;
+  professional_sectors: string[];
+  skills: string[];
+  years_experience: string;
   focus_areas: string[];
   regional_expertise: string[];
   industries: string[];
@@ -37,8 +36,6 @@ export const useOnboardingForm = (initialData?: Partial<OnboardingFormData>) => 
   const [formData, setFormData] = useState<OnboardingFormData>({
     // Step 0
     user_type: initialData?.user_type || 'individual',
-    organization_name: initialData?.organization_name || '',
-    organization_category: initialData?.organization_category || '',
 
     // Step 1
     first_name: initialData?.first_name || '',
@@ -48,11 +45,7 @@ export const useOnboardingForm = (initialData?: Partial<OnboardingFormData>) => 
     headline: initialData?.headline || '',
 
     // Step 2
-    profession: initialData?.profession || '',
-    professional_role: initialData?.professional_role || '',
-    professional_sectors: initialData?.professional_sectors || [],
-    skills: initialData?.skills || [],
-    years_experience: initialData?.years_experience || '',
+    username: initialData?.username || '',
 
     // Step 3
     country_of_origin: initialData?.country_of_origin || '',
@@ -60,7 +53,12 @@ export const useOnboardingForm = (initialData?: Partial<OnboardingFormData>) => 
     interests: initialData?.interests || [],
     my_dna_statement: initialData?.my_dna_statement || '',
 
-    // Step 4
+    // Deferred fields
+    profession: initialData?.profession || '',
+    professional_role: initialData?.professional_role || '',
+    professional_sectors: initialData?.professional_sectors || [],
+    skills: initialData?.skills || [],
+    years_experience: initialData?.years_experience || '',
     focus_areas: initialData?.focus_areas || [],
     regional_expertise: initialData?.regional_expertise || [],
     industries: initialData?.industries || [],

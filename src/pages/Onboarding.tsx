@@ -24,9 +24,7 @@ const Onboarding = () => {
 
   // Initialize form with any existing profile data
   const { formData, updateField } = useOnboardingForm({
-    user_type: (profile as any)?.user_type || 'individual',
-    organization_name: (profile as any)?.organization_name || '',
-    organization_category: (profile as any)?.organization_category || '',
+    user_type: ((profile as any)?.user_type as any) || 'individual',
     first_name: profile?.first_name || user?.user_metadata?.full_name?.split(' ')[0] || '',
     last_name: profile?.last_name || user?.user_metadata?.full_name?.split(' ').slice(1).join(' ') || '',
     avatar_url: profile?.avatar_url || user?.user_metadata?.picture || '',
@@ -113,7 +111,7 @@ const Onboarding = () => {
       // Use the username chosen by the user (already validated in step 2)
       const fullName = `${formData.first_name.trim()} ${formData.last_name.trim()}`.trim();
 
-      // Prepare profile data
+      // Prepare profile data - only include fields that exist in DB
       const profileData: any = {
         id: user.id,
         email: user.email,
@@ -123,23 +121,21 @@ const Onboarding = () => {
         username: formData.username,
         avatar_url: formData.avatar_url,
         current_country: formData.current_country,
-        headline: formData.headline,
-        user_type: formData.user_type,
-        organization_name: formData.user_type === 'organization' ? formData.organization_name : null,
-        organization_category: formData.user_type === 'organization' ? formData.organization_category : null,
-        profession: formData.profession,
-        professional_role: formData.professional_role,
-        professional_sectors: formData.professional_sectors,
-        skills: formData.skills,
+        headline: formData.headline || null,
+        user_type: formData.user_type || 'individual',
+        profession: formData.profession || null,
+        professional_role: formData.professional_role || null,
+        professional_sectors: formData.professional_sectors || [],
+        skills: formData.skills || [],
         years_experience: formData.years_experience ? parseInt(formData.years_experience.split('-')[0]) : null,
         country_of_origin: formData.country_of_origin,
         diaspora_origin: formData.diaspora_origin || null,
-        interests: formData.interests,
-        my_dna_statement: formData.my_dna_statement,
-        focus_areas: formData.focus_areas,
-        regional_expertise: formData.regional_expertise,
-        industries: formData.industries,
-        engagement_intentions: formData.engagement_intentions,
+        interests: formData.interests || [],
+        my_dna_statement: formData.my_dna_statement || null,
+        focus_areas: formData.focus_areas || [],
+        regional_expertise: formData.regional_expertise || [],
+        industries: formData.industries || [],
+        engagement_intentions: formData.engagement_intentions || [],
         is_public: true,
         updated_at: new Date().toISOString()
       };
@@ -244,8 +240,8 @@ const Onboarding = () => {
           <UserTypeStep
             data={{
               user_type: formData.user_type,
-              organization_name: formData.organization_name,
-              organization_category: formData.organization_category,
+              organization_name: '',
+              organization_category: '',
             }}
             onUpdate={(field, value) => updateField(field as any, value)}
             errors={errors}
