@@ -62,22 +62,22 @@ export default function ConveyHub() {
   };
 
   const centerColumn = (
-    <div className="py-8 px-4">
+    <div className="py-4 lg:py-8 px-4 sm:px-6">
       {/* Hero Section */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-foreground mb-4">
+      <div className="mb-6 lg:mb-8">
+        <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3 sm:mb-4">
           CONVEY
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl">
+        <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
           Stories and updates from the DNA community across the African world
         </p>
       </div>
 
       {/* Filters */}
-      <div className="mb-6 p-4 bg-card border border-border rounded-lg">
-        <div className="flex flex-wrap gap-4 items-center">
+      <div className="mb-6 p-3 sm:p-4 bg-card border border-border rounded-lg">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
           <Select value={selectedType} onValueChange={handleTypeChange}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-full sm:w-48">
               <SelectValue placeholder="All types" />
             </SelectTrigger>
             <SelectContent>
@@ -89,7 +89,7 @@ export default function ConveyHub() {
           </Select>
 
           <Select value={selectedRegion} onValueChange={handleRegionChange}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-full sm:w-48">
               <SelectValue placeholder="All regions" />
             </SelectTrigger>
             <SelectContent>

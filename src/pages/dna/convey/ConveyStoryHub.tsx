@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
@@ -22,10 +22,6 @@ export default function ConveyStoryHub() {
   const [activeTab, setActiveTab] = useState<StoryTab>('all');
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   if (!user) {
     return (

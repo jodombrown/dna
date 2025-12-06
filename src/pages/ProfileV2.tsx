@@ -22,6 +22,7 @@ import ProfileV2Interests from '@/components/profile-v2/ProfileV2Interests';
 import ProfileV2Activity from '@/components/profile-v2/ProfileV2Activity';
 import ProfileV2Completion from '@/components/profile-v2/ProfileV2Completion';
 import ProfileV2Verification from '@/components/profile-v2/ProfileV2Verification';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 const ProfileV2: React.FC = () => {
   const { username } = useParams<{ username: string }>();
@@ -97,7 +98,7 @@ const ProfileV2: React.FC = () => {
   const { profile, tags, activity, permissions, visibility, completion, verification_meta } = bundle;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Hero Section */}
       <ProfileV2Hero
         profile={profile}
@@ -108,8 +109,8 @@ const ProfileV2: React.FC = () => {
       />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-6">
             <ProfileV2About
@@ -169,6 +170,7 @@ const ProfileV2: React.FC = () => {
           </div>
         </div>
       </div>
+      <MobileBottomNav />
     </div>
   );
 };

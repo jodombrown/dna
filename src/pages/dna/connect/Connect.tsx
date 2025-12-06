@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
@@ -40,16 +40,12 @@ const Connect = () => {
 
   const completionScore = calculateProfileCompletion(profile);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-4 pb-20 md:pb-8 max-w-7xl">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-7xl">
         {/* Header with Profile Strength */}
-        <div className="flex items-start justify-between mb-8 gap-4">
-          <div>
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-6 lg:mb-8 gap-4">
+          <div className="flex-1 min-w-0">
             <h1 className={`${TYPOGRAPHY.h1} mb-2`}>
               Connect
             </h1>
@@ -57,8 +53,8 @@ const Connect = () => {
               Discover, connect, and engage with your network
             </p>
           </div>
-          
-          <div className="hidden lg:block w-80">
+
+          <div className="hidden lg:block lg:w-80 shrink-0">
             <ProfileStrengthCard completionScore={completionScore} compact />
           </div>
         </div>

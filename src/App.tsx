@@ -10,6 +10,7 @@ import { AccountDrawerProvider } from "@/contexts/AccountDrawerContext";
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import BaseLayout from "@/layouts/BaseLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 // Core pages
 import Index from "./pages/Index";
@@ -184,6 +185,7 @@ function App() {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
             <AuthProvider>
               <AccountDrawerProvider>
                 <ViewStateProvider>

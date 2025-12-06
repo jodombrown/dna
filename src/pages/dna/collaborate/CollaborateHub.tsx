@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,10 +14,6 @@ export default function CollaborateHub() {
   const navigate = useNavigate();
   const { data: mySpaces, isLoading: mySpacesLoading } = useMySpaces();
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   const renderSpaceCard = (space: SpaceWithMembership) => (
     <Card 
       key={space.id} 
@@ -25,14 +21,14 @@ export default function CollaborateHub() {
       onClick={() => navigate(`/dna/collaborate/spaces/${space.slug}`)}
     >
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="text-lg">{space.name}</CardTitle>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-lg truncate">{space.name}</CardTitle>
             {space.tagline && (
-              <CardDescription className="mt-1">{space.tagline}</CardDescription>
+              <CardDescription className="mt-1 line-clamp-2">{space.tagline}</CardDescription>
             )}
           </div>
-          <Badge variant={space.status === 'active' ? 'default' : 'secondary'}>
+          <Badge variant={space.status === 'active' ? 'default' : 'secondary'} className="shrink-0">
             {space.status}
           </Badge>
         </div>
@@ -67,8 +63,8 @@ export default function CollaborateHub() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-4 pb-20 md:pb-8 max-w-7xl space-y-8">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 max-w-7xl space-y-6 lg:space-y-8">
       {/* Hero Section */}
       <div className="text-center space-y-4 py-4">
         <div className="flex items-center justify-center gap-2 mb-4">
