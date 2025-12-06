@@ -198,12 +198,12 @@ const Onboarding = () => {
 
       toast({
         title: "🎉 Welcome to DNA!",
-        description: `You're all set, @${formData.username}! Let's start connecting with the diaspora.`,
+        description: `You're all set, @${formData.username}! Let's help you connect with the diaspora.`,
       });
 
-      // Redirect to dashboard
+      // Redirect to discover page to help users find connections immediately
       setTimeout(() => {
-        navigate('/dna/feed');
+        navigate('/dna/connect/discover');
       }, 1500);
     } catch (error: any) {
       console.error('Error completing onboarding:', error);

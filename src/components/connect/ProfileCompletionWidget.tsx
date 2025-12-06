@@ -163,23 +163,26 @@ export const ProfileCompletionWidget = () => {
   const pointsToMilestone = nextMilestone - completion;
   const estimatedMinutes = Math.ceil(pointsToMilestone / 10); // Rough estimate
 
-  // Milestone unlocks
+  // Milestone benefits (no blocking, just incentives!)
   const milestones = [
-    { threshold: 40, label: '✅ All features unlocked', achieved: completion >= 40 },
-    { threshold: 60, label: '🚀 Boost connection visibility', achieved: completion >= 60 },
-    { threshold: 80, label: '🔍 Searchable by investors', achieved: completion >= 80 },
-    { threshold: 100, label: '⭐ Join the Founders Circle', achieved: completion >= 100 },
+    { threshold: 40, label: '✅ Unlock better match recommendations', achieved: completion >= 40 },
+    { threshold: 60, label: '🚀 Boost your connection visibility', achieved: completion >= 60 },
+    { threshold: 80, label: '🔍 Become highly searchable by investors', achieved: completion >= 80 },
+    { threshold: 100, label: '⭐ Join the Founders Circle elite', achieved: completion >= 100 },
   ];
 
-  const isUnlocked = completion >= 40;
+  const isUnlocked = true; // Always unlocked - zero blocking!
 
   return (
     <Card className="border-l-4 border-l-dna-copper">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <Sparkles className="h-5 w-5 text-dna-copper" />
-          Complete Your Profile
+          Enhance Your Profile
         </CardTitle>
+        <p className="text-sm text-muted-foreground mt-1">
+          Stand out and unlock premium features as you complete your profile
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Progress Bar */}
@@ -194,23 +197,12 @@ export const ProfileCompletionWidget = () => {
           </p>
         </div>
 
-        {/* Unlock Status */}
-        <div className={`flex items-center gap-2 text-sm p-3 rounded-lg ${
-          isUnlocked 
-            ? 'bg-dna-mint/10 text-dna-forest border border-dna-mint' 
-            : 'bg-amber-500/10 text-amber-900 dark:text-amber-100 border border-amber-500/20'
-        }`}>
-          {isUnlocked ? (
-            <>
-              <CheckCircle className="h-4 w-4" />
-              <span className="font-medium">All features unlocked!</span>
-            </>
-          ) : (
-            <>
-              <AlertCircle className="h-4 w-4" />
-              <span className="font-medium">Complete {40 - completion}% more to unlock all features</span>
-            </>
-          )}
+        {/* Encouragement Status - NO BLOCKING! */}
+        <div className="flex items-center gap-2 text-sm p-3 rounded-lg bg-dna-mint/10 text-dna-forest border border-dna-mint">
+          <CheckCircle className="h-4 w-4" />
+          <span className="font-medium">
+            {completion >= 80 ? '⭐ Amazing profile!' : completion >= 60 ? '🚀 Great progress!' : '💪 You can connect with anyone!'}
+          </span>
         </div>
 
         {/* Quick Wins Section */}

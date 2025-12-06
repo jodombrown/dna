@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import { MapPin, Briefcase, UserPlus, Eye, Check, MessageSquare } from 'lucide-react';
+import { MapPin, Briefcase, UserPlus, Eye, Check, MessageSquare, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -12,6 +12,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { useMutualConnections } from '@/hooks/useMutualConnections';
 
 interface MemberCardProps {
   member: {
@@ -39,6 +40,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
   const { trackEvent } = useAnalytics();
   const [isSending, setIsSending] = useState(false);
   const { data: connectionStatus, refetch: refetchStatus } = useConnectionStatus(member.id);
+  const { data: mutualConnections } = useMutualConnections(user?.id, member.id);
 
   // Compute shared attributes for "why this match"
   const getSharedAttributes = () => {
@@ -223,6 +225,16 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
               <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
                 <MapPin className="h-3 w-3" />
                 <span className="truncate">{member.location}</span>
+              </div>
+            )}
+
+            {/* Mutual Connections */}
+            {mutualConnections && mutualConnections.length > 0 && (
+              <div className="flex items-center gap-1 text-xs text-dna-copper font-medium mb-2">
+                <Users className="h-3 w-3" />
+                <span>
+                  {mutualConnections.length} mutual connection{mutualConnections.length !== 1 ? 's' : ''}
+                </span>
               </div>
             )}
 

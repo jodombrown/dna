@@ -3,9 +3,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, User, Loader2, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, User, Loader2, Clock, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
+import { useMutualConnections } from '@/hooks/useMutualConnections';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ConnectionRequestCardProps {
   request: {
@@ -34,6 +36,8 @@ const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
   isDeclining,
 }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { data: mutualConnections } = useMutualConnections(user?.id, request.sender?.id);
 
   const getInitials = (name: string) => {
     return name
@@ -78,6 +82,19 @@ const ConnectionRequestCard: React.FC<ConnectionRequestCardProps> = ({
               <Badge variant="secondary" className="mt-2 text-xs">
                 {request.sender.location}
               </Badge>
+            )}
+            {mutualConnections && mutualConnections.length > 0 && (
+              <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                <Users className="w-4 h-4 text-dna-copper" />
+                <span>
+                  {mutualConnections.length} mutual connection{mutualConnections.length !== 1 ? 's' : ''}
+                  {mutualConnections.length <= 3 && (
+                    <span className="ml-1">
+                      ({mutualConnections.map(c => c.full_name).join(', ')})
+                    </span>
+                  )}
+                </span>
+              </div>
             )}
             {request.message && (
               <div className="mt-3 p-3 bg-muted rounded-md border-l-4 border-[hsl(30,65%,55%)]">

@@ -12,6 +12,9 @@ import { Card } from '@/components/ui/card';
 import { Newspaper, Loader2 } from 'lucide-react';
 import { FeedTab, RankingMode, FeedItemType } from '@/types/feed';
 import { supabase } from '@/integrations/supabase/client';
+import { EmptyFeedState } from './EmptyFeedState';
+import { PopularPostsSection } from './PopularPostsSection';
+import { useQuery } from '@tanstack/react-query';
 
 type FeedSurface = 'home' | 'profile' | 'space' | 'event' | 'mobile';
 
@@ -40,13 +43,13 @@ export const UniversalFeedInfinite: React.FC<UniversalFeedInfiniteProps> = ({
   emptyMessage,
   emptyAction,
 }) => {
-  const { 
-    feedItems, 
-    isLoading, 
+  const {
+    feedItems,
+    isLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    refetch 
+    refetch
   } = useInfiniteUniversalFeed({
     viewerId,
     tab,
@@ -55,6 +58,22 @@ export const UniversalFeedInfinite: React.FC<UniversalFeedInfiniteProps> = ({
     eventId,
     postType,
     rankingMode,
+  });
+
+  // Check if user has any connections (for showing popular posts to new users)
+  const { data: connectionCount } = useQuery({
+    queryKey: ['connection-count', viewerId],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('connections')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'accepted')
+        .or(`requester_id.eq.${viewerId},recipient_id.eq.${viewerId}`);
+
+      if (error) throw error;
+      return count || 0;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // Infinite scroll observer
@@ -98,15 +117,21 @@ export const UniversalFeedInfinite: React.FC<UniversalFeedInfiniteProps> = ({
   }
 
   if (feedItems.length === 0) {
-    return (
-      <Card className="p-12 text-center">
-        <Newspaper className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-        <h3 className="text-xl font-semibold mb-2">
-          {emptyMessage || 'No posts to show'}
-        </h3>
-        {emptyAction}
-      </Card>
-    );
+    // Show popular posts for new users with few connections on 'all' tab
+    const hasFeConnections = (connectionCount || 0) < 5;
+    const shouldShowPopularPosts = hasFeConnections && (tab === 'all' || tab === 'network') && !authorId && !spaceId && !eventId;
+
+    if (shouldShowPopularPosts) {
+      return (
+        <div className="space-y-6">
+          <EmptyFeedState tab={tab} />
+          <PopularPostsSection />
+        </div>
+      );
+    }
+
+    // Otherwise show the appropriate empty state
+    return <EmptyFeedState tab={tab} />;
   }
 
   return (

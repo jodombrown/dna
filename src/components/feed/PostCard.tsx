@@ -15,6 +15,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { CommentSection } from './CommentSection';
+import { ReshareDialog } from './ReshareDialog';
+import { createResharePost } from '@/lib/feedWriter';
 
 interface Post {
   id: string;
@@ -40,6 +42,7 @@ export function PostCard({ post }: PostCardProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [showComments, setShowComments] = useState(false);
+  const [showReshareDialog, setShowReshareDialog] = useState(false);
 
   // Fetch author profile
   const { data: author } = useQuery({
@@ -87,6 +90,18 @@ export function PostCard({ post }: PostCardProps) {
     queryFn: async () => {
       const { count } = await supabase
         .from('post_comments')
+        .select('id', { count: 'exact', head: true })
+        .eq('post_id', post.id);
+      return count || 0;
+    },
+  });
+
+  // Fetch share count
+  const { data: shareCount } = useQuery({
+    queryKey: ['post-shares-count', post.id],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('post_shares')
         .select('id', { count: 'exact', head: true })
         .eq('post_id', post.id);
       return count || 0;
@@ -188,6 +203,33 @@ export function PostCard({ post }: PostCardProps) {
     },
   });
 
+  // Reshare post
+  const reshareMutation = useMutation({
+    mutationFn: async (commentary: string) => {
+      if (!user) throw new Error('Not authenticated');
+
+      await createResharePost({
+        userId: user.id,
+        originalPostId: post.id,
+        commentary: commentary || undefined,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['post-shares-count', post.id] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
+      toast.success('Post reshared successfully!');
+    },
+    onError: (error) => {
+      console.error('Reshare failed:', error);
+      toast.error('Failed to reshare post. Please try again.');
+    },
+  });
+
+  const handleReshare = async (commentary: string) => {
+    await reshareMutation.mutateAsync(commentary);
+  };
+
   const isOwnPost = user?.id === post.author_id;
 
   return (
@@ -256,9 +298,13 @@ export function PostCard({ post }: PostCardProps) {
             {commentCount || 0}
           </Button>
 
-          <Button variant="ghost" size="sm" disabled>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => user && setShowReshareDialog(true)}
+          >
             <Share2 className="h-4 w-4 mr-2" />
-            Share
+            {shareCount || 0}
           </Button>
         </div>
 
@@ -274,6 +320,20 @@ export function PostCard({ post }: PostCardProps) {
 
       {/* Comments Section */}
       {showComments && <CommentSection postId={post.id} />}
+
+      {/* Reshare Dialog */}
+      <ReshareDialog
+        isOpen={showReshareDialog}
+        onClose={() => setShowReshareDialog(false)}
+        onReshare={handleReshare}
+        originalPost={{
+          id: post.id,
+          author_name: author?.full_name || 'User',
+          author_avatar: author?.avatar_url || null,
+          content: post.content,
+          media_url: post.media_urls?.[0] || null,
+        }}
+      />
     </Card>
   );
 }
