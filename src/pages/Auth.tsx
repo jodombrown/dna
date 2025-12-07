@@ -17,7 +17,7 @@ const Auth = () => {
   useScrollToTop();
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
-  const { registrationEnabled, loading: flagsLoading } = useFeatureFlags();
+  const { registrationEnabled } = useFeatureFlags();
   const { toast } = useToast();
   
   // Sign In State
@@ -143,123 +143,8 @@ const Auth = () => {
     }
   ];
 
-  // Mobile Layout (same as before)
-  const MobileAuthLayout = () => (
-    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10 flex items-center justify-center px-3 py-6 lg:hidden">
-      <div className="w-full max-w-md space-y-4">
-        <Link 
-          to="/" 
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-dna-copper transition-colors mb-4"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Home
-        </Link>
-
-        <Card className="border-border/50 shadow-xl">
-          <CardHeader className="text-center pb-3">
-            <div className="mx-auto mb-3 w-14 h-14 rounded-full bg-gradient-to-br from-dna-emerald to-dna-copper flex items-center justify-center">
-              <Globe className="w-7 h-7 text-white" />
-            </div>
-            <CardTitle className="text-2xl font-bold text-foreground">
-              Join DNA
-            </CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              Connect with the global African diaspora
-            </p>
-          </CardHeader>
-          <CardContent>
-            <AuthTabs />
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-
-  // Desktop Layout (new split-screen design)
-  const DesktopAuthLayout = () => (
-    <div className="hidden lg:flex min-h-screen">
-      {/* Left Side - Hero/Branding */}
-      <div className="w-1/2 bg-gradient-to-br from-dna-forest via-dna-emerald to-dna-copper p-12 flex flex-col justify-between relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-64 h-64 rounded-full bg-white/20 blur-3xl" />
-          <div className="absolute bottom-40 right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute top-1/2 left-1/3 w-40 h-40 rounded-full bg-white/15 blur-2xl" />
-        </div>
-        
-        {/* Logo & Back Link */}
-        <div className="relative z-10">
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
-        </div>
-
-        {/* Main Content */}
-        <div className="relative z-10 space-y-8">
-          <div className="space-y-4">
-            <h1 className="text-5xl font-bold text-white leading-tight">
-              Diaspora Network<br />of Africa
-            </h1>
-            <p className="text-xl text-white/80 max-w-md">
-              Join the movement connecting Africa's global diaspora to build, invest, and contribute to the continent's future.
-            </p>
-          </div>
-
-          {/* Features */}
-          <div className="space-y-4 pt-4">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-start gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
-                  <feature.icon className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white">{feature.title}</h3>
-                  <p className="text-sm text-white/70">{feature.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="relative z-10 text-white/60 text-sm">
-          © 2024 Diaspora Network of Africa. All rights reserved.
-        </div>
-      </div>
-
-      {/* Right Side - Auth Form */}
-      <div className="w-1/2 bg-background flex items-center justify-center p-12">
-        <div className="w-full max-w-md space-y-8">
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <h2 className="text-3xl font-bold text-foreground">Welcome</h2>
-            <p className="text-muted-foreground">
-              Sign in to your account or create a new one
-            </p>
-          </div>
-
-          {/* Auth Card */}
-          <Card className="border-border/50 shadow-lg">
-            <CardContent className="pt-6">
-              <AuthTabs />
-            </CardContent>
-          </Card>
-
-          {/* Trust Indicators */}
-          <div className="text-center text-sm text-muted-foreground">
-            <p>Trusted by diaspora members in 50+ countries</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Shared Auth Tabs Component
-  const AuthTabs = () => (
+  // Shared Auth Tabs JSX
+  const authTabsContent = (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="grid w-full grid-cols-2 mb-6">
         <TabsTrigger value="signin">Sign In</TabsTrigger>
@@ -433,8 +318,116 @@ const Auth = () => {
 
   return (
     <>
-      <MobileAuthLayout />
-      <DesktopAuthLayout />
+      {/* Mobile Layout */}
+      <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10 flex items-center justify-center px-3 py-6 lg:hidden">
+        <div className="w-full max-w-md space-y-4">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-dna-copper transition-colors mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
+
+          <Card className="border-border/50 shadow-xl">
+            <CardHeader className="text-center pb-3">
+              <div className="mx-auto mb-3 w-14 h-14 rounded-full bg-gradient-to-br from-dna-emerald to-dna-copper flex items-center justify-center">
+                <Globe className="w-7 h-7 text-white" />
+              </div>
+              <CardTitle className="text-2xl font-bold text-foreground">
+                Join DNA
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Connect with the global African diaspora
+              </p>
+            </CardHeader>
+            <CardContent>
+              {authTabsContent}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden lg:flex min-h-screen">
+        {/* Left Side - Hero/Branding */}
+        <div className="w-1/2 bg-gradient-to-br from-dna-forest via-dna-emerald to-dna-copper p-12 flex flex-col justify-between relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-20 left-20 w-64 h-64 rounded-full bg-white/20 blur-3xl" />
+            <div className="absolute bottom-40 right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute top-1/2 left-1/3 w-40 h-40 rounded-full bg-white/15 blur-2xl" />
+          </div>
+          
+          {/* Logo & Back Link */}
+          <div className="relative z-10">
+            <Link 
+              to="/" 
+              className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Home
+            </Link>
+          </div>
+
+          {/* Main Content */}
+          <div className="relative z-10 space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-5xl font-bold text-white leading-tight">
+                Diaspora Network<br />of Africa
+              </h1>
+              <p className="text-xl text-white/80 max-w-md">
+                Join the movement connecting Africa's global diaspora to build, invest, and contribute to the continent's future.
+              </p>
+            </div>
+
+            {/* Features */}
+            <div className="space-y-4 pt-4">
+              {features.map((feature, index) => (
+                <div key={index} className="flex items-start gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <feature.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-white">{feature.title}</h3>
+                    <p className="text-sm text-white/70">{feature.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="relative z-10 text-white/60 text-sm">
+            © 2024 Diaspora Network of Africa. All rights reserved.
+          </div>
+        </div>
+
+        {/* Right Side - Auth Form */}
+        <div className="w-1/2 bg-background flex items-center justify-center p-12">
+          <div className="w-full max-w-md space-y-8">
+            {/* Header */}
+            <div className="text-center space-y-2">
+              <h2 className="text-3xl font-bold text-foreground">Welcome</h2>
+              <p className="text-muted-foreground">
+                Sign in to your account or create a new one
+              </p>
+            </div>
+
+            {/* Auth Card */}
+            <Card className="border-border/50 shadow-lg">
+              <CardContent className="pt-6">
+                {authTabsContent}
+              </CardContent>
+            </Card>
+
+            {/* Trust Indicators */}
+            <div className="text-center text-sm text-muted-foreground">
+              <p>Trusted by diaspora members in 50+ countries</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
