@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -6,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useDashboardPreferences, DashboardModule } from '@/hooks/useDashboardPreferences';
 
-import { Sparkles, GripVertical } from 'lucide-react';
+import { Sparkles, GripVertical, X } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -64,6 +65,7 @@ function SortableModule({
 }
 
 export default function DashboardSettings() {
+  const navigate = useNavigate();
   const { preferences, updatePreferences, isLoading, isUpdating } = useDashboardPreferences();
   const [localModules, setLocalModules] = useState<DashboardModule[]>(preferences.visible_modules);
   const [localDensity, setLocalDensity] = useState(preferences.density);
@@ -116,7 +118,18 @@ export default function DashboardSettings() {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-20">
+    <div className="min-h-screen bg-background pt-20 relative">
+      {/* Close Button */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute top-4 right-4 z-10"
+        onClick={() => navigate('/dna/feed')}
+        aria-label="Close settings"
+      >
+        <X className="h-5 w-5" />
+      </Button>
+
       <div className="container max-w-4xl mx-auto pb-8 px-4">
         <div className="mb-6">
           <h1 className="text-3xl font-bold flex items-center gap-2">

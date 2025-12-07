@@ -8,9 +8,10 @@ interface ProfileV2VerificationProps {
   verificationMeta: ProfileV2VerificationMeta;
 }
 
-const getVerificationConfig = (tier: VerificationStatus) => {
+const getVerificationConfig = (tier: string | undefined) => {
   switch (tier) {
     case 'fully_verified':
+    case 'full':
       return {
         icon: Award,
         label: 'Fully Verified',
@@ -19,6 +20,7 @@ const getVerificationConfig = (tier: VerificationStatus) => {
         description: 'Confirmed diaspora identity with full platform access',
       };
     case 'soft_verified':
+    case 'soft':
       return {
         icon: Shield,
         label: 'Soft Verified',
@@ -40,7 +42,7 @@ const getVerificationConfig = (tier: VerificationStatus) => {
 const ProfileV2Verification: React.FC<ProfileV2VerificationProps> = ({
   verificationMeta,
 }) => {
-  const config = getVerificationConfig(verificationMeta.tier);
+  const config = getVerificationConfig(verificationMeta.tier || verificationMeta.status);
   const IconComponent = config.icon;
 
   return (
@@ -64,7 +66,7 @@ const ProfileV2Verification: React.FC<ProfileV2VerificationProps> = ({
           </div>
         </div>
 
-        {verificationMeta.improvement_suggestions.length > 0 && (
+        {verificationMeta.improvement_suggestions && verificationMeta.improvement_suggestions.length > 0 && (
           <div>
             <p className="text-sm font-medium mb-2">To improve verification:</p>
             <ul className="space-y-1.5 text-xs text-muted-foreground">
