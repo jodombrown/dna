@@ -23,15 +23,15 @@ export interface ReactionCount {
 }
 
 // Quick access reactions (always visible in quick bar)
+// Includes LinkedIn-style + Diaspora-specific reactions
 export const QUICK_REACTIONS: ReactionEmoji[] = [
+  '👍',  // like
   '❤️',  // love
-  '👍',  // thumbs up
-  '😂',  // laughing
-  '🔥',  // fire
-  '😮',  // wow
   '🎉',  // celebrate
-  '💯',  // 100
-  '🙌',  // raised hands
+  '🙌',  // support
+  '💡',  // insightful
+  '🤝',  // unity (diaspora-specific)
+  '💪',  // strength (diaspora-specific)
 ];
 
 // Legacy emoji mapping (for existing reactions)
@@ -50,19 +50,31 @@ export const REACTION_EMOJIS: Record<ReactionType, { emoji: ReactionEmoji; label
   love: { emoji: '❤️', label: 'Love', color: 'text-red-500' },
   celebrate: { emoji: '🎉', label: 'Celebrate', color: 'text-yellow-500' },
   insightful: { emoji: '💡', label: 'Insightful', color: 'text-purple-500' },
-  support: { emoji: '🤝', label: 'Support', color: 'text-green-500' },
+  support: { emoji: '🙌', label: 'Support', color: 'text-green-500' },
   curious: { emoji: '🤔', label: 'Curious', color: 'text-orange-500' },
+};
+
+// Diaspora-specific reaction labels
+export const DIASPORA_REACTIONS: Record<string, { emoji: ReactionEmoji; label: string; color: string }> = {
+  unity: { emoji: '🤝', label: 'Unity', color: 'text-amber-500' },
+  strength: { emoji: '💪', label: 'Strength', color: 'text-dna-copper' },
 };
 
 // Helper: Get emoji label for display
 export const getEmojiLabel = (emoji: ReactionEmoji): string => {
+  // Check if it's a diaspora reaction
+  const diasporaMatch = Object.entries(DIASPORA_REACTIONS).find(([_, data]) => data.emoji === emoji);
+  if (diasporaMatch) {
+    return diasporaMatch[1].label;
+  }
+
   // Check if it's a legacy reaction
   const legacyMatch = Object.entries(LEGACY_EMOJI_MAP).find(([_, e]) => e === emoji);
   if (legacyMatch) {
     const [type] = legacyMatch;
     return REACTION_EMOJIS[type as ReactionType].label;
   }
-  
+
   // For custom emojis, just return the emoji itself
   return emoji;
 };
