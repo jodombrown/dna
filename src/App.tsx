@@ -201,7 +201,12 @@ function App() {
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/dna/welcome" element={<Welcome />} />
               
-              {/* Settings */}
+              {/* Settings - both /dna/settings and /dna/settings/dashboard */}
+              <Route path="/dna/settings" element={
+                <OnboardingGuard>
+                  <DashboardSettings />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/settings/dashboard" element={
                 <OnboardingGuard>
                   <DashboardSettings />
