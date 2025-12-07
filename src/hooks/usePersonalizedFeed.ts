@@ -40,10 +40,16 @@ export const usePersonalizedFeed = (limit: number = 20) => {
     queryFn: async () => {
       if (!user) return [];
 
-      const { data, error } = await supabase.rpc('get_personalized_feed', {
+      // Personalized feed RPC not yet implemented - fall back to universal feed
+      const { data, error } = await supabase.rpc('get_universal_feed', {
         p_viewer_id: user.id,
+        p_tab: 'all',
+        p_author_id: null as any,
+        p_space_id: null as any,
+        p_event_id: null as any,
         p_limit: limit,
         p_offset: 0,
+        p_ranking_mode: 'top',
       });
 
       if (error) {
@@ -51,7 +57,11 @@ export const usePersonalizedFeed = (limit: number = 20) => {
         throw error;
       }
 
-      return (data as PersonalizedPost[]) || [];
+      // Map universal feed response to personalized format
+      return ((data as any[]) || []).map(item => ({
+        ...item,
+        personalization_score: 1.0, // Default score until ML is implemented
+      })) as PersonalizedPost[];
     },
     enabled: !!user,
     staleTime: 2 * 60 * 1000, // 2 minutes - personalized feed changes less frequently

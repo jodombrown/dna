@@ -48,10 +48,12 @@ export const SentRequestCard: React.FC<SentRequestCardProps> = ({
   const handleWithdraw = async () => {
     setIsWithdrawing(true);
     try {
-      const { error } = await supabase.rpc('withdraw_connection_request', {
-        p_request_id: request.connection_id,
-        p_user_id: (await supabase.auth.getUser()).data.user?.id,
-      });
+      // Delete the pending connection request directly
+      const { error } = await supabase
+        .from('connections')
+        .delete()
+        .eq('id', request.connection_id)
+        .eq('status', 'pending');
 
       if (error) throw error;
 

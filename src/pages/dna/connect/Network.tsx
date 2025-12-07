@@ -54,9 +54,37 @@ export default function Network() {
     if (!user) return;
     try {
       setLoading(prev => ({ ...prev, sentRequests: true }));
-      const { data, error } = await supabase.rpc('get_sent_connection_requests', { p_user_id: user.id });
+      // Query sent connection requests directly
+      const { data, error } = await supabase
+        .from('connections')
+        .select(`
+          id,
+          recipient_id,
+          created_at,
+          recipient:profiles!connections_recipient_id_fkey (
+            id,
+            full_name,
+            avatar_url,
+            headline
+          )
+        `)
+        .eq('requester_id', user.id)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+      
       if (error) throw error;
-      setSentRequests(data || []);
+      
+      // Map to expected format
+      const mappedRequests = (data || []).map((r: any) => ({
+        connection_id: r.id,
+        recipient_id: r.recipient_id,
+        recipient_name: r.recipient?.full_name || 'Unknown',
+        recipient_avatar: r.recipient?.avatar_url,
+        recipient_headline: r.recipient?.headline,
+        created_at: r.created_at,
+      }));
+      
+      setSentRequests(mappedRequests);
     } finally {
       setLoading(prev => ({ ...prev, sentRequests: false }));
     }
