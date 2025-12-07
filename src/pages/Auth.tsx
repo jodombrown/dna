@@ -34,6 +34,9 @@ const Auth = () => {
   // Password visibility toggles
   const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+  
+  // Tab state
+  const [activeTab, setActiveTab] = useState('signin');
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,7 +260,7 @@ const Auth = () => {
 
   // Shared Auth Tabs Component
   const AuthTabs = () => (
-    <Tabs defaultValue="signin" className="w-full">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="grid w-full grid-cols-2 mb-6">
         <TabsTrigger value="signin">Sign In</TabsTrigger>
         <TabsTrigger value="signup">{registrationEnabled ? 'Sign Up' : 'Join Waitlist'}</TabsTrigger>
