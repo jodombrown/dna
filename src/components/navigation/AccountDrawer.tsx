@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut } from 'lucide-react';
+import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -54,11 +54,8 @@ export const AccountDrawer: React.FC = () => {
     <Sheet open={isOpen} onOpenChange={(open) => !open && close()}>
       <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
+        <div className="p-4 border-b border-border">
           <h2 className="text-lg font-semibold">Account</h2>
-          <Button variant="ghost" size="icon" onClick={close}>
-            <X className="h-5 w-5" />
-          </Button>
         </div>
 
         {/* Scrollable Content */}
