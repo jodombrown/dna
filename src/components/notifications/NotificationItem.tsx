@@ -48,6 +48,8 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
         return <AtSign className="h-4 w-4" />;
       case 'reshare':
         return <Repeat2 className="h-4 w-4" />;
+      case 'profile_view':
+        return <UserPlus className="h-4 w-4 text-primary" />;
       case 'post_comment':
       case 'comment_reply':
         return <MessageCircle className="h-4 w-4" />;
@@ -58,8 +60,6 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
         return <Calendar className="h-4 w-4" />;
       case 'group_invite':
         return <Users className="h-4 w-4" />;
-      case 'profile_view':
-        return <UserPlus className="h-4 w-4" />;
       default:
         return <Bell className="h-4 w-4" />;
     }

@@ -40,6 +40,8 @@ import {
   ProfileContributionsSection,
   ProfileStoriesSection,
 } from '@/components/profile/cross-5c';
+import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
+import { ProfileViewersWidget } from '@/components/analytics/ProfileViewersWidget';
 
 const PublicProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -467,6 +469,16 @@ const PublicProfile = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Profile View Tracker - Auto-tracks views */}
+        <ProfileViewTracker profileId={profile.id} />
+
+        {/* Profile Viewers Widget - Only shown to profile owner */}
+        {isOwnProfile && (
+          <div className="mt-6">
+            <ProfileViewersWidget profileId={profile.id} />
+          </div>
+        )}
 
         {/* Cross-5C Sections */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
