@@ -19,6 +19,7 @@ import { CommentSection } from './CommentSection';
 import { ReshareDialog } from './ReshareDialog';
 import { EditPostDialog } from './EditPostDialog';
 import { createResharePost } from '@/lib/feedWriter';
+import { linkifyContent } from '@/utils/linkifyContent';
 
 interface Post {
   id: string;
@@ -320,7 +321,7 @@ export function PostCard({ post }: PostCardProps) {
       </div>
 
       {/* Post Content */}
-      <div className="text-foreground whitespace-pre-wrap">{post.content}</div>
+      <div className="text-foreground whitespace-pre-wrap">{linkifyContent(post.content)}</div>
 
       {/* Post Actions */}
       <div className="flex items-center justify-between border-t pt-3">
