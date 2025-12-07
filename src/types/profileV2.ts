@@ -16,15 +16,19 @@ export interface ProfileV2Bundle {
 }
 
 export interface ProfileV2Data {
-  user_id: string;
+  id: string;
+  user_id?: string; // legacy alias
   username: string;
   full_name: string;
+  first_name?: string;
+  last_name?: string;
   headline: string | null;
   professional_role: string | null;
   company: string | null;
   avatar_url: string | null;
   banner_url: string | null;
   current_country: string | null;
+  current_city?: string | null;
   location: string | null;
   country_of_origin: string | null;
   diaspora_origin: string | null;
@@ -32,35 +36,41 @@ export interface ProfileV2Data {
   profession: string | null;
   industry: string | null;
   years_experience: number | null;
+  languages?: string[] | null;
   verification_status: VerificationStatus;
-  verification_updated_at: string | null;
+  verification_updated_at?: string | null;
+  created_at?: string;
 }
 
 export interface ProfileV2Tags {
-  skills: string[];
-  interests: string[];
-  impact_areas: string[];
-  available_for: string[];
-  diaspora_tags: any[];
-  region_tags: any[];
-  skill_tags: any[];
-  contribution_tags: any[];
-  interest_tags: any[];
+  skills?: string[];
+  interests?: string[];
+  impact_areas?: string[];
+  available_for?: string[];
+  skill_tags?: any[];
+  interest_tags?: any[];
+  contribution_tags?: any[];
+  sector_tags?: any[];
+  diaspora_tags?: any[];
+  region_tags?: any[];
+  language_tags?: any[];
 }
 
 export interface ProfileV2Activity {
   spaces: Array<{
     id: string;
     title: string;
-    role: 'creator' | 'member';
+    role: 'creator' | 'member' | string;
   }>;
   events: Array<{
     id: string;
     title: string;
-    role: 'host' | 'attendee';
+    role: 'host' | 'attendee' | string;
     event_date: string;
   }>;
-  connections_count: number;
+  connections_count?: number;
+  stories_count?: number;
+  contributions_count?: number;
 }
 
 export interface ProfileV2Permissions {
@@ -68,14 +78,18 @@ export interface ProfileV2Permissions {
   can_edit: boolean;
   can_create_events: boolean;
   can_create_public_spaces: boolean;
-  can_connect: boolean;
+  can_connect?: boolean;
 }
 
 export interface ProfileV2Visibility {
-  about: 'public' | 'hidden';
-  skills: 'public' | 'hidden';
-  interests: 'public' | 'hidden';
-  activity: 'public' | 'hidden';
+  about?: 'public' | 'hidden';
+  skills?: 'public' | 'hidden';
+  interests?: 'public' | 'hidden';
+  activity?: 'public' | 'hidden';
+  show_about?: boolean;
+  show_skills?: boolean;
+  show_interests?: boolean;
+  show_activity?: boolean;
 }
 
 export interface ProfileV2Completion {
@@ -84,7 +98,8 @@ export interface ProfileV2Completion {
 }
 
 export interface ProfileV2VerificationMeta {
-  tier: VerificationStatus;
-  updated_at: string | null;
-  improvement_suggestions: string[];
+  tier?: VerificationStatus | 'pending' | 'soft' | 'full';
+  status?: VerificationStatus;
+  updated_at?: string | null;
+  improvement_suggestions?: string[];
 }
