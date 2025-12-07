@@ -26,6 +26,7 @@ import ActivityFeed from "./pages/ActivityFeed";
 import SavedPostsPage from "./pages/SavedPostsPage";
 import DnaNetwork from "./pages/dna/Network";
 import DnaFeed from "./pages/dna/Feed";
+import HashtagFeed from "./pages/dna/HashtagFeed";
 import DebugUniversalFeed from "./pages/dna/DebugUniversalFeed";
 import DnaEvents from "./pages/dna/Events";
 import DnaMessages from "./pages/dna/Messages";
@@ -254,6 +255,12 @@ function App() {
                <Route path="/dna/debug/feed" element={
                  <OnboardingGuard>
                    <DebugUniversalFeed />
+                 </OnboardingGuard>
+               } />
+               {/* Hashtag feed page */}
+               <Route path="/dna/hashtag/:hashtag" element={
+                 <OnboardingGuard>
+                   <HashtagFeed />
                  </OnboardingGuard>
                } />
                {/* Messages: Canonical routes */}
