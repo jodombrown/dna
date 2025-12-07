@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Flag, Edit3 } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Flag, Edit3, SmilePlus } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   DropdownMenu,
@@ -20,6 +20,9 @@ import { ReshareDialog } from './ReshareDialog';
 import { EditPostDialog } from './EditPostDialog';
 import { createResharePost } from '@/lib/feedWriter';
 import { linkifyContent } from '@/utils/linkifyContent';
+import { usePostReactions } from '@/hooks/usePostReactions';
+import { ReactionPicker } from '@/components/posts/ReactionPicker';
+import { ReactionSummary } from '@/components/posts/ReactionSummary';
 
 interface Post {
   id: string;
@@ -60,6 +63,15 @@ export function PostCard({ post }: PostCardProps) {
       return data;
     },
   });
+
+  // Use reactions hook
+  const {
+    reactions,
+    totalReactions,
+    currentReaction,
+    addReaction,
+    removeReaction,
+  } = usePostReactions(post.id, user?.id);
 
   // Fetch like count and status
   const { data: likeCount } = useQuery({
@@ -323,18 +335,41 @@ export function PostCard({ post }: PostCardProps) {
       {/* Post Content */}
       <div className="text-foreground whitespace-pre-wrap">{linkifyContent(post.content)}</div>
 
+      {/* Reaction Summary (above action bar) */}
+      {totalReactions > 0 && (
+        <div className="flex items-center justify-between border-t pt-2">
+          <ReactionSummary reactions={reactions} totalCount={totalReactions} />
+        </div>
+      )}
+
       {/* Post Actions */}
       <div className="flex items-center justify-between border-t pt-3">
         <div className="flex gap-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => user && toggleLikeMutation.mutate()}
-            className={hasLiked ? 'text-red-500' : ''}
-          >
-            <Heart className={`h-4 w-4 mr-2 ${hasLiked ? 'fill-current' : ''}`} />
-            {likeCount || 0}
-          </Button>
+          {/* Reaction Picker */}
+          <ReactionPicker onReactionSelect={(emoji) => {
+            if (!user) {
+              toast.error('Please sign in to react');
+              return;
+            }
+            if (currentReaction === emoji) {
+              removeReaction(emoji);
+            } else {
+              addReaction(emoji);
+            }
+          }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={currentReaction ? 'text-primary' : ''}
+            >
+              {currentReaction ? (
+                <span className="text-lg mr-1">{currentReaction}</span>
+              ) : (
+                <SmilePlus className="h-4 w-4 mr-2" />
+              )}
+              {totalReactions > 0 ? totalReactions : 'React'}
+            </Button>
+          </ReactionPicker>
 
           <Button
             variant="ghost"

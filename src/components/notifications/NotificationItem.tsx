@@ -12,6 +12,9 @@ import {
   Calendar,
   Users,
   Bell,
+  SmilePlus,
+  AtSign,
+  Repeat2,
 } from 'lucide-react';
 
 interface NotificationItemProps {
@@ -39,6 +42,12 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
         return <UserPlus className="h-4 w-4" />;
       case 'post_like':
         return <Heart className="h-4 w-4" />;
+      case 'reaction':
+        return <SmilePlus className="h-4 w-4" />;
+      case 'mention':
+        return <AtSign className="h-4 w-4" />;
+      case 'reshare':
+        return <Repeat2 className="h-4 w-4" />;
       case 'post_comment':
       case 'comment_reply':
         return <MessageCircle className="h-4 w-4" />;
