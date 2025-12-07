@@ -3,8 +3,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { UserPlus, MessageSquarePlus, TrendingUp, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+// Exclude 'for_you' from tabs EmptyFeedState handles - it has its own component
+type EmptyFeedTab = Exclude<import('@/types/feed').FeedTab, 'for_you'>;
+
 interface EmptyFeedStateProps {
-  tab: 'all' | 'network' | 'my_posts' | 'bookmarks';
+  tab: EmptyFeedTab;
 }
 
 export const EmptyFeedState = ({ tab }: EmptyFeedStateProps) => {

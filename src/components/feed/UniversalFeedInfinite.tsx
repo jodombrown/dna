@@ -131,7 +131,9 @@ export const UniversalFeedInfinite: React.FC<UniversalFeedInfiniteProps> = ({
     }
 
     // Otherwise show the appropriate empty state
-    return <EmptyFeedState tab={tab} />;
+    // Map 'for_you' to 'all' for empty state since EmptyFeedState doesn't handle 'for_you'
+    const emptyTab = tab === 'for_you' ? 'all' : tab;
+    return <EmptyFeedState tab={emptyTab} />;
   }
 
   return (
