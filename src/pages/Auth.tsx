@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Calendar, Rocket, LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Globe, Users, Handshake, Eye, EyeOff } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
-import { BetaWaitlist } from '@/components/auth/BetaWaitlist';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,7 +50,7 @@ const Auth = () => {
           title: 'Welcome back!',
           description: 'Successfully signed in.',
         });
-        navigate('/');
+        navigate('/dna/feed');
       }
     } catch (error: any) {
       toast({
@@ -99,7 +98,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'linkedin_oidc',
         options: {
-          redirectTo: `${window.location.origin}/`
+          redirectTo: `${window.location.origin}/dna/feed`
         }
       });
       
@@ -119,10 +118,29 @@ const Auth = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10 flex items-center justify-center px-3 sm:px-4 py-6">
+  // Features for desktop hero
+  const features = [
+    {
+      icon: Globe,
+      title: 'Global Network',
+      description: 'Connect with diaspora members across continents'
+    },
+    {
+      icon: Users,
+      title: 'Community',
+      description: 'Join spaces and events that matter to you'
+    },
+    {
+      icon: Handshake,
+      title: 'Collaborate',
+      description: 'Build partnerships for Africa\'s development'
+    }
+  ];
+
+  // Mobile Layout (same as before)
+  const MobileAuthLayout = () => (
+    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-background to-dna-copper/10 flex items-center justify-center px-3 py-6 lg:hidden">
       <div className="w-full max-w-md space-y-4">
-        {/* Back to Home */}
         <Link 
           to="/" 
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-dna-copper transition-colors mb-4"
@@ -131,220 +149,281 @@ const Auth = () => {
           Back to Home
         </Link>
 
-        {/* Beta Launch Card */}
-        <Card className="border-dna-emerald/30 shadow-xl">
-          <CardHeader className="text-center pb-4">
-            <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-gradient-to-br from-dna-emerald to-dna-copper flex items-center justify-center">
-              <Rocket className="w-8 h-8 text-white" />
-            </div>
-            <CardTitle className="text-2xl sm:text-3xl font-bold text-dna-forest">
-              Beta Launching Soon
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Launch Date */}
-            <div className="bg-gradient-to-r from-dna-emerald/10 to-dna-copper/10 rounded-xl p-4 border border-dna-emerald/20">
-              <div className="flex items-center gap-3 justify-center">
-                <Calendar className="w-6 h-6 text-dna-emerald" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Official Beta Launch</p>
-                  <p className="text-xl sm:text-2xl font-bold text-dna-forest">December 15, 2024</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Message */}
-            <div className="text-center space-y-3">
-              <p className="text-base text-foreground leading-relaxed">
-                We're putting the final touches on the <span className="font-semibold text-dna-forest">Diaspora Network of Africa</span> platform.
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Join our waitlist to be among the first to connect, collaborate, and contribute to Africa's development when we launch.
-              </p>
-            </div>
-
-            {/* Waitlist Component */}
-            <div className="pt-2">
-              <BetaWaitlist />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Authentication Card */}
-        <Card className="border-dna-copper/30">
+        <Card className="border-border/50 shadow-xl">
           <CardHeader className="text-center pb-3">
-            <CardTitle className="text-xl font-bold text-dna-forest">
-              Join the Network
+            <div className="mx-auto mb-3 w-14 h-14 rounded-full bg-gradient-to-br from-dna-emerald to-dna-copper flex items-center justify-center">
+              <Globe className="w-7 h-7 text-white" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-foreground">
+              Join DNA
             </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Connect with the global African diaspora
+            </p>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="signin" className="space-y-4">
-                <form onSubmit={handleSignIn} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-email">Email</Label>
-                    <Input
-                      id="signin-email"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={signInEmail}
-                      onChange={(e) => setSignInEmail(e.target.value)}
-                      required
-                      disabled={isSignInLoading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signin-password">Password</Label>
-                    <div className="relative">
-                      <Input
-                        id="signin-password"
-                        type={showSignInPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        value={signInPassword}
-                        onChange={(e) => setSignInPassword(e.target.value)}
-                        required
-                        disabled={isSignInLoading}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowSignInPassword(!showSignInPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                        aria-label={showSignInPassword ? "Hide password" : "Show password"}
-                      >
-                        {showSignInPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full"
-                    disabled={isSignInLoading}
-                  >
-                    {isSignInLoading ? 'Signing in...' : 'Sign In'}
-                  </Button>
-                </form>
-                
-                <div className="relative my-4">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                  </div>
-                </div>
-                
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  className="w-full"
-                  onClick={handleLinkedInSignIn}
-                >
-                  <svg className="w-5 h-5 mr-2" fill="#0077B5" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>
-                  Continue with LinkedIn
-                </Button>
-              </TabsContent>
-              
-              <TabsContent value="signup" className="space-y-4">
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name">Full Name</Label>
-                    <Input
-                      id="signup-name"
-                      type="text"
-                      placeholder="Your full name"
-                      value={signUpFullName}
-                      onChange={(e) => setSignUpFullName(e.target.value)}
-                      required
-                      disabled={isSignUpLoading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={signUpEmail}
-                      onChange={(e) => setSignUpEmail(e.target.value)}
-                      required
-                      disabled={isSignUpLoading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <div className="relative">
-                      <Input
-                        id="signup-password"
-                        type={showSignUpPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        value={signUpPassword}
-                        onChange={(e) => setSignUpPassword(e.target.value)}
-                        required
-                        disabled={isSignUpLoading}
-                        minLength={6}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowSignUpPassword(!showSignUpPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                        aria-label={showSignUpPassword ? "Hide password" : "Show password"}
-                      >
-                        {showSignUpPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full"
-                    disabled={isSignUpLoading}
-                  >
-                    {isSignUpLoading ? 'Creating account...' : 'Create Account'}
-                  </Button>
-                </form>
-                
-                <div className="relative my-4">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                  </div>
-                </div>
-                
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  className="w-full"
-                  onClick={handleLinkedInSignIn}
-                >
-                  <svg className="w-5 h-5 mr-2" fill="#0077B5" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>
-                  Continue with LinkedIn
-                </Button>
-              </TabsContent>
-            </Tabs>
+            <AuthTabs />
           </CardContent>
         </Card>
       </div>
     </div>
+  );
+
+  // Desktop Layout (new split-screen design)
+  const DesktopAuthLayout = () => (
+    <div className="hidden lg:flex min-h-screen">
+      {/* Left Side - Hero/Branding */}
+      <div className="w-1/2 bg-gradient-to-br from-dna-forest via-dna-emerald to-dna-copper p-12 flex flex-col justify-between relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-64 h-64 rounded-full bg-white/20 blur-3xl" />
+          <div className="absolute bottom-40 right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute top-1/2 left-1/3 w-40 h-40 rounded-full bg-white/15 blur-2xl" />
+        </div>
+        
+        {/* Logo & Back Link */}
+        <div className="relative z-10">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
+        </div>
+
+        {/* Main Content */}
+        <div className="relative z-10 space-y-8">
+          <div className="space-y-4">
+            <h1 className="text-5xl font-bold text-white leading-tight">
+              Diaspora Network<br />of Africa
+            </h1>
+            <p className="text-xl text-white/80 max-w-md">
+              Join the movement connecting Africa's global diaspora to build, invest, and contribute to the continent's future.
+            </p>
+          </div>
+
+          {/* Features */}
+          <div className="space-y-4 pt-4">
+            {features.map((feature, index) => (
+              <div key={index} className="flex items-start gap-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                  <feature.icon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white">{feature.title}</h3>
+                  <p className="text-sm text-white/70">{feature.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="relative z-10 text-white/60 text-sm">
+          © 2024 Diaspora Network of Africa. All rights reserved.
+        </div>
+      </div>
+
+      {/* Right Side - Auth Form */}
+      <div className="w-1/2 bg-background flex items-center justify-center p-12">
+        <div className="w-full max-w-md space-y-8">
+          {/* Header */}
+          <div className="text-center space-y-2">
+            <h2 className="text-3xl font-bold text-foreground">Welcome</h2>
+            <p className="text-muted-foreground">
+              Sign in to your account or create a new one
+            </p>
+          </div>
+
+          {/* Auth Card */}
+          <Card className="border-border/50 shadow-lg">
+            <CardContent className="pt-6">
+              <AuthTabs />
+            </CardContent>
+          </Card>
+
+          {/* Trust Indicators */}
+          <div className="text-center text-sm text-muted-foreground">
+            <p>Trusted by diaspora members in 50+ countries</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Shared Auth Tabs Component
+  const AuthTabs = () => (
+    <Tabs defaultValue="signin" className="w-full">
+      <TabsList className="grid w-full grid-cols-2 mb-6">
+        <TabsTrigger value="signin">Sign In</TabsTrigger>
+        <TabsTrigger value="signup">Sign Up</TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="signin" className="space-y-4">
+        <form onSubmit={handleSignIn} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="signin-email">Email</Label>
+            <Input
+              id="signin-email"
+              type="email"
+              placeholder="your@email.com"
+              value={signInEmail}
+              onChange={(e) => setSignInEmail(e.target.value)}
+              required
+              disabled={isSignInLoading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="signin-password">Password</Label>
+            <div className="relative">
+              <Input
+                id="signin-password"
+                type={showSignInPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={signInPassword}
+                onChange={(e) => setSignInPassword(e.target.value)}
+                required
+                disabled={isSignInLoading}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowSignInPassword(!showSignInPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={showSignInPassword ? "Hide password" : "Show password"}
+              >
+                {showSignInPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          </div>
+          <Button 
+            type="submit" 
+            className="w-full bg-dna-forest hover:bg-dna-forest/90"
+            disabled={isSignInLoading}
+          >
+            {isSignInLoading ? 'Signing in...' : 'Sign In'}
+          </Button>
+        </form>
+        
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+          </div>
+        </div>
+        
+        <Button 
+          type="button"
+          variant="outline" 
+          className="w-full"
+          onClick={handleLinkedInSignIn}
+        >
+          <svg className="w-5 h-5 mr-2" fill="#0077B5" viewBox="0 0 24 24">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          Continue with LinkedIn
+        </Button>
+      </TabsContent>
+      
+      <TabsContent value="signup" className="space-y-4">
+        <form onSubmit={handleSignUp} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="signup-name">Full Name</Label>
+            <Input
+              id="signup-name"
+              type="text"
+              placeholder="Your full name"
+              value={signUpFullName}
+              onChange={(e) => setSignUpFullName(e.target.value)}
+              required
+              disabled={isSignUpLoading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="signup-email">Email</Label>
+            <Input
+              id="signup-email"
+              type="email"
+              placeholder="your@email.com"
+              value={signUpEmail}
+              onChange={(e) => setSignUpEmail(e.target.value)}
+              required
+              disabled={isSignUpLoading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="signup-password">Password</Label>
+            <div className="relative">
+              <Input
+                id="signup-password"
+                type={showSignUpPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={signUpPassword}
+                onChange={(e) => setSignUpPassword(e.target.value)}
+                required
+                disabled={isSignUpLoading}
+                minLength={6}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowSignUpPassword(!showSignUpPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={showSignUpPassword ? "Hide password" : "Show password"}
+              >
+                {showSignUpPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          </div>
+          <Button 
+            type="submit" 
+            className="w-full bg-dna-forest hover:bg-dna-forest/90"
+            disabled={isSignUpLoading}
+          >
+            {isSignUpLoading ? 'Creating account...' : 'Create Account'}
+          </Button>
+        </form>
+        
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+          </div>
+        </div>
+        
+        <Button 
+          type="button"
+          variant="outline" 
+          className="w-full"
+          onClick={handleLinkedInSignIn}
+        >
+          <svg className="w-5 h-5 mr-2" fill="#0077B5" viewBox="0 0 24 24">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+          Continue with LinkedIn
+        </Button>
+      </TabsContent>
+    </Tabs>
+  );
+
+  return (
+    <>
+      <MobileAuthLayout />
+      <DesktopAuthLayout />
+    </>
   );
 };
 
