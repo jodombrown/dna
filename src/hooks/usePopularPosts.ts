@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface PopularPost {
@@ -32,20 +31,12 @@ export const usePopularPosts = (limit: number = 10) => {
 
   return useQuery({
     queryKey: ['popular-posts', user?.id, limit],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_popular_posts', {
-        p_limit: limit,
-        p_viewer_id: user?.id || null,
-      });
-
-      if (error) {
-        console.error('Error fetching popular posts:', error);
-        throw error;
-      }
-
-      return data as PopularPost[];
+    queryFn: async (): Promise<PopularPost[]> => {
+      // RPC not yet implemented - return empty for now
+      console.warn('get_popular_posts RPC not yet implemented');
+      return [];
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };

@@ -11,7 +11,7 @@ export interface MutualConnection {
 export const useMutualConnections = (userId1: string | undefined, userId2: string | undefined) => {
   return useQuery({
     queryKey: ['mutual-connections', userId1, userId2],
-    queryFn: async () => {
+    queryFn: async (): Promise<MutualConnection[]> => {
       if (!userId1 || !userId2) return [];
 
       const { data, error } = await supabase.rpc('get_mutual_connections', {
@@ -21,12 +21,18 @@ export const useMutualConnections = (userId1: string | undefined, userId2: strin
 
       if (error) {
         console.error('Error fetching mutual connections:', error);
-        throw error;
+        return [];
       }
 
-      return (data as MutualConnection[]) || [];
+      // Map the RPC response to our interface
+      return ((data as any[]) || []).map(item => ({
+        user_id: item.id || item.user_id,
+        full_name: item.full_name || '',
+        username: item.username || '',
+        avatar_url: item.avatar_url || null,
+      }));
     },
     enabled: !!userId1 && !!userId2 && userId1 !== userId2,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 };

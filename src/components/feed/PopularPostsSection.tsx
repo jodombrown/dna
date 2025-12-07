@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Loader2 } from 'lucide-react';
 import { usePopularPosts } from '@/hooks/usePopularPosts';
-import { UniversalFeedItem } from './UniversalFeedItem';
+import { UniversalFeedItemComponent } from './UniversalFeedItem';
+import { UniversalFeedItem } from '@/types/feed';
 
 export const PopularPostsSection = () => {
   const { data: popularPosts, isLoading, error } = usePopularPosts(10);
@@ -44,34 +45,46 @@ export const PopularPostsSection = () => {
         </CardHeader>
       </Card>
 
-      {popularPosts.map((post) => (
-        <UniversalFeedItem
-          key={post.id}
-          item={{
-            id: post.id,
-            post_type: post.post_type as any,
-            author_id: post.author_id,
-            author_name: post.author_name,
-            author_username: post.author_username,
-            author_avatar: post.author_avatar,
-            author_headline: post.author_headline,
-            content: post.content,
-            media_url: post.media_url,
-            privacy_level: post.privacy_level as 'public' | 'connections',
-            linked_entity_type: post.linked_entity_type,
-            linked_entity_id: post.linked_entity_id,
-            space_id: post.space_id,
-            event_id: post.event_id,
-            created_at: post.created_at,
-            like_count: post.like_count,
-            comment_count: post.comment_count,
-            share_count: post.share_count,
-            bookmark_count: post.bookmark_count,
-            user_has_liked: post.user_has_liked,
-            user_has_bookmarked: post.user_has_bookmarked,
-          }}
-        />
-      ))}
+      {popularPosts.map((post) => {
+        // Map PopularPost to UniversalFeedItem structure
+        const feedItem: UniversalFeedItem = {
+          post_id: post.id,
+          post_type: (post.post_type || 'post') as any,
+          author_id: post.author_id,
+          author_display_name: post.author_name,
+          author_username: post.author_username,
+          author_avatar_url: post.author_avatar,
+          content: post.content,
+          title: null,
+          subtitle: null,
+          media_url: post.media_url,
+          privacy_level: post.privacy_level || 'public',
+          linked_entity_type: (post.linked_entity_type as any) || null,
+          linked_entity_id: post.linked_entity_id,
+          space_id: post.space_id,
+          space_title: null,
+          event_id: post.event_id,
+          event_title: null,
+          created_at: post.created_at,
+          updated_at: post.created_at,
+          like_count: post.like_count,
+          comment_count: post.comment_count,
+          share_count: post.share_count,
+          view_count: 0,
+          bookmark_count: post.bookmark_count,
+          has_liked: post.user_has_liked,
+          has_bookmarked: post.user_has_bookmarked,
+        };
+
+        return (
+          <UniversalFeedItemComponent
+            key={post.id}
+            item={feedItem}
+            currentUserId=""
+            onUpdate={() => {}}
+          />
+        );
+      })}
     </div>
   );
 };
