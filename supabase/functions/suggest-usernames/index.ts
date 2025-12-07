@@ -14,9 +14,9 @@ serve(async (req) => {
   try {
     const { fullName, industry, countryOrigin, currentLocation } = await req.json();
 
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!openaiApiKey) {
-      throw new Error('OpenAI API key not configured');
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    if (!lovableApiKey) {
+      throw new Error('LOVABLE_API_KEY is not configured');
     }
 
     // Create context-aware prompt for diaspora username suggestions
@@ -52,33 +52,45 @@ Return ONLY a JSON array of objects with this exact format:
 
     console.log('Generating username suggestions for:', { fullName, industry, countryOrigin });
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
+        'Authorization': `Bearer ${lovableApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
+        model: 'google/gemini-2.5-flash',
         messages: [
           {
             role: 'system',
-            content: 'You are a creative username generator specializing in African diaspora professional identity. Generate meaningful, culturally-aware username suggestions.'
+            content: 'You are a creative username generator specializing in African diaspora professional identity. Generate meaningful, culturally-aware username suggestions. Always respond with valid JSON only.'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        temperature: 0.8,
-        max_tokens: 1000,
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('OpenAI API error:', errorData);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      console.error('Lovable AI Gateway error:', response.status, errorData);
+      
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded, please try again later.', suggestions: [] }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: 'AI service unavailable, please try again later.', suggestions: [] }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      throw new Error(`AI Gateway error: ${response.status}`);
     }
 
     const data = await response.json();
@@ -91,7 +103,18 @@ Return ONLY a JSON array of objects with this exact format:
     // Parse the JSON response
     let parsedSuggestions;
     try {
-      parsedSuggestions = JSON.parse(suggestions);
+      // Clean up response - remove markdown code blocks if present
+      let cleanedSuggestions = suggestions.trim();
+      if (cleanedSuggestions.startsWith('```json')) {
+        cleanedSuggestions = cleanedSuggestions.slice(7);
+      }
+      if (cleanedSuggestions.startsWith('```')) {
+        cleanedSuggestions = cleanedSuggestions.slice(3);
+      }
+      if (cleanedSuggestions.endsWith('```')) {
+        cleanedSuggestions = cleanedSuggestions.slice(0, -3);
+      }
+      parsedSuggestions = JSON.parse(cleanedSuggestions.trim());
     } catch (parseError) {
       console.error('Failed to parse AI response:', suggestions);
       // Fallback suggestions if AI response is malformed
@@ -101,7 +124,7 @@ Return ONLY a JSON array of objects with this exact format:
           explanation: "Professional username based on your name"
         },
         {
-          username: `${countryOrigin?.toLowerCase().slice(0, 4)}_innovator`,
+          username: `${countryOrigin?.toLowerCase().slice(0, 4) || 'afro'}_innovator`,
           explanation: "Reflects your innovative diaspora identity"
         }
       ];
