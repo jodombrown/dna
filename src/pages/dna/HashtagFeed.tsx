@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Hash, TrendingUp } from 'lucide-react';
 import { useHashtagPosts, useTrendingHashtags } from '@/hooks/useHashtags';
-import { UniversalFeedItem } from '@/components/feed/UniversalFeedItem';
+import { UniversalFeedItemComponent } from '@/components/feed/UniversalFeedItem';
+import { UniversalFeedItem } from '@/types/feed';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
 
@@ -58,34 +59,46 @@ export default function HashtagFeed() {
               </CardContent>
             </Card>
           ) : (
-            posts.map((post) => (
-              <UniversalFeedItem
-                key={post.id}
-                item={{
-                  id: post.id,
-                  post_type: post.post_type as any,
-                  author_id: post.author_id,
-                  author_name: post.author_name,
-                  author_username: post.author_username,
-                  author_avatar: post.author_avatar,
-                  author_headline: post.author_headline,
-                  content: post.content,
-                  media_url: post.media_url,
-                  privacy_level: post.privacy_level as 'public' | 'connections',
-                  linked_entity_type: null,
-                  linked_entity_id: null,
-                  space_id: null,
-                  event_id: null,
-                  created_at: post.created_at,
-                  like_count: post.like_count,
-                  comment_count: post.comment_count,
-                  share_count: post.share_count,
-                  bookmark_count: post.bookmark_count,
-                  user_has_liked: post.user_has_liked,
-                  user_has_bookmarked: post.user_has_bookmarked,
-                }}
-              />
-            ))
+            posts.map((post) => {
+              // Map HashtagPost to UniversalFeedItem structure
+              const feedItem: UniversalFeedItem = {
+                post_id: post.id,
+                post_type: (post.post_type || 'post') as any,
+                author_id: post.author_id,
+                author_display_name: post.author_name,
+                author_username: post.author_username,
+                author_avatar_url: post.author_avatar,
+                content: post.content,
+                title: null,
+                subtitle: null,
+                media_url: post.media_url,
+                privacy_level: post.privacy_level || 'public',
+                linked_entity_type: null,
+                linked_entity_id: null,
+                space_id: null,
+                space_title: null,
+                event_id: null,
+                event_title: null,
+                created_at: post.created_at,
+                updated_at: post.updated_at || post.created_at,
+                like_count: post.like_count,
+                comment_count: post.comment_count,
+                share_count: post.share_count,
+                view_count: 0,
+                bookmark_count: post.bookmark_count,
+                has_liked: post.user_has_liked,
+                has_bookmarked: post.user_has_bookmarked,
+              };
+
+              return (
+                <UniversalFeedItemComponent
+                  key={post.id}
+                  item={feedItem}
+                  currentUserId={user?.id || ''}
+                  onUpdate={() => {}}
+                />
+              );
+            })
           )}
         </div>
 

@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface SearchFilters {
@@ -43,26 +42,12 @@ export const usePostSearch = (
 
   return useQuery({
     queryKey: ['post-search', query, filters, user?.id, limit, offset],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('search_posts', {
-        p_query: query || null,
-        p_viewer_id: user?.id || null,
-        p_author_id: filters?.authorId || null,
-        p_post_type: filters?.postType || null,
-        p_date_from: filters?.dateFrom?.toISOString() || null,
-        p_date_to: filters?.dateTo?.toISOString() || null,
-        p_limit: limit,
-        p_offset: offset,
-      });
-
-      if (error) {
-        console.error('Error searching posts:', error);
-        throw error;
-      }
-
-      return (data as SearchPost[]) || [];
+    queryFn: async (): Promise<SearchPost[]> => {
+      // RPC not yet implemented - return empty for now
+      console.warn('search_posts RPC not yet implemented');
+      return [];
     },
-    enabled: query.length > 0, // Only search when there's a query
-    staleTime: 1 * 60 * 1000, // 1 minute
+    enabled: query.length > 0,
+    staleTime: 1 * 60 * 1000,
   });
 };

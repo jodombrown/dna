@@ -213,8 +213,8 @@ export function PostCard({ post }: PostCardProps) {
       if (!user) throw new Error('Not authenticated');
 
       await createResharePost({
-        userId: user.id,
         originalPostId: post.id,
+        authorId: user.id,
         commentary: commentary || undefined,
       });
     },
@@ -239,11 +239,12 @@ export function PostCard({ post }: PostCardProps) {
     mutationFn: async (content: string) => {
       if (!user) throw new Error('Not authenticated');
 
-      const { data, error } = await supabase.rpc('update_post', {
-        p_post_id: post.id,
-        p_user_id: user.id,
-        p_content: content,
-      });
+      // Direct update instead of RPC (update_post RPC not yet implemented)
+      const { data, error } = await supabase
+        .from('posts')
+        .update({ content, updated_at: new Date().toISOString() })
+        .eq('id', post.id)
+        .eq('author_id', user.id);
 
       if (error) throw error;
       return data;
