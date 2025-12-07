@@ -6,7 +6,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Flag } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Flag, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   DropdownMenu,
@@ -16,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { CommentSection } from './CommentSection';
 import { ReshareDialog } from './ReshareDialog';
+import { EditPostDialog } from './EditPostDialog';
 import { createResharePost } from '@/lib/feedWriter';
 
 interface Post {
@@ -43,6 +45,7 @@ export function PostCard({ post }: PostCardProps) {
   const queryClient = useQueryClient();
   const [showComments, setShowComments] = useState(false);
   const [showReshareDialog, setShowReshareDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   // Fetch author profile
   const { data: author } = useQuery({
@@ -230,7 +233,37 @@ export function PostCard({ post }: PostCardProps) {
     await reshareMutation.mutateAsync(commentary);
   };
 
+  // Edit post
+  const editPostMutation = useMutation({
+    mutationFn: async (content: string) => {
+      if (!user) throw new Error('Not authenticated');
+
+      const { data, error } = await supabase.rpc('update_post', {
+        p_post_id: post.id,
+        p_user_id: user.id,
+        p_content: content,
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      toast.success('Post updated successfully!');
+    },
+    onError: (error) => {
+      console.error('Edit failed:', error);
+      toast.error('Failed to update post. Please try again.');
+    },
+  });
+
+  const handleEdit = async (content: string) => {
+    await editPostMutation.mutateAsync(content);
+  };
+
   const isOwnPost = user?.id === post.author_id;
+  const isEdited = post.updated_at && post.updated_at !== post.created_at;
 
   return (
     <Card className="p-6 space-y-4">
@@ -245,9 +278,16 @@ export function PostCard({ post }: PostCardProps) {
           </Avatar>
           <div>
             <p className="font-semibold text-foreground">{author?.full_name || 'User'}</p>
-            <p className="text-sm text-muted-foreground">
-              {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">
+                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+              </p>
+              {isEdited && (
+                <Badge variant="secondary" className="text-xs">
+                  Edited
+                </Badge>
+              )}
+            </div>
           </div>
         </div>
 
@@ -259,9 +299,15 @@ export function PostCard({ post }: PostCardProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {isOwnPost && (
-              <DropdownMenuItem onClick={() => deletePostMutation.mutate()}>
-                Delete
-              </DropdownMenuItem>
+              <>
+                <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+                  <Edit3 className="h-4 w-4 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => deletePostMutation.mutate()}>
+                  Delete
+                </DropdownMenuItem>
+              </>
             )}
             {!isOwnPost && (
               <DropdownMenuItem>
@@ -333,6 +379,14 @@ export function PostCard({ post }: PostCardProps) {
           content: post.content,
           media_url: post.media_urls?.[0] || null,
         }}
+      />
+
+      {/* Edit Post Dialog */}
+      <EditPostDialog
+        isOpen={showEditDialog}
+        onClose={() => setShowEditDialog(false)}
+        onSave={handleEdit}
+        initialContent={post.content}
       />
     </Card>
   );
