@@ -98,55 +98,22 @@ serve(async (req) => {
       );
     }
 
-    // Check requester's profile completion (must be >= 40%)
-    const { data: requesterProfile, error: requesterError } = await supabaseClient
-      .from('profiles')
-      .select('id, profile_completion_percentage')
-      .eq('id', user.id)
-      .single();
-
-    if (requesterError || !requesterProfile) {
-      console.error('Requester profile error:', requesterError);
-      return new Response(
-        JSON.stringify({ 
-          status: 'error',
-          error: 'Unable to verify your profile' 
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 500,
-        }
-      );
-    }
-
-    // Enforce profile gate: requester must have >= 40% completion
-    if ((requesterProfile.profile_completion_percentage || 0) < 40) {
-      return new Response(
-        JSON.stringify({ 
-          status: 'profile_incomplete',
-          error: 'Complete your profile to at least 40% to send connection requests',
-          requester_completion: requesterProfile.profile_completion_percentage || 0
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 403,
-        }
-      );
-    }
+    // Profile completion check REMOVED - zero blocking!
+    // Users can now send connection requests regardless of profile completion
 
     // Check if target user exists
     const { data: targetProfile, error: profileError } = await supabaseClient
       .from('profiles')
-      .select('id, full_name, profile_completion_percentage')
+      .select('id, full_name')
       .eq('id', target_user_id)
       .single();
 
     if (profileError || !targetProfile) {
       console.error('Target user not found:', profileError);
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           status: 'not_found',
-          error: 'User not found' 
+          error: 'User not found'
         }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -155,19 +122,7 @@ serve(async (req) => {
       );
     }
 
-    // Verify target user has sufficient profile completion (40%)
-    if ((targetProfile.profile_completion_percentage || 0) < 40) {
-      return new Response(
-        JSON.stringify({ 
-          status: 'profile_incomplete',
-          error: 'This user has not completed their profile yet' 
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 400,
-        }
-      );
-    }
+    // Profile completion check REMOVED for target user as well - zero blocking!
 
     // Check for blocked relationships
     const { data: blockCheck } = await supabaseClient

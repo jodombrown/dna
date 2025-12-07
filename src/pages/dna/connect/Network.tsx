@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { ConnectionRequestCard } from '@/components/connect/ConnectionRequestCard';
@@ -6,9 +6,12 @@ import { ConnectionCard } from '@/components/connect/ConnectionCard';
 import { MemberCard } from '@/components/connect/MemberCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Users, UserPlus, UserCheck } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Loader2, Users, UserPlus, UserCheck, Search, SlidersHorizontal } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useSearchParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 export default function Network() {
   const { user } = useAuth();
@@ -18,6 +21,11 @@ export default function Network() {
   const [connections, setConnections] = useState<any[]>([]);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [loading, setLoading] = useState({ requests: true, connections: true, suggestions: true });
+
+  // Connection search and filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('alphabetical');
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -63,6 +71,35 @@ export default function Network() {
     }
   };
 
+  // Filter and sort connections
+  const filteredConnections = useMemo(() => {
+    let filtered = [...connections];
+
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(c =>
+        c.full_name?.toLowerCase().includes(query) ||
+        c.headline?.toLowerCase().includes(query) ||
+        c.profession?.toLowerCase().includes(query)
+      );
+    }
+
+    // Sort
+    switch (sortBy) {
+      case 'alphabetical':
+        filtered.sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''));
+        break;
+      case 'recent':
+        filtered.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+        break;
+      default:
+        break;
+    }
+
+    return filtered;
+  }, [connections, searchQuery, sortBy]);
+
   if (!user) return null;
 
   return (
@@ -102,14 +139,93 @@ export default function Network() {
         <TabsContent value="connections">
           <Card>
             <CardHeader>
-              <CardTitle>My Connections</CardTitle>
-              <CardDescription>People you're connected with</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>My Connections</CardTitle>
+                  <CardDescription>
+                    {connections.length} connection{connections.length !== 1 ? 's' : ''}
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowFilters(!showFilters)}
+                >
+                  <SlidersHorizontal className="h-4 w-4 mr-2" />
+                  {showFilters ? 'Hide' : 'Show'} Filters
+                </Button>
+              </div>
+
+              {/* Search and Sort Controls */}
+              <div className={`space-y-3 mt-4 ${showFilters ? '' : 'hidden'}`}>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {/* Search Input */}
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by name, headline, or profession..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+
+                  {/* Sort Dropdown */}
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger className="w-full sm:w-[200px]">
+                      <SelectValue placeholder="Sort by..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="alphabetical">Alphabetical</SelectItem>
+                      <SelectItem value="recent">Recently Connected</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Clear Filters */}
+                {(searchQuery || sortBy !== 'alphabetical') && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSortBy('alphabetical');
+                    }}
+                    className="text-xs"
+                  >
+                    Clear filters
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
-              {loading.connections ? <Loader2 className="h-8 w-8 animate-spin mx-auto" /> : connections.length === 0 ? (
-                <Alert><UserCheck className="h-4 w-4" /><AlertDescription>No connections yet.</AlertDescription></Alert>
+              {loading.connections ? (
+                <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+              ) : connections.length === 0 ? (
+                <Alert>
+                  <UserCheck className="h-4 w-4" />
+                  <AlertDescription>No connections yet.</AlertDescription>
+                </Alert>
+              ) : filteredConnections.length === 0 ? (
+                <Alert>
+                  <Search className="h-4 w-4" />
+                  <AlertDescription>
+                    No connections match your search. Try different keywords.
+                  </AlertDescription>
+                </Alert>
               ) : (
-                <div className="space-y-3">{connections.map(c => <ConnectionCard key={c.id} connection={c} onConnectionRemoved={() => { loadConnections(); loadSuggestions(); }} />)}</div>
+                <div className="space-y-3">
+                  {filteredConnections.map(c => (
+                    <ConnectionCard
+                      key={c.id}
+                      connection={c}
+                      onConnectionRemoved={() => {
+                        loadConnections();
+                        loadSuggestions();
+                      }}
+                    />
+                  ))}
+                </div>
               )}
             </CardContent>
           </Card>

@@ -6,7 +6,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Flag } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Flag, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   DropdownMenu,
@@ -15,6 +16,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { CommentSection } from './CommentSection';
+import { ReshareDialog } from './ReshareDialog';
+import { EditPostDialog } from './EditPostDialog';
+import { createResharePost } from '@/lib/feedWriter';
+import { linkifyContent } from '@/utils/linkifyContent';
 
 interface Post {
   id: string;
@@ -40,6 +45,8 @@ export function PostCard({ post }: PostCardProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [showComments, setShowComments] = useState(false);
+  const [showReshareDialog, setShowReshareDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   // Fetch author profile
   const { data: author } = useQuery({
@@ -87,6 +94,18 @@ export function PostCard({ post }: PostCardProps) {
     queryFn: async () => {
       const { count } = await supabase
         .from('post_comments')
+        .select('id', { count: 'exact', head: true })
+        .eq('post_id', post.id);
+      return count || 0;
+    },
+  });
+
+  // Fetch share count
+  const { data: shareCount } = useQuery({
+    queryKey: ['post-shares-count', post.id],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('post_shares')
         .select('id', { count: 'exact', head: true })
         .eq('post_id', post.id);
       return count || 0;
@@ -188,7 +207,64 @@ export function PostCard({ post }: PostCardProps) {
     },
   });
 
+  // Reshare post
+  const reshareMutation = useMutation({
+    mutationFn: async (commentary: string) => {
+      if (!user) throw new Error('Not authenticated');
+
+      await createResharePost({
+        userId: user.id,
+        originalPostId: post.id,
+        commentary: commentary || undefined,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['post-shares-count', post.id] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
+      toast.success('Post reshared successfully!');
+    },
+    onError: (error) => {
+      console.error('Reshare failed:', error);
+      toast.error('Failed to reshare post. Please try again.');
+    },
+  });
+
+  const handleReshare = async (commentary: string) => {
+    await reshareMutation.mutateAsync(commentary);
+  };
+
+  // Edit post
+  const editPostMutation = useMutation({
+    mutationFn: async (content: string) => {
+      if (!user) throw new Error('Not authenticated');
+
+      const { data, error } = await supabase.rpc('update_post', {
+        p_post_id: post.id,
+        p_user_id: user.id,
+        p_content: content,
+      });
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      toast.success('Post updated successfully!');
+    },
+    onError: (error) => {
+      console.error('Edit failed:', error);
+      toast.error('Failed to update post. Please try again.');
+    },
+  });
+
+  const handleEdit = async (content: string) => {
+    await editPostMutation.mutateAsync(content);
+  };
+
   const isOwnPost = user?.id === post.author_id;
+  const isEdited = post.updated_at && post.updated_at !== post.created_at;
 
   return (
     <Card className="p-6 space-y-4">
@@ -203,9 +279,16 @@ export function PostCard({ post }: PostCardProps) {
           </Avatar>
           <div>
             <p className="font-semibold text-foreground">{author?.full_name || 'User'}</p>
-            <p className="text-sm text-muted-foreground">
-              {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">
+                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+              </p>
+              {isEdited && (
+                <Badge variant="secondary" className="text-xs">
+                  Edited
+                </Badge>
+              )}
+            </div>
           </div>
         </div>
 
@@ -217,9 +300,15 @@ export function PostCard({ post }: PostCardProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {isOwnPost && (
-              <DropdownMenuItem onClick={() => deletePostMutation.mutate()}>
-                Delete
-              </DropdownMenuItem>
+              <>
+                <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+                  <Edit3 className="h-4 w-4 mr-2" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => deletePostMutation.mutate()}>
+                  Delete
+                </DropdownMenuItem>
+              </>
             )}
             {!isOwnPost && (
               <DropdownMenuItem>
@@ -232,7 +321,7 @@ export function PostCard({ post }: PostCardProps) {
       </div>
 
       {/* Post Content */}
-      <div className="text-foreground whitespace-pre-wrap">{post.content}</div>
+      <div className="text-foreground whitespace-pre-wrap">{linkifyContent(post.content)}</div>
 
       {/* Post Actions */}
       <div className="flex items-center justify-between border-t pt-3">
@@ -256,9 +345,13 @@ export function PostCard({ post }: PostCardProps) {
             {commentCount || 0}
           </Button>
 
-          <Button variant="ghost" size="sm" disabled>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => user && setShowReshareDialog(true)}
+          >
             <Share2 className="h-4 w-4 mr-2" />
-            Share
+            {shareCount || 0}
           </Button>
         </div>
 
@@ -274,6 +367,28 @@ export function PostCard({ post }: PostCardProps) {
 
       {/* Comments Section */}
       {showComments && <CommentSection postId={post.id} />}
+
+      {/* Reshare Dialog */}
+      <ReshareDialog
+        isOpen={showReshareDialog}
+        onClose={() => setShowReshareDialog(false)}
+        onReshare={handleReshare}
+        originalPost={{
+          id: post.id,
+          author_name: author?.full_name || 'User',
+          author_avatar: author?.avatar_url || null,
+          content: post.content,
+          media_url: post.media_urls?.[0] || null,
+        }}
+      />
+
+      {/* Edit Post Dialog */}
+      <EditPostDialog
+        isOpen={showEditDialog}
+        onClose={() => setShowEditDialog(false)}
+        onSave={handleEdit}
+        initialContent={post.content}
+      />
     </Card>
   );
 }

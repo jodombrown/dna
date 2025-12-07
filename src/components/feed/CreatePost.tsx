@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -8,11 +8,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Image, Video, Link2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { MentionAutocomplete } from './MentionAutocomplete';
+import type { MentionSuggestion } from '@/hooks/useMentionAutocomplete';
 
 export function CreatePost() {
   const { user, profile } = useAuth();
   const [content, setContent] = useState('');
+  const [cursorPosition, setCursorPosition] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
 
   const createPostMutation = useMutation({
@@ -61,6 +65,38 @@ export function CreatePost() {
     },
   });
 
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
+    setCursorPosition(e.target.selectionStart);
+  };
+
+  const handleTextareaClick = () => {
+    if (textareaRef.current) {
+      setCursorPosition(textareaRef.current.selectionStart);
+    }
+  };
+
+  const handleMentionSelect = (mention: MentionSuggestion, startPos: number, endPos: number) => {
+    // Replace the @query with @username
+    const beforeMention = content.substring(0, startPos);
+    const afterMention = content.substring(endPos);
+    const newContent = `${beforeMention}@${mention.username} ${afterMention}`;
+
+    setContent(newContent);
+
+    // Move cursor after the inserted mention
+    const newCursorPos = startPos + mention.username.length + 2; // +2 for @ and space
+    setCursorPosition(newCursorPos);
+
+    // Focus textarea and set cursor position
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  };
+
   const handleSubmit = async () => {
     if (!content.trim()) {
       toast.error('Please write something');
@@ -91,12 +127,21 @@ export function CreatePost() {
             {profile?.full_name?.[0] || user.email?.[0] || 'U'}
           </AvatarFallback>
         </Avatar>
-        <div className="flex-1 space-y-3">
+        <div className="flex-1 space-y-3 relative">
           <Textarea
+            ref={textareaRef}
             placeholder="What's on your mind?"
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={handleContentChange}
+            onClick={handleTextareaClick}
+            onKeyUp={handleTextareaClick}
             className="min-h-[100px] resize-none border-0 p-0 focus-visible:ring-0 text-base"
+          />
+          <MentionAutocomplete
+            text={content}
+            cursorPosition={cursorPosition}
+            onSelectMention={handleMentionSelect}
+            textareaRef={textareaRef}
           />
         </div>
       </div>

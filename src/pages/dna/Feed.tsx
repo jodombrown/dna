@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
-import { PenSquare, Sparkles, Users, Newspaper, Settings, TrendingUp } from 'lucide-react';
+import { PenSquare, Sparkles, Users, Newspaper, Settings, TrendingUp, Search } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import LayoutController from '@/components/LayoutController';
 import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 import { DashboardModules } from '@/components/feed/DashboardModules';
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
+import { SearchDialog } from '@/components/feed/SearchDialog';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileViewContainer } from '@/components/mobile/MobileViewContainer';
@@ -28,6 +29,7 @@ const DnaFeed = () => {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<FeedTab>('all');
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
+  const [showSearchDialog, setShowSearchDialog] = useState(false);
   const { preferences, isLoading: prefsLoading } = useDashboardPreferences();
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
@@ -63,7 +65,17 @@ const DnaFeed = () => {
         <>
           {/* Compact Feed Header */}
           <div className="flex items-center justify-between py-1">
-            <h1 className="text-xl font-semibold">Feed</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-semibold">Feed</h1>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSearchDialog(true)}
+                className="h-8 w-8 p-0"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
             <Tabs value={rankingMode} onValueChange={(v) => setRankingMode(v as RankingMode)} className="w-auto">
               <TabsList className="h-8">
                 <TabsTrigger value="top" className="flex items-center gap-1.5 text-xs px-2">
@@ -182,8 +194,10 @@ const DnaFeed = () => {
         <div className="min-h-screen bg-background" data-mobile-feed="true">
           {/* Fixed header + tabs container (mobile feed only) */}
           <div className="fixed top-0 left-0 right-0 z-40 bg-background border-b border-border">
-            <MobileHeader 
+            <MobileHeader
               variant="feed"
+              showSearch={true}
+              onSearchClick={() => setShowSearchDialog(true)}
               onComposerClick={() => composer.open('post')}
               className="border-b-0"
             />
@@ -251,6 +265,10 @@ const DnaFeed = () => {
             onModeChange={composer.switchMode}
             onSubmit={composer.submit}
           />
+          <SearchDialog
+            isOpen={showSearchDialog}
+            onClose={() => setShowSearchDialog(false)}
+          />
         </div>
       </>
     );
@@ -274,8 +292,12 @@ const DnaFeed = () => {
         onModeChange={composer.switchMode}
         onSubmit={composer.submit}
       />
+      <SearchDialog
+        isOpen={showSearchDialog}
+        onClose={() => setShowSearchDialog(false)}
+      />
     </div>
   );
 };
- 
+
 export default DnaFeed;

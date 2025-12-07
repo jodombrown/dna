@@ -54,10 +54,10 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
       return;
     }
 
-    // If onboarding completed but trying to access onboarding page, redirect to feed
+    // If onboarding completed but trying to access onboarding page, redirect to discover
     if (hasCompletedOnboarding && location.pathname === '/onboarding') {
-      console.log('OnboardingGuard: Onboarding already completed, redirecting to /dna/feed');
-      navigate('/dna/feed', { replace: true });
+      console.log('OnboardingGuard: Onboarding already completed, redirecting to /dna/connect/discover');
+      navigate('/dna/connect/discover', { replace: true });
     }
   }, [profile, user, authLoading, profileLoading, navigate, location.pathname]);
 

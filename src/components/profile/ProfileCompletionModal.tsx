@@ -32,19 +32,19 @@ export const ProfileCompletionModal: React.FC<ProfileCompletionModalProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Lock className="h-5 w-5 text-amber-500" />
-            Unlock More Features
+            <Star className="h-5 w-5 text-dna-copper" />
+            Enhance Your Experience
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm font-medium">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-dna-mint/20 text-dna-forest text-sm font-medium">
               <Star className="h-4 w-4" />
-              {requiredScore}% Profile Required
+              Get More Visibility
             </div>
             <p className="text-muted-foreground">
-              Complete your profile to access <strong>{featureName}</strong>. 
+              A complete profile helps you get better matches and visibility for <strong>{featureName}</strong>.
               You're currently at {currentScore}%.
             </p>
           </div>
@@ -56,7 +56,7 @@ export const ProfileCompletionModal: React.FC<ProfileCompletionModalProps> = ({
             </div>
             <Progress value={currentScore} className="h-2" />
             <div className="text-xs text-muted-foreground text-center">
-              {requiredScore - currentScore}% more to unlock this feature
+              {requiredScore - currentScore}% more to get premium visibility
             </div>
           </div>
 

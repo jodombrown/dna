@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,6 +8,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Heart, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { MentionAutocomplete } from './MentionAutocomplete';
+import { linkifyContent } from '@/utils/linkifyContent';
+import type { MentionSuggestion } from '@/hooks/useMentionAutocomplete';
 
 interface CommentSectionProps {
   postId: string;
@@ -16,6 +19,8 @@ interface CommentSectionProps {
 export function CommentSection({ postId }: CommentSectionProps) {
   const { user, profile } = useAuth();
   const [commentText, setCommentText] = useState('');
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const commentTextareaRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
 
   // Fetch comments
@@ -55,6 +60,35 @@ export function CommentSection({ postId }: CommentSectionProps) {
     },
   });
 
+  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCommentText(e.target.value);
+    setCursorPosition(e.target.selectionStart);
+  };
+
+  const handleCommentClick = () => {
+    if (commentTextareaRef.current) {
+      setCursorPosition(commentTextareaRef.current.selectionStart);
+    }
+  };
+
+  const handleMentionSelect = (mention: MentionSuggestion, startPos: number, endPos: number) => {
+    const beforeMention = commentText.substring(0, startPos);
+    const afterMention = commentText.substring(endPos);
+    const newContent = `${beforeMention}@${mention.username} ${afterMention}`;
+
+    setCommentText(newContent);
+
+    const newCursorPos = startPos + mention.username.length + 2;
+    setCursorPosition(newCursorPos);
+
+    setTimeout(() => {
+      if (commentTextareaRef.current) {
+        commentTextareaRef.current.focus();
+        commentTextareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    }, 0);
+  };
+
   const handleSubmitComment = () => {
     if (!commentText.trim()) return;
     if (!user) {
@@ -75,12 +109,21 @@ export function CommentSection({ postId }: CommentSectionProps) {
               {profile?.full_name?.[0] || 'U'}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-2 relative">
             <Textarea
+              ref={commentTextareaRef}
               placeholder="Write a comment..."
               value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
+              onChange={handleCommentChange}
+              onClick={handleCommentClick}
+              onKeyUp={handleCommentClick}
               className="min-h-[60px] resize-none text-sm"
+            />
+            <MentionAutocomplete
+              text={commentText}
+              cursorPosition={cursorPosition}
+              onSelectMention={handleMentionSelect}
+              textareaRef={commentTextareaRef}
             />
             <div className="flex justify-end">
               <Button
@@ -201,7 +244,7 @@ function CommentItem({ comment }: { comment: any }) {
       <div className="flex-1 space-y-1">
         <div className="bg-accent rounded-lg p-3">
           <p className="font-semibold text-sm text-foreground">{author?.full_name || 'User'}</p>
-          <p className="text-sm text-foreground mt-1">{comment.content}</p>
+          <div className="text-sm text-foreground mt-1">{linkifyContent(comment.content)}</div>
         </div>
         <div className="flex items-center gap-4 px-3">
           <Button
