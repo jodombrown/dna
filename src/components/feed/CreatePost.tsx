@@ -6,9 +6,16 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Image, Video, Link2, Loader2 } from 'lucide-react';
+import { Image, Video, Link2, Loader2, Save, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { MentionAutocomplete } from './MentionAutocomplete';
+import { useDraftPosts } from '@/hooks/useDraftPosts';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { MentionSuggestion } from '@/hooks/useMentionAutocomplete';
 
 export function CreatePost() {
@@ -18,6 +25,7 @@ export function CreatePost() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
+  const { drafts, saveDraft, deleteDraft } = useDraftPosts();
 
   const createPostMutation = useMutation({
     mutationFn: async (postContent: string) => {
@@ -97,6 +105,20 @@ export function CreatePost() {
     }, 0);
   };
 
+  const handleSaveDraft = async () => {
+    if (!content.trim()) {
+      toast.error('Please write something to save');
+      return;
+    }
+    await saveDraft.mutateAsync({ content, postType: 'post' });
+  };
+
+  const handleLoadDraft = (draftContent: string, draftId: string) => {
+    setContent(draftContent);
+    // Delete the draft after loading
+    deleteDraft.mutate(draftId);
+  };
+
   const handleSubmit = async () => {
     if (!content.trim()) {
       toast.error('Please write something');
@@ -148,17 +170,44 @@ export function CreatePost() {
 
       <div className="flex items-center justify-between border-t pt-3">
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm" disabled>
-            <Image className="h-4 w-4 mr-2" />
-            Photo
-          </Button>
-          <Button variant="ghost" size="sm" disabled>
-            <Video className="h-4 w-4 mr-2" />
-            Video
-          </Button>
-          <Button variant="ghost" size="sm" disabled>
-            <Link2 className="h-4 w-4 mr-2" />
-            Link
+          {/* Draft Management */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm">
+                <FileText className="h-4 w-4 mr-2" />
+                Drafts {drafts && drafts.length > 0 && `(${drafts.length})`}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-80">
+              {drafts && drafts.length > 0 ? (
+                drafts.map((draft) => (
+                  <DropdownMenuItem
+                    key={draft.id}
+                    onClick={() => handleLoadDraft(draft.content, draft.id)}
+                    className="flex flex-col items-start gap-1 cursor-pointer"
+                  >
+                    <p className="text-sm line-clamp-2">{draft.content}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(draft.updated_at).toLocaleDateString()}
+                    </p>
+                  </DropdownMenuItem>
+                ))
+              ) : (
+                <div className="p-2 text-sm text-muted-foreground text-center">
+                  No saved drafts
+                </div>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSaveDraft}
+            disabled={!content.trim() || saveDraft.isPending}
+          >
+            <Save className="h-4 w-4 mr-2" />
+            Save Draft
           </Button>
         </div>
 

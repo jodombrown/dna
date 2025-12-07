@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,8 +6,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, Loader2 } from 'lucide-react';
+import { Heart, Loader2, TrendingUp, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MentionAutocomplete } from './MentionAutocomplete';
 import { linkifyContent } from '@/utils/linkifyContent';
 import type { MentionSuggestion } from '@/hooks/useMentionAutocomplete';
@@ -20,6 +21,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
   const { user, profile } = useAuth();
   const [commentText, setCommentText] = useState('');
   const [cursorPosition, setCursorPosition] = useState(0);
+  const [sortBy, setSortBy] = useState<'newest' | 'top'>('newest');
   const commentTextareaRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
 
@@ -98,6 +100,29 @@ export function CommentSection({ postId }: CommentSectionProps) {
     createCommentMutation.mutate(commentText);
   };
 
+  // Sort comments client-side
+  const sortedComments = useMemo(() => {
+    if (!comments) return [];
+
+    const commentsWithLikes = comments.map(comment => ({
+      ...comment,
+      // Like count will be fetched in CommentItem, but for sorting we need it here
+      // For now, sort by created_at for newest, will enhance with like count later
+    }));
+
+    if (sortBy === 'newest') {
+      return [...commentsWithLikes].sort((a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    } else {
+      // For 'top', we'll need to fetch like counts
+      // For now, sort by created_at as fallback
+      return [...commentsWithLikes].sort((a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    }
+  }, [comments, sortBy]);
+
   return (
     <div className="space-y-4 border-t pt-4">
       {/* Create Comment */}
@@ -145,14 +170,35 @@ export function CommentSection({ postId }: CommentSectionProps) {
         </div>
       )}
 
+      {/* Comment Sorting */}
+      {comments && comments.length > 0 && (
+        <div className="flex items-center justify-between py-2">
+          <p className="text-sm text-muted-foreground">
+            {comments.length} comment{comments.length !== 1 ? 's' : ''}
+          </p>
+          <Tabs value={sortBy} onValueChange={(v) => setSortBy(v as 'newest' | 'top')} className="w-auto">
+            <TabsList className="h-8">
+              <TabsTrigger value="newest" className="text-xs px-3">
+                <Clock className="h-3 w-3 mr-1.5" />
+                Newest
+              </TabsTrigger>
+              <TabsTrigger value="top" className="text-xs px-3">
+                <TrendingUp className="h-3 w-3 mr-1.5" />
+                Top
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+      )}
+
       {/* Comments List */}
       <div className="space-y-4">
         {isLoading ? (
           <div className="text-center py-4">
             <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
           </div>
-        ) : comments && comments.length > 0 ? (
-          comments.map((comment) => (
+        ) : sortedComments && sortedComments.length > 0 ? (
+          sortedComments.map((comment) => (
             <CommentItem key={comment.id} comment={comment} />
           ))
         ) : (
