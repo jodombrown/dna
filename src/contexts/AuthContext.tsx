@@ -144,23 +144,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      // Email whitelist check
-      const emailLower = email.toLowerCase().trim();
-      const allowedEmails = [
-        'jaunelamarr@icloud.com',
-        'jaunelamarr@gmail.com'
-      ];
-      const isWhitelisted = allowedEmails.includes(emailLower) || emailLower.endsWith('@diasporanetwork.africa');
-      
-      if (!isWhitelisted) {
-        return { 
-          error: { 
-            message: 'Registration is currently closed. Please join our waitlist to be notified when we launch on December 15, 2024.',
-            name: 'RegistrationClosed'
-          } 
-        };
-      }
-      
       const redirectUrl = `${window.location.origin}/dna/feed`;
       
       const { error } = await supabase.auth.signUp({
