@@ -12,6 +12,7 @@ import LayoutController from '@/components/LayoutController';
 import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 import { DashboardModules } from '@/components/feed/DashboardModules';
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
+import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
@@ -113,54 +114,58 @@ const DnaFeed = () => {
 
       {/* Filter Tabs */}
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-        <TabsList className="w-full grid grid-cols-4">
+        <TabsList className="w-full grid grid-cols-5">
           <TabsTrigger value="all">
-            <Newspaper className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">All Posts</span>
-            <span className="sm:hidden">All</span>
+            <Newspaper className="h-4 w-4 mr-1" />
+            <span className="hidden sm:inline">All</span>
+          </TabsTrigger>
+          <TabsTrigger value="for_you">
+            <Sparkles className="h-4 w-4 mr-1" />
+            <span className="hidden sm:inline">For You</span>
           </TabsTrigger>
           <TabsTrigger value="network">
-            <Users className="h-4 w-4 mr-2" />
+            <Users className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Network</span>
-            <span className="sm:hidden">Network</span>
           </TabsTrigger>
           <TabsTrigger value="my_posts">
-            <Sparkles className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">My Posts</span>
-            <span className="sm:hidden">Mine</span>
+            <PenSquare className="h-4 w-4 mr-1" />
+            <span className="hidden sm:inline">Mine</span>
           </TabsTrigger>
           <TabsTrigger value="bookmarks">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
             </svg>
-            <span className="hidden sm:inline">Bookmarks</span>
-            <span className="sm:hidden">Saved</span>
+            <span className="hidden sm:inline">Saved</span>
           </TabsTrigger>
         </TabsList>
       </Tabs>
 
-      {/* Universal Feed - Infinite Scroll */}
-      <UniversalFeedInfinite
-        viewerId={user.id}
-        tab={activeTab}
-        rankingMode={rankingMode}
-        emptyMessage={
-          activeTab === 'my_posts'
-            ? "You haven't posted anything yet"
-            : activeTab === 'network'
-            ? "Your connections haven't posted yet"
-            : 'No posts to show'
-        }
-        emptyAction={
-          <Button
-            onClick={() => composer.open('post')}
-            className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
-          >
-            <PenSquare className="h-4 w-4 mr-2" />
-            Create Your First Post
-          </Button>
-        }
-      />
+      {/* Feed Content - Personalized or Universal */}
+      {activeTab === 'for_you' ? (
+        <PersonalizedFeed />
+      ) : (
+        <UniversalFeedInfinite
+          viewerId={user.id}
+          tab={activeTab}
+          rankingMode={rankingMode}
+          emptyMessage={
+            activeTab === 'my_posts'
+              ? "You haven't posted anything yet"
+              : activeTab === 'network'
+              ? "Your connections haven't posted yet"
+              : 'No posts to show'
+          }
+          emptyAction={
+            <Button
+              onClick={() => composer.open('post')}
+              className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
+            >
+              <PenSquare className="h-4 w-4 mr-2" />
+              Create Your First Post
+            </Button>
+          }
+        />
+      )}
     </div>
   );
 
@@ -201,30 +206,30 @@ const DnaFeed = () => {
               onComposerClick={() => composer.open('post')}
               className="border-b-0"
             />
-            <div className="px-3 pb-2 pt-1">
+            <div className="px-3 pb-2 pt-1 overflow-x-auto">
               <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-                <TabsList className="w-full grid grid-cols-4">
-                  <TabsTrigger value="all">
-                    <Newspaper className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">All Posts</span>
-                    <span className="sm:hidden">All</span>
+                <TabsList className="w-full grid grid-cols-5">
+                  <TabsTrigger value="all" className="text-xs px-2">
+                    <Newspaper className="h-4 w-4" />
+                    <span className="ml-1 hidden xs:inline">All</span>
                   </TabsTrigger>
-                  <TabsTrigger value="network">
-                    <Users className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">Network</span>
-                    <span className="sm:hidden">Network</span>
+                  <TabsTrigger value="for_you" className="text-xs px-2">
+                    <Sparkles className="h-4 w-4" />
+                    <span className="ml-1 hidden xs:inline">You</span>
                   </TabsTrigger>
-                  <TabsTrigger value="my_posts">
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    <span className="hidden sm:inline">My Posts</span>
-                    <span className="sm:hidden">Mine</span>
+                  <TabsTrigger value="network" className="text-xs px-2">
+                    <Users className="h-4 w-4" />
+                    <span className="ml-1 hidden xs:inline">Net</span>
                   </TabsTrigger>
-                  <TabsTrigger value="bookmarks">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <TabsTrigger value="my_posts" className="text-xs px-2">
+                    <PenSquare className="h-4 w-4" />
+                    <span className="ml-1 hidden xs:inline">Mine</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="bookmarks" className="text-xs px-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                     </svg>
-                    <span className="hidden sm:inline">Bookmarks</span>
-                    <span className="sm:hidden">Saved</span>
+                    <span className="ml-1 hidden xs:inline">Save</span>
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -233,27 +238,31 @@ const DnaFeed = () => {
 
           {/* Add top padding to account for fixed header height */}
           <main className="pb-16 px-3 pt-[7.25rem]">
-            <UniversalFeedInfinite
-              viewerId={user.id}
-              tab={activeTab}
-              rankingMode={rankingMode}
-              emptyMessage={
-                activeTab === 'my_posts'
-                  ? "You haven't posted anything yet"
-                  : activeTab === 'network'
-                  ? "Your connections haven't posted yet"
-                  : 'No posts to show'
-              }
-              emptyAction={
-                <Button
-                  onClick={() => composer.open('post')}
-                  className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
-                >
-                  <PenSquare className="h-4 w-4 mr-2" />
-                  Create Your First Post
-                </Button>
-              }
-            />
+            {activeTab === 'for_you' ? (
+              <PersonalizedFeed />
+            ) : (
+              <UniversalFeedInfinite
+                viewerId={user.id}
+                tab={activeTab}
+                rankingMode={rankingMode}
+                emptyMessage={
+                  activeTab === 'my_posts'
+                    ? "You haven't posted anything yet"
+                    : activeTab === 'network'
+                    ? "Your connections haven't posted yet"
+                    : 'No posts to show'
+                }
+                emptyAction={
+                  <Button
+                    onClick={() => composer.open('post')}
+                    className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
+                  >
+                    <PenSquare className="h-4 w-4 mr-2" />
+                    Create Your First Post
+                  </Button>
+                }
+              />
+            )}
           </main>
           <MobileBottomNav />
           <UniversalComposer

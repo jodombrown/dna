@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { ConnectionRequestCard } from '@/components/connect/ConnectionRequestCard';
+import { SentRequestCard } from '@/components/network/SentRequestCard';
 import { ConnectionCard } from '@/components/connect/ConnectionCard';
 import { MemberCard } from '@/components/connect/MemberCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,9 +19,10 @@ export default function Network() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'requests');
   const [requests, setRequests] = useState<any[]>([]);
+  const [sentRequests, setSentRequests] = useState<any[]>([]);
   const [connections, setConnections] = useState<any[]>([]);
   const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [loading, setLoading] = useState({ requests: true, connections: true, suggestions: true });
+  const [loading, setLoading] = useState({ requests: true, sentRequests: true, connections: true, suggestions: true });
 
   // Connection search and filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,6 +32,7 @@ export default function Network() {
   useEffect(() => {
     if (user) {
       loadRequests();
+      loadSentRequests();
       loadConnections();
       loadSuggestions();
     }
@@ -44,6 +47,18 @@ export default function Network() {
       setRequests(data || []);
     } finally {
       setLoading(prev => ({ ...prev, requests: false }));
+    }
+  };
+
+  const loadSentRequests = async () => {
+    if (!user) return;
+    try {
+      setLoading(prev => ({ ...prev, sentRequests: true }));
+      const { data, error } = await supabase.rpc('get_sent_connection_requests', { p_user_id: user.id });
+      if (error) throw error;
+      setSentRequests(data || []);
+    } finally {
+      setLoading(prev => ({ ...prev, sentRequests: false }));
     }
   };
 
@@ -105,10 +120,14 @@ export default function Network() {
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={(v) => { setActiveTab(v); setSearchParams({ tab: v }); }}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="requests">
             <UserPlus className="h-4 w-4 mr-2" />
             Requests {requests.length > 0 && <span className="ml-1 bg-dna-copper text-white rounded-full px-2 py-0.5 text-xs">{requests.length}</span>}
+          </TabsTrigger>
+          <TabsTrigger value="sent">
+            <UserPlus className="h-4 w-4 mr-2" />
+            Sent {sentRequests.length > 0 && <span className="ml-1 bg-amber-500 text-white rounded-full px-2 py-0.5 text-xs">{sentRequests.length}</span>}
           </TabsTrigger>
           <TabsTrigger value="connections">
             <UserCheck className="h-4 w-4 mr-2" />
@@ -131,6 +150,22 @@ export default function Network() {
                 <Alert><UserPlus className="h-4 w-4" /><AlertDescription>No pending requests.</AlertDescription></Alert>
               ) : (
                 <div className="space-y-3">{requests.map(r => <ConnectionRequestCard key={r.connection_id} request={r} onRequestHandled={() => { loadRequests(); loadConnections(); }} />)}</div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="sent">
+          <Card>
+            <CardHeader>
+              <CardTitle>Sent Requests</CardTitle>
+              <CardDescription>Connection requests waiting for response</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading.sentRequests ? <Loader2 className="h-8 w-8 animate-spin mx-auto" /> : sentRequests.length === 0 ? (
+                <Alert><UserPlus className="h-4 w-4" /><AlertDescription>You haven't sent any connection requests.</AlertDescription></Alert>
+              ) : (
+                <div className="space-y-3">{sentRequests.map(r => <SentRequestCard key={r.connection_id} request={r} onWithdraw={loadSentRequests} />)}</div>
               )}
             </CardContent>
           </Card>

@@ -21,7 +21,7 @@ export type LinkedEntityType =
   | 'story' 
   | 'community_post';
 
-export type FeedTab = 'all' | 'network' | 'my_posts' | 'bookmarks';
+export type FeedTab = 'all' | 'for_you' | 'network' | 'my_posts' | 'bookmarks';
 export type RankingMode = 'latest' | 'top';
 
 /**
