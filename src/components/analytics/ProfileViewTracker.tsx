@@ -32,7 +32,7 @@ export const ProfileViewTracker: React.FC<ProfileViewTrackerProps> = ({
 
       try {
         // Use new record_profile_view function with notifications
-        const { error } = await supabase.rpc('record_profile_view', {
+        const { error } = await supabase.rpc('record_profile_view' as any, {
           p_viewer_id: user.id,
           p_profile_id: profileId,
         });

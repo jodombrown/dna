@@ -38,13 +38,13 @@ export const PostAnalyticsPanel: React.FC<PostAnalyticsPanelProps> = ({ postId, 
       setLoading(true);
       setError(null);
       try {
-        const { data, error: rpcError } = await supabase.rpc('get_post_analytics', {
+        const { data, error: rpcError } = await supabase.rpc('get_post_analytics' as any, {
           p_post_id: postId,
         });
 
         if (!cancelled) {
           if (rpcError) throw rpcError;
-          if (data && data.length > 0) {
+          if (data && Array.isArray(data) && data.length > 0) {
             setAnalytics(data[0] as PostAnalytics);
           }
         }
