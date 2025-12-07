@@ -10,6 +10,8 @@ export type NotificationType =
   | 'event_reminder'
   | 'group_invite'
   | 'profile_view'
+  | 'reaction'
+  | 'reshare'
   | 'system';
 
 export interface Notification {
