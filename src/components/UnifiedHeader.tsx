@@ -515,16 +515,20 @@ const UnifiedHeader = () => {
                               ))}
                             </div>
 
-                            {filteredNavItems.map((item) => (
-                              <Button
-                                key={item.name}
-                                variant="ghost"
-                                className="justify-start text-left hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                                onClick={() => handleNavClick(item)}
-                              >
-                                {item.name}
-                              </Button>
-                            ))}
+                            {/* The 5 C's Section */}
+                            <div className="border-b pb-4 mb-4">
+                              <p className="text-sm text-gray-600 mb-2 font-medium px-4">The 5 C's</p>
+                              {filteredNavItems.map((item) => (
+                                <Button
+                                  key={item.name}
+                                  variant="ghost"
+                                  className="justify-start text-left w-full hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                                  onClick={() => handleNavClick(item)}
+                                >
+                                  {item.name}
+                                </Button>
+                              ))}
+                            </div>
                             
                             {/* Mobile Phases Menu */}
                             {phases.length > 0 && (
