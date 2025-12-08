@@ -198,6 +198,7 @@ const ProfileEdit = () => {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
       
       const completionPercentage = data.profile_completion_percentage || 0;
       toast({
@@ -299,6 +300,7 @@ const ProfileEdit = () => {
       // Update profile immediately
       await supabase.from('profiles').update({ avatar_url: url }).eq('id', user.id);
       queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
       toast({ title: 'Avatar updated!' });
     }
     setUploadingAvatar(false);
@@ -325,6 +327,7 @@ const ProfileEdit = () => {
       // Update profile immediately
       await supabase.from('profiles').update({ banner_url: url }).eq('id', user.id);
       queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
       toast({ title: 'Banner updated!' });
     }
     setUploadingBanner(false);
