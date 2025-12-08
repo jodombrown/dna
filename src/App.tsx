@@ -202,7 +202,7 @@ function App() {
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/dna/welcome" element={<Welcome />} />
               
-              {/* Settings - both /dna/settings and /dna/settings/dashboard */}
+              {/* Settings - multiple paths for different entry points */}
               <Route path="/dna/settings" element={
                 <OnboardingGuard>
                   <DashboardSettings />
@@ -211,6 +211,16 @@ function App() {
               <Route path="/dna/settings/dashboard" element={
                 <OnboardingGuard>
                   <DashboardSettings />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/profile" element={
+                <OnboardingGuard>
+                  <DashboardSettings />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/notifications" element={
+                <OnboardingGuard>
+                  <NotificationSettingsPage />
                 </OnboardingGuard>
               } />
               

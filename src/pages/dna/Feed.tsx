@@ -4,6 +4,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
 import { PenSquare, Sparkles, Users, Newspaper, Settings, TrendingUp, Search } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -112,31 +113,66 @@ const DnaFeed = () => {
         </>
       )}
 
-      {/* Filter Tabs */}
+      {/* Filter Tabs with Tooltips */}
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
         <TabsList className="w-full grid grid-cols-5">
-          <TabsTrigger value="all">
-            <Newspaper className="h-4 w-4 mr-1" />
-            <span className="hidden sm:inline">All</span>
-          </TabsTrigger>
-          <TabsTrigger value="for_you">
-            <Sparkles className="h-4 w-4 mr-1" />
-            <span className="hidden sm:inline">For You</span>
-          </TabsTrigger>
-          <TabsTrigger value="network">
-            <Users className="h-4 w-4 mr-1" />
-            <span className="hidden sm:inline">Network</span>
-          </TabsTrigger>
-          <TabsTrigger value="my_posts">
-            <PenSquare className="h-4 w-4 mr-1" />
-            <span className="hidden sm:inline">Mine</span>
-          </TabsTrigger>
-          <TabsTrigger value="bookmarks">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-            <span className="hidden sm:inline">Saved</span>
-          </TabsTrigger>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TabsTrigger value="all">
+                <Newspaper className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">All</span>
+              </TabsTrigger>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>All posts from across DNA</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TabsTrigger value="for_you">
+                <Sparkles className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">For You</span>
+              </TabsTrigger>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Personalized based on your interests</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TabsTrigger value="network">
+                <Users className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">Network</span>
+              </TabsTrigger>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Posts from your connections</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TabsTrigger value="my_posts">
+                <PenSquare className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">Mine</span>
+              </TabsTrigger>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Your posts and stories</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TabsTrigger value="bookmarks">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+                <span className="hidden sm:inline">Saved</span>
+              </TabsTrigger>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Bookmarked posts and stories</p>
+            </TooltipContent>
+          </Tooltip>
         </TabsList>
       </Tabs>
 

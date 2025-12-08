@@ -27,6 +27,7 @@ export default function FeedStoryDetail() {
     queryFn: async () => {
       if (!id) throw new Error('No story ID provided');
 
+      // Try to find as story first, then fallback to any post type
       const { data, error } = await supabase
         .from('posts')
         .select(`
@@ -47,12 +48,11 @@ export default function FeedStoryDetail() {
           )
         `)
         .eq('id', id)
-        .eq('post_type', 'story')
         .eq('is_deleted', false)
         .single();
 
       if (error) throw error;
-      if (!data) throw new Error('Story not found');
+      if (!data) throw new Error('Content not found');
       
       return data;
     },
@@ -98,13 +98,13 @@ export default function FeedStoryDetail() {
           <div className="max-w-md w-full bg-muted/50 border border-border rounded-lg p-6 sm:p-8 text-center space-y-4">
             <BookOpen className="h-12 w-12 mx-auto text-muted-foreground" />
             <div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-2">Story not available</h2>
+              <h2 className="text-lg sm:text-xl font-semibold mb-2">Content not available</h2>
               <p className="text-sm sm:text-base text-muted-foreground">
-                This story may have been removed or is no longer accessible.
+                This content may have been removed or is no longer accessible.
               </p>
             </div>
-            <Button onClick={() => navigate('/dna/convey')} variant="outline" size="sm">
-              Back to Stories
+            <Button onClick={() => navigate('/dna/feed')} variant="outline" size="sm">
+              Back to Feed
             </Button>
           </div>
         </div>
@@ -112,6 +112,8 @@ export default function FeedStoryDetail() {
       </>
     );
   }
+
+  const isStory = story.post_type === 'story';
 
   const author = story.profiles as any;
 
@@ -142,10 +144,12 @@ export default function FeedStoryDetail() {
 
       {/* Story Content */}
       <article className="max-w-2xl mx-auto px-4 sm:px-6 py-8 md:py-12">
-        <Badge variant="secondary" className="gap-1 mb-4 text-xs uppercase tracking-wide">
-          <BookOpen className="h-3 w-3" />
-          Story
-        </Badge>
+        {isStory && (
+          <Badge variant="secondary" className="gap-1 mb-4 text-xs uppercase tracking-wide">
+            <BookOpen className="h-3 w-3" />
+            Story
+          </Badge>
+        )}
 
         <h1 className="text-2xl md:text-3xl font-semibold text-foreground mb-2 leading-tight">
           {story.title}
