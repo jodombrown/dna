@@ -14,12 +14,44 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { X, Plus, ArrowLeft, Save, Loader2, LogOut, Camera, Image, Info } from 'lucide-react';
+import { X, Plus, ArrowLeft, Save, Loader2, LogOut, Camera, Image, Info, Check, ChevronsUpDown } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { ProfileDiscoverySection } from '@/components/profile/ProfileDiscoverySection';
 import ProfileCompletionBar from '@/components/profile/ProfileCompletionBar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useImageUpload } from '@/components/profile/form/ImageUploadHandler';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+
+// Languages list (alphabetically sorted)
+const LANGUAGES = [
+  'Afrikaans', 'Akan', 'Albanian', 'Amharic', 'Arabic', 'Armenian', 'Azerbaijani',
+  'Bambara', 'Basque', 'Belarusian', 'Bengali', 'Berber', 'Bosnian', 'Bulgarian',
+  'Catalan', 'Chichewa', 'Chinese (Cantonese)', 'Chinese (Mandarin)', 'Croatian', 'Czech',
+  'Danish', 'Dinka', 'Dutch',
+  'English', 'Estonian', 'Ewe',
+  'Fang', 'Finnish', 'French', 'Fula',
+  'Ga', 'Georgian', 'German', 'Greek', 'Guarani', 'Gujarati',
+  'Hausa', 'Hebrew', 'Hindi', 'Hungarian',
+  'Icelandic', 'Igbo', 'Indonesian', 'Irish', 'Italian',
+  'Japanese', 'Javanese',
+  'Kannada', 'Kazakh', 'Khmer', 'Kikuyu', 'Kinyarwanda', 'Kirundi', 'Korean', 'Kurdish',
+  'Lao', 'Latvian', 'Lingala', 'Lithuanian', 'Luo',
+  'Macedonian', 'Malagasy', 'Malay', 'Malayalam', 'Maltese', 'Mandinka', 'Marathi', 'Mongolian', 'Moore',
+  'Ndebele', 'Nepali', 'Norwegian', 'Nuer',
+  'Oromo',
+  'Pashto', 'Persian (Farsi)', 'Polish', 'Portuguese', 'Punjabi',
+  'Romanian', 'Russian',
+  'Sango', 'Serbian', 'Sesotho', 'Shona', 'Sindhi', 'Sinhala', 'Slovak', 'Slovenian', 'Somali', 'Spanish', 'Swahili', 'Swedish',
+  'Tagalog', 'Tamil', 'Telugu', 'Thai', 'Tigrinya', 'Tswana', 'Turkish', 'Twi',
+  'Ukrainian', 'Urdu', 'Uzbek',
+  'Vietnamese',
+  'Welsh', 'Wolof',
+  'Xhosa',
+  'Yoruba',
+  'Zulu'
+].sort();
 
 // African countries list for dropdowns
 const AFRICAN_COUNTRIES = [
@@ -93,6 +125,11 @@ const ProfileEdit = () => {
   const [focusAreas, setFocusAreas] = useState<string[]>([]);
   const [regionalExpertise, setRegionalExpertise] = useState<string[]>([]);
   const [industries, setIndustries] = useState<string[]>([]);
+  
+  // Languages state
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [languagesOpen, setLanguagesOpen] = useState(false);
+  const [languageSearch, setLanguageSearch] = useState('');
 
   // Initialize form data when profile loads
   useEffect(() => {
@@ -140,6 +177,9 @@ const ProfileEdit = () => {
       setFocusAreas(Array.isArray(profile.focus_areas) ? profile.focus_areas : []);
       setRegionalExpertise(Array.isArray(profile.regional_expertise) ? profile.regional_expertise : []);
       setIndustries(Array.isArray(profile.industries) ? profile.industries : []);
+      
+      // Initialize languages
+      setLanguages(Array.isArray(profile.languages) ? profile.languages : []);
     }
   }, [profile]);
 
@@ -188,6 +228,7 @@ const ProfileEdit = () => {
       focus_areas: focusAreas,
       regional_expertise: regionalExpertise,
       industries: industries,
+      languages: languages,
       updated_at: new Date().toISOString(),
     };
     
@@ -638,6 +679,97 @@ const ProfileEdit = () => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Languages */}
+              <div>
+                <Label className="flex items-center gap-2 mb-2">
+                  Languages You Speak
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Add all languages you speak to help connect with the diaspora</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </Label>
+                
+                <Popover open={languagesOpen} onOpenChange={setLanguagesOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={languagesOpen}
+                      className="w-full justify-between"
+                    >
+                      {languages.length > 0 
+                        ? `${languages.length} language${languages.length > 1 ? 's' : ''} selected`
+                        : "Select languages..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0 bg-popover border border-border z-50" align="start">
+                    <Command>
+                      <CommandInput 
+                        placeholder="Search languages..." 
+                        value={languageSearch}
+                        onValueChange={setLanguageSearch}
+                      />
+                      <CommandList className="max-h-60 overflow-auto">
+                        <CommandEmpty>No language found.</CommandEmpty>
+                        <CommandGroup>
+                          {LANGUAGES.filter(lang => 
+                            lang.toLowerCase().includes(languageSearch.toLowerCase())
+                          ).map((language) => (
+                            <CommandItem
+                              key={language}
+                              value={language}
+                              onSelect={() => {
+                                const normalizedLang = LANGUAGES.find(
+                                  l => l.toLowerCase() === language.toLowerCase()
+                                ) || language;
+                                setLanguages(prev =>
+                                  prev.includes(normalizedLang)
+                                    ? prev.filter(l => l !== normalizedLang)
+                                    : [...prev, normalizedLang]
+                                );
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  languages.some(l => l.toLowerCase() === language.toLowerCase())
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {language}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
+                {/* Selected languages display */}
+                {languages.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {languages.map((language) => (
+                      <Badge key={language} variant="secondary">
+                        {language}
+                        <X
+                          className="w-3 h-3 ml-1 cursor-pointer"
+                          onClick={() => setLanguages(prev => prev.filter(l => l !== language))}
+                        />
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground mt-2">
+                  Type to search or scroll through the list. Select all languages you speak.
+                </p>
               </div>
             </CardContent>
           </Card>
