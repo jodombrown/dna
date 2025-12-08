@@ -74,6 +74,7 @@ import EventsIndex from "./pages/dna/convene/EventsIndex";
 import EventDetail from "./pages/dna/convene/EventDetail";
 import Welcome from "./pages/dna/Welcome";
 import DashboardSettings from "./pages/dna/DashboardSettings";
+import { AccountSettings, PrivacySettings, NotificationSettings, PreferencesSettings } from "./pages/settings";
 import CreateEvent from "./pages/dna/convene/CreateEvent";
 import MyEvents from "./pages/dna/convene/MyEvents";
 import EventAnalytics from "./pages/dna/convene/EventAnalytics";
@@ -202,25 +203,35 @@ function App() {
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/dna/welcome" element={<Welcome />} />
               
-              {/* Settings - multiple paths for different entry points */}
+              {/* Settings Hub - multiple paths for different sections */}
               <Route path="/dna/settings" element={
                 <OnboardingGuard>
-                  <DashboardSettings />
+                  <Navigate to="/dna/settings/account" replace />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/account" element={
+                <OnboardingGuard>
+                  <AccountSettings />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/privacy" element={
+                <OnboardingGuard>
+                  <PrivacySettings />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/notifications" element={
+                <OnboardingGuard>
+                  <NotificationSettings />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/settings/preferences" element={
+                <OnboardingGuard>
+                  <PreferencesSettings />
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/dashboard" element={
                 <OnboardingGuard>
                   <DashboardSettings />
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/settings/profile" element={
-                <OnboardingGuard>
-                  <DashboardSettings />
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/settings/notifications" element={
-                <OnboardingGuard>
-                  <NotificationSettingsPage />
                 </OnboardingGuard>
               } />
               
