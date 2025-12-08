@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useProfile } from '@/hooks/useProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,9 +14,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { X, Plus, ArrowLeft, Save, Loader2, LogOut } from 'lucide-react';
+import { X, Plus, ArrowLeft, Save, Loader2, LogOut, Camera, Image, Info } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { ProfileDiscoverySection } from '@/components/profile/ProfileDiscoverySection';
+import ProfileCompletionBar from '@/components/profile/ProfileCompletionBar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useImageUpload } from '@/components/profile/form/ImageUploadHandler';
 
 // African countries list for dropdowns
 const AFRICAN_COUNTRIES = [
@@ -61,6 +64,15 @@ const ProfileEdit = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { uploadImage } = useImageUpload();
+  
+  // File input refs
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [bannerUrl, setBannerUrl] = useState<string | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -104,6 +116,8 @@ const ProfileEdit = () => {
         intentions: profile.intentions || [],
         africa_focus_areas: profile.africa_focus_areas || []
       });
+      setAvatarUrl(profile.avatar_url || null);
+      setBannerUrl(profile.banner_url || null);
       setSelectedIntentions(Array.isArray(profile.intentions) ? profile.intentions : []);
       
       // Ensure africa_focus_areas is properly typed
@@ -222,6 +236,59 @@ const ProfileEdit = () => {
     setAfricaFocusAreas(africaFocusAreas.filter((_, i) => i !== index));
   };
 
+  // Image upload handlers
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    
+    // Validate file
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      toast({ title: 'Invalid file type', description: 'Please upload JPG, PNG, or WebP', variant: 'destructive' });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Max size is 5MB', variant: 'destructive' });
+      return;
+    }
+    
+    setUploadingAvatar(true);
+    const url = await uploadImage(file, user.id, 'avatar');
+    if (url) {
+      setAvatarUrl(url);
+      // Update profile immediately
+      await supabase.from('profiles').update({ avatar_url: url }).eq('id', user.id);
+      queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
+      toast({ title: 'Avatar updated!' });
+    }
+    setUploadingAvatar(false);
+  };
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    
+    // Validate file
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      toast({ title: 'Invalid file type', description: 'Please upload JPG, PNG, or WebP', variant: 'destructive' });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Max size is 10MB for banners', variant: 'destructive' });
+      return;
+    }
+    
+    setUploadingBanner(true);
+    const url = await uploadImage(file, user.id, 'banner');
+    if (url) {
+      setBannerUrl(url);
+      // Update profile immediately
+      await supabase.from('profiles').update({ banner_url: url }).eq('id', user.id);
+      queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
+      toast({ title: 'Banner updated!' });
+    }
+    setUploadingBanner(false);
+  };
+
   const toggleSectorInFocusArea = (areaIndex: number, sector: string) => {
     const updated = [...africaFocusAreas];
     const currentSectors = updated[areaIndex].sectors;
@@ -256,15 +323,136 @@ const ProfileEdit = () => {
             className="mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Profile
+            Back to Feed
           </Button>
           <h1 className="text-3xl font-bold">Edit Profile</h1>
           <p className="text-muted-foreground mt-2">
             Complete your profile to unlock all DNA features and connect with the diaspora community
           </p>
+          
+          {/* Quick nudges for incomplete fields */}
+          {profile && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {!profile.avatar_url && (
+                <Badge variant="outline" className="text-xs cursor-pointer hover:bg-primary/10" onClick={() => avatarInputRef.current?.click()}>
+                  + Add photo
+                </Badge>
+              )}
+              {!profile.banner_url && (
+                <Badge variant="outline" className="text-xs cursor-pointer hover:bg-primary/10" onClick={() => bannerInputRef.current?.click()}>
+                  + Add banner
+                </Badge>
+              )}
+              {!profile.headline && (
+                <Badge variant="outline" className="text-xs">+ Add headline</Badge>
+              )}
+              {(!profile.skills || profile.skills.length < 3) && (
+                <Badge variant="outline" className="text-xs">+ Add 3+ skills</Badge>
+              )}
+              {(!profile.focus_areas || profile.focus_areas.length < 2) && (
+                <Badge variant="outline" className="text-xs">+ Add focus areas</Badge>
+              )}
+            </div>
+          )}
         </div>
 
+        {/* Profile Completion Progress */}
+        <ProfileCompletionBar profile={{ ...profile, avatar_url: avatarUrl, banner_url: bannerUrl }} />
+
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Profile Images */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                Profile Images
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>A complete profile with images gets 3x more visibility</p>
+                  </TooltipContent>
+                </Tooltip>
+              </CardTitle>
+              <CardDescription>Add a profile photo and banner to stand out</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Avatar Upload */}
+              <div>
+                <Label className="flex items-center gap-2 mb-2">
+                  Profile Photo
+                  <span className="text-xs text-muted-foreground">(Recommended: 400×400px, JPG/PNG, max 5MB)</span>
+                </Label>
+                <div className="flex items-center gap-4">
+                  <div className="relative w-24 h-24 rounded-full overflow-hidden bg-muted border-2 border-dashed border-border">
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="flex items-center justify-center w-full h-full">
+                        <Camera className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => avatarInputRef.current?.click()}
+                      disabled={uploadingAvatar}
+                    >
+                      {uploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Camera className="h-4 w-4 mr-2" />}
+                      {avatarUrl ? 'Change Photo' : 'Upload Photo'}
+                    </Button>
+                    <input
+                      ref={avatarInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={handleAvatarUpload}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Banner Upload */}
+              <div>
+                <Label className="flex items-center gap-2 mb-2">
+                  Profile Banner
+                  <span className="text-xs text-muted-foreground">(Recommended: 1500×500px, JPG/PNG, max 10MB)</span>
+                </Label>
+                <div 
+                  className="relative w-full h-32 rounded-lg overflow-hidden bg-muted border-2 border-dashed border-border cursor-pointer hover:border-primary/50 transition-colors"
+                  onClick={() => bannerInputRef.current?.click()}
+                >
+                  {bannerUrl ? (
+                    <img src={bannerUrl} alt="Banner" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center w-full h-full">
+                      <Image className="h-8 w-8 text-muted-foreground mb-2" />
+                      <span className="text-sm text-muted-foreground">Click to upload banner (1500×500px)</span>
+                    </div>
+                  )}
+                  {uploadingBanner && (
+                    <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                  )}
+                </div>
+                <input
+                  ref={bannerInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleBannerUpload}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Your banner appears at the top of your profile. Use an image that represents you or your work.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Basic Information */}
           <Card>
             <CardHeader>

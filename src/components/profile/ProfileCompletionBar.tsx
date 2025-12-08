@@ -47,8 +47,8 @@ export function calculateProfileCompletion(profile: any): number {
   if (profile.current_country?.length > 0) score += 5;
   
   // Engagement Flags (10 points)
-  if (profile.availability_for_mentoring === true) score += 5;
   if (profile.looking_for_opportunities === true) score += 5;
+  if (profile.banner_url) score += 5; // Banner image for complete profile look
   
   return score;
 }
