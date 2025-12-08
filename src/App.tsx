@@ -119,6 +119,9 @@ import MessagesPage from "./pages/MessagesPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import ProfileEdit from "./pages/ProfileEdit";
+
+// Settings Hub pages
+import { AccountSettings, PrivacySettings, NotificationSettings, PreferencesSettings } from "./pages/dna/settings";
 import AdinPreferences from "./pages/AdinPreferences";
 import NudgeCenter from "./pages/NudgeCenter";
 import EventsPage from "./pages/EventsPage";
@@ -202,27 +205,35 @@ function App() {
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/dna/welcome" element={<Welcome />} />
               
-              {/* Settings - multiple paths for different entry points */}
+              {/* Settings Hub - Complete settings experience */}
               <Route path="/dna/settings" element={
                 <OnboardingGuard>
-                  <DashboardSettings />
+                  <PreferencesSettings />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/settings/dashboard" element={
+              <Route path="/dna/settings/account" element={
                 <OnboardingGuard>
-                  <DashboardSettings />
+                  <AccountSettings />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/settings/profile" element={
+              <Route path="/dna/settings/privacy" element={
                 <OnboardingGuard>
-                  <DashboardSettings />
+                  <PrivacySettings />
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/notifications" element={
                 <OnboardingGuard>
-                  <NotificationSettingsPage />
+                  <NotificationSettings />
                 </OnboardingGuard>
               } />
+              <Route path="/dna/settings/preferences" element={
+                <OnboardingGuard>
+                  <PreferencesSettings />
+                </OnboardingGuard>
+              } />
+              {/* Legacy settings routes - redirect to new hub */}
+              <Route path="/dna/settings/dashboard" element={<Navigate to="/dna/settings/preferences" replace />} />
+              <Route path="/dna/settings/profile" element={<Navigate to="/app/profile/edit" replace />} />
               
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
               <Route path="/fact-sheet" element={<FactSheetPage />} />

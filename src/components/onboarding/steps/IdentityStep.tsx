@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AvatarUploader from '@/components/uploader/AvatarUploader';
-import SearchableCountrySelect from '@/components/ui/SearchableCountrySelect';
+import CountryCombobox from '@/components/ui/CountryCombobox';
 import { AlertCircle } from 'lucide-react';
 
 interface IdentityStepProps {
@@ -103,9 +103,11 @@ const IdentityStep: React.FC<IdentityStepProps> = ({ data, onUpdate, errors = {}
           {/* Country */}
           <div className="space-y-2">
             <Label htmlFor="current_country" className="text-base">Current Country *</Label>
-            <SearchableCountrySelect
+            <CountryCombobox
               value={data.current_country}
               onChange={(code, name) => onUpdate('current_country', name)}
+              placeholder="Select your current country"
+              error={!!errors.current_country}
             />
             {errors.current_country && (
               <p className="text-sm text-destructive">{errors.current_country}</p>
