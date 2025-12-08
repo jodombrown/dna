@@ -113,7 +113,7 @@ const MobileBottomNav: React.FC = () => {
     { 
       label: 'Settings', 
       icon: Settings, 
-      path: '/dna/settings/profile',
+      path: '/dna/settings',
       description: 'Account settings'
     },
   ];

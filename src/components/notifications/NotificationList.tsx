@@ -19,7 +19,7 @@ export function NotificationList({ onClose }: NotificationListProps) {
   };
 
   const handleSettings = () => {
-    navigate('/dna/settings/notifications');
+    navigate('/dna/settings');
     onClose();
   };
 
