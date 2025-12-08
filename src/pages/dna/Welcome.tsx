@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { WelcomeWizard } from '@/components/onboarding/WelcomeWizard';
 
 export default function Welcome() {
   const { user } = useAuth();
@@ -10,8 +9,8 @@ export default function Welcome() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // If user already has a role set, redirect to feed
-    if (!isLoading && profile?.user_role) {
+    // If user has completed onboarding (has username), go directly to feed
+    if (!isLoading && profile?.username) {
       navigate('/dna/feed', { replace: true });
     }
   }, [profile, isLoading, navigate]);
@@ -29,5 +28,7 @@ export default function Welcome() {
     return null;
   }
 
-  return <WelcomeWizard />;
+  // If user doesn't have username yet, redirect to onboarding
+  navigate('/onboarding', { replace: true });
+  return null;
 }

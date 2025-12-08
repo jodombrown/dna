@@ -9,7 +9,6 @@ import { OnboardingProgressBar } from '@/components/onboarding/OnboardingProgres
 import UserTypeStep from '@/components/onboarding/steps/UserTypeStep';
 import IdentityStep from '@/components/onboarding/steps/IdentityStep';
 import UsernameStep from '@/components/onboarding/steps/UsernameStep';
-import DiasporaImpactStep from '@/components/onboarding/steps/DiasporaImpactStep';
 import { validateStep } from '@/components/onboarding/validation/onboardingStepValidation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -83,14 +82,14 @@ const Onboarding = () => {
     // Clear errors
     setErrors({});
 
-    // If not on last step, advance
-    if (currentStep < 3) {
+    // If not on last step, advance (now only 3 steps: 0, 1, 2)
+    if (currentStep < 2) {
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    // On final step, submit the profile
+    // On final step (username), submit and go to feed
     await handleSubmit();
   };
 
@@ -201,9 +200,9 @@ const Onboarding = () => {
         description: `You're all set, @${formData.username}! Let's help you connect with the diaspora.`,
       });
 
-      // Redirect to discover page to help users find connections immediately
+      // Go directly to feed after confetti - no more steps!
       setTimeout(() => {
-        navigate('/dna/connect/discover');
+        navigate('/dna/feed');
       }, 1500);
     } catch (error: any) {
       console.error('Error completing onboarding:', error);
@@ -221,14 +220,13 @@ const Onboarding = () => {
     return null;
   }
 
-  // Calculate estimated completion based on current step
+  // Calculate estimated completion based on current step (now 3 steps)
   const estimateCompletion = () => {
     let baseCompletion = 0;
 
-    if (currentStep >= 0) baseCompletion += 20; // User type
-    if (currentStep >= 1) baseCompletion += 25; // Identity
-    if (currentStep >= 2) baseCompletion += 25; // Username
-    if (currentStep >= 3) baseCompletion += 30; // Diaspora
+    if (currentStep >= 0) baseCompletion += 33; // User type
+    if (currentStep >= 1) baseCompletion += 33; // Identity
+    if (currentStep >= 2) baseCompletion += 34; // Username (final)
 
     return Math.min(baseCompletion, 100);
   };
@@ -272,16 +270,6 @@ const Onboarding = () => {
             }}
           />
         );
-      case 3:
-        return (
-          <DiasporaImpactStep
-            data={{
-              country_of_origin: formData.country_of_origin,
-            }}
-            onUpdate={updateField}
-            errors={errors}
-          />
-        );
       default:
         return null;
     }
@@ -294,7 +282,7 @@ const Onboarding = () => {
         <div className="mb-6">
           <OnboardingProgressBar
             currentStep={currentStep + 1}
-            totalSteps={4}
+            totalSteps={3}
             completionPercentage={estimateCompletion()}
           />
         </div>
@@ -323,8 +311,8 @@ const Onboarding = () => {
           >
             {isSubmitting ? (
               "Saving..."
-            ) : currentStep === 3 ? (
-              "Complete & Join DNA"
+            ) : currentStep === 2 ? (
+              "Complete & Join DNA 🎉"
             ) : (
               <>
                 Next
