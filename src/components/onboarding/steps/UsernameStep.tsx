@@ -166,154 +166,158 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
   const progressValue = (usedChanges / 2) * 100;
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-lg font-semibold text-dna-forest mb-2">Choose Your DNA Username</h3>
-        <p className="text-gray-600">This will be your unique identity in the diaspora network</p>
-      </div>
-
-      {/* Manual Input */}
-      <div className="space-y-2">
-        <Label htmlFor="username">Username</Label>
-        <div className="relative">
-          <Input
-            id="username"
-            value={username}
-            onChange={(e) => handleInputChange(e.target.value)}
-            placeholder="choose_username"
-            className={`pr-10 ${
-              username.length >= 3
-                ? isAvailable === true
-                  ? 'border-green-500 focus:border-green-500'
-                  : isAvailable === false
-                  ? 'border-red-500 focus:border-red-500'
-                  : ''
-                : ''
-            }`}
-          />
-          
-          {checking && (
-            <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 animate-spin text-gray-500" />
-          )}
-          
-          {!checking && username.length >= 3 && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              {isAvailable === true && (
-                <CheckCircle className="w-4 h-4 text-green-500" />
-              )}
-              {isAvailable === false && (
-                <AlertCircle className="w-4 h-4 text-red-500" />
-              )}
-            </div>
-          )}
-        </div>
-
-        {username.length >= 3 && !checking && (
-          <>
-            {isAvailable === true && (
-              <div className="flex items-center gap-2 text-sm text-green-600">
-                <span>🎉</span>
-                <span className="font-medium">@{username} is available!</span>
-              </div>
-            )}
-            
-            {isAvailable === false && manualSuggestions.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-sm text-red-500">@{username} is taken. Try these alternatives:</p>
-                <div className="flex flex-wrap gap-2">
-                  {manualSuggestions.map((suggestion) => (
-                    <Button
-                      key={suggestion}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => selectUsername(suggestion)}
-                      className="text-xs h-7"
-                    >
-                      {suggestion}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-
-      {/* AI Suggestions */}
-      <Card className="border-dna-mint/20">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-dna-copper" />
-              <h4 className="font-medium text-dna-forest">AI Suggestions</h4>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={generateAISuggestions}
-              disabled={loadingSuggestions}
-              className="h-8 px-2"
-            >
-              {loadingSuggestions ? (
-                <Loader2 className="w-3 h-3 animate-spin" />
-              ) : (
-                <RefreshCw className="w-3 h-3" />
-              )}
-            </Button>
-          </div>
-
-          {loadingSuggestions ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-dna-copper" />
-              <span className="ml-2 text-sm text-gray-600">Generating personalized suggestions...</span>
-            </div>
-          ) : aiSuggestions.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {aiSuggestions.map((suggestion, index) => (
-                <div
-                  key={index}
-                  className={`p-3 rounded-lg border cursor-pointer transition-all hover:border-dna-emerald/50 ${
-                    username === suggestion.username 
-                      ? 'border-dna-emerald bg-dna-emerald/5' 
-                      : 'border-gray-200 hover:bg-gray-50'
-                  }`}
-                  onClick={() => selectUsername(suggestion.username)}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <Badge variant="outline" className="mb-2 text-xs">
-                        @{suggestion.username}
-                      </Badge>
-                      <p className="text-xs text-gray-600">{suggestion.explanation}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500 text-center py-4">
-              AI suggestions will appear here based on your profile
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Changes Progress */}
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Username changes used</span>
-          <span className="font-medium">{usedChanges}/2</span>
-        </div>
-        <Progress value={progressValue} className="h-2" />
-        <p className="text-xs text-gray-500">
-          You can change your username 2 more times after joining
+    <div className="space-y-6 max-w-2xl mx-auto px-4">
+      <div className="text-center space-y-2 pt-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-dna-forest">Claim Your Username</h2>
+        <p className="text-sm sm:text-base text-muted-foreground">
+          This will be your unique identity in the diaspora network
         </p>
       </div>
 
+      <Card>
+        <CardContent className="p-4 sm:p-6 space-y-6">
+          {/* Manual Input */}
+          <div className="space-y-2">
+            <Label htmlFor="username" className="text-base">Username *</Label>
+            <div className="relative">
+              <Input
+                id="username"
+                value={username}
+                onChange={(e) => handleInputChange(e.target.value)}
+                placeholder="choose_your_username"
+                className={`pr-10 min-h-[44px] ${
+                  username.length >= 3
+                    ? isAvailable === true
+                      ? 'border-green-500 focus:border-green-500'
+                      : isAvailable === false
+                      ? 'border-destructive focus:border-destructive'
+                      : ''
+                    : ''
+                }`}
+              />
+              
+              {checking && (
+                <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+              )}
+              
+              {!checking && username.length >= 3 && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  {isAvailable === true && (
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                  )}
+                  {isAvailable === false && (
+                    <AlertCircle className="w-4 h-4 text-destructive" />
+                  )}
+                </div>
+              )}
+            </div>
+
+            {username.length >= 3 && !checking && (
+              <>
+                {isAvailable === true && (
+                  <div className="flex items-center gap-2 text-sm text-green-600">
+                    <span>🎉</span>
+                    <span className="font-medium">@{username} is available!</span>
+                  </div>
+                )}
+                
+                {isAvailable === false && manualSuggestions.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm text-destructive">@{username} is taken. Try these alternatives:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {manualSuggestions.map((suggestion) => (
+                        <Button
+                          key={suggestion}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => selectUsername(suggestion)}
+                          className="text-xs h-8"
+                        >
+                          {suggestion}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* AI Suggestions */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-dna-copper" />
+                <h4 className="font-medium text-foreground">AI Suggestions</h4>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={generateAISuggestions}
+                disabled={loadingSuggestions}
+                className="h-8 px-2"
+              >
+                {loadingSuggestions ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  <RefreshCw className="w-3 h-3" />
+                )}
+              </Button>
+            </div>
+
+            {loadingSuggestions ? (
+              <div className="flex items-center justify-center py-6">
+                <Loader2 className="w-5 h-5 animate-spin text-dna-copper" />
+                <span className="ml-2 text-sm text-muted-foreground">Generating suggestions...</span>
+              </div>
+            ) : aiSuggestions.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {aiSuggestions.map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 rounded-lg border cursor-pointer transition-all hover:border-dna-emerald/50 ${
+                      username === suggestion.username 
+                        ? 'border-dna-emerald bg-dna-emerald/5' 
+                        : 'border-border hover:bg-accent/50'
+                    }`}
+                    onClick={() => selectUsername(suggestion.username)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <Badge variant="outline" className="mb-2 text-xs">
+                          @{suggestion.username}
+                        </Badge>
+                        <p className="text-xs text-muted-foreground">{suggestion.explanation}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                AI suggestions will appear here based on your profile
+              </p>
+            )}
+          </div>
+
+          {/* Changes Progress */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Username changes available</span>
+              <span className="font-medium">{changesLeft}/2</span>
+            </div>
+            <Progress value={progressValue} className="h-2" />
+            <p className="text-xs text-muted-foreground">
+              You can change your username up to 2 times after joining
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Requirements */}
-      <div className="bg-blue-50 p-3 rounded-lg">
-        <h5 className="text-sm font-medium text-blue-900 mb-1">Username Requirements:</h5>
-        <ul className="text-xs text-blue-700 space-y-1">
+      <div className="bg-accent/50 p-4 rounded-lg border">
+        <h5 className="text-sm font-medium text-foreground mb-2">Username Requirements:</h5>
+        <ul className="text-xs text-muted-foreground space-y-1">
           <li>• 3-20 characters long</li>
           <li>• Only letters, numbers, dots (.), underscores (_), and hyphens (-)</li>
           <li>• Must be unique across the platform</li>
