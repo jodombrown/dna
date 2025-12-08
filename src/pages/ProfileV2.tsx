@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useProfileV2 } from '@/hooks/useProfileV2';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,6 +29,7 @@ const ProfileV2: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { data: bundle, isLoading, error } = useProfileV2(username);
 
   // Update handlers
@@ -103,7 +104,7 @@ const ProfileV2: React.FC = () => {
       <ProfileV2Hero
         profile={profile}
         permissions={permissions}
-        onEdit={() => console.log('Edit profile clicked')}
+        onEdit={() => permissions.is_owner && navigate('/app/profile/edit')}
         onConnect={() => console.log('Connect clicked')}
         onMessage={() => console.log('Message clicked')}
       />
