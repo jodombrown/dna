@@ -6932,6 +6932,10 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: boolean
       }
+      can_message_user: {
+        Args: { p_recipient_id: string; p_sender_id: string }
+        Returns: boolean
+      }
       can_post_opportunity: { Args: { _org_id: string }; Returns: boolean }
       can_send_messages: { Args: { user_id_param: string }; Returns: boolean }
       can_view_field: {
@@ -7617,7 +7621,7 @@ export type Database = {
         }
       }
       get_or_create_conversation: {
-        Args: { user1_id: string; user2_id: string }
+        Args: { p_other_user_id: string; p_user_id: string }
         Returns: string
       }
       get_organizer_analytics:
@@ -7957,6 +7961,21 @@ export type Database = {
           other_user_full_name: string
           other_user_headline: string
           other_user_id: string
+          other_user_username: string
+          unread_count: number
+        }[]
+      }
+      get_user_conversations_with_preview: {
+        Args: { p_user_id: string }
+        Returns: {
+          conversation_id: string
+          created_at: string
+          last_message_at: string
+          last_message_content: string
+          last_message_sender_id: string
+          other_user_avatar: string
+          other_user_id: string
+          other_user_name: string
           other_user_username: string
           unread_count: number
         }[]
@@ -8417,6 +8436,14 @@ export type Database = {
       rpc_toggle_spotlight: {
         Args: { p_post: string; p_value: boolean }
         Returns: undefined
+      }
+      send_message: {
+        Args: {
+          p_content: string
+          p_conversation_id: string
+          p_sender_id: string
+        }
+        Returns: string
       }
       send_notification: {
         Args: {

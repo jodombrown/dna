@@ -61,8 +61,8 @@ export const NewMessageDialog: React.FC<NewMessageDialogProps> = ({ isOpen, onCl
     setCreating(true);
     try {
       const { data, error } = await supabase.rpc('get_or_create_conversation', {
-        user1_id: user.id,
-        user2_id: connectionId,
+        p_user_id: user.id,
+        p_other_user_id: connectionId,
       });
 
       if (error) throw error;
