@@ -269,8 +269,8 @@ export async function createStandardPost(params: {
   const { authorId, content, mediaUrl, spaceId, eventId, privacyLevel, linkUrl, linkTitle, linkDescription, linkThumbnail, linkProviderName } = params;
 
   try {
-    // Build metadata object for video/link embeds
-    const metadata = linkUrl ? {
+    // Build link_metadata object for video/link embeds
+    const linkMetadata = linkUrl ? {
       embed_type: 'video',
       provider_name: linkProviderName || undefined,
       thumbnail_url: linkThumbnail || undefined,
@@ -289,7 +289,7 @@ export async function createStandardPost(params: {
       link_url: linkUrl || null,
       link_title: linkTitle || null,
       link_description: linkDescription || null,
-      metadata: metadata,
+      link_metadata: linkMetadata,
     };
 
     console.log('createStandardPost inserting:', insertPayload);
@@ -297,7 +297,7 @@ export async function createStandardPost(params: {
     const { data: postData, error: postError } = await supabase
       .from('posts')
       .insert(insertPayload)
-      .select('id, author_id, content, post_type, image_url, created_at, link_url, link_title, link_description, metadata')
+      .select('id, author_id, content, post_type, image_url, created_at, link_url, link_title, link_description, link_metadata')
       .single();
 
     if (postError) {
@@ -340,7 +340,7 @@ export async function createStandardPost(params: {
       link_url: postData.link_url || undefined,
       link_title: postData.link_title || undefined,
       link_description: postData.link_description || undefined,
-      link_metadata: postData.metadata as any,
+      link_metadata: postData.link_metadata as any,
     };
 
     return mapped;

@@ -40,8 +40,8 @@ export default function PreferencesSettings() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (profile?.display_preferences) {
-      const stored = profile.display_preferences as any;
+    if (profile && (profile as any).display_preferences) {
+      const stored = (profile as any).display_preferences as any;
       setPreferences({
         display_density: stored.display_density || 'comfortable',
         show_connect_module: stored.show_connect_module ?? true,
