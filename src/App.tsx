@@ -233,7 +233,7 @@ function App() {
               } />
               {/* Legacy settings routes - redirect to new hub */}
               <Route path="/dna/settings/dashboard" element={<Navigate to="/dna/settings/preferences" replace />} />
-              <Route path="/dna/settings/profile" element={<Navigate to="/app/profile/edit" replace />} />
+              <Route path="/dna/settings/profile" element={<Navigate to="/dna/profile/edit" replace />} />
               
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
               <Route path="/fact-sheet" element={<FactSheetPage />} />
@@ -250,7 +250,12 @@ function App() {
                   <ProfileV2 />
                 </OnboardingGuard>
               } />
-              
+              <Route path="/dna/profile/edit" element={
+                <OnboardingGuard>
+                  <ProfileEdit />
+                </OnboardingGuard>
+              } />
+
               {/* ========== CONNECT HUB M2 ========== */}
               <Route path="/dna/connect" element={
                 <OnboardingGuard>
