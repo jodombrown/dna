@@ -147,6 +147,7 @@ function PostModeFields({
           showRemoveButton={true}
           onRemove={handleRemovePreview}
           size="compact"
+          disableLightbox={true}
         />
       )}
       

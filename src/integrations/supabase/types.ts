@@ -6902,6 +6902,7 @@ export type Database = {
         Returns: number
       }
       calculate_match_score:
+        | { Args: { profile_id: string; signal_id: string }; Returns: number }
         | {
             Args: {
               user1_regions: string[]
@@ -6911,7 +6912,6 @@ export type Database = {
             }
             Returns: number
           }
-        | { Args: { profile_id: string; signal_id: string }; Returns: number }
       calculate_profile_completeness: {
         Args: { target_user_id: string }
         Returns: number
@@ -7012,8 +7012,7 @@ export type Database = {
               p_content: string
               p_entity_id: string
               p_entity_type: string
-              p_event_id: string
-              p_space_id: string
+              p_metadata?: Json
             }
             Returns: string
           }
@@ -7023,15 +7022,18 @@ export type Database = {
               p_content: string
               p_entity_id: string
               p_entity_type: string
-              p_metadata?: Json
+              p_event_id: string
+              p_space_id: string
             }
             Returns: string
           }
       create_notification:
         | {
             Args: {
-              p_actor_id?: string
-              p_link?: string
+              p_action_url?: string
+              p_actor_id: string
+              p_entity_id?: string
+              p_entity_type?: string
               p_message: string
               p_title: string
               p_type: string
@@ -7041,10 +7043,8 @@ export type Database = {
           }
         | {
             Args: {
-              p_action_url?: string
-              p_actor_id: string
-              p_entity_id?: string
-              p_entity_type?: string
+              p_actor_id?: string
+              p_link?: string
               p_message: string
               p_title: string
               p_type: string
@@ -7256,8 +7256,8 @@ export type Database = {
       get_dashboard_preferences: { Args: { p_user_id: string }; Returns: Json }
       get_engagement_rate: { Args: never; Returns: number }
       get_engine_loop_metrics:
-        | { Args: { p_end_date: string; p_start_date: string }; Returns: Json }
         | { Args: never; Returns: Json }
+        | { Args: { p_end_date: string; p_start_date: string }; Returns: Json }
       get_event_analytics: { Args: { p_event_id: string }; Returns: Json }
       get_event_attendees: {
         Args: {
@@ -8002,14 +8002,14 @@ export type Database = {
       }
       get_view_state_distribution:
         | {
-            Args: { p_end_date: string; p_start_date: string }
+            Args: never
             Returns: {
               user_count: number
               view_state: string
             }[]
           }
         | {
-            Args: never
+            Args: { p_end_date: string; p_start_date: string }
             Returns: {
               user_count: number
               view_state: string
@@ -8216,11 +8216,6 @@ export type Database = {
       }
       rpc_create_post:
         | {
-            Args: { p_content: string; p_media_url?: string; p_pillar?: string }
-            Returns: string
-          }
-        | { Args: { p: Json }; Returns: string }
-        | {
             Args: {
               content: string
               embed_metadata?: Json
@@ -8236,6 +8231,11 @@ export type Database = {
               type?: string
               visibility?: string
             }
+            Returns: string
+          }
+        | { Args: { p: Json }; Returns: string }
+        | {
+            Args: { p_content: string; p_media_url?: string; p_pillar?: string }
             Returns: string
           }
       rpc_dashboard_counts: { Args: never; Returns: Json }
