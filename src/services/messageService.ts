@@ -1,45 +1,65 @@
 import { supabase } from '@/integrations/supabase/client';
-import { ConversationListItem, MessageWithSender, Message } from '@/types/messaging';
+import {
+  ConversationListItem,
+  MessageWithSender,
+  Message,
+  MessageRequest,
+  UserPresence,
+  CanMessageResult,
+  ParticipantStatus,
+  ConversationOriginType,
+  OriginMetadata,
+  MessageContentType,
+  MessageMetadata,
+} from '@/types/messaging';
 
 /**
  * messageService - Centralized messaging service for the DNA Platform
- * 
- * Provides a clean, unified API for all messaging operations including:
- * - Conversation management (create, fetch, list)
- * - Message operations (send, fetch, mark as read)
+ *
+ * Implements the DNA Messaging System PRD requirements:
+ * - Conversation management with origin context
+ * - Message operations with content types
+ * - Message request system (accept/decline)
+ * - User restrictions (block/mute)
+ * - Read receipts and delivery status
+ * - Global user presence
  * - Real-time subscriptions
- * - Unread count tracking
- * 
- * Key Features:
- * - Connection-gated messaging (enforced at DB level)
- * - Automatic error handling with descriptive messages
- * - Real-time updates via Supabase subscriptions
- * - Type-safe operations
  */
 export const messageService = {
+  // =====================================================
+  // CONVERSATION MANAGEMENT
+  // =====================================================
+
   /**
    * Get or create a conversation between the current user and another user
-   * 
-   * IMPORTANT: Requires an accepted connection between users.
-   * Will throw error if users are not connected.
-   * 
+   * with optional origin context (where the conversation started)
+   *
    * @param otherUserId - ID of the user to start conversation with
+   * @param originType - Where conversation started: 'event', 'project', 'profile', 'post'
+   * @param originId - ID of the origin entity
+   * @param originMetadata - Additional context (title, date, etc.)
    * @returns Object with conversation ID
-   * @throws Error if not authenticated or users not connected
    */
-  async getOrCreateConversation(otherUserId: string): Promise<{ id: string }> {
+  async getOrCreateConversation(
+    otherUserId: string,
+    originType?: ConversationOriginType,
+    originId?: string,
+    originMetadata?: OriginMetadata
+  ): Promise<{ id: string }> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const { data, error } = await supabase.rpc('get_or_create_conversation', {
-      user1_id: user.id,
-      user2_id: otherUserId,
+    const { data, error } = await supabase.rpc('get_or_create_conversation_contextual', {
+      p_user1_id: user.id,
+      p_user2_id: otherUserId,
+      p_origin_type: originType || null,
+      p_origin_id: originId || null,
+      p_origin_metadata: originMetadata || {},
     });
 
     if (error) {
-      // Check if it's a connection requirement error
-      if (error.message?.includes('must be connected')) {
-        throw new Error('Users must be connected to message each other');
+      if (error.message?.includes('Cannot message')) {
+        throw new Error('Cannot message this user');
       }
       throw error;
     }
@@ -49,19 +69,18 @@ export const messageService = {
 
   /**
    * Get all conversations for the current user
-   * 
-   * Returns conversations ordered by last message time with:
-   * - Other user profile details
-   * - Last message preview
-   * - Unread count per conversation
-   * 
-   * @param limit - Maximum number of conversations to fetch (default: 50)
+   *
+   * @param limit - Maximum number of conversations (default: 50)
    * @param offset - Offset for pagination (default: 0)
+   * @param status - Filter by participant status: 'active', 'pending', 'declined'
+   * @param includeMuted - Include muted conversations (default: true)
    * @returns Array of conversation list items
    */
   async getConversations(
     limit: number = 50,
-    offset: number = 0
+    offset: number = 0,
+    status: ParticipantStatus = 'active',
+    includeMuted: boolean = true
   ): Promise<ConversationListItem[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
@@ -70,25 +89,26 @@ export const messageService = {
       p_user_id: user.id,
       p_limit: limit,
       p_offset: offset,
+      p_status: status,
+      p_include_muted: includeMuted,
     });
 
     if (error) throw error;
-    return data || [];
+    return (data || []) as ConversationListItem[];
   },
 
   /**
    * Get messages for a specific conversation
-   * 
-   * Returns messages with sender profile details.
-   * Verifies user is a participant before returning messages.
-   * 
+   *
    * @param conversationId - ID of the conversation
    * @param limit - Maximum number of messages (default: 100)
+   * @param beforeTimestamp - Load messages before this timestamp (for pagination)
    * @returns Array of messages with sender details, oldest first
    */
   async getMessages(
     conversationId: string,
-    limit: number = 100
+    limit: number = 100,
+    beforeTimestamp?: string
   ): Promise<MessageWithSender[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
@@ -97,6 +117,7 @@ export const messageService = {
       p_conversation_id: conversationId,
       p_user_id: user.id,
       p_limit: limit,
+      p_before_timestamp: beforeTimestamp || null,
     });
 
     if (error) {
@@ -105,23 +126,30 @@ export const messageService = {
       }
       throw error;
     }
-    
+
     // Reverse to show oldest first (chronological order)
-    return (data || []).reverse();
+    return ((data || []) as MessageWithSender[]).reverse();
   },
 
   /**
    * Send a message in a conversation
-   * 
+   *
    * @param conversationId - ID of the conversation
    * @param content - Message content (text)
+   * @param contentType - Type of content (default: 'text')
+   * @param metadata - Additional metadata for non-text content
    * @returns The created message object
    */
-  async sendMessage(conversationId: string, content: string): Promise<Message> {
+  async sendMessage(
+    conversationId: string,
+    content: string,
+    contentType: MessageContentType = 'text',
+    metadata?: MessageMetadata
+  ): Promise<Message> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    if (!content || content.trim().length === 0) {
+    if (contentType === 'text' && (!content || content.trim().length === 0)) {
       throw new Error('Message content cannot be empty');
     }
 
@@ -130,21 +158,21 @@ export const messageService = {
       .insert({
         conversation_id: conversationId,
         sender_id: user.id,
-        content: content.trim(),
+        content: content?.trim() || null,
+        content_type: contentType,
+        metadata: metadata || {},
       })
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    return data as Message;
   },
 
   /**
    * Mark a conversation as read
-   * 
-   * Updates the last_read_at timestamp for the current user
-   * in this conversation, which affects unread count.
-   * 
+   * Updates last_read_at, resets unread count, and creates read receipts
+   *
    * @param conversationId - ID of the conversation to mark as read
    */
   async markAsRead(conversationId: string): Promise<void> {
@@ -161,7 +189,7 @@ export const messageService = {
 
   /**
    * Get total count of unread messages across all conversations
-   * 
+   *
    * @returns Number of unread messages
    */
   async getTotalUnreadCount(): Promise<number> {
@@ -181,24 +209,303 @@ export const messageService = {
   },
 
   /**
+   * Delete a message (soft delete)
+   *
+   * @param messageId - ID of the message to delete
+   */
+  async deleteMessage(messageId: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { error } = await supabase
+      .from('messages_new')
+      .update({ is_deleted: true })
+      .eq('id', messageId)
+      .eq('sender_id', user.id);
+
+    if (error) throw error;
+  },
+
+  // =====================================================
+  // MESSAGE REQUESTS
+  // =====================================================
+
+  /**
+   * Get pending message requests for the current user
+   *
+   * @param limit - Maximum number of requests (default: 50)
+   * @param offset - Offset for pagination (default: 0)
+   * @returns Array of message requests
+   */
+  async getMessageRequests(
+    limit: number = 50,
+    offset: number = 0
+  ): Promise<MessageRequest[]> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('get_message_requests', {
+      p_user_id: user.id,
+      p_limit: limit,
+      p_offset: offset,
+    });
+
+    if (error) throw error;
+    return (data || []) as MessageRequest[];
+  },
+
+  /**
+   * Accept a message request
+   * Changes participant status from 'pending' to 'active'
+   *
+   * @param conversationId - ID of the conversation
+   * @returns true if successful
+   */
+  async acceptMessageRequest(conversationId: string): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('respond_to_message_request', {
+      p_conversation_id: conversationId,
+      p_user_id: user.id,
+      p_accept: true,
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
+  /**
+   * Decline a message request
+   * Changes participant status from 'pending' to 'declined'
+   *
+   * @param conversationId - ID of the conversation
+   * @returns true if successful
+   */
+  async declineMessageRequest(conversationId: string): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('respond_to_message_request', {
+      p_conversation_id: conversationId,
+      p_user_id: user.id,
+      p_accept: false,
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
+  // =====================================================
+  // USER RESTRICTIONS (BLOCK/MUTE)
+  // =====================================================
+
+  /**
+   * Block a user - prevents messaging in either direction
+   *
+   * @param targetUserId - ID of the user to block
+   */
+  async blockUser(targetUserId: string): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('block_user', {
+      p_user_id: user.id,
+      p_target_user_id: targetUserId,
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
+  /**
+   * Unblock a user
+   *
+   * @param targetUserId - ID of the user to unblock
+   */
+  async unblockUser(targetUserId: string): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('unblock_user', {
+      p_user_id: user.id,
+      p_target_user_id: targetUserId,
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
+  /**
+   * Get list of blocked users
+   *
+   * @returns Array of blocked user IDs
+   */
+  async getBlockedUsers(): Promise<string[]> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase
+      .from('user_restrictions')
+      .select('target_user_id')
+      .eq('user_id', user.id)
+      .eq('restriction_type', 'block');
+
+    if (error) throw error;
+    return (data || []).map((r) => r.target_user_id);
+  },
+
+  // =====================================================
+  // CONVERSATION ACTIONS (MUTE/PIN)
+  // =====================================================
+
+  /**
+   * Toggle mute status for a conversation
+   *
+   * @param conversationId - ID of the conversation
+   * @param mute - true to mute, false to unmute
+   */
+  async toggleConversationMute(
+    conversationId: string,
+    mute: boolean
+  ): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('toggle_conversation_mute', {
+      p_conversation_id: conversationId,
+      p_user_id: user.id,
+      p_mute: mute,
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
+  /**
+   * Toggle pin status for a conversation
+   *
+   * @param conversationId - ID of the conversation
+   * @param pin - true to pin, false to unpin
+   */
+  async toggleConversationPin(
+    conversationId: string,
+    pin: boolean
+  ): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('toggle_conversation_pin', {
+      p_conversation_id: conversationId,
+      p_user_id: user.id,
+      p_pin: pin,
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
+  // =====================================================
+  // PRESENCE MANAGEMENT
+  // =====================================================
+
+  /**
+   * Update current user's presence status
+   *
+   * @param status - 'online', 'away', or 'offline'
+   */
+  async updatePresence(status: 'online' | 'away' | 'offline' = 'online'): Promise<boolean> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
+
+    const { data, error } = await supabase.rpc('update_user_presence', {
+      p_user_id: user.id,
+      p_status: status,
+    });
+
+    if (error) {
+      console.error('Error updating presence:', error);
+      return false;
+    }
+
+    return data;
+  },
+
+  /**
+   * Get presence status for multiple users
+   *
+   * @param userIds - Array of user IDs
+   * @returns Array of presence records
+   */
+  async getUsersPresence(userIds: string[]): Promise<UserPresence[]> {
+    if (userIds.length === 0) return [];
+
+    const { data, error } = await supabase.rpc('get_users_presence', {
+      p_user_ids: userIds,
+    });
+
+    if (error) {
+      console.error('Error fetching presence:', error);
+      return [];
+    }
+
+    return (data || []) as UserPresence[];
+  },
+
+  // =====================================================
+  // PERMISSION CHECKS
+  // =====================================================
+
+  /**
+   * Check if current user can message another user
+   *
+   * @param otherUserId - ID of the user to check
+   * @returns CanMessageResult with details
+   */
+  async canMessage(otherUserId: string): Promise<CanMessageResult> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return {
+        can_message: false,
+        is_connected: false,
+        is_blocked: false,
+        reason: 'Not authenticated',
+      };
+    }
+
+    const { data, error } = await supabase.rpc('can_message_user', {
+      p_user_id: user.id,
+      p_target_user_id: otherUserId,
+    });
+
+    if (error) {
+      console.error('Error checking message permission:', error);
+      return {
+        can_message: false,
+        is_connected: false,
+        is_blocked: false,
+        reason: 'Error checking permissions',
+      };
+    }
+
+    return (data?.[0] || {
+      can_message: false,
+      is_connected: false,
+      is_blocked: false,
+      reason: 'Unknown error',
+    }) as CanMessageResult;
+  },
+
+  // =====================================================
+  // REAL-TIME SUBSCRIPTIONS
+  // =====================================================
+
+  /**
    * Subscribe to real-time message updates in a conversation
-   * 
-   * Sets up a Supabase real-time channel to listen for new messages.
-   * Remember to unsubscribe when component unmounts!
-   * 
-   * @param conversationId - ID of the conversation to subscribe to
+   *
+   * @param conversationId - ID of the conversation
    * @param callback - Function called when new message arrives
    * @returns Supabase channel (call .unsubscribe() to cleanup)
-   * 
-   * @example
-   * ```typescript
-   * useEffect(() => {
-   *   const channel = messageService.subscribeToMessages(conversationId, (message) => {
-   *     // Handle new message
-   *   });
-   *   return () => channel.unsubscribe();
-   * }, [conversationId]);
-   * ```
    */
   subscribeToMessages(conversationId: string, callback: (message: Message) => void) {
     return supabase
@@ -218,19 +525,21 @@ export const messageService = {
 
   /**
    * Broadcast typing status to conversation participants
-   * 
-   * Uses Supabase broadcast for low-latency typing indicator updates.
-   * No persistence - ephemeral state only.
-   * 
+   *
    * @param conversationId - ID of the conversation
    * @param userId - ID of the user typing
    * @param displayName - Display name of the user
    * @param isTyping - Whether user is currently typing
    * @returns Supabase channel
    */
-  broadcastTyping(conversationId: string, userId: string, displayName: string, isTyping: boolean) {
+  broadcastTyping(
+    conversationId: string,
+    userId: string,
+    displayName: string,
+    isTyping: boolean
+  ) {
     const channel = supabase.channel(`typing:${conversationId}`);
-    
+
     channel.subscribe((status) => {
       if (status === 'SUBSCRIBED') {
         channel.send({
@@ -246,10 +555,7 @@ export const messageService = {
 
   /**
    * Subscribe to typing indicators in a conversation
-   * 
-   * Manages typing state with automatic timeout after 3 seconds.
-   * Filters typing users and notifies via callback.
-   * 
+   *
    * @param conversationId - ID of the conversation
    * @param onTypingChange - Callback with current typing users
    * @returns Supabase channel
@@ -266,13 +572,11 @@ export const messageService = {
         const { userId, displayName, isTyping } = payload;
 
         if (isTyping) {
-          // Clear existing timeout
           const existing = typingUsers.get(userId);
           if (existing?.timeout) {
             clearTimeout(existing.timeout);
           }
 
-          // Add user to typing list with auto-remove timeout
           const timeout = setTimeout(() => {
             typingUsers.delete(userId);
             onTypingChange(Array.from(typingUsers.values()));
@@ -280,7 +584,6 @@ export const messageService = {
 
           typingUsers.set(userId, { user_id: userId, display_name: displayName, timeout });
         } else {
-          // Remove user from typing list
           const existing = typingUsers.get(userId);
           if (existing?.timeout) {
             clearTimeout(existing.timeout);
@@ -297,16 +600,17 @@ export const messageService = {
 
   /**
    * Track user presence in a conversation
-   * 
-   * Broadcasts user's online status using Supabase Presence API.
-   * Auto-expires when user disconnects.
-   * 
+   *
    * @param conversationId - ID of the conversation
    * @param userId - ID of the user
    * @param userData - Additional user data (name, avatar)
    * @returns Supabase channel
    */
-  trackPresence(conversationId: string, userId: string, userData: { display_name: string; avatar_url?: string }) {
+  trackPresence(
+    conversationId: string,
+    userId: string,
+    userData: { display_name: string; avatar_url?: string }
+  ) {
     const channel = supabase.channel(`presence:${conversationId}`, {
       config: { presence: { key: userId } },
     });
@@ -326,10 +630,7 @@ export const messageService = {
 
   /**
    * Subscribe to presence updates in a conversation
-   * 
-   * Listens for users joining/leaving the conversation.
-   * Returns array of currently online users.
-   * 
+   *
    * @param conversationId - ID of the conversation
    * @param onPresenceChange - Callback with online users
    * @returns Supabase channel
@@ -355,10 +656,7 @@ export const messageService = {
 
   /**
    * Subscribe to conversation list updates
-   * 
-   * Listens for new messages across all conversations to update the list.
-   * Useful for the conversation list view to show new messages in real-time.
-   * 
+   *
    * @param userId - Current user ID
    * @param callback - Function called when conversation list should refresh
    * @returns Supabase channel
@@ -389,51 +687,61 @@ export const messageService = {
   },
 
   /**
-   * Delete a message (soft delete)
-   * 
-   * Marks message as deleted rather than removing from database.
-   * Deleted messages show as "[Message deleted]" in UI.
-   * 
-   * @param messageId - ID of the message to delete
+   * Subscribe to global presence updates
+   * Tracks online/offline status for the inbox user list
+   *
+   * @param onPresenceChange - Callback with presence updates
+   * @returns Supabase channel
    */
-  async deleteMessage(messageId: string): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
+  subscribeToGlobalPresence(
+    onPresenceChange: (presences: UserPresence[]) => void
+  ) {
+    const channel = supabase.channel('global_presence');
 
-    const { error } = await supabase
-      .from('messages_new')
-      .update({ is_deleted: true })
-      .eq('id', messageId)
-      .eq('sender_id', user.id); // Only sender can delete their own messages
+    channel
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_presence',
+        },
+        () => {
+          // Re-fetch presence data when changes occur
+          // The component should call getUsersPresence with relevant user IDs
+          onPresenceChange([]);
+        }
+      )
+      .subscribe();
 
-    if (error) throw error;
+    return channel;
   },
 
   /**
-   * Check if current user can message another user
-   * 
-   * Validates that:
-   * 1. User is authenticated
-   * 2. Users have an accepted connection
-   * 
-   * @param otherUserId - ID of the user to check
-   * @returns True if messaging is allowed, false otherwise
+   * Subscribe to message requests updates
+   *
+   * @param userId - Current user ID
+   * @param callback - Function called when new request arrives
+   * @returns Supabase channel
    */
-  async canMessage(otherUserId: string): Promise<boolean> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
-
-    // Check connection status
-    const { data, error } = await supabase.rpc('get_connection_status', {
-      user1_id: user.id,
-      user2_id: otherUserId,
-    });
-
-    if (error) {
-      console.error('Error checking connection status:', error);
-      return false;
-    }
-
-    return data === 'accepted';
+  subscribeToMessageRequests(userId: string, callback: () => void) {
+    return supabase
+      .channel('message_requests')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'conversation_participants',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          // Only trigger for pending status
+          if ((payload.new as any)?.status === 'pending') {
+            callback();
+          }
+        }
+      )
+      .subscribe();
   },
 };
