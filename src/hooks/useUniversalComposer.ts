@@ -31,6 +31,7 @@ export interface ComposerFormData {
   linkTitle?: string;
   linkDescription?: string;
   linkThumbnail?: string;
+  linkProviderName?: string;
   // Event specific
   eventDate?: string;
   eventTime?: string;
@@ -170,6 +171,8 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             linkUrl: formData.linkUrl,
             linkTitle: formData.linkTitle,
             linkDescription: formData.linkDescription,
+            linkThumbnail: formData.linkThumbnail,
+            linkProviderName: formData.linkProviderName,
           });
 
           // Map to UniversalFeedItem so it shows up instantly
@@ -203,7 +206,12 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             link_url: formData.linkUrl || null,
             link_title: formData.linkTitle || null,
             link_description: formData.linkDescription || null,
-            link_metadata: null,
+            link_metadata: formData.linkThumbnail ? {
+              embed_type: 'video',
+              provider_name: formData.linkProviderName,
+              thumbnail_url: formData.linkThumbnail,
+              is_video: true,
+            } : null,
           };
           break;
         }

@@ -346,9 +346,8 @@ export function PostCard({
                   url: post.link_url,
                   title: post.link_title,
                   author_name: post.link_description,
-                  // Try to extract thumbnail from metadata if available
-                  thumbnail_url: undefined,
-                  provider_name: undefined,
+                  thumbnail_url: post.link_metadata?.thumbnail_url,
+                  provider_name: post.link_metadata?.provider_name,
                 }}
                 showRemoveButton={false}
                 size="full"

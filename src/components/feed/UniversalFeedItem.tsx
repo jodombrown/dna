@@ -95,6 +95,10 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
             comments_count: item.comment_count || 0,
             user_has_liked: item.has_liked || false,
             is_connection: false,
+            link_url: item.link_url || undefined,
+            link_title: item.link_title || undefined,
+            link_description: item.link_description || undefined,
+            link_metadata: item.link_metadata || undefined,
           }}
           currentUserId={currentUserId}
           onUpdate={onUpdate}
