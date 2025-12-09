@@ -74,7 +74,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
   };
 
   return (
-    <Card className="p-4 sm:p-5 md:p-6 hover:border-primary/20 transition-colors bg-gradient-to-br from-background via-background to-muted/10">
+    <Card className="p-4 sm:p-5 md:p-6 hover:border-dna-gold/40 transition-colors border-l-4 border-l-dna-gold/60 shadow-[0_2px_8px_-2px_hsl(var(--dna-gold)/0.15)]">
       {/* Header */}
       <div className="flex items-start gap-3 mb-4">
         <Avatar
