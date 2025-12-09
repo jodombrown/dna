@@ -26,6 +26,11 @@ export interface ComposerFormData {
   content: string;
   title?: string;
   mediaUrl?: string;
+  // Link/video preview
+  linkUrl?: string;
+  linkTitle?: string;
+  linkDescription?: string;
+  linkThumbnail?: string;
   // Event specific
   eventDate?: string;
   eventTime?: string;
@@ -162,6 +167,9 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             mediaUrl: formData.mediaUrl,
             spaceId: context.spaceId,
             eventId: context.eventId,
+            linkUrl: formData.linkUrl,
+            linkTitle: formData.linkTitle,
+            linkDescription: formData.linkDescription,
           });
 
           // Map to UniversalFeedItem so it shows up instantly
@@ -192,11 +200,12 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             bookmark_count: 0,
             has_liked: false,
             has_bookmarked: false,
-            link_url: null,
-            link_title: null,
-            link_description: null,
+            link_url: formData.linkUrl || null,
+            link_title: formData.linkTitle || null,
+            link_description: formData.linkDescription || null,
             link_metadata: null,
           };
+          break;
         }
 
 
