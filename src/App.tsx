@@ -74,6 +74,7 @@ import EventsIndex from "./pages/dna/convene/EventsIndex";
 import EventDetail from "./pages/dna/convene/EventDetail";
 import Welcome from "./pages/dna/Welcome";
 import DashboardSettings from "./pages/dna/DashboardSettings";
+import { AccountSettings, PrivacySettings, NotificationSettings, PreferencesSettings } from "./pages/settings";
 import CreateEvent from "./pages/dna/convene/CreateEvent";
 import MyEvents from "./pages/dna/convene/MyEvents";
 import EventAnalytics from "./pages/dna/convene/EventAnalytics";
@@ -205,10 +206,10 @@ function App() {
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/dna/welcome" element={<Welcome />} />
               
-              {/* Settings Hub - Complete settings experience */}
+              {/* Settings Hub - multiple paths for different sections */}
               <Route path="/dna/settings" element={
                 <OnboardingGuard>
-                  <PreferencesSettings />
+                  <Navigate to="/dna/settings/account" replace />
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/account" element={

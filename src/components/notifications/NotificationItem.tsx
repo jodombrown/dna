@@ -69,9 +69,40 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
     if (!notification.is_read) {
       markAsRead(notification.notification_id);
     }
+    
+    // Navigate to appropriate destination based on notification data
     if (notification.action_url) {
-      navigate(notification.action_url);
+      // Validate action_url starts with valid routes
+      const validPrefixes = ['/dna/', '/messages', '/profile'];
+      const isValidUrl = validPrefixes.some(prefix => notification.action_url?.startsWith(prefix));
+      
+      if (isValidUrl) {
+        navigate(notification.action_url);
+      } else if (notification.entity_type && notification.entity_id) {
+        // Fallback: construct URL from entity type and ID
+        const entityRoutes: Record<string, string> = {
+          'post': `/dna/feed`,
+          'story': `/dna/story/${notification.entity_id}`,
+          'event': `/dna/convene/events/${notification.entity_id}`,
+          'profile': `/dna/${notification.actor_username || notification.entity_id}`,
+          'space': `/dna/collaborate/spaces/${notification.entity_id}`,
+          'connection': `/dna/connect/network`,
+          'message': `/dna/messages`,
+        };
+        const route = entityRoutes[notification.entity_type] || '/dna/feed';
+        navigate(route);
+      } else if (notification.actor_username) {
+        // Navigate to actor's profile if no other destination
+        navigate(`/dna/${notification.actor_username}`);
+      } else {
+        // Final fallback: go to feed
+        navigate('/dna/feed');
+      }
+    } else if (notification.actor_username) {
+      // If no action_url, navigate to actor's profile
+      navigate(`/dna/${notification.actor_username}`);
     }
+    
     onClose();
   };
 

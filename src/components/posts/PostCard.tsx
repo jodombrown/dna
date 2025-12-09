@@ -10,7 +10,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { EmbedPreview } from '@/components/social-feed/EmbedPreview';
+import { VideoLinkPreview } from '@/components/feed/VideoLinkPreview';
 import { ReactionPicker } from './ReactionPicker';
 import { ReactionSummary } from './ReactionSummary';
 import { RepostDialog } from './RepostDialog';
@@ -211,7 +211,7 @@ export function PostCard({
   const isRepost = !!post.original_post_id;
 
   return (
-    <Card ref={viewTrackerRef} className="p-6">
+    <Card ref={viewTrackerRef} className="p-6 border-l-4 border-l-dna-emerald/50 shadow-[0_2px_8px_-2px_hsl(var(--dna-emerald)/0.12)]">
       {/* Repost indicator */}
       {isRepost && (
         <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
@@ -338,18 +338,19 @@ export function PostCard({
             </div>
           )}
 
-          {/* Link Preview - Enhanced with metadata */}
+          {/* Link/Video Preview - Enhanced with VideoLinkPreview */}
           {post.link_url && (
             <div className="mb-4">
-              <EmbedPreview
+              <VideoLinkPreview
                 embedData={{
                   url: post.link_url,
-                  version: '1.0',
-                  type: 'link',
                   title: post.link_title,
-                  thumbnail_url: post.link_description ? undefined : post.link_url,
+                  author_name: post.link_description,
+                  thumbnail_url: post.link_metadata?.thumbnail_url,
+                  provider_name: post.link_metadata?.provider_name,
                 }}
                 showRemoveButton={false}
+                size="full"
               />
             </div>
           )}

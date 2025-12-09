@@ -10,83 +10,69 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save, Loader2, LogOut } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import ProfileCompletionBar from '@/components/profile/ProfileCompletionBar';
-import { useImageUpload } from '@/components/profile/form/ImageUploadHandler';
 
-// Import modular section components
+// Import modular profile edit components
 import {
-  ProfileImagesSection,
-  BasicInfoSection,
-  ProfessionalSection,
-  DiasporaSection,
-  IntentionsSection,
-  AfricaFocusSection,
-  SocialLinksSection,
-  PrivacySection,
-  ProfileEditFormData,
-  AfricaFocusArea,
-} from '@/components/profile/edit';
+  ProfileEditImages,
+  ProfileEditBasicInfo,
+  ProfileEditProfessional,
+  ProfileEditDiaspora,
+  ProfileEditInterests,
+  ProfileEditLanguages,
+  ProfileEditSocialLinks,
+  ProfileEditPrivacy,
+} from '@/components/profile-edit';
 
-/**
- * ProfileEdit Page - Refactored
- *
- * This page has been refactored from 992 lines to a modular structure.
- * Each section is now a separate component in /components/profile/edit/
- *
- * Features:
- * - Modular section components for maintainability
- * - Unified selectors (CountryCombobox, TagMultiSelect)
- * - All essential DB fields exposed
- * - Autosave-ready architecture
- * - Better mobile responsiveness
- */
 const ProfileEdit = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { uploadImage } = useImageUpload();
-
-  // Image upload state
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [bannerUrl, setBannerUrl] = useState<string | null>(null);
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [uploadingBanner, setUploadingBanner] = useState(false);
-
-  // Fetch current profile
+  
+  // Fetch current profile using unified hook
   const { data: profile, isLoading } = useProfile();
 
-  // Form state with all BETA-required fields
-  const [formData, setFormData] = useState<ProfileEditFormData>({
-    full_name: '',
-    headline: '',
-    bio: '',
-    current_location: '',
-    current_country: '',
-    country_of_origin: '',
-    profession: '',
-    company: '',
-    years_experience: 0,
-    skills: [],
-    interests: [],
-    diaspora_status: '',
-    languages: [],
-    intentions: [],
-    engagement_intentions: [],
-    available_for: [],
-    mentorship_areas: [],
-    diaspora_networks: [],
-    africa_focus_areas: [],
-    focus_areas: [],
-    regional_expertise: [],
-    industries: [],
-    linkedin_url: '',
-    twitter_url: '',
-    website_url: '',
-    is_public: false,
-  });
+  // Image state
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [bannerUrl, setBannerUrl] = useState<string | null>(null);
 
-  // Africa focus areas (separate state for complex nested structure)
-  const [africaFocusAreas, setAfricaFocusAreas] = useState<AfricaFocusArea[]>([]);
+  // Basic info state
+  const [fullName, setFullName] = useState('');
+  const [headline, setHeadline] = useState('');
+  const [bio, setBio] = useState('');
+  const [location, setLocation] = useState('');
+  const [countryOfOrigin, setCountryOfOrigin] = useState('');
+  const [currentCountry, setCurrentCountry] = useState('');
+
+  // Professional state
+  const [profession, setProfession] = useState('');
+  const [company, setCompany] = useState('');
+  const [yearsExperience, setYearsExperience] = useState(0);
+  const [skills, setSkills] = useState<string[]>([]);
+  const [professionalSectors, setProfessionalSectors] = useState<string[]>([]);
+
+  // Diaspora state
+  const [diasporaStatus, setDiasporaStatus] = useState('');
+  const [diasporaNetworks, setDiasporaNetworks] = useState<string[]>([]);
+  const [engagementIntentions, setEngagementIntentions] = useState<string[]>([]);
+  const [mentorshipAreas, setMentorshipAreas] = useState<string[]>([]);
+
+  // Interests & Discovery state
+  const [interests, setInterests] = useState<string[]>([]);
+  const [focusAreas, setFocusAreas] = useState<string[]>([]);
+  const [regionalExpertise, setRegionalExpertise] = useState<string[]>([]);
+  const [industries, setIndustries] = useState<string[]>([]);
+
+  // Languages state
+  const [languages, setLanguages] = useState<string[]>([]);
+
+  // Social links state
+  const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [twitterUrl, setTwitterUrl] = useState('');
+  const [websiteUrl, setWebsiteUrl] = useState('');
+
+  // Privacy state
+  const [isPublic, setIsPublic] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
@@ -96,87 +82,76 @@ const ProfileEdit = () => {
   // Initialize form data when profile loads
   useEffect(() => {
     if (profile) {
-      setFormData({
-        full_name: profile.full_name || '',
-        headline: profile.headline || '',
-        bio: profile.bio || '',
-        current_location: profile.current_location || profile.location || '',
-        current_country: profile.current_country || '',
-        country_of_origin: profile.country_of_origin || '',
-        profession: profile.profession || '',
-        company: profile.company || '',
-        years_experience: profile.years_experience || 0,
-        skills: Array.isArray(profile.skills) ? profile.skills : [],
-        interests: Array.isArray(profile.interests) ? profile.interests : [],
-        diaspora_status: profile.diaspora_status || '',
-        languages: Array.isArray(profile.languages) ? profile.languages : [],
-        intentions: Array.isArray(profile.intentions) ? profile.intentions : [],
-        engagement_intentions: Array.isArray(profile.engagement_intentions) ? profile.engagement_intentions : [],
-        available_for: Array.isArray(profile.available_for) ? profile.available_for : [],
-        mentorship_areas: Array.isArray(profile.mentorship_areas) ? profile.mentorship_areas : [],
-        diaspora_networks: Array.isArray(profile.diaspora_networks) ? profile.diaspora_networks : [],
-        africa_focus_areas: [],
-        focus_areas: Array.isArray(profile.focus_areas) ? profile.focus_areas : [],
-        regional_expertise: Array.isArray(profile.regional_expertise) ? profile.regional_expertise : [],
-        industries: Array.isArray(profile.industries) ? profile.industries : [],
-        linkedin_url: profile.linkedin_url || '',
-        twitter_url: profile.twitter_url || '',
-        website_url: profile.website_url || '',
-        is_public: profile.is_public || false,
-      });
-
+      // Images
       setAvatarUrl(profile.avatar_url || null);
       setBannerUrl(profile.banner_url || null);
 
-      // Parse africa_focus_areas
-      const focusAreasData: any = profile.africa_focus_areas || [];
-      const typedFocusAreas: AfricaFocusArea[] = Array.isArray(focusAreasData)
-        ? (focusAreasData as any[]).filter((area: any) =>
-            typeof area === 'object' &&
-            area !== null &&
-            'geography' in area &&
-            'sectors' in area &&
-            Array.isArray(area.sectors)
-          ).map(area => ({
-            geography: area.geography as string,
-            sectors: area.sectors as string[]
-          }))
-        : [];
-      setAfricaFocusAreas(typedFocusAreas);
+      // Basic info
+      setFullName(profile.full_name || '');
+      setHeadline(profile.headline || '');
+      setBio(profile.bio || '');
+      setLocation(profile.location || '');
+      setCountryOfOrigin(profile.country_of_origin || '');
+      setCurrentCountry(profile.current_country || '');
+
+      // Professional
+      setProfession(profile.profession || '');
+      setCompany(profile.company || '');
+      setYearsExperience(profile.years_experience || 0);
+      setSkills(Array.isArray(profile.skills) ? profile.skills : []);
+      setProfessionalSectors(Array.isArray(profile.professional_sectors) ? profile.professional_sectors : []);
+
+      // Diaspora
+      setDiasporaStatus(profile.diaspora_status || '');
+      setDiasporaNetworks(Array.isArray(profile.diaspora_networks) ? profile.diaspora_networks : []);
+      setEngagementIntentions(Array.isArray(profile.engagement_intentions) ? profile.engagement_intentions : []);
+      setMentorshipAreas(Array.isArray(profile.mentorship_areas) ? profile.mentorship_areas : []);
+
+      // Interests & Discovery
+      setInterests(Array.isArray(profile.interests) ? profile.interests : []);
+      setFocusAreas(Array.isArray(profile.focus_areas) ? profile.focus_areas : []);
+      setRegionalExpertise(Array.isArray(profile.regional_expertise) ? profile.regional_expertise : []);
+      setIndustries(Array.isArray(profile.industries) ? profile.industries : []);
+
+      // Languages
+      setLanguages(Array.isArray(profile.languages) ? profile.languages : []);
+
+      // Social links
+      setLinkedinUrl(profile.linkedin_url || '');
+      setTwitterUrl(profile.twitter_url || '');
+      setWebsiteUrl(profile.website_url || '');
+
+      // Privacy
+      setIsPublic(profile.is_public || false);
     }
   }, [profile]);
 
-  // Update handler for form fields
-  const handleUpdate = (field: keyof ProfileEditFormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
   // Update mutation
   const updateMutation = useMutation({
-    mutationFn: async (updates: any) => {
+    mutationFn: async (updates: Record<string, unknown>) => {
       const { data, error } = await supabase
         .from('profiles')
         .update(updates)
         .eq('id', user!.id)
         .select()
         .single();
-
+      
       if (error) throw error;
       return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
-
+      
       const completionPercentage = data.profile_completion_percentage || 0;
       toast({
         title: 'Profile updated!',
         description: `You're ${completionPercentage}% complete. ${completionPercentage >= 40 ? '✅ All features unlocked!' : `Complete ${40 - completionPercentage}% more to unlock all features.`}`,
       });
-
+      
       navigate('/dna/feed');
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: 'Error updating profile',
         description: error.message,
@@ -187,65 +162,51 @@ const ProfileEdit = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     const updates = {
-      ...formData,
-      africa_focus_areas: africaFocusAreas,
+      // Basic info
+      full_name: fullName,
+      headline,
+      bio,
+      location,
+      country_of_origin: countryOfOrigin,
+      current_country: currentCountry,
+
+      // Professional
+      profession,
+      company,
+      years_experience: yearsExperience,
+      skills,
+      professional_sectors: professionalSectors,
+
+      // Diaspora
+      diaspora_status: diasporaStatus,
+      diaspora_networks: diasporaNetworks,
+      engagement_intentions: engagementIntentions,
+      mentorship_areas: mentorshipAreas,
+
+      // Interests & Discovery
+      interests,
+      focus_areas: focusAreas,
+      regional_expertise: regionalExpertise,
+      industries,
+
+      // Languages
+      languages,
+
+      // Social links
+      linkedin_url: linkedinUrl,
+      twitter_url: twitterUrl,
+      website_url: websiteUrl,
+
+      // Privacy
+      is_public: isPublic,
+
+      // Meta
       updated_at: new Date().toISOString(),
     };
-
+    
     updateMutation.mutate(updates);
-  };
-
-  // Image upload handlers
-  const handleAvatarUpload = async (file: File) => {
-    if (!user) return;
-
-    // Validate file
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      toast({ title: 'Invalid file type', description: 'Please upload JPG, PNG, or WebP', variant: 'destructive' });
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast({ title: 'File too large', description: 'Max size is 5MB', variant: 'destructive' });
-      return;
-    }
-
-    setUploadingAvatar(true);
-    const url = await uploadImage(file, user.id, 'avatar');
-    if (url) {
-      setAvatarUrl(url);
-      await supabase.from('profiles').update({ avatar_url: url }).eq('id', user.id);
-      queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
-      toast({ title: 'Avatar updated!' });
-    }
-    setUploadingAvatar(false);
-  };
-
-  const handleBannerUpload = async (file: File) => {
-    if (!user) return;
-
-    // Validate file
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      toast({ title: 'Invalid file type', description: 'Please upload JPG, PNG, or WebP', variant: 'destructive' });
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      toast({ title: 'File too large', description: 'Max size is 10MB for banners', variant: 'destructive' });
-      return;
-    }
-
-    setUploadingBanner(true);
-    const url = await uploadImage(file, user.id, 'banner');
-    if (url) {
-      setBannerUrl(url);
-      await supabase.from('profiles').update({ banner_url: url }).eq('id', user.id);
-      queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
-      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
-      toast({ title: 'Banner updated!' });
-    }
-    setUploadingBanner(false);
   };
 
   if (isLoading) {
@@ -263,7 +224,7 @@ const ProfileEdit = () => {
   return (
     <div className="min-h-screen bg-background">
       <UnifiedHeader />
-
+      
       <div className="container max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-6">
@@ -279,7 +240,7 @@ const ProfileEdit = () => {
           <p className="text-muted-foreground mt-2">
             Complete your profile to unlock all DNA features and connect with the diaspora community
           </p>
-
+          
           {/* Quick nudges for incomplete fields */}
           <div className="mt-4 flex flex-wrap gap-2">
             {!avatarUrl && (
@@ -292,13 +253,13 @@ const ProfileEdit = () => {
                 + Add banner
               </Badge>
             )}
-            {!formData.headline && (
+            {!headline && (
               <Badge variant="outline" className="text-xs">+ Add headline</Badge>
             )}
-            {formData.skills.length < 3 && (
+            {skills.length < 3 && (
               <Badge variant="outline" className="text-xs">+ Add 3+ skills</Badge>
             )}
-            {formData.focus_areas.length < 2 && (
+            {focusAreas.length < 2 && (
               <Badge variant="outline" className="text-xs">+ Add focus areas</Badge>
             )}
           </div>
@@ -309,61 +270,92 @@ const ProfileEdit = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Profile Images */}
-          <ProfileImagesSection
+          <ProfileEditImages
+            userId={user.id}
             avatarUrl={avatarUrl}
             bannerUrl={bannerUrl}
-            uploadingAvatar={uploadingAvatar}
-            uploadingBanner={uploadingBanner}
-            onAvatarUpload={handleAvatarUpload}
-            onBannerUpload={handleBannerUpload}
+            onAvatarChange={setAvatarUrl}
+            onBannerChange={setBannerUrl}
           />
 
           {/* Basic Information */}
-          <BasicInfoSection
-            formData={formData}
-            onUpdate={handleUpdate}
+          <ProfileEditBasicInfo
+            fullName={fullName}
+            headline={headline}
+            bio={bio}
+            location={location}
+            countryOfOrigin={countryOfOrigin}
+            currentCountry={currentCountry}
+            onFullNameChange={setFullName}
+            onHeadlineChange={setHeadline}
+            onBioChange={setBio}
+            onLocationChange={setLocation}
+            onCountryOfOriginChange={setCountryOfOrigin}
+            onCurrentCountryChange={setCurrentCountry}
           />
 
           {/* Professional Background */}
-          <ProfessionalSection
-            formData={formData}
-            onUpdate={handleUpdate}
+          <ProfileEditProfessional
+            profession={profession}
+            company={company}
+            yearsExperience={yearsExperience}
+            skills={skills}
+            professionalSectors={professionalSectors}
+            onProfessionChange={setProfession}
+            onCompanyChange={setCompany}
+            onYearsExperienceChange={setYearsExperience}
+            onSkillsChange={setSkills}
+            onSectorsChange={setProfessionalSectors}
           />
 
           {/* African Diaspora Identity */}
-          <DiasporaSection
-            formData={formData}
-            onUpdate={handleUpdate}
+          <ProfileEditDiaspora
+            diasporaStatus={diasporaStatus}
+            diasporaNetworks={diasporaNetworks}
+            engagementIntentions={engagementIntentions}
+            mentorshipAreas={mentorshipAreas}
+            onDiasporaStatusChange={setDiasporaStatus}
+            onNetworksChange={setDiasporaNetworks}
+            onIntentionsChange={setEngagementIntentions}
+            onMentorshipAreasChange={setMentorshipAreas}
           />
 
-          {/* Intentions & Engagement */}
-          <IntentionsSection
-            formData={formData}
-            onUpdate={handleUpdate}
+          {/* Interests & Focus Areas */}
+          <ProfileEditInterests
+            interests={interests}
+            focusAreas={focusAreas}
+            regionalExpertise={regionalExpertise}
+            industries={industries}
+            onInterestsChange={setInterests}
+            onFocusAreasChange={setFocusAreas}
+            onRegionalExpertiseChange={setRegionalExpertise}
+            onIndustriesChange={setIndustries}
           />
 
-          {/* Africa Focus & Discovery */}
-          <AfricaFocusSection
-            formData={formData}
-            onUpdate={handleUpdate}
-            africaFocusAreas={africaFocusAreas}
-            onAfricaFocusAreasChange={setAfricaFocusAreas}
+          {/* Languages */}
+          <ProfileEditLanguages
+            languages={languages}
+            onLanguagesChange={setLanguages}
           />
 
           {/* Social Links */}
-          <SocialLinksSection
-            formData={formData}
-            onUpdate={handleUpdate}
+          <ProfileEditSocialLinks
+            linkedinUrl={linkedinUrl}
+            twitterUrl={twitterUrl}
+            websiteUrl={websiteUrl}
+            onLinkedinChange={setLinkedinUrl}
+            onTwitterChange={setTwitterUrl}
+            onWebsiteChange={setWebsiteUrl}
           />
 
           {/* Privacy Settings */}
-          <PrivacySection
-            formData={formData}
-            onUpdate={handleUpdate}
+          <ProfileEditPrivacy
+            isPublic={isPublic}
+            onIsPublicChange={setIsPublic}
           />
 
           {/* Submit Buttons */}
-          <div className="flex gap-4 justify-between sticky bottom-4 bg-background/95 backdrop-blur-sm p-4 -mx-4 border-t">
+          <div className="flex gap-4 justify-between pb-8">
             <Button
               type="button"
               variant="outline"

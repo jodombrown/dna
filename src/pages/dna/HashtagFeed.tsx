@@ -88,6 +88,10 @@ export default function HashtagFeed() {
                 bookmark_count: post.bookmark_count,
                 has_liked: post.user_has_liked,
                 has_bookmarked: post.user_has_bookmarked,
+                link_url: null,
+                link_title: null,
+                link_description: null,
+                link_metadata: null,
               };
 
               return (

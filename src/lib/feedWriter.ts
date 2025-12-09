@@ -260,10 +260,23 @@ export async function createStandardPost(params: {
   privacyLevel?: 'public' | 'connections';
   spaceId?: string;
   eventId?: string;
+  linkUrl?: string;
+  linkTitle?: string;
+  linkDescription?: string;
+  linkThumbnail?: string;
+  linkProviderName?: string;
 }): Promise<PostWithAuthor> {
-  const { authorId, content, mediaUrl, spaceId, eventId, privacyLevel } = params;
+  const { authorId, content, mediaUrl, spaceId, eventId, privacyLevel, linkUrl, linkTitle, linkDescription, linkThumbnail, linkProviderName } = params;
 
   try {
+    // Build metadata object for video/link embeds
+    const metadata = linkUrl ? {
+      embed_type: 'video',
+      provider_name: linkProviderName || undefined,
+      thumbnail_url: linkThumbnail || undefined,
+      is_video: true,
+    } : null;
+
     // Insert the post with correct post_type value
     const insertPayload = {
       author_id: authorId,
@@ -273,6 +286,10 @@ export async function createStandardPost(params: {
       space_id: spaceId || null,
       event_id: eventId || null,
       privacy_level: privacyLevel || 'public',
+      link_url: linkUrl || null,
+      link_title: linkTitle || null,
+      link_description: linkDescription || null,
+      metadata: metadata,
     };
 
     console.log('createStandardPost inserting:', insertPayload);
@@ -280,7 +297,7 @@ export async function createStandardPost(params: {
     const { data: postData, error: postError } = await supabase
       .from('posts')
       .insert(insertPayload)
-      .select('id, author_id, content, post_type, image_url, created_at')
+      .select('id, author_id, content, post_type, image_url, created_at, link_url, link_title, link_description, metadata')
       .single();
 
     if (postError) {
@@ -320,6 +337,10 @@ export async function createStandardPost(params: {
       author_avatar_url: profileData?.avatar_url || undefined,
       user_has_liked: false,
       is_connection: false,
+      link_url: postData.link_url || undefined,
+      link_title: postData.link_title || undefined,
+      link_description: postData.link_description || undefined,
+      link_metadata: postData.metadata as any,
     };
 
     return mapped;

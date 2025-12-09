@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,10 +6,12 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Image, Video, Link2, Loader2, Save, FileText } from 'lucide-react';
+import { Loader2, Save, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { MentionAutocomplete } from './MentionAutocomplete';
 import { useDraftPosts } from '@/hooks/useDraftPosts';
+import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
+import { VideoLinkPreview } from './VideoLinkPreview';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +28,20 @@ export function CreatePost() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
   const { drafts, saveDraft, deleteDraft } = useDraftPosts();
+  
+  // Auto-detect video/embed links
+  const { 
+    loading: embedLoading, 
+    embedData, 
+    handleContentChange: detectEmbed, 
+    clearEmbedData,
+    isVideoEmbed 
+  } = useAutoEmbedDetection();
+
+  // Detect embeds when content changes
+  useEffect(() => {
+    detectEmbed(content);
+  }, [content, detectEmbed]);
 
   const createPostMutation = useMutation({
     mutationFn: async (postContent: string) => {
@@ -34,6 +50,9 @@ export function CreatePost() {
         content: postContent,
         post_type: 'post',
         privacy_level: 'public',
+        link_url: embedData?.url || null,
+        link_title: embedData?.title || null,
+        link_description: embedData?.author_name || null,
       });
 
       const { data, error } = await supabase
@@ -41,12 +60,23 @@ export function CreatePost() {
         .insert({
           author_id: user!.id,
           content: postContent,
-          post_type: 'post', // Valid post_type per database constraint
+          post_type: 'post',
           privacy_level: 'public',
           linked_entity_type: null,
           linked_entity_id: null,
           space_id: null,
           event_id: null,
+          // Store video/link metadata
+          link_url: embedData?.url || null,
+          link_title: embedData?.title || null,
+          link_description: embedData?.author_name || null,
+          // Store additional metadata in JSONB
+          metadata: embedData ? {
+            embed_type: embedData.type,
+            provider_name: embedData.provider_name,
+            thumbnail_url: embedData.thumbnail_url,
+            is_video: isVideoEmbed,
+          } : null,
         })
         .select()
         .single();
@@ -64,6 +94,7 @@ export function CreatePost() {
       queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
       setContent('');
+      clearEmbedData();
       toast.success('Post created successfully!');
     },
     onError: (error: any) => {
@@ -85,18 +116,15 @@ export function CreatePost() {
   };
 
   const handleMentionSelect = (mention: MentionSuggestion, startPos: number, endPos: number) => {
-    // Replace the @query with @username
     const beforeMention = content.substring(0, startPos);
     const afterMention = content.substring(endPos);
     const newContent = `${beforeMention}@${mention.username} ${afterMention}`;
 
     setContent(newContent);
 
-    // Move cursor after the inserted mention
-    const newCursorPos = startPos + mention.username.length + 2; // +2 for @ and space
+    const newCursorPos = startPos + mention.username.length + 2;
     setCursorPosition(newCursorPos);
 
-    // Focus textarea and set cursor position
     setTimeout(() => {
       if (textareaRef.current) {
         textareaRef.current.focus();
@@ -115,7 +143,6 @@ export function CreatePost() {
 
   const handleLoadDraft = (draftContent: string, draftId: string) => {
     setContent(draftContent);
-    // Delete the draft after loading
     deleteDraft.mutate(draftId);
   };
 
@@ -152,7 +179,7 @@ export function CreatePost() {
         <div className="flex-1 space-y-3 relative">
           <Textarea
             ref={textareaRef}
-            placeholder="What's on your mind?"
+            placeholder="What's on your mind? Paste a YouTube or Vimeo link to share a video."
             value={content}
             onChange={handleContentChange}
             onClick={handleTextareaClick}
@@ -167,6 +194,22 @@ export function CreatePost() {
           />
         </div>
       </div>
+
+      {/* Video/Link Preview */}
+      {embedLoading && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground px-2">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <span>Loading preview...</span>
+        </div>
+      )}
+      
+      {embedData && !embedLoading && (
+        <VideoLinkPreview
+          embedData={embedData}
+          showRemoveButton={false}
+          size="compact"
+        />
+      )}
 
       <div className="flex items-center justify-between border-t pt-3">
         <div className="flex gap-2">

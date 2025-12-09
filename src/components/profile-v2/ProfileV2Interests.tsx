@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Plus, X, Sparkles } from 'lucide-react';
+import { Edit, Plus, X, Sparkles, Loader2, Check } from 'lucide-react';
 import { ProfileV2Tags, ProfileV2Visibility } from '@/types/profileV2';
 import { Input } from '@/components/ui/input';
 
@@ -24,7 +24,15 @@ const ProfileV2Interests: React.FC<ProfileV2InterestsProps> = ({
   const [newInterest, setNewInterest] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
+  // Hide if visibility is set to hidden and viewer is not owner
   if (visibility.interests === 'hidden' && !isOwner) {
+    return null;
+  }
+
+  const hasInterests = (tags.interests || []).length > 0;
+
+  // Hide empty section for public viewers
+  if (!hasInterests && !isOwner) {
     return null;
   }
 
@@ -60,15 +68,16 @@ const ProfileV2Interests: React.FC<ProfileV2InterestsProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <div className="flex items-center gap-2">
+    <Card className="overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+        <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />
-          <CardTitle className="text-xl">Interests & Focus Areas</CardTitle>
-        </div>
-        {isOwner && !isEditing && (
-          <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>
+          Interests & Focus Areas
+        </CardTitle>
+        {isOwner && !isEditing && onUpdate && (
+          <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)} className="h-8 w-8 p-0">
             <Edit className="w-4 h-4" />
+            <span className="sr-only">Edit interests</span>
           </Button>
         )}
       </CardHeader>
@@ -86,7 +95,7 @@ const ProfileV2Interests: React.FC<ProfileV2InterestsProps> = ({
                   }
                 }}
                 placeholder="Add an interest or focus area..."
-                className="flex-1"
+                className="flex-1 text-sm"
               />
               <Button size="sm" onClick={handleAddInterest} disabled={!newInterest.trim()}>
                 <Plus className="w-4 h-4" />
@@ -95,40 +104,54 @@ const ProfileV2Interests: React.FC<ProfileV2InterestsProps> = ({
             
             <div className="flex flex-wrap gap-2">
               {interestsList.map((interest, idx) => (
-                <Badge key={idx} variant="secondary" className="gap-1">
+                <Badge key={idx} variant="secondary" className="gap-1 pr-1">
                   {interest}
                   <button
                     onClick={() => handleRemoveInterest(interest)}
-                    className="ml-1 hover:text-destructive"
+                    className="ml-1 p-0.5 rounded-full hover:bg-destructive/20 hover:text-destructive transition-colors"
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </Badge>
               ))}
+              {interestsList.length === 0 && (
+                <p className="text-sm text-muted-foreground italic">No interests added yet</p>
+              )}
             </div>
 
             <div className="flex gap-2 justify-end pt-2">
               <Button variant="outline" size="sm" onClick={handleCancel} disabled={isSaving}>
+                <X className="w-4 h-4 mr-1" />
                 Cancel
               </Button>
               <Button size="sm" onClick={handleSave} disabled={isSaving}>
+                {isSaving ? (
+                  <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                ) : (
+                  <Check className="w-4 h-4 mr-1" />
+                )}
                 Save
               </Button>
             </div>
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {(tags.interests || []).length > 0 ? (
-              tags.interests.map((interest, idx) => (
-                <Badge key={idx} variant="secondary" className="bg-secondary">
+            {hasInterests ? (
+              tags.interests?.map((interest, idx) => (
+                <Badge key={idx} variant="secondary" className="text-xs sm:text-sm">
                   {interest}
                 </Badge>
               ))
             ) : (
               isOwner && (
-                <p className="text-muted-foreground italic text-sm">
-                  Add interests to connect with like-minded community members.
-                </p>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="w-full text-left p-4 rounded-lg border-2 border-dashed border-muted-foreground/20 hover:border-primary/40 transition-colors"
+                >
+                  <p className="text-muted-foreground italic text-sm">
+                    🎯 Add interests to connect with like-minded community members.
+                  </p>
+                </button>
               )
             )}
           </div>

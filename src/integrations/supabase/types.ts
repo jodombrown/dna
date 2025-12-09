@@ -4562,6 +4562,7 @@ export type Database = {
           image_url: string | null
           is_deleted: boolean
           link_description: string | null
+          link_metadata: Json | null
           link_title: string | null
           link_url: string | null
           linked_entity_id: string | null
@@ -4594,6 +4595,7 @@ export type Database = {
           image_url?: string | null
           is_deleted?: boolean
           link_description?: string | null
+          link_metadata?: Json | null
           link_title?: string | null
           link_url?: string | null
           linked_entity_id?: string | null
@@ -4626,6 +4628,7 @@ export type Database = {
           image_url?: string | null
           is_deleted?: boolean
           link_description?: string | null
+          link_metadata?: Json | null
           link_title?: string | null
           link_url?: string | null
           linked_entity_id?: string | null
@@ -7862,13 +7865,13 @@ export type Database = {
       }
       get_universal_feed: {
         Args: {
-          p_author_id: string
-          p_event_id: string
-          p_limit: number
-          p_offset: number
-          p_ranking_mode: string
-          p_space_id: string
-          p_tab: string
+          p_author_id?: string
+          p_event_id?: string
+          p_limit?: number
+          p_offset?: number
+          p_ranking_mode?: string
+          p_space_id?: string
+          p_tab?: string
           p_viewer_id: string
         }
         Returns: {
@@ -7883,6 +7886,10 @@ export type Database = {
           id: string
           image_url: string
           likes_count: number
+          link_description: string
+          link_metadata: Json
+          link_title: string
+          link_url: string
           linked_entity_id: string
           linked_entity_type: string
           post_type: string

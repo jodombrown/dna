@@ -8,10 +8,20 @@ import { useOnboardingForm } from '@/components/onboarding/hooks/useOnboardingFo
 import { OnboardingProgressBar } from '@/components/onboarding/OnboardingProgressBar';
 import UserTypeStep from '@/components/onboarding/steps/UserTypeStep';
 import IdentityStep from '@/components/onboarding/steps/IdentityStep';
+import DiasporaOriginStep from '@/components/onboarding/steps/DiasporaOriginStep';
 import UsernameStep from '@/components/onboarding/steps/UsernameStep';
 import { validateStep } from '@/components/onboarding/validation/onboardingStepValidation';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+
+const TOTAL_STEPS = 4;
+
+const STEP_TITLES = [
+  'How are you joining?',
+  'Basic Identity',
+  'Diaspora Origin',
+  'Claim Your Username'
+];
 
 const Onboarding = () => {
   const { user, profile, refreshProfile } = useAuth();
@@ -31,13 +41,13 @@ const Onboarding = () => {
     headline: profile?.headline || '',
     username: profile?.username || '',
     country_of_origin: profile?.country_of_origin || '',
+    diaspora_origin: profile?.diaspora_origin || '',
     // Deferred fields - kept for profile completion later
     profession: profile?.profession || '',
     professional_role: profile?.professional_role || '',
     professional_sectors: profile?.professional_sectors || [],
     skills: profile?.skills || [],
     years_experience: profile?.years_experience?.toString() || '',
-    diaspora_origin: profile?.diaspora_origin || '',
     interests: profile?.interests || [],
     my_dna_statement: profile?.my_dna_statement || '',
     focus_areas: profile?.focus_areas || [],
@@ -73,7 +83,7 @@ const Onboarding = () => {
       
       toast({
         title: "Please complete required fields",
-        description: `Step ${currentStep} has missing or invalid information.`,
+        description: validationErrors[0].message,
         variant: "destructive"
       });
       return;
@@ -82,8 +92,8 @@ const Onboarding = () => {
     // Clear errors
     setErrors({});
 
-    // If not on last step, advance (now only 3 steps: 0, 1, 2)
-    if (currentStep < 2) {
+    // If not on last step, advance
+    if (currentStep < TOTAL_STEPS - 1) {
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -107,7 +117,6 @@ const Onboarding = () => {
     setIsSubmitting(true);
 
     try {
-      // Use the username chosen by the user (already validated in step 2)
       const fullName = `${formData.first_name.trim()} ${formData.last_name.trim()}`.trim();
 
       // Prepare profile data - only include fields that exist in DB
@@ -145,15 +154,14 @@ const Onboarding = () => {
         .upsert([profileData], { onConflict: 'id' });
 
       if (upsertError) {
-        // Handle duplicate username (shouldn't happen as we check in step 2, but just in case)
         if (upsertError.code === '23505') {
           toast({
             title: "Username Taken",
-            description: "This username was just taken by someone else. Please go back and choose a different one.",
+            description: "This username was just taken. Please go back and choose a different one.",
             variant: "destructive"
           });
           setIsSubmitting(false);
-          setCurrentStep(2); // Go back to username step
+          setCurrentStep(3); // Go back to username step
           return;
         } else {
           throw upsertError;
@@ -171,8 +179,6 @@ const Onboarding = () => {
         console.error('Error calculating completion:', completionError);
       }
 
-      const completionPercentage = completionData || 0;
-
       // Mark onboarding as complete
       const { error: completeError } = await supabase
         .from('profiles')
@@ -189,21 +195,21 @@ const Onboarding = () => {
 
       // 🎉 CONFETTI CELEBRATION!
       confetti({
-        particleCount: 100,
-        spread: 70,
+        particleCount: 150,
+        spread: 80,
         origin: { y: 0.6 },
-        colors: ['#D4AF37', '#C87533', '#2F5233', '#3D8B40']
+        colors: ['#D4AF37', '#C87533', '#2F5233', '#3D8B40', '#FFD700']
       });
 
       toast({
         title: "🎉 Welcome to DNA!",
-        description: `You're all set, @${formData.username}! Let's help you connect with the diaspora.`,
+        description: `You're all set, @${formData.username}! Let's connect with the diaspora.`,
       });
 
-      // Go directly to feed after confetti - no more steps!
+      // Go to feed after celebration
       setTimeout(() => {
         navigate('/dna/feed');
-      }, 1500);
+      }, 1800);
     } catch (error: any) {
       console.error('Error completing onboarding:', error);
       toast({
@@ -220,15 +226,9 @@ const Onboarding = () => {
     return null;
   }
 
-  // Calculate estimated completion based on current step (now 3 steps)
+  // Calculate estimated completion based on current step
   const estimateCompletion = () => {
-    let baseCompletion = 0;
-
-    if (currentStep >= 0) baseCompletion += 33; // User type
-    if (currentStep >= 1) baseCompletion += 33; // Identity
-    if (currentStep >= 2) baseCompletion += 34; // Username (final)
-
-    return Math.min(baseCompletion, 100);
+    return Math.round(((currentStep + 1) / TOTAL_STEPS) * 100);
   };
 
   const currentStepComponent = () => {
@@ -255,6 +255,17 @@ const Onboarding = () => {
         );
       case 2:
         return (
+          <DiasporaOriginStep
+            data={{
+              country_of_origin: formData.country_of_origin,
+              diaspora_origin: formData.diaspora_origin,
+            }}
+            onUpdate={(field, value) => updateField(field as any, value)}
+            errors={errors}
+          />
+        );
+      case 3:
+        return (
           <UsernameStep
             data={{
               full_name: `${formData.first_name} ${formData.last_name}`,
@@ -276,15 +287,18 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-white to-dna-emerald/10">
+    <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 via-background to-dna-emerald/10">
       <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
         {/* Progress Bar */}
         <div className="mb-6">
           <OnboardingProgressBar
             currentStep={currentStep + 1}
-            totalSteps={3}
+            totalSteps={TOTAL_STEPS}
             completionPercentage={estimateCompletion()}
           />
+          <p className="text-center text-xs text-muted-foreground mt-2">
+            Step {currentStep + 1} of {TOTAL_STEPS}: {STEP_TITLES[currentStep]}
+          </p>
         </div>
 
         {/* Step Content */}
@@ -310,8 +324,11 @@ const Onboarding = () => {
             className="bg-dna-copper hover:bg-dna-gold text-white flex items-center justify-center gap-2 px-6 min-h-[44px] w-full sm:w-auto"
           >
             {isSubmitting ? (
-              "Saving..."
-            ) : currentStep === 2 ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : currentStep === TOTAL_STEPS - 1 ? (
               "Complete & Join DNA 🎉"
             ) : (
               <>
