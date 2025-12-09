@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
-import { messageService } from '@/services/messageService';
+import { useMessage } from '@/contexts/MessageContext';
 import { ConnectionActionsMenu } from '@/components/connections/ConnectionActionsMenu';
 
 interface ConnectionCardProps {
@@ -29,6 +29,7 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { openMessageOverlay } = useMessage();
 
   const getInitials = (name: string) => {
     return name
@@ -38,20 +39,14 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
       .toUpperCase() || '?';
   };
 
-  const handleMessage = async () => {
+  const handleMessage = () => {
     if (!user) return;
-    
-    try {
-      const conversation = await messageService.getOrCreateConversation(connection.id);
-      navigate(`/dna/messages/${conversation.id}`);
-    } catch (error: any) {
-      console.error('Error creating conversation:', error);
-      toast({
-        title: 'Error',
-        description: error.message || 'Failed to start conversation',
-        variant: 'destructive',
-      });
-    }
+
+    openMessageOverlay({
+      recipientId: connection.id,
+      originType: 'profile',
+      originMetadata: { title: connection.full_name }
+    });
   };
 
   return (

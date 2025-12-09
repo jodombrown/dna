@@ -13,6 +13,7 @@ import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useMutualConnections } from '@/hooks/useMutualConnections';
+import { useMessage } from '@/contexts/MessageContext';
 
 interface MemberCardProps {
   member: {
@@ -38,6 +39,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
   const navigate = useNavigate();
   const { toast } = useToast();
   const { trackEvent } = useAnalytics();
+  const { openMessageOverlay } = useMessage();
   const [isSending, setIsSending] = useState(false);
   const { data: connectionStatus, refetch: refetchStatus } = useConnectionStatus(member.id);
   const { data: mutualConnections } = useMutualConnections(user?.id, member.id);
@@ -134,38 +136,14 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
     }
   };
 
-  const handleMessage = async () => {
+  const handleMessage = () => {
     if (!user) return;
-    
-    try {
-      // Get or create conversation
-      const { data: existingConversation } = await supabase
-        .from('conversations')
-        .select('id')
-        .or(`and(user_a.eq.${user.id},user_b.eq.${member.id}),and(user_a.eq.${member.id},user_b.eq.${user.id})`)
-        .maybeSingle();
 
-      if (existingConversation) {
-        navigate(`/dna/messages?conversation=${existingConversation.id}`);
-      } else {
-        // Create new conversation
-        const { data: newConv, error } = await supabase
-          .from('conversations')
-          .insert({ user_a: user.id, user_b: member.id })
-          .select('id')
-          .single();
-
-        if (error) throw error;
-        navigate(`/dna/messages?conversation=${newConv.id}`);
-      }
-    } catch (error) {
-      console.error('Message error:', error);
-      toast({
-        title: 'Error',
-        description: 'Could not start conversation',
-        variant: 'destructive',
-      });
-    }
+    openMessageOverlay({
+      recipientId: member.id,
+      originType: 'profile',
+      originMetadata: { title: member.full_name }
+    });
   };
 
   const handleViewProfile = () => {

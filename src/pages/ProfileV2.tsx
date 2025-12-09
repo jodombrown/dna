@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
+import { useMessage } from '@/contexts/MessageContext';
 
 // Profile v2 Components
 import ProfileV2Hero from '@/components/profile-v2/ProfileV2Hero';
@@ -32,6 +33,7 @@ const ProfileV2: React.FC = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { openMessageOverlay } = useMessage();
   const { data: bundle, isLoading, error } = useProfileV2(username);
 
   // Update handlers
@@ -146,7 +148,11 @@ const ProfileV2: React.FC = () => {
         permissions={permissions}
         onEdit={() => permissions.is_owner && navigate('/dna/profile/edit')}
         onConnect={() => console.log('Connect clicked')}
-        onMessage={() => console.log('Message clicked')}
+        onMessage={() => openMessageOverlay({
+          recipientId: profile.id,
+          originType: 'profile',
+          originMetadata: { title: profile.full_name }
+        })}
       />
 
       {/* Main Content */}

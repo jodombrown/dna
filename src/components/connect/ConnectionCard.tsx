@@ -7,6 +7,7 @@ import { MessageCircle, Eye, MoreVertical, UserMinus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useMessage } from '@/contexts/MessageContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,29 +44,18 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { openMessageOverlay } = useMessage();
   const [isRemoving, setIsRemoving] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
-  const handleMessage = async (e: React.MouseEvent) => {
+  const handleMessage = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    try {
-      const { data, error } = await supabase.rpc('get_or_create_conversation', {
-        user1_id: (await supabase.auth.getUser()).data.user?.id,
-        user2_id: connection.id,
-      });
 
-      if (error) throw error;
-
-      navigate('/dna/messages');
-    } catch (error: any) {
-      console.error('Message error:', error);
-      toast({
-        title: 'Error opening conversation',
-        description: error.message || 'Please try again.',
-        variant: 'destructive',
-      });
-    }
+    openMessageOverlay({
+      recipientId: connection.id,
+      originType: 'profile',
+      originMetadata: { title: connection.full_name }
+    });
   };
 
   const handleRemoveConnection = async () => {

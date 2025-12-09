@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { messageService } from '@/services/messageService';
 
 interface NewMessageDialogProps {
   isOpen: boolean;
@@ -60,15 +61,10 @@ export const NewMessageDialog: React.FC<NewMessageDialogProps> = ({ isOpen, onCl
 
     setCreating(true);
     try {
-      const { data, error } = await supabase.rpc('get_or_create_conversation', {
-        user1_id: user.id,
-        user2_id: connectionId,
-      });
-
-      if (error) throw error;
+      const conversation = await messageService.getOrCreateConversation(connectionId);
 
       onClose();
-      navigate(`/dna/messages/${data}`);
+      navigate(`/dna/messages/${conversation.id}`);
     } catch (error: any) {
       console.error('Error creating conversation:', error);
       toast({

@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useMessage } from "@/contexts/MessageContext";
 
 interface ProfileHeroSectionProps {
   profile: any;
@@ -34,6 +35,7 @@ const ProfileHeroSection = ({
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { openMessageOverlay } = useMessage();
   const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
   const [isLoadingStatus, setIsLoadingStatus] = useState(false);
 
@@ -63,26 +65,14 @@ const ProfileHeroSection = ({
     }
   };
 
-  const handleMessage = async () => {
+  const handleMessage = () => {
     if (!user || !profile) return;
-    
-    try {
-      const { data: conversationId, error } = await supabase.rpc('get_or_create_conversation', {
-        user1_id: user.id,
-        user2_id: profile.id,
-      });
 
-      if (error) throw error;
-      
-      navigate(`/dna/messages/${conversationId}`);
-    } catch (error) {
-      console.error('Error creating conversation:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to start conversation',
-        variant: 'destructive',
-      });
-    }
+    openMessageOverlay({
+      recipientId: profile.id,
+      originType: 'profile',
+      originMetadata: { title: profile.full_name }
+    });
   };
 
   const handleConnect = async () => {
