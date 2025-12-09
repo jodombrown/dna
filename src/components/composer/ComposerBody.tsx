@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { uploadMedia } from '@/lib/uploadMedia';
 import { useToast } from '@/hooks/use-toast';
+import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
+import { VideoLinkPreview } from '@/components/feed/VideoLinkPreview';
 
 interface ComposerBodyProps {
   mode: ComposerMode;
@@ -66,6 +68,71 @@ export const ComposerBody = ({
   );
 };
 
+function PostModeFields({ 
+  formData, 
+  onChange 
+}: { 
+  formData: ComposerFormData; 
+  onChange: (updates: Partial<ComposerFormData>) => void;
+}) {
+  const { embedData, handleContentChange, isVideoEmbed, loading } = useAutoEmbedDetection();
+
+  // Sync embed data to form when detected
+  useEffect(() => {
+    if (embedData) {
+      onChange({
+        linkUrl: embedData.url,
+        linkTitle: embedData.title || undefined,
+        linkDescription: embedData.author_name || undefined,
+        linkThumbnail: embedData.thumbnail_url || undefined,
+      });
+    }
+  }, [embedData]);
+
+  const handleTextChange = (value: string) => {
+    onChange({ content: value });
+    handleContentChange(value);
+  };
+
+  return (
+    <>
+      <Textarea
+        placeholder="What's on your mind?"
+        value={formData.content}
+        onChange={(e) => handleTextChange(e.target.value)}
+        className="min-h-[120px] resize-none"
+      />
+      
+      {/* Video/Link Preview */}
+      {loading && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground p-3 bg-muted/50 rounded-lg">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading preview...
+        </div>
+      )}
+      {embedData && !loading && (
+        <VideoLinkPreview
+          embedData={{
+            url: embedData.url,
+            title: embedData.title,
+            author_name: embedData.author_name,
+            thumbnail_url: embedData.thumbnail_url,
+            provider_name: embedData.provider_name,
+          }}
+          showRemoveButton={false}
+          size="compact"
+        />
+      )}
+      
+      <MediaUploadButton 
+        currentMediaUrl={formData.mediaUrl}
+        onUpload={(url) => onChange({ mediaUrl: url })} 
+        onRemove={() => onChange({ mediaUrl: undefined })}
+      />
+    </>
+  );
+}
+
 function renderModeFields(
   mode: ComposerMode,
   formData: ComposerFormData,
@@ -73,21 +140,7 @@ function renderModeFields(
 ) {
   switch (mode) {
     case 'post':
-      return (
-        <>
-          <Textarea
-            placeholder="What's on your mind?"
-            value={formData.content}
-            onChange={(e) => onChange({ content: e.target.value })}
-            className="min-h-[120px] resize-none"
-          />
-          <MediaUploadButton 
-            currentMediaUrl={formData.mediaUrl}
-            onUpload={(url) => onChange({ mediaUrl: url })} 
-            onRemove={() => onChange({ mediaUrl: undefined })}
-          />
-        </>
-      );
+      return <PostModeFields formData={formData} onChange={onChange} />;
 
     case 'story':
       return (

@@ -260,8 +260,11 @@ export async function createStandardPost(params: {
   privacyLevel?: 'public' | 'connections';
   spaceId?: string;
   eventId?: string;
+  linkUrl?: string;
+  linkTitle?: string;
+  linkDescription?: string;
 }): Promise<PostWithAuthor> {
-  const { authorId, content, mediaUrl, spaceId, eventId, privacyLevel } = params;
+  const { authorId, content, mediaUrl, spaceId, eventId, privacyLevel, linkUrl, linkTitle, linkDescription } = params;
 
   try {
     // Insert the post with correct post_type value
@@ -273,6 +276,9 @@ export async function createStandardPost(params: {
       space_id: spaceId || null,
       event_id: eventId || null,
       privacy_level: privacyLevel || 'public',
+      link_url: linkUrl || null,
+      link_title: linkTitle || null,
+      link_description: linkDescription || null,
     };
 
     console.log('createStandardPost inserting:', insertPayload);
