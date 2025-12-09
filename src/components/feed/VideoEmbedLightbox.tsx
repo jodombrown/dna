@@ -78,12 +78,12 @@ export function VideoEmbedLightbox({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl w-[95vw] p-0 border-0 bg-black/95 overflow-hidden">
-        {/* Close button */}
+      <DialogContent className="max-w-4xl w-[95vw] p-0 border-0 bg-black overflow-hidden [&>button]:hidden">
+        {/* Custom close button */}
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-4 right-4 z-50 text-white hover:bg-white/20 rounded-full"
+          className="absolute top-2 right-2 z-50 text-white hover:bg-white/20 rounded-full"
           onClick={() => onOpenChange(false)}
         >
           <X className="h-6 w-6" />
@@ -93,21 +93,22 @@ export function VideoEmbedLightbox({
         <Button
           variant="ghost"
           size="icon"
-          className="absolute top-4 left-4 z-50 text-white hover:bg-white/20 rounded-full"
+          className="absolute top-2 left-2 z-50 text-white hover:bg-white/20 rounded-full"
           onClick={handleOpenOriginal}
           title="Open on YouTube"
         >
           <ExternalLink className="h-5 w-5" />
         </Button>
 
-        {/* Video iframe */}
-        <div className="relative w-full pt-[56.25%]">
+        {/* Video iframe - using aspect-ratio instead of padding trick */}
+        <div className="w-full aspect-video">
           <iframe
             src={embedUrl}
             title={title}
-            className="absolute inset-0 w-full h-full"
+            className="w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
+            frameBorder="0"
           />
         </div>
       </DialogContent>
