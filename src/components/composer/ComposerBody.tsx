@@ -75,24 +75,49 @@ function PostModeFields({
   formData: ComposerFormData; 
   onChange: (updates: Partial<ComposerFormData>) => void;
 }) {
-  const { embedData, handleContentChange, isVideoEmbed, loading } = useAutoEmbedDetection();
+  const { embedData, handleContentChange, loading, clearEmbedData } = useAutoEmbedDetection();
 
-  // Sync embed data to form when detected
+  // Sync embed data to form when detected (only if not already set)
   useEffect(() => {
-    if (embedData) {
+    if (embedData && !formData.linkUrl) {
       onChange({
         linkUrl: embedData.url,
         linkTitle: embedData.title || undefined,
         linkDescription: embedData.author_name || undefined,
         linkThumbnail: embedData.thumbnail_url || undefined,
+        linkProviderName: embedData.provider_name || undefined,
       });
     }
-  }, [embedData]);
+  }, [embedData, formData.linkUrl]);
 
   const handleTextChange = (value: string) => {
     onChange({ content: value });
-    handleContentChange(value);
+    // Only trigger auto-detection if we don't already have link data
+    if (!formData.linkUrl) {
+      handleContentChange(value);
+    }
   };
+
+  const handleRemovePreview = () => {
+    clearEmbedData();
+    onChange({
+      linkUrl: undefined,
+      linkTitle: undefined,
+      linkDescription: undefined,
+      linkThumbnail: undefined,
+      linkProviderName: undefined,
+    });
+  };
+
+  // Show preview from embedData (just detected) OR from formData (already saved)
+  const hasPreview = embedData || formData.linkUrl;
+  const previewData = embedData || (formData.linkUrl ? {
+    url: formData.linkUrl,
+    title: formData.linkTitle,
+    author_name: formData.linkDescription,
+    thumbnail_url: formData.linkThumbnail,
+    provider_name: formData.linkProviderName,
+  } : null);
 
   return (
     <>
@@ -110,16 +135,17 @@ function PostModeFields({
           Loading preview...
         </div>
       )}
-      {embedData && !loading && (
+      {hasPreview && previewData && !loading && (
         <VideoLinkPreview
           embedData={{
-            url: embedData.url,
-            title: embedData.title,
-            author_name: embedData.author_name,
-            thumbnail_url: embedData.thumbnail_url,
-            provider_name: embedData.provider_name,
+            url: previewData.url,
+            title: previewData.title,
+            author_name: previewData.author_name,
+            thumbnail_url: previewData.thumbnail_url,
+            provider_name: previewData.provider_name,
           }}
-          showRemoveButton={false}
+          showRemoveButton={true}
+          onRemove={handleRemovePreview}
           size="compact"
         />
       )}
