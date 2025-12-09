@@ -61,6 +61,7 @@ export const useAutoEmbedDetection = () => {
       return embedData;
     }
 
+    console.log('[useAutoEmbedDetection] Fetching embed for:', url);
     setLoading(true);
     lastFetchedUrl.current = url;
 
@@ -69,8 +70,18 @@ export const useAutoEmbedDetection = () => {
         body: { url }
       });
 
+      console.log('[useAutoEmbedDetection] Response:', { data, error });
+
       if (error) {
+        console.error('[useAutoEmbedDetection] Error:', error);
         throw error;
+      }
+
+      // Check if noembed returned an error
+      if (data?.error) {
+        console.warn('[useAutoEmbedDetection] Provider error:', data.error);
+        setEmbedData(null);
+        return null;
       }
 
       // Determine if this is a video
@@ -78,13 +89,15 @@ export const useAutoEmbedDetection = () => {
 
       const enrichedData: EmbedMetadata = {
         ...data,
+        url: data?.url || url, // Ensure URL is always set
         is_video: isVideo,
       };
 
+      console.log('[useAutoEmbedDetection] Enriched data:', enrichedData);
       setEmbedData(enrichedData);
       return enrichedData;
     } catch (error) {
-      console.error('Embed fetch error:', error);
+      console.error('[useAutoEmbedDetection] Fetch error:', error);
       setEmbedData(null);
       return null;
     } finally {
@@ -99,11 +112,14 @@ export const useAutoEmbedDetection = () => {
     }
 
     const urls = extractUrls(content);
+    console.log('[useAutoEmbedDetection] Detected URLs:', urls);
     
     if (urls.length > 0) {
       // Use the first URL found, prioritize video URLs
       const videoUrl = urls.find(isVideoUrl);
       const urlToFetch = videoUrl || urls[0];
+      
+      console.log('[useAutoEmbedDetection] Will fetch:', urlToFetch, 'isVideo:', isVideoUrl(urlToFetch));
       
       // Debounce the fetch to avoid hammering the API while typing
       debounceTimer.current = setTimeout(() => {
