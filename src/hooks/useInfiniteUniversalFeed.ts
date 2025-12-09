@@ -86,6 +86,11 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           bookmark_count: 0, // Not returned by RPC
           has_liked: item.user_has_liked,
           has_bookmarked: item.user_has_bookmarked,
+          // Link/video preview data
+          link_url: item.link_url || null,
+          link_title: item.link_title || null,
+          link_description: item.link_description || null,
+          link_metadata: item.link_metadata || null,
         })) as UniversalFeedItem[];
 
         if (DEBUG_FEED) {
