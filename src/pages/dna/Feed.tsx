@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useNavigate } from 'react-router-dom';
-import { PenSquare, Sparkles, Users, Newspaper, Settings, TrendingUp, Search } from 'lucide-react';
+import { PenSquare, Sparkles, Users, Newspaper, Settings, TrendingUp, Search, Bookmark } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { DashboardModules } from '@/components/feed/DashboardModules';
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
+import { MobileFeedTabs } from '@/components/feed/MobileFeedTabs';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileViewContainer } from '@/components/mobile/MobileViewContainer';
@@ -243,32 +244,7 @@ const DnaFeed = () => {
               className="border-b-0"
             />
             <div className="px-3 pb-2 pt-1 overflow-x-auto">
-              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-                <TabsList className="w-full grid grid-cols-5">
-                  <TabsTrigger value="all" className="text-xs px-2">
-                    <Newspaper className="h-4 w-4" />
-                    <span className="ml-1 hidden xs:inline">All</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="for_you" className="text-xs px-2">
-                    <Sparkles className="h-4 w-4" />
-                    <span className="ml-1 hidden xs:inline">You</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="network" className="text-xs px-2">
-                    <Users className="h-4 w-4" />
-                    <span className="ml-1 hidden xs:inline">Net</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="my_posts" className="text-xs px-2">
-                    <PenSquare className="h-4 w-4" />
-                    <span className="ml-1 hidden xs:inline">Mine</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="bookmarks" className="text-xs px-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                    </svg>
-                    <span className="ml-1 hidden xs:inline">Save</span>
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
+              <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </div>
 
