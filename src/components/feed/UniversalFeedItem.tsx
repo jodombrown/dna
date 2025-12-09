@@ -5,7 +5,7 @@
  * This is the single entry point for rendering any feed content.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { UniversalFeedItem as UniversalFeedItemType } from '@/types/feed';
 import { PostCard } from '@/components/posts/PostCard';
 import { EventCard } from './cards/EventCard';
@@ -24,11 +24,17 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
   currentUserId,
   onUpdate,
 }) => {
+  const [showComments, setShowComments] = useState(false);
+
   // Defensive guards
   if (!item || !item.post_id || !item.author_id) {
     console.warn('Invalid feed item:', item);
     return null;
   }
+
+  const handleCommentClick = () => {
+    setShowComments(!showComments);
+  };
 
   // For linked entities, we might want to show them differently
   // For MVP, we route based on post_type
@@ -40,6 +46,8 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
           item={item}
           currentUserId={currentUserId}
           onUpdate={onUpdate}
+          showComments={showComments}
+          onCommentClick={handleCommentClick}
         />
       );
 
@@ -102,7 +110,8 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
           }}
           currentUserId={currentUserId}
           onUpdate={onUpdate}
-          showComments={false}
+          onCommentClick={handleCommentClick}
+          showComments={showComments}
           feedItem={item}
         />
       );
@@ -129,7 +138,8 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
           }}
           currentUserId={currentUserId}
           onUpdate={onUpdate}
-          showComments={false}
+          onCommentClick={handleCommentClick}
+          showComments={showComments}
           feedItem={item}
           isReshare={true}
         />
