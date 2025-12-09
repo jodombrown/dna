@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Search, Plus } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import { Loader2, Search, Plus, MoreVertical, Pin, BellOff, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { ConversationListItem } from '@/types/messaging';
+import { ConversationListItem, InboxTab } from '@/types/messaging';
+import InboxTabs from './InboxTabs';
+import PresenceIndicator from './PresenceIndicator';
+import { ConversationContextBadge } from './ConversationContext';
+import { MessageRequestCard } from './MessageRequestBanner';
+import { useMessageRequests } from '@/hooks/useMessageRequests';
+import { messageService } from '@/services/messageService';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface ConversationListPanelProps {
   conversations?: ConversationListItem[];
@@ -17,19 +33,19 @@ interface ConversationListPanelProps {
   selectedConversationId: string | null;
   onSelectConversation: (id: string) => void;
   onNewConversation?: () => void;
+  onlineUsers?: string[];
 }
-
-type FilterTab = 'all' | 'unread';
 
 /**
  * ConversationListPanel - Left panel (35%) for MESSAGES_MODE
- * Lists all user conversations with search/filter
- * 
- * Features:
+ *
+ * Implements PRD requirements:
+ * - Inbox Tabs: Focused | Other | Requests (LinkedIn-style)
+ * - Presence: Green dot for online users
+ * - Context Badge: Icon showing origin (event, project)
+ * - Actions: Pin, mute, archive, delete
  * - Search conversations by name
- * - Filter tabs (All/Unread)
  * - Unread conversation badges
- * - New conversation button
  */
 const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   conversations,
@@ -39,22 +55,79 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   selectedConversationId,
   onSelectConversation,
   onNewConversation,
+  onlineUsers = [],
 }) => {
-  const [filterTab, setFilterTab] = useState<FilterTab>('all');
+  const [activeTab, setActiveTab] = useState<InboxTab>('focused');
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const { requests, requestCount, isLoading: requestsLoading } = useMessageRequests();
 
   const getInitials = (name: string) => {
-    return name?.split(' ').map(n => n[0]).join('').toUpperCase() || '?';
+    return name?.split(' ').map((n) => n[0]).join('').toUpperCase() || '?';
   };
 
-  // Filter by search term
-  let filteredConversations = conversations?.filter(conv =>
-    conv.other_user_full_name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter conversations based on search term and tab
+  const filteredConversations = useMemo(() => {
+    if (!conversations) return [];
 
-  // Filter by tab (unread)
-  if (filterTab === 'unread') {
-    filteredConversations = filteredConversations?.filter(conv => conv.unread_count > 0);
-  }
+    let filtered = conversations.filter((conv) =>
+      conv.other_user_full_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Filter by tab
+    switch (activeTab) {
+      case 'focused':
+        // Active conversations that are not muted
+        filtered = filtered.filter(
+          (conv) => conv.participant_status === 'active' && !conv.is_muted
+        );
+        break;
+      case 'other':
+        // Muted or low-priority conversations
+        filtered = filtered.filter(
+          (conv) => conv.participant_status === 'active' && conv.is_muted
+        );
+        break;
+      case 'requests':
+        // Pending message requests
+        filtered = filtered.filter(
+          (conv) => conv.participant_status === 'pending'
+        );
+        break;
+    }
+
+    return filtered;
+  }, [conversations, searchTerm, activeTab]);
+
+  // Count unread for focused tab
+  const focusedUnreadCount = useMemo(() => {
+    if (!conversations) return 0;
+    return conversations
+      .filter((c) => c.participant_status === 'active' && !c.is_muted)
+      .reduce((sum, c) => sum + (c.unread_count || 0), 0);
+  }, [conversations]);
+
+  // Handle mute toggle
+  const handleToggleMute = async (conversationId: string, currentlyMuted: boolean) => {
+    try {
+      await messageService.toggleConversationMute(conversationId, !currentlyMuted);
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({ title: currentlyMuted ? 'Conversation unmuted' : 'Conversation muted' });
+    } catch (error) {
+      toast({ title: 'Failed to update', variant: 'destructive' });
+    }
+  };
+
+  // Handle pin toggle
+  const handleTogglePin = async (conversationId: string, currentlyPinned: boolean) => {
+    try {
+      await messageService.toggleConversationPin(conversationId, !currentlyPinned);
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({ title: currentlyPinned ? 'Conversation unpinned' : 'Conversation pinned' });
+    } catch (error) {
+      toast({ title: 'Failed to update', variant: 'destructive' });
+    }
+  };
 
   return (
     <Card className="flex flex-col h-full">
@@ -68,7 +141,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
             </Button>
           )}
         </div>
-        
+
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
@@ -78,92 +151,203 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
             className="pl-9"
           />
         </div>
-
-        {/* Filter Tabs */}
-        <div className="flex gap-2">
-          <Button
-            variant={filterTab === 'all' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setFilterTab('all')}
-            className="flex-1"
-          >
-            All
-          </Button>
-          <Button
-            variant={filterTab === 'unread' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setFilterTab('unread')}
-            className="flex-1"
-          >
-            Unread
-          </Button>
-        </div>
       </div>
+
+      {/* Inbox Tabs */}
+      <InboxTabs
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        focusedCount={focusedUnreadCount}
+        requestsCount={requestCount}
+      />
 
       {/* Conversation List */}
       <ScrollArea className="flex-1">
-        {isLoading ? (
+        {isLoading || (activeTab === 'requests' && requestsLoading) ? (
           <div className="flex justify-center items-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ) : filteredConversations?.length === 0 ? (
+        ) : activeTab === 'requests' && requests.length > 0 ? (
+          // Show message requests
+          <div className="p-4 space-y-4">
+            {requests.map((request) => (
+              <MessageRequestCard
+                key={request.conversation_id}
+                request={request}
+                onAccept={() => onSelectConversation(request.conversation_id)}
+              />
+            ))}
+          </div>
+        ) : filteredConversations.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground">
-            <p>No conversations yet</p>
-            <p className="text-sm mt-2">Start connecting with people!</p>
+            {activeTab === 'requests' ? (
+              <>
+                <p>No message requests</p>
+                <p className="text-sm mt-2">
+                  Requests from people you're not connected with will appear here
+                </p>
+              </>
+            ) : activeTab === 'other' ? (
+              <>
+                <p>No muted conversations</p>
+                <p className="text-sm mt-2">Muted conversations will appear here</p>
+              </>
+            ) : (
+              <>
+                <p>No conversations yet</p>
+                <p className="text-sm mt-2">Start connecting with people!</p>
+              </>
+            )}
           </div>
         ) : (
           <div className="divide-y">
-            {filteredConversations?.map((conversation) => {
+            {filteredConversations.map((conversation) => {
               const hasUnread = conversation.unread_count > 0;
-              
+              const isOnline = onlineUsers.includes(conversation.other_user_id || '');
+
               return (
-                <button
+                <div
                   key={conversation.conversation_id}
-                  onClick={() => onSelectConversation(conversation.conversation_id)}
-                   className={`w-full p-4 hover:bg-accent transition-colors text-left ${
-                    selectedConversationId === conversation.conversation_id ? 'bg-accent' : ''
-                  }`}
+                  className={cn(
+                    'relative group',
+                    selectedConversationId === conversation.conversation_id && 'bg-accent'
+                  )}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="relative">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src={conversation.other_user_avatar_url || ''} />
-                        <AvatarFallback className="bg-primary text-primary-foreground">
-                          {getInitials(conversation.other_user_full_name || '')}
-                        </AvatarFallback>
-                      </Avatar>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className={`font-semibold text-sm truncate ${hasUnread ? 'text-primary' : ''}`}>
-                          {conversation.other_user_full_name}
-                        </p>
-                        <div className="flex items-center gap-2">
-                          {conversation.last_message_at && (
-                            <span className="text-xs text-muted-foreground whitespace-nowrap">
-                              {formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
-                            </span>
-                          )}
-                          {hasUnread && (
-                            <Badge variant="default" className="rounded-full px-2 py-0 text-xs">
-                              {conversation.unread_count}
-                            </Badge>
-                          )}
-                        </div>
+                  <button
+                    onClick={() => onSelectConversation(conversation.conversation_id)}
+                    className="w-full p-4 hover:bg-accent transition-colors text-left"
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Avatar with presence indicator */}
+                      <div className="relative">
+                        <Avatar className="w-12 h-12">
+                          <AvatarImage src={conversation.other_user_avatar_url || ''} />
+                          <AvatarFallback className="bg-primary text-primary-foreground">
+                            {getInitials(conversation.other_user_full_name || '')}
+                          </AvatarFallback>
+                        </Avatar>
+                        {isOnline && (
+                          <div className="absolute bottom-0 right-0 border-2 border-background rounded-full">
+                            <PresenceIndicator status="online" size="sm" />
+                          </div>
+                        )}
                       </div>
-                      {conversation.other_user_headline && (
-                        <p className="text-xs text-muted-foreground truncate mt-1">
-                          {conversation.other_user_headline}
-                        </p>
-                      )}
-                      {conversation.last_message_content && (
-                        <p className={`text-xs truncate mt-1 ${hasUnread ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
-                          {conversation.last_message_content}
-                        </p>
-                      )}
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            {/* Pin indicator */}
+                            {conversation.is_pinned && (
+                              <Pin className="w-3 h-3 text-primary flex-shrink-0" />
+                            )}
+                            <p
+                              className={cn(
+                                'font-semibold text-sm truncate',
+                                hasUnread && 'text-primary'
+                              )}
+                            >
+                              {conversation.other_user_full_name}
+                            </p>
+                            {/* Origin context badge */}
+                            {conversation.origin_type && (
+                              <ConversationContextBadge
+                                originType={conversation.origin_type}
+                              />
+                            )}
+                            {/* Muted indicator */}
+                            {conversation.is_muted && (
+                              <BellOff className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            {conversation.last_message_at && (
+                              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                                {formatDistanceToNow(
+                                  new Date(conversation.last_message_at),
+                                  { addSuffix: false }
+                                )}
+                              </span>
+                            )}
+                            {hasUnread && (
+                              <Badge
+                                variant="default"
+                                className="rounded-full px-2 py-0 text-xs"
+                              >
+                                {conversation.unread_count}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+
+                        {conversation.other_user_headline && (
+                          <p className="text-xs text-muted-foreground truncate mt-1">
+                            {conversation.other_user_headline}
+                          </p>
+                        )}
+
+                        {(conversation.last_message_content ||
+                          conversation.last_message_preview) && (
+                          <p
+                            className={cn(
+                              'text-xs truncate mt-1',
+                              hasUnread
+                                ? 'font-medium text-foreground'
+                                : 'text-muted-foreground'
+                            )}
+                          >
+                            {conversation.last_message_preview ||
+                              conversation.last_message_content}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </button>
+                  </button>
+
+                  {/* Context menu */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleTogglePin(
+                            conversation.conversation_id,
+                            conversation.is_pinned
+                          );
+                        }}
+                      >
+                        <Pin className="h-4 w-4 mr-2" />
+                        {conversation.is_pinned ? 'Unpin' : 'Pin'}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleMute(
+                            conversation.conversation_id,
+                            conversation.is_muted
+                          );
+                        }}
+                      >
+                        <BellOff className="h-4 w-4 mr-2" />
+                        {conversation.is_muted ? 'Unmute' : 'Mute'}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="text-destructive">
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               );
             })}
           </div>

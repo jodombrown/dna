@@ -3,9 +3,17 @@ import MessageOverlay from '@/components/messaging/MessageOverlay';
 import { messagingService } from '@/services/messagingService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { ConversationOriginType, OriginMetadata } from '@/types/messaging';
+
+interface OpenMessageOverlayParams {
+  recipientId: string;
+  originType?: ConversationOriginType;
+  originId?: string;
+  originMetadata?: OriginMetadata;
+}
 
 interface MessageContextType {
-  openMessageOverlay: (recipientId: string) => void;
+  openMessageOverlay: (recipientIdOrParams: string | OpenMessageOverlayParams) => void;
   closeMessageOverlay: () => void;
   isOverlayOpen: boolean;
   currentRecipientId?: string;
@@ -45,7 +53,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
   const [currentRecipientId, setCurrentRecipientId] = useState<string | undefined>();
   const [currentConversationId, setCurrentConversationId] = useState<string | undefined>();
 
-  const openMessageOverlay = async (recipientId: string) => {
+  const openMessageOverlay = async (recipientIdOrParams: string | OpenMessageOverlayParams) => {
     if (!user) {
       toast({
         title: 'Authentication required',
@@ -55,21 +63,31 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
       return;
     }
 
+    // Support both simple string and params object
+    const params: OpenMessageOverlayParams = typeof recipientIdOrParams === 'string'
+      ? { recipientId: recipientIdOrParams }
+      : recipientIdOrParams;
+
     try {
-      // Get or create conversation with this user
-      const conversation = await messagingService.getOrCreateConversation(recipientId);
-      
-      setCurrentRecipientId(recipientId);
+      // Get or create conversation with this user, including origin context
+      const conversation = await messagingService.getOrCreateConversation(
+        params.recipientId,
+        params.originType,
+        params.originId,
+        params.originMetadata
+      );
+
+      setCurrentRecipientId(params.recipientId);
       setCurrentConversationId(conversation.id);
       setIsOverlayOpen(true);
     } catch (error: any) {
       console.error('Failed to open conversation:', error);
-      
-      // Handle connection requirement error
-      if (error?.message?.includes('must be connected')) {
+
+      // Handle connection requirement error - now allows message requests
+      if (error?.message?.includes('Cannot message')) {
         toast({
-          title: 'Connection Required',
-          description: 'You must be connected to message this member. Send them a connection request first.',
+          title: 'Cannot Message',
+          description: 'You cannot message this user.',
           variant: 'destructive',
         });
       } else {
