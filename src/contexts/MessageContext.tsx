@@ -74,7 +74,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
         params.recipientId,
         params.originType,
         params.originId,
-        params.originMetadata
+        params.originMetadata as Record<string, unknown> | undefined
       );
 
       setCurrentRecipientId(params.recipientId);
