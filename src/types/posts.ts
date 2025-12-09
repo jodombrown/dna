@@ -35,6 +35,13 @@ export interface PostWithAuthor {
   comments_count: number;
   user_has_liked: boolean;
   is_connection: boolean;
+  // Link/Video metadata
+  link_metadata?: {
+    embed_type?: string;
+    provider_name?: string;
+    thumbnail_url?: string;
+    is_video?: boolean;
+  };
   // Repost/share fields
   original_post_id?: string;
   shared_by?: string;

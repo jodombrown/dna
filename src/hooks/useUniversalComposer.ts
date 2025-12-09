@@ -148,8 +148,11 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             bookmark_count: 0,
             has_liked: false,
             has_bookmarked: false,
+            link_url: null,
+            link_title: null,
+            link_description: null,
+            link_metadata: null,
           };
-          break;
         }
 
         case 'post': {
@@ -189,8 +192,11 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             bookmark_count: 0,
             has_liked: false,
             has_bookmarked: false,
+            link_url: null,
+            link_title: null,
+            link_description: null,
+            link_metadata: null,
           };
-          break;
         }
 
 

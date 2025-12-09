@@ -10,7 +10,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { EmbedPreview } from '@/components/social-feed/EmbedPreview';
+import { VideoLinkPreview } from '@/components/feed/VideoLinkPreview';
 import { ReactionPicker } from './ReactionPicker';
 import { ReactionSummary } from './ReactionSummary';
 import { RepostDialog } from './RepostDialog';
@@ -338,18 +338,20 @@ export function PostCard({
             </div>
           )}
 
-          {/* Link Preview - Enhanced with metadata */}
+          {/* Link/Video Preview - Enhanced with VideoLinkPreview */}
           {post.link_url && (
             <div className="mb-4">
-              <EmbedPreview
+              <VideoLinkPreview
                 embedData={{
                   url: post.link_url,
-                  version: '1.0',
-                  type: 'link',
                   title: post.link_title,
-                  thumbnail_url: post.link_description ? undefined : post.link_url,
+                  author_name: post.link_description,
+                  // Try to extract thumbnail from metadata if available
+                  thumbnail_url: undefined,
+                  provider_name: undefined,
                 }}
                 showRemoveButton={false}
+                size="full"
               />
             </div>
           )}

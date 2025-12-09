@@ -55,6 +55,16 @@ export interface UniversalFeedItem {
   bookmark_count: number;
   has_liked: boolean;
   has_bookmarked: boolean;
+  // Video/Link metadata
+  link_url: string | null;
+  link_title: string | null;
+  link_description: string | null;
+  link_metadata: {
+    embed_type?: string;
+    provider_name?: string;
+    thumbnail_url?: string;
+    is_video?: boolean;
+  } | null;
 }
 
 /**
