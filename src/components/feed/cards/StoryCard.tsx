@@ -17,6 +17,7 @@ import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { Badge } from '@/components/ui/badge';
 import { VideoLinkPreview } from '@/components/feed/VideoLinkPreview';
+import { PostComments } from '@/components/posts/PostComments';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,13 +32,22 @@ interface StoryCardProps {
   item: UniversalFeedItem;
   currentUserId: string;
   onUpdate: () => void;
+  showComments?: boolean;
+  onCommentClick?: () => void;
 }
 
-export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpdate }) => {
+export const StoryCard: React.FC<StoryCardProps> = ({ 
+  item, 
+  currentUserId, 
+  onUpdate,
+  showComments = false,
+  onCommentClick,
+}) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [localShowComments, setLocalShowComments] = useState(showComments);
 
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
   const { bookmarkCount, userHasBookmarked, toggleBookmark } = usePostBookmarks(
@@ -48,6 +58,14 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
   const isOwner = item.author_id === currentUserId;
   const bodyPreview = item.content.slice(0, 240);
   const needsExpansion = item.content.length > 240;
+
+  const handleCommentClick = () => {
+    if (onCommentClick) {
+      onCommentClick();
+    } else {
+      setLocalShowComments(!localShowComments);
+    }
+  };
 
   const handleDelete = async () => {
     if (!confirm('Delete this story? This action cannot be undone.')) return;
@@ -73,6 +91,8 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
       setIsDeleting(false);
     }
   };
+
+  const commentsVisible = showComments || localShowComments;
 
   return (
     <Card className="p-4 sm:p-5 md:p-6 hover:border-dna-gold/50 transition-colors border-2 border-dna-gold/50 rounded-xl shadow-[0_2px_12px_-2px_hsl(var(--dna-gold)/0.18)]">
@@ -238,8 +258,13 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
           <span className="hidden xs:inline">{likeCount > 0 ? likeCount : 'Appreciate'}</span>
           <span className="xs:hidden">{likeCount > 0 ? likeCount : ''}</span>
         </Button>
-        <Button variant="ghost" size="sm" className="flex items-center gap-2 text-xs sm:text-sm">
-          <MessageCircle className="h-4 w-4" />
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="flex items-center gap-2 text-xs sm:text-sm"
+          onClick={handleCommentClick}
+        >
+          <MessageCircle className={cn('h-4 w-4', commentsVisible && 'text-primary')} />
           <span className="hidden xs:inline">{item.comment_count > 0 ? item.comment_count : 'Comment'}</span>
           <span className="xs:hidden">{item.comment_count > 0 ? item.comment_count : ''}</span>
         </Button>
@@ -257,6 +282,11 @@ export const StoryCard: React.FC<StoryCardProps> = ({ item, currentUserId, onUpd
           />
         </Button>
       </div>
+
+      {/* Comments Section */}
+      {commentsVisible && (
+        <PostComments postId={item.post_id} currentUserId={currentUserId} />
+      )}
     </Card>
   );
 };

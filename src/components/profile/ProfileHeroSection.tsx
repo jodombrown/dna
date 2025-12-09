@@ -241,16 +241,14 @@ const ProfileHeroSection = ({
                   {connectionStatus === 'pending' ? 'Request Pending' : 'Connect'}
                 </Button>
               )}
-              {connectionStatus === 'accepted' && (
-                <Button
-                  onClick={handleMessage}
-                  variant="outline"
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                >
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Message
-                </Button>
-              )}
+              <Button
+                onClick={handleMessage}
+                variant="outline"
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Message
+              </Button>
             </div>
           )}
         </div>

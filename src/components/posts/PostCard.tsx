@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { VideoLinkPreview } from '@/components/feed/VideoLinkPreview';
 import { ReactionPicker } from './ReactionPicker';
+import { PostComments } from './PostComments';
 import { ReactionSummary } from './ReactionSummary';
 import { RepostDialog } from './RepostDialog';
 import { SharedPostCard } from './SharedPostCard';
@@ -482,6 +483,11 @@ export function PostCard({
           <span className="hidden sm:inline">{isBookmarked ? 'Saved' : 'Save'}</span>
         </Button>
       </div>
+
+      {/* Comments Section */}
+      {showComments && (
+        <PostComments postId={post.post_id} currentUserId={currentUserId} />
+      )}
 
       {/* Reshare Dialog - TEMPORARILY HIDDEN for Lockdown v1 */}
       {/* {feedItem && (
