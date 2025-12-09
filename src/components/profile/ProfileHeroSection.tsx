@@ -68,8 +68,8 @@ const ProfileHeroSection = ({
     
     try {
       const { data: conversationId, error } = await supabase.rpc('get_or_create_conversation', {
-        user1_id: user.id,
-        user2_id: profile.id,
+        p_user_id: user.id,
+        p_other_user_id: profile.id,
       });
 
       if (error) throw error;

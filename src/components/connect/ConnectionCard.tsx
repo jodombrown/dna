@@ -51,8 +51,8 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
     
     try {
       const { data, error } = await supabase.rpc('get_or_create_conversation', {
-        user1_id: (await supabase.auth.getUser()).data.user?.id,
-        user2_id: connection.id,
+        p_user_id: (await supabase.auth.getUser()).data.user?.id,
+        p_other_user_id: connection.id,
       });
 
       if (error) throw error;
