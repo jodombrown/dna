@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import CountrySelect from '@/components/ui/CountrySelect';
+import CountryCombobox from '@/components/ui/CountryCombobox';
 import { AlertCircle, Heart } from 'lucide-react';
 
 interface DiasporaImpactStepProps {
@@ -30,9 +30,12 @@ const DiasporaImpactStep: React.FC<DiasporaImpactStepProps> = ({ data, onUpdate,
           {/* Country of Origin */}
           <div className="space-y-2">
             <Label htmlFor="country_of_origin" className="text-base">Country of Origin *</Label>
-            <CountrySelect
+            <CountryCombobox
               value={data.country_of_origin}
               onChange={(code, name) => onUpdate('country_of_origin', name)}
+              africanOnly={true}
+              placeholder="Select your country of origin"
+              error={!!errors.country_of_origin}
             />
             <p className="text-xs text-muted-foreground">
               The African country you identify with or have roots in. This helps us connect you with others from your diaspora community.

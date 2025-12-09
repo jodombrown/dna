@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import CountrySelect from '@/components/ui/CountrySelect';
+import CountryCombobox from '@/components/ui/CountryCombobox';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -79,7 +79,11 @@ export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; o
           {needs.has('current_country_code') && (
             <div>
               <Label>Current Country</Label>
-              <CountrySelect value={countryCode} onChange={(code, name) => { setCountryCode(code); setCountryName(name); }} />
+              <CountryCombobox
+                value={countryCode}
+                onChange={(code, name) => { setCountryCode(code); setCountryName(name); }}
+                placeholder="Select your current country"
+              />
             </div>
           )}
           {needs.has('avatar_url') && (
