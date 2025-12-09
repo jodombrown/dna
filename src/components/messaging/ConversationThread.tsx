@@ -91,57 +91,22 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
       queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
       setMessageInput('');
-      // Stop typing indicator on send
-      if (user && isTyping) {
-        setIsTyping(false);
-        messageService.broadcastTyping(conversationId, user.id, '', false);
-      }
+      setIsTyping(false);
     },
     onError: () => {
       toast({ title: 'Failed to send message', variant: 'destructive' });
     },
   });
 
-  // Block user mutation
+  // Block user mutation (stubbed - feature not yet implemented)
   const blockUserMutation = useMutation({
-    mutationFn: (targetUserId: string) => messageService.blockUser(targetUserId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
-      toast({ title: 'User blocked' });
-      onClose?.();
+    mutationFn: async (_targetUserId: string) => {
+      toast({ title: 'Block feature coming soon' });
+      return false;
     },
-    onError: () => {
-      toast({ title: 'Failed to block user', variant: 'destructive' });
-    },
+    onSuccess: () => {},
+    onError: () => {},
   });
-
-  // Subscribe to realtime updates, typing, and presence
-  useEffect(() => {
-    if (!conversationId || !user) return;
-
-    const typingChannel = messageService.subscribeToTyping(
-      conversationId,
-      (users) => {
-        // Filter out current user from typing indicators
-        setTypingUsers(users.filter((u) => u.user_id !== user.id));
-      }
-    );
-
-    // Track own presence in this conversation
-    const ownPresenceChannel = messageService.trackPresence(
-      conversationId,
-      user.id,
-      {
-        display_name: user.user_metadata?.full_name || 'User',
-        avatar_url: user.user_metadata?.avatar_url,
-      }
-    );
-
-    return () => {
-      typingChannel.unsubscribe();
-      ownPresenceChannel.unsubscribe();
-    };
-  }, [conversationId, user]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -165,15 +130,9 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
 
-    // Broadcast typing indicator
-    if (!isTyping && e.target.value.length > 0 && user) {
+    // Set local typing state (typing indicators not yet implemented)
+    if (!isTyping && e.target.value.length > 0) {
       setIsTyping(true);
-      messageService.broadcastTyping(
-        conversationId,
-        user.id,
-        user.user_metadata?.full_name || 'User',
-        true
-      );
     }
 
     // Clear existing timeout
@@ -183,10 +142,7 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
 
     // Set timeout to stop typing indicator
     typingTimeoutRef.current = setTimeout(() => {
-      if (user) {
-        setIsTyping(false);
-        messageService.broadcastTyping(conversationId, user.id, '', false);
-      }
+      setIsTyping(false);
     }, 2000);
   };
 

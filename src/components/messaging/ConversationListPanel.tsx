@@ -107,26 +107,14 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
       .reduce((sum, c) => sum + (c.unread_count || 0), 0);
   }, [conversations]);
 
-  // Handle mute toggle
-  const handleToggleMute = async (conversationId: string, currentlyMuted: boolean) => {
-    try {
-      await messageService.toggleConversationMute(conversationId, !currentlyMuted);
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
-      toast({ title: currentlyMuted ? 'Conversation unmuted' : 'Conversation muted' });
-    } catch (error) {
-      toast({ title: 'Failed to update', variant: 'destructive' });
-    }
+  // Handle mute toggle (stubbed - feature not yet implemented)
+  const handleToggleMute = async (_conversationId: string, currentlyMuted: boolean) => {
+    toast({ title: currentlyMuted ? 'Unmute coming soon' : 'Mute coming soon' });
   };
 
-  // Handle pin toggle
-  const handleTogglePin = async (conversationId: string, currentlyPinned: boolean) => {
-    try {
-      await messageService.toggleConversationPin(conversationId, !currentlyPinned);
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
-      toast({ title: currentlyPinned ? 'Conversation unpinned' : 'Conversation pinned' });
-    } catch (error) {
-      toast({ title: 'Failed to update', variant: 'destructive' });
-    }
+  // Handle pin toggle (stubbed - feature not yet implemented)
+  const handleTogglePin = async (_conversationId: string, currentlyPinned: boolean) => {
+    toast({ title: currentlyPinned ? 'Unpin coming soon' : 'Pin coming soon' });
   };
 
   return (

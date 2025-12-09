@@ -80,23 +80,23 @@ export interface ConversationParticipant {
  */
 export interface ConversationListItem {
   conversation_id: string;
-  conversation_type: ConversationType;
-  origin_type: ConversationOriginType;
-  origin_id: string | null;
-  origin_metadata: OriginMetadata;
+  conversation_type?: ConversationType;
+  origin_type?: ConversationOriginType;
+  origin_id?: string | null;
+  origin_metadata?: OriginMetadata;
   other_user_id: string;
   other_user_username: string;
   other_user_full_name: string;
   other_user_avatar_url?: string;
   other_user_headline?: string;
-  last_message_content?: string;
+  last_message_content?: string | null;
   last_message_preview?: string;
   last_message_sender_id?: string;
-  last_message_at: string;
+  last_message_at?: string | null;
   unread_count: number;
-  participant_status: ParticipantStatus;
-  is_muted: boolean;
-  is_pinned: boolean;
+  participant_status?: ParticipantStatus;
+  is_muted?: boolean;
+  is_pinned?: boolean;
 }
 
 // =====================================================
@@ -161,12 +161,12 @@ export interface MessageWithSender {
   sender_full_name: string;
   sender_avatar_url?: string;
   content: string | null;
-  content_type: MessageContentType;
-  metadata: MessageMetadata;
+  content_type?: MessageContentType;
+  metadata?: MessageMetadata;
   created_at: string;
   is_deleted: boolean;
-  delivered_at: string | null;
-  is_read: boolean;
+  delivered_at?: string | null;
+  is_read?: boolean;
 }
 
 /**

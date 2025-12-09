@@ -62,30 +62,25 @@ const MessageRequestBanner: React.FC<MessageRequestBannerProps> = ({
     }
   };
 
+  // Stubbed - message request feature not yet implemented
   const acceptMutation = useMutation({
-    mutationFn: () => messageService.acceptMessageRequest(conversationId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
-      queryClient.invalidateQueries({ queryKey: ['messageRequests'] });
-      toast({ title: 'Message request accepted' });
+    mutationFn: async () => {
+      toast({ title: 'Message request feature coming soon' });
       onAccept?.();
+      return true;
     },
-    onError: () => {
-      toast({ title: 'Failed to accept request', variant: 'destructive' });
-    },
+    onSuccess: () => {},
+    onError: () => {},
   });
 
   const declineMutation = useMutation({
-    mutationFn: () => messageService.declineMessageRequest(conversationId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
-      queryClient.invalidateQueries({ queryKey: ['messageRequests'] });
-      toast({ title: 'Message request declined' });
+    mutationFn: async () => {
+      toast({ title: 'Message request feature coming soon' });
       onDecline?.();
+      return true;
     },
-    onError: () => {
-      toast({ title: 'Failed to decline request', variant: 'destructive' });
-    },
+    onSuccess: () => {},
+    onError: () => {},
   });
 
   const isPending = acceptMutation.isPending || declineMutation.isPending;

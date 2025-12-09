@@ -75,7 +75,8 @@ export function ConversationView({
           });
 
           if (newMessageData && newMessageData.length > 0) {
-            setMessages((prev) => [...prev, newMessageData[0]]);
+            const newMsg = newMessageData[0] as MessageWithSender;
+            setMessages((prev) => [...prev, newMsg]);
           }
         }
       )
