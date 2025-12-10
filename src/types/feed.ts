@@ -65,6 +65,16 @@ export interface UniversalFeedItem {
     thumbnail_url?: string;
     is_video?: boolean;
   } | null;
+  // Original post data for reshares
+  original_post_id: string | null;
+  original_author_id: string | null;
+  original_author_username: string | null;
+  original_author_full_name: string | null;
+  original_author_avatar_url: string | null;
+  original_author_headline: string | null;
+  original_content: string | null;
+  original_image_url: string | null;
+  original_created_at: string | null;
 }
 
 /**

@@ -14,15 +14,24 @@ export function usePostRepost() {
 
   const repostMutation = useMutation({
     mutationFn: async ({ postId, userId, commentary }: RepostParams) => {
+      // First, fetch the original post to get its content
+      const { data: originalPost, error: fetchError } = await supabase
+        .from('posts')
+        .select('content, image_url, link_url, link_title, link_description, link_metadata')
+        .eq('id', postId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Create the reshare post with proper original_post_id reference
       const { error } = await supabase
         .from('posts')
         .insert({
           author_id: userId,
-          content: commentary || '', // Empty if no commentary
-          post_type: 'update',
+          content: commentary || '', // User's commentary goes in content
+          post_type: 'reshare',
           privacy_level: 'public',
           original_post_id: postId, // Link to original post
-          shared_by: userId, // Track who shared it
           share_commentary: commentary || null,
         });
 
@@ -31,6 +40,7 @@ export function usePostRepost() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
       queryClient.invalidateQueries({ queryKey: ['infinite-feed-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast({
         title: 'Post shared!',
         description: 'Your share has been added to your feed',
