@@ -1,10 +1,29 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export function usePostActions(postId: string, authorId: string, currentUserId?: string) {
   const queryClient = useQueryClient();
   const isOwnPost = authorId === currentUserId;
+
+  // Check if author is muted
+  const { data: isMuted = false } = useQuery({
+    queryKey: ['muted-author', currentUserId, authorId],
+    queryFn: async () => {
+      if (!currentUserId || isOwnPost) return false;
+
+      const { data, error } = await supabase
+        .from('muted_authors')
+        .select('id')
+        .eq('user_id', currentUserId)
+        .eq('muted_user_id', authorId)
+        .maybeSingle();
+
+      if (error) return false;
+      return !!data;
+    },
+    enabled: !!currentUserId && !isOwnPost,
+  });
 
   // Edit post
   const editPost = useMutation({
@@ -135,9 +154,31 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['muted-author', currentUserId, authorId] });
       toast.success('Author muted. You won\'t see their posts.');
     },
     onError: () => toast.error('Failed to mute author'),
+  });
+
+  // Unmute author
+  const unmuteAuthor = useMutation({
+    mutationFn: async () => {
+      if (!currentUserId) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('muted_authors')
+        .delete()
+        .eq('user_id', currentUserId)
+        .eq('muted_user_id', authorId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
+      queryClient.invalidateQueries({ queryKey: ['muted-author', currentUserId, authorId] });
+      toast.success('Author unmuted. You\'ll see their posts again.');
+    },
+    onError: () => toast.error('Failed to unmute author'),
   });
 
   // Copy link
@@ -149,6 +190,7 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
 
   return {
     isOwnPost,
+    isMuted,
     editPost,
     deletePost,
     togglePin,
@@ -156,6 +198,7 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
     reportPost,
     hidePost,
     muteAuthor,
+    unmuteAuthor,
     copyLink,
   };
 }

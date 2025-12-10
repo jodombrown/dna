@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MoreHorizontal, Link, Flag, EyeOff, VolumeX } from 'lucide-react';
+import { MoreHorizontal, Link, Flag, EyeOff, VolumeX, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -29,9 +29,11 @@ export function PostMenuOthers({
   const [showReportDialog, setShowReportDialog] = useState(false);
 
   const {
+    isMuted,
     reportPost,
     hidePost,
     muteAuthor,
+    unmuteAuthor,
     copyLink,
   } = usePostActions(postId, authorId, currentUserId);
 
@@ -40,11 +42,15 @@ export function PostMenuOthers({
     onUpdate?.();
   };
 
-  const handleMute = () => {
-    if (confirm(`Are you sure you want to mute ${authorName}? You won't see their posts in your feed.`)) {
-      muteAuthor.mutate();
-      onUpdate?.();
+  const handleMuteToggle = () => {
+    if (isMuted) {
+      unmuteAuthor.mutate();
+    } else {
+      if (confirm(`Are you sure you want to mute ${authorName}? You won't see their posts in your feed.`)) {
+        muteAuthor.mutate();
+      }
     }
+    onUpdate?.();
   };
 
   return (
@@ -68,9 +74,18 @@ export function PostMenuOthers({
             Hide post
           </DropdownMenuItem>
           
-          <DropdownMenuItem onClick={handleMute}>
-            <VolumeX className="h-4 w-4 mr-2" />
-            Mute {authorName.split(' ')[0]}
+          <DropdownMenuItem onClick={handleMuteToggle}>
+            {isMuted ? (
+              <>
+                <Volume2 className="h-4 w-4 mr-2" />
+                Unmute {authorName.split(' ')[0]}
+              </>
+            ) : (
+              <>
+                <VolumeX className="h-4 w-4 mr-2" />
+                Mute {authorName.split(' ')[0]}
+              </>
+            )}
           </DropdownMenuItem>
           
           <DropdownMenuSeparator />
