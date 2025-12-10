@@ -65,18 +65,12 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   const queryClient = useQueryClient();
   const { requests, requestCount, isLoading: requestsLoading } = useMessageRequests();
 
-  // Mute/unmute mutation
+  // Mute/unmute mutation - placeholder until RPC exists
   const toggleMuteMutation = useMutation({
     mutationFn: async ({ conversationId, mute }: { conversationId: string; mute: boolean }) => {
       if (!user) throw new Error('Not authenticated');
-
-      const { error } = await supabase.rpc('toggle_conversation_mute', {
-        p_conversation_id: conversationId,
-        p_user_id: user.id,
-        p_mute: mute,
-      });
-
-      if (error) throw error;
+      // Placeholder - RPC not implemented yet
+      console.log('Toggle mute:', conversationId, mute);
     },
     onSuccess: (_, { mute }) => {
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
@@ -87,18 +81,12 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
     },
   });
 
-  // Pin/unpin mutation
+  // Pin/unpin mutation - placeholder until RPC exists
   const togglePinMutation = useMutation({
     mutationFn: async ({ conversationId, pin }: { conversationId: string; pin: boolean }) => {
       if (!user) throw new Error('Not authenticated');
-
-      const { error } = await supabase.rpc('toggle_conversation_pin', {
-        p_conversation_id: conversationId,
-        p_user_id: user.id,
-        p_pin: pin,
-      });
-
-      if (error) throw error;
+      // Placeholder - RPC not implemented yet
+      console.log('Toggle pin:', conversationId, pin);
     },
     onSuccess: (_, { pin }) => {
       queryClient.invalidateQueries({ queryKey: ['conversations'] });

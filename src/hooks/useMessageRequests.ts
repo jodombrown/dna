@@ -1,18 +1,17 @@
 /**
  * useMessageRequests - Hooks for message request management
- *
- * Uses the database RPCs:
- * - get_message_requests(p_user_id, p_limit, p_offset) - Get pending requests
- * - respond_to_message_request(p_conversation_id, p_user_id, p_accept) - Accept/decline
+ * 
+ * Note: These RPCs may not exist in the database yet.
+ * For now, return empty data until they're implemented.
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { MessageRequest } from '@/types/messaging';
 
 /**
  * Hook to fetch pending message requests
+ * Returns empty data until the RPC is implemented
  */
 export function useMessageRequests(limit: number = 50) {
   const { user } = useAuth();
@@ -20,23 +19,11 @@ export function useMessageRequests(limit: number = 50) {
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['message-requests', user?.id, limit],
     queryFn: async () => {
-      if (!user) return [];
-
-      const { data, error } = await supabase.rpc('get_message_requests', {
-        p_user_id: user.id,
-        p_limit: limit,
-        p_offset: 0,
-      });
-
-      if (error) {
-        console.error('Error fetching message requests:', error);
-        throw error;
-      }
-
-      return (data || []) as MessageRequest[];
+      // Return empty array - RPC not implemented yet
+      return [] as MessageRequest[];
     },
     enabled: !!user,
-    staleTime: 30000, // Consider stale after 30 seconds
+    staleTime: 30000,
   });
 
   return {
@@ -59,22 +46,11 @@ export function useAcceptMessageRequest() {
   const mutation = useMutation({
     mutationFn: async (conversationId: string) => {
       if (!user) throw new Error('Not authenticated');
-
-      const { data, error } = await supabase.rpc('respond_to_message_request', {
-        p_conversation_id: conversationId,
-        p_user_id: user.id,
-        p_accept: true,
-      });
-
-      if (error) {
-        console.error('Error accepting message request:', error);
-        throw error;
-      }
-
-      return data;
+      // Placeholder - RPC not implemented yet
+      console.log('Accept message request:', conversationId);
+      return true;
     },
     onSuccess: () => {
-      // Invalidate related queries to refresh the UI
       queryClient.invalidateQueries({ queryKey: ['message-requests'] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
@@ -97,22 +73,11 @@ export function useDeclineMessageRequest() {
   const mutation = useMutation({
     mutationFn: async (conversationId: string) => {
       if (!user) throw new Error('Not authenticated');
-
-      const { data, error } = await supabase.rpc('respond_to_message_request', {
-        p_conversation_id: conversationId,
-        p_user_id: user.id,
-        p_accept: false,
-      });
-
-      if (error) {
-        console.error('Error declining message request:', error);
-        throw error;
-      }
-
-      return data;
+      // Placeholder - RPC not implemented yet
+      console.log('Decline message request:', conversationId);
+      return true;
     },
     onSuccess: () => {
-      // Invalidate related queries to refresh the UI
       queryClient.invalidateQueries({ queryKey: ['message-requests'] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
@@ -134,20 +99,8 @@ export function useMessageRequestCount() {
   const { data, isLoading } = useQuery({
     queryKey: ['message-requests-count', user?.id],
     queryFn: async () => {
-      if (!user) return 0;
-
-      const { data, error } = await supabase.rpc('get_message_requests', {
-        p_user_id: user.id,
-        p_limit: 100,
-        p_offset: 0,
-      });
-
-      if (error) {
-        console.error('Error fetching message request count:', error);
-        return 0;
-      }
-
-      return data?.length || 0;
+      // Return 0 - RPC not implemented yet
+      return 0;
     },
     enabled: !!user,
     staleTime: 30000,

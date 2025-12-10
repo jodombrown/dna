@@ -265,10 +265,10 @@ export const messageService = {
       return { can_message: false, reason: 'Cannot message yourself' };
     }
 
-    // Use the proper RPC that handles all block and connection checks
+    // Use the proper RPC that handles block checks
     const { data, error } = await supabase.rpc('can_message_user', {
-      p_user_id: user.id,
-      p_target_user_id: otherUserId,
+      p_sender_id: user.id,
+      p_recipient_id: otherUserId,
     });
 
     if (error) {
@@ -277,17 +277,8 @@ export const messageService = {
       return { can_message: true };
     }
 
-    if (data && data.length > 0) {
-      const result = data[0];
-      return {
-        can_message: result.can_message,
-        is_connected: result.is_connected,
-        is_blocked: result.is_blocked,
-        reason: result.reason,
-      };
-    }
-
-    return { can_message: true };
+    // RPC returns a boolean directly
+    return { can_message: data === true };
   },
 
   /**
