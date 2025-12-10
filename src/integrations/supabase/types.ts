@@ -7009,6 +7009,10 @@ export type Database = {
         }
         Returns: string
       }
+      create_conversation_with_participant: {
+        Args: { p_other_user_id: string }
+        Returns: string
+      }
       create_entity_feed_post:
         | {
             Args: {

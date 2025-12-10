@@ -63,50 +63,19 @@ export const messageService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Check for existing conversation in conversations_new table
-    const { data: existingConversation, error: findError } = await supabase
-      .from('conversation_participants')
-      .select('conversation_id')
-      .eq('user_id', user.id);
+    // Use the SECURITY DEFINER function to create/find conversation
+    // This bypasses RLS to allow adding the other user as participant
+    const { data: conversationId, error } = await supabase.rpc(
+      'create_conversation_with_participant',
+      { p_other_user_id: otherUserId }
+    );
 
-    if (findError) throw findError;
-
-    // Find a conversation where both users are participants
-    if (existingConversation && existingConversation.length > 0) {
-      for (const conv of existingConversation) {
-        const { data: otherParticipant } = await supabase
-          .from('conversation_participants')
-          .select('conversation_id')
-          .eq('conversation_id', conv.conversation_id)
-          .eq('user_id', otherUserId)
-          .single();
-
-        if (otherParticipant) {
-          return { id: otherParticipant.conversation_id };
-        }
-      }
+    if (error) {
+      console.error('Failed to create conversation:', error);
+      throw error;
     }
 
-    // Create new conversation
-    const { data: newConversation, error: createError } = await supabase
-      .from('conversations_new')
-      .insert({})
-      .select()
-      .single();
-
-    if (createError) throw createError;
-
-    // Add both participants
-    const { error: participantError } = await supabase
-      .from('conversation_participants')
-      .insert([
-        { conversation_id: newConversation.id, user_id: user.id },
-        { conversation_id: newConversation.id, user_id: otherUserId },
-      ]);
-
-    if (participantError) throw participantError;
-
-    return { id: newConversation.id };
+    return { id: conversationId };
   },
 
   /**

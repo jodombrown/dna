@@ -142,7 +142,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
               onChange={handleCommentChange}
               onClick={handleCommentClick}
               onKeyUp={handleCommentClick}
-              className="min-h-[60px] resize-none text-sm"
+              className="min-h-[60px] resize-none text-base md:text-sm"
             />
             <MentionAutocomplete
               text={commentText}
