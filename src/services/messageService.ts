@@ -246,9 +246,16 @@ export const messageService = {
 
   /**
    * Check if current user can message another user
-   * For now, allow messaging any user (simplified implementation)
+   * Uses the can_message_user RPC which properly checks:
+   * - Block status (both directions)
+   * - Connection status
    */
-  async canMessage(otherUserId: string): Promise<{ can_message: boolean; reason?: string }> {
+  async canMessage(otherUserId: string): Promise<{
+    can_message: boolean;
+    is_connected?: boolean;
+    is_blocked?: boolean;
+    reason?: string;
+  }> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return { can_message: false, reason: 'Not authenticated' };
@@ -258,16 +265,26 @@ export const messageService = {
       return { can_message: false, reason: 'Cannot message yourself' };
     }
 
-    // Check if user is blocked
-    const { data: blocked } = await supabase
-      .from('blocked_users')
-      .select('id')
-      .or(`blocker_id.eq.${user.id},blocked_id.eq.${user.id}`)
-      .or(`blocker_id.eq.${otherUserId},blocked_id.eq.${otherUserId}`)
-      .limit(1);
+    // Use the proper RPC that handles all block and connection checks
+    const { data, error } = await supabase.rpc('can_message_user', {
+      p_user_id: user.id,
+      p_target_user_id: otherUserId,
+    });
 
-    if (blocked && blocked.length > 0) {
-      return { can_message: false, reason: 'User is blocked' };
+    if (error) {
+      console.error('Error checking message permission:', error);
+      // Default to allowing messaging if check fails
+      return { can_message: true };
+    }
+
+    if (data && data.length > 0) {
+      const result = data[0];
+      return {
+        can_message: result.can_message,
+        is_connected: result.is_connected,
+        is_blocked: result.is_blocked,
+        reason: result.reason,
+      };
     }
 
     return { can_message: true };
