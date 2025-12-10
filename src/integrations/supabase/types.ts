@@ -4434,6 +4434,7 @@ export type Database = {
           created_at: string
           folder: string | null
           id: string
+          pinned_at: string | null
           post_id: string
           user_id: string
         }
@@ -4441,6 +4442,7 @@ export type Database = {
           created_at?: string
           folder?: string | null
           id?: string
+          pinned_at?: string | null
           post_id: string
           user_id: string
         }
@@ -4448,6 +4450,7 @@ export type Database = {
           created_at?: string
           folder?: string | null
           id?: string
+          pinned_at?: string | null
           post_id?: string
           user_id?: string
         }

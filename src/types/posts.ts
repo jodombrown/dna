@@ -35,6 +35,9 @@ export interface PostWithAuthor {
   comments_count: number;
   user_has_liked: boolean;
   is_connection: boolean;
+  // Pin and comment settings
+  pinned_at?: string | null;
+  comments_disabled?: boolean;
   // Link/Video metadata
   link_metadata?: {
     embed_type?: string;
