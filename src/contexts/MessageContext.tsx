@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import MessageOverlay from '@/components/messaging/MessageOverlay';
-import { messagingService } from '@/services/messagingService';
+import { messageService } from '@/services/messageService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { usePresenceHeartbeat } from '@/hooks/usePresence';
 import { ConversationOriginType, OriginMetadata } from '@/types/messaging';
 
 interface OpenMessageOverlayParams {
@@ -53,6 +54,9 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
   const [currentRecipientId, setCurrentRecipientId] = useState<string | undefined>();
   const [currentConversationId, setCurrentConversationId] = useState<string | undefined>();
 
+  // Keep user's online presence updated (heartbeat)
+  usePresenceHeartbeat();
+
   const openMessageOverlay = async (recipientIdOrParams: string | OpenMessageOverlayParams) => {
     if (!user) {
       toast({
@@ -70,7 +74,7 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
 
     try {
       // Get or create conversation with this user, including origin context
-      const conversation = await messagingService.getOrCreateConversation(
+      const conversation = await messageService.getOrCreateConversation(
         params.recipientId,
         params.originType,
         params.originId,

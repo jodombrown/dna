@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { messagingService } from '@/services/messagingService';
+import { messageService } from '@/services/messageService';
 import { useMobile } from '@/hooks/useMobile';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
@@ -33,7 +33,7 @@ export default function MessagesPage() {
   // Fetch conversations
   const { data: conversations, isLoading } = useQuery({
     queryKey: ['conversations'],
-    queryFn: () => messagingService.getConversations(),
+    queryFn: () => messageService.getConversations(),
   });
 
   const selectedConversation = conversations?.find(c => c.conversation_id === selectedConversationId);

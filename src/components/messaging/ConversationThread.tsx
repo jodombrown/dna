@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { messagingService } from '@/services/messagingService';
+import { messageService } from '@/services/messageService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -18,10 +18,10 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { MessageBubble, MessageDateSeparator } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
-import { messageService } from '@/services/messageService';
 import ConversationContext from './ConversationContext';
 import MessageRequestBanner from './MessageRequestBanner';
 import PresenceIndicator, { LastSeenStatus } from './PresenceIndicator';
+import ReportMessageDialog from './ReportMessageDialog';
 import { useConversationPresence } from '@/hooks/usePresence';
 import { useAcceptMessageRequest, useDeclineMessageRequest } from '@/hooks/useMessageRequests';
 import { ConversationListItem, MessageWithSender } from '@/types/messaging';
@@ -61,17 +61,19 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
   const [typingUsers, setTypingUsers] = useState<
     Array<{ user_id: string; display_name: string }>
   >([]);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [messageToReport, setMessageToReport] = useState<string | null>(null);
 
   // Fetch conversation details - first check cache, then fetch directly
   const { data: conversations } = useQuery({
     queryKey: ['conversations'],
-    queryFn: () => messagingService.getConversations(),
+    queryFn: () => messageService.getConversations(),
   });
 
   // Direct fetch for conversation details if not in cache
   const { data: directConversation } = useQuery({
     queryKey: ['conversation-details', conversationId],
-    queryFn: () => messagingService.getConversationDetails(conversationId),
+    queryFn: () => messageService.getConversationDetails(conversationId),
     enabled: !!conversationId,
     staleTime: 30000, // 30 seconds
   });
@@ -85,7 +87,7 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
   }, [conversations, conversationId, directConversation]) as ConversationListItem | undefined;
 
   // Track presence for the other user
-  const { isOtherUserOnline, onlineUsers } = useConversationPresence(
+  const { isOtherUserOnline, lastSeen } = useConversationPresence(
     conversationId,
     conversation?.other_user_id || ''
   );
@@ -121,8 +123,8 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
       if (!user) throw new Error('Not authenticated');
 
       const { error } = await supabase.rpc('block_user', {
-        p_blocked_user_id: targetUserId,
-        p_reason: 'User blocked from conversation',
+        p_user_id: user.id,
+        p_target_user_id: targetUserId,
       });
 
       if (error) throw error;
@@ -138,12 +140,16 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
     },
   });
 
-  // Mute conversation mutation - placeholder until RPC exists
+  // Mute conversation mutation
   const muteConversationMutation = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error('Not authenticated');
-      // Placeholder - RPC not implemented yet
-      console.log('Mute conversation:', conversationId);
+      const { error } = await supabase.rpc('toggle_conversation_mute', {
+        p_conversation_id: conversationId,
+        p_user_id: user.id,
+        p_mute: true,
+      });
+      if (error) throw error;
     },
     onSuccess: () => {
       toast({ title: 'Notifications muted' });
@@ -266,6 +272,7 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
             )}
             <LastSeenStatus
               status={isOtherUserOnline ? 'online' : 'offline'}
+              lastSeenAt={lastSeen}
             />
           </div>
 
@@ -297,7 +304,25 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
                   <Ban className="h-4 w-4 mr-2" />
                   {blockUserMutation.isPending ? 'Blocking...' : 'Block user'}
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => {
+                    // Find the most recent message from the other user to report
+                    const otherUserMessage = messages?.find(
+                      (m) => m.sender_id === conversation.other_user_id
+                    );
+                    if (otherUserMessage) {
+                      setMessageToReport(otherUserMessage.message_id);
+                      setReportDialogOpen(true);
+                    } else {
+                      toast({
+                        title: 'No messages to report',
+                        description: 'This user has not sent any messages yet.',
+                        variant: 'destructive',
+                      });
+                    }
+                  }}
+                >
                   <Flag className="h-4 w-4 mr-2" />
                   Report
                 </DropdownMenuItem>
@@ -434,6 +459,16 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
           </Button>
         </div>
       </form>
+
+      {/* Report Dialog */}
+      {messageToReport && (
+        <ReportMessageDialog
+          open={reportDialogOpen}
+          onOpenChange={setReportDialogOpen}
+          messageId={messageToReport}
+          senderName={conversation.other_user_full_name}
+        />
+      )}
     </div>
   );
 };

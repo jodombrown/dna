@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { messagingService } from '@/services/messagingService';
+import { messageService } from '@/services/messageService';
 import { useParams } from 'react-router-dom';
 import { useMobile } from '@/hooks/useMobile';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
@@ -28,7 +28,7 @@ const DnaMessages = () => {
   // Fetch conversations
   const { data: conversations, isLoading } = useQuery({
     queryKey: ['conversations'],
-    queryFn: () => messagingService.getConversations(),
+    queryFn: () => messageService.getConversations(),
   });
 
   if (isLoading) {

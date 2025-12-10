@@ -320,11 +320,89 @@ export const messageService = {
       supabase.removeChannel(channel);
     };
   },
+
+  /**
+   * Search messages within a conversation or globally
+   */
+  async searchMessages(
+    query: string,
+    conversationId?: string,
+    limit: number = 50,
+    offset: number = 0
+  ): Promise<MessageSearchResult[]> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    if (!query || query.trim().length === 0) {
+      return [];
+    }
+
+    const { data, error } = await supabase.rpc('search_messages', {
+      p_user_id: user.id,
+      p_query: query.trim(),
+      p_conversation_id: conversationId || null,
+      p_limit: limit,
+      p_offset: offset,
+    });
+
+    if (error) {
+      console.error('Error searching messages:', error);
+      throw error;
+    }
+
+    return (data || []) as MessageSearchResult[];
+  },
+
+  /**
+   * Report a message as spam/inappropriate
+   */
+  async reportMessage(
+    messageId: string,
+    reason: 'spam' | 'harassment' | 'inappropriate' | 'scam' | 'other',
+    description?: string
+  ): Promise<string> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('report_message', {
+      p_message_id: messageId,
+      p_reason: reason,
+      p_description: description || null,
+    });
+
+    if (error) {
+      console.error('Error reporting message:', error);
+      throw error;
+    }
+
+    return data as string;
+  },
 };
+
+/**
+ * MessageSearchResult - Type for search results
+ */
+export interface MessageSearchResult {
+  message_id: string;
+  conversation_id: string;
+  sender_id: string;
+  sender_username: string;
+  sender_full_name: string;
+  sender_avatar_url: string;
+  content: string;
+  content_type: string;
+  created_at: string;
+  other_user_id: string;
+  other_user_username: string;
+  other_user_full_name: string;
+  other_user_avatar_url: string;
+  rank: number;
+}
 
 // Also export types for backward compatibility
 export type {
   MessageWithSender as MessageWithSenderType,
   ConversationListItem as ConversationListItemType,
   Message as MessageType,
+  MessageSearchResult as MessageSearchResultType,
 };
