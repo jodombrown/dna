@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PostWithAuthor } from '@/types/posts';
-import { MessageCircle, MoreHorizontal, Globe, Users, Repeat2, Share2, Heart, Bookmark } from 'lucide-react';
+import { MessageCircle, Globe, Users, Repeat2, Heart, Bookmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -12,13 +12,15 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { VideoLinkPreview } from '@/components/feed/VideoLinkPreview';
 import { ReactionPicker } from './ReactionPicker';
-import { PostComments } from './PostComments';
+import { ThreadedComments } from './ThreadedComments';
 import { ReactionSummary } from './ReactionSummary';
 import { RepostDialog } from './RepostDialog';
 import { SharedPostCard } from './SharedPostCard';
 import { LikedByModal } from './LikedByModal';
 import { ShareDialog } from './ShareDialog';
 import { ReshareDialog } from '@/components/feed/dialogs/ReshareDialog';
+import { PostMenuOwn } from './PostMenuOwn';
+import { PostMenuOthers } from './PostMenuOthers';
 import { usePostReactions } from '@/hooks/usePostReactions';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmark } from '@/hooks/usePostBookmark';
@@ -31,12 +33,6 @@ import { usePostViewTracker } from '@/hooks/usePostViewTracker';
 import { PostAnalytics } from './PostAnalytics';
 import { feedAnalytics } from '@/lib/feedAnalytics';
 import { MediaLightbox } from '@/components/feed/MediaLightbox';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 interface PostCardProps {
   post: PostWithAuthor;
@@ -278,19 +274,22 @@ export function PostCard({
           )}
         </div>
 
-        {isOwnPost && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleDelete} className="text-destructive">
-                Delete Post
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {isOwnPost ? (
+          <PostMenuOwn
+            postId={post.post_id}
+            authorId={post.author_id}
+            currentUserId={currentUserId}
+            content={post.content}
+            onUpdate={onUpdate}
+          />
+        ) : (
+          <PostMenuOthers
+            postId={post.post_id}
+            authorId={post.author_id}
+            authorName={post.author_full_name}
+            currentUserId={currentUserId}
+            onUpdate={onUpdate}
+          />
         )}
       </div>
 
@@ -484,9 +483,9 @@ export function PostCard({
         </Button>
       </div>
 
-      {/* Comments Section */}
+      {/* Threaded Comments Section */}
       {showComments && (
-        <PostComments postId={post.post_id} currentUserId={currentUserId} />
+        <ThreadedComments postId={post.post_id} currentUserId={currentUserId} />
       )}
 
       {/* Reshare Dialog - TEMPORARILY HIDDEN for Lockdown v1 */}
