@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Send, X, MoreVertical, Ban, BellOff, Flag } from 'lucide-react';
+import { Loader2, Send, X, MoreVertical, Ban, BellOff, Flag, Check } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +23,9 @@ import ConversationContext from './ConversationContext';
 import MessageRequestBanner from './MessageRequestBanner';
 import PresenceIndicator, { LastSeenStatus } from './PresenceIndicator';
 import { useConversationPresence } from '@/hooks/usePresence';
+import { useAcceptMessageRequest, useDeclineMessageRequest } from '@/hooks/useMessageRequests';
 import { ConversationListItem, MessageWithSender } from '@/types/messaging';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ConversationThreadProps {
   conversationId: string;
@@ -109,14 +111,53 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
     },
   });
 
-  // Block user mutation (stubbed - feature not yet implemented)
+  // Message request handlers
+  const acceptRequestMutation = useAcceptMessageRequest();
+  const declineRequestMutation = useDeclineMessageRequest();
+
+  // Block user mutation
   const blockUserMutation = useMutation({
-    mutationFn: async (_targetUserId: string) => {
-      toast({ title: 'Block feature coming soon' });
-      return false;
+    mutationFn: async (targetUserId: string) => {
+      if (!user) throw new Error('Not authenticated');
+
+      const { error } = await supabase.rpc('block_user', {
+        p_user_id: user.id,
+        p_target_user_id: targetUserId,
+      });
+
+      if (error) throw error;
+      return true;
     },
-    onSuccess: () => {},
-    onError: () => {},
+    onSuccess: () => {
+      toast({ title: 'User blocked' });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      onClose?.();
+    },
+    onError: () => {
+      toast({ title: 'Failed to block user', variant: 'destructive' });
+    },
+  });
+
+  // Mute conversation mutation
+  const muteConversationMutation = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error('Not authenticated');
+
+      const { error } = await supabase.rpc('toggle_conversation_mute', {
+        p_conversation_id: conversationId,
+        p_user_id: user.id,
+        p_mute: true,
+      });
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: 'Notifications muted' });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    },
+    onError: () => {
+      toast({ title: 'Failed to mute notifications', variant: 'destructive' });
+    },
   });
 
   // Auto-scroll to bottom
@@ -243,9 +284,12 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => muteConversationMutation.mutate()}
+                  disabled={muteConversationMutation.isPending}
+                >
                   <BellOff className="h-4 w-4 mr-2" />
-                  Mute notifications
+                  {muteConversationMutation.isPending ? 'Muting...' : 'Mute notifications'}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -254,9 +298,10 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
                     conversation.other_user_id &&
                     blockUserMutation.mutate(conversation.other_user_id)
                   }
+                  disabled={blockUserMutation.isPending}
                 >
                   <Ban className="h-4 w-4 mr-2" />
-                  Block user
+                  {blockUserMutation.isPending ? 'Blocking...' : 'Block user'}
                 </DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive">
                   <Flag className="h-4 w-4 mr-2" />
@@ -303,10 +348,13 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
             }
             originType={conversation.origin_type}
             originMetadata={conversation.origin_metadata}
-            onAccept={() => {
+            onAccept={async () => {
+              await acceptRequestMutation.mutateAsync(conversationId);
               queryClient.invalidateQueries({ queryKey: ['conversations'] });
+              queryClient.invalidateQueries({ queryKey: ['conversation-details', conversationId] });
             }}
-            onDecline={() => {
+            onDecline={async () => {
+              await declineRequestMutation.mutateAsync(conversationId);
               onClose?.();
             }}
           />

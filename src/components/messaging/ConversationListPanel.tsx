@@ -21,9 +21,11 @@ import { ConversationContextBadge } from './ConversationContext';
 import { MessageRequestCard } from './MessageRequestBanner';
 import { useMessageRequests } from '@/hooks/useMessageRequests';
 import { messageService } from '@/services/messageService';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ConversationListPanelProps {
   conversations?: ConversationListItem[];
@@ -59,8 +61,53 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<InboxTab>('focused');
   const { toast } = useToast();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const { requests, requestCount, isLoading: requestsLoading } = useMessageRequests();
+
+  // Mute/unmute mutation
+  const toggleMuteMutation = useMutation({
+    mutationFn: async ({ conversationId, mute }: { conversationId: string; mute: boolean }) => {
+      if (!user) throw new Error('Not authenticated');
+
+      const { error } = await supabase.rpc('toggle_conversation_mute', {
+        p_conversation_id: conversationId,
+        p_user_id: user.id,
+        p_mute: mute,
+      });
+
+      if (error) throw error;
+    },
+    onSuccess: (_, { mute }) => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({ title: mute ? 'Conversation muted' : 'Conversation unmuted' });
+    },
+    onError: () => {
+      toast({ title: 'Failed to update mute setting', variant: 'destructive' });
+    },
+  });
+
+  // Pin/unpin mutation
+  const togglePinMutation = useMutation({
+    mutationFn: async ({ conversationId, pin }: { conversationId: string; pin: boolean }) => {
+      if (!user) throw new Error('Not authenticated');
+
+      const { error } = await supabase.rpc('toggle_conversation_pin', {
+        p_conversation_id: conversationId,
+        p_user_id: user.id,
+        p_pin: pin,
+      });
+
+      if (error) throw error;
+    },
+    onSuccess: (_, { pin }) => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({ title: pin ? 'Conversation pinned' : 'Conversation unpinned' });
+    },
+    onError: () => {
+      toast({ title: 'Failed to update pin setting', variant: 'destructive' });
+    },
+  });
 
   const getInitials = (name: string) => {
     return name?.split(' ').map((n) => n[0]).join('').toUpperCase() || '?';
@@ -107,14 +154,14 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
       .reduce((sum, c) => sum + (c.unread_count || 0), 0);
   }, [conversations]);
 
-  // Handle mute toggle (stubbed - feature not yet implemented)
-  const handleToggleMute = async (_conversationId: string, currentlyMuted: boolean) => {
-    toast({ title: currentlyMuted ? 'Unmute coming soon' : 'Mute coming soon' });
+  // Handle mute toggle
+  const handleToggleMute = (conversationId: string, currentlyMuted: boolean) => {
+    toggleMuteMutation.mutate({ conversationId, mute: !currentlyMuted });
   };
 
-  // Handle pin toggle (stubbed - feature not yet implemented)
-  const handleTogglePin = async (_conversationId: string, currentlyPinned: boolean) => {
-    toast({ title: currentlyPinned ? 'Unpin coming soon' : 'Pin coming soon' });
+  // Handle pin toggle
+  const handleTogglePin = (conversationId: string, currentlyPinned: boolean) => {
+    togglePinMutation.mutate({ conversationId, pin: !currentlyPinned });
   };
 
   return (
