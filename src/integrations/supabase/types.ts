@@ -780,6 +780,82 @@ export type Database = {
         }
         Relationships: []
       }
+      comment_reactions: {
+        Row: {
+          comment_id: string
+          created_at: string
+          emoji: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          emoji: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          emoji?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_reactions_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "post_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comment_reports: {
+        Row: {
+          comment_id: string
+          created_at: string
+          description: string | null
+          id: string
+          reason: string
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          reason: string
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          reason?: string
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_reports_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "post_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comments: {
         Row: {
           author_id: string
@@ -3172,6 +3248,35 @@ export type Database = {
         }
         Relationships: []
       }
+      hidden_posts: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hidden_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       impact_attributions: {
         Row: {
           connection_id: string
@@ -3616,6 +3721,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      muted_authors: {
+        Row: {
+          created_at: string
+          id: string
+          muted_user_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          muted_user_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          muted_user_id?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       newsletter_subscriptions: {
         Row: {
@@ -4362,6 +4488,7 @@ export type Database = {
           moderated_by: string | null
           moderation_notes: string | null
           moderation_status: string | null
+          parent_comment_id: string | null
           post_id: string
           updated_at: string
           user_id: string
@@ -4378,6 +4505,7 @@ export type Database = {
           moderated_by?: string | null
           moderation_notes?: string | null
           moderation_status?: string | null
+          parent_comment_id?: string | null
           post_id: string
           updated_at?: string
           user_id: string
@@ -4394,11 +4522,19 @@ export type Database = {
           moderated_by?: string | null
           moderation_notes?: string | null
           moderation_status?: string | null
+          parent_comment_id?: string | null
           post_id?: string
           updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "post_comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "post_comments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "post_comments_user_id_fkey"
             columns: ["user_id"]
@@ -4489,6 +4625,50 @@ export type Database = {
         }
         Relationships: []
       }
+      post_reports: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          post_id: string
+          reason: string
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          post_id: string
+          reason: string
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          post_id?: string
+          reason?: string
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_reports_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_shares: {
         Row: {
           created_at: string
@@ -4552,6 +4732,7 @@ export type Database = {
       posts: {
         Row: {
           author_id: string
+          comments_disabled: boolean
           content: string
           created_at: string
           event_id: string | null
@@ -4573,6 +4754,7 @@ export type Database = {
           moderation_notes: string | null
           moderation_status: string | null
           original_post_id: string | null
+          pinned_at: string | null
           post_type: string
           privacy_level: string
           share_commentary: string | null
@@ -4585,6 +4767,7 @@ export type Database = {
         }
         Insert: {
           author_id: string
+          comments_disabled?: boolean
           content: string
           created_at?: string
           event_id?: string | null
@@ -4606,6 +4789,7 @@ export type Database = {
           moderation_notes?: string | null
           moderation_status?: string | null
           original_post_id?: string | null
+          pinned_at?: string | null
           post_type?: string
           privacy_level?: string
           share_commentary?: string | null
@@ -4618,6 +4802,7 @@ export type Database = {
         }
         Update: {
           author_id?: string
+          comments_disabled?: boolean
           content?: string
           created_at?: string
           event_id?: string | null
@@ -4639,6 +4824,7 @@ export type Database = {
           moderation_notes?: string | null
           moderation_status?: string | null
           original_post_id?: string | null
+          pinned_at?: string | null
           post_type?: string
           privacy_level?: string
           share_commentary?: string | null
@@ -7835,6 +8021,23 @@ export type Database = {
           profession: string
           skills: string[]
           username: string
+        }[]
+      }
+      get_threaded_comments: {
+        Args: { p_post_id: string; p_user_id: string }
+        Returns: {
+          author_avatar_url: string
+          author_full_name: string
+          author_id: string
+          author_username: string
+          comment_id: string
+          content: string
+          created_at: string
+          parent_comment_id: string
+          reaction_counts: Json
+          reply_count: number
+          updated_at: string
+          user_reaction: string
         }[]
       }
       get_top_cross_transitions:

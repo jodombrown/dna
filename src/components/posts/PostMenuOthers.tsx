@@ -1,0 +1,98 @@
+import { useState } from 'react';
+import { MoreHorizontal, Link, Flag, EyeOff, VolumeX } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { usePostActions } from '@/hooks/usePostActions';
+import { ReportDialog } from './ReportDialog';
+
+interface PostMenuOthersProps {
+  postId: string;
+  authorId: string;
+  authorName: string;
+  currentUserId: string;
+  onUpdate?: () => void;
+}
+
+export function PostMenuOthers({
+  postId,
+  authorId,
+  authorName,
+  currentUserId,
+  onUpdate,
+}: PostMenuOthersProps) {
+  const [showReportDialog, setShowReportDialog] = useState(false);
+
+  const {
+    reportPost,
+    hidePost,
+    muteAuthor,
+    copyLink,
+  } = usePostActions(postId, authorId, currentUserId);
+
+  const handleHide = () => {
+    hidePost.mutate();
+    onUpdate?.();
+  };
+
+  const handleMute = () => {
+    if (confirm(`Are you sure you want to mute ${authorName}? You won't see their posts in your feed.`)) {
+      muteAuthor.mutate();
+      onUpdate?.();
+    }
+  };
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem onClick={copyLink}>
+            <Link className="h-4 w-4 mr-2" />
+            Copy link
+          </DropdownMenuItem>
+          
+          <DropdownMenuSeparator />
+          
+          <DropdownMenuItem onClick={handleHide}>
+            <EyeOff className="h-4 w-4 mr-2" />
+            Hide post
+          </DropdownMenuItem>
+          
+          <DropdownMenuItem onClick={handleMute}>
+            <VolumeX className="h-4 w-4 mr-2" />
+            Mute {authorName.split(' ')[0]}
+          </DropdownMenuItem>
+          
+          <DropdownMenuSeparator />
+          
+          <DropdownMenuItem 
+            onClick={() => setShowReportDialog(true)}
+            className="text-destructive focus:text-destructive"
+          >
+            <Flag className="h-4 w-4 mr-2" />
+            Report post
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <ReportDialog
+        open={showReportDialog}
+        onOpenChange={setShowReportDialog}
+        onSubmit={(reason, description) => {
+          reportPost.mutate({ reason, description });
+        }}
+        type="post"
+      />
+    </>
+  );
+}
