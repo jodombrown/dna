@@ -2,6 +2,7 @@
  * Story Card for Universal Feed
  * 
  * Displays published stories in the feed with title, body preview, and read-more expansion.
+ * Includes full engagement features: threaded comments, reactions, owner/others menus.
  */
 
 import React, { useState } from 'react';
@@ -9,7 +10,7 @@ import { UniversalFeedItem } from '@/types/feed';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Bookmark, MoreVertical, FileText, BookOpen } from 'lucide-react';
+import { Heart, MessageCircle, Bookmark, FileText, BookOpen } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -17,16 +18,9 @@ import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { Badge } from '@/components/ui/badge';
 import { VideoLinkPreview } from '@/components/feed/VideoLinkPreview';
-import { PostComments } from '@/components/posts/PostComments';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { supabase } from '@/integrations/supabase/client';
-import { useQueryClient } from '@tanstack/react-query';
-import { toast } from '@/hooks/use-toast';
+import { ThreadedComments } from '@/components/posts/ThreadedComments';
+import { PostMenuOwn } from '@/components/posts/PostMenuOwn';
+import { PostMenuOthers } from '@/components/posts/PostMenuOthers';
 
 interface StoryCardProps {
   item: UniversalFeedItem;
@@ -44,9 +38,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   onCommentClick,
 }) => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [localShowComments, setLocalShowComments] = useState(showComments);
 
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
@@ -64,31 +56,6 @@ export const StoryCard: React.FC<StoryCardProps> = ({
       onCommentClick();
     } else {
       setLocalShowComments(!localShowComments);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm('Delete this story? This action cannot be undone.')) return;
-
-    setIsDeleting(true);
-    try {
-      const { error } = await supabase
-        .from('posts')
-        .update({ is_deleted: true })
-        .eq('id', item.post_id);
-
-      if (error) throw error;
-
-      // Invalidate feed queries to remove the post
-      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
-      queryClient.invalidateQueries({ queryKey: ['universal-feed-infinite'] });
-
-      toast({ description: 'Story deleted' });
-    } catch (error) {
-      console.error('Error deleting story:', error);
-      toast({ variant: 'destructive', description: 'Could not delete story' });
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -122,19 +89,24 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
           </p>
         </div>
-        {isOwner && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleDelete} disabled={isDeleting} className="text-destructive">
-                {isDeleting ? 'Deleting...' : 'Delete Story'}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        
+        {/* Post Menu - Own or Others */}
+        {isOwner ? (
+          <PostMenuOwn
+            postId={item.post_id}
+            authorId={item.author_id}
+            currentUserId={currentUserId}
+            content={item.content}
+            onUpdate={onUpdate}
+          />
+        ) : (
+          <PostMenuOthers
+            postId={item.post_id}
+            authorId={item.author_id}
+            authorName={item.author_display_name || item.author_username || 'User'}
+            currentUserId={currentUserId}
+            onUpdate={onUpdate}
+          />
         )}
       </div>
 
@@ -283,9 +255,9 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         </Button>
       </div>
 
-      {/* Comments Section */}
+      {/* Threaded Comments Section */}
       {commentsVisible && (
-        <PostComments postId={item.post_id} currentUserId={currentUserId} />
+        <ThreadedComments postId={item.post_id} currentUserId={currentUserId} />
       )}
     </Card>
   );
