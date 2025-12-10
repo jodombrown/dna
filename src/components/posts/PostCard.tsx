@@ -280,6 +280,8 @@ export function PostCard({
             authorId={post.author_id}
             currentUserId={currentUserId}
             content={post.content}
+            isPinned={!!post.pinned_at}
+            commentsDisabled={!!post.comments_disabled}
             onUpdate={onUpdate}
           />
         ) : (

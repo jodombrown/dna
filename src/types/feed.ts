@@ -55,6 +55,9 @@ export interface UniversalFeedItem {
   bookmark_count: number;
   has_liked: boolean;
   has_bookmarked: boolean;
+  // Pin and comment settings
+  pinned_at: string | null;
+  comments_disabled: boolean;
   // Video/Link metadata
   link_url: string | null;
   link_title: string | null;
