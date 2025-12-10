@@ -8191,14 +8191,20 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number; p_user_id: string }
         Returns: {
           conversation_id: string
+          is_muted: boolean
+          is_pinned: boolean
           last_message_at: string
           last_message_content: string
-          last_message_sender_id: string
+          last_message_preview: string
+          origin_id: string
+          origin_metadata: Json
+          origin_type: string
           other_user_avatar_url: string
           other_user_full_name: string
           other_user_headline: string
           other_user_id: string
           other_user_username: string
+          participant_status: string
           unread_count: number
         }[]
       }
