@@ -9,6 +9,7 @@ import { useProfileV2 } from '@/hooks/useProfileV2';
 import { Loader2, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMessage } from '@/contexts/MessageContext';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,6 +31,7 @@ const ProfileV2: React.FC = () => {
   const { username } = useParams<{ username: string }>();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { openMessageOverlay } = useMessage();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { data: bundle, isLoading, error } = useProfileV2(username);
@@ -146,7 +148,7 @@ const ProfileV2: React.FC = () => {
         permissions={permissions}
         onEdit={() => permissions.is_owner && navigate('/dna/profile/edit')}
         onConnect={() => console.log('Connect clicked')}
-        onMessage={() => console.log('Message clicked')}
+        onMessage={() => openMessageOverlay(profile.id)}
       />
 
       {/* Main Content */}
