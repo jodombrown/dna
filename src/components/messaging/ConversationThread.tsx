@@ -1,13 +1,13 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { messageService } from '@/services/messageService';
+import { messageService, ConversationListItem, MessageWithSender } from '@/services/messageService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Send, X, MoreVertical, Ban, BellOff, Flag, Check } from 'lucide-react';
+import { Loader2, Send, X, MoreVertical, Ban, BellOff, Flag } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,14 +17,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { MessageBubble, MessageDateSeparator } from './MessageBubble';
-import { TypingIndicator } from './TypingIndicator';
-import ConversationContext from './ConversationContext';
-import MessageRequestBanner from './MessageRequestBanner';
-import PresenceIndicator, { LastSeenStatus } from './PresenceIndicator';
-import ReportMessageDialog from './ReportMessageDialog';
-import { useConversationPresence } from '@/hooks/usePresence';
-import { useAcceptMessageRequest, useDeclineMessageRequest } from '@/hooks/useMessageRequests';
-import { ConversationListItem, MessageWithSender } from '@/types/messaging';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ConversationThreadProps {
@@ -34,16 +26,7 @@ interface ConversationThreadProps {
 }
 
 /**
- * ConversationThread - Full conversation view with messages
- *
- * Implements PRD requirements:
- * - Real-time message updates
- * - Auto-scroll to bottom
- * - Typing indicators
- * - Read receipts (sent/delivered/read)
- * - Context banner for origin
- * - Message request banner for pending status
- * - Presence indicator (online/offline)
+ * ConversationThread - Simplified conversation view with messages
  */
 const ConversationThread: React.FC<ConversationThreadProps> = ({
   conversationId,
@@ -54,49 +37,19 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [messageInput, setMessageInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [typingUsers, setTypingUsers] = useState<
-    Array<{ user_id: string; display_name: string }>
-  >([]);
-  const [reportDialogOpen, setReportDialogOpen] = useState(false);
-  const [messageToReport, setMessageToReport] = useState<string | null>(null);
 
-  // Fetch conversation details - first check cache, then fetch directly
-  const { data: conversations } = useQuery({
-    queryKey: ['conversations'],
-    queryFn: () => messageService.getConversations(),
-  });
-
-  // Direct fetch for conversation details if not in cache
-  const { data: directConversation } = useQuery({
+  // Fetch conversation details
+  const { data: conversation, isLoading: conversationLoading } = useQuery({
     queryKey: ['conversation-details', conversationId],
     queryFn: () => messageService.getConversationDetails(conversationId),
     enabled: !!conversationId,
-    staleTime: 30000, // 30 seconds
+    staleTime: 30000,
   });
 
-  const conversation = useMemo(() => {
-    // First try to find in cached conversations list
-    const cached = conversations?.find((c) => c.conversation_id === conversationId);
-    if (cached) return cached;
-    // Fall back to directly fetched conversation
-    return directConversation || undefined;
-  }, [conversations, conversationId, directConversation]) as ConversationListItem | undefined;
-
-  // Track presence for the other user
-  const { isOtherUserOnline, lastSeen } = useConversationPresence(
-    conversationId,
-    conversation?.other_user_id || ''
-  );
-
   // Fetch messages with realtime updates
-  const { data: messages, isLoading } = useRealtimeMessages(conversationId);
-
-  // Check if this is a pending message request
-  const isPendingRequest = conversation?.participant_status === 'pending';
+  const { data: messages, isLoading: messagesLoading } = useRealtimeMessages(conversationId);
 
   // Send message mutation
   const sendMessageMutation = useMutation({
@@ -106,26 +59,19 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
       queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
       setMessageInput('');
-      setIsTyping(false);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Failed to send message:', error);
       toast({ title: 'Failed to send message', variant: 'destructive' });
     },
   });
 
-  // Message request handlers
-  const acceptRequestMutation = useAcceptMessageRequest();
-  const declineRequestMutation = useDeclineMessageRequest();
-
   // Block user mutation
   const blockUserMutation = useMutation({
     mutationFn: async (targetUserId: string) => {
-      if (!user) throw new Error('Not authenticated');
-
-      const { error } = await supabase.rpc('block_user', {
-        p_blocked_user_id: targetUserId,
-      });
-
+      const { error } = await supabase
+        .from('blocked_users')
+        .insert({ blocker_id: user?.id, blocked_id: targetUserId });
       if (error) throw error;
       return true;
     },
@@ -139,7 +85,7 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
     },
   });
 
-  // Mute - simplified placeholder
+  // Mute - placeholder
   const handleMuteConversation = () => {
     toast({ title: 'Notifications muted', description: 'Feature coming soon' });
   };
@@ -151,35 +97,19 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
 
   // Mark as read
   useEffect(() => {
-    if (conversationId && !isPendingRequest) {
+    if (conversationId) {
       messageService.markAsRead(conversationId);
     }
-  }, [conversationId, isPendingRequest]);
+  }, [conversationId]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!messageInput.trim()) return;
-
     sendMessageMutation.mutate(messageInput.trim());
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMessageInput(e.target.value);
-
-    // Set local typing state (typing indicators not yet implemented)
-    if (!isTyping && e.target.value.length > 0) {
-      setIsTyping(true);
-    }
-
-    // Clear existing timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-
-    // Set timeout to stop typing indicator
-    typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false);
-    }, 2000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -221,6 +151,14 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
     return result;
   }, [messages]);
 
+  if (conversationLoading) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   if (!conversation) {
     return (
       <div className="h-full flex items-center justify-center text-muted-foreground">
@@ -234,30 +172,17 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
       {/* Thread Header */}
       {!isOverlay && (
         <div className="p-4 border-b flex items-center gap-3 bg-card">
-          <div className="relative">
-            <Avatar className="w-10 h-10">
-              <AvatarImage src={conversation.other_user_avatar_url || ''} />
-              <AvatarFallback className="bg-primary text-primary-foreground">
-                {getInitials(conversation.other_user_full_name || '')}
-              </AvatarFallback>
-            </Avatar>
-            {isOtherUserOnline && (
-              <div className="absolute bottom-0 right-0 border-2 border-background rounded-full">
-                <PresenceIndicator status="online" size="sm" />
-              </div>
-            )}
-          </div>
+          <Avatar className="w-10 h-10">
+            <AvatarImage src={conversation.other_user_avatar_url || ''} />
+            <AvatarFallback className="bg-primary text-primary-foreground">
+              {getInitials(conversation.other_user_full_name || '')}
+            </AvatarFallback>
+          </Avatar>
           <div className="flex-1">
             <p className="font-semibold">{conversation.other_user_full_name}</p>
-            {conversation.other_user_headline && (
-              <p className="text-xs text-muted-foreground">
-                {conversation.other_user_headline}
-              </p>
-            )}
-            <LastSeenStatus
-              status={isOtherUserOnline ? 'online' : 'offline'}
-              lastSeenAt={lastSeen}
-            />
+            <p className="text-xs text-muted-foreground">
+              @{conversation.other_user_username || 'user'}
+            </p>
           </div>
 
           {/* Actions */}
@@ -285,28 +210,6 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
                   <Ban className="h-4 w-4 mr-2" />
                   {blockUserMutation.isPending ? 'Blocking...' : 'Block user'}
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-destructive"
-                  onClick={() => {
-                    // Find the most recent message from the other user to report
-                    const otherUserMessage = messages?.find(
-                      (m) => m.sender_id === conversation.other_user_id
-                    );
-                    if (otherUserMessage) {
-                      setMessageToReport(otherUserMessage.message_id);
-                      setReportDialogOpen(true);
-                    } else {
-                      toast({
-                        title: 'No messages to report',
-                        description: 'This user has not sent any messages yet.',
-                        variant: 'destructive',
-                      });
-                    }
-                  }}
-                >
-                  <Flag className="h-4 w-4 mr-2" />
-                  Report
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -319,51 +222,9 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
         </div>
       )}
 
-      {/* Context Banner (if conversation has origin) */}
-      {conversation.origin_type && (
-        <div className="px-4 pt-4">
-          <ConversationContext
-            originType={conversation.origin_type}
-            originId={conversation.origin_id}
-            originMetadata={conversation.origin_metadata}
-          />
-        </div>
-      )}
-
-      {/* Message Request Banner (if pending) */}
-      {isPendingRequest && (
-        <div className="px-4 pt-4">
-          <MessageRequestBanner
-            conversationId={conversationId}
-            requester={{
-              id: conversation.other_user_id || '',
-              full_name: conversation.other_user_full_name || '',
-              avatar_url: conversation.other_user_avatar_url,
-              headline: conversation.other_user_headline,
-            }}
-            previewContent={
-              conversation.last_message_content ||
-              conversation.last_message_preview ||
-              undefined
-            }
-            originType={conversation.origin_type}
-            originMetadata={conversation.origin_metadata}
-            onAccept={async () => {
-              await acceptRequestMutation.mutateAsync(conversationId);
-              queryClient.invalidateQueries({ queryKey: ['conversations'] });
-              queryClient.invalidateQueries({ queryKey: ['conversation-details', conversationId] });
-            }}
-            onDecline={async () => {
-              await declineRequestMutation.mutateAsync(conversationId);
-              onClose?.();
-            }}
-          />
-        </div>
-      )}
-
       {/* Messages */}
       <ScrollArea className="flex-1 p-4">
-        {isLoading ? (
+        {messagesLoading ? (
           <div className="flex justify-center items-center h-full">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
@@ -389,47 +250,30 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
                   key={message.message_id}
                   message={message}
                   isOwnMessage={isOwnMessage}
-                  showReadReceipt={true}
-                  isRead={message.is_read}
-                  isDelivered={!!message.delivered_at}
+                  showReadReceipt={false}
                 />
               );
             })}
-
-            {/* Typing Indicator */}
-            {typingUsers.length > 0 && (
-              <div className="px-4">
-                <TypingIndicator users={typingUsers} />
-              </div>
-            )}
 
             <div ref={messagesEndRef} />
           </div>
         )}
       </ScrollArea>
 
-      {/* Message Input (disabled for pending requests) */}
+      {/* Message Input */}
       <form onSubmit={handleSendMessage} className="p-4 border-t bg-card">
         <div className="flex gap-2">
           <Input
             value={messageInput}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
-            placeholder={
-              isPendingRequest
-                ? 'Accept the request to reply...'
-                : 'Type a message...'
-            }
-            disabled={sendMessageMutation.isPending || isPendingRequest}
-            className="flex-1"
+            placeholder="Type a message..."
+            disabled={sendMessageMutation.isPending}
+            className="flex-1 text-base md:text-sm"
           />
           <Button
             type="submit"
-            disabled={
-              !messageInput.trim() ||
-              sendMessageMutation.isPending ||
-              isPendingRequest
-            }
+            disabled={!messageInput.trim() || sendMessageMutation.isPending}
             size="icon"
           >
             {sendMessageMutation.isPending ? (
@@ -440,16 +284,6 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
           </Button>
         </div>
       </form>
-
-      {/* Report Dialog */}
-      {messageToReport && (
-        <ReportMessageDialog
-          open={reportDialogOpen}
-          onOpenChange={setReportDialogOpen}
-          messageId={messageToReport}
-          senderName={conversation.other_user_full_name}
-        />
-      )}
     </div>
   );
 };

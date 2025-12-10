@@ -1,6 +1,18 @@
 import { supabase } from '@/integrations/supabase/client';
 
 /**
+ * Message type for the simpler conversations/messages tables
+ */
+export interface Message {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  content: string;
+  read: boolean;
+  created_at: string;
+}
+
+/**
  * MessageWithSender - Type for messages with sender information
  */
 export interface MessageWithSender {
@@ -29,30 +41,14 @@ export interface ConversationListItem {
 }
 
 /**
- * Message - Basic message type
- */
-export interface Message {
-  id: string;
-  conversation_id: string;
-  sender_id: string;
-  content: string;
-  created_at: string;
-  is_deleted: boolean;
-}
-
-/**
- * messageService - Centralized messaging service for the DNA Platform
- *
- * Uses existing database functions:
- * - get_user_conversations
- * - get_conversation_messages
- * - mark_conversation_read
- * - get_total_unread_count
+ * messageService - SIMPLIFIED messaging using conversations/messages tables
+ * 
+ * Uses the SIMPLER tables with user_a/user_b structure which have working RLS
  */
 export const messageService = {
   /**
    * Get or create a conversation between the current user and another user
-   * Uses the existing conversations table directly
+   * Uses direct Supabase client calls - NO RPCs
    */
   async getOrCreateConversation(
     otherUserId: string,
@@ -63,51 +59,101 @@ export const messageService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Use the SECURITY DEFINER function to create/find conversation
-    // This bypasses RLS to allow adding the other user as participant
-    const { data: conversationId, error } = await supabase.rpc(
-      'create_conversation_with_participant',
-      { p_other_user_id: otherUserId }
-    );
+    console.log('[messageService] Getting or creating conversation with:', otherUserId);
 
-    if (error) {
-      console.error('Failed to create conversation:', error);
-      throw error;
+    // First, check if conversation already exists (current user could be user_a OR user_b)
+    const { data: existingConversation, error: findError } = await supabase
+      .from('conversations')
+      .select('id')
+      .or(`and(user_a.eq.${user.id},user_b.eq.${otherUserId}),and(user_a.eq.${otherUserId},user_b.eq.${user.id})`)
+      .maybeSingle();
+
+    if (findError) {
+      console.error('[messageService] Error finding conversation:', findError);
+      throw findError;
     }
 
-    return { id: conversationId };
+    if (existingConversation) {
+      console.log('[messageService] Found existing conversation:', existingConversation.id);
+      return { id: existingConversation.id };
+    }
+
+    // Create new conversation - current user is user_a, other user is user_b
+    console.log('[messageService] Creating new conversation');
+    const { data: newConversation, error: createError } = await supabase
+      .from('conversations')
+      .insert({
+        user_a: user.id,
+        user_b: otherUserId,
+      })
+      .select('id')
+      .single();
+
+    if (createError) {
+      console.error('[messageService] Error creating conversation:', createError);
+      throw createError;
+    }
+
+    console.log('[messageService] Created new conversation:', newConversation.id);
+    return { id: newConversation.id };
   },
 
   /**
-   * Get conversation details by ID (for direct lookup when not in cache)
+   * Get conversation details by ID
    */
   async getConversationDetails(conversationId: string): Promise<ConversationListItem | null> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const { data, error } = await supabase.rpc('get_conversation_details', {
-      p_conversation_id: conversationId,
-      p_user_id: user.id,
-    });
+    // Get conversation with both users
+    const { data: conversation, error } = await supabase
+      .from('conversations')
+      .select('id, user_a, user_b, last_message_at')
+      .eq('id', conversationId)
+      .single();
 
-    if (error) {
-      console.error('Failed to get conversation details:', error);
+    if (error || !conversation) {
+      console.error('[messageService] Error getting conversation:', error);
       return null;
     }
 
-    if (!data || data.length === 0) return null;
+    // Determine other user
+    const otherUserId = conversation.user_a === user.id ? conversation.user_b : conversation.user_a;
 
-    const row = data[0];
+    // Get other user's profile
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .eq('id', otherUserId)
+      .single();
+
+    // Get last message
+    const { data: lastMessage } = await supabase
+      .from('messages')
+      .select('content')
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    // Get unread count
+    const { count: unreadCount } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('conversation_id', conversationId)
+      .eq('read', false)
+      .neq('sender_id', user.id);
+
     return {
-      conversation_id: row.conversation_id,
-      other_user_id: row.other_user_id,
-      other_user_username: row.other_user_username,
-      other_user_full_name: row.other_user_full_name,
-      other_user_avatar_url: row.other_user_avatar_url,
-      last_message_content: row.last_message_content,
-      last_message_at: row.last_message_at,
-      unread_count: 0,
-    } as ConversationListItem;
+      conversation_id: conversation.id,
+      other_user_id: otherUserId,
+      other_user_username: profile?.username || '',
+      other_user_full_name: profile?.full_name || 'Unknown User',
+      other_user_avatar_url: profile?.avatar_url || '',
+      last_message_content: lastMessage?.content || null,
+      last_message_at: conversation.last_message_at,
+      unread_count: unreadCount || 0,
+    };
   },
 
   /**
@@ -115,19 +161,77 @@ export const messageService = {
    */
   async getConversations(
     limit: number = 50,
-    offset: number = 0
+    _offset: number = 0
   ): Promise<ConversationListItem[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const { data, error } = await supabase.rpc('get_user_conversations', {
-      p_user_id: user.id,
-      p_limit: limit,
-      p_offset: offset,
-    });
+    // Get all conversations where user is participant
+    const { data: conversations, error } = await supabase
+      .from('conversations')
+      .select('id, user_a, user_b, last_message_at')
+      .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
+      .order('last_message_at', { ascending: false, nullsFirst: false })
+      .limit(limit);
 
-    if (error) throw error;
-    return (data || []) as ConversationListItem[];
+    if (error) {
+      console.error('[messageService] Error getting conversations:', error);
+      throw error;
+    }
+
+    if (!conversations || conversations.length === 0) {
+      return [];
+    }
+
+    // Get other user IDs
+    const otherUserIds = conversations.map(c => 
+      c.user_a === user.id ? c.user_b : c.user_a
+    );
+
+    // Get all profiles in one query
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .in('id', otherUserIds);
+
+    const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+    // Build conversation list
+    const result: ConversationListItem[] = [];
+    for (const conv of conversations) {
+      const otherUserId = conv.user_a === user.id ? conv.user_b : conv.user_a;
+      const profile = profileMap.get(otherUserId);
+
+      // Get last message for this conversation
+      const { data: lastMessage } = await supabase
+        .from('messages')
+        .select('content')
+        .eq('conversation_id', conv.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      // Get unread count
+      const { count: unreadCount } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('conversation_id', conv.id)
+        .eq('read', false)
+        .neq('sender_id', user.id);
+
+      result.push({
+        conversation_id: conv.id,
+        other_user_id: otherUserId,
+        other_user_username: profile?.username || '',
+        other_user_full_name: profile?.full_name || 'Unknown User',
+        other_user_avatar_url: profile?.avatar_url || '',
+        last_message_content: lastMessage?.content || null,
+        last_message_at: conv.last_message_at,
+        unread_count: unreadCount || 0,
+      });
+    }
+
+    return result;
   },
 
   /**
@@ -136,27 +240,49 @@ export const messageService = {
   async getMessages(
     conversationId: string,
     limit: number = 100,
-    beforeTimestamp?: string
+    _beforeTimestamp?: string
   ): Promise<MessageWithSender[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const { data, error } = await supabase.rpc('get_conversation_messages', {
-      p_conversation_id: conversationId,
-      p_user_id: user.id,
-      p_limit: limit,
-      p_before_timestamp: beforeTimestamp || null,
-    });
+    // Get messages
+    const { data: messages, error } = await supabase
+      .from('messages')
+      .select('id, conversation_id, sender_id, content, read, created_at')
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: true })
+      .limit(limit);
 
     if (error) {
-      if (error.message?.includes('not a participant')) {
-        throw new Error('You are not a participant in this conversation');
-      }
+      console.error('[messageService] Error getting messages:', error);
       throw error;
     }
 
-    // Reverse to show oldest first (chronological order)
-    return ((data || []) as MessageWithSender[]).reverse();
+    if (!messages || messages.length === 0) {
+      return [];
+    }
+
+    // Get unique sender IDs
+    const senderIds = [...new Set(messages.map(m => m.sender_id))];
+
+    // Get sender profiles
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .in('id', senderIds);
+
+    const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+    return messages.map(m => ({
+      message_id: m.id,
+      content: m.content,
+      created_at: m.created_at,
+      is_deleted: false,
+      sender_id: m.sender_id,
+      sender_username: profileMap.get(m.sender_id)?.username || '',
+      sender_full_name: profileMap.get(m.sender_id)?.full_name || 'Unknown',
+      sender_avatar_url: profileMap.get(m.sender_id)?.avatar_url || '',
+    }));
   },
 
   /**
@@ -173,24 +299,31 @@ export const messageService = {
       throw new Error('Message content cannot be empty');
     }
 
+    console.log('[messageService] Sending message to conversation:', conversationId);
+
     const { data, error } = await supabase
-      .from('messages_new')
+      .from('messages')
       .insert({
         conversation_id: conversationId,
         sender_id: user.id,
         content: content.trim(),
+        read: false,
       })
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('[messageService] Error sending message:', error);
+      throw error;
+    }
 
     // Update conversation's last_message_at
     await supabase
-      .from('conversations_new')
+      .from('conversations')
       .update({ last_message_at: new Date().toISOString() })
       .eq('id', conversationId);
 
+    console.log('[messageService] Message sent successfully');
     return data as Message;
   },
 
@@ -201,12 +334,12 @@ export const messageService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const { error } = await supabase.rpc('mark_conversation_read', {
-      p_conversation_id: conversationId,
-      p_user_id: user.id,
-    });
-
-    if (error) throw error;
+    // Mark all messages in this conversation as read (except own messages)
+    await supabase
+      .from('messages')
+      .update({ read: true })
+      .eq('conversation_id', conversationId)
+      .neq('sender_id', user.id);
   },
 
   /**
@@ -216,28 +349,38 @@ export const messageService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return 0;
 
-    const { data, error } = await supabase.rpc('get_total_unread_count', {
-      p_user_id: user.id,
-    });
+    // Get all user's conversations
+    const { data: conversations } = await supabase
+      .from('conversations')
+      .select('id')
+      .or(`user_a.eq.${user.id},user_b.eq.${user.id}`);
 
-    if (error) {
-      console.error('Error fetching unread count:', error);
-      return 0;
-    }
+    if (!conversations || conversations.length === 0) return 0;
 
-    return data || 0;
+    const conversationIds = conversations.map(c => c.id);
+
+    // Count unread messages in these conversations (not sent by user)
+    const { count } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .in('conversation_id', conversationIds)
+      .eq('read', false)
+      .neq('sender_id', user.id);
+
+    return count || 0;
   },
 
   /**
-   * Delete a message (soft delete)
+   * Delete a message (mark as deleted)
    */
   async deleteMessage(messageId: string): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
+    // For the simple messages table, we just delete the message
     const { error } = await supabase
-      .from('messages_new')
-      .update({ is_deleted: true })
+      .from('messages')
+      .delete()
       .eq('id', messageId)
       .eq('sender_id', user.id);
 
@@ -246,14 +389,9 @@ export const messageService = {
 
   /**
    * Check if current user can message another user
-   * Uses the can_message_user RPC which properly checks:
-   * - Block status (both directions)
-   * - Connection status
    */
   async canMessage(otherUserId: string): Promise<{
     can_message: boolean;
-    is_connected?: boolean;
-    is_blocked?: boolean;
     reason?: string;
   }> {
     const { data: { user } } = await supabase.auth.getUser();
@@ -265,20 +403,18 @@ export const messageService = {
       return { can_message: false, reason: 'Cannot message yourself' };
     }
 
-    // Use the proper RPC that handles block checks
-    const { data, error } = await supabase.rpc('can_message_user', {
-      p_sender_id: user.id,
-      p_recipient_id: otherUserId,
-    });
+    // Check if blocked
+    const { data: blocked } = await supabase
+      .from('blocked_users')
+      .select('id')
+      .or(`and(blocker_id.eq.${user.id},blocked_id.eq.${otherUserId}),and(blocker_id.eq.${otherUserId},blocked_id.eq.${user.id})`)
+      .maybeSingle();
 
-    if (error) {
-      console.error('Error checking message permission:', error);
-      // Default to allowing messaging if check fails
-      return { can_message: true };
+    if (blocked) {
+      return { can_message: false, reason: 'User is blocked' };
     }
 
-    // RPC returns a boolean directly
-    return { can_message: data === true };
+    return { can_message: true };
   },
 
   /**
@@ -295,18 +431,16 @@ export const messageService = {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages_new',
+          table: 'messages',
           filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
-          // Basic message data from realtime
           const newMessage = payload.new as Message;
-          // Fetch full message with sender info would be done by the consumer
           onNewMessage({
             message_id: newMessage.id,
             content: newMessage.content,
             created_at: newMessage.created_at,
-            is_deleted: newMessage.is_deleted,
+            is_deleted: false,
             sender_id: newMessage.sender_id,
             sender_username: '',
             sender_full_name: '',
@@ -322,7 +456,7 @@ export const messageService = {
   },
 
   /**
-   * Search messages - simplified (searches client-side for now)
+   * Search messages - placeholder
    */
   async searchMessages(
     _query: string,
@@ -330,19 +464,17 @@ export const messageService = {
     _limit: number = 50,
     _offset: number = 0
   ): Promise<MessageSearchResult[]> {
-    // Search functionality requires RPC setup
     return [];
   },
 
   /**
-   * Report a message - simplified placeholder
+   * Report a message - placeholder
    */
   async reportMessage(
     _messageId: string,
     _reason: 'spam' | 'harassment' | 'inappropriate' | 'scam' | 'other',
     _description?: string
   ): Promise<string> {
-    // Report functionality requires RPC setup
     console.log('Report message - feature pending');
     return 'pending';
   },

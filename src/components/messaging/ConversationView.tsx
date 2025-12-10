@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { MessageBubble } from './MessageBubble';
 import { MessageComposer } from './MessageComposer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { MessageWithSender } from '@/types/messaging';
+import { messageService, MessageWithSender } from '@/services/messageService';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -27,31 +27,16 @@ export function ConversationView({
   onBack,
 }: ConversationViewProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const [messages, setMessages] = useState<MessageWithSender[]>([]);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['conversation-messages', conversationId],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_conversation_messages', {
-        p_conversation_id: conversationId,
-        p_user_id: currentUserId,
-        p_limit: 50,
-        p_before_timestamp: null,
-      });
-
-      if (error) throw error;
-      return (data || []) as MessageWithSender[];
-    },
+  // Fetch messages using the simplified service
+  const { data: messages = [], isLoading } = useQuery({
+    queryKey: ['messages', conversationId],
+    queryFn: () => messageService.getMessages(conversationId),
     enabled: !!conversationId,
   });
-
-  useEffect(() => {
-    if (data) {
-      setMessages([...data].reverse());
-    }
-  }, [data]);
 
   // Real-time subscription for new messages
   useEffect(() => {
@@ -62,22 +47,13 @@ export function ConversationView({
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages_new',
+          table: 'messages',
           filter: `conversation_id=eq.${conversationId}`,
         },
-        async (payload) => {
-          // Fetch the complete message with sender info
-          const { data: newMessageData } = await supabase.rpc('get_conversation_messages', {
-            p_conversation_id: conversationId,
-            p_user_id: currentUserId,
-            p_limit: 1,
-            p_before_timestamp: null,
-          });
-
-          if (newMessageData && newMessageData.length > 0) {
-            const newMsg = newMessageData[0] as MessageWithSender;
-            setMessages((prev) => [...prev, newMsg]);
-          }
+        () => {
+          // Refetch messages when a new one arrives
+          queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
+          queryClient.invalidateQueries({ queryKey: ['conversations'] });
         }
       )
       .subscribe();
@@ -85,19 +61,14 @@ export function ConversationView({
     return () => {
       channel.unsubscribe();
     };
-  }, [conversationId, currentUserId]);
+  }, [conversationId, queryClient]);
 
   // Mark conversation as read
   useEffect(() => {
-    const markAsRead = async () => {
-      await supabase.rpc('mark_conversation_read', {
-        p_conversation_id: conversationId,
-        p_user_id: currentUserId,
-      });
-    };
-
-    markAsRead();
-  }, [conversationId, currentUserId]);
+    if (conversationId) {
+      messageService.markAsRead(conversationId);
+    }
+  }, [conversationId]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
