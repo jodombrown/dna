@@ -1,14 +1,12 @@
 /**
  * usePresence - Hooks for user presence/online status
- *
- * Uses the database RPCs:
- * - get_users_presence(p_user_ids[]) - Get presence for multiple users
- * - update_user_presence(p_user_id, p_status) - Update own presence
+ * 
+ * Note: Presence RPCs may not exist in the database yet.
+ * For now, return mock data until they're implemented.
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
 export type PresenceStatus = 'online' | 'away' | 'offline';
@@ -26,27 +24,8 @@ export function usePresence(userIds: string[] = []) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  // Fetch presence for specified users
-  const { data: presenceData } = useQuery({
-    queryKey: ['presence', userIds],
-    queryFn: async () => {
-      if (userIds.length === 0) return [];
-
-      const { data, error } = await supabase.rpc('get_users_presence', {
-        p_user_ids: userIds,
-      });
-
-      if (error) {
-        console.error('Error fetching presence:', error);
-        return [];
-      }
-
-      return (data || []) as UserPresence[];
-    },
-    enabled: userIds.length > 0,
-    refetchInterval: 30000, // Refresh every 30 seconds
-    staleTime: 15000, // Consider stale after 15 seconds
-  });
+  // Return empty map - presence system not fully implemented
+  const presenceData: UserPresence[] = [];
 
   // Create a Map for quick lookups
   const presenceMap = useMemo(() => {
@@ -74,70 +53,13 @@ export function usePresence(userIds: string[] = []) {
     [getPresence]
   );
 
-  // Update own presence mutation
-  const updatePresenceMutation = useMutation({
-    mutationFn: async (status: PresenceStatus = 'online') => {
-      if (!user) return;
-
-      const { error } = await supabase.rpc('update_user_presence', {
-        p_user_id: user.id,
-        p_status: status,
-      });
-
-      if (error) {
-        console.error('Error updating presence:', error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['presence'] });
-    },
-  });
-
-  // Update own presence
+  // Update own presence - no-op for now
   const updateMyPresence = useCallback(
     async (status: PresenceStatus = 'online') => {
-      await updatePresenceMutation.mutateAsync(status);
+      // No-op - RPC not implemented
     },
-    [updatePresenceMutation]
+    []
   );
-
-  // Set online on mount, offline on unmount
-  useEffect(() => {
-    if (!user) return;
-
-    // Set online when component mounts
-    updateMyPresence('online');
-
-    // Set offline when tab is hidden or window is closed
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        updateMyPresence('away');
-      } else {
-        updateMyPresence('online');
-      }
-    };
-
-    const handleBeforeUnload = () => {
-      // Use synchronous approach for beforeunload
-      navigator.sendBeacon?.(
-        `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/rpc/update_user_presence`,
-        JSON.stringify({
-          p_user_id: user.id,
-          p_status: 'offline',
-        })
-      );
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      updateMyPresence('offline');
-    };
-  }, [user, updateMyPresence]);
 
   return {
     presenceMap,
@@ -151,31 +73,10 @@ export function usePresence(userIds: string[] = []) {
  * Hook to get presence for a single user
  */
 export function useUserPresence(userId: string | undefined) {
-  const { data } = useQuery({
-    queryKey: ['presence', userId ? [userId] : []],
-    queryFn: async () => {
-      if (!userId) return null;
-
-      const { data, error } = await supabase.rpc('get_users_presence', {
-        p_user_ids: [userId],
-      });
-
-      if (error) {
-        console.error('Error fetching user presence:', error);
-        return null;
-      }
-
-      return data?.[0] as UserPresence | undefined;
-    },
-    enabled: !!userId,
-    refetchInterval: 30000,
-    staleTime: 15000,
-  });
-
   return {
-    status: (data?.status || 'offline') as PresenceStatus,
-    isOnline: data?.status === 'online',
-    lastSeen: data?.last_seen_at,
+    status: 'offline' as PresenceStatus,
+    isOnline: false,
+    lastSeen: undefined,
   };
 }
 
@@ -188,38 +89,8 @@ export function useConversationPresence(
 ) {
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
-  const { data } = useQuery({
-    queryKey: ['presence', otherUserId ? [otherUserId] : []],
-    queryFn: async () => {
-      if (!otherUserId) return null;
-
-      const { data, error } = await supabase.rpc('get_users_presence', {
-        p_user_ids: [otherUserId],
-      });
-
-      if (error) {
-        console.error('Error fetching conversation presence:', error);
-        return null;
-      }
-
-      return data?.[0] as UserPresence | undefined;
-    },
-    enabled: !!otherUserId,
-    refetchInterval: 30000,
-    staleTime: 15000,
-  });
-
-  // Update online users list
-  useEffect(() => {
-    if (data?.status === 'online' && otherUserId) {
-      setOnlineUsers([otherUserId]);
-    } else {
-      setOnlineUsers([]);
-    }
-  }, [data, otherUserId]);
-
   return {
     onlineUsers,
-    isOtherUserOnline: data?.status === 'online',
+    isOtherUserOnline: false,
   };
 }

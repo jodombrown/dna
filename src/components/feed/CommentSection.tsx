@@ -25,7 +25,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
   const commentTextareaRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
 
-  // Fetch comments
+  // Fetch comments - post_comments table doesn't have parent_comment_id column
   const { data: comments, isLoading } = useQuery({
     queryKey: ['post-comments', postId],
     queryFn: async () => {
@@ -33,7 +33,6 @@ export function CommentSection({ postId }: CommentSectionProps) {
         .from('post_comments')
         .select('*')
         .eq('post_id', postId)
-        .is('parent_comment_id', null)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -48,7 +47,7 @@ export function CommentSection({ postId }: CommentSectionProps) {
         .from('post_comments')
         .insert({
           post_id: postId,
-          author_id: user!.id,
+          user_id: user!.id,
           content,
         } as any);
 
@@ -215,14 +214,14 @@ function CommentItem({ comment }: { comment: any }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  // Fetch author profile
+  // Fetch author profile - post_comments uses user_id, not author_id
   const { data: author } = useQuery({
-    queryKey: ['user-profile', comment.author_id],
+    queryKey: ['user-profile', comment.user_id],
     queryFn: async () => {
       const { data } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', comment.author_id)
+        .eq('id', comment.user_id)
         .maybeSingle();
       return data;
     },
