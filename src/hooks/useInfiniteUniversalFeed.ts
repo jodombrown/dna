@@ -74,23 +74,32 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           linked_entity_type: item.linked_entity_type,
           linked_entity_id: item.linked_entity_id,
           space_id: item.space_id,
-          space_title: null, // Not returned by RPC yet
+          space_title: null,
           event_id: item.event_id,
-          event_title: null, // Not returned by RPC yet
+          event_title: null,
           created_at: item.created_at,
           updated_at: item.updated_at,
           like_count: Number(item.likes_count),
           comment_count: Number(item.comments_count),
-          share_count: 0, // Not implemented yet
-          view_count: 0, // Not implemented yet
-          bookmark_count: 0, // Not returned by RPC
+          share_count: 0,
+          view_count: 0,
+          bookmark_count: 0,
           has_liked: item.user_has_liked,
           has_bookmarked: item.user_has_bookmarked,
-          // Link/video preview data
           link_url: item.link_url || null,
           link_title: item.link_title || null,
           link_description: item.link_description || null,
           link_metadata: item.link_metadata || null,
+          // Original post data for reshares
+          original_post_id: item.original_post_id || null,
+          original_author_id: item.original_author_id || null,
+          original_author_username: item.original_author_username || null,
+          original_author_full_name: item.original_author_full_name || null,
+          original_author_avatar_url: item.original_author_avatar_url || null,
+          original_author_headline: item.original_author_headline || null,
+          original_content: item.original_content || null,
+          original_image_url: item.original_image_url || null,
+          original_created_at: item.original_created_at || null,
         })) as UniversalFeedItem[];
 
         if (DEBUG_FEED) {

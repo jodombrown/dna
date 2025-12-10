@@ -7918,6 +7918,15 @@ export type Database = {
           link_url: string
           linked_entity_id: string
           linked_entity_type: string
+          original_author_avatar_url: string
+          original_author_full_name: string
+          original_author_headline: string
+          original_author_id: string
+          original_author_username: string
+          original_content: string
+          original_created_at: string
+          original_image_url: string
+          original_post_id: string
           post_type: string
           privacy_level: string
           space_id: string

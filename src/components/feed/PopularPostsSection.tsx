@@ -78,6 +78,15 @@ export const PopularPostsSection = () => {
           link_title: null,
           link_description: null,
           link_metadata: null,
+          original_post_id: null,
+          original_author_id: null,
+          original_author_username: null,
+          original_author_full_name: null,
+          original_author_avatar_url: null,
+          original_author_headline: null,
+          original_content: null,
+          original_image_url: null,
+          original_created_at: null,
         };
 
         return (
