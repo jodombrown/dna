@@ -36,7 +36,7 @@ export function useRealtimeMessages(conversationId: string) {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages_new',
+          table: 'messages',
           filter: `conversation_id=eq.${conversationId}`,
         },
         () => {
