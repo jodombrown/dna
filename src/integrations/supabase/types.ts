@@ -8056,6 +8056,10 @@ export type Database = {
         Args: { p_connection: string }
         Returns: boolean
       }
+      is_conversation_participant: {
+        Args: { p_conversation_id: string; p_user_id: string }
+        Returns: boolean
+      }
       is_event_owner: {
         Args: { p_event: string; p_user: string }
         Returns: boolean
