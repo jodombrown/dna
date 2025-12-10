@@ -5,6 +5,7 @@ interface BookmarkedPost {
   id: string;
   post_id: string;
   created_at: string;
+  pinned_at?: string | null;
   folder?: string;
   // Post data
   post?: {
@@ -35,6 +36,7 @@ export function useUserBookmarks(userId?: string) {
           id,
           post_id,
           created_at,
+          pinned_at,
           folder,
           posts:post_id (
             id,
@@ -62,6 +64,7 @@ export function useUserBookmarks(userId?: string) {
         id: bookmark.id,
         post_id: bookmark.post_id,
         created_at: bookmark.created_at,
+        pinned_at: bookmark.pinned_at,
         folder: bookmark.folder,
         post: bookmark.posts ? {
           ...bookmark.posts,

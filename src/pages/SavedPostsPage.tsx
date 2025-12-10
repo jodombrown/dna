@@ -5,10 +5,11 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bookmark, Search, X } from 'lucide-react';
+import { Bookmark, Search, X, Pin, PinOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { usePostBookmark } from '@/hooks/usePostBookmark';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export default function SavedPostsPage() {
   const { user } = useAuth();
@@ -26,14 +27,15 @@ export default function SavedPostsPage() {
            authorName.includes(searchQuery.toLowerCase());
   });
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  // Sort: pinned items first, then by created_at
+  const sortedBookmarks = [...filteredBookmarks].sort((a, b) => {
+    const aPinned = a.pinned_at ? 1 : 0;
+    const bPinned = b.pinned_at ? 1 : 0;
+    if (aPinned !== bPinned) return bPinned - aPinned;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+
+  const pinnedCount = filteredBookmarks.filter(b => b.pinned_at).length;
 
   if (isLoading) {
     return (
@@ -51,7 +53,8 @@ export default function SavedPostsPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Saved Posts</h1>
         <p className="text-muted-foreground">
-          {bookmarks.length} {bookmarks.length === 1 ? 'post' : 'posts'} saved for later
+          {bookmarks.length} {bookmarks.length === 1 ? 'post' : 'posts'} saved
+          {pinnedCount > 0 && ` · ${pinnedCount} pinned`}
         </p>
       </div>
 
@@ -77,7 +80,7 @@ export default function SavedPostsPage() {
       </div>
 
       {/* Empty State */}
-      {filteredBookmarks.length === 0 && (
+      {sortedBookmarks.length === 0 && (
         <Card className="p-12 text-center">
           <Bookmark className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-lg font-semibold mb-2">
@@ -98,7 +101,7 @@ export default function SavedPostsPage() {
 
       {/* Bookmarked Posts List */}
       <div className="space-y-4">
-        {filteredBookmarks.map((bookmark) => {
+        {sortedBookmarks.map((bookmark) => {
           if (!bookmark.post) return null;
 
           return (
@@ -118,14 +121,25 @@ export default function SavedPostsPage() {
 // Separate component for each saved post
 function SavedPostCard({ bookmark, onNavigate, userId }: any) {
   const navigate = useNavigate();
-  const { toggleBookmark } = usePostBookmark(bookmark.post_id, userId);
+  const { isBookmarked, isPinned, toggleBookmark, togglePin, isPinLoading } = usePostBookmark(bookmark.post_id, userId);
 
   const getInitials = (name: string) => {
     return name?.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) || '??';
   };
 
+  // Use local bookmark data for pin status if hook hasn't loaded yet
+  const pinned = isPinned || !!bookmark.pinned_at;
+
   return (
-    <Card className="p-6 hover:shadow-md transition-shadow">
+    <Card className={`p-6 hover:shadow-md transition-shadow ${pinned ? 'border-primary/50 bg-primary/5' : ''}`}>
+      {/* Pinned indicator */}
+      {pinned && (
+        <div className="flex items-center gap-1 text-xs text-primary mb-3">
+          <Pin className="h-3 w-3" />
+          <span>Pinned</span>
+        </div>
+      )}
+
       <div className="flex items-start gap-3 mb-4">
         <Avatar
           className="h-10 w-10 cursor-pointer"
@@ -154,14 +168,46 @@ function SavedPostCard({ bookmark, onNavigate, userId }: any) {
           </p>
         </div>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => toggleBookmark()}
-          className="text-primary"
-        >
-          <Bookmark className="h-4 w-4 fill-current" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => togglePin()}
+                  disabled={isPinLoading}
+                  className={pinned ? 'text-primary' : 'text-muted-foreground hover:text-primary'}
+                >
+                  {pinned ? (
+                    <PinOff className="h-4 w-4" />
+                  ) : (
+                    <Pin className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {pinned ? 'Unpin from top' : 'Pin to top'}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleBookmark()}
+                  className="text-primary"
+                >
+                  <Bookmark className="h-4 w-4 fill-current" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Remove from saved</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
 
       <p className="whitespace-pre-wrap break-words mb-4">{bookmark.post.content}</p>
