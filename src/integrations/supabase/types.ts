@@ -7236,6 +7236,20 @@ export type Database = {
         Args: { user1_id: string; user2_id: string }
         Returns: string
       }
+      get_conversation_details: {
+        Args: { p_conversation_id: string; p_user_id: string }
+        Returns: {
+          conversation_id: string
+          last_message_at: string
+          last_message_content: string
+          other_user_avatar_url: string
+          other_user_full_name: string
+          other_user_headline: string
+          other_user_id: string
+          other_user_username: string
+          participant_status: string
+        }[]
+      }
       get_conversation_messages: {
         Args: {
           p_before_timestamp?: string
@@ -7245,9 +7259,13 @@ export type Database = {
         }
         Returns: {
           content: string
+          content_type: string
           created_at: string
+          delivered_at: string
           is_deleted: boolean
+          is_read: boolean
           message_id: string
+          metadata: Json
           sender_avatar_url: string
           sender_full_name: string
           sender_id: string

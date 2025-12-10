@@ -60,16 +60,27 @@ const ConversationThread: React.FC<ConversationThreadProps> = ({
     Array<{ user_id: string; display_name: string }>
   >([]);
 
-  // Fetch conversation details
+  // Fetch conversation details - first check cache, then fetch directly
   const { data: conversations } = useQuery({
     queryKey: ['conversations'],
     queryFn: () => messagingService.getConversations(),
   });
 
-  const conversation = useMemo(
-    () => conversations?.find((c) => c.conversation_id === conversationId),
-    [conversations, conversationId]
-  ) as ConversationListItem | undefined;
+  // Direct fetch for conversation details if not in cache
+  const { data: directConversation } = useQuery({
+    queryKey: ['conversation-details', conversationId],
+    queryFn: () => messagingService.getConversationDetails(conversationId),
+    enabled: !!conversationId,
+    staleTime: 30000, // 30 seconds
+  });
+
+  const conversation = useMemo(() => {
+    // First try to find in cached conversations list
+    const cached = conversations?.find((c) => c.conversation_id === conversationId);
+    if (cached) return cached;
+    // Fall back to directly fetched conversation
+    return directConversation || undefined;
+  }, [conversations, conversationId, directConversation]) as ConversationListItem | undefined;
 
   // Track presence for the other user
   const { isOtherUserOnline, onlineUsers } = useConversationPresence(

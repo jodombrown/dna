@@ -79,6 +79,38 @@ export const messageService = {
   },
 
   /**
+   * Get conversation details by ID (for direct lookup when not in cache)
+   */
+  async getConversationDetails(conversationId: string): Promise<ConversationListItem | null> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data, error } = await supabase.rpc('get_conversation_details', {
+      p_conversation_id: conversationId,
+      p_user_id: user.id,
+    });
+
+    if (error) {
+      console.error('Failed to get conversation details:', error);
+      return null;
+    }
+
+    if (!data || data.length === 0) return null;
+
+    const row = data[0];
+    return {
+      conversation_id: row.conversation_id,
+      other_user_id: row.other_user_id,
+      other_user_username: row.other_user_username,
+      other_user_full_name: row.other_user_full_name,
+      other_user_avatar_url: row.other_user_avatar_url,
+      last_message_content: row.last_message_content,
+      last_message_at: row.last_message_at,
+      unread_count: 0,
+    } as ConversationListItem;
+  },
+
+  /**
    * Get all conversations for the current user
    */
   async getConversations(
