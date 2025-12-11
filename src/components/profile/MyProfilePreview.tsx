@@ -74,7 +74,7 @@ export const MyProfilePreview: React.FC<MyProfilePreviewProps> = ({ profile }) =
           </Button>
           <Button
             className="flex-1 bg-dna-copper hover:bg-dna-gold"
-            onClick={() => navigate('/app/profile/edit')}
+            onClick={() => navigate('/dna/profile/edit')}
           >
             <Edit className="w-4 h-4 mr-2" />
             Edit Profile

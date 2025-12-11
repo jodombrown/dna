@@ -121,7 +121,7 @@ const DnaUserDashboard = () => {
                         )}
                       </div>
                       {isOwnProfile && (
-                        <Button onClick={() => navigate('/app/profile/edit')}>
+                        <Button onClick={() => navigate('/dna/profile/edit')}>
                           <Edit className="w-4 h-4 mr-2" />
                           Edit Profile
                         </Button>

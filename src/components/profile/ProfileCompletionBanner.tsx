@@ -43,7 +43,7 @@ export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = (
               <Progress value={completenessScore} />
             </div>
             <div className="mt-3 flex gap-2">
-              <Button size="sm" onClick={() => (window.location.href = '/app/profile/edit')}>Complete profile</Button>
+              <Button size="sm" onClick={() => (window.location.href = '/dna/profile/edit')}>Complete profile</Button>
               <Button size="sm" variant="outline" onClick={handleDismiss}>Not now</Button>
             </div>
           </div>

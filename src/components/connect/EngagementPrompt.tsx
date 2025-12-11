@@ -26,7 +26,7 @@ export const EngagementPrompt: React.FC<EngagementPromptProps> = ({
       title: 'Complete your profile to unlock features',
       description: `You're just ${100 - profileCompletion}% away from full platform access`,
       action: 'Complete Now',
-      onClick: () => navigate('/app/profile/edit'),
+      onClick: () => navigate('/dna/profile/edit'),
       gradient: 'from-dna-emerald/10 to-dna-forest/10',
       border: 'border-dna-emerald',
     },

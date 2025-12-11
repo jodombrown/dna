@@ -104,7 +104,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
           description: result.message || 'Complete your profile to at least 40% to send connection requests.',
           variant: 'destructive',
         });
-        navigate('/app/profile/edit');
+        navigate('/dna/profile/edit');
       } else if (result.status === 'already_connected') {
         toast({
           title: 'Already connected',

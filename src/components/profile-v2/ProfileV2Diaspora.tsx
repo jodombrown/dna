@@ -28,7 +28,7 @@ const ProfileV2Diaspora: React.FC<ProfileV2DiasporaProps> = ({
     if (onEdit) {
       onEdit();
     } else {
-      navigate('/app/profile/edit');
+      navigate('/dna/profile/edit');
     }
   };
 

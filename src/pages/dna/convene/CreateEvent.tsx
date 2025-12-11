@@ -84,7 +84,7 @@ const CreateEvent = () => {
                 <Button 
                   variant="link" 
                   className="px-1"
-                  onClick={() => navigate('/app/profile/edit')}
+                  onClick={() => navigate('/dna/profile/edit')}
                 >
                   Complete your profile
                 </Button>

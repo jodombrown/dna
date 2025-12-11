@@ -351,7 +351,7 @@ const PublicProfile = () => {
               )}
 
               {isOwnProfile && (
-                <Button onClick={() => navigate('/app/profile/edit')}>
+                <Button onClick={() => navigate('/dna/profile/edit')}>
                   Edit Profile
                 </Button>
               )}

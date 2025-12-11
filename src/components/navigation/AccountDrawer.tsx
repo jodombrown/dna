@@ -25,7 +25,7 @@ export const AccountDrawer: React.FC = () => {
   };
 
   const handleEditProfile = () => {
-    navigate('/app/profile/edit');
+    navigate('/dna/profile/edit');
     close();
   };
 

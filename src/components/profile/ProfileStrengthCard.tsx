@@ -46,7 +46,7 @@ export const ProfileStrengthCard: React.FC<ProfileStrengthCardProps> = ({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => navigate('/app/profile/edit')}
+            onClick={() => navigate('/dna/profile/edit')}
           >
             <Edit className="h-3 w-3" />
           </Button>
@@ -102,7 +102,7 @@ export const ProfileStrengthCard: React.FC<ProfileStrengthCardProps> = ({
         )}
 
         <Button
-          onClick={() => navigate('/app/profile/edit')}
+          onClick={() => navigate('/dna/profile/edit')}
           className="w-full"
           variant={isUnlocked ? 'outline' : 'default'}
         >

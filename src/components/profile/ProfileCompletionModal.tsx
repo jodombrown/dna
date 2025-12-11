@@ -24,7 +24,7 @@ export const ProfileCompletionModal: React.FC<ProfileCompletionModalProps> = ({
 
   const handleCompleteProfile = () => {
     onClose();
-    navigate('/app/profile/edit');
+    navigate('/dna/profile/edit');
   };
 
   return (
