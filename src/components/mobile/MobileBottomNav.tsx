@@ -83,6 +83,12 @@ const MobileBottomNav: React.FC = () => {
 
   const moreMenuItems = [
     { 
+      label: 'Messages', 
+      icon: MessageSquare, 
+      path: '/dna/messages',
+      description: 'Direct conversations'
+    },
+    { 
       label: 'Contribute', 
       pillar: 'contribute',
       icon: Heart, 
@@ -96,13 +102,6 @@ const MobileBottomNav: React.FC = () => {
       path: '/dna/convey',
       description: 'Share your story'
     },
-    // DNA v1.0 LOCKDOWN: Messages hidden until messaging MVP ready
-    // { 
-    //   label: 'Messages', 
-    //   icon: MessageSquare, 
-    //   path: '/dna/messages',
-    //   description: 'Direct conversations'
-    // },
     { 
       label: 'Notifications', 
       icon: Bell, 
