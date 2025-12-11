@@ -6,11 +6,13 @@ import { cn } from '@/lib/utils';
 interface VoiceMessageRecorderProps {
   onSendVoice: (audioBlob: Blob, duration: number) => Promise<void>;
   disabled?: boolean;
+  onActiveStateChange?: (isActive: boolean) => void;
 }
 
 export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
   onSendVoice,
   disabled,
+  onActiveStateChange,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
@@ -49,6 +51,12 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
       }
     };
   }, []);
+
+  // Notify parent of active state changes
+  useEffect(() => {
+    const isActive = isRecording || !!audioBlob;
+    onActiveStateChange?.(isActive);
+  }, [isRecording, audioBlob, onActiveStateChange]);
 
   const updateWaveform = useCallback(() => {
     if (!analyserRef.current) return;
@@ -235,23 +243,23 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
   // Recording in progress
   if (isRecording) {
     return (
-      <div className="flex-shrink-0 max-w-[280px]">
-        <div className="flex items-center gap-2 px-3 py-2 bg-destructive/10 rounded-full">
+      <div className="flex-1 min-w-0 max-w-full">
+        <div className="flex items-center gap-1.5 px-2 py-1.5 bg-destructive/10 rounded-full">
           {/* Animated recording indicator */}
-          <div className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
+          <div className="h-2 w-2 rounded-full bg-destructive animate-pulse flex-shrink-0" />
           
-          {/* Live Waveform */}
-          <div className="flex items-center gap-[2px] h-6 flex-shrink-0">
-            {waveformData.map((amplitude, index) => (
+          {/* Live Waveform - flexible width, limited bars */}
+          <div className="flex items-center gap-[2px] h-5 flex-1 min-w-0 overflow-hidden justify-center">
+            {waveformData.slice(0, 12).map((amplitude, index) => (
               <div
                 key={index}
-                className="w-1 bg-destructive rounded-full transition-all duration-75"
+                className="w-[3px] bg-destructive rounded-full transition-all duration-75 flex-shrink-0"
                 style={{ height: `${Math.max(20, amplitude * 100)}%` }}
               />
             ))}
           </div>
           
-          <span className="text-sm font-medium text-destructive min-w-[40px]">
+          <span className="text-xs font-medium text-destructive flex-shrink-0">
             {formatTime(recordingTime)}
           </span>
           
@@ -259,17 +267,17 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
             variant="ghost"
             size="icon"
             onClick={stopRecording}
-            className="h-8 w-8 rounded-full hover:bg-destructive/20 flex-shrink-0"
+            className="h-7 w-7 rounded-full hover:bg-destructive/20 flex-shrink-0"
           >
-            <Square className="h-4 w-4 fill-destructive text-destructive" />
+            <Square className="h-3.5 w-3.5 fill-destructive text-destructive" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={cancelRecording}
-            className="h-8 w-8 rounded-full hover:bg-destructive/20 flex-shrink-0"
+            className="h-7 w-7 rounded-full hover:bg-destructive/20 flex-shrink-0"
           >
-            <Trash2 className="h-4 w-4 text-destructive" />
+            <Trash2 className="h-3.5 w-3.5 text-destructive" />
           </Button>
         </div>
       </div>
@@ -279,36 +287,36 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
   // Has recorded audio, ready to send
   if (audioBlob) {
     return (
-      <div className="flex-shrink-0 max-w-[280px]">
-        <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-full">
+      <div className="flex-1 min-w-0 max-w-full">
+        <div className="flex items-center gap-1.5 px-2 py-1.5 bg-muted rounded-full">
           {/* Play/Pause preview */}
           <Button
             variant="ghost"
             size="icon"
             onClick={togglePreviewPlayback}
-            className="h-8 w-8 rounded-full flex-shrink-0"
+            className="h-7 w-7 rounded-full flex-shrink-0"
           >
             {isPlaying ? (
-              <Square className="h-4 w-4 fill-foreground text-foreground" />
+              <Square className="h-3.5 w-3.5 fill-foreground text-foreground" />
             ) : (
-              <svg className="h-4 w-4 fill-foreground text-foreground" viewBox="0 0 24 24">
+              <svg className="h-3.5 w-3.5 fill-foreground text-foreground" viewBox="0 0 24 24">
                 <polygon points="5,3 19,12 5,21" />
               </svg>
             )}
           </Button>
           
-          {/* Static Waveform Preview */}
-          <div className="flex items-center gap-[2px] h-6 flex-shrink-0">
-            {waveformData.map((amplitude, index) => (
+          {/* Static Waveform Preview - flexible width, limited bars */}
+          <div className="flex items-center gap-[2px] h-5 flex-1 min-w-0 overflow-hidden justify-center">
+            {waveformData.slice(0, 12).map((amplitude, index) => (
               <div
                 key={index}
-                className="w-1 bg-foreground/50 rounded-full"
+                className="w-[3px] bg-foreground/50 rounded-full flex-shrink-0"
                 style={{ height: `${Math.max(20, amplitude * 100)}%` }}
               />
             ))}
           </div>
           
-          <span className="text-xs text-muted-foreground min-w-[40px]">
+          <span className="text-xs text-muted-foreground flex-shrink-0">
             {formatTime(recordingTime)}
           </span>
           
@@ -316,21 +324,21 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
             variant="ghost"
             size="icon"
             onClick={cancelRecording}
-            className="h-8 w-8 rounded-full flex-shrink-0"
+            className="h-7 w-7 rounded-full flex-shrink-0"
           >
-            <Trash2 className="h-4 w-4 text-muted-foreground" />
+            <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
           </Button>
           <Button
             variant="default"
             size="icon"
             onClick={sendVoiceMessage}
             disabled={isSending}
-            className="h-8 w-8 rounded-full flex-shrink-0"
+            className="h-7 w-7 rounded-full flex-shrink-0"
           >
             {isSending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <Send className="h-4 w-4" />
+              <Send className="h-3.5 w-3.5" />
             )}
           </Button>
         </div>
