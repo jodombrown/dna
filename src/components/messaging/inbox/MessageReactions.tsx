@@ -15,6 +15,7 @@ interface MessageReactionsProps {
   onAddReaction: (emoji: string) => void;
   onRemoveReaction: (emoji: string) => void;
   isOwn: boolean;
+  showTriggerOnly?: boolean;
 }
 
 const QUICK_REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🔥', '👏', '🙏'];
@@ -24,6 +25,7 @@ export const MessageReactions: React.FC<MessageReactionsProps> = ({
   onAddReaction,
   onRemoveReaction,
   isOwn,
+  showTriggerOnly = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,41 +39,69 @@ export const MessageReactions: React.FC<MessageReactionsProps> = ({
     setIsOpen(false);
   };
 
-  return (
-    <div className={cn(
-      "flex items-center gap-1 flex-wrap",
-      isOwn ? "justify-end" : "justify-start"
-    )}>
-      {/* Display existing reactions */}
-      {reactions.length > 0 && (
-        <div className="flex items-center gap-1 flex-wrap">
-          {reactions.map((reaction) => (
-            <button
-              key={reaction.emoji}
-              onClick={() => handleReactionClick(reaction.emoji)}
-              className={cn(
-                "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs transition-colors",
-                reaction.hasReacted
-                  ? "bg-primary/20 border border-primary/30"
-                  : "bg-muted hover:bg-muted/80 border border-border"
-              )}
-            >
-              <span>{reaction.emoji}</span>
-              <span className="text-muted-foreground">{reaction.count}</span>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Add reaction button */}
+  // If showing trigger only (for hover state next to actions menu)
+  if (showTriggerOnly) {
+    return (
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
             className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+            title="Add reaction"
           >
             <SmilePlus className="h-4 w-4 text-muted-foreground" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-2" side={isOwn ? "left" : "right"}>
+          <div className="flex gap-1 flex-wrap max-w-[200px]">
+            {QUICK_REACTIONS.map((emoji) => (
+              <button
+                key={emoji}
+                onClick={() => handleReactionClick(emoji)}
+                className="p-2 hover:bg-muted rounded transition-colors text-lg"
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  }
+
+  return (
+    <div className={cn(
+      "flex items-center gap-1 flex-wrap",
+      isOwn ? "justify-end" : "justify-start"
+    )}>
+      {/* Display existing reactions */}
+      {reactions.map((reaction) => (
+        <button
+          key={reaction.emoji}
+          onClick={() => handleReactionClick(reaction.emoji)}
+          className={cn(
+            "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs transition-colors",
+            reaction.hasReacted
+              ? "bg-primary/20 border border-primary/30"
+              : "bg-muted hover:bg-muted/80 border border-border"
+          )}
+        >
+          <span>{reaction.emoji}</span>
+          <span className="text-muted-foreground">{reaction.count}</span>
+        </button>
+      ))}
+      
+      {/* Add more reactions button - shown with existing reactions */}
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-5 w-5"
+            title="Add reaction"
+          >
+            <SmilePlus className="h-3.5 w-3.5 text-muted-foreground" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-2" side={isOwn ? "left" : "right"}>
