@@ -3553,6 +3553,7 @@ export type Database = {
           conversation_id: string
           created_at: string
           id: string
+          payload: Json | null
           read: boolean
           sender_id: string
         }
@@ -3561,6 +3562,7 @@ export type Database = {
           conversation_id: string
           created_at?: string
           id?: string
+          payload?: Json | null
           read?: boolean
           sender_id: string
         }
@@ -3569,6 +3571,7 @@ export type Database = {
           conversation_id?: string
           created_at?: string
           id?: string
+          payload?: Json | null
           read?: boolean
           sender_id?: string
         }

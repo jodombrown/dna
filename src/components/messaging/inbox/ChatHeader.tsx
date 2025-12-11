@@ -1,8 +1,9 @@
 import React from 'react';
-import { ArrowLeft, Phone, Video, MoreVertical } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { ConversationActionsMenu } from './ConversationActionsMenu';
 
 interface ChatHeaderProps {
   otherUser: {
@@ -11,10 +12,17 @@ interface ChatHeaderProps {
     full_name: string;
     avatar_url: string;
   };
+  conversationId: string;
   onBack: () => void;
+  onDeleteConversation?: () => void;
 }
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({ otherUser, onBack }) => {
+export const ChatHeader: React.FC<ChatHeaderProps> = ({ 
+  otherUser, 
+  conversationId,
+  onBack,
+  onDeleteConversation,
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -41,18 +49,12 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ otherUser, onBack }) => 
         </div>
       </button>
 
-      {/* Actions - Placeholder for future */}
-      <div className="flex items-center gap-1">
-        {/* <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Phone className="h-5 w-5" />
-        </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Video className="h-5 w-5" />
-        </Button> */}
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <MoreVertical className="h-5 w-5" />
-        </Button>
-      </div>
+      {/* Actions Menu */}
+      <ConversationActionsMenu
+        otherUser={otherUser}
+        conversationId={conversationId}
+        onDeleteConversation={onDeleteConversation}
+      />
     </div>
   );
 };

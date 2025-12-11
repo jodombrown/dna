@@ -6,6 +6,7 @@ import { Check, CheckCheck } from 'lucide-react';
 import { MessageAttachment } from './MessageAttachment';
 import { LinkPreview } from './LinkPreview';
 import { useLinkPreview } from '@/hooks/useLinkPreview';
+import { MessageActionsMenu } from './MessageActionsMenu';
 
 interface AttachmentData {
   type: 'image' | 'file';
@@ -41,12 +42,14 @@ interface ChatBubbleProps {
   };
   isOwn: boolean;
   showAvatar?: boolean;
+  onDeleteMessage?: (messageId: string) => void;
 }
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
   message,
   isOwn,
   showAvatar = true,
+  onDeleteMessage,
 }) => {
   // Auto-detect links in message content
   const { previews } = useLinkPreview(message.content || '');
@@ -65,7 +68,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
 
   return (
     <div className={cn(
-      "flex gap-2 px-4 py-1",
+      "group flex gap-2 px-4 py-1",
       isOwn ? "flex-row-reverse" : "flex-row"
     )}>
       {/* Avatar - Only for other user */}
@@ -79,9 +82,22 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       )}
       {!isOwn && !showAvatar && <div className="w-8" />}
 
+      {/* Message Actions Menu - appears on hover */}
+      <div className={cn(
+        "flex items-center",
+        isOwn ? "order-first" : "order-last"
+      )}>
+        <MessageActionsMenu
+          messageId={message.message_id}
+          content={message.content}
+          isOwn={isOwn}
+          onDelete={onDeleteMessage}
+        />
+      </div>
+
       {/* Message Bubble */}
       <div className={cn(
-        "max-w-[75%] rounded-2xl px-4 py-2",
+        "max-w-[70%] rounded-2xl px-4 py-2",
         isOwn 
           ? "bg-primary text-primary-foreground rounded-tr-sm" 
           : "bg-muted rounded-tl-sm"
