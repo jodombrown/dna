@@ -1,6 +1,36 @@
 import { supabase } from '@/integrations/supabase/client';
 
 /**
+ * Attachment data for messages
+ */
+export interface MessageAttachmentData {
+  type: 'image' | 'file';
+  url: string;
+  filename?: string;
+  filesize?: number;
+  mimetype?: string;
+}
+
+/**
+ * Link preview data for messages
+ */
+export interface LinkPreviewData {
+  url: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  siteName?: string;
+}
+
+/**
+ * Message payload structure
+ */
+export interface MessagePayload {
+  attachment?: MessageAttachmentData;
+  linkPreview?: LinkPreviewData;
+}
+
+/**
  * Message type for the simpler conversations/messages tables
  */
 export interface Message {
@@ -10,6 +40,7 @@ export interface Message {
   content: string;
   read: boolean;
   created_at: string;
+  payload?: MessagePayload;
 }
 
 /**
@@ -24,6 +55,8 @@ export interface MessageWithSender {
   sender_username: string;
   sender_full_name: string;
   sender_avatar_url: string;
+  is_read?: boolean;
+  payload?: MessagePayload;
 }
 
 /**
@@ -245,13 +278,24 @@ export const messageService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Get messages
+    // Get messages - cast to bypass type checking for payload column
     const { data: messages, error } = await supabase
       .from('messages')
-      .select('id, conversation_id, sender_id, content, read, created_at')
+      .select('id, conversation_id, sender_id, content, read, created_at, payload')
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true })
-      .limit(limit);
+      .limit(limit) as unknown as { 
+        data: Array<{
+          id: string;
+          conversation_id: string;
+          sender_id: string;
+          content: string;
+          read: boolean;
+          created_at: string;
+          payload: MessagePayload | null;
+        }> | null;
+        error: Error | null;
+      };
 
     if (error) {
       console.error('[messageService] Error getting messages:', error);
@@ -282,33 +326,41 @@ export const messageService = {
       sender_username: profileMap.get(m.sender_id)?.username || '',
       sender_full_name: profileMap.get(m.sender_id)?.full_name || 'Unknown',
       sender_avatar_url: profileMap.get(m.sender_id)?.avatar_url || '',
+      is_read: m.read,
+      payload: m.payload || undefined,
     }));
   },
 
   /**
-   * Send a message in a conversation
+   * Send a message in a conversation with optional attachment
    */
   async sendMessage(
     conversationId: string,
-    content: string
+    content: string,
+    attachment?: MessageAttachmentData
   ): Promise<Message> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    if (!content || content.trim().length === 0) {
-      throw new Error('Message content cannot be empty');
+    if (!content && !attachment) {
+      throw new Error('Message must have content or attachment');
     }
 
     console.log('[messageService] Sending message to conversation:', conversationId);
 
+    // Build payload if there's an attachment
+    const payload: MessagePayload | null = attachment ? { attachment } : null;
+
+    // Cast insert to bypass type checking for payload column
     const { data, error } = await supabase
       .from('messages')
       .insert({
         conversation_id: conversationId,
         sender_id: user.id,
-        content: content.trim(),
+        content: content?.trim() || '',
         read: false,
-      })
+        payload: payload,
+      } as any)
       .select()
       .single();
 
