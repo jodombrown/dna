@@ -142,12 +142,11 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       {/* Message Bubble */}
       <div className="flex flex-col gap-1 max-w-[70%]">
         <div className={cn(
-          "rounded-xl px-3 py-2",
-          // Subtle 3D shadow effect
-          "shadow-sm",
+          "rounded-lg px-3 py-2",
+          // Deeper 3D shadow effect
           isOwn 
-            ? "bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-tr-[4px] shadow-emerald-700/30" 
-            : "bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 text-foreground rounded-tl-[4px] shadow-amber-200/50 dark:shadow-amber-900/30"
+            ? "bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-tr-[2px] shadow-[0_2px_8px_rgba(5,150,105,0.4),0_4px_16px_rgba(5,150,105,0.2)]" 
+            : "bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 text-foreground rounded-tl-[2px] shadow-[0_2px_8px_rgba(217,119,6,0.2),0_4px_16px_rgba(217,119,6,0.1)]"
         )}>
           {/* Voice Message Player */}
           {isVoiceMessage && attachment?.url ? (
