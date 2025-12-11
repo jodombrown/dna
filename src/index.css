@@ -265,6 +265,22 @@ html, body {
   50% { transform: translateY(-10px); }
 }
 
+/* Waveform idle animation - subtle breathing effect for voice messages */
+@keyframes waveform-idle {
+  0%, 100% { 
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: scaleY(0.85);
+    opacity: 0.8;
+  }
+}
+
+.animate-waveform-idle {
+  animation: waveform-idle 2s ease-in-out infinite;
+}
+
 /* Enhanced Mobile-first responsive design utilities */
 @layer utilities {
   /* Container utilities */

@@ -206,7 +206,7 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
           )}
         </button>
 
-        {/* Waveform Visualization */}
+        {/* Waveform Visualization with subtle wave animation */}
         <div 
           className="relative h-6 flex items-center gap-[2px] cursor-pointer flex-1"
           onClick={handleSeek}
@@ -215,14 +215,17 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
             <div
               key={index}
               className={cn(
-                "w-[3px] rounded-full transition-all duration-100",
+                "w-[3px] rounded-full transition-all duration-150",
                 index < progressIndex
                   ? (isOwn ? "bg-white" : "bg-foreground")
-                  : (isOwn ? "bg-white/40" : "bg-foreground/30")
+                  : (isOwn ? "bg-white/80" : "bg-foreground/50"),
+                // Add subtle wave animation when not playing
+                !isPlaying && "animate-waveform-idle"
               )}
               style={{ 
                 height: `${Math.max(20, amplitude * 100)}%`,
-                minHeight: '3px'
+                minHeight: '3px',
+                animationDelay: `${index * 50}ms`
               }}
             />
           ))}
