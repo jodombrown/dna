@@ -6,7 +6,7 @@ import { MemberCard } from '@/components/connect/MemberCard';
 import { Loader2, Users } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAnalytics } from '@/hooks/useAnalytics';
-import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
+import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
 
 export default function Discover() {
   const { user } = useAuth();
@@ -105,8 +105,8 @@ export default function Discover() {
 
   return (
     <div className="space-y-6">
-      {/* Profile Strength Banner */}
-      <ProfileStrengthBanner />
+      {/* Profile Completion Nudge */}
+      <ProfileCompletionNudge variant="compact" threshold={40} showMissingFields={true} />
 
       {/* Search Input */}
       <div>
