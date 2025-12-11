@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { messageService } from '@/services/messageService';
 import { useMobile } from '@/hooks/useMobile';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import ConversationListPanel from '@/components/messaging/ConversationListPanel';
-import ConversationThread from '@/components/messaging/ConversationThread';
+import { ChatThread } from '@/components/messaging/inbox/ChatThread';
 import EmptyConversationState from '@/components/messaging/EmptyConversationState';
 import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
 
@@ -25,7 +25,6 @@ import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
  */
 export default function MessagesPage() {
   const { isMobile } = useMobile();
-  const queryClient = useQueryClient();
   
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -37,27 +36,27 @@ export default function MessagesPage() {
   });
 
   const selectedConversation = conversations?.find(c => c.conversation_id === selectedConversationId);
+  
+  // Build otherUser object for ChatThread
+  const otherUser = selectedConversation ? {
+    id: selectedConversation.other_user_id,
+    username: selectedConversation.other_user_username || 'user',
+    full_name: selectedConversation.other_user_full_name || 'Unknown User',
+    avatar_url: selectedConversation.other_user_avatar_url || '',
+  } : null;
 
   // Mobile: Show only conversation list or thread, not both
   if (isMobile) {
-    if (selectedConversationId) {
+    if (selectedConversationId && otherUser) {
       return (
         <div className="min-h-screen bg-background">
           <UnifiedHeader />
           
-          <div className="border-b bg-card">
-            <div className="container mx-auto px-4 py-3">
-              <MessagesBreadcrumb 
-                selectedConversation={selectedConversation}
-                onClearSelection={() => setSelectedConversationId(null)}
-              />
-            </div>
-          </div>
-
           <div className="h-[calc(100vh-140px)]">
-            <ConversationThread 
+            <ChatThread 
               conversationId={selectedConversationId}
-              onClose={() => setSelectedConversationId(null)}
+              otherUser={otherUser}
+              onBack={() => setSelectedConversationId(null)}
             />
           </div>
           
@@ -122,9 +121,11 @@ export default function MessagesPage() {
           />
         }
         right={
-          selectedConversationId ? (
-            <ConversationThread 
+          selectedConversationId && otherUser ? (
+            <ChatThread 
               conversationId={selectedConversationId}
+              otherUser={otherUser}
+              onBack={() => setSelectedConversationId(null)}
             />
           ) : (
             <EmptyConversationState message="Select a conversation to start chatting" />
