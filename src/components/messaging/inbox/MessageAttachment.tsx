@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Download } from 'lucide-react';
+import { FileText, Download, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ImageLightbox } from './ImageLightbox';
+import { VideoEmbedLightbox, isSupportedVideoUrl, getYouTubeThumbnail } from '@/components/feed/VideoEmbedLightbox';
 
 interface AttachmentData {
-  type: 'image' | 'file';
+  type: 'image' | 'file' | 'video';
   url: string;
   filename?: string;
   filesize?: number;
   mimetype?: string;
+  thumbnail_url?: string;
 }
 
 interface MessageAttachmentProps {
@@ -21,7 +23,9 @@ export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
   isOwn,
 }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [videoLightboxOpen, setVideoLightboxOpen] = useState(false);
   const [showHeartbeat, setShowHeartbeat] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   // Stop heartbeat animation after 30 seconds
   useEffect(() => {
@@ -31,12 +35,69 @@ export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
+  // Preload image for faster lightbox
+  useEffect(() => {
+    if (attachment.type === 'image' && attachment.url) {
+      const img = new Image();
+      img.src = attachment.url;
+      img.onload = () => setImageLoaded(true);
+    }
+  }, [attachment.type, attachment.url]);
+
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return '';
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
+
+  // Check if this is a video link
+  const isVideo = attachment.type === 'video' || 
+    (attachment.type === 'file' && attachment.url && isSupportedVideoUrl(attachment.url));
+
+  if (isVideo) {
+    const thumbnailUrl = attachment.thumbnail_url || getYouTubeThumbnail(attachment.url);
+    
+    return (
+      <>
+        <button
+          onClick={() => setVideoLightboxOpen(true)}
+          className={cn(
+            "relative block mt-2 rounded-lg overflow-hidden max-w-[280px] cursor-pointer group",
+            showHeartbeat && "animate-image-heartbeat"
+          )}
+        >
+          {thumbnailUrl ? (
+            <img
+              src={thumbnailUrl}
+              alt="Video thumbnail"
+              className="w-full h-auto object-cover rounded-lg"
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full aspect-video bg-muted rounded-lg flex items-center justify-center">
+              <Play className="h-12 w-12 text-muted-foreground" />
+            </div>
+          )}
+          {/* Play overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors rounded-lg">
+            <div className={cn(
+              "p-3 rounded-full bg-white/90 shadow-lg",
+              showHeartbeat && "animate-heartbeat"
+            )}>
+              <Play className="h-8 w-8 text-primary fill-primary" />
+            </div>
+          </div>
+        </button>
+        <VideoEmbedLightbox
+          open={videoLightboxOpen}
+          onOpenChange={setVideoLightboxOpen}
+          videoUrl={attachment.url}
+          title={attachment.filename || 'Video'}
+        />
+      </>
+    );
+  }
 
   if (attachment.type === 'image') {
     return (
@@ -52,7 +113,7 @@ export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
             src={attachment.url} 
             alt={attachment.filename || 'Image'} 
             className="w-full h-auto object-cover rounded-lg hover:opacity-90 transition-opacity"
-            loading="lazy"
+            loading="eager"
           />
         </button>
         <ImageLightbox
