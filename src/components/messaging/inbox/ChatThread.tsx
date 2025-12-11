@@ -124,6 +124,12 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     sendMutation.mutate({ content, attachment: serviceAttachment });
   };
 
+  const handleSendVoice = async (audioBlob: Blob, duration: number) => {
+    await messageService.sendVoiceMessage(conversationId, audioBlob, duration);
+    queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
+    queryClient.invalidateQueries({ queryKey: ['conversations'] });
+  };
+
   const handleDeleteMessage = (messageId: string) => {
     deleteMutation.mutate(messageId);
   };
@@ -183,6 +189,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
       {/* Input */}
       <ChatInput 
         onSend={handleSend} 
+        onSendVoice={handleSendVoice}
         disabled={sendMutation.isPending}
       />
     </div>

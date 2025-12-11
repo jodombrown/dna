@@ -508,19 +508,94 @@ export const messageService = {
   },
 
   /**
-   * Search messages - placeholder
+   * Search messages in conversations
    */
   async searchMessages(
-    _query: string,
-    _conversationId?: string,
-    _limit: number = 50,
-    _offset: number = 0
+    query: string,
+    conversationId?: string,
+    limit: number = 50
   ): Promise<MessageSearchResult[]> {
-    return [];
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    if (!query.trim()) return [];
+
+    // Build the query
+    let queryBuilder = supabase
+      .from('messages')
+      .select('id, conversation_id, sender_id, content, created_at')
+      .ilike('content', `%${query}%`)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (conversationId) {
+      queryBuilder = queryBuilder.eq('conversation_id', conversationId);
+    }
+
+    const { data, error } = await queryBuilder;
+
+    if (error) throw error;
+    if (!data || data.length === 0) return [];
+
+    // Get sender profiles
+    const senderIds = [...new Set(data.map(m => m.sender_id))];
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .in('id', senderIds);
+
+    const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+    // Get conversation details for each message
+    const convIds = [...new Set(data.map(m => m.conversation_id))];
+    const { data: conversations } = await supabase
+      .from('conversations')
+      .select('id, user_a, user_b')
+      .in('id', convIds);
+
+    const convMap = new Map(conversations?.map(c => [c.id, c]) || []);
+
+    // Get other user profiles
+    const otherUserIds = new Set<string>();
+    conversations?.forEach(c => {
+      const otherId = c.user_a === user.id ? c.user_b : c.user_a;
+      otherUserIds.add(otherId);
+    });
+
+    const { data: otherProfiles } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .in('id', Array.from(otherUserIds));
+
+    const otherProfileMap = new Map(otherProfiles?.map(p => [p.id, p]) || []);
+
+    return data.map((m, index) => {
+      const sender = profileMap.get(m.sender_id);
+      const conv = convMap.get(m.conversation_id);
+      const otherId = conv ? (conv.user_a === user.id ? conv.user_b : conv.user_a) : '';
+      const otherUser = otherProfileMap.get(otherId);
+
+      return {
+        message_id: m.id,
+        conversation_id: m.conversation_id,
+        sender_id: m.sender_id,
+        sender_username: sender?.username || '',
+        sender_full_name: sender?.full_name || 'Unknown',
+        sender_avatar_url: sender?.avatar_url || '',
+        content: m.content,
+        content_type: 'text',
+        created_at: m.created_at,
+        other_user_id: otherId,
+        other_user_username: otherUser?.username || '',
+        other_user_full_name: otherUser?.full_name || 'Unknown',
+        other_user_avatar_url: otherUser?.avatar_url || '',
+        rank: limit - index,
+      };
+    });
   },
 
   /**
-   * Report a message - placeholder
+   * Report a message
    */
   async reportMessage(
     _messageId: string,
@@ -530,7 +605,268 @@ export const messageService = {
     console.log('Report message - feature pending');
     return 'pending';
   },
+
+  // =====================================================
+  // TIER 3: Reactions, Archive/Mute, Voice Messages
+  // =====================================================
+
+  /**
+   * Get reactions for a message
+   */
+  async getMessageReactions(messageId: string): Promise<MessageReaction[]> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    // Use 'reaction' column (actual DB column name)
+    const { data, error } = await supabase
+      .from('message_reactions')
+      .select('id, reaction, user_id, created_at')
+      .eq('message_id', messageId);
+
+    if (error) {
+      console.error('[messageService] Error getting reactions:', error);
+      return [];
+    }
+
+    // Group by emoji and count
+    const emojiMap = new Map<string, { count: number; hasReacted: boolean; users: string[] }>();
+    
+    (data || []).forEach((r) => {
+      const emoji = r.reaction;
+      const existing = emojiMap.get(emoji) || { count: 0, hasReacted: false, users: [] };
+      existing.count++;
+      if (r.user_id === user.id) existing.hasReacted = true;
+      existing.users.push(r.user_id);
+      emojiMap.set(emoji, existing);
+    });
+
+    return Array.from(emojiMap.entries()).map(([emoji, data]) => ({
+      emoji,
+      count: data.count,
+      hasReacted: data.hasReacted,
+    }));
+  },
+
+  /**
+   * Add a reaction to a message
+   */
+  async addReaction(messageId: string, emoji: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { error } = await supabase
+      .from('message_reactions')
+      .insert({
+        message_id: messageId,
+        user_id: user.id,
+        reaction: emoji,
+      });
+
+    if (error && !error.message?.includes('duplicate')) {
+      console.error('[messageService] Error adding reaction:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Remove a reaction from a message
+   */
+  async removeReaction(messageId: string, emoji: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { error } = await supabase
+      .from('message_reactions')
+      .delete()
+      .eq('message_id', messageId)
+      .eq('user_id', user.id)
+      .eq('reaction', emoji);
+
+    if (error) {
+      console.error('[messageService] Error removing reaction:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Archive a conversation
+   */
+  async archiveConversation(conversationId: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    // Get conversation to determine if user is user_a or user_b
+    const { data: conv } = await supabase
+      .from('conversations')
+      .select('user_a, user_b')
+      .eq('id', conversationId)
+      .single();
+
+    if (!conv) throw new Error('Conversation not found');
+
+    const isUserA = conv.user_a === user.id;
+    const updateField = isUserA ? 'is_archived_by_a' : 'is_archived_by_b';
+
+    const { error } = await supabase
+      .from('conversations')
+      .update({ [updateField]: true })
+      .eq('id', conversationId);
+
+    if (error) throw error;
+  },
+
+  /**
+   * Unarchive a conversation
+   */
+  async unarchiveConversation(conversationId: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data: conv } = await supabase
+      .from('conversations')
+      .select('user_a, user_b')
+      .eq('id', conversationId)
+      .single();
+
+    if (!conv) throw new Error('Conversation not found');
+
+    const isUserA = conv.user_a === user.id;
+    const updateField = isUserA ? 'is_archived_by_a' : 'is_archived_by_b';
+
+    const { error } = await supabase
+      .from('conversations')
+      .update({ [updateField]: false })
+      .eq('id', conversationId);
+
+    if (error) throw error;
+  },
+
+  /**
+   * Mute a conversation
+   */
+  async muteConversation(conversationId: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data: conv } = await supabase
+      .from('conversations')
+      .select('user_a, user_b')
+      .eq('id', conversationId)
+      .single();
+
+    if (!conv) throw new Error('Conversation not found');
+
+    const isUserA = conv.user_a === user.id;
+    const updateField = isUserA ? 'is_muted_by_a' : 'is_muted_by_b';
+
+    const { error } = await supabase
+      .from('conversations')
+      .update({ [updateField]: true })
+      .eq('id', conversationId);
+
+    if (error) throw error;
+  },
+
+  /**
+   * Unmute a conversation
+   */
+  async unmuteConversation(conversationId: string): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data: conv } = await supabase
+      .from('conversations')
+      .select('user_a, user_b')
+      .eq('id', conversationId)
+      .single();
+
+    if (!conv) throw new Error('Conversation not found');
+
+    const isUserA = conv.user_a === user.id;
+    const updateField = isUserA ? 'is_muted_by_a' : 'is_muted_by_b';
+
+    const { error } = await supabase
+      .from('conversations')
+      .update({ [updateField]: false })
+      .eq('id', conversationId);
+
+    if (error) throw error;
+  },
+
+  /**
+   * Get conversation status (archived/muted)
+   */
+  async getConversationStatus(conversationId: string): Promise<{ isArchived: boolean; isMuted: boolean }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { isArchived: false, isMuted: false };
+
+    const { data: conv } = await supabase
+      .from('conversations')
+      .select('user_a, user_b, is_archived_by_a, is_archived_by_b, is_muted_by_a, is_muted_by_b')
+      .eq('id', conversationId)
+      .single();
+
+    if (!conv) return { isArchived: false, isMuted: false };
+
+    const isUserA = conv.user_a === user.id;
+    
+    return {
+      isArchived: isUserA ? (conv.is_archived_by_a || false) : (conv.is_archived_by_b || false),
+      isMuted: isUserA ? (conv.is_muted_by_a || false) : (conv.is_muted_by_b || false),
+    };
+  },
+
+  /**
+   * Send a voice message
+   */
+  async sendVoiceMessage(
+    conversationId: string,
+    audioBlob: Blob,
+    duration: number
+  ): Promise<Message> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    // Upload audio to storage
+    const fileName = `voice-${user.id}-${Date.now()}.webm`;
+    const filePath = `voice-messages/${conversationId}/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('messages')
+      .upload(filePath, audioBlob, {
+        contentType: 'audio/webm',
+        cacheControl: '3600',
+      });
+
+    if (uploadError) {
+      console.error('[messageService] Error uploading voice message:', uploadError);
+      throw uploadError;
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('messages')
+      .getPublicUrl(filePath);
+
+    // Send message with voice attachment
+    return this.sendMessage(conversationId, '🎤 Voice message', {
+      type: 'file',
+      url: urlData.publicUrl,
+      filename: fileName,
+      mimetype: 'audio/webm',
+      filesize: audioBlob.size,
+    });
+  },
 };
+
+/**
+ * MessageReaction type
+ */
+export interface MessageReaction {
+  emoji: string;
+  count: number;
+  hasReacted: boolean;
+}
 
 /**
  * MessageSearchResult - Type for search results
@@ -558,4 +894,5 @@ export type {
   ConversationListItem as ConversationListItemType,
   Message as MessageType,
   MessageSearchResult as MessageSearchResultType,
+  MessageReaction as MessageReactionType,
 };

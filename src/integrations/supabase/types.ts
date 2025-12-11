@@ -1587,6 +1587,10 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          is_archived_by_a: boolean | null
+          is_archived_by_b: boolean | null
+          is_muted_by_a: boolean | null
+          is_muted_by_b: boolean | null
           last_message_at: string | null
           user_a: string
           user_b: string
@@ -1594,6 +1598,10 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          is_archived_by_a?: boolean | null
+          is_archived_by_b?: boolean | null
+          is_muted_by_a?: boolean | null
+          is_muted_by_b?: boolean | null
           last_message_at?: string | null
           user_a: string
           user_b: string
@@ -1601,6 +1609,10 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          is_archived_by_a?: boolean | null
+          is_archived_by_b?: boolean | null
+          is_muted_by_a?: boolean | null
+          is_muted_by_b?: boolean | null
           last_message_at?: string | null
           user_a?: string
           user_b?: string

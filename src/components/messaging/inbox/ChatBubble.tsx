@@ -7,6 +7,10 @@ import { MessageAttachment } from './MessageAttachment';
 import { LinkPreview } from './LinkPreview';
 import { useLinkPreview } from '@/hooks/useLinkPreview';
 import { MessageActionsMenu } from './MessageActionsMenu';
+import { MessageReactions } from './MessageReactions';
+import { VoiceMessagePlayer } from './VoiceMessagePlayer';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { messageService, MessageReaction } from '@/services/messageService';
 
 interface AttachmentData {
   type: 'image' | 'file';
@@ -51,6 +55,8 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   showAvatar = true,
   onDeleteMessage,
 }) => {
+  const queryClient = useQueryClient();
+  
   // Auto-detect links in message content
   const { previews } = useLinkPreview(message.content || '');
   
@@ -65,6 +71,33 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   // Use payload link preview if available, otherwise use auto-detected
   const linkPreview = message.payload?.linkPreview || previews[0];
   const attachment = message.payload?.attachment;
+  
+  // Check if this is a voice message
+  const isVoiceMessage = attachment?.mimetype?.startsWith('audio/') || 
+    (attachment?.filename?.includes('voice-') && attachment?.type === 'file');
+
+  // Fetch reactions for this message
+  const { data: reactions = [] } = useQuery({
+    queryKey: ['message-reactions', message.message_id],
+    queryFn: () => messageService.getMessageReactions(message.message_id),
+    staleTime: 30000,
+  });
+
+  // Add reaction mutation
+  const addReactionMutation = useMutation({
+    mutationFn: (emoji: string) => messageService.addReaction(message.message_id, emoji),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['message-reactions', message.message_id] });
+    },
+  });
+
+  // Remove reaction mutation
+  const removeReactionMutation = useMutation({
+    mutationFn: (emoji: string) => messageService.removeReaction(message.message_id, emoji),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['message-reactions', message.message_id] });
+    },
+  });
 
   return (
     <div className={cn(
@@ -96,50 +129,67 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       </div>
 
       {/* Message Bubble */}
-      <div className={cn(
-        "max-w-[70%] rounded-2xl px-4 py-2",
-        isOwn 
-          ? "bg-primary text-primary-foreground rounded-tr-sm" 
-          : "bg-muted rounded-tl-sm"
-      )}>
-        {/* Text content - hide raw URLs when link preview exists */}
-        {message.content && (
-          <p className="text-sm whitespace-pre-wrap break-words">
-            {linkPreview && linkPreview.url 
-              ? message.content.replace(linkPreview.url, '').trim() 
-              : message.content}
-          </p>
-        )}
-
-        {/* Attachment */}
-        {attachment && (
-          <MessageAttachment attachment={attachment} isOwn={isOwn} />
-        )}
-
-        {/* Link Preview - only show if no attachment and link detected */}
-        {!attachment && linkPreview && linkPreview.url && (
-          <LinkPreview preview={linkPreview} isOwn={isOwn} />
-        )}
-
-        {/* Timestamp and read receipt */}
+      <div className="flex flex-col gap-1 max-w-[70%]">
         <div className={cn(
-          "flex items-center gap-1 mt-1",
-          isOwn ? "justify-end" : "justify-start"
+          "rounded-2xl px-4 py-2",
+          isOwn 
+            ? "bg-primary text-primary-foreground rounded-tr-sm" 
+            : "bg-muted rounded-tl-sm"
         )}>
-          <span className={cn(
-            "text-[10px]",
-            isOwn ? "text-primary-foreground/70" : "text-muted-foreground"
-          )}>
-            {formatTime(message.created_at)}
-          </span>
-          {isOwn && (
-            message.is_read ? (
-              <CheckCheck className="h-3 w-3 text-blue-400" />
-            ) : (
-              <Check className="h-3 w-3 text-primary-foreground/70" />
-            )
+          {/* Voice Message Player */}
+          {isVoiceMessage && attachment?.url ? (
+            <VoiceMessagePlayer url={attachment.url} isOwn={isOwn} />
+          ) : (
+            <>
+              {/* Text content - hide raw URLs when link preview exists */}
+              {message.content && (
+                <p className="text-sm whitespace-pre-wrap break-words">
+                  {linkPreview && linkPreview.url 
+                    ? message.content.replace(linkPreview.url, '').trim() 
+                    : message.content}
+                </p>
+              )}
+
+              {/* Regular Attachment */}
+              {attachment && !isVoiceMessage && (
+                <MessageAttachment attachment={attachment} isOwn={isOwn} />
+              )}
+
+              {/* Link Preview - only show if no attachment and link detected */}
+              {!attachment && linkPreview && linkPreview.url && (
+                <LinkPreview preview={linkPreview} isOwn={isOwn} />
+              )}
+            </>
           )}
+
+          {/* Timestamp and read receipt */}
+          <div className={cn(
+            "flex items-center gap-1 mt-1",
+            isOwn ? "justify-end" : "justify-start"
+          )}>
+            <span className={cn(
+              "text-[10px]",
+              isOwn ? "text-primary-foreground/70" : "text-muted-foreground"
+            )}>
+              {formatTime(message.created_at)}
+            </span>
+            {isOwn && (
+              message.is_read ? (
+                <CheckCheck className="h-3 w-3 text-blue-400" />
+              ) : (
+                <Check className="h-3 w-3 text-primary-foreground/70" />
+              )
+            )}
+          </div>
         </div>
+
+        {/* Reactions */}
+        <MessageReactions
+          reactions={reactions}
+          onAddReaction={(emoji) => addReactionMutation.mutate(emoji)}
+          onRemoveReaction={(emoji) => removeReactionMutation.mutate(emoji)}
+          isOwn={isOwn}
+        />
       </div>
     </div>
   );
