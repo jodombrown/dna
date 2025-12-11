@@ -85,7 +85,14 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
       case 'reaction':
       case 'mention':
       case 'reshare':
-        targetRoute = '/dna/feed';
+        // Navigate to specific post if entity_id exists
+        if (notification.entity_type === 'post' && notification.entity_id) {
+          targetRoute = `/dna/feed?post=${notification.entity_id}`;
+        } else if (notification.action_url) {
+          targetRoute = notification.action_url;
+        } else {
+          targetRoute = '/dna/feed';
+        }
         break;
       case 'new_message':
         targetRoute = '/dna/messages';
