@@ -4,7 +4,8 @@ import { Card } from '@/components/ui/card';
 import { ChatThread } from './inbox/ChatThread';
 import { useMobile } from '@/hooks/useMobile';
 import { messageService } from '@/services/messageService';
-import { Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface MessageOverlayProps {
   isOpen: boolean;
@@ -29,11 +30,12 @@ const MessageOverlay: React.FC<MessageOverlayProps> = ({
   const { isMobile } = useMobile();
 
   // Fetch conversation details to get other user info
-  const { data: conversation, isLoading } = useQuery({
+  const { data: conversation, isLoading, error } = useQuery({
     queryKey: ['conversation-details', conversationId],
     queryFn: () => messageService.getConversationDetails(conversationId!),
     enabled: !!conversationId && isOpen,
     staleTime: 30000,
+    retry: 2,
   });
 
   // Handle ESC key to close
@@ -71,6 +73,16 @@ const MessageOverlay: React.FC<MessageOverlayProps> = ({
     avatar_url: conversation.other_user_avatar_url || '',
   } : null;
 
+  // Fallback header component for loading/error states
+  const FallbackHeader = ({ title }: { title: string }) => (
+    <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+      <h2 className="font-semibold">{title}</h2>
+      <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+        <X className="h-5 w-5" />
+      </Button>
+    </div>
+  );
+
   return (
     <>
       {/* Backdrop */}
@@ -90,9 +102,19 @@ const MessageOverlay: React.FC<MessageOverlayProps> = ({
       >
         <Card className="h-full border-0 rounded-none flex flex-col overflow-hidden">
           {isLoading ? (
-            <div className="h-full flex items-center justify-center">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
+            <>
+              <FallbackHeader title="Loading..." />
+              <div className="h-full flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            </>
+          ) : error ? (
+            <>
+              <FallbackHeader title="Error" />
+              <div className="h-full flex items-center justify-center text-muted-foreground">
+                <p>Failed to load conversation</p>
+              </div>
+            </>
           ) : conversationId && otherUser ? (
             <ChatThread
               conversationId={conversationId}
@@ -100,13 +122,19 @@ const MessageOverlay: React.FC<MessageOverlayProps> = ({
               onBack={onClose}
             />
           ) : recipientId ? (
-            <div className="h-full flex items-center justify-center text-muted-foreground">
-              <p>Starting conversation...</p>
-            </div>
+            <>
+              <FallbackHeader title="New Message" />
+              <div className="h-full flex items-center justify-center text-muted-foreground">
+                <p>Starting conversation...</p>
+              </div>
+            </>
           ) : (
-            <div className="h-full flex items-center justify-center text-muted-foreground">
-              <p>No conversation selected</p>
-            </div>
+            <>
+              <FallbackHeader title="Messages" />
+              <div className="h-full flex items-center justify-center text-muted-foreground">
+                <p>No conversation selected</p>
+              </div>
+            </>
           )}
         </Card>
       </div>
