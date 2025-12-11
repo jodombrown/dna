@@ -29,7 +29,7 @@ import DnaFeed from "./pages/dna/Feed";
 import HashtagFeed from "./pages/dna/HashtagFeed";
 import DebugUniversalFeed from "./pages/dna/DebugUniversalFeed";
 import DnaEvents from "./pages/dna/Events";
-import DnaMessages from "./pages/dna/Messages";
+import DnaMessages from "./pages/dna/MessagesInbox";
 import DnaImpact from "./pages/dna/Impact";
 import DnaNotifications from "./pages/dna/Notifications";
 import DnaAnalytics from "./pages/dna/Analytics";
