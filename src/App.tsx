@@ -11,152 +11,165 @@ import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import BaseLayout from "@/layouts/BaseLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import React, { Suspense, lazy } from "react";
 
-// Core pages
+// Loading fallback for lazy-loaded routes
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+);
+
+// Core pages - eagerly loaded for initial render
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import ResetPassword from "./pages/ResetPassword";
-import InviteSignup from "./pages/InviteSignup";
-import Onboarding from "./pages/Onboarding";
-import DnaMe from "./pages/dna/Me";
-import DnaUserDashboard from "./pages/dna/Username";
-import PublicProfile from "./pages/dna/PublicProfile";
-import ProfileV2 from "./pages/ProfileV2";
-import ActivityFeed from "./pages/ActivityFeed";
-import SavedPostsPage from "./pages/SavedPostsPage";
-import DnaNetwork from "./pages/dna/Network";
-import DnaFeed from "./pages/dna/Feed";
-import HashtagFeed from "./pages/dna/HashtagFeed";
-import DebugUniversalFeed from "./pages/dna/DebugUniversalFeed";
-import DnaEvents from "./pages/dna/Events";
-import DnaMessages from "./pages/dna/MessagesInbox";
-import DnaImpact from "./pages/dna/Impact";
-import DnaNotifications from "./pages/dna/Notifications";
-import DnaAnalytics from "./pages/dna/Analytics";
 import NotFound from "./pages/NotFound";
-import AdminLayout from "./pages/admin/AdminLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import EngagementDashboard from "./pages/admin/EngagementDashboard";
-import AdminEngagement from "./pages/admin/AdminEngagement";
-import AdminSignals from "./pages/admin/AdminSignals";
-import WaitlistManagement from "./pages/admin/WaitlistManagement";
-import UserManagement from "./pages/admin/UserManagement";
-import PlatformHealth from "./pages/admin/PlatformHealth";
-import ContentModeration from "./pages/admin/ContentModeration";
 import { OnboardingGuard } from "./components/auth/OnboardingGuard";
-import FeedComingSoon from "./pages/FeedComingSoon";
+
+// Lazy-loaded pages - split into separate chunks
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const InviteSignup = lazy(() => import("./pages/InviteSignup"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const DnaMe = lazy(() => import("./pages/dna/Me"));
+const DnaUserDashboard = lazy(() => import("./pages/dna/Username"));
+const PublicProfile = lazy(() => import("./pages/dna/PublicProfile"));
+const ProfileV2 = lazy(() => import("./pages/ProfileV2"));
+const ActivityFeed = lazy(() => import("./pages/ActivityFeed"));
+const SavedPostsPage = lazy(() => import("./pages/SavedPostsPage"));
+const DnaNetwork = lazy(() => import("./pages/dna/Network"));
+const DnaFeed = lazy(() => import("./pages/dna/Feed"));
+const HashtagFeed = lazy(() => import("./pages/dna/HashtagFeed"));
+const DebugUniversalFeed = lazy(() => import("./pages/dna/DebugUniversalFeed"));
+const DnaEvents = lazy(() => import("./pages/dna/Events"));
+const DnaMessages = lazy(() => import("./pages/dna/MessagesInbox"));
+const DnaImpact = lazy(() => import("./pages/dna/Impact"));
+const DnaNotifications = lazy(() => import("./pages/dna/Notifications"));
+const DnaAnalytics = lazy(() => import("./pages/dna/Analytics"));
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const EngagementDashboard = lazy(() => import("./pages/admin/EngagementDashboard"));
+const AdminEngagement = lazy(() => import("./pages/admin/AdminEngagement"));
+const AdminSignals = lazy(() => import("./pages/admin/AdminSignals"));
+const WaitlistManagement = lazy(() => import("./pages/admin/WaitlistManagement"));
+const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
+const PlatformHealth = lazy(() => import("./pages/admin/PlatformHealth"));
+const ContentModeration = lazy(() => import("./pages/admin/ContentModeration"));
+const FeedComingSoon = lazy(() => import("./pages/FeedComingSoon"));
 
 // Static pages  
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import TermsOfService from "./pages/TermsOfService";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import UserAgreement from "./pages/UserAgreement";
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const UserAgreement = lazy(() => import("./pages/UserAgreement"));
 
 // Example pages
-import ConnectExample from "./pages/ConnectExample";
-import ConveneExample from "./pages/ConveneExample";
-import CollaborationsExample from "./pages/CollaborationsExample";
-import ContributeExample from "./pages/ContributeExample";
-import ConveyExample from "./pages/ConveyExample";
-import Convene from "./pages/Convene";
-import ConveneCategoryPage from "./pages/ConveneCategoryPage";
-import FeaturedCalendarsPage from "./pages/FeaturedCalendarsPage";
-import LocalEventsPage from "./pages/LocalEventsPage";
-import FactSheetPage from "./pages/FactSheetPage";
-import PitchDeck from "./pages/PitchDeck";
-import FeaturesHub from "./pages/documentation/FeaturesHub";
-import FeatureDetail from "./pages/documentation/FeatureDetail";
+const ConnectExample = lazy(() => import("./pages/ConnectExample"));
+const ConveneExample = lazy(() => import("./pages/ConveneExample"));
+const CollaborationsExample = lazy(() => import("./pages/CollaborationsExample"));
+const ContributeExample = lazy(() => import("./pages/ContributeExample"));
+const ConveyExample = lazy(() => import("./pages/ConveyExample"));
+const Convene = lazy(() => import("./pages/Convene"));
+const ConveneCategoryPage = lazy(() => import("./pages/ConveneCategoryPage"));
+const FeaturedCalendarsPage = lazy(() => import("./pages/FeaturedCalendarsPage"));
+const LocalEventsPage = lazy(() => import("./pages/LocalEventsPage"));
+const FactSheetPage = lazy(() => import("./pages/FactSheetPage"));
+const PitchDeck = lazy(() => import("./pages/PitchDeck"));
+const FeaturesHub = lazy(() => import("./pages/documentation/FeaturesHub"));
+const FeatureDetail = lazy(() => import("./pages/documentation/FeatureDetail"));
 
 // Convene M1-M3 pages
-import ConveneHub from "./pages/dna/convene/ConveneHub";
-import EventsIndex from "./pages/dna/convene/EventsIndex";
-import EventDetail from "./pages/dna/convene/EventDetail";
-import Welcome from "./pages/dna/Welcome";
-import DashboardSettings from "./pages/dna/DashboardSettings";
-import CreateEvent from "./pages/dna/convene/CreateEvent";
-import MyEvents from "./pages/dna/convene/MyEvents";
-import EventAnalytics from "./pages/dna/convene/EventAnalytics";
-import OrganizerAnalytics from "./pages/dna/convene/OrganizerAnalytics";
-import GroupsBrowse from "./pages/dna/convene/GroupsBrowse";
-import GroupEventsPage from "./pages/dna/convene/GroupEventsPage";
+const ConveneHub = lazy(() => import("./pages/dna/convene/ConveneHub"));
+const EventsIndex = lazy(() => import("./pages/dna/convene/EventsIndex"));
+const EventDetail = lazy(() => import("./pages/dna/convene/EventDetail"));
+const Welcome = lazy(() => import("./pages/dna/Welcome"));
+const DashboardSettings = lazy(() => import("./pages/dna/DashboardSettings"));
+const CreateEvent = lazy(() => import("./pages/dna/convene/CreateEvent"));
+const MyEvents = lazy(() => import("./pages/dna/convene/MyEvents"));
+const EventAnalytics = lazy(() => import("./pages/dna/convene/EventAnalytics"));
+const OrganizerAnalytics = lazy(() => import("./pages/dna/convene/OrganizerAnalytics"));
+const GroupsBrowse = lazy(() => import("./pages/dna/convene/GroupsBrowse"));
+const GroupEventsPage = lazy(() => import("./pages/dna/convene/GroupEventsPage"));
 
 // Collaborate M1-M5 pages
-import CollaborateHub from "./pages/dna/collaborate/CollaborateHub";
-import SpacesIndex from "./pages/dna/collaborate/SpacesIndex";
-import CollaborateSpaceDetail from "./pages/dna/collaborate/SpaceDetail";
-import SpaceBoard from "./pages/dna/collaborate/SpaceBoard";
-import CreateSpace from "./pages/dna/collaborate/CreateSpace";
-import SpaceSettings from "./pages/dna/collaborate/SpaceSettings";
-import MySpaces from "./pages/dna/collaborate/MySpaces";
+const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub"));
+const SpacesIndex = lazy(() => import("./pages/dna/collaborate/SpacesIndex"));
+const CollaborateSpaceDetail = lazy(() => import("./pages/dna/collaborate/SpaceDetail"));
+const SpaceBoard = lazy(() => import("./pages/dna/collaborate/SpaceBoard"));
+const CreateSpace = lazy(() => import("./pages/dna/collaborate/CreateSpace"));
+const SpaceSettings = lazy(() => import("./pages/dna/collaborate/SpaceSettings"));
+const MySpaces = lazy(() => import("./pages/dna/collaborate/MySpaces"));
 
 // Contribute M1-M2 pages
-import ContributeHub from "./pages/dna/contribute/ContributeHub";
-import NeedsIndex from "./pages/dna/contribute/NeedsIndex";
-import NeedDetail from "./pages/dna/contribute/NeedDetail";
-import OpportunityDetail from "./pages/dna/contribute/OpportunityDetail";
-import MyContributions from "./pages/dna/contribute/MyContributions";
+const ContributeHub = lazy(() => import("./pages/dna/contribute/ContributeHub"));
+const NeedsIndex = lazy(() => import("./pages/dna/contribute/NeedsIndex"));
+const NeedDetail = lazy(() => import("./pages/dna/contribute/NeedDetail"));
+const OpportunityDetail = lazy(() => import("./pages/dna/contribute/OpportunityDetail"));
+const MyContributions = lazy(() => import("./pages/dna/contribute/MyContributions"));
 
 // Convey M1-M4 pages
-import Convey from "./pages/dna/Convey";
-import ConveyHub from "./pages/dna/convey/ConveyHub";
-import StoryDetail from "./pages/dna/convey/StoryDetail";
-import FeedStoryDetail from "./pages/dna/FeedStoryDetail";
-import CreateStory from "./pages/dna/convey/CreateStory";
-import ConveyAnalytics from "./pages/dna/admin/ConveyAnalytics";
+const Convey = lazy(() => import("./pages/dna/Convey"));
+const ConveyHub = lazy(() => import("./pages/dna/convey/ConveyHub"));
+const StoryDetail = lazy(() => import("./pages/dna/convey/StoryDetail"));
+const FeedStoryDetail = lazy(() => import("./pages/dna/FeedStoryDetail"));
+const CreateStory = lazy(() => import("./pages/dna/convey/CreateStory"));
+const ConveyAnalytics = lazy(() => import("./pages/dna/admin/ConveyAnalytics"));
 
 // Feature pages
-import Opportunities from "./pages/Opportunities";
-import MyApplications from "./pages/MyApplications";
-import CollaborationSpaces from "./pages/CollaborationSpaces";
-import SpaceDetail from "./pages/SpaceDetail";
-import Discover from "./pages/Discover";
-import DiscoverMembers from "./pages/DiscoverMembers";
-import DnaDiscover from "./pages/dna/Discover";
-import Network from "./pages/Network";
-import Messages from "./pages/Messages";
-import MessagesPage from "./pages/MessagesPage";
-import NotificationsPage from "./pages/NotificationsPage";
-import NotificationSettingsPage from "./pages/NotificationSettingsPage";
-import ProfileEdit from "./pages/ProfileEdit";
+const Opportunities = lazy(() => import("./pages/Opportunities"));
+const MyApplications = lazy(() => import("./pages/MyApplications"));
+const CollaborationSpaces = lazy(() => import("./pages/CollaborationSpaces"));
+const SpaceDetail = lazy(() => import("./pages/SpaceDetail"));
+const Discover = lazy(() => import("./pages/Discover"));
+const DiscoverMembers = lazy(() => import("./pages/DiscoverMembers"));
+const DnaDiscover = lazy(() => import("./pages/dna/Discover"));
+const Network = lazy(() => import("./pages/Network"));
+const Messages = lazy(() => import("./pages/Messages"));
+const MessagesPage = lazy(() => import("./pages/MessagesPage"));
+const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
+const NotificationSettingsPage = lazy(() => import("./pages/NotificationSettingsPage"));
+const ProfileEdit = lazy(() => import("./pages/ProfileEdit"));
 
 // Settings Hub pages
-import { AccountSettings, PrivacySettings, NotificationSettings, PreferencesSettings } from "./pages/dna/settings";
-import AdinPreferences from "./pages/AdinPreferences";
-import NudgeCenter from "./pages/NudgeCenter";
-import EventsPage from "./pages/EventsPage";
-import EventDetailsPage from "./pages/EventDetailsPage";
-import EditEventPage from "./pages/EditEventPage";
-import GroupsPage from "./pages/GroupsPage";
-import DnaGroups from "./pages/dna/Groups";
-import GroupDetailsPage from "./pages/GroupDetailsPage";
-import GroupSettingsPage from "./pages/GroupSettingsPage";
+const AccountSettings = lazy(() => import("./pages/dna/settings/AccountSettings"));
+const PrivacySettings = lazy(() => import("./pages/dna/settings/PrivacySettings"));
+const NotificationSettings = lazy(() => import("./pages/dna/settings/NotificationSettings"));
+const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesSettings"));
+const AdinPreferences = lazy(() => import("./pages/AdinPreferences"));
+const NudgeCenter = lazy(() => import("./pages/NudgeCenter"));
+const EventsPage = lazy(() => import("./pages/EventsPage"));
+const EventDetailsPage = lazy(() => import("./pages/EventDetailsPage"));
+const EditEventPage = lazy(() => import("./pages/EditEventPage"));
+const GroupsPage = lazy(() => import("./pages/GroupsPage"));
+const DnaGroups = lazy(() => import("./pages/dna/Groups"));
+const GroupDetailsPage = lazy(() => import("./pages/GroupDetailsPage"));
+const GroupSettingsPage = lazy(() => import("./pages/GroupSettingsPage"));
 
 // CONNECT M2 - New Connect Hub pages
-import Connect from "./pages/dna/connect/Connect";
-import { ConnectLayout } from "./components/connect/ConnectLayout";
-import ConnectDiscover from "./pages/dna/connect/Discover";
-import ConnectNetwork from "./pages/dna/connect/Network";
-import ConnectMessages from "./pages/dna/connect/Messages";
-import ConversationView from "./pages/dna/connect/ConversationView";
+const Connect = lazy(() => import("./pages/dna/connect/Connect"));
+const ConnectLayout = lazy(() => import("./components/connect/ConnectLayout").then(m => ({ default: m.ConnectLayout })));
+const ConnectDiscover = lazy(() => import("./pages/dna/connect/Discover"));
+const ConnectNetwork = lazy(() => import("./pages/dna/connect/Network"));
+const ConnectMessages = lazy(() => import("./pages/dna/connect/Messages"));
+const ConversationView = lazy(() => import("./pages/dna/connect/ConversationView"));
 
 // Regional pages
-import NorthAfricaLandingPage from "./pages/NorthAfricaLandingPage";
+const NorthAfricaLandingPage = lazy(() => import("./pages/NorthAfricaLandingPage"));
 
 // Phase pages
-import MarketResearchPhase from "./pages/MarketResearchPhase";
-import PrototypingPhase from "./pages/PrototypingPhase";
-import CustomerDiscoveryPhase from "./pages/CustomerDiscoveryPhase";
-import MvpPhase from "./pages/MvpPhase";
-import BetaValidationPhase from "./pages/BetaValidationPhase";
-import GoToMarketPhase from "./pages/GoToMarketPhase";
-import Moderation from "./pages/admin/Moderation";
+const MarketResearchPhase = lazy(() => import("./pages/MarketResearchPhase"));
+const PrototypingPhase = lazy(() => import("./pages/PrototypingPhase"));
+const CustomerDiscoveryPhase = lazy(() => import("./pages/CustomerDiscoveryPhase"));
+const MvpPhase = lazy(() => import("./pages/MvpPhase"));
+const BetaValidationPhase = lazy(() => import("./pages/BetaValidationPhase"));
+const GoToMarketPhase = lazy(() => import("./pages/GoToMarketPhase"));
+const Moderation = lazy(() => import("./pages/admin/Moderation"));
 
 // Partner With DNA pages
-import PartnerWithDna from "./pages/PartnerWithDna";
-import PartnerSector from "./pages/PartnerSector";
-import PartnerModels from "./pages/PartnerModels";
-import PartnerStart from "./pages/PartnerStart";
+const PartnerWithDna = lazy(() => import("./pages/PartnerWithDna"));
+const PartnerSector = lazy(() => import("./pages/PartnerSector"));
+const PartnerModels = lazy(() => import("./pages/PartnerModels"));
+const PartnerStart = lazy(() => import("./pages/PartnerStart"));
 
 
 const queryClient = new QueryClient();
@@ -195,7 +208,8 @@ function App() {
                 <ViewStateProvider>
                   <MessageProvider>
                     <BaseLayout>
-                  <Routes>
+                  <Suspense fallback={<PageLoader />}>
+                    <Routes>
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
@@ -561,6 +575,7 @@ function App() {
               
               <Route path="*" element={<NotFound />} />
                 </Routes>
+                  </Suspense>
                 <BadgeToastListener />
               </BaseLayout>
                 </MessageProvider>
