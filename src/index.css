@@ -498,12 +498,20 @@ html, body {
 
 /* Mobile-safe area for devices with notches/home indicators */
 .safe-area-pb {
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem);
+}
+
+.safe-area-pt {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safe-area-inset-bottom {
+  bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Ensure bottom-fixed elements sit above iOS browser bar */
 .safe-area-bottom {
-  bottom: env(safe-area-inset-bottom) !important;
+  bottom: env(safe-area-inset-bottom, 0px) !important;
 }
 
 /* Dynamic Bokeh Animation Keyframes */

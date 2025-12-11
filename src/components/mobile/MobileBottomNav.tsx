@@ -147,7 +147,7 @@ const MobileBottomNav: React.FC = () => {
               )}
             >
               <item.icon className="w-5 h-5" strokeWidth={isActive(item.path) ? 2.5 : 2} />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <span className="text-xs font-medium">{item.label}</span>
               
               {/* Active indicator */}
               {isActive(item.path) && (
