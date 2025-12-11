@@ -120,6 +120,8 @@ const UnifiedHeader = () => {
                   src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
                   alt="DNA Logo" 
                   className="h-8 w-auto"
+                  width={57}
+                  height={32}
                 />
               </NavLink>
             </div>
@@ -148,6 +150,8 @@ const UnifiedHeader = () => {
                           src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
                           alt="Logo" 
                           className="h-6 sm:h-8 w-auto"
+                          width={57}
+                          height={32}
                         />
                       </div>
                     </div>
@@ -246,6 +250,8 @@ const UnifiedHeader = () => {
                   src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
                   alt="DNA Logo" 
                   className="h-8 w-auto"
+                  width={57}
+                  height={32}
                 />
               </NavLink>
               
@@ -492,6 +498,8 @@ const UnifiedHeader = () => {
                           src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
                           alt="Logo" 
                           className="h-6 sm:h-8 w-auto"
+                          width={57}
+                          height={32}
                         />
                       </div>
                     </div>

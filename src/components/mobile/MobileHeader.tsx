@@ -61,6 +61,8 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
             src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
             alt="DNA" 
             className="h-8 w-auto cursor-pointer flex-shrink-0"
+            width={57}
+            height={32}
             onClick={() => navigate('/dna/feed')}
           />
 
@@ -115,6 +117,8 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
               src="/lovable-uploads/f7ac6d60-aafb-4e52-beb5-69c903113029.png" 
               alt="DNA" 
               className="h-8 w-auto cursor-pointer"
+              width={57}
+              height={32}
               onClick={() => navigate('/dna/feed')}
             />
           )}
