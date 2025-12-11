@@ -32,6 +32,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 }) => {
   const [message, setMessage] = useState('');
   const [attachment, setAttachment] = useState<MessageAttachment | null>(null);
+  const [isVoiceRecorderActive, setIsVoiceRecorderActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { uploadImage, uploading } = useImageUpload();
@@ -176,7 +177,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       )}
 
       <div className="p-3">
-        <div className="flex items-end gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           {/* File input */}
           <input
             type="file"
@@ -186,49 +187,54 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             className="hidden"
           />
 
-          {/* Attachment button */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-10 w-10 flex-shrink-0"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={disabled || uploading}
-          >
-            {uploading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Paperclip className="h-5 w-5" />
-            )}
-          </Button>
-
-          {/* Input */}
-          <div className="flex-1 relative">
-            <Textarea
-              ref={textareaRef}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={placeholder}
-              disabled={disabled}
-              rows={1}
-              className={cn(
-                "min-h-[44px] max-h-[120px] resize-none",
-                "text-base md:text-sm", // 16px on mobile to prevent iOS zoom
-                "bg-muted/50 border-0 focus-visible:ring-1 rounded-2xl py-3 px-4"
+          {/* Attachment button - hide when voice recorder is active */}
+          {!isVoiceRecorderActive && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-10 w-10 flex-shrink-0"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={disabled || uploading}
+            >
+              {uploading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Paperclip className="h-5 w-5" />
               )}
-            />
-          </div>
+            </Button>
+          )}
 
-          {/* Voice Message Recorder */}
+          {/* Voice Message Recorder - takes over when active */}
           {onSendVoice && !message.trim() && !attachment && (
             <VoiceMessageRecorder 
               onSendVoice={onSendVoice} 
-              disabled={disabled} 
+              disabled={disabled}
+              onActiveStateChange={setIsVoiceRecorderActive}
             />
           )}
 
+          {/* Input - hide when voice recorder is active */}
+          {!isVoiceRecorderActive && (
+            <div className="flex-1 min-w-0">
+              <Textarea
+                ref={textareaRef}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={placeholder}
+                disabled={disabled}
+                rows={1}
+                className={cn(
+                  "min-h-[44px] max-h-[120px] resize-none",
+                  "text-base md:text-sm", // 16px on mobile to prevent iOS zoom
+                  "bg-muted/50 border-0 focus-visible:ring-1 rounded-2xl py-3 px-4"
+                )}
+              />
+            </div>
+          )}
+
           {/* Send button - show when there's content */}
-          {(message.trim() || attachment || linkPreview) && (
+          {(message.trim() || attachment || linkPreview) && !isVoiceRecorderActive && (
             <Button 
               onClick={handleSend}
               disabled={(!message.trim() && !attachment && !linkPreview) || disabled}
