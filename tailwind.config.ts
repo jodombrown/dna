@@ -266,6 +266,17 @@ export default {
 						boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
 					}
 				}
+				},
+				'image-heartbeat': {
+					'0%, 100%': {
+						transform: 'scale(1)',
+						boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+					},
+					'50%': {
+						transform: 'scale(1.02)',
+						boxShadow: '0 6px 20px rgba(0, 0, 0, 0.15)'
+					}
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -275,7 +286,8 @@ export default {
 				'heartbeat-delayed': 'heartbeat 2s ease-in-out infinite 1s',
 				'heartbeat-delayed-2': 'heartbeat 2s ease-in-out infinite 2s',
 				'breathing-pulse': 'breathing-pulse 1.5s ease-in-out forwards',
-				'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite'
+				'breathing-pulse-staggered': 'breathing-pulse-staggered 2s ease-in-out infinite',
+				'image-heartbeat': 'image-heartbeat 2.5s ease-in-out infinite'
 			}
 		}
 	},
