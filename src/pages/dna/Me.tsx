@@ -4,6 +4,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { ConnectNudges } from '@/components/connect/ConnectNudges';
 import { MyProfilePreview } from '@/components/profile/MyProfilePreview';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
+import { RecentActivity } from '@/components/profile/RecentActivity';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -141,17 +142,8 @@ const DnaMe = () => {
               </CardContent>
             </Card>
 
-            {/* Activity placeholder - can be enhanced later */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  <p className="text-sm">Your recent activity will appear here</p>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Recent Activity - populated with real data */}
+            <RecentActivity />
           </div>
         </div>
       </div>
