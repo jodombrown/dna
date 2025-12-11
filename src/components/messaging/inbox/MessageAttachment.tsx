@@ -5,12 +5,13 @@ import { ImageLightbox } from './ImageLightbox';
 import { VideoEmbedLightbox, isSupportedVideoUrl, getYouTubeThumbnail } from '@/components/feed/VideoEmbedLightbox';
 
 interface AttachmentData {
-  type: 'image' | 'file' | 'video';
+  type: 'image' | 'file' | 'video' | 'voice';
   url: string;
   filename?: string;
   filesize?: number;
   mimetype?: string;
   thumbnail_url?: string;
+  duration?: number;
 }
 
 interface MessageAttachmentProps {

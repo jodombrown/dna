@@ -4,11 +4,12 @@ import { supabase } from '@/integrations/supabase/client';
  * Attachment data for messages
  */
 export interface MessageAttachmentData {
-  type: 'image' | 'file';
+  type: 'image' | 'file' | 'voice';
   url: string;
   filename?: string;
   filesize?: number;
   mimetype?: string;
+  duration?: number; // For voice messages, duration in seconds
 }
 
 /**
@@ -827,9 +828,18 @@ export const messageService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
+    console.log('[messageService] Sending voice message:', {
+      conversationId,
+      blobSize: audioBlob.size,
+      duration,
+      type: audioBlob.type,
+    });
+
     // Upload audio to storage
     const fileName = `voice-${user.id}-${Date.now()}.webm`;
     const filePath = `voice-messages/${conversationId}/${fileName}`;
+
+    console.log('[messageService] Uploading to storage:', filePath);
 
     const { error: uploadError } = await supabase.storage
       .from('messages')
@@ -840,22 +850,30 @@ export const messageService = {
 
     if (uploadError) {
       console.error('[messageService] Error uploading voice message:', uploadError);
-      throw uploadError;
+      throw new Error(`Failed to upload voice message: ${uploadError.message}`);
     }
+
+    console.log('[messageService] Upload successful, getting public URL');
 
     // Get public URL
     const { data: urlData } = supabase.storage
       .from('messages')
       .getPublicUrl(filePath);
 
+    console.log('[messageService] Public URL:', urlData.publicUrl);
+
     // Send message with voice attachment
-    return this.sendMessage(conversationId, '🎤 Voice message', {
-      type: 'file',
+    const result = await this.sendMessage(conversationId, '🎤 Voice message', {
+      type: 'voice',
       url: urlData.publicUrl,
       filename: fileName,
       mimetype: 'audio/webm',
       filesize: audioBlob.size,
+      duration: duration,
     });
+
+    console.log('[messageService] Voice message sent successfully:', result.id);
+    return result;
   },
 };
 

@@ -86,13 +86,26 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
   }, []);
 
   const sendVoiceMessage = useCallback(async () => {
-    if (!audioBlob) return;
+    if (!audioBlob) {
+      console.error('[VoiceMessageRecorder] No audio blob to send');
+      return;
+    }
+    
+    console.log('[VoiceMessageRecorder] Sending voice message...', {
+      blobSize: audioBlob.size,
+      duration: recordingTime,
+      type: audioBlob.type,
+    });
     
     setIsSending(true);
     try {
       await onSendVoice(audioBlob, recordingTime);
+      console.log('[VoiceMessageRecorder] Voice message sent successfully');
       setAudioBlob(null);
       setRecordingTime(0);
+    } catch (error) {
+      console.error('[VoiceMessageRecorder] Failed to send voice message:', error);
+      // Don't clear the audio so user can retry
     } finally {
       setIsSending(false);
     }
