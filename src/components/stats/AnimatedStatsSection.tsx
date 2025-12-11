@@ -13,11 +13,11 @@ const AnimatedStat = ({ value, suffix, label, description, bgGradient }: {
 
   return (
     <div className={`${bgGradient} rounded-xl p-6 text-center shadow-lg min-h-[140px]`}>
-      <div ref={countRef} className="text-4xl font-bold text-white mb-2 tabular-nums min-w-[80px] inline-block">
+      <div ref={countRef} className="text-4xl font-bold text-white mb-2 tabular-nums min-w-[120px] inline-block h-[44px]">
         {count}{suffix}
       </div>
-      <div className="text-lg font-medium text-white/90 mb-1">{label}</div>
-      <div className="text-sm text-white/80">{description}</div>
+      <div className="text-lg font-medium text-white/90 mb-1 h-[28px]">{label}</div>
+      <div className="text-sm text-white/80 min-h-[40px]">{description}</div>
     </div>
   );
 };
