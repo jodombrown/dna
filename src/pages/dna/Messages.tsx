@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useMobile } from '@/hooks/useMobile';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import ConversationListPanel from '@/components/messaging/ConversationListPanel';
-import ConversationThread from '@/components/messaging/ConversationThread';
+import { ChatThread } from '@/components/messaging/inbox/ChatThread';
 import EmptyConversationState from '@/components/messaging/EmptyConversationState';
 import { LayoutTransitionLoader } from '@/components/LayoutTransitionLoader';
 
@@ -36,23 +36,26 @@ const DnaMessages = () => {
   }
 
   const selectedConversation = conversations?.find(c => c.conversation_id === selectedConversationId);
+  
+  // Build otherUser object for ChatThread
+  const otherUser = selectedConversation ? {
+    id: selectedConversation.other_user_id,
+    username: selectedConversation.other_user_username || 'user',
+    full_name: selectedConversation.other_user_full_name || 'Unknown User',
+    avatar_url: selectedConversation.other_user_avatar_url || '',
+  } : null;
 
   // Mobile: Show only conversation list or thread, not both
   if (isMobile) {
-    if (selectedConversationId) {
+    if (selectedConversationId && otherUser) {
       return (
         <div className="min-h-screen bg-background pt-20">
-          <div className="border-b bg-card">
-            <div className="container mx-auto px-4 py-3">
-              <MessagesBreadcrumb 
-                selectedConversation={selectedConversation}
-                onClearSelection={() => setSelectedConversationId(null)}
-              />
-            </div>
-          </div>
-
-          <div className="container mx-auto px-4">
-            <ConversationThread conversationId={selectedConversationId} />
+          <div className="h-[calc(100vh-80px)]">
+            <ChatThread 
+              conversationId={selectedConversationId}
+              otherUser={otherUser}
+              onBack={() => setSelectedConversationId(null)}
+            />
           </div>
 
           <MobileBottomNav />
@@ -96,8 +99,12 @@ const DnaMessages = () => {
           />
         }
         right={
-          selectedConversationId ? (
-            <ConversationThread conversationId={selectedConversationId} />
+          selectedConversationId && otherUser ? (
+            <ChatThread 
+              conversationId={selectedConversationId}
+              otherUser={otherUser}
+              onBack={() => setSelectedConversationId(null)}
+            />
           ) : (
             <EmptyConversationState />
           )

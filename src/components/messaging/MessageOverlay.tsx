@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
-import { X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
-import ConversationThread from './ConversationThread';
+import { ChatThread } from './inbox/ChatThread';
 import { useMobile } from '@/hooks/useMobile';
+import { messageService } from '@/services/messageService';
+import { Loader2 } from 'lucide-react';
 
 interface MessageOverlayProps {
   isOpen: boolean;
   onClose: () => void;
   conversationId?: string;
-  recipientId?: string; // For starting new conversation
+  recipientId?: string;
 }
 
 /**
@@ -17,12 +18,7 @@ interface MessageOverlayProps {
  * 
  * Can be triggered from anywhere in the app for quick messaging.
  * Slides in from right (desktop) or full-screen (mobile).
- * 
- * Features:
- * - Semi-transparent backdrop
- * - Click backdrop to close
- * - Escape key to close
- * - Maintains conversation state when view changes
+ * Uses the enhanced ChatThread component for consistency.
  */
 const MessageOverlay: React.FC<MessageOverlayProps> = ({
   isOpen,
@@ -31,6 +27,14 @@ const MessageOverlay: React.FC<MessageOverlayProps> = ({
   recipientId,
 }) => {
   const { isMobile } = useMobile();
+
+  // Fetch conversation details to get other user info
+  const { data: conversation, isLoading } = useQuery({
+    queryKey: ['conversation-details', conversationId],
+    queryFn: () => messageService.getConversationDetails(conversationId!),
+    enabled: !!conversationId && isOpen,
+    staleTime: 30000,
+  });
 
   // Handle ESC key to close
   useEffect(() => {
@@ -59,6 +63,14 @@ const MessageOverlay: React.FC<MessageOverlayProps> = ({
 
   if (!isOpen) return null;
 
+  // Build otherUser object for ChatThread
+  const otherUser = conversation ? {
+    id: conversation.other_user_id || '',
+    username: conversation.other_user_username || 'user',
+    full_name: conversation.other_user_full_name || 'Unknown User',
+    avatar_url: conversation.other_user_avatar_url || '',
+  } : null;
+
   return (
     <>
       {/* Backdrop */}
@@ -76,38 +88,26 @@ const MessageOverlay: React.FC<MessageOverlayProps> = ({
             : 'top-0 right-0 h-full w-[450px]'
         }`}
       >
-        <Card className="h-full border-0 rounded-none flex flex-col">
-          {/* Header */}
-          <div className="p-4 border-b flex items-center justify-between bg-card">
-            <h2 className="font-semibold text-lg">Message</h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="h-8 w-8 p-0"
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
-
-          {/* Conversation Thread */}
-          <div className="flex-1 overflow-hidden">
-            {conversationId ? (
-              <ConversationThread
-                conversationId={conversationId}
-                onClose={onClose}
-                isOverlay
-              />
-            ) : recipientId ? (
-              <div className="h-full flex items-center justify-center text-muted-foreground">
-                <p>Starting conversation with user {recipientId}...</p>
-              </div>
-            ) : (
-              <div className="h-full flex items-center justify-center text-muted-foreground">
-                <p>No conversation selected</p>
-              </div>
-            )}
-          </div>
+        <Card className="h-full border-0 rounded-none flex flex-col overflow-hidden">
+          {isLoading ? (
+            <div className="h-full flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : conversationId && otherUser ? (
+            <ChatThread
+              conversationId={conversationId}
+              otherUser={otherUser}
+              onBack={onClose}
+            />
+          ) : recipientId ? (
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <p>Starting conversation...</p>
+            </div>
+          ) : (
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <p>No conversation selected</p>
+            </div>
+          )}
         </Card>
       </div>
     </>

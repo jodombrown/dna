@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ConversationListItem } from '@/components/messaging/ConversationListItem';
-import { ConversationView } from '@/components/messaging/ConversationView';
 import { Input } from '@/components/ui/input';
-import { ConversationListItem as ConversationListItemType } from '@/types/messaging';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -11,28 +8,22 @@ import { Search, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { ChatThread } from '@/components/messaging/inbox/ChatThread';
+import { ConversationListItem as ConversationItem } from '@/components/messaging/inbox/ConversationListItem';
+import { messageService, ConversationListItem } from '@/services/messageService';
+import { useMobile } from '@/hooks/useMobile';
 
 export default function MessagesPage() {
   const { conversationId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isMobile } = useMobile();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedConversation, setSelectedConversation] =
-    useState<ConversationListItemType | null>(null);
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(conversationId || null);
 
-  const { data: conversations, refetch } = useQuery({
-    queryKey: ['user-conversations', user?.id],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data, error } = await supabase.rpc('get_user_conversations', {
-        p_user_id: user.id,
-        p_limit: 50,
-        p_offset: 0,
-      });
-
-      if (error) throw error;
-      return (data || []) as ConversationListItemType[];
-    },
+  const { data: conversations, refetch, isLoading } = useQuery({
+    queryKey: ['conversations'],
+    queryFn: () => messageService.getConversations(),
     enabled: !!user,
   });
 
@@ -47,7 +38,7 @@ export default function MessagesPage() {
         {
           event: '*',
           schema: 'public',
-          table: 'messages_new',
+          table: 'messages',
         },
         () => {
           refetch();
@@ -62,27 +53,35 @@ export default function MessagesPage() {
 
   // Set selected conversation from URL param
   useEffect(() => {
-    if (conversationId && conversations) {
-      const conversation = conversations.find((c) => c.conversation_id === conversationId);
-      if (conversation) {
-        setSelectedConversation(conversation);
-      }
+    if (conversationId) {
+      setSelectedConversationId(conversationId);
     }
-  }, [conversationId, conversations]);
+  }, [conversationId]);
 
-  const handleSelectConversation = (conversation: ConversationListItemType) => {
-    setSelectedConversation(conversation);
+  const handleSelectConversation = (conversation: ConversationListItem) => {
+    setSelectedConversationId(conversation.conversation_id);
     navigate(`/dna/messages/${conversation.conversation_id}`);
   };
 
   const handleBack = () => {
-    setSelectedConversation(null);
+    setSelectedConversationId(null);
     navigate('/dna/messages');
   };
 
   const filteredConversations = conversations?.filter((c) =>
-    c.other_user_full_name.toLowerCase().includes(searchQuery.toLowerCase())
+    c.other_user_full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.other_user_username.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const selectedConversation = conversations?.find(c => c.conversation_id === selectedConversationId);
+  
+  // Build otherUser object for ChatThread
+  const otherUser = selectedConversation ? {
+    id: selectedConversation.other_user_id,
+    username: selectedConversation.other_user_username || 'user',
+    full_name: selectedConversation.other_user_full_name || 'Unknown User',
+    avatar_url: selectedConversation.other_user_avatar_url || '',
+  } : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -91,7 +90,7 @@ export default function MessagesPage() {
         {/* Conversations List */}
         <div
           className={`w-full md:w-96 border-r flex flex-col ${
-            selectedConversation ? 'hidden md:flex' : 'flex'
+            selectedConversationId ? 'hidden md:flex' : 'flex'
           }`}
         >
           <div className="p-4 border-b">
@@ -107,8 +106,8 @@ export default function MessagesPage() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-2">
-            {!conversations ? (
+          <div className="flex-1 overflow-y-auto">
+            {isLoading ? (
               <div className="text-center py-12 text-muted-foreground">
                 Loading conversations...
               </div>
@@ -132,32 +131,30 @@ export default function MessagesPage() {
                 )}
               </div>
             ) : (
-              filteredConversations?.map((conversation) => (
-                <ConversationListItem
-                  key={conversation.conversation_id}
-                  conversation={conversation}
-                  currentUserId={user?.id || ''}
-                  isActive={selectedConversation?.conversation_id === conversation.conversation_id}
-                  onClick={() => handleSelectConversation(conversation)}
-                />
-              ))
+              <div>
+                {filteredConversations?.map((conversation) => (
+                  <ConversationItem
+                    key={conversation.conversation_id}
+                    conversation={conversation}
+                    isSelected={selectedConversationId === conversation.conversation_id}
+                    onClick={() => handleSelectConversation(conversation)}
+                  />
+                ))}
+              </div>
             )}
           </div>
         </div>
 
-        {/* Conversation View */}
+        {/* Conversation View - Enhanced ChatThread */}
         <div
           className={`flex-1 ${
-            selectedConversation ? 'flex' : 'hidden md:flex'
+            selectedConversationId ? 'flex' : 'hidden md:flex'
           } flex-col bg-muted/30`}
         >
-          {selectedConversation ? (
-            <ConversationView
-              conversationId={selectedConversation.conversation_id}
-              currentUserId={user?.id || ''}
-              otherUserName={selectedConversation.other_user_full_name}
-              otherUserUsername={selectedConversation.other_user_username}
-              otherUserAvatar={selectedConversation.other_user_avatar_url}
+          {selectedConversationId && otherUser ? (
+            <ChatThread
+              conversationId={selectedConversationId}
+              otherUser={otherUser}
               onBack={handleBack}
             />
           ) : (
