@@ -3,7 +3,7 @@
  * Modal for playing YouTube/Vimeo videos in-app without leaving the platform
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X, ExternalLink } from 'lucide-react';
@@ -19,6 +19,8 @@ interface VideoEmbedLightboxProps {
  * Extract video ID and platform from URL
  */
 function parseVideoUrl(url: string): { platform: 'youtube' | 'vimeo' | null; videoId: string | null } {
+  if (!url) return { platform: null, videoId: null };
+  
   // YouTube patterns
   const youtubePatterns = [
     /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]+)/,
@@ -67,12 +69,16 @@ export function VideoEmbedLightbox({
     window.open(videoUrl, '_blank', 'noopener,noreferrer');
   };
 
-  // If we can't parse the URL, just open externally
-  if (!embedUrl) {
-    if (open) {
+  // Handle unsupported URLs - open externally via useEffect (not during render)
+  useEffect(() => {
+    if (open && !embedUrl && videoUrl) {
       handleOpenOriginal();
       onOpenChange(false);
     }
+  }, [open, embedUrl, videoUrl, onOpenChange]);
+
+  // Don't render dialog if no valid embed URL
+  if (!embedUrl) {
     return null;
   }
 
