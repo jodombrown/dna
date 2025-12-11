@@ -48,6 +48,14 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     },
   });
 
+  // Delete message mutation
+  const deleteMutation = useMutation({
+    mutationFn: (messageId: string) => messageService.deleteMessage(messageId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
+    },
+  });
+
   // Mark as read on mount and when new messages arrive
   useEffect(() => {
     if (conversationId) {
@@ -116,10 +124,18 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     sendMutation.mutate({ content, attachment: serviceAttachment });
   };
 
+  const handleDeleteMessage = (messageId: string) => {
+    deleteMutation.mutate(messageId);
+  };
+
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <ChatHeader otherUser={otherUser} onBack={onBack} />
+      <ChatHeader 
+        otherUser={otherUser} 
+        conversationId={conversationId}
+        onBack={onBack} 
+      />
 
       {/* Messages */}
       <div 
@@ -153,6 +169,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
                       message={msg}
                       isOwn={isOwn}
                       showAvatar={showAvatar}
+                      onDeleteMessage={handleDeleteMessage}
                     />
                   );
                 })}
