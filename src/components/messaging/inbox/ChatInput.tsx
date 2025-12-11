@@ -7,6 +7,7 @@ import { useImageUpload } from '@/hooks/useImageUpload';
 import { useToast } from '@/hooks/use-toast';
 import { useLinkPreview, extractFirstUrl } from '@/hooks/useLinkPreview';
 import { LinkPreview } from './LinkPreview';
+import { VoiceMessageRecorder } from './VoiceMessageRecorder';
 
 export interface MessageAttachment {
   type: 'image' | 'file';
@@ -18,12 +19,14 @@ export interface MessageAttachment {
 
 interface ChatInputProps {
   onSend: (content: string, attachment?: MessageAttachment) => void;
+  onSendVoice?: (audioBlob: Blob, duration: number) => Promise<void>;
   disabled?: boolean;
   placeholder?: string;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
   onSend,
+  onSendVoice,
   disabled = false,
   placeholder = "Type a message...",
 }) => {
@@ -216,15 +219,25 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             />
           </div>
 
-          {/* Send button */}
-          <Button 
-            onClick={handleSend}
-            disabled={(!message.trim() && !attachment && !linkPreview) || disabled}
-            size="icon"
-            className="h-10 w-10 rounded-full flex-shrink-0"
-          >
-            <Send className="h-5 w-5" />
-          </Button>
+          {/* Voice Message Recorder */}
+          {onSendVoice && !message.trim() && !attachment && (
+            <VoiceMessageRecorder 
+              onSendVoice={onSendVoice} 
+              disabled={disabled} 
+            />
+          )}
+
+          {/* Send button - show when there's content */}
+          {(message.trim() || attachment || linkPreview) && (
+            <Button 
+              onClick={handleSend}
+              disabled={(!message.trim() && !attachment && !linkPreview) || disabled}
+              size="icon"
+              className="h-10 w-10 rounded-full flex-shrink-0"
+            >
+              <Send className="h-5 w-5" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
