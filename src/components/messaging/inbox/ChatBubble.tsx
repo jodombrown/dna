@@ -117,9 +117,17 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
 
       {/* Message Actions Menu - appears on hover */}
       <div className={cn(
-        "flex items-center",
+        "flex items-center gap-1",
         isOwn ? "order-first" : "order-last"
       )}>
+        {/* Reaction trigger button - visible on hover */}
+        <MessageReactions
+          reactions={[]}
+          onAddReaction={(emoji) => addReactionMutation.mutate(emoji)}
+          onRemoveReaction={(emoji) => removeReactionMutation.mutate(emoji)}
+          isOwn={isOwn}
+          showTriggerOnly
+        />
         <MessageActionsMenu
           messageId={message.message_id}
           content={message.content}
@@ -183,13 +191,15 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           </div>
         </div>
 
-        {/* Reactions */}
-        <MessageReactions
-          reactions={reactions}
-          onAddReaction={(emoji) => addReactionMutation.mutate(emoji)}
-          onRemoveReaction={(emoji) => removeReactionMutation.mutate(emoji)}
-          isOwn={isOwn}
-        />
+        {/* Existing Reactions - displayed below message */}
+        {reactions.length > 0 && (
+          <MessageReactions
+            reactions={reactions}
+            onAddReaction={(emoji) => addReactionMutation.mutate(emoji)}
+            onRemoveReaction={(emoji) => removeReactionMutation.mutate(emoji)}
+            isOwn={isOwn}
+          />
+        )}
       </div>
     </div>
   );
