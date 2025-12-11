@@ -13,11 +13,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { messageService, MessageReaction } from '@/services/messageService';
 
 interface AttachmentData {
-  type: 'image' | 'file';
+  type: 'image' | 'file' | 'voice' | 'video';
   url: string;
   filename?: string;
   filesize?: number;
   mimetype?: string;
+  duration?: number;
+  thumbnail_url?: string;
 }
 
 interface LinkPreviewData {
@@ -73,7 +75,8 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   const attachment = message.payload?.attachment;
   
   // Check if this is a voice message
-  const isVoiceMessage = attachment?.mimetype?.startsWith('audio/') || 
+  const isVoiceMessage = attachment?.type === 'voice' || 
+    attachment?.mimetype?.startsWith('audio/') || 
     (attachment?.filename?.includes('voice-') && attachment?.type === 'file');
 
   // Fetch reactions for this message
@@ -146,7 +149,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
         )}>
           {/* Voice Message Player */}
           {isVoiceMessage && attachment?.url ? (
-            <VoiceMessagePlayer url={attachment.url} isOwn={isOwn} />
+            <VoiceMessagePlayer url={attachment.url} duration={attachment.duration} isOwn={isOwn} />
           ) : (
             <>
               {/* Text content - hide raw URLs when link preview exists */}
