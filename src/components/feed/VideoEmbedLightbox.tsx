@@ -3,7 +3,7 @@
  * Modal for playing YouTube/Vimeo videos in-app without leaving the platform
  */
 
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X, ExternalLink } from 'lucide-react';
@@ -65,21 +65,27 @@ export function VideoEmbedLightbox({
     return null;
   }, [platform, videoId]);
 
-  const handleOpenOriginal = () => {
+  const handleOpenOriginal = useCallback(() => {
     window.open(videoUrl, '_blank', 'noopener,noreferrer');
-  };
+  }, [videoUrl]);
 
-  // Handle unsupported URLs - open externally via useEffect (not during render)
-  useEffect(() => {
-    if (open && !embedUrl && videoUrl) {
-      handleOpenOriginal();
-      onOpenChange(false);
-    }
-  }, [open, embedUrl, videoUrl, onOpenChange]);
-
-  // Don't render dialog if no valid embed URL
+  // If we can't parse the URL, show a fallback message instead of opening externally
   if (!embedUrl) {
-    return null;
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-md p-6 border bg-background">
+          <div className="text-center space-y-4">
+            <p className="text-muted-foreground">
+              This video format is not supported for in-app playback.
+            </p>
+            <Button onClick={handleOpenOriginal} variant="outline">
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Open in new tab
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
   }
 
   return (

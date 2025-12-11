@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Download, X } from 'lucide-react';
+import { Download } from 'lucide-react';
 
 interface ImageLightboxProps {
   isOpen: boolean;
@@ -16,7 +16,8 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
   imageUrl,
   filename = 'image',
 }) => {
-  const handleDownload = async () => {
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       const response = await fetch(imageUrl);
       const blob = await response.blob();
@@ -36,46 +37,28 @@ export const ImageLightbox: React.FC<ImageLightboxProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-black/95 border-none overflow-hidden">
-        <div className="relative flex flex-col items-center justify-center w-full h-full min-h-[50vh]">
-          {/* Close button */}
+      <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-black/95 border-none overflow-hidden [&>button]:hidden">
+        <div 
+          className="relative flex flex-col items-center justify-center w-full h-full min-h-[50vh]"
+          onClick={onClose}
+        >
+          {/* Single download button - top right */}
           <Button
             variant="ghost"
             size="icon"
-            className="absolute top-2 right-2 z-10 text-white hover:bg-white/20"
-            onClick={onClose}
-          >
-            <X className="h-6 w-6" />
-          </Button>
-          
-          {/* Download button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-2 left-2 z-10 text-white hover:bg-white/20"
+            className="absolute top-3 right-3 z-10 text-white hover:bg-white/20 rounded-full"
             onClick={handleDownload}
           >
             <Download className="h-6 w-6" />
           </Button>
 
-          {/* Image */}
+          {/* Image - click anywhere else to close */}
           <img
             src={imageUrl}
             alt={filename}
-            className="max-w-full max-h-[85vh] object-contain"
+            className="max-w-full max-h-[90vh] object-contain"
+            onClick={(e) => e.stopPropagation()}
           />
-
-          {/* Download bar at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-            <Button
-              variant="secondary"
-              className="w-full"
-              onClick={handleDownload}
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Save Image
-            </Button>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
