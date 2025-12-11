@@ -1,16 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import HeroSection from '@/components/HeroSection';
-import PlatformFeatureShowcase from '@/components/PlatformFeatureShowcase';
-import BuildingTogetherSection from '@/components/BuildingTogetherSection';
-import WhoIsDNAForSection from '@/components/WhoIsDNAForSection';
-import Footer from '@/components/Footer';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import PrototypeBanner from '@/components/PrototypeBanner';
-import WaitlistPopup from '@/components/waitlist/WaitlistPopup';
-import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
 import { useAuth } from '@/contexts/AuthContext';
+import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
+
+// Lazy load below-the-fold components to improve TTI
+const PlatformFeatureShowcase = lazy(() => import('@/components/PlatformFeatureShowcase'));
+const BuildingTogetherSection = lazy(() => import('@/components/BuildingTogetherSection'));
+const WhoIsDNAForSection = lazy(() => import('@/components/WhoIsDNAForSection'));
+const Footer = lazy(() => import('@/components/Footer'));
+const WaitlistPopup = lazy(() => import('@/components/waitlist/WaitlistPopup'));
+
+// Minimal loading fallback
+const SectionFallback = () => <div className="min-h-[200px]" />;
 
 const Index = () => {
   useScrollToTop();
@@ -34,21 +39,26 @@ const Index = () => {
       {/* Hero Section with improved layout */}
       <HeroSection />
 
-      {/* Platform Feature Showcase - DNA Framework with all 5 pillars in order */}
-      <PlatformFeatureShowcase />
+      {/* Lazy-loaded below-the-fold sections */}
+      <Suspense fallback={<SectionFallback />}>
+        {/* Platform Feature Showcase - DNA Framework with all 5 pillars in order */}
+        <PlatformFeatureShowcase />
 
-      {/* Building Together Section */}
-      <BuildingTogetherSection />
+        {/* Building Together Section */}
+        <BuildingTogetherSection />
 
-      {/* Who is DNA for Section */}
-      <WhoIsDNAForSection />
+        {/* Who is DNA for Section */}
+        <WhoIsDNAForSection />
 
-      <Footer />
+        <Footer />
+      </Suspense>
       
-      <WaitlistPopup 
-        isOpen={showWaitlistPopup}
-        onClose={closeWaitlistPopup}
-      />
+      <Suspense fallback={null}>
+        <WaitlistPopup 
+          isOpen={showWaitlistPopup}
+          onClose={closeWaitlistPopup}
+        />
+      </Suspense>
     </div>
   );
 };
