@@ -142,10 +142,12 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       {/* Message Bubble */}
       <div className="flex flex-col gap-1 max-w-[70%]">
         <div className={cn(
-          "rounded-2xl px-4 py-2",
+          "rounded-xl px-3 py-2",
+          // Subtle 3D shadow effect
+          "shadow-sm",
           isOwn 
-            ? "bg-primary text-primary-foreground rounded-tr-sm" 
-            : "bg-muted rounded-tl-sm"
+            ? "bg-gradient-to-br from-emerald-600 to-emerald-700 text-white rounded-tr-[4px] shadow-emerald-700/30" 
+            : "bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 text-foreground rounded-tl-[4px] shadow-amber-200/50 dark:shadow-amber-900/30"
         )}>
           {/* Voice Message Player */}
           {isVoiceMessage && attachment?.url ? (
@@ -180,15 +182,15 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           )}>
             <span className={cn(
               "text-[10px]",
-              isOwn ? "text-primary-foreground/70" : "text-muted-foreground"
+              isOwn ? "text-white/70" : "text-muted-foreground"
             )}>
               {formatTime(message.created_at)}
             </span>
             {isOwn && (
               message.is_read ? (
-                <CheckCheck className="h-3 w-3 text-blue-400" />
+                <CheckCheck className="h-3 w-3 text-blue-300" />
               ) : (
-                <Check className="h-3 w-3 text-primary-foreground/70" />
+                <Check className="h-3 w-3 text-white/70" />
               )
             )}
           </div>
