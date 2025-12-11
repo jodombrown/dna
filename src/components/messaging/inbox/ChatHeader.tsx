@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -27,9 +27,10 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
   return (
     <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card">
-      {/* Back Button */}
-      <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 md:hidden">
-        <ArrowLeft className="h-5 w-5" />
+      {/* Back/Close Button - ArrowLeft on mobile, X on desktop */}
+      <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8">
+        <ArrowLeft className="h-5 w-5 md:hidden" />
+        <X className="h-5 w-5 hidden md:block" />
       </Button>
 
       {/* User Info */}
