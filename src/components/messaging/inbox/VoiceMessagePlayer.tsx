@@ -31,8 +31,8 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
   const [transcript, setTranscript] = useState<string | null>(null);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
+  const [showControls, setShowControls] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Generate waveform data from audio
   const generateWaveform = useCallback(async () => {
@@ -43,7 +43,7 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
       
       const rawData = audioBuffer.getChannelData(0);
-      const samples = 40; // Number of bars in waveform
+      const samples = 35; // Number of bars in waveform
       const blockSize = Math.floor(rawData.length / samples);
       const filteredData: number[] = [];
       
@@ -64,7 +64,7 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
     } catch (error) {
       console.error('Error generating waveform:', error);
       // Fallback to random-ish waveform
-      setWaveformData(Array(40).fill(0).map(() => 0.3 + Math.random() * 0.7));
+      setWaveformData(Array(35).fill(0).map(() => 0.3 + Math.random() * 0.7));
     }
   }, [url]);
 
@@ -157,7 +157,6 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
     }
 
     if (!transcriptionEnabled) {
-      // Show coming soon message - feature ready but API key not configured
       return;
     }
 
@@ -182,135 +181,114 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
   const progressIndex = Math.floor((progress / 100) * waveformData.length);
 
   return (
-    <div className={cn(
-      "flex flex-col gap-2 p-2 rounded-lg min-w-[200px]",
-      isOwn ? "bg-white/10" : "bg-background/50"
-    )}>
-      <div className="flex items-center gap-2">
-        {/* Play/Pause Button */}
-        <Button
-          variant="ghost"
-          size="icon"
+    <div className="flex flex-col gap-1.5 min-w-[180px]">
+      {/* Main Player - Clean minimal design */}
+      <div 
+        className="flex items-center gap-3"
+        onMouseEnter={() => setShowControls(true)}
+        onMouseLeave={() => setShowControls(false)}
+      >
+        {/* Circular Play/Pause Button */}
+        <button
           onClick={togglePlay}
           className={cn(
-            "h-10 w-10 rounded-full flex-shrink-0",
-            isOwn ? "hover:bg-white/20 bg-white/10" : "hover:bg-muted bg-muted/50"
+            "h-9 w-9 rounded-full flex items-center justify-center flex-shrink-0 transition-all",
+            "border-2",
+            isOwn 
+              ? "border-white/60 hover:border-white text-white" 
+              : "border-foreground/40 hover:border-foreground text-foreground"
           )}
         >
           {isPlaying ? (
-            <Pause className={cn("h-5 w-5", isOwn ? "text-white" : "text-foreground")} />
+            <Pause className="h-4 w-4" />
           ) : (
-            <Play className={cn("h-5 w-5", isOwn ? "text-white" : "text-foreground")} />
+            <Play className="h-4 w-4 ml-0.5" />
           )}
-        </Button>
+        </button>
 
-        <div className="flex-1 flex flex-col gap-1">
-          {/* Waveform Visualization */}
-          <div 
-            className="relative h-8 flex items-center gap-[2px] cursor-pointer"
-            onClick={handleSeek}
-          >
-            {waveformData.map((amplitude, index) => (
-              <div
-                key={index}
+        {/* Waveform Visualization */}
+        <div 
+          className="relative h-6 flex items-center gap-[2px] cursor-pointer flex-1"
+          onClick={handleSeek}
+        >
+          {waveformData.map((amplitude, index) => (
+            <div
+              key={index}
+              className={cn(
+                "w-[3px] rounded-full transition-all duration-100",
+                index < progressIndex
+                  ? (isOwn ? "bg-white" : "bg-foreground")
+                  : (isOwn ? "bg-white/40" : "bg-foreground/30")
+              )}
+              style={{ 
+                height: `${Math.max(20, amplitude * 100)}%`,
+                minHeight: '3px'
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Time and Controls Row */}
+      <div className="flex items-center justify-between px-1">
+        <span className={cn(
+          "text-[10px] font-medium",
+          isOwn ? "text-white/70" : "text-muted-foreground"
+        )}>
+          {formatTime(currentTime)} / {formatTime(audioDuration)}
+        </span>
+        
+        <div className="flex items-center gap-1">
+          {/* Speed Control */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
                 className={cn(
-                  "flex-1 rounded-full transition-colors",
-                  index < progressIndex
-                    ? (isOwn ? "bg-white" : "bg-emerald-600")
-                    : (isOwn ? "bg-white/30" : "bg-muted-foreground/30")
+                  "text-[10px] font-medium px-1.5 py-0.5 rounded transition-colors",
+                  isOwn 
+                    ? "text-white/70 hover:bg-white/20" 
+                    : "text-muted-foreground hover:bg-muted"
                 )}
-                style={{ 
-                  height: `${Math.max(15, amplitude * 100)}%`,
-                  minHeight: '4px'
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Time and Speed */}
-          <div className="flex items-center justify-between">
-            <span className={cn(
-              "text-xs",
-              isOwn ? "text-white/70" : "text-muted-foreground"
-            )}>
-              {formatTime(currentTime)} / {formatTime(audioDuration)}
-            </span>
-            
-            {/* Speed Control */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
+              >
+                {playbackSpeed}x
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-0">
+              {PLAYBACK_SPEEDS.map((speed) => (
+                <DropdownMenuItem
+                  key={speed}
+                  onClick={() => setPlaybackSpeed(speed)}
                   className={cn(
-                    "h-5 px-1.5 text-xs font-medium",
-                    isOwn ? "text-white/70 hover:bg-white/20" : "text-muted-foreground hover:bg-muted"
+                    "text-xs cursor-pointer",
+                    playbackSpeed === speed && "bg-accent"
                   )}
                 >
-                  {playbackSpeed}x
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-0">
-                {PLAYBACK_SPEEDS.map((speed) => (
-                  <DropdownMenuItem
-                    key={speed}
-                    onClick={() => setPlaybackSpeed(speed)}
-                    className={cn(
-                      "text-xs cursor-pointer",
-                      playbackSpeed === speed && "bg-accent"
-                    )}
-                  >
-                    {speed}x
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
+                  {speed}x
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col gap-1">
-          {/* Transcribe Button - Coming Soon */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleTranscribe}
-            disabled={!transcriptionEnabled && !transcript}
-            className={cn(
-              "h-7 w-7 rounded-full",
-              isOwn ? "hover:bg-white/20" : "hover:bg-muted",
-              transcript && showTranscript && "bg-accent",
-              !transcriptionEnabled && !transcript && "opacity-50"
-            )}
-            title={transcriptionEnabled || transcript ? "Transcribe" : "Transcription coming soon"}
-          >
-            {isTranscribing ? (
-              <Loader2 className={cn("h-4 w-4 animate-spin", isOwn ? "text-white/70" : "text-muted-foreground")} />
-            ) : (
-              <FileText className={cn("h-4 w-4", isOwn ? "text-white/70" : "text-muted-foreground")} />
-            )}
-          </Button>
-          
           {/* Download Button */}
-          <Button
-            variant="ghost"
-            size="icon"
+          <button
             onClick={handleDownload}
             className={cn(
-              "h-7 w-7 rounded-full",
-              isOwn ? "hover:bg-white/20" : "hover:bg-muted"
+              "p-1 rounded transition-colors",
+              isOwn 
+                ? "text-white/70 hover:bg-white/20" 
+                : "text-muted-foreground hover:bg-muted"
             )}
             title="Download"
           >
-            <Download className={cn("h-4 w-4", isOwn ? "text-white/70" : "text-muted-foreground")} />
-          </Button>
+            <Download className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
 
       {/* Transcript */}
       {showTranscript && transcript && (
         <div className={cn(
-          "text-xs p-2 rounded-md mt-1",
+          "text-xs p-2 rounded-md",
           isOwn ? "bg-white/20 text-white" : "bg-muted text-foreground"
         )}>
           <p className="italic">"{transcript}"</p>
