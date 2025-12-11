@@ -71,7 +71,7 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
           <ProfileHeroSection
             profile={profile}
             isOwnProfile={isOwnProfile}
-            onEdit={() => navigate('/app/profile/edit')}
+            onEdit={() => navigate('/dna/profile/edit')}
             bannerType={(profile.banner_type as 'gradient' | 'solid' | 'image') || 'gradient'}
             bannerGradient={profile.banner_gradient || 'dna'}
             bannerUrl={profile.banner_url}

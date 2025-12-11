@@ -62,7 +62,7 @@ export const ProfileStrengthBanner = ({ minForFull = 40 }: ProfileStrengthBanner
             <div className="flex gap-2">
               <Button
                 size="sm"
-                onClick={() => navigate('/app/profile/edit')}
+                onClick={() => navigate('/dna/profile/edit')}
                 className="bg-dna-copper hover:bg-dna-gold"
               >
                 Complete Profile

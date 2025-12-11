@@ -35,7 +35,7 @@ const ProfileV2Completion: React.FC<ProfileV2CompletionProps> = ({
       onActionClick(action);
     } else {
       // Default: navigate to profile edit
-      navigate('/app/profile/edit');
+      navigate('/dna/profile/edit');
     }
   };
 

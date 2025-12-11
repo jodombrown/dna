@@ -32,14 +32,14 @@ export const ProfileCompletenessWidget: React.FC<ProfileCompletenessWidgetProps>
   const getIncompleteItems = () => {
     const items = [];
     
-    if (!profile.full_name) items.push({ icon: User, label: 'Add your full name', action: () => navigate('/app/profile/edit') });
-    if (!profile.bio) items.push({ icon: MessageSquare, label: 'Write your bio', action: () => navigate('/app/profile/edit') });
-    if (!profile.avatar_url) items.push({ icon: Camera, label: 'Upload profile picture', action: () => navigate('/app/profile/edit') });
-    if (!profile.location) items.push({ icon: MapPin, label: 'Add your location', action: () => navigate('/app/profile/edit') });
-    if (!profile.profession) items.push({ icon: Briefcase, label: 'Add your profession', action: () => navigate('/app/profile/edit') });
-    if (!profile.skills || profile.skills.length === 0) items.push({ icon: Star, label: 'Add your skills', action: () => navigate('/app/profile/edit') });
+    if (!profile.full_name) items.push({ icon: User, label: 'Add your full name', action: () => navigate('/dna/profile/edit') });
+    if (!profile.bio) items.push({ icon: MessageSquare, label: 'Write your bio', action: () => navigate('/dna/profile/edit') });
+    if (!profile.avatar_url) items.push({ icon: Camera, label: 'Upload profile picture', action: () => navigate('/dna/profile/edit') });
+    if (!profile.location) items.push({ icon: MapPin, label: 'Add your location', action: () => navigate('/dna/profile/edit') });
+    if (!profile.profession) items.push({ icon: Briefcase, label: 'Add your profession', action: () => navigate('/dna/profile/edit') });
+    if (!profile.skills || profile.skills.length === 0) items.push({ icon: Star, label: 'Add your skills', action: () => navigate('/dna/profile/edit') });
     if (!profile.intro_text) {
-      items.push({ icon: Heart, label: 'Add your DNA statement', action: () => navigate('/app/profile/edit') });
+      items.push({ icon: Heart, label: 'Add your DNA statement', action: () => navigate('/dna/profile/edit') });
     }
     
     return items.slice(0, 3); // Show max 3 items
@@ -109,7 +109,7 @@ export const ProfileCompletenessWidget: React.FC<ProfileCompletenessWidgetProps>
         {/* CTA */}
         <div className="pt-2">
           <Button 
-            onClick={() => navigate('/app/profile/edit')} 
+            onClick={() => navigate('/dna/profile/edit')} 
             className="w-full"
             size="sm"
           >

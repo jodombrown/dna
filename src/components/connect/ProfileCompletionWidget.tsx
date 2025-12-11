@@ -296,7 +296,7 @@ export const ProfileCompletionWidget = () => {
 
         {/* CTA Button */}
         <Button 
-          onClick={() => navigate('/app/profile/edit')}
+          onClick={() => navigate('/dna/profile/edit')}
           className="w-full"
           variant="default"
         >

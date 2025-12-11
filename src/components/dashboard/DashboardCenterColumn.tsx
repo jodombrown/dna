@@ -238,7 +238,7 @@ const DashboardCenterColumn: React.FC<DashboardCenterColumnProps> = ({
             <p className="text-amber-700 text-sm mb-4">
               Complete your profile to attract better connections and opportunities in the diaspora network.
             </p>
-            <Link to="/app/profile/edit">
+            <Link to="/dna/profile/edit">
               <Button 
                 variant="outline" 
                 size="sm" 

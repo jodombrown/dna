@@ -55,7 +55,7 @@ const MobileProfileView = () => {
           <Button 
             size="sm" 
             className="flex-1 bg-dna-copper hover:bg-dna-gold text-white"
-            onClick={() => navigate('/app/profile/edit')}
+            onClick={() => navigate('/dna/profile/edit')}
           >
             <Edit3 className="w-4 h-4 mr-2" />
             Edit Profile

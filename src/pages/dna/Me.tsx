@@ -58,7 +58,7 @@ const DnaMe = () => {
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={() => navigate('/app/profile/edit')}
+                  onClick={() => navigate('/dna/profile/edit')}
                 >
                   <PenSquare className="w-4 h-4 mr-2" />
                   Edit Profile
