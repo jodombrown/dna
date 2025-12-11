@@ -12,8 +12,8 @@ const AnimatedStat = ({ value, suffix, label, description, bgGradient }: {
   const { count, countRef } = useAnimatedCounter({ end: value, duration: 2500 });
 
   return (
-    <div className={`${bgGradient} rounded-xl p-6 text-center shadow-lg`}>
-      <div ref={countRef} className="text-4xl font-bold text-white mb-2">
+    <div className={`${bgGradient} rounded-xl p-6 text-center shadow-lg min-h-[140px]`}>
+      <div ref={countRef} className="text-4xl font-bold text-white mb-2 tabular-nums min-w-[80px] inline-block">
         {count}{suffix}
       </div>
       <div className="text-lg font-medium text-white/90 mb-1">{label}</div>
