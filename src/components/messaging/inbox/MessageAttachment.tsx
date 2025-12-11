@@ -1,6 +1,7 @@
-import React from 'react';
-import { FileText, Download, Image as ImageIcon, ExternalLink } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { FileText, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ImageLightbox } from './ImageLightbox';
 
 interface AttachmentData {
   type: 'image' | 'file';
@@ -19,6 +20,17 @@ export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
   attachment,
   isOwn,
 }) => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [showHeartbeat, setShowHeartbeat] = useState(true);
+
+  // Stop heartbeat animation after 30 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowHeartbeat(false);
+    }, 30000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return '';
     if (bytes < 1024) return `${bytes} B`;
@@ -28,19 +40,28 @@ export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
 
   if (attachment.type === 'image') {
     return (
-      <a 
-        href={attachment.url} 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="block mt-2 rounded-lg overflow-hidden max-w-[280px]"
-      >
-        <img 
-          src={attachment.url} 
-          alt={attachment.filename || 'Image'} 
-          className="w-full h-auto object-cover rounded-lg hover:opacity-90 transition-opacity"
-          loading="lazy"
+      <>
+        <button 
+          onClick={() => setLightboxOpen(true)}
+          className={cn(
+            "block mt-2 rounded-lg overflow-hidden max-w-[280px] cursor-pointer",
+            showHeartbeat && "animate-image-heartbeat"
+          )}
+        >
+          <img 
+            src={attachment.url} 
+            alt={attachment.filename || 'Image'} 
+            className="w-full h-auto object-cover rounded-lg hover:opacity-90 transition-opacity"
+            loading="lazy"
+          />
+        </button>
+        <ImageLightbox
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          imageUrl={attachment.url}
+          filename={attachment.filename}
         />
-      </a>
+      </>
     );
   }
 

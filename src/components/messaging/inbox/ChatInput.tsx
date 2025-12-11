@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react';
-import { Send, Paperclip, Image, X, Loader2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Send, Paperclip, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useToast } from '@/hooks/use-toast';
+import { useLinkPreview, extractFirstUrl } from '@/hooks/useLinkPreview';
+import { LinkPreview } from './LinkPreview';
 
 export interface MessageAttachment {
   type: 'image' | 'file';
@@ -28,15 +30,43 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const [message, setMessage] = useState('');
   const [attachment, setAttachment] = useState<MessageAttachment | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { uploadImage, uploading } = useImageUpload();
   const { toast } = useToast();
+  
+  // Detect links for preview
+  const { previews, loading: previewLoading } = useLinkPreview(message);
+  const detectedUrl = extractFirstUrl(message);
+  const linkPreview = previews[0];
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      const scrollHeight = textareaRef.current.scrollHeight;
+      // Min height ~44px (1 row), max ~120px (~4 rows for ~150 chars)
+      textareaRef.current.style.height = `${Math.min(Math.max(scrollHeight, 44), 120)}px`;
+    }
+  }, [message]);
+
+  // Remove URL from message text when sending if link preview exists
+  const getCleanedMessage = () => {
+    if (linkPreview && detectedUrl) {
+      return message.replace(detectedUrl, '').trim();
+    }
+    return message.trim();
+  };
 
   const handleSend = () => {
-    const trimmed = message.trim();
-    if ((trimmed || attachment) && !disabled) {
-      onSend(trimmed, attachment || undefined);
+    const cleanedMessage = getCleanedMessage();
+    if ((cleanedMessage || attachment || linkPreview) && !disabled) {
+      onSend(cleanedMessage, attachment || undefined);
       setMessage('');
       setAttachment(null);
+      // Reset textarea height
+      if (textareaRef.current) {
+        textareaRef.current.style.height = '44px';
+      }
     }
   };
 
@@ -94,6 +124,20 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <div className="border-t border-border bg-card">
+      {/* Link Preview - shown before sending */}
+      {linkPreview && !attachment && (
+        <div className="px-3 pt-3">
+          <div className="relative">
+            <LinkPreview preview={linkPreview} isOwn={false} />
+            {previewLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-muted/50 rounded-lg">
+                <Loader2 className="h-4 w-4 animate-spin" />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Attachment Preview */}
       {attachment && (
         <div className="px-3 pt-3">
@@ -157,6 +201,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           {/* Input */}
           <div className="flex-1 relative">
             <Textarea
+              ref={textareaRef}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -164,9 +209,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               disabled={disabled}
               rows={1}
               className={cn(
-                "min-h-[44px] max-h-32 resize-none",
+                "min-h-[44px] max-h-[120px] resize-none",
                 "text-base md:text-sm", // 16px on mobile to prevent iOS zoom
-                "bg-muted/50 border-0 focus-visible:ring-1 rounded-full py-3 px-4"
+                "bg-muted/50 border-0 focus-visible:ring-1 rounded-2xl py-3 px-4"
               )}
             />
           </div>
@@ -174,7 +219,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           {/* Send button */}
           <Button 
             onClick={handleSend}
-            disabled={(!message.trim() && !attachment) || disabled}
+            disabled={(!message.trim() && !attachment && !linkPreview) || disabled}
             size="icon"
             className="h-10 w-10 rounded-full flex-shrink-0"
           >

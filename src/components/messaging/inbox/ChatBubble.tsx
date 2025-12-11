@@ -102,9 +102,13 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           ? "bg-primary text-primary-foreground rounded-tr-sm" 
           : "bg-muted rounded-tl-sm"
       )}>
-        {/* Text content */}
+        {/* Text content - hide raw URLs when link preview exists */}
         {message.content && (
-          <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+          <p className="text-sm whitespace-pre-wrap break-words">
+            {linkPreview && linkPreview.url 
+              ? message.content.replace(linkPreview.url, '').trim() 
+              : message.content}
+          </p>
         )}
 
         {/* Attachment */}
