@@ -262,11 +262,10 @@ export default {
 						boxShadow: '0 6px 20px rgba(0, 0, 0, 0.35)'
 					},
 					'100%': {
-						transform: 'scale(1)',
-						boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
-					}
+					transform: 'scale(1)',
+					boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
 				}
-				},
+			},
 				'image-heartbeat': {
 					'0%, 100%': {
 						transform: 'scale(1)',
