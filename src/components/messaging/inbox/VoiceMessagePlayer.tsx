@@ -184,7 +184,7 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
   return (
     <div className={cn(
       "flex flex-col gap-2 p-2 rounded-lg min-w-[200px]",
-      isOwn ? "bg-primary-foreground/10" : "bg-background/50"
+      isOwn ? "bg-white/10" : "bg-background/50"
     )}>
       <div className="flex items-center gap-2">
         {/* Play/Pause Button */}
@@ -194,13 +194,13 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
           onClick={togglePlay}
           className={cn(
             "h-10 w-10 rounded-full flex-shrink-0",
-            isOwn ? "hover:bg-primary-foreground/20" : "hover:bg-muted"
+            isOwn ? "hover:bg-white/20 bg-white/10" : "hover:bg-muted bg-muted/50"
           )}
         >
           {isPlaying ? (
-            <Pause className={cn("h-5 w-5", isOwn ? "text-primary-foreground" : "text-foreground")} />
+            <Pause className={cn("h-5 w-5", isOwn ? "text-white" : "text-foreground")} />
           ) : (
-            <Play className={cn("h-5 w-5", isOwn ? "text-primary-foreground" : "text-foreground")} />
+            <Play className={cn("h-5 w-5", isOwn ? "text-white" : "text-foreground")} />
           )}
         </Button>
 
@@ -216,8 +216,8 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
                 className={cn(
                   "flex-1 rounded-full transition-colors",
                   index < progressIndex
-                    ? (isOwn ? "bg-primary-foreground" : "bg-primary")
-                    : (isOwn ? "bg-primary-foreground/30" : "bg-muted-foreground/30")
+                    ? (isOwn ? "bg-white" : "bg-emerald-600")
+                    : (isOwn ? "bg-white/30" : "bg-muted-foreground/30")
                 )}
                 style={{ 
                   height: `${Math.max(15, amplitude * 100)}%`,
@@ -231,7 +231,7 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
           <div className="flex items-center justify-between">
             <span className={cn(
               "text-xs",
-              isOwn ? "text-primary-foreground/70" : "text-muted-foreground"
+              isOwn ? "text-white/70" : "text-muted-foreground"
             )}>
               {formatTime(currentTime)} / {formatTime(audioDuration)}
             </span>
@@ -244,7 +244,7 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
                   size="sm"
                   className={cn(
                     "h-5 px-1.5 text-xs font-medium",
-                    isOwn ? "text-primary-foreground/70 hover:bg-primary-foreground/20" : "text-muted-foreground hover:bg-muted"
+                    isOwn ? "text-white/70 hover:bg-white/20" : "text-muted-foreground hover:bg-muted"
                   )}
                 >
                   {playbackSpeed}x
@@ -278,16 +278,16 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
             disabled={!transcriptionEnabled && !transcript}
             className={cn(
               "h-7 w-7 rounded-full",
-              isOwn ? "hover:bg-primary-foreground/20" : "hover:bg-muted",
+              isOwn ? "hover:bg-white/20" : "hover:bg-muted",
               transcript && showTranscript && "bg-accent",
               !transcriptionEnabled && !transcript && "opacity-50"
             )}
             title={transcriptionEnabled || transcript ? "Transcribe" : "Transcription coming soon"}
           >
             {isTranscribing ? (
-              <Loader2 className={cn("h-4 w-4 animate-spin", isOwn ? "text-primary-foreground/70" : "text-muted-foreground")} />
+              <Loader2 className={cn("h-4 w-4 animate-spin", isOwn ? "text-white/70" : "text-muted-foreground")} />
             ) : (
-              <FileText className={cn("h-4 w-4", isOwn ? "text-primary-foreground/70" : "text-muted-foreground")} />
+              <FileText className={cn("h-4 w-4", isOwn ? "text-white/70" : "text-muted-foreground")} />
             )}
           </Button>
           
@@ -298,11 +298,11 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
             onClick={handleDownload}
             className={cn(
               "h-7 w-7 rounded-full",
-              isOwn ? "hover:bg-primary-foreground/20" : "hover:bg-muted"
+              isOwn ? "hover:bg-white/20" : "hover:bg-muted"
             )}
             title="Download"
           >
-            <Download className={cn("h-4 w-4", isOwn ? "text-primary-foreground/70" : "text-muted-foreground")} />
+            <Download className={cn("h-4 w-4", isOwn ? "text-white/70" : "text-muted-foreground")} />
           </Button>
         </div>
       </div>
@@ -311,7 +311,7 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
       {showTranscript && transcript && (
         <div className={cn(
           "text-xs p-2 rounded-md mt-1",
-          isOwn ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-foreground"
+          isOwn ? "bg-white/20 text-white" : "bg-muted text-foreground"
         )}>
           <p className="italic">"{transcript}"</p>
         </div>

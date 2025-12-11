@@ -235,41 +235,43 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
   // Recording in progress
   if (isRecording) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2 bg-destructive/10 rounded-full">
-        {/* Animated recording indicator */}
-        <div className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
-        
-        {/* Live Waveform */}
-        <div className="flex items-center gap-[2px] h-6">
-          {waveformData.map((amplitude, index) => (
-            <div
-              key={index}
-              className="w-1 bg-destructive rounded-full transition-all duration-75"
-              style={{ height: `${Math.max(20, amplitude * 100)}%` }}
-            />
-          ))}
+      <div className="flex-shrink-0 max-w-[280px]">
+        <div className="flex items-center gap-2 px-3 py-2 bg-destructive/10 rounded-full">
+          {/* Animated recording indicator */}
+          <div className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
+          
+          {/* Live Waveform */}
+          <div className="flex items-center gap-[2px] h-6 flex-shrink-0">
+            {waveformData.map((amplitude, index) => (
+              <div
+                key={index}
+                className="w-1 bg-destructive rounded-full transition-all duration-75"
+                style={{ height: `${Math.max(20, amplitude * 100)}%` }}
+              />
+            ))}
+          </div>
+          
+          <span className="text-sm font-medium text-destructive min-w-[40px]">
+            {formatTime(recordingTime)}
+          </span>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={stopRecording}
+            className="h-8 w-8 rounded-full hover:bg-destructive/20 flex-shrink-0"
+          >
+            <Square className="h-4 w-4 fill-destructive text-destructive" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={cancelRecording}
+            className="h-8 w-8 rounded-full hover:bg-destructive/20 flex-shrink-0"
+          >
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
         </div>
-        
-        <span className="text-sm font-medium text-destructive min-w-[40px]">
-          {formatTime(recordingTime)}
-        </span>
-        
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={stopRecording}
-          className="h-8 w-8 rounded-full hover:bg-destructive/20"
-        >
-          <Square className="h-4 w-4 fill-destructive text-destructive" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={cancelRecording}
-          className="h-8 w-8 rounded-full hover:bg-destructive/20"
-        >
-          <Trash2 className="h-4 w-4 text-destructive" />
-        </Button>
       </div>
     );
   }
@@ -277,59 +279,61 @@ export const VoiceMessageRecorder: React.FC<VoiceMessageRecorderProps> = ({
   // Has recorded audio, ready to send
   if (audioBlob) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-full">
-        {/* Play/Pause preview */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={togglePreviewPlayback}
-          className="h-8 w-8 rounded-full"
-        >
-          {isPlaying ? (
-            <Square className="h-4 w-4 fill-foreground text-foreground" />
-          ) : (
-            <svg className="h-4 w-4 fill-foreground text-foreground" viewBox="0 0 24 24">
-              <polygon points="5,3 19,12 5,21" />
-            </svg>
-          )}
-        </Button>
-        
-        {/* Static Waveform Preview */}
-        <div className="flex items-center gap-[2px] h-6">
-          {waveformData.map((amplitude, index) => (
-            <div
-              key={index}
-              className="w-1 bg-foreground/50 rounded-full"
-              style={{ height: `${Math.max(20, amplitude * 100)}%` }}
-            />
-          ))}
+      <div className="flex-shrink-0 max-w-[280px]">
+        <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-full">
+          {/* Play/Pause preview */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={togglePreviewPlayback}
+            className="h-8 w-8 rounded-full flex-shrink-0"
+          >
+            {isPlaying ? (
+              <Square className="h-4 w-4 fill-foreground text-foreground" />
+            ) : (
+              <svg className="h-4 w-4 fill-foreground text-foreground" viewBox="0 0 24 24">
+                <polygon points="5,3 19,12 5,21" />
+              </svg>
+            )}
+          </Button>
+          
+          {/* Static Waveform Preview */}
+          <div className="flex items-center gap-[2px] h-6 flex-shrink-0">
+            {waveformData.map((amplitude, index) => (
+              <div
+                key={index}
+                className="w-1 bg-foreground/50 rounded-full"
+                style={{ height: `${Math.max(20, amplitude * 100)}%` }}
+              />
+            ))}
+          </div>
+          
+          <span className="text-xs text-muted-foreground min-w-[40px]">
+            {formatTime(recordingTime)}
+          </span>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={cancelRecording}
+            className="h-8 w-8 rounded-full flex-shrink-0"
+          >
+            <Trash2 className="h-4 w-4 text-muted-foreground" />
+          </Button>
+          <Button
+            variant="default"
+            size="icon"
+            onClick={sendVoiceMessage}
+            disabled={isSending}
+            className="h-8 w-8 rounded-full flex-shrink-0"
+          >
+            {isSending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+          </Button>
         </div>
-        
-        <span className="text-xs text-muted-foreground min-w-[40px]">
-          {formatTime(recordingTime)}
-        </span>
-        
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={cancelRecording}
-          className="h-8 w-8 rounded-full"
-        >
-          <Trash2 className="h-4 w-4 text-muted-foreground" />
-        </Button>
-        <Button
-          variant="default"
-          size="icon"
-          onClick={sendVoiceMessage}
-          disabled={isSending}
-          className="h-8 w-8 rounded-full"
-        >
-          {isSending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Send className="h-4 w-4" />
-          )}
-        </Button>
       </div>
     );
   }
