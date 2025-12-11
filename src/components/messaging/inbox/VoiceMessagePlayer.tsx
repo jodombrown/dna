@@ -147,9 +147,17 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
     }
   };
 
+  // Transcription temporarily disabled until OPENAI_API_KEY is configured
+  const transcriptionEnabled = false;
+  
   const handleTranscribe = async () => {
     if (transcript) {
       setShowTranscript(!showTranscript);
+      return;
+    }
+
+    if (!transcriptionEnabled) {
+      // Show coming soon message - feature ready but API key not configured
       return;
     }
 
@@ -262,18 +270,19 @@ export const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-1">
-          {/* Transcribe Button */}
+          {/* Transcribe Button - Coming Soon */}
           <Button
             variant="ghost"
             size="icon"
             onClick={handleTranscribe}
-            disabled={isTranscribing}
+            disabled={!transcriptionEnabled && !transcript}
             className={cn(
               "h-7 w-7 rounded-full",
               isOwn ? "hover:bg-primary-foreground/20" : "hover:bg-muted",
-              transcript && showTranscript && "bg-accent"
+              transcript && showTranscript && "bg-accent",
+              !transcriptionEnabled && !transcript && "opacity-50"
             )}
-            title="Transcribe"
+            title={transcriptionEnabled || transcript ? "Transcribe" : "Transcription coming soon"}
           >
             {isTranscribing ? (
               <Loader2 className={cn("h-4 w-4 animate-spin", isOwn ? "text-primary-foreground/70" : "text-muted-foreground")} />
