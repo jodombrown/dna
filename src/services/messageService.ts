@@ -338,19 +338,23 @@ export const messageService = {
   async sendMessage(
     conversationId: string,
     content: string,
-    attachment?: MessageAttachmentData
+    attachment?: MessageAttachmentData,
+    linkPreview?: LinkPreviewData
   ): Promise<Message> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    if (!content && !attachment) {
-      throw new Error('Message must have content or attachment');
+    if (!content && !attachment && !linkPreview) {
+      throw new Error('Message must have content, attachment, or link preview');
     }
 
     console.log('[messageService] Sending message to conversation:', conversationId);
 
-    // Build payload if there's an attachment
-    const payload: MessagePayload | null = attachment ? { attachment } : null;
+    // Build payload if there's an attachment or link preview
+    const payload: MessagePayload | null = (attachment || linkPreview) ? { 
+      attachment, 
+      linkPreview 
+    } : null;
 
     // Cast insert to bypass type checking for payload column
     const { data, error } = await supabase

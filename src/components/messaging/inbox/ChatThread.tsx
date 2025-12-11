@@ -4,7 +4,7 @@ import { messageService, MessageWithSender, MessageAttachmentData } from '@/serv
 import { useAuth } from '@/contexts/AuthContext';
 import { ChatHeader } from './ChatHeader';
 import { ChatBubble } from './ChatBubble';
-import { ChatInput, MessageAttachment } from './ChatInput';
+import { ChatInput, MessageAttachment, MessageLinkPreview } from './ChatInput';
 import { DateSeparator } from './DateSeparator';
 import { Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -40,8 +40,8 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
 
   // Send message mutation
   const sendMutation = useMutation({
-    mutationFn: ({ content, attachment }: { content: string; attachment?: MessageAttachmentData }) => 
-      messageService.sendMessage(conversationId, content, attachment),
+    mutationFn: ({ content, attachment, linkPreview }: { content: string; attachment?: MessageAttachmentData; linkPreview?: MessageLinkPreview }) => 
+      messageService.sendMessage(conversationId, content, attachment, linkPreview),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
@@ -111,7 +111,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     return groups;
   }, [messages]);
 
-  const handleSend = (content: string, attachment?: MessageAttachment) => {
+  const handleSend = (content: string, attachment?: MessageAttachment, linkPreview?: MessageLinkPreview) => {
     // Convert ChatInput attachment to service attachment type
     const serviceAttachment: MessageAttachmentData | undefined = attachment ? {
       type: attachment.type,
@@ -121,7 +121,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
       mimetype: attachment.mimetype,
     } : undefined;
 
-    sendMutation.mutate({ content, attachment: serviceAttachment });
+    sendMutation.mutate({ content, attachment: serviceAttachment, linkPreview });
   };
 
   const handleSendVoice = async (audioBlob: Blob, duration: number) => {
