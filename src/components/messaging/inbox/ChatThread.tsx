@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { messageService, MessageWithSender } from '@/services/messageService';
+import { messageService, MessageWithSender, MessageAttachmentData } from '@/services/messageService';
 import { useAuth } from '@/contexts/AuthContext';
 import { ChatHeader } from './ChatHeader';
 import { ChatBubble } from './ChatBubble';
-import { ChatInput } from './ChatInput';
+import { ChatInput, MessageAttachment } from './ChatInput';
 import { DateSeparator } from './DateSeparator';
 import { Loader2 } from 'lucide-react';
-import { format, isSameDay } from 'date-fns';
+import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ChatThreadProps {
@@ -40,7 +40,8 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
 
   // Send message mutation
   const sendMutation = useMutation({
-    mutationFn: (content: string) => messageService.sendMessage(conversationId, content),
+    mutationFn: ({ content, attachment }: { content: string; attachment?: MessageAttachmentData }) => 
+      messageService.sendMessage(conversationId, content, attachment),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
@@ -102,8 +103,17 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     return groups;
   }, [messages]);
 
-  const handleSend = (content: string) => {
-    sendMutation.mutate(content);
+  const handleSend = (content: string, attachment?: MessageAttachment) => {
+    // Convert ChatInput attachment to service attachment type
+    const serviceAttachment: MessageAttachmentData | undefined = attachment ? {
+      type: attachment.type,
+      url: attachment.url,
+      filename: attachment.filename,
+      filesize: attachment.filesize,
+      mimetype: attachment.mimetype,
+    } : undefined;
+
+    sendMutation.mutate({ content, attachment: serviceAttachment });
   };
 
   return (
@@ -129,7 +139,7 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
           </div>
         ) : (
           <div className="py-4">
-            {groupedMessages.map((group, groupIndex) => (
+            {groupedMessages.map((group) => (
               <div key={group.date}>
                 <DateSeparator date={group.date} />
                 {group.messages.map((msg, msgIndex) => {
