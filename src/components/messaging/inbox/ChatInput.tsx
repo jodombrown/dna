@@ -17,8 +17,16 @@ export interface MessageAttachment {
   mimetype?: string;
 }
 
+export interface MessageLinkPreview {
+  url: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  siteName?: string;
+}
+
 interface ChatInputProps {
-  onSend: (content: string, attachment?: MessageAttachment) => void;
+  onSend: (content: string, attachment?: MessageAttachment, linkPreview?: MessageLinkPreview) => void;
   onSendVoice?: (audioBlob: Blob, duration: number) => Promise<void>;
   disabled?: boolean;
   placeholder?: string;
@@ -64,7 +72,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const handleSend = () => {
     const cleanedMessage = getCleanedMessage();
     if ((cleanedMessage || attachment || linkPreview) && !disabled) {
-      onSend(cleanedMessage, attachment || undefined);
+      // Pass link preview data when sending
+      const linkPreviewData: MessageLinkPreview | undefined = linkPreview ? {
+        url: linkPreview.url,
+        title: linkPreview.title,
+        description: linkPreview.description,
+        image: linkPreview.image,
+        siteName: linkPreview.siteName,
+      } : undefined;
+      
+      onSend(cleanedMessage, attachment || undefined, linkPreviewData);
       setMessage('');
       setAttachment(null);
       // Reset textarea height
