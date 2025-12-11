@@ -8,7 +8,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ProfileStrengthBanner } from '@/components/shared/ProfileStrengthBanner';
+import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
 import LayoutController from '@/components/LayoutController';
 import { useDashboardPreferences } from '@/hooks/useDashboardPreferences';
 import { DashboardModules } from '@/components/feed/DashboardModules';
@@ -62,7 +62,7 @@ const DnaFeed = () => {
   // Center Column: Main Feed
   const centerColumn = (
     <div className="space-y-2">
-      {!isMobile && <ProfileStrengthBanner />}
+      {!isMobile && <ProfileCompletionNudge variant="banner" threshold={40} />}
       
       {!isMobile && (
         <>
@@ -249,7 +249,10 @@ const DnaFeed = () => {
           </div>
 
           {/* Add top padding to account for fixed header height */}
-          <main className="pb-16 px-3 pt-[7.25rem]">
+          <main className="pb-16 px-3 pt-[7.25rem] space-y-3">
+            {/* Mobile Profile Nudge */}
+            <ProfileCompletionNudge variant="inline" threshold={40} />
+            
             {activeTab === 'for_you' ? (
               <PersonalizedFeed />
             ) : (

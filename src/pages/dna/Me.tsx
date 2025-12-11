@@ -3,7 +3,7 @@ import { useProfile } from '@/hooks/useProfile';
 
 import { ConnectNudges } from '@/components/connect/ConnectNudges';
 import { MyProfilePreview } from '@/components/profile/MyProfilePreview';
-import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
+import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -66,8 +66,10 @@ const DnaMe = () => {
               </CardContent>
             </Card>
             
-            <ProfileStrengthCard
-              completionScore={profile.profile_completion_percentage || 0}
+            <ProfileCompletionNudge 
+              variant="card" 
+              threshold={80} 
+              showMissingFields={true}
             />
           </div>
 
