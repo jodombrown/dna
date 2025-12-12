@@ -28,11 +28,11 @@ export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
   const [showHeartbeat, setShowHeartbeat] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Stop heartbeat animation after 30 seconds
+  // Stop heartbeat animation after 10 seconds (captures attention, then settles)
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowHeartbeat(false);
-    }, 30000);
+    }, 10000);
     return () => clearTimeout(timer);
   }, []);
 
