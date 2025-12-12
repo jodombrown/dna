@@ -16,6 +16,7 @@ import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
 import { MobileFeedTabs } from '@/components/feed/MobileFeedTabs';
+import { FeedTabExplainer } from '@/components/feed/FeedTabExplainer';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileViewContainer } from '@/components/mobile/MobileViewContainer';
@@ -143,7 +144,7 @@ const DnaFeed = () => {
             <TooltipTrigger asChild>
               <TabsTrigger value="network">
                 <Users className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">Network</span>
+                <span className="hidden sm:inline">My Network</span>
               </TabsTrigger>
             </TooltipTrigger>
             <TooltipContent>
@@ -176,6 +177,9 @@ const DnaFeed = () => {
           </Tooltip>
         </TabsList>
       </Tabs>
+
+      {/* Tab Explainer - shows once per day per tab */}
+      <FeedTabExplainer activeTab={activeTab} />
 
       {/* Feed Content - Personalized or Universal */}
       {activeTab === 'for_you' ? (
@@ -252,6 +256,9 @@ const DnaFeed = () => {
           <main className="pb-16 px-3 pt-[7.25rem] space-y-3">
             {/* Mobile Profile Nudge */}
             <ProfileCompletionNudge variant="inline" threshold={40} />
+            
+            {/* Tab Explainer - shows once per day per tab */}
+            <FeedTabExplainer activeTab={activeTab} />
             
             {activeTab === 'for_you' ? (
               <PersonalizedFeed />
