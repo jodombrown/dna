@@ -99,6 +99,19 @@ export function useNotifications(
           queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['notifications'] });
+          queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+        }
+      )
       .subscribe();
 
     return () => {
@@ -141,12 +154,71 @@ export function useNotifications(
     },
   });
 
+  // Delete/dismiss a single notification
+  const dismissNotification = useMutation({
+    mutationFn: async (notificationId: string) => {
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('id', notificationId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+    },
+  });
+
+  // Clear all notifications
+  const clearAllNotifications = useMutation({
+    mutationFn: async () => {
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+    },
+  });
+
+  // Clear read notifications only
+  const clearReadNotifications = useMutation({
+    mutationFn: async () => {
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('is_read', true);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+    },
+  });
+
   return {
     notifications: query.data,
     unreadCount,
     isLoading: query.isLoading,
     markAsRead: markAsRead.mutate,
     markAllAsRead: markAllAsRead.mutate,
+    dismissNotification: dismissNotification.mutate,
+    clearAllNotifications: clearAllNotifications.mutate,
+    clearReadNotifications: clearReadNotifications.mutate,
     refetch: query.refetch,
   };
 }

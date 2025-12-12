@@ -4,14 +4,27 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { NotificationItem } from '@/components/notifications/NotificationItem';
 import { useNotifications } from '@/hooks/useNotifications';
-import { Bell, CheckCheck, Settings } from 'lucide-react';
+import { Bell, CheckCheck, Settings, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function NotificationsPage() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   
-  const { notifications, markAllAsRead, isLoading } = useNotifications(
+  const { 
+    notifications, 
+    markAllAsRead, 
+    isLoading,
+    dismissNotification,
+    clearAllNotifications,
+    clearReadNotifications
+  } = useNotifications(
     filter === 'unread'
   );
 
@@ -24,6 +37,26 @@ export default function NotificationsPage() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">Notifications</h1>
           <div className="flex gap-2">
+            {/* Clear dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => clearReadNotifications()}>
+                  Clear read notifications
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => clearAllNotifications()}
+                  className="text-destructive"
+                >
+                  Clear all notifications
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             {unreadNotifications.length > 0 && (
               <Button
                 variant="outline"
@@ -74,6 +107,8 @@ export default function NotificationsPage() {
                   key={notification.notification_id}
                   notification={notification}
                   onClose={() => {}}
+                  showDismiss={true}
+                  onDismiss={dismissNotification}
                 />
               ))}
             </div>

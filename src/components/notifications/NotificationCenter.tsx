@@ -1,118 +1,164 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Bell, Check, MessageSquare, UserPlus, Heart, Share2 } from 'lucide-react';
+import { Bell, Check, Trash2, X, Settings } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useNavigate } from 'react-router-dom';
-
-interface Notification {
-  id: string;
-  type: string;
-  title: string;
-  message: string;
-  created_at: string;
-  read: boolean;
-  link?: string;
-  actor_id?: string;
-  actor_name?: string;
-  actor_avatar?: string;
-}
+import { useNotifications } from '@/hooks/useNotifications';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
+import {
+  UserPlus,
+  Heart,
+  MessageCircle,
+  Mail,
+  Calendar,
+  Users,
+  SmilePlus,
+  AtSign,
+  Repeat2,
+  Eye,
+} from 'lucide-react';
 
 export function NotificationCenter() {
-  const { user } = useAuth();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Fetch notifications
-  const { data: notifications = [], isLoading } = useQuery({
-    queryKey: ['notifications', user?.id],
-    queryFn: async () => {
-      if (!user) return [];
+  const { 
+    notifications = [], 
+    isLoading, 
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    dismissNotification,
+    clearAllNotifications,
+    clearReadNotifications
+  } = useNotifications();
 
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20);
-
-      if (error) throw error;
-      return data as Notification[];
-    },
-    enabled: !!user,
-    refetchInterval: 30000, // Refresh every 30 seconds
-  });
-
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  // Mark as read mutation
-  const markAsRead = useMutation({
-    mutationFn: async (notificationId: string) => {
-      const { error } = await supabase
-        .from('notifications')
-        .update({ read: true })
-        .eq('id', notificationId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-    },
-  });
-
-  // Mark all as read
-  const markAllAsRead = useMutation({
-    mutationFn: async () => {
-      if (!user) return;
-
-      const { error } = await supabase
-        .from('notifications')
-        .update({ read: true })
-        .eq('user_id', user.id)
-        .eq('read', false);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-    },
-  });
-
-  const handleNotificationClick = (notification: Notification) => {
-    markAsRead.mutate(notification.id);
-    
-    if (notification.link) {
-      navigate(notification.link);
-      setIsOpen(false);
+  const getIcon = (type: string) => {
+    switch (type) {
+      case 'connection_request':
+      case 'connection_accepted':
+        return <UserPlus className="h-4 w-4" />;
+      case 'post_like':
+        return <Heart className="h-4 w-4" />;
+      case 'reaction':
+        return <SmilePlus className="h-4 w-4" />;
+      case 'mention':
+        return <AtSign className="h-4 w-4" />;
+      case 'reshare':
+        return <Repeat2 className="h-4 w-4" />;
+      case 'profile_view':
+        return <Eye className="h-4 w-4" />;
+      case 'post_comment':
+      case 'comment_reply':
+        return <MessageCircle className="h-4 w-4" />;
+      case 'new_message':
+        return <Mail className="h-4 w-4" />;
+      case 'event_invite':
+      case 'event_reminder':
+        return <Calendar className="h-4 w-4" />;
+      case 'group_invite':
+        return <Users className="h-4 w-4" />;
+      default:
+        return <Bell className="h-4 w-4" />;
     }
   };
 
-  const getNotificationIcon = (type: string) => {
+  const getIconBgColor = (type: string) => {
     switch (type) {
-      case 'message':
-        return <MessageSquare className="h-4 w-4 text-blue-500" />;
-      case 'connection':
-        return <UserPlus className="h-4 w-4 text-green-500" />;
-      case 'like':
+      case 'connection_request':
+      case 'connection_accepted':
+        return 'bg-emerald-500';
+      case 'post_like':
       case 'reaction':
-        return <Heart className="h-4 w-4 text-red-500" />;
-      case 'share':
-        return <Share2 className="h-4 w-4 text-purple-500" />;
+        return 'bg-rose-500';
+      case 'mention':
+        return 'bg-blue-500';
+      case 'reshare':
+        return 'bg-purple-500';
+      case 'profile_view':
+        return 'bg-amber-500';
+      case 'post_comment':
+      case 'comment_reply':
+        return 'bg-sky-500';
+      case 'new_message':
+        return 'bg-indigo-500';
+      case 'event_invite':
+      case 'event_reminder':
+        return 'bg-orange-500';
+      case 'group_invite':
+        return 'bg-teal-500';
       default:
-        return <Bell className="h-4 w-4 text-primary" />;
+        return 'bg-primary';
     }
+  };
+
+  const handleNotificationClick = (notification: any) => {
+    markAsRead(notification.notification_id);
+    
+    let targetRoute = '/dna/feed';
+    
+    switch (notification.type) {
+      case 'connection_request':
+        targetRoute = '/dna/connect/network?tab=requests';
+        break;
+      case 'connection_accepted':
+        if (notification.actor_username) {
+          targetRoute = `/dna/${notification.actor_username}`;
+        } else {
+          targetRoute = '/dna/connect/network';
+        }
+        break;
+      case 'post_like':
+      case 'post_comment':
+      case 'comment_reply':
+      case 'reaction':
+      case 'mention':
+      case 'reshare':
+        if (notification.entity_type === 'post' && notification.entity_id) {
+          targetRoute = `/dna/feed?post=${notification.entity_id}`;
+        }
+        break;
+      case 'new_message':
+        targetRoute = '/dna/messages';
+        break;
+      case 'event_invite':
+      case 'event_reminder':
+        targetRoute = notification.entity_id 
+          ? `/dna/convene/events/${notification.entity_id}` 
+          : '/dna/convene';
+        break;
+      case 'group_invite':
+        targetRoute = notification.entity_id 
+          ? `/dna/collaborate/spaces/${notification.entity_id}` 
+          : '/dna/collaborate';
+        break;
+      case 'profile_view':
+        targetRoute = notification.actor_username 
+          ? `/dna/${notification.actor_username}` 
+          : '/dna/connect';
+        break;
+    }
+    
+    navigate(targetRoute);
+    setIsOpen(false);
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      ?.split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2) || '?';
   };
 
   return (
@@ -120,7 +166,7 @@ export function NotificationCenter() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
-          {unreadCount > 0 && (
+          {unreadCount && unreadCount > 0 && (
             <Badge 
               variant="destructive" 
               className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
@@ -130,20 +176,68 @@ export function NotificationCenter() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80">
-        <div className="flex items-center justify-between px-2 py-2">
-          <h3 className="font-semibold">Notifications</h3>
-          {unreadCount > 0 && (
+      <DropdownMenuContent align="end" className="w-96">
+        <div className="flex items-center justify-between px-3 py-2">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">Notifications</h3>
+            {unreadCount && unreadCount > 0 && (
+              <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                {unreadCount}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            {/* Clear options */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-7 w-7">
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="w-full justify-start text-xs"
+                  onClick={() => clearReadNotifications()}
+                >
+                  Clear read
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="w-full justify-start text-xs text-destructive"
+                  onClick={() => clearAllNotifications()}
+                >
+                  Clear all
+                </Button>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {unreadCount && unreadCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => markAllAsRead()}
+                className="text-xs h-7"
+              >
+                <Check className="h-3 w-3 mr-1" />
+                Mark all read
+              </Button>
+            )}
+
             <Button
               variant="ghost"
-              size="sm"
-              onClick={() => markAllAsRead.mutate()}
-              className="text-xs"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => {
+                navigate('/dna/settings/notifications');
+                setIsOpen(false);
+              }}
             >
-              <Check className="h-3 w-3 mr-1" />
-              Mark all read
+              <Settings className="h-3.5 w-3.5" />
             </Button>
-          )}
+          </div>
         </div>
         <DropdownMenuSeparator />
         
@@ -159,35 +253,94 @@ export function NotificationCenter() {
             </div>
           ) : (
             notifications.map((notification) => (
-              <DropdownMenuItem
-                key={notification.id}
+              <div
+                key={notification.notification_id}
                 onClick={() => handleNotificationClick(notification)}
-                className={`flex items-start gap-3 p-3 cursor-pointer ${
-                  !notification.read ? 'bg-accent/50' : ''
-                }`}
+                className={cn(
+                  'group flex items-start gap-3 p-3 cursor-pointer hover:bg-accent relative',
+                  !notification.is_read && 'bg-primary/5'
+                )}
               >
-                <div className="mt-0.5">
-                  {getNotificationIcon(notification.type)}
+                {/* Avatar with type badge */}
+                <div className="relative flex-shrink-0">
+                  {notification.actor_avatar_url ? (
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={notification.actor_avatar_url} />
+                      <AvatarFallback className="text-xs">
+                        {getInitials(notification.actor_full_name || '')}
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <div className={cn(
+                      "h-9 w-9 rounded-full flex items-center justify-center text-white",
+                      getIconBgColor(notification.type)
+                    )}>
+                      {getIcon(notification.type)}
+                    </div>
+                  )}
+                  
+                  {notification.actor_avatar_url && (
+                    <div className={cn(
+                      "absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center text-white border-2 border-background",
+                      getIconBgColor(notification.type)
+                    )}>
+                      {React.cloneElement(getIcon(notification.type), { className: 'h-2 w-2' })}
+                    </div>
+                  )}
                 </div>
+
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium line-clamp-1">
-                    {notification.title}
-                  </p>
-                  <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                  <p className={cn(
+                    "text-sm line-clamp-2",
+                    !notification.is_read && "font-medium"
+                  )}>
                     {notification.message}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
                   </p>
                 </div>
-                {!notification.read && (
+
+                {!notification.is_read && (
                   <div className="h-2 w-2 rounded-full bg-primary flex-shrink-0 mt-2" />
                 )}
-              </DropdownMenuItem>
+
+                {/* Dismiss button on hover */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dismissNotification(notification.notification_id);
+                  }}
+                  className="opacity-0 group-hover:opacity-100 absolute top-2 right-2 p-1 hover:bg-muted rounded transition-opacity"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
             ))
           )}
         </ScrollArea>
+
+        {/* View all footer */}
+        {notifications.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <div className="p-2">
+              <Button
+                variant="ghost"
+                className="w-full text-sm text-primary"
+                onClick={() => {
+                  navigate('/dna/notifications');
+                  setIsOpen(false);
+                }}
+              >
+                View All Notifications
+              </Button>
+            </div>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
+
+import React from 'react';
