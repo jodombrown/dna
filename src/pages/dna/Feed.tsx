@@ -17,6 +17,7 @@ import { PersonalizedFeed } from '@/components/feed/PersonalizedFeed';
 import { SearchDialog } from '@/components/feed/SearchDialog';
 import { MobileFeedTabs } from '@/components/feed/MobileFeedTabs';
 import { FeedTabExplainer } from '@/components/feed/FeedTabExplainer';
+import { MobileProfileCompletionBanner } from '@/components/feed/MobileProfileCompletionBanner';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileViewContainer } from '@/components/mobile/MobileViewContainer';
@@ -238,8 +239,8 @@ const DnaFeed = () => {
           }
         `}</style>
         <div className="min-h-screen bg-background" data-mobile-feed="true">
-          {/* Fixed header + tabs container (mobile feed only) */}
-          <div className="fixed top-0 left-0 right-0 z-40 bg-background border-b border-border">
+          {/* Fixed header + profile banner + tabs container (mobile feed only) */}
+          <div className="fixed top-0 left-0 right-0 z-40 bg-background">
             <MobileHeader
               variant="feed"
               showSearch={true}
@@ -247,17 +248,16 @@ const DnaFeed = () => {
               onComposerClick={() => composer.open('post')}
               className="border-b-0"
             />
-            <div className="px-3 pb-2 pt-1 overflow-x-auto">
+            {/* Profile completion banner - above tabs */}
+            <MobileProfileCompletionBanner threshold={100} />
+            <div className="px-3 pb-2 pt-1 overflow-x-auto border-b border-border">
               <MobileFeedTabs activeTab={activeTab} onTabChange={setActiveTab} />
             </div>
           </div>
 
           {/* Add top padding to account for fixed header height */}
-          <main className="pb-16 px-3 pt-[7.25rem] space-y-3">
-            {/* Mobile Profile Nudge */}
-            <ProfileCompletionNudge variant="inline" threshold={40} />
-            
-            {/* Tab Explainer - shows once per day per tab */}
+          <main className="pb-16 px-3 pt-[8.5rem] space-y-3">
+            {/* Tab Explainer - shows once per day/login per tab */}
             <FeedTabExplainer activeTab={activeTab} />
             
             {activeTab === 'for_you' ? (
