@@ -5045,6 +5045,10 @@ export type Database = {
           community_involvement: string | null
           company: string | null
           connection_count: number | null
+          consent_event_invites: boolean | null
+          consent_marketing_emails: boolean | null
+          consent_partner_intros: boolean | null
+          consent_public_search: boolean | null
           contribution_style: string | null
           contribution_tags: Json | null
           contribution_types: string[] | null
@@ -5141,6 +5145,7 @@ export type Database = {
           phone: string | null
           pinned_activity_ids: Json | null
           preferred_contact: string | null
+          preferred_contact_method: string | null
           profession: string | null
           professional_role: string | null
           professional_sectors: string[] | null
@@ -5151,6 +5156,7 @@ export type Database = {
           profile_picture_url: string | null
           profile_views_count: number | null
           profile_visibility_settings: Json | null
+          pronouns: string | null
           recent_searches: string[] | null
           referral_code: string | null
           referrer_id: string | null
@@ -5167,6 +5173,7 @@ export type Database = {
           skills_needed: string[] | null
           skills_offered: string[] | null
           support_areas: string[] | null
+          timezone: string | null
           twitter_handle: string | null
           twitter_url: string | null
           updated_at: string
@@ -5192,6 +5199,7 @@ export type Database = {
           website_url: string | null
           what_to_give: string[] | null
           what_to_receive: string[] | null
+          whatsapp_number: string | null
           why_contribute: string | null
           years_experience: number | null
           years_in_diaspora: number | null
@@ -5232,6 +5240,10 @@ export type Database = {
           community_involvement?: string | null
           company?: string | null
           connection_count?: number | null
+          consent_event_invites?: boolean | null
+          consent_marketing_emails?: boolean | null
+          consent_partner_intros?: boolean | null
+          consent_public_search?: boolean | null
           contribution_style?: string | null
           contribution_tags?: Json | null
           contribution_types?: string[] | null
@@ -5328,6 +5340,7 @@ export type Database = {
           phone?: string | null
           pinned_activity_ids?: Json | null
           preferred_contact?: string | null
+          preferred_contact_method?: string | null
           profession?: string | null
           professional_role?: string | null
           professional_sectors?: string[] | null
@@ -5338,6 +5351,7 @@ export type Database = {
           profile_picture_url?: string | null
           profile_views_count?: number | null
           profile_visibility_settings?: Json | null
+          pronouns?: string | null
           recent_searches?: string[] | null
           referral_code?: string | null
           referrer_id?: string | null
@@ -5354,6 +5368,7 @@ export type Database = {
           skills_needed?: string[] | null
           skills_offered?: string[] | null
           support_areas?: string[] | null
+          timezone?: string | null
           twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
@@ -5379,6 +5394,7 @@ export type Database = {
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
+          whatsapp_number?: string | null
           why_contribute?: string | null
           years_experience?: number | null
           years_in_diaspora?: number | null
@@ -5419,6 +5435,10 @@ export type Database = {
           community_involvement?: string | null
           company?: string | null
           connection_count?: number | null
+          consent_event_invites?: boolean | null
+          consent_marketing_emails?: boolean | null
+          consent_partner_intros?: boolean | null
+          consent_public_search?: boolean | null
           contribution_style?: string | null
           contribution_tags?: Json | null
           contribution_types?: string[] | null
@@ -5515,6 +5535,7 @@ export type Database = {
           phone?: string | null
           pinned_activity_ids?: Json | null
           preferred_contact?: string | null
+          preferred_contact_method?: string | null
           profession?: string | null
           professional_role?: string | null
           professional_sectors?: string[] | null
@@ -5525,6 +5546,7 @@ export type Database = {
           profile_picture_url?: string | null
           profile_views_count?: number | null
           profile_visibility_settings?: Json | null
+          pronouns?: string | null
           recent_searches?: string[] | null
           referral_code?: string | null
           referrer_id?: string | null
@@ -5541,6 +5563,7 @@ export type Database = {
           skills_needed?: string[] | null
           skills_offered?: string[] | null
           support_areas?: string[] | null
+          timezone?: string | null
           twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
@@ -5566,6 +5589,7 @@ export type Database = {
           website_url?: string | null
           what_to_give?: string[] | null
           what_to_receive?: string[] | null
+          whatsapp_number?: string | null
           why_contribute?: string | null
           years_experience?: number | null
           years_in_diaspora?: number | null

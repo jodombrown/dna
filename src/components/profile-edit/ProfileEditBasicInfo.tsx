@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import CountryCombobox from '@/components/ui/country-combobox';
 
 interface ProfileEditBasicInfoProps {
@@ -12,13 +13,25 @@ interface ProfileEditBasicInfoProps {
   location: string;
   countryOfOrigin: string;
   currentCountry: string;
+  pronouns: string;
   onFullNameChange: (value: string) => void;
   onHeadlineChange: (value: string) => void;
   onBioChange: (value: string) => void;
   onLocationChange: (value: string) => void;
   onCountryOfOriginChange: (value: string) => void;
   onCurrentCountryChange: (value: string) => void;
+  onPronounsChange: (value: string) => void;
 }
+
+const PRONOUN_OPTIONS = [
+  { value: 'he/him', label: 'He/Him' },
+  { value: 'she/her', label: 'She/Her' },
+  { value: 'they/them', label: 'They/Them' },
+  { value: 'he/they', label: 'He/They' },
+  { value: 'she/they', label: 'She/They' },
+  { value: 'prefer_not_to_say', label: 'Prefer not to say' },
+  { value: 'custom', label: 'Custom' },
+];
 
 const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
   fullName,
@@ -27,12 +40,14 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
   location,
   countryOfOrigin,
   currentCountry,
+  pronouns,
   onFullNameChange,
   onHeadlineChange,
   onBioChange,
   onLocationChange,
   onCountryOfOriginChange,
   onCurrentCountryChange,
+  onPronounsChange,
 }) => {
   return (
     <Card>
@@ -52,14 +67,33 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
             />
           </div>
           <div>
-            <Label htmlFor="headline">Professional Headline</Label>
-            <Input
-              id="headline"
-              placeholder="e.g., Software Engineer at Tech Company"
-              value={headline}
-              onChange={(e) => onHeadlineChange(e.target.value)}
-            />
+            <Label>Pronouns</Label>
+            <Select value={pronouns} onValueChange={onPronounsChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select pronouns (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                {PRONOUN_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+        </div>
+
+        <div>
+          <Label htmlFor="headline">Professional Headline</Label>
+          <Input
+            id="headline"
+            placeholder="e.g., Software Engineer at Tech Company"
+            value={headline}
+            onChange={(e) => onHeadlineChange(e.target.value)}
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            A short description of what you do
+          </p>
         </div>
 
         <div>
@@ -72,7 +106,7 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
             rows={4}
           />
           <p className="text-xs text-muted-foreground mt-1">
-            A good bio helps others understand your story and connect with you.
+            A good bio helps others understand your story and connect with you. Aim for 50+ characters.
           </p>
         </div>
 
