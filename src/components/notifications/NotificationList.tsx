@@ -3,13 +3,12 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { NotificationItem } from './NotificationItem';
 import { useNotifications } from '@/hooks/useNotifications';
-import { CheckCheck, Settings, Bell, Trash2 } from 'lucide-react';
+import { CheckCheck, Settings, Bell, Trash2, MoreVertical, Circle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
 interface NotificationListProps {
@@ -20,12 +19,13 @@ export function NotificationList({ onClose }: NotificationListProps) {
   const navigate = useNavigate();
   const { 
     notifications, 
-    markAllAsRead, 
+    markAllAsRead,
+    markAllAsUnread,
     isLoading, 
     unreadCount,
     dismissNotification,
-    clearAllNotifications,
-    clearReadNotifications
+    deleteAllNotifications,
+    deleteReadNotifications
   } = useNotifications(false);
 
   const handleViewAll = () => {
@@ -37,6 +37,9 @@ export function NotificationList({ onClose }: NotificationListProps) {
     navigate('/dna/settings/notifications');
     onClose();
   };
+
+  const hasUnread = notifications?.some(n => !n.is_read);
+  const hasRead = notifications?.some(n => n.is_read);
 
   return (
     <div className="flex flex-col h-[500px] max-h-[80vh]">
@@ -51,37 +54,51 @@ export function NotificationList({ onClose }: NotificationListProps) {
           )}
         </div>
         <div className="flex gap-1">
-          {/* Clear options dropdown */}
+          {/* More options menu (mark read/unread) */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8" title="More options">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {hasUnread && (
+                <DropdownMenuItem onClick={() => markAllAsRead()}>
+                  <CheckCheck className="h-4 w-4 mr-2" />
+                  Mark all as read
+                </DropdownMenuItem>
+              )}
+              {hasRead && (
+                <DropdownMenuItem onClick={() => markAllAsUnread()}>
+                  <Circle className="h-4 w-4 mr-2" />
+                  Mark all as unread
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Delete menu (trash icon) */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8" title="Delete notifications">
                 <Trash2 className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => clearReadNotifications()}>
-                Clear read notifications
-              </DropdownMenuItem>
+              {hasRead && (
+                <DropdownMenuItem onClick={() => deleteReadNotifications()}>
+                  Delete read notifications
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem 
-                onClick={() => clearAllNotifications()}
+                onClick={() => deleteAllNotifications()}
                 className="text-destructive"
               >
-                Clear all notifications
+                Delete all notifications
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {unreadCount && unreadCount > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => markAllAsRead()}
-              className="text-xs"
-            >
-              <CheckCheck className="h-4 w-4 mr-1" />
-              Mark all read
-            </Button>
-          )}
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleSettings}>
             <Settings className="h-4 w-4" />
           </Button>

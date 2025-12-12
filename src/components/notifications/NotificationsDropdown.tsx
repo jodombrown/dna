@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
-import { X, Check, Trash2 } from 'lucide-react';
+import { X, Check, Trash2, MoreVertical, CheckCheck, Circle } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import {
@@ -43,9 +44,10 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
     isLoading, 
     markAsRead, 
     markAllAsRead,
+    markAllAsUnread,
     dismissNotification,
-    clearAllNotifications,
-    clearReadNotifications,
+    deleteAllNotifications,
+    deleteReadNotifications,
     unreadCount
   } = useNotifications();
 
@@ -207,6 +209,9 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
       .slice(0, 2) || '?';
   };
 
+  const hasUnread = notifications?.some(n => !n.is_read);
+  const hasRead = notifications?.some(n => n.is_read);
+
   return (
     <div className="absolute right-0 mt-2 w-96 bg-background rounded-lg shadow-lg border border-border z-50 max-h-[600px] flex flex-col">
       {/* Header */}
@@ -220,34 +225,51 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
           )}
         </div>
         <div className="flex items-center gap-1">
-          {/* Clear dropdown */}
+          {/* More options menu (mark read/unread) */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8" title="More options">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {hasUnread && (
+                <DropdownMenuItem onClick={() => markAllAsRead()}>
+                  <CheckCheck className="h-4 w-4 mr-2" />
+                  Mark all as read
+                </DropdownMenuItem>
+              )}
+              {hasRead && (
+                <DropdownMenuItem onClick={() => markAllAsUnread()}>
+                  <Circle className="h-4 w-4 mr-2" />
+                  Mark all as unread
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Delete menu (trash icon) */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8" title="Delete notifications">
                 <Trash2 className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => clearReadNotifications()}>
-                Clear read
-              </DropdownMenuItem>
+              {hasRead && (
+                <DropdownMenuItem onClick={() => deleteReadNotifications()}>
+                  Delete read notifications
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem 
-                onClick={() => clearAllNotifications()}
+                onClick={() => deleteAllNotifications()}
                 className="text-destructive"
               >
-                Clear all
+                Delete all notifications
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {notifications && notifications.some(n => !n.is_read) && (
-            <button
-              onClick={() => markAllAsRead()}
-              className="text-sm text-primary hover:underline px-2"
-            >
-              Mark all read
-            </button>
-          )}
           <button 
             onClick={onClose}
             className="text-muted-foreground hover:text-foreground p-1"
@@ -333,6 +355,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
                       markAsRead(notification.notification_id);
                     }}
                     className="opacity-0 group-hover:opacity-100 ml-2 text-primary hover:text-primary/80 flex-shrink-0 transition-opacity"
+                    title="Mark as read"
                   >
                     <Check className="h-4 w-4" />
                   </button>
@@ -345,6 +368,7 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
                     dismissNotification(notification.notification_id);
                   }}
                   className="opacity-0 group-hover:opacity-100 ml-1 text-muted-foreground hover:text-foreground flex-shrink-0 transition-opacity"
+                  title="Delete notification"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -372,5 +396,3 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
     </div>
   );
 }
-
-import React from 'react';
