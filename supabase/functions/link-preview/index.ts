@@ -310,6 +310,13 @@ serve(async (req) => {
       previewData.thumbnail_url = previewData.image;
     }
 
+    // Final safety: only treat as video for known video providers
+    // Some sites incorrectly label pages as "video" via og:type without actually being videos.
+    // To avoid showing a play button on regular articles/websites, downgrade these to article/website.
+    if (previewData.type === 'video' && !isVideo) {
+      previewData.type = previewData.description ? 'article' : 'website';
+    }
+
     // Ensure site_name fallback
     if (!previewData.site_name) {
       previewData.site_name = parsedUrl.hostname.replace('www.', '');
