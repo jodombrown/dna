@@ -3,7 +3,14 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { NotificationItem } from './NotificationItem';
 import { useNotifications } from '@/hooks/useNotifications';
-import { CheckCheck, Settings, Bell } from 'lucide-react';
+import { CheckCheck, Settings, Bell, Trash2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
 interface NotificationListProps {
   onClose: () => void;
@@ -11,7 +18,15 @@ interface NotificationListProps {
 
 export function NotificationList({ onClose }: NotificationListProps) {
   const navigate = useNavigate();
-  const { notifications, markAllAsRead, isLoading, unreadCount } = useNotifications(false);
+  const { 
+    notifications, 
+    markAllAsRead, 
+    isLoading, 
+    unreadCount,
+    dismissNotification,
+    clearAllNotifications,
+    clearReadNotifications
+  } = useNotifications(false);
 
   const handleViewAll = () => {
     navigate('/dna/notifications');
@@ -19,7 +34,7 @@ export function NotificationList({ onClose }: NotificationListProps) {
   };
 
   const handleSettings = () => {
-    navigate('/dna/settings');
+    navigate('/dna/settings/notifications');
     onClose();
   };
 
@@ -36,6 +51,26 @@ export function NotificationList({ onClose }: NotificationListProps) {
           )}
         </div>
         <div className="flex gap-1">
+          {/* Clear options dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => clearReadNotifications()}>
+                Clear read notifications
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => clearAllNotifications()}
+                className="text-destructive"
+              >
+                Clear all notifications
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {unreadCount && unreadCount > 0 && (
             <Button
               variant="ghost"
@@ -66,6 +101,8 @@ export function NotificationList({ onClose }: NotificationListProps) {
                 key={notification.notification_id}
                 notification={notification}
                 onClose={onClose}
+                showDismiss={true}
+                onDismiss={dismissNotification}
               />
             ))}
           </div>

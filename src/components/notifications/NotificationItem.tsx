@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { Notification } from '@/types/notifications';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
@@ -15,14 +16,23 @@ import {
   SmilePlus,
   AtSign,
   Repeat2,
+  X,
+  Eye,
 } from 'lucide-react';
 
 interface NotificationItemProps {
   notification: Notification;
   onClose: () => void;
+  showDismiss?: boolean;
+  onDismiss?: (id: string) => void;
 }
 
-export function NotificationItem({ notification, onClose }: NotificationItemProps) {
+export function NotificationItem({ 
+  notification, 
+  onClose, 
+  showDismiss = false,
+  onDismiss 
+}: NotificationItemProps) {
   const navigate = useNavigate();
   const { markAsRead } = useNotifications();
 
@@ -49,7 +59,7 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
       case 'reshare':
         return <Repeat2 className="h-4 w-4" />;
       case 'profile_view':
-        return <UserPlus className="h-4 w-4 text-primary" />;
+        return <Eye className="h-4 w-4" />;
       case 'post_comment':
       case 'comment_reply':
         return <MessageCircle className="h-4 w-4" />;
@@ -65,19 +75,54 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
     }
   };
 
+  const getIconBgColor = () => {
+    switch (notification.type) {
+      case 'connection_request':
+      case 'connection_accepted':
+        return 'bg-emerald-500';
+      case 'post_like':
+      case 'reaction':
+        return 'bg-rose-500';
+      case 'mention':
+        return 'bg-blue-500';
+      case 'reshare':
+        return 'bg-purple-500';
+      case 'profile_view':
+        return 'bg-amber-500';
+      case 'post_comment':
+      case 'comment_reply':
+        return 'bg-sky-500';
+      case 'new_message':
+        return 'bg-indigo-500';
+      case 'event_invite':
+      case 'event_reminder':
+        return 'bg-orange-500';
+      case 'group_invite':
+        return 'bg-teal-500';
+      default:
+        return 'bg-primary';
+    }
+  };
+
   const handleClick = () => {
     if (!notification.is_read) {
       markAsRead(notification.notification_id);
     }
     
-    // Determine navigation based on notification type first
+    // Determine navigation based on notification type
     let targetRoute = '/dna/feed';
     
-    // Type-based routing
     switch (notification.type) {
       case 'connection_request':
+        targetRoute = '/dna/connect/network?tab=requests';
+        break;
       case 'connection_accepted':
-        targetRoute = '/dna/connect/network';
+        // Go to the actor's profile if available
+        if (notification.actor_username) {
+          targetRoute = `/dna/${notification.actor_username}`;
+        } else {
+          targetRoute = '/dna/connect/network';
+        }
         break;
       case 'post_like':
       case 'post_comment':
@@ -88,14 +133,19 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
         // Navigate to specific post if entity_id exists
         if (notification.entity_type === 'post' && notification.entity_id) {
           targetRoute = `/dna/feed?post=${notification.entity_id}`;
-        } else if (notification.action_url) {
+        } else if (notification.action_url && notification.action_url.startsWith('/dna')) {
           targetRoute = notification.action_url;
         } else {
           targetRoute = '/dna/feed';
         }
         break;
       case 'new_message':
-        targetRoute = '/dna/messages';
+        // Go to messages, ideally to the specific conversation
+        if (notification.entity_id) {
+          targetRoute = `/dna/messages?conversation=${notification.entity_id}`;
+        } else {
+          targetRoute = '/dna/messages';
+        }
         break;
       case 'event_invite':
       case 'event_reminder':
@@ -120,8 +170,8 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
         }
         break;
       default:
-        // Try action_url if available
-        if (notification.action_url && notification.action_url.startsWith('/')) {
+        // Try action_url if available and valid
+        if (notification.action_url && notification.action_url.startsWith('/dna')) {
           targetRoute = notification.action_url;
         } else if (notification.actor_username) {
           targetRoute = `/dna/${notification.actor_username}`;
@@ -132,6 +182,13 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
     onClose();
   };
 
+  const handleDismiss = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDismiss) {
+      onDismiss(notification.notification_id);
+    }
+  };
+
   const timeAgo = formatDistanceToNow(new Date(notification.created_at), {
     addSuffix: true,
   });
@@ -140,38 +197,70 @@ export function NotificationItem({ notification, onClose }: NotificationItemProp
     <div
       onClick={handleClick}
       className={cn(
-        'flex gap-3 p-4 hover:bg-accent cursor-pointer transition-colors',
+        'group flex gap-3 p-4 hover:bg-accent cursor-pointer transition-colors relative',
         !notification.is_read && 'bg-primary/5'
       )}
     >
-      {notification.actor_avatar_url ? (
-        <Avatar className="h-10 w-10 flex-shrink-0">
-          <AvatarImage
-            src={notification.actor_avatar_url}
-            alt={notification.actor_full_name || 'User'}
-          />
-          <AvatarFallback className="bg-primary text-primary-foreground">
-            {notification.actor_full_name
-              ? getInitials(notification.actor_full_name)
-              : <Bell className="h-5 w-5" />}
-          </AvatarFallback>
-        </Avatar>
-      ) : (
-        <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground flex-shrink-0">
-          {getIcon()}
-        </div>
-      )}
+      {/* Avatar with icon badge */}
+      <div className="relative flex-shrink-0">
+        {notification.actor_avatar_url ? (
+          <Avatar className="h-10 w-10">
+            <AvatarImage
+              src={notification.actor_avatar_url}
+              alt={notification.actor_full_name || 'User'}
+            />
+            <AvatarFallback className="bg-muted text-muted-foreground text-sm">
+              {notification.actor_full_name
+                ? getInitials(notification.actor_full_name)
+                : '?'}
+            </AvatarFallback>
+          </Avatar>
+        ) : (
+          <div className={cn(
+            "h-10 w-10 rounded-full flex items-center justify-center text-white",
+            getIconBgColor()
+          )}>
+            {getIcon()}
+          </div>
+        )}
+        
+        {/* Type indicator badge */}
+        {notification.actor_avatar_url && (
+          <div className={cn(
+            "absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full flex items-center justify-center text-white border-2 border-background",
+            getIconBgColor()
+          )}>
+            {React.cloneElement(getIcon(), { className: 'h-2.5 w-2.5' })}
+          </div>
+        )}
+      </div>
 
       <div className="flex-1 min-w-0">
-        <p className={cn('text-sm', !notification.is_read && 'font-semibold')}>
+        <p className={cn('text-sm leading-snug', !notification.is_read && 'font-medium')}>
           {notification.message}
         </p>
         <p className="text-xs text-muted-foreground mt-1">{timeAgo}</p>
       </div>
 
+      {/* Unread indicator */}
       {!notification.is_read && (
         <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-2" />
+      )}
+
+      {/* Dismiss button - only show on hover when enabled */}
+      {showDismiss && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2"
+          onClick={handleDismiss}
+        >
+          <X className="h-3 w-3" />
+        </Button>
       )}
     </div>
   );
 }
+
+// Need to import React for cloneElement
+import React from 'react';
