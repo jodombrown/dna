@@ -80,13 +80,13 @@ export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
               <Play className="h-12 w-12 text-muted-foreground" />
             </div>
           )}
-          {/* Play overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors rounded-lg">
+          {/* Play overlay - matching VideoLinkPreview style */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors rounded-lg">
             <div className={cn(
-              "p-3 rounded-full bg-white/90 shadow-lg",
+              "w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform",
               showHeartbeat && "animate-heartbeat"
             )}>
-              <Play className="h-8 w-8 text-primary fill-primary" />
+              <Play className="h-5 w-5 text-primary-foreground ml-0.5" fill="currentColor" />
             </div>
           </div>
         </button>
