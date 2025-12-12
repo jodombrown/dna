@@ -12,6 +12,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Newspaper, Sparkles, Users, PenSquare, Bookmark } from 'lucide-react';
 import { FeedTab } from '@/types/feed';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface FeedTabExplainerProps {
   activeTab: FeedTab;
@@ -50,29 +51,55 @@ const TAB_EXPLAINERS: Record<FeedTab, { title: string; description: string; icon
   },
 };
 
-const getStorageKey = (tab: FeedTab) => `dna_feed_explainer_${tab}`;
+const getStorageKey = (tab: FeedTab, userId: string) => `dna_feed_explainer_${tab}_${userId}`;
 
-const hasShownToday = (tab: FeedTab): boolean => {
-  const stored = localStorage.getItem(getStorageKey(tab));
-  if (!stored) return false;
-  
-  const today = new Date().toDateString();
-  return stored === today;
+const hasShownThisSession = (tab: FeedTab, userId: string, sessionTimestamp: number): boolean => {
+  try {
+    const stored = localStorage.getItem(getStorageKey(tab, userId));
+    if (!stored) return false;
+    
+    const data = JSON.parse(stored);
+    const today = new Date().toDateString();
+    
+    // Reset if different day
+    if (data.date !== today) return false;
+    
+    // Reset if new login session
+    if (sessionTimestamp > data.sessionTimestamp) return false;
+    
+    return true;
+  } catch {
+    return false;
+  }
 };
 
-const markAsShown = (tab: FeedTab): void => {
-  const today = new Date().toDateString();
-  localStorage.setItem(getStorageKey(tab), today);
+const markAsShown = (tab: FeedTab, userId: string, sessionTimestamp: number): void => {
+  try {
+    const today = new Date().toDateString();
+    localStorage.setItem(getStorageKey(tab, userId), JSON.stringify({
+      date: today,
+      sessionTimestamp,
+      shownAt: Date.now()
+    }));
+  } catch {}
 };
 
 export const FeedTabExplainer: React.FC<FeedTabExplainerProps> = ({ activeTab }) => {
+  const { user, session } = useAuth();
   const [visibleTab, setVisibleTab] = useState<FeedTab | null>(null);
   const [isExiting, setIsExiting] = useState(false);
 
+  // Get session timestamp for login detection
+  const sessionTimestamp = session?.access_token 
+    ? new Date(session.expires_at ? (session.expires_at * 1000 - 3600000) : Date.now()).getTime()
+    : Date.now();
+
   useEffect(() => {
+    if (!user) return;
+
     // Check if we should show the explainer for this tab
-    if (!hasShownToday(activeTab)) {
-      markAsShown(activeTab);
+    if (!hasShownThisSession(activeTab, user.id, sessionTimestamp)) {
+      markAsShown(activeTab, user.id, sessionTimestamp);
       setIsExiting(false);
       setVisibleTab(activeTab);
       
@@ -91,7 +118,7 @@ export const FeedTabExplainer: React.FC<FeedTabExplainerProps> = ({ activeTab })
         clearTimeout(hideTimer);
       };
     }
-  }, [activeTab]);
+  }, [activeTab, user, sessionTimestamp]);
 
   const explainer = visibleTab ? TAB_EXPLAINERS[visibleTab] : null;
   
