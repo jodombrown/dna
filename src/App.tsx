@@ -324,7 +324,6 @@ function App() {
               <Route path="/dna/connect/messages" element={<Navigate to="/dna/messages" replace />} />
               <Route path="/dna/connect/messages/:conversationId" element={<Navigate to="/dna/messages" replace />} />
               <Route path="/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
-              <Route path="/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/discover" element={<Navigate to="/dna/connect/discover" replace />} />
               
               {/* ========== CONVENE PILLAR M1 ========== */}
@@ -369,7 +368,6 @@ function App() {
                   <DnaGroups />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/convene/groups" element={<OnboardingGuard><GroupsBrowse /></OnboardingGuard>} />
               <Route path="/dna/convene/groups/:slug/events" element={<OnboardingGuard><GroupEventsPage /></OnboardingGuard>} />
               <Route path="/dna/convene/groups/:slug" element={<GroupDetailsPage />} />
               <Route path="/dna/convene/groups/:slug/settings" element={<GroupSettingsPage />} />
@@ -481,13 +479,6 @@ function App() {
                 {/* ========== LEGACY ROUTES ========== */}
                {/* Legacy space route - redirect to canonical collaborate route */}
                <Route path="/dna/space/:slug" element={<Navigate to="/dna/collaborate/spaces/:slug" replace />} />
-               
-               <Route path="/dna/connect" element={<Navigate to="/dna/connect/network" replace />} />
-              <Route path="/dna/convene" element={
-                <OnboardingGuard>
-                  <ConveneHub />
-                </OnboardingGuard>
-              } />
               
               {/* ========== NOTIFICATIONS & NUDGES ========== */}
               <Route path="/dna/notifications" element={
