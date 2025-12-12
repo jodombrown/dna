@@ -57,6 +57,7 @@
     "embla-carousel-react": "^8.3.0",
     "embla-carousel-wheel-gestures": "^8.0.2",
     "emoji-picker-react": "^4.15.0",
+    "framer-motion": "^12.23.26",
     "ics": "^3.7.6",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.462.0",
