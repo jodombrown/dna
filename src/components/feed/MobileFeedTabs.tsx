@@ -18,7 +18,7 @@ interface MobileFeedTabsProps {
 const TAB_CONFIG: { value: FeedTab; icon: React.ElementType; label: string }[] = [
   { value: 'all', icon: Newspaper, label: 'All' },
   { value: 'for_you', icon: Sparkles, label: 'For You' },
-  { value: 'network', icon: Users, label: 'Network' },
+  { value: 'network', icon: Users, label: 'My Network' },
   { value: 'my_posts', icon: PenSquare, label: 'Mine' },
   { value: 'bookmarks', icon: Bookmark, label: 'Saved' },
 ];
