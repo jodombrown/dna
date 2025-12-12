@@ -106,3 +106,6 @@ verify_jwt = false
 
 [functions.oembed-proxy]
 verify_jwt = false
+
+[functions.link-preview]
+verify_jwt = false

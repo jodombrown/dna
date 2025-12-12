@@ -1,25 +1,26 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { X, ExternalLink } from 'lucide-react';
+import { X, ExternalLink, Globe } from 'lucide-react';
 
 interface EmbedMetadata {
   url: string;
-  version: string;
-  type: string;
-  provider_name?: string;
-  provider_url?: string;
-  html?: string;
-  width?: number;
-  height?: number;
+  type?: 'article' | 'video' | 'image' | 'website' | 'rich' | string;
   title?: string;
-  author_name?: string;
-  author_url?: string;
+  description?: string;
+  image?: string;
+  site_name?: string;
+  author?: string;
+  favicon?: string;
+  // Video-specific
+  html?: string;
+  embed_html?: string;
+  video_url?: string;
   thumbnail_url?: string;
-  thumbnail_width?: number;
-  thumbnail_height?: number;
-  cache_age?: number;
-  fetched_at?: string;
+  provider_name?: string;
+  // Legacy compatibility
+  author_name?: string;
+  is_video?: boolean;
 }
 
 interface EmbedPreviewProps {
@@ -39,8 +40,25 @@ export const EmbedPreview: React.FC<EmbedPreviewProps> = ({
     window.open(embedData.url, '_blank', 'noopener,noreferrer');
   };
 
+  // Determine the best image to show
+  const previewImage = embedData.thumbnail_url || embedData.image;
+  const embedHtml = embedData.embed_html || embedData.html;
+  const isVideo = embedData.type === 'video' || embedData.is_video;
+  const authorName = embedData.author_name || embedData.author;
+  const providerName = embedData.provider_name || embedData.site_name;
+
+  // Get domain for display
+  const getDomain = (url: string) => {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.hostname.replace('www.', '');
+    } catch {
+      return url;
+    }
+  };
+
   return (
-    <Card className="border border-border overflow-hidden">
+    <Card className="border border-border overflow-hidden relative">
       <CardContent className="p-0">
         {showRemoveButton && onRemove && (
           <div className="absolute top-2 right-2 z-10">
@@ -55,53 +73,85 @@ export const EmbedPreview: React.FC<EmbedPreviewProps> = ({
           </div>
         )}
         
-        {/* Rich embed with HTML */}
-        {embedData.html && embedData.type === 'video' ? (
+        {/* Rich embed with HTML (for videos) */}
+        {embedHtml && isVideo ? (
           <div className="aspect-video w-full">
             <div 
-              dangerouslySetInnerHTML={{ __html: embedData.html }}
+              dangerouslySetInnerHTML={{ __html: embedHtml }}
               className="w-full h-full [&_iframe]:w-full [&_iframe]:h-full [&_iframe]:border-0"
             />
           </div>
         ) : (
-          /* Link preview card */
-          <div className="flex">
-            {embedData.thumbnail_url && (
-              <div className="w-32 h-32 flex-shrink-0">
+          /* Link preview card - LinkedIn style */
+          <div 
+            className="cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={handleOpenLink}
+          >
+            {/* Large image preview if available */}
+            {previewImage && (
+              <div className="w-full h-40 sm:h-48 overflow-hidden bg-muted">
                 <img 
-                  src={embedData.thumbnail_url} 
+                  src={previewImage} 
                   alt={embedData.title || 'Preview'}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Hide broken images
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
                 />
               </div>
             )}
-            <div className="flex-1 p-4">
-              <div className="flex items-start justify-between">
+            <div className="p-4">
+              <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
+                  {/* Title */}
                   {embedData.title && (
-                    <h3 className="font-semibold text-foreground line-clamp-2 mb-1">
+                    <h3 className="font-semibold text-foreground line-clamp-2 mb-1 text-base">
                       {embedData.title}
                     </h3>
                   )}
-                  {embedData.author_name && (
+                  
+                  {/* Description */}
+                  {embedData.description && (
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+                      {embedData.description}
+                    </p>
+                  )}
+                  
+                  {/* Author */}
+                  {authorName && (
                     <p className="text-sm text-muted-foreground mb-1">
-                      by {embedData.author_name}
+                      by {authorName}
                     </p>
                   )}
-                  {embedData.provider_name && (
-                    <p className="text-xs text-muted-foreground mb-2">
-                      {embedData.provider_name}
-                    </p>
-                  )}
-                  <p className="text-xs text-muted-foreground truncate">
-                    {embedData.url}
-                  </p>
+                  
+                  {/* Domain/Provider with favicon */}
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    {embedData.favicon ? (
+                      <img 
+                        src={embedData.favicon} 
+                        alt="" 
+                        className="w-4 h-4"
+                        onError={(e) => {
+                          // Replace with globe icon on error
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <Globe className="w-4 h-4" />
+                    )}
+                    <span>{providerName || getDomain(embedData.url)}</span>
+                  </div>
                 </div>
+                
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={handleOpenLink}
-                  className="ml-2 flex-shrink-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenLink();
+                  }}
+                  className="flex-shrink-0"
                 >
                   <ExternalLink className="h-4 w-4" />
                 </Button>
