@@ -12,9 +12,7 @@ import {
   ArrowRight,
   Apple,
   MonitorSmartphone,
-  Sparkles,
-  Menu,
-  X
+  Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,28 +21,27 @@ import { useNavigate } from "react-router-dom";
 const Install = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("ios");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const betaFeatures = [
     {
       icon: Globe2,
       title: "Feed",
-      description: "Share updates and stories with diaspora professionals worldwide"
+      description: "Share updates and insights with the Sixth Region community"
     },
     {
       icon: Users,
       title: "Connect",
-      description: "Build meaningful connections with fellow Africans globally"
+      description: "Build bridges with fellow diaspora members across continents"
     },
     {
       icon: Heart,
       title: "Convey",
-      description: "Share your diaspora story and inspire others"
+      description: "Share your diaspora journey and inspire collective action"
     },
     {
       icon: MessageCircle,
       title: "Messaging",
-      description: "Direct conversations with rich media sharing"
+      description: "Collaborate directly with diaspora professionals worldwide"
     }
   ];
 
@@ -96,55 +93,6 @@ const Install = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <img 
-              src="/icons/icon-192.png" 
-              alt="DNA Logo" 
-              className="w-10 h-10 rounded-xl cursor-pointer"
-              onClick={() => navigate("/")}
-            />
-            
-            {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-6">
-              <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
-              <a href="#install" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Install</a>
-              <a href="#about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</a>
-              <Button 
-                onClick={() => navigate("/auth")}
-                className="bg-primary hover:bg-primary/90"
-              >
-                Get Started
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button 
-              className="md:hidden p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border/50 bg-background px-4 py-4 space-y-3">
-            <a href="#features" className="block text-sm text-muted-foreground hover:text-foreground" onClick={() => setMobileMenuOpen(false)}>Features</a>
-            <a href="#install" className="block text-sm text-muted-foreground hover:text-foreground" onClick={() => setMobileMenuOpen(false)}>Install</a>
-            <a href="#about" className="block text-sm text-muted-foreground hover:text-foreground" onClick={() => setMobileMenuOpen(false)}>About</a>
-            <Button 
-              onClick={() => navigate("/auth")}
-              className="w-full bg-primary hover:bg-primary/90"
-            >
-              Get Started
-            </Button>
-          </div>
-        )}
-      </nav>
 
       {/* Hero Section */}
       <section className="relative bg-background py-16 sm:py-24">
@@ -155,18 +103,18 @@ const Install = () => {
             transition={{ duration: 0.6 }}
           >
             <p className="text-sm font-medium text-primary mb-4 tracking-wide uppercase">
-              Download Now
+              Beta Now Live
             </p>
             
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-              Connect with Africa's
+              Welcome to Africa's
               <br />
-              <span className="text-primary">Global Diaspora</span>
+              <span className="text-primary">Sixth Region</span>
             </h1>
             
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-              Join thousands of Africans worldwide building meaningful connections, 
-              sharing stories, and creating impact together.
+              Join the global African diaspora — descendants, migrants, and allies united 
+              to build Africa's future. Add DNA to your home screen and be part of the movement.
             </p>
 
             <div className="flex items-center justify-center gap-3">
@@ -364,30 +312,31 @@ const Install = () => {
                 About DNA
               </p>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-6">
-                Uniting Africa's Global Diaspora
+                Building Africa's Sixth Region
               </h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  <strong className="text-foreground">Diaspora Network of Africa (DNA)</strong> is a 
-                  movement dedicated to connecting millions of Africans and people of African descent 
-                  living around the world.
+                  The African Union recognizes the <strong className="text-foreground">Sixth Region</strong> — 
+                  all people of African origin living outside the continent who are willing to contribute 
+                  to Africa's development.
                 </p>
                 <p>
-                  Through <span className="text-primary font-medium">capacity building</span>, 
-                  <span className="text-amber-600 font-medium"> venture development</span>, and 
-                  <span className="text-primary font-medium"> ecosystem building</span>, we're creating 
-                  pathways for meaningful impact across the continent.
+                  <strong className="text-foreground">Diaspora Network of Africa (DNA)</strong> is the 
+                  infrastructure for this global community. We connect descendants of enslaved Africans, 
+                  first and second-generation migrants, and all who identify with Africa's future.
                 </p>
                 <p>
-                  Whether you're a professional, entrepreneur, student, or simply passionate about 
-                  Africa's future — there's a place for you here.
+                  Through <span className="text-primary font-medium">connection</span>, 
+                  <span className="text-primary font-medium"> collaboration</span>, and 
+                  <span className="text-primary font-medium"> contribution</span>, we're mobilizing 
+                  talent, capital, and expertise for Africa's transformation.
                 </p>
               </div>
               <Button 
                 className="mt-6 bg-primary hover:bg-primary/90 gap-2"
                 onClick={() => navigate("/auth")}
               >
-                Join the Movement
+                Join the Sixth Region
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
@@ -398,19 +347,19 @@ const Install = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-background rounded-2xl p-6 shadow-sm text-center">
                     <Globe2 className="w-10 h-10 text-primary mx-auto mb-3" />
-                    <p className="text-sm font-medium text-foreground">Global Network</p>
+                    <p className="text-sm font-medium text-foreground">6 Continents</p>
                   </div>
                   <div className="bg-background rounded-2xl p-6 shadow-sm text-center">
                     <Users className="w-10 h-10 text-primary mx-auto mb-3" />
-                    <p className="text-sm font-medium text-foreground">Growing Community</p>
+                    <p className="text-sm font-medium text-foreground">Diaspora United</p>
                   </div>
                   <div className="bg-background rounded-2xl p-6 shadow-sm text-center">
                     <Heart className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-                    <p className="text-sm font-medium text-foreground">Shared Stories</p>
+                    <p className="text-sm font-medium text-foreground">Shared Heritage</p>
                   </div>
                   <div className="bg-background rounded-2xl p-6 shadow-sm text-center">
                     <Sparkles className="w-10 h-10 text-primary mx-auto mb-3" />
-                    <p className="text-sm font-medium text-foreground">Real Impact</p>
+                    <p className="text-sm font-medium text-foreground">Collective Impact</p>
                   </div>
                 </div>
               </div>
@@ -423,10 +372,11 @@ const Install = () => {
       <section className="bg-foreground py-20 sm:py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-background mb-4">
-            Ready to Get Started?
+            Join Africa's Sixth Region
           </h2>
           <p className="text-background/70 mb-8 max-w-lg mx-auto">
-            Install DNA on your device or continue in your browser to join the movement.
+            Whether you're born on the continent or in the diaspora, your contribution matters. 
+            Install DNA and become part of Africa's global movement.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button 
