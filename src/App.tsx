@@ -58,6 +58,7 @@ const FeedComingSoon = lazy(() => import("./pages/FeedComingSoon"));
 
 // Static pages  
 const About = lazy(() => import("./pages/About"));
+const Install = lazy(() => import("./pages/Install"));
 const Contact = lazy(() => import("./pages/Contact"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -212,6 +213,7 @@ function App() {
                     <Routes>
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
+              <Route path="/install" element={<Install />} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
               
