@@ -21,6 +21,7 @@ import {
   ProfileEditLanguages,
   ProfileEditSocialLinks,
   ProfileEditPrivacy,
+  ProfileEditContact,
 } from '@/components/profile-edit';
 
 const ProfileEdit = () => {
@@ -43,6 +44,12 @@ const ProfileEdit = () => {
   const [location, setLocation] = useState('');
   const [countryOfOrigin, setCountryOfOrigin] = useState('');
   const [currentCountry, setCurrentCountry] = useState('');
+  const [pronouns, setPronouns] = useState('');
+
+  // Contact preferences state
+  const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [preferredContactMethod, setPreferredContactMethod] = useState('');
+  const [timezone, setTimezone] = useState('');
 
   // Professional state
   const [profession, setProfession] = useState('');
@@ -93,6 +100,12 @@ const ProfileEdit = () => {
       setLocation(profile.location || '');
       setCountryOfOrigin(profile.country_of_origin || '');
       setCurrentCountry(profile.current_country || '');
+      setPronouns((profile as any).pronouns || '');
+
+      // Contact preferences
+      setWhatsappNumber((profile as any).whatsapp_number || '');
+      setPreferredContactMethod((profile as any).preferred_contact_method || '');
+      setTimezone((profile as any).timezone || '');
 
       // Professional
       setProfession(profile.profession || '');
@@ -174,6 +187,12 @@ const ProfileEdit = () => {
       location,
       country_of_origin: countryOfOrigin,
       current_country: currentCountry,
+      pronouns,
+
+      // Contact preferences
+      whatsapp_number: whatsappNumber,
+      preferred_contact_method: preferredContactMethod,
+      timezone,
 
       // Professional
       profession,
@@ -289,12 +308,24 @@ const ProfileEdit = () => {
             location={location}
             countryOfOrigin={countryOfOrigin}
             currentCountry={currentCountry}
+            pronouns={pronouns}
             onFullNameChange={setFullName}
             onHeadlineChange={setHeadline}
             onBioChange={setBio}
             onLocationChange={setLocation}
             onCountryOfOriginChange={setCountryOfOrigin}
             onCurrentCountryChange={setCurrentCountry}
+            onPronounsChange={setPronouns}
+          />
+
+          {/* Contact Preferences */}
+          <ProfileEditContact
+            whatsappNumber={whatsappNumber}
+            preferredContactMethod={preferredContactMethod}
+            timezone={timezone}
+            onWhatsappChange={setWhatsappNumber}
+            onPreferredContactChange={setPreferredContactMethod}
+            onTimezoneChange={setTimezone}
           />
 
           {/* Professional Background */}

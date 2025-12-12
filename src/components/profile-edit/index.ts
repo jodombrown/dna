@@ -1,4 +1,5 @@
 export { default as ProfileEditImages } from './ProfileEditImages';
+export { default as ProfileEditContact } from './ProfileEditContact';
 export { default as ProfileEditBasicInfo } from './ProfileEditBasicInfo';
 export { default as ProfileEditProfessional } from './ProfileEditProfessional';
 export { default as ProfileEditDiaspora } from './ProfileEditDiaspora';

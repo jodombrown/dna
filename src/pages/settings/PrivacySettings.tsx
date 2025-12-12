@@ -5,30 +5,51 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Shield, Eye, EyeOff, Users } from 'lucide-react';
+import { Shield, Eye, EyeOff, Users, Mail, Handshake, Calendar, Search } from 'lucide-react';
 import SettingsLayout from './SettingsLayout';
 import { Skeleton } from '@/components/ui/skeleton';
+
+interface ConsentSettings {
+  is_public: boolean;
+  consent_marketing_emails: boolean;
+  consent_partner_intros: boolean;
+  consent_event_invites: boolean;
+  consent_public_search: boolean;
+}
 
 export default function PrivacySettings() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [isPublic, setIsPublic] = useState(true);
+  const [settings, setSettings] = useState<ConsentSettings>({
+    is_public: true,
+    consent_marketing_emails: true,
+    consent_partner_intros: true,
+    consent_event_invites: true,
+    consent_public_search: true,
+  });
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const [savingField, setSavingField] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPrivacySettings = async () => {
+    const fetchSettings = async () => {
       if (!user?.id) return;
 
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('is_public')
+          .select('is_public, consent_marketing_emails, consent_partner_intros, consent_event_invites, consent_public_search')
           .eq('id', user.id)
           .single();
 
         if (error) throw error;
-        setIsPublic(data?.is_public ?? true);
+        
+        setSettings({
+          is_public: data?.is_public ?? true,
+          consent_marketing_emails: (data as any)?.consent_marketing_emails ?? true,
+          consent_partner_intros: (data as any)?.consent_partner_intros ?? true,
+          consent_event_invites: (data as any)?.consent_event_invites ?? true,
+          consent_public_search: (data as any)?.consent_public_search ?? true,
+        });
       } catch (error) {
         console.error('Error fetching privacy settings:', error);
       } finally {
@@ -36,36 +57,34 @@ export default function PrivacySettings() {
       }
     };
 
-    fetchPrivacySettings();
+    fetchSettings();
   }, [user?.id]);
 
-  const handleTogglePublic = async (checked: boolean) => {
+  const handleToggle = async (field: keyof ConsentSettings, checked: boolean) => {
     if (!user?.id) return;
 
-    setIsSaving(true);
+    setSavingField(field);
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ is_public: checked })
+        .update({ [field]: checked })
         .eq('id', user.id);
 
       if (error) throw error;
 
-      setIsPublic(checked);
+      setSettings(prev => ({ ...prev, [field]: checked }));
       toast({
-        title: 'Privacy settings updated',
-        description: checked 
-          ? 'Your profile is now visible to everyone.' 
-          : 'Your profile is now private.',
+        title: 'Settings updated',
+        description: 'Your privacy preferences have been saved.',
       });
     } catch (error: any) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to update privacy settings',
+        description: error.message || 'Failed to update settings',
         variant: 'destructive',
       });
     } finally {
-      setIsSaving(false);
+      setSavingField(null);
     }
   };
 
@@ -78,6 +97,7 @@ export default function PrivacySettings() {
             <Skeleton className="h-4 w-72 mt-2" />
           </div>
           <Skeleton className="h-48 w-full" />
+          <Skeleton className="h-64 w-full" />
         </div>
       </SettingsLayout>
     );
@@ -87,8 +107,8 @@ export default function PrivacySettings() {
     <SettingsLayout>
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold">Privacy Settings</h2>
-          <p className="text-muted-foreground mt-1">Control who can see your profile and information</p>
+          <h2 className="text-2xl font-bold">Privacy & Consent</h2>
+          <p className="text-muted-foreground mt-1">Control your visibility and communication preferences</p>
         </div>
 
         {/* Profile Visibility */}
@@ -105,7 +125,7 @@ export default function PrivacySettings() {
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between p-4 rounded-lg border bg-card">
               <div className="flex items-center gap-4">
-                {isPublic ? (
+                {settings.is_public ? (
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                     <Eye className="h-5 w-5 text-primary" />
                   </div>
@@ -116,10 +136,10 @@ export default function PrivacySettings() {
                 )}
                 <div>
                   <Label htmlFor="public-toggle" className="font-medium">
-                    {isPublic ? 'Public Profile' : 'Private Profile'}
+                    {settings.is_public ? 'Public Profile' : 'Private Profile'}
                   </Label>
                   <p className="text-sm text-muted-foreground">
-                    {isPublic 
+                    {settings.is_public 
                       ? 'Anyone can view your profile and find you in search'
                       : 'Only you can see your full profile'
                     }
@@ -128,15 +148,15 @@ export default function PrivacySettings() {
               </div>
               <Switch
                 id="public-toggle"
-                checked={isPublic}
-                onCheckedChange={handleTogglePublic}
-                disabled={isSaving}
+                checked={settings.is_public}
+                onCheckedChange={(checked) => handleToggle('is_public', checked)}
+                disabled={savingField === 'is_public'}
               />
             </div>
 
             {/* Explanation Cards */}
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className={`p-4 rounded-lg border ${isPublic ? 'border-primary bg-primary/5' : 'border-border'}`}>
+              <div className={`p-4 rounded-lg border ${settings.is_public ? 'border-primary bg-primary/5' : 'border-border'}`}>
                 <div className="flex items-center gap-2 mb-2">
                   <Users className="h-4 w-4 text-primary" />
                   <span className="font-medium text-sm">When Public</span>
@@ -149,7 +169,7 @@ export default function PrivacySettings() {
                 </ul>
               </div>
               
-              <div className={`p-4 rounded-lg border ${!isPublic ? 'border-primary bg-primary/5' : 'border-border'}`}>
+              <div className={`p-4 rounded-lg border ${!settings.is_public ? 'border-primary bg-primary/5' : 'border-border'}`}>
                 <div className="flex items-center gap-2 mb-2">
                   <EyeOff className="h-4 w-4 text-muted-foreground" />
                   <span className="font-medium text-sm">When Private</span>
@@ -165,14 +185,121 @@ export default function PrivacySettings() {
           </CardContent>
         </Card>
 
-        {/* Future: Per-field visibility */}
-        <Card className="opacity-60">
+        {/* Consent & Communication */}
+        <Card>
           <CardHeader>
-            <CardTitle className="text-muted-foreground">Section Visibility</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5" />
+              Consent & Communication
+            </CardTitle>
             <CardDescription>
-              Fine-grained control over individual profile sections coming in a future update.
+              Control how DNA communicates with you and shares your information
             </CardDescription>
           </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Marketing Emails */}
+            <div className="flex items-center justify-between p-4 rounded-lg border">
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                  <Mail className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div>
+                  <Label htmlFor="marketing-toggle" className="font-medium">
+                    Marketing Emails
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive news, updates, and promotional content from DNA
+                  </p>
+                </div>
+              </div>
+              <Switch
+                id="marketing-toggle"
+                checked={settings.consent_marketing_emails}
+                onCheckedChange={(checked) => handleToggle('consent_marketing_emails', checked)}
+                disabled={savingField === 'consent_marketing_emails'}
+              />
+            </div>
+
+            {/* Partner Introductions */}
+            <div className="flex items-center justify-between p-4 rounded-lg border">
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                  <Handshake className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div>
+                  <Label htmlFor="partner-toggle" className="font-medium">
+                    Partner Introductions
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Allow DNA to introduce you to ecosystem partners (investors, programs, etc.)
+                  </p>
+                </div>
+              </div>
+              <Switch
+                id="partner-toggle"
+                checked={settings.consent_partner_intros}
+                onCheckedChange={(checked) => handleToggle('consent_partner_intros', checked)}
+                disabled={savingField === 'consent_partner_intros'}
+              />
+            </div>
+
+            {/* Event Invitations */}
+            <div className="flex items-center justify-between p-4 rounded-lg border">
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                  <Calendar className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div>
+                  <Label htmlFor="events-toggle" className="font-medium">
+                    Event Invitations
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive invitations to DNA events and community gatherings
+                  </p>
+                </div>
+              </div>
+              <Switch
+                id="events-toggle"
+                checked={settings.consent_event_invites}
+                onCheckedChange={(checked) => handleToggle('consent_event_invites', checked)}
+                disabled={savingField === 'consent_event_invites'}
+              />
+            </div>
+
+            {/* Public Search */}
+            <div className="flex items-center justify-between p-4 rounded-lg border">
+              <div className="flex items-center gap-4">
+                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                  <Search className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div>
+                  <Label htmlFor="search-toggle" className="font-medium">
+                    Public Search Visibility
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Allow your profile to appear in search engine results
+                  </p>
+                </div>
+              </div>
+              <Switch
+                id="search-toggle"
+                checked={settings.consent_public_search}
+                onCheckedChange={(checked) => handleToggle('consent_public_search', checked)}
+                disabled={savingField === 'consent_public_search'}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Data Rights Notice */}
+        <Card className="bg-muted/30">
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">
+              <strong>Your Data Rights:</strong> You can request to export or delete your data at any time. 
+              DNA respects your privacy and complies with GDPR/CCPA regulations. 
+              For data requests, contact <a href="mailto:privacy@diasporanetwork.africa" className="text-primary hover:underline">privacy@diasporanetwork.africa</a>
+            </p>
+          </CardContent>
         </Card>
       </div>
     </SettingsLayout>
