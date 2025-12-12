@@ -143,7 +143,10 @@ const ProfileEdit = () => {
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
       
-      const completionPercentage = data.profile_completion_percentage || 0;
+      // Use client-side calculation for accurate completion percentage
+      const { calculateProfileCompletion } = require('@/components/profile/ProfileCompletionBar');
+      const completionPercentage = calculateProfileCompletion(data);
+      
       toast({
         title: 'Profile updated!',
         description: `You're ${completionPercentage}% complete. ${completionPercentage >= 40 ? '✅ All features unlocked!' : `Complete ${40 - completionPercentage}% more to unlock all features.`}`,

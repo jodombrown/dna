@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { Badge } from '@/components/ui/badge';
-import { VideoLinkPreview } from '@/components/feed/VideoLinkPreview';
+import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { ThreadedComments } from '@/components/posts/ThreadedComments';
 import { PostMenuOwn } from '@/components/posts/PostMenuOwn';
 import { PostMenuOthers } from '@/components/posts/PostMenuOthers';
@@ -141,15 +141,17 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           </div>
         )}
 
-        {/* Video Link Preview */}
+        {/* Link Preview - Only shows play button for actual video links */}
         {item.link_url && (
-          <VideoLinkPreview
-            embedData={{
+          <LinkPreviewCard
+            data={{
               url: item.link_url,
               title: item.link_title || undefined,
-              author_name: item.link_description || undefined,
+              description: item.link_description || undefined,
               provider_name: item.link_metadata?.provider_name,
               thumbnail_url: item.link_metadata?.thumbnail_url,
+              type: item.link_metadata?.embed_type,
+              is_video: item.link_metadata?.is_video,
             }}
             showRemoveButton={false}
             size="full"

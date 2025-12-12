@@ -76,24 +76,20 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="location">Current Location</Label>
-            <Input
-              id="location"
-              placeholder="City, Country"
-              value={location}
-              onChange={(e) => onLocationChange(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Current Country</Label>
-            <CountryCombobox
-              value={currentCountry}
-              onValueChange={onCurrentCountryChange}
-              placeholder="Select your current country"
-            />
-          </div>
+        <div>
+          <Label>Current Location</Label>
+          <CountryCombobox
+            value={currentCountry}
+            onValueChange={(value) => {
+              onCurrentCountryChange(value);
+              // Also update location to keep them in sync
+              onLocationChange(value);
+            }}
+            placeholder="Select your current country"
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            Where you currently live — helps connect you with nearby diaspora.
+          </p>
         </div>
 
         <div>
