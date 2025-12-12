@@ -60,19 +60,6 @@ export const PersonalizedFeed = () => {
 
   return (
     <div className="space-y-4">
-      {/* Info Banner */}
-      <Card className="p-4 bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 border-dna-copper/20">
-        <div className="flex items-start gap-3">
-          <Sparkles className="h-5 w-5 text-dna-copper mt-0.5" />
-          <div className="flex-1">
-            <h4 className="font-semibold text-sm">Personalized For You</h4>
-            <p className="text-xs text-muted-foreground mt-1">
-              These posts are selected based on your connections, interests, and engagement patterns
-            </p>
-          </div>
-        </div>
-      </Card>
-
       {/* Personalized Posts */}
       {posts.map((post) => (
         <PostCard
