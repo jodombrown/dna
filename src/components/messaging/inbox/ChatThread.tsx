@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { messageService, MessageWithSender, MessageAttachmentData } from '@/services/messageService';
+import { messageService, MessageWithSender, MessageAttachmentData, deleteConversation, archiveConversation, pinConversation, muteConversation } from '@/services/messageService';
 import { useAuth } from '@/contexts/AuthContext';
 import { ChatHeader } from './ChatHeader';
 import { ChatBubble } from './ChatBubble';
@@ -9,6 +9,8 @@ import { DateSeparator } from './DateSeparator';
 import { Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface ChatThreadProps {
   conversationId: string;
@@ -18,18 +20,26 @@ interface ChatThreadProps {
     full_name: string;
     avatar_url: string;
   };
+  isMuted?: boolean;
+  isPinned?: boolean;
+  isArchived?: boolean;
   onBack: () => void;
 }
 
 export const ChatThread: React.FC<ChatThreadProps> = ({
   conversationId,
   otherUser,
+  isMuted = false,
+  isPinned = false,
+  isArchived = false,
   onBack,
 }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Fetch messages
   const { data: messages = [], isLoading } = useQuery({
@@ -53,6 +63,89 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
     mutationFn: (messageId: string) => messageService.deleteMessage(messageId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
+    },
+  });
+
+  // Delete conversation mutation
+  const deleteConversationMutation = useMutation({
+    mutationFn: () => deleteConversation(conversationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({
+        title: "Conversation deleted",
+        description: "The conversation has been removed from your inbox",
+      });
+      navigate('/dna/messages');
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete conversation",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Archive conversation mutation
+  const archiveConversationMutation = useMutation({
+    mutationFn: () => archiveConversation(conversationId, !isArchived),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({
+        title: isArchived ? "Conversation unarchived" : "Conversation archived",
+        description: isArchived 
+          ? "The conversation has been moved back to your inbox"
+          : "The conversation has been archived",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update conversation",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Pin conversation mutation
+  const pinConversationMutation = useMutation({
+    mutationFn: () => pinConversation(conversationId, !isPinned),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({
+        title: isPinned ? "Conversation unpinned" : "Conversation pinned",
+        description: isPinned 
+          ? "The conversation has been unpinned"
+          : "The conversation has been pinned to the top",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update conversation",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mute conversation mutation
+  const muteConversationMutation = useMutation({
+    mutationFn: () => muteConversation(conversationId, !isMuted),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({
+        title: isMuted ? "Notifications unmuted" : "Notifications muted",
+        description: isMuted 
+          ? `You'll receive notifications from ${otherUser.full_name}`
+          : `You won't receive notifications from ${otherUser.full_name}`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update notification settings",
+        variant: "destructive",
+      });
     },
   });
 
@@ -140,7 +233,14 @@ export const ChatThread: React.FC<ChatThreadProps> = ({
       <ChatHeader 
         otherUser={otherUser} 
         conversationId={conversationId}
-        onBack={onBack} 
+        isMuted={isMuted}
+        isPinned={isPinned}
+        isArchived={isArchived}
+        onBack={onBack}
+        onMuteToggle={() => muteConversationMutation.mutate()}
+        onPinToggle={() => pinConversationMutation.mutate()}
+        onArchiveToggle={() => archiveConversationMutation.mutate()}
+        onDeleteConversation={() => deleteConversationMutation.mutate()}
       />
 
       {/* Messages */}
