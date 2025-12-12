@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { NotificationItem } from '@/components/notifications/NotificationItem';
 import { useNotifications } from '@/hooks/useNotifications';
-import { Bell, CheckCheck, Settings, Trash2 } from 'lucide-react';
+import { Bell, CheckCheck, Settings, Trash2, MoreVertical, Circle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
@@ -18,16 +18,20 @@ export const DashboardNotificationsColumn = () => {
   
   const { 
     notifications, 
-    markAllAsRead, 
+    markAllAsRead,
+    markAllAsUnread,
     isLoading,
     dismissNotification,
-    clearAllNotifications,
-    clearReadNotifications
+    deleteAllNotifications,
+    deleteReadNotifications
   } = useNotifications(
     filter === 'unread'
   );
 
   const unreadNotifications = notifications?.filter((n) => !n.is_read) || [];
+  const readNotifications = notifications?.filter((n) => n.is_read) || [];
+  const hasUnread = unreadNotifications.length > 0;
+  const hasRead = readNotifications.length > 0;
 
   return (
     <div className="space-y-6">
@@ -35,36 +39,51 @@ export const DashboardNotificationsColumn = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Notifications</h1>
         <div className="flex gap-2">
-          {/* Clear dropdown */}
+          {/* More options menu (mark read/unread) */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="h-9 w-9">
+              <Button variant="outline" size="icon" className="h-9 w-9" title="More options">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {hasUnread && (
+                <DropdownMenuItem onClick={() => markAllAsRead()}>
+                  <CheckCheck className="h-4 w-4 mr-2" />
+                  Mark all as read
+                </DropdownMenuItem>
+              )}
+              {hasRead && (
+                <DropdownMenuItem onClick={() => markAllAsUnread()}>
+                  <Circle className="h-4 w-4 mr-2" />
+                  Mark all as unread
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Delete menu (trash icon) */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="h-9 w-9" title="Delete notifications">
                 <Trash2 className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => clearReadNotifications()}>
-                Clear read
-              </DropdownMenuItem>
+              {hasRead && (
+                <DropdownMenuItem onClick={() => deleteReadNotifications()}>
+                  Delete read notifications
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem 
-                onClick={() => clearAllNotifications()}
+                onClick={() => deleteAllNotifications()}
                 className="text-destructive"
               >
-                Clear all
+                Delete all notifications
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {unreadNotifications.length > 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => markAllAsRead()}
-            >
-              <CheckCheck className="h-4 w-4 mr-2" />
-              Mark all read
-            </Button>
-          )}
           <Button
             variant="outline"
             size="sm"

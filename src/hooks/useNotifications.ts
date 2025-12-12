@@ -124,10 +124,31 @@ export function useNotifications(
     mutationFn: async (notificationId: string) => {
       if (!user) return;
 
-      const { error } = await supabase.rpc('mark_notifications_read' as any, {
-        p_user_id: user.id,
-        p_notification_ids: [notificationId],
-      });
+      // Update both is_read and read columns for compatibility
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: true, read: true })
+        .eq('id', notificationId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+    },
+  });
+
+  // Mark single notification as unread
+  const markAsUnread = useMutation({
+    mutationFn: async (notificationId: string) => {
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: false, read: false })
+        .eq('id', notificationId)
+        .eq('user_id', user.id);
 
       if (error) throw error;
     },
@@ -142,9 +163,28 @@ export function useNotifications(
     mutationFn: async () => {
       if (!user) return;
 
-      const { error } = await supabase.rpc('mark_all_notifications_read' as any, {
-        p_user_id: user.id,
-      });
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: true, read: true })
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+    },
+  });
+
+  // Mark all notifications as unread
+  const markAllAsUnread = useMutation({
+    mutationFn: async () => {
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: false, read: false })
+        .eq('user_id', user.id);
 
       if (error) throw error;
     },
@@ -173,8 +213,8 @@ export function useNotifications(
     },
   });
 
-  // Clear all notifications
-  const clearAllNotifications = useMutation({
+  // Delete all notifications
+  const deleteAllNotifications = useMutation({
     mutationFn: async () => {
       if (!user) return;
 
@@ -183,7 +223,10 @@ export function useNotifications(
         .delete()
         .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting all notifications:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
@@ -191,8 +234,8 @@ export function useNotifications(
     },
   });
 
-  // Clear read notifications only
-  const clearReadNotifications = useMutation({
+  // Delete read notifications only
+  const deleteReadNotifications = useMutation({
     mutationFn: async () => {
       if (!user) return;
 
@@ -202,7 +245,10 @@ export function useNotifications(
         .eq('user_id', user.id)
         .eq('is_read', true);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting read notifications:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
@@ -215,10 +261,15 @@ export function useNotifications(
     unreadCount,
     isLoading: query.isLoading,
     markAsRead: markAsRead.mutate,
+    markAsUnread: markAsUnread.mutate,
     markAllAsRead: markAllAsRead.mutate,
+    markAllAsUnread: markAllAsUnread.mutate,
     dismissNotification: dismissNotification.mutate,
-    clearAllNotifications: clearAllNotifications.mutate,
-    clearReadNotifications: clearReadNotifications.mutate,
+    deleteAllNotifications: deleteAllNotifications.mutate,
+    deleteReadNotifications: deleteReadNotifications.mutate,
+    // Keep old names for backward compatibility
+    clearAllNotifications: deleteAllNotifications.mutate,
+    clearReadNotifications: deleteReadNotifications.mutate,
     refetch: query.refetch,
   };
 }
