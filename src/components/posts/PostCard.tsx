@@ -10,7 +10,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { VideoLinkPreview } from '@/components/feed/VideoLinkPreview';
+import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { ReactionPicker } from './ReactionPicker';
 import { ThreadedComments } from './ThreadedComments';
 import { ReactionSummary } from './ReactionSummary';
@@ -340,16 +340,18 @@ export function PostCard({
             </div>
           )}
 
-          {/* Link/Video Preview - Enhanced with VideoLinkPreview */}
+          {/* Link/Video Preview - Uses LinkPreviewCard which only shows play button for videos */}
           {post.link_url && (
             <div className="mb-4">
-              <VideoLinkPreview
-                embedData={{
+              <LinkPreviewCard
+                data={{
                   url: post.link_url,
                   title: post.link_title,
-                  author_name: post.link_description,
+                  description: post.link_description,
                   thumbnail_url: post.link_metadata?.thumbnail_url,
                   provider_name: post.link_metadata?.provider_name,
+                  type: post.link_metadata?.embed_type,
+                  is_video: post.link_metadata?.is_video,
                 }}
                 showRemoveButton={false}
                 size="full"
