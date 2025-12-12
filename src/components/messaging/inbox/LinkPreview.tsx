@@ -23,11 +23,11 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
   const [videoLightboxOpen, setVideoLightboxOpen] = useState(false);
   const [showHeartbeat, setShowHeartbeat] = useState(true);
 
-  // Stop heartbeat animation after 30 seconds
+  // Stop heartbeat animation after 10 seconds (captures attention, then settles)
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowHeartbeat(false);
-    }, 30000);
+    }, 10000);
     return () => clearTimeout(timer);
   }, []);
 
