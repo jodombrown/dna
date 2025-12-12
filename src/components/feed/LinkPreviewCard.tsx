@@ -51,9 +51,9 @@ export const LinkPreviewCard: React.FC<LinkPreviewCardProps> = ({
   
   if (!data?.url) return null;
 
-  // Determine if this is a video
-  const isVideo = data.type === 'video' || data.is_video || 
-    /youtube\.com|youtu\.be|vimeo\.com/i.test(data.url);
+  // Determine if this is a video - ONLY trust explicit type or is_video flag
+  // Do NOT use URL pattern matching as it can misclassify article pages
+  const isVideo = data.type === 'video' || data.is_video === true;
 
   // Get the best available image
   const previewImage = data.thumbnail_url || data.image || 
