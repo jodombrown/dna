@@ -12,7 +12,7 @@ import { useState, useRef, useEffect } from 'react';
 import { uploadMedia } from '@/lib/uploadMedia';
 import { useToast } from '@/hooks/use-toast';
 import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
-import { VideoLinkPreview } from '@/components/feed/VideoLinkPreview';
+import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 
 interface ComposerBodyProps {
   mode: ComposerMode;
@@ -136,11 +136,11 @@ function PostModeFields({
         </div>
       )}
       {hasPreview && previewData && !loading && (
-        <VideoLinkPreview
-          embedData={{
+        <LinkPreviewCard
+          data={{
             url: previewData.url,
             title: previewData.title,
-            author_name: previewData.author_name,
+            description: previewData.author_name,
             thumbnail_url: previewData.thumbnail_url,
             provider_name: previewData.provider_name,
           }}
