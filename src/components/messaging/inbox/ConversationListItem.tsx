@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
+import { Pin, BellOff, Archive } from 'lucide-react';
 
 interface ConversationListItemProps {
   conversation: {
@@ -14,6 +15,9 @@ interface ConversationListItemProps {
     last_message_content: string | null;
     last_message_at: string | null;
     unread_count: number;
+    is_pinned?: boolean;
+    is_muted?: boolean;
+    is_archived?: boolean;
   };
   isSelected: boolean;
   onClick: () => void;
@@ -41,7 +45,8 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
       className={cn(
         "w-full flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors border-b border-border/50",
         isSelected && "bg-primary/10 border-l-2 border-l-primary",
-        hasUnread && "bg-primary/5"
+        hasUnread && "bg-primary/5",
+        conversation.is_pinned && "bg-amber-50/50 dark:bg-amber-950/20"
       )}
     >
       {/* Avatar */}
@@ -52,19 +57,28 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
             {conversation.other_user_full_name?.charAt(0) || '?'}
           </AvatarFallback>
         </Avatar>
-        {/* Online indicator - placeholder */}
-        {/* <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" /> */}
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0 text-left">
         <div className="flex items-center justify-between gap-2">
-          <span className={cn(
-            "font-medium truncate text-sm",
-            hasUnread && "font-semibold text-foreground"
-          )}>
-            {conversation.other_user_full_name || 'Unknown User'}
-          </span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            {conversation.is_pinned && (
+              <Pin className="h-3 w-3 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+            )}
+            <span className={cn(
+              "font-medium truncate text-sm",
+              hasUnread && "font-semibold text-foreground"
+            )}>
+              {conversation.other_user_full_name || 'Unknown User'}
+            </span>
+            {conversation.is_muted && (
+              <BellOff className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+            )}
+            {conversation.is_archived && (
+              <Archive className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+            )}
+          </div>
           <span className={cn(
             "text-xs flex-shrink-0",
             hasUnread ? "text-primary font-medium" : "text-muted-foreground"

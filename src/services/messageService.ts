@@ -72,6 +72,9 @@ export interface ConversationListItem {
   last_message_content: string | null;
   last_message_at: string | null;
   unread_count: number;
+  is_muted: boolean;
+  is_pinned: boolean;
+  is_archived: boolean;
 }
 
 /**
@@ -135,14 +138,14 @@ export const messageService = {
   /**
    * Get conversation details by ID
    */
-  async getConversationDetails(conversationId: string): Promise<ConversationListItem | null> {
+async getConversationDetails(conversationId: string): Promise<ConversationListItem | null> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Get conversation with both users
+    // Get conversation with both users and all state fields
     const { data: conversation, error } = await supabase
       .from('conversations')
-      .select('id, user_a, user_b, last_message_at')
+      .select('id, user_a, user_b, last_message_at, is_archived_by_a, is_archived_by_b, is_muted_by_a, is_muted_by_b, is_pinned_by_a, is_pinned_by_b, deleted_by_a, deleted_by_b')
       .eq('id', conversationId)
       .single();
 
@@ -151,8 +154,9 @@ export const messageService = {
       return null;
     }
 
-    // Determine other user
-    const otherUserId = conversation.user_a === user.id ? conversation.user_b : conversation.user_a;
+    // Determine other user and current user's state
+    const isUserA = conversation.user_a === user.id;
+    const otherUserId = isUserA ? conversation.user_b : conversation.user_a;
 
     // Get other user's profile
     const { data: profile } = await supabase
@@ -187,23 +191,27 @@ export const messageService = {
       last_message_content: lastMessage?.content || null,
       last_message_at: conversation.last_message_at,
       unread_count: unreadCount || 0,
+      is_muted: isUserA ? (conversation.is_muted_by_a ?? false) : (conversation.is_muted_by_b ?? false),
+      is_pinned: isUserA ? (conversation.is_pinned_by_a ?? false) : (conversation.is_pinned_by_b ?? false),
+      is_archived: isUserA ? (conversation.is_archived_by_a ?? false) : (conversation.is_archived_by_b ?? false),
     };
   },
 
   /**
    * Get all conversations for the current user
    */
-  async getConversations(
+async getConversations(
     limit: number = 50,
-    _offset: number = 0
+    _offset: number = 0,
+    includeArchived: boolean = false
   ): Promise<ConversationListItem[]> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Get all conversations where user is participant
+    // Get all conversations where user is participant with all state fields
     const { data: conversations, error } = await supabase
       .from('conversations')
-      .select('id, user_a, user_b, last_message_at')
+      .select('id, user_a, user_b, last_message_at, is_archived_by_a, is_archived_by_b, is_muted_by_a, is_muted_by_b, is_pinned_by_a, is_pinned_by_b, deleted_by_a, deleted_by_b')
       .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
       .order('last_message_at', { ascending: false, nullsFirst: false })
       .limit(limit);
@@ -217,8 +225,19 @@ export const messageService = {
       return [];
     }
 
+    // Filter out deleted conversations and optionally archived ones
+    const filteredConversations = conversations.filter(conv => {
+      const isUserA = conv.user_a === user.id;
+      const isDeleted = isUserA ? conv.deleted_by_a : conv.deleted_by_b;
+      const isArchived = isUserA ? conv.is_archived_by_a : conv.is_archived_by_b;
+      
+      if (isDeleted) return false;
+      if (!includeArchived && isArchived) return false;
+      return true;
+    });
+
     // Get other user IDs
-    const otherUserIds = conversations.map(c => 
+    const otherUserIds = filteredConversations.map(c => 
       c.user_a === user.id ? c.user_b : c.user_a
     );
 
@@ -232,8 +251,9 @@ export const messageService = {
 
     // Build conversation list
     const result: ConversationListItem[] = [];
-    for (const conv of conversations) {
-      const otherUserId = conv.user_a === user.id ? conv.user_b : conv.user_a;
+    for (const conv of filteredConversations) {
+      const isUserA = conv.user_a === user.id;
+      const otherUserId = isUserA ? conv.user_b : conv.user_a;
       const profile = profileMap.get(otherUserId);
 
       // Get last message for this conversation
@@ -262,8 +282,18 @@ export const messageService = {
         last_message_content: lastMessage?.content || null,
         last_message_at: conv.last_message_at,
         unread_count: unreadCount || 0,
+        is_muted: isUserA ? (conv.is_muted_by_a ?? false) : (conv.is_muted_by_b ?? false),
+        is_pinned: isUserA ? (conv.is_pinned_by_a ?? false) : (conv.is_pinned_by_b ?? false),
+        is_archived: isUserA ? (conv.is_archived_by_a ?? false) : (conv.is_archived_by_b ?? false),
       });
     }
+
+    // Sort: pinned first, then by last_message_at
+    result.sort((a, b) => {
+      if (a.is_pinned && !b.is_pinned) return -1;
+      if (!a.is_pinned && b.is_pinned) return 1;
+      return 0;
+    });
 
     return result;
   },
@@ -908,6 +938,115 @@ export interface MessageSearchResult {
   other_user_full_name: string;
   other_user_avatar_url: string;
   rank: number;
+}
+
+/**
+ * Conversation management functions
+ */
+
+/**
+ * Delete a conversation (soft delete - hides for current user only)
+ */
+export async function deleteConversation(conversationId: string): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  // Get conversation to determine which user column to update
+  const { data: conv, error: fetchError } = await supabase
+    .from('conversations')
+    .select('user_a, user_b')
+    .eq('id', conversationId)
+    .single();
+
+  if (fetchError || !conv) throw new Error('Conversation not found');
+
+  const isUserA = conv.user_a === user.id;
+  const updateField = isUserA ? 'deleted_by_a' : 'deleted_by_b';
+
+  const { error } = await supabase
+    .from('conversations')
+    .update({ [updateField]: true })
+    .eq('id', conversationId);
+
+  if (error) throw error;
+}
+
+/**
+ * Archive/unarchive a conversation
+ */
+export async function archiveConversation(conversationId: string, archive: boolean = true): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data: conv, error: fetchError } = await supabase
+    .from('conversations')
+    .select('user_a, user_b')
+    .eq('id', conversationId)
+    .single();
+
+  if (fetchError || !conv) throw new Error('Conversation not found');
+
+  const isUserA = conv.user_a === user.id;
+  const updateField = isUserA ? 'is_archived_by_a' : 'is_archived_by_b';
+
+  const { error } = await supabase
+    .from('conversations')
+    .update({ [updateField]: archive })
+    .eq('id', conversationId);
+
+  if (error) throw error;
+}
+
+/**
+ * Pin/unpin a conversation
+ */
+export async function pinConversation(conversationId: string, pin: boolean = true): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data: conv, error: fetchError } = await supabase
+    .from('conversations')
+    .select('user_a, user_b')
+    .eq('id', conversationId)
+    .single();
+
+  if (fetchError || !conv) throw new Error('Conversation not found');
+
+  const isUserA = conv.user_a === user.id;
+  const updateField = isUserA ? 'is_pinned_by_a' : 'is_pinned_by_b';
+
+  const { error } = await supabase
+    .from('conversations')
+    .update({ [updateField]: pin })
+    .eq('id', conversationId);
+
+  if (error) throw error;
+}
+
+/**
+ * Mute/unmute a conversation
+ */
+export async function muteConversation(conversationId: string, mute: boolean = true): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data: conv, error: fetchError } = await supabase
+    .from('conversations')
+    .select('user_a, user_b')
+    .eq('id', conversationId)
+    .single();
+
+  if (fetchError || !conv) throw new Error('Conversation not found');
+
+  const isUserA = conv.user_a === user.id;
+  const updateField = isUserA ? 'is_muted_by_a' : 'is_muted_by_b';
+
+  const { error } = await supabase
+    .from('conversations')
+    .update({ [updateField]: mute })
+    .eq('id', conversationId);
+
+  if (error) throw error;
 }
 
 // Also export types for backward compatibility

@@ -107,6 +107,9 @@ const MessagesInbox = () => {
               full_name: selectedConversation.other_user_full_name,
               avatar_url: selectedConversation.other_user_avatar_url,
             }}
+            isMuted={selectedConversation.is_muted}
+            isPinned={selectedConversation.is_pinned}
+            isArchived={selectedConversation.is_archived}
             onBack={handleBack}
           />
         </div>
@@ -189,6 +192,9 @@ const MessagesInbox = () => {
                 full_name: selectedConversation.other_user_full_name,
                 avatar_url: selectedConversation.other_user_avatar_url,
               }}
+              isMuted={selectedConversation.is_muted}
+              isPinned={selectedConversation.is_pinned}
+              isArchived={selectedConversation.is_archived}
               onBack={handleBack}
             />
           ) : (

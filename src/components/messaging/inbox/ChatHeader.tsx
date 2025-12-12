@@ -13,14 +13,26 @@ interface ChatHeaderProps {
     avatar_url: string;
   };
   conversationId: string;
+  isMuted?: boolean;
+  isPinned?: boolean;
+  isArchived?: boolean;
   onBack: () => void;
+  onMuteToggle?: () => void;
+  onPinToggle?: () => void;
+  onArchiveToggle?: () => void;
   onDeleteConversation?: () => void;
 }
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({ 
   otherUser, 
   conversationId,
+  isMuted = false,
+  isPinned = false,
+  isArchived = false,
   onBack,
+  onMuteToggle,
+  onPinToggle,
+  onArchiveToggle,
   onDeleteConversation,
 }) => {
   const navigate = useNavigate();
@@ -54,6 +66,12 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       <ConversationActionsMenu
         otherUser={otherUser}
         conversationId={conversationId}
+        isMuted={isMuted}
+        isPinned={isPinned}
+        isArchived={isArchived}
+        onMuteToggle={onMuteToggle}
+        onPinToggle={onPinToggle}
+        onArchiveToggle={onArchiveToggle}
         onDeleteConversation={onDeleteConversation}
       />
     </div>
