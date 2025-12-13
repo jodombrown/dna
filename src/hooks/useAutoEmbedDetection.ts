@@ -90,12 +90,13 @@ export const useAutoEmbedDetection = () => {
         return null;
       }
 
-      // Determine if this is a video
-      const isVideo = data?.type === 'video' || isVideoUrl(url);
+      // Determine if this is a video - ONLY trust API metadata, NOT URL patterns
+      // URL pattern matching can misclassify article pages as videos
+      const isVideo = data?.type === 'video' || data?.is_video === true;
 
       const enrichedData: EmbedMetadata = {
         url: data?.url || url,
-        type: data?.type || 'website',
+        type: isVideo ? 'video' : (data?.type || 'website'),
         title: data?.title,
         description: data?.description,
         image: data?.image,
@@ -117,15 +118,15 @@ export const useAutoEmbedDetection = () => {
     } catch (error) {
       console.error('[useAutoEmbedDetection] Fetch error:', error);
       
-      // Fallback: create basic preview from URL
+      // Fallback: create basic preview from URL - NO video assumption without API confirmation
       try {
         const urlObj = new URL(url);
         const fallbackData: EmbedMetadata = {
           url,
-          type: isVideoUrl(url) ? 'video' : 'website',
+          type: 'website',
           site_name: urlObj.hostname.replace('www.', ''),
           favicon: `${urlObj.origin}/favicon.ico`,
-          is_video: isVideoUrl(url),
+          is_video: false,
         };
         setEmbedData(fallbackData);
         return fallbackData;
