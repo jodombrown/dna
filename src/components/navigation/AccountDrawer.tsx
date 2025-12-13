@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter } from 'lucide-react';
+import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter, Download, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -9,6 +9,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
@@ -16,12 +17,14 @@ import { useProfile } from '@/hooks/useProfile';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
 import { toast } from 'sonner';
 import { profileRoute } from '@/lib/profileRoute';
+import { generateProfilePDF } from '@/lib/generateProfilePDF';
 
 export const AccountDrawer: React.FC = () => {
   const { isOpen, close } = useAccountDrawer();
   const { user, signOut } = useAuth();
   const { data: profile } = useProfile();
   const navigate = useNavigate();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleViewProfile = () => {
     if (profile?.username) {
@@ -81,6 +84,21 @@ export const AccountDrawer: React.FC = () => {
       }
     } else {
       handleCopyLink();
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    if (!profile) return;
+    
+    setIsDownloading(true);
+    try {
+      await generateProfilePDF(profile);
+      toast.success('Profile PDF downloaded successfully');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Failed to generate PDF');
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -191,6 +209,15 @@ export const AccountDrawer: React.FC = () => {
                         Share via...
                       </DropdownMenuItem>
                     )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleDownloadPDF} className="cursor-pointer" disabled={isDownloading}>
+                      {isDownloading ? (
+                        <Loader2 className="h-4 w-4 mr-3 animate-spin" />
+                      ) : (
+                        <Download className="h-4 w-4 mr-3" />
+                      )}
+                      {isDownloading ? 'Generating...' : 'Download PDF'}
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
