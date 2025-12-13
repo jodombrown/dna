@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,9 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ConveyItemType, ConveyItemVisibility, ConveyItemStatus } from '@/types/conveyTypes';
 import { Loader2 } from 'lucide-react';
 import { RichTextEditor } from './RichTextEditor';
+import { CoverImageEditor } from './CoverImageEditor';
+import { StoryTagsInput } from './StoryTagsInput';
+import { StorySeriesSelect } from './StorySeriesSelect';
 
 interface ConveyItemFormData {
   type: ConveyItemType;
@@ -22,6 +25,9 @@ interface ConveyItemFormData {
   body: string;
   visibility: ConveyItemVisibility;
   region: string;
+  coverImage?: string;
+  tags?: string[];
+  seriesId?: string;
 }
 
 interface ConveyItemFormProps {
@@ -67,6 +73,9 @@ export function ConveyItemForm({
       body: initialData?.body || '',
       visibility: initialData?.visibility || defaultVisibility,
       region: initialData?.region || '',
+      coverImage: initialData?.coverImage || '',
+      tags: initialData?.tags || [],
+      seriesId: initialData?.seriesId || undefined,
     },
   });
 
@@ -147,6 +156,12 @@ export function ConveyItemForm({
         />
       </div>
 
+      {/* Cover Image - Tier 2 */}
+      <CoverImageEditor
+        value={watch('coverImage')}
+        onChange={(url) => setValue('coverImage', url)}
+      />
+
       {/* Body - Rich Text Editor */}
       <div className="space-y-2">
         <Label htmlFor="body">Story *</Label>
@@ -158,6 +173,18 @@ export function ConveyItemForm({
           error={errors.body?.message}
         />
       </div>
+
+      {/* Tags/Topics - Tier 2 */}
+      <StoryTagsInput
+        value={watch('tags') || []}
+        onChange={(tags) => setValue('tags', tags)}
+      />
+
+      {/* Series/Collection - Tier 2 */}
+      <StorySeriesSelect
+        value={watch('seriesId')}
+        onChange={(seriesId) => setValue('seriesId', seriesId)}
+      />
 
       {/* Visibility */}
       <div className="space-y-2">
