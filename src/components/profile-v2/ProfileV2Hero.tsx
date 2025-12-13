@@ -178,7 +178,7 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                       Edit Profile
                     </Button>
                   )}
-                  <Button onClick={handleShare} variant="outline" size="icon" className="flex-shrink-0">
+                  <Button onClick={handleShare} variant="ghost" size="icon" className="flex-shrink-0 h-10">
                     <Share2 className="w-4 h-4" />
                   </Button>
                 </>
