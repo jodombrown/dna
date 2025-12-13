@@ -151,7 +151,8 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
               {(profile.location || profile.current_country) && (
                 <div className="flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  <span className="truncate max-w-[120px] sm:max-w-none">
+                  <span className="truncate max-w-[150px] sm:max-w-none">
+                    <span className="text-muted-foreground/70">Based in </span>
                     {profile.location || profile.current_country}
                   </span>
                 </div>
@@ -159,7 +160,10 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
               {profile.country_of_origin && (
                 <div className="flex items-center gap-1.5">
                   <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  <span className="truncate max-w-[120px] sm:max-w-none">{profile.country_of_origin}</span>
+                  <span className="truncate max-w-[150px] sm:max-w-none">
+                    <span className="text-muted-foreground/70">From </span>
+                    {profile.country_of_origin}
+                  </span>
                 </div>
               )}
             </div>
