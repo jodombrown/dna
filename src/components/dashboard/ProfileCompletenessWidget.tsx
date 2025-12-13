@@ -12,12 +12,38 @@ import {
   Camera, 
   MessageSquare,
   ChevronRight,
-  Star
+  Star,
+  Globe,
+  Languages,
+  Linkedin,
+  Image
 } from 'lucide-react';
+import { calculateProfileCompletionPts, getMissingFields, type ProfileFieldCheck } from '@/lib/profileCompletion';
 
 interface ProfileCompletenessWidgetProps {
   className?: string;
 }
+
+// Map canonical field names to icons
+const getFieldIcon = (field: string) => {
+  const iconMap: Record<string, React.ElementType> = {
+    avatar_url: Camera,
+    full_name: User,
+    headline: Briefcase,
+    profession: Briefcase,
+    bio: MessageSquare,
+    linkedin_url: Linkedin,
+    skills: Star,
+    focus_areas: Globe,
+    interests: Heart,
+    country_of_origin: MapPin,
+    current_country: MapPin,
+    languages: Languages,
+    banner_url: Image,
+    industries: Globe,
+  };
+  return iconMap[field] || Star;
+};
 
 export const ProfileCompletenessWidget: React.FC<ProfileCompletenessWidgetProps> = ({ className }) => {
   const { profile } = useAuth();
@@ -25,27 +51,19 @@ export const ProfileCompletenessWidget: React.FC<ProfileCompletenessWidgetProps>
 
   if (!profile) return null;
 
-  // Use database-calculated completion score
-  const completenessScore = profile?.profile_completion_percentage || 0;
+  // Use canonical completion score (0-100 pts)
+  const completenessScore = calculateProfileCompletionPts(profile);
   const isProfileComplete = completenessScore >= 80;
 
-  const getIncompleteItems = () => {
-    const items = [];
-    
-    if (!profile.full_name) items.push({ icon: User, label: 'Add your full name', action: () => navigate('/dna/profile/edit') });
-    if (!profile.bio) items.push({ icon: MessageSquare, label: 'Write your bio', action: () => navigate('/dna/profile/edit') });
-    if (!profile.avatar_url) items.push({ icon: Camera, label: 'Upload profile picture', action: () => navigate('/dna/profile/edit') });
-    if (!profile.location) items.push({ icon: MapPin, label: 'Add your location', action: () => navigate('/dna/profile/edit') });
-    if (!profile.profession) items.push({ icon: Briefcase, label: 'Add your profession', action: () => navigate('/dna/profile/edit') });
-    if (!profile.skills || profile.skills.length === 0) items.push({ icon: Star, label: 'Add your skills', action: () => navigate('/dna/profile/edit') });
-    if (!profile.intro_text) {
-      items.push({ icon: Heart, label: 'Add your DNA statement', action: () => navigate('/dna/profile/edit') });
-    }
-    
-    return items.slice(0, 3); // Show max 3 items
-  };
+  // Get missing fields from canonical utility, take top 3
+  const missingFields = getMissingFields(profile).slice(0, 3);
+  const incompleteItems = missingFields.map((field: ProfileFieldCheck) => ({
+    icon: getFieldIcon(field.field),
+    label: field.label,
+    points: field.points,
+    action: () => navigate('/dna/profile/edit'),
+  }));
 
-  const incompleteItems = getIncompleteItems();
   const engagementScore = Math.min(100, (profile.connections_count || 0) * 10 + completenessScore);
 
   if (isProfileComplete && engagementScore >= 70) {
@@ -64,8 +82,8 @@ export const ProfileCompletenessWidget: React.FC<ProfileCompletenessWidgetProps>
         {/* Progress Section */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Profile Completeness</span>
-            <span className="font-medium">{completenessScore}%</span>
+            <span className="text-muted-foreground">Profile Strength</span>
+            <span className="font-medium">{completenessScore} pts</span>
           </div>
           <Progress value={completenessScore} className="h-2" />
         </div>
