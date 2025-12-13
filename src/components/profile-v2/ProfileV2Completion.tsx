@@ -36,9 +36,9 @@ const ProfileV2Completion: React.FC<ProfileV2CompletionProps> = ({
   const handleActionClick = (action: string) => {
     if (onActionClick) {
       onActionClick(action);
-    } else {
-      navigate('/dna/profile/edit');
     }
+    // Always navigate to profile edit so the button never feels "dead"
+    navigate('/dna/profile/edit');
   };
 
   return (
