@@ -1,16 +1,16 @@
 import React from 'react';
 import { CheckCircle2, Circle, Camera, User, Briefcase, MapPin, Globe, Heart, Languages, Linkedin, Image } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { 
-  getProfileFieldChecks, 
-  getMissingFields as getMissingFieldsFromLib,
-  getCompletedFields as getCompletedFieldsFromLib,
-  getCompletionByPillar as getCompletionByPillarFromLib,
-  type ProfileFieldCheck 
-} from '@/lib/profileCompletion';
+import { getProfileFieldChecks } from '@/lib/profileCompletion';
 
 // Re-export from pure utility for backward compatibility
-export { getProfileFieldChecks, getMissingFields, getCompletedFields, getCompletionByPillar } from '@/lib/profileCompletion';
+export { 
+  getProfileFieldChecks, 
+  getMissingFields, 
+  getCompletedFields, 
+  getCompletionByPillar,
+  calculateProfileCompletionPts 
+} from '@/lib/profileCompletion';
 export type { ProfileFieldCheck } from '@/lib/profileCompletion';
 
 interface ProfileMissingFieldsProps {
