@@ -163,7 +163,7 @@ export const AccountDrawer: React.FC = () => {
                       Share
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-background border border-border z-50">
+                  <DropdownMenuContent align="end" className="w-56 bg-background border border-border z-[100]" sideOffset={5}>
                     <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
                       <Copy className="h-4 w-4 mr-3" />
                       Copy link
