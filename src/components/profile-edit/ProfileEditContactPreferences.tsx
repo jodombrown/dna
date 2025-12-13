@@ -208,7 +208,7 @@ const ProfileEditContactPreferences: React.FC<ProfileEditContactPreferencesProps
             <Clock className="h-4 w-4" />
             Your Timezone
           </Label>
-          <Select value={timezone} onValueChange={onTimezoneChange}>
+          <Select value={timezone || undefined} onValueChange={onTimezoneChange}>
             <SelectTrigger>
               <SelectValue placeholder="Select your timezone" />
             </SelectTrigger>
