@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
 import { MessageProvider } from "@/contexts/MessageContext";
 import { AccountDrawerProvider } from "@/contexts/AccountDrawerContext";
+import { HelmetProvider } from 'react-helmet-async';
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import BaseLayout from "@/layouts/BaseLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -33,6 +34,7 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const DnaMe = lazy(() => import("./pages/dna/Me"));
 const DnaUserDashboard = lazy(() => import("./pages/dna/Username"));
 const PublicProfile = lazy(() => import("./pages/dna/PublicProfile"));
+const PublicProfilePage = lazy(() => import("./pages/PublicProfilePage"));
 const ProfileV2 = lazy(() => import("./pages/ProfileV2"));
 const ActivityFeed = lazy(() => import("./pages/ActivityFeed"));
 const SavedPostsPage = lazy(() => import("./pages/SavedPostsPage"));
@@ -198,19 +200,23 @@ const AppShell = ({ children }: { children: React.ReactNode }) => (
 function App() {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <ScrollToTop />
-            <AuthProvider>
-              <AccountDrawerProvider>
-                <ViewStateProvider>
-                  <MessageProvider>
-                    <BaseLayout>
-                  <Suspense fallback={<PageLoader />}>
-                    <Routes>
+      <HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <ScrollToTop />
+              <AuthProvider>
+                <AccountDrawerProvider>
+                  <ViewStateProvider>
+                    <MessageProvider>
+                      <BaseLayout>
+                        <Suspense fallback={<PageLoader />}>
+                          <Routes>
+              {/* Public profile - accessible without authentication */}
+              <Route path="/u/:username" element={<PublicProfilePage />} />
+              
               {/* Core authentication */}
               <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
               <Route path="/install" element={<Install />} />
@@ -578,6 +584,7 @@ function App() {
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 }

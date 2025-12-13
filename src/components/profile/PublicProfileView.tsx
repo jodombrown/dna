@@ -10,7 +10,7 @@ interface ProfileData {
   id: string;
   full_name: string | null;
   avatar_url: string | null;
-  profession: string | null; // Changed from professional_role to match DB
+  profession: string | null;
   current_country: string | null;
   interests: string[] | null;
   bio: string | null;

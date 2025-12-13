@@ -1,0 +1,372 @@
+/**
+ * Publicly Accessible Profile Page
+ * Route: /u/:username
+ * 
+ * This page is accessible to ANYONE - no authentication required.
+ * Shows profile information and CTAs to sign up or connect.
+ */
+
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { 
+  MapPin, 
+  Briefcase, 
+  Globe2, 
+  MessageCircle, 
+  UserPlus, 
+  ArrowLeft,
+  User,
+  Share2,
+  ExternalLink
+} from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { ProfileShareButtons } from '@/components/profile/ProfileShareButtons';
+import { Helmet } from 'react-helmet-async';
+
+const PublicProfilePage = () => {
+  const { username } = useParams<{ username: string }>();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  // Fetch profile data - no auth required
+  const { data: profile, isLoading, error } = useQuery({
+    queryKey: ['public-profile-view', username],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, username, full_name, avatar_url, profession, headline, bio, current_country, country_of_origin, skills, focus_areas, industries, is_public, diaspora_story, available_for, regional_expertise')
+        .eq('username', username)
+        .eq('is_public', true)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (!data) throw new Error('Profile not found or private');
+      return data;
+    },
+    enabled: !!username,
+  });
+
+  const isLoggedIn = !!user;
+  const isOwnProfile = user?.id === profile?.id;
+
+  // Handle connect click - redirect to auth if not logged in
+  const handleConnect = () => {
+    if (!isLoggedIn) {
+      // Store the intended action and redirect to auth
+      sessionStorage.setItem('dna_connect_after_auth', profile?.id || '');
+      navigate(`/auth?redirect=/dna/${username}`);
+      return;
+    }
+    // If logged in, go to the authenticated profile page where they can connect
+    navigate(`/dna/${username}`);
+  };
+
+  // Handle message click
+  const handleMessage = () => {
+    if (!isLoggedIn) {
+      sessionStorage.setItem('dna_message_after_auth', profile?.id || '');
+      navigate(`/auth?redirect=/dna/${username}`);
+      return;
+    }
+    navigate(`/dna/${username}`);
+  };
+
+  // Handle share
+  const handleShare = async () => {
+    const profileUrl = `${window.location.origin}/u/${username}`;
+    const shareText = `Check out ${profile?.full_name || username}'s profile on DNA - Diaspora Network of Africa`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${profile?.full_name || username} on DNA`,
+          text: shareText,
+          url: profileUrl,
+        });
+      } catch (err) {
+        // User cancelled or error
+      }
+    } else {
+      // Fallback to clipboard
+      await navigator.clipboard.writeText(profileUrl);
+      toast({
+        title: 'Link copied!',
+        description: 'Profile link copied to clipboard',
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container max-w-4xl mx-auto px-4 py-16 text-center">
+          <User className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+          <h1 className="text-3xl font-bold mb-4">Profile Not Found</h1>
+          <p className="text-muted-foreground mb-6">
+            This profile doesn't exist, has been removed, or is set to private.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button onClick={() => navigate('/')}>
+              Visit DNA
+            </Button>
+            {!isLoggedIn && (
+              <Button variant="outline" onClick={() => navigate('/auth')}>
+                Sign Up for DNA
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const displayName = profile.full_name || profile.username || 'DNA Member';
+  const displayRole = profile.profession || profile.headline;
+
+  return (
+    <>
+      {/* SEO Meta Tags */}
+      <Helmet>
+        <title>{displayName} | DNA - Diaspora Network of Africa</title>
+        <meta name="description" content={profile.bio || `Connect with ${displayName} on DNA - the global network for the African diaspora.`} />
+        <meta property="og:title" content={`${displayName} | DNA`} />
+        <meta property="og:description" content={profile.bio || `Connect with ${displayName} on DNA.`} />
+        <meta property="og:image" content={profile.avatar_url || '/og-image.png'} />
+        <meta property="og:url" content={`${window.location.origin}/u/${username}`} />
+        <meta property="og:type" content="profile" />
+        <meta name="twitter:card" content="summary" />
+      </Helmet>
+
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+          <div className="container max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
+            <Link to="/" className="flex items-center gap-2">
+              <span className="font-bold text-lg text-dna-copper">DNA</span>
+            </Link>
+            <div className="flex items-center gap-2">
+              {!isLoggedIn ? (
+                <>
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link to="/auth">Log In</Link>
+                  </Button>
+                  <Button size="sm" className="bg-dna-copper hover:bg-dna-gold" asChild>
+                    <Link to="/auth?mode=signup">Sign Up</Link>
+                  </Button>
+                </>
+              ) : (
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/dna/feed">Go to Dashboard</Link>
+                </Button>
+              )}
+            </div>
+          </div>
+        </header>
+
+        <div className="container max-w-4xl mx-auto px-4 py-8">
+          {/* Profile Card */}
+          <Card>
+            <CardContent className="pt-8">
+              <div className="flex flex-col sm:flex-row items-start gap-6 mb-6">
+                <Avatar className="w-24 h-24 sm:w-32 sm:h-32 border-4 border-background shrink-0">
+                  <AvatarImage src={profile.avatar_url || undefined} />
+                  <AvatarFallback className="text-2xl sm:text-3xl bg-dna-mint text-dna-forest">
+                    {displayName.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-2xl sm:text-3xl font-bold mb-2 break-words">{displayName}</h1>
+                  
+                  {displayRole && (
+                    <div className="flex items-center text-muted-foreground mb-2">
+                      <Briefcase className="w-4 h-4 mr-2 shrink-0" />
+                      <span className="break-words">{displayRole}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
+                    {profile.current_country && (
+                      <div className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-1 shrink-0" />
+                        <span className="break-words">{profile.current_country}</span>
+                      </div>
+                    )}
+                    {profile.country_of_origin && profile.country_of_origin !== profile.current_country && (
+                      <div className="flex items-center">
+                        <Globe2 className="w-4 h-4 mr-1 shrink-0" />
+                        <span className="break-words">From {profile.country_of_origin}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-3 mb-6">
+                <Button
+                  onClick={handleConnect}
+                  className="bg-dna-copper hover:bg-dna-gold"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  {isLoggedIn ? 'Connect' : 'Sign Up to Connect'}
+                </Button>
+                
+                {isLoggedIn && (
+                  <Button onClick={handleMessage} variant="outline">
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Message
+                  </Button>
+                )}
+                
+                <Button onClick={handleShare} variant="outline" size="icon">
+                  <Share2 className="w-4 h-4" />
+                </Button>
+              </div>
+
+              {/* Diaspora Story */}
+              {profile.diaspora_story && (
+                <div className="mb-6">
+                  <h3 className="font-semibold mb-2">Diaspora Story</h3>
+                  <p className="text-muted-foreground whitespace-pre-wrap">{profile.diaspora_story}</p>
+                </div>
+              )}
+
+              {/* Bio */}
+              {profile.bio && (
+                <div className="mb-6">
+                  <h3 className="font-semibold mb-2">About</h3>
+                  <p className="text-muted-foreground whitespace-pre-wrap">{profile.bio}</p>
+                </div>
+              )}
+
+              {/* Skills & Expertise */}
+              <div className="grid md:grid-cols-2 gap-6 mt-6">
+                {profile.skills && profile.skills.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold mb-3">Skills</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {profile.skills.map((skill: string, i: number) => (
+                        <Badge key={i} variant="secondary">{skill}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {profile.focus_areas && profile.focus_areas.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold mb-3">Focus Areas</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {profile.focus_areas.map((area: string, i: number) => (
+                        <Badge key={i} variant="outline" className="border-dna-copper">{area}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {profile.industries && profile.industries.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold mb-3">Industries</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {profile.industries.map((industry: string, i: number) => (
+                        <Badge key={i} variant="secondary">{industry}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {profile.regional_expertise && profile.regional_expertise.length > 0 && (
+                  <div>
+                    <h3 className="font-semibold mb-3">Regional Expertise</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {profile.regional_expertise.map((region: string, i: number) => (
+                        <Badge key={i} variant="outline">{region}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Availability flags */}
+              {profile.available_for && profile.available_for.length > 0 && (
+                <div className="mt-6 pt-6 border-t">
+                  <h3 className="font-semibold mb-3">Open To</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {profile.available_for.map((item: string, i: number) => (
+                      <Badge key={i} variant="outline">{item}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* CTA Card for non-logged-in users */}
+          {!isLoggedIn && (
+            <Card className="mt-6 bg-gradient-to-r from-dna-forest to-dna-emerald text-white">
+              <CardContent className="py-8 text-center">
+                <h2 className="text-xl sm:text-2xl font-bold mb-3">
+                  Join the Diaspora Network of Africa
+                </h2>
+                <p className="text-white/90 mb-6 max-w-md mx-auto">
+                  Connect with {displayName} and thousands of other diaspora members. 
+                  Build your network, share your story, and contribute to Africa's future.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button 
+                    size="lg" 
+                    className="bg-dna-copper hover:bg-dna-gold text-white"
+                    asChild
+                  >
+                    <Link to="/auth?mode=signup">
+                      Create Your Free Account
+                    </Link>
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="border-white text-white hover:bg-white/10"
+                    asChild
+                  >
+                    <Link to="/">
+                      Learn More About DNA
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Footer */}
+        <footer className="border-t mt-12 py-8 text-center text-sm text-muted-foreground">
+          <div className="container">
+            <p>© {new Date().getFullYear()} Diaspora Network of Africa. All rights reserved.</p>
+            <div className="flex justify-center gap-4 mt-2">
+              <Link to="/privacy" className="hover:underline">Privacy</Link>
+              <Link to="/terms" className="hover:underline">Terms</Link>
+              <Link to="/about" className="hover:underline">About</Link>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </>
+  );
+};
+
+export default PublicProfilePage;
