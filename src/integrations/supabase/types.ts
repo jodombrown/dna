@@ -5019,6 +5019,7 @@ export type Database = {
           advocacy_interests: string[] | null
           africa_focus_areas: string[] | null
           agrees_to_values: boolean | null
+          allow_profile_sharing: boolean | null
           availability_for_mentoring: boolean | null
           availability_hours_per_month: number | null
           availability_tags: Json | null
@@ -5216,6 +5217,7 @@ export type Database = {
           advocacy_interests?: string[] | null
           africa_focus_areas?: string[] | null
           agrees_to_values?: boolean | null
+          allow_profile_sharing?: boolean | null
           availability_for_mentoring?: boolean | null
           availability_hours_per_month?: number | null
           availability_tags?: Json | null
@@ -5413,6 +5415,7 @@ export type Database = {
           advocacy_interests?: string[] | null
           africa_focus_areas?: string[] | null
           agrees_to_values?: boolean | null
+          allow_profile_sharing?: boolean | null
           availability_for_mentoring?: boolean | null
           availability_hours_per_month?: number | null
           availability_tags?: Json | null
