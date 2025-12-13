@@ -190,12 +190,15 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                       Connect
                     </Button>
                   )}
-                  {onMessage && (
+              {onMessage && (
                     <Button onClick={onMessage} variant="outline" className="flex-1" size="sm">
                       <MessageCircle className="w-4 h-4 mr-2" />
                       Message
                     </Button>
                   )}
+                  <Button onClick={handleShare} variant="ghost" size="icon" className="flex-shrink-0 h-9">
+                    <Share2 className="w-4 h-4" />
+                  </Button>
                 </>
               )}
             </div>
