@@ -4,20 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import DiasporaStats from '@/components/DiasporaStats';
 import { TYPOGRAPHY } from '@/lib/typography.config';
 import RequestDemoDialog from '@/components/RequestDemoDialog';
+import JoinBetaDialog from '@/components/JoinBetaDialog';
 import PatternBackground from '@/components/ui/PatternBackground';
 import heroProfessional from '@/assets/hero-professional.jpeg';
 
 const HeroSection = () => {
   const navigate = useNavigate();
   const [isDemoDialogOpen, setIsDemoDialogOpen] = useState(false);
-  
-  const scrollToNextSection = () => {
-    // Scroll to the DiasporaStats section
-    const statsSection = document.getElementById('stats-section');
-    if (statsSection) {
-      statsSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const [isBetaDialogOpen, setIsBetaDialogOpen] = useState(false);
 
   return (
     <>
@@ -56,7 +50,7 @@ const HeroSection = () => {
                   <Button 
                     variant="default" 
                     size="lg"
-                    onClick={scrollToNextSection}
+                    onClick={() => setIsBetaDialogOpen(true)}
                     className="bg-dna-emerald hover:bg-dna-forest text-base lg:text-xl px-6 lg:px-10 py-3 lg:py-6 h-auto font-medium"
                   >
                     Join Our Beta
@@ -115,18 +109,21 @@ const HeroSection = () => {
       </PatternBackground>
 
       {/* Statistics Section with Mudcloth pattern */}
-      <div id="stats-section">
-        <PatternBackground pattern="mudcloth" intensity="subtle" className="py-10 bg-gradient-to-r from-dna-terra/10 to-dna-sunset/10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <DiasporaStats />
-          </div>
-        </PatternBackground>
-      </div>
+      <PatternBackground pattern="mudcloth" intensity="subtle" className="py-10 bg-gradient-to-r from-dna-terra/10 to-dna-sunset/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <DiasporaStats />
+        </div>
+      </PatternBackground>
 
 
       <RequestDemoDialog 
         isOpen={isDemoDialogOpen} 
         onClose={() => setIsDemoDialogOpen(false)} 
+      />
+
+      <JoinBetaDialog 
+        isOpen={isBetaDialogOpen} 
+        onClose={() => setIsBetaDialogOpen(false)} 
       />
     </>
   );
