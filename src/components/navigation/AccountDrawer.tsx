@@ -157,7 +157,7 @@ export const AccountDrawer: React.FC = () => {
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="outline"
-                      className="justify-start bg-dna-amber text-primary-foreground hover:bg-dna-amber/90"
+                      className="justify-start bg-dna-amber text-foreground hover:bg-dna-amber/90"
                     >
                       <Share2 className="h-4 w-4 mr-2" />
                       Share
