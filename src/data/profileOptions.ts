@@ -44,18 +44,26 @@ export const INTENTION_VALUES = INTENTION_OPTIONS.map(o => o.value);
 export type IntentionValue = typeof INTENTION_OPTIONS[number]['value'];
 
 // =============================================================================
-// DIASPORA STATUS
+// CONNECTION TO AFRICA (Inclusive Member Types)
 // =============================================================================
 
-export const DIASPORA_STATUS_OPTIONS = [
-  { value: '1st_gen', label: '1st Generation' },
-  { value: '2nd_gen', label: '2nd Generation' },
-  { value: 'continental_abroad', label: 'Continental African Abroad' },
-  { value: 'other', label: 'Other' },
+export const CONNECTION_TYPE_OPTIONS = [
+  { value: '1st_gen_diaspora', label: '1st Generation Diaspora', description: 'Born in Africa, living abroad' },
+  { value: '2nd_gen_diaspora', label: '2nd Generation Diaspora', description: 'Born abroad, African parent(s)' },
+  { value: '3rd_gen_diaspora', label: '3rd+ Generation Diaspora', description: 'Multi-generational diaspora' },
+  { value: 'continental_african', label: 'Continental African', description: 'Living in Africa' },
+  { value: 'returnee', label: 'Returnee', description: 'Returned to live in Africa' },
+  { value: 'ally', label: 'Ally / Friend of Africa', description: 'Supporting African development' },
+  { value: 'mixed_heritage', label: 'Mixed Heritage', description: 'Partial African ancestry' },
 ] as const;
 
-export const DIASPORA_STATUS_VALUES = DIASPORA_STATUS_OPTIONS.map(o => o.value);
-export type DiasporaStatusValue = typeof DIASPORA_STATUS_OPTIONS[number]['value'];
+export const CONNECTION_TYPE_VALUES = CONNECTION_TYPE_OPTIONS.map(o => o.value);
+export type ConnectionTypeValue = typeof CONNECTION_TYPE_OPTIONS[number]['value'];
+
+// Legacy alias for backward compatibility
+export const DIASPORA_STATUS_OPTIONS = CONNECTION_TYPE_OPTIONS;
+export const DIASPORA_STATUS_VALUES = CONNECTION_TYPE_VALUES;
+export type DiasporaStatusValue = ConnectionTypeValue;
 
 // =============================================================================
 // ENGAGEMENT INTENTIONS (For Connect/Collaborate pillars)

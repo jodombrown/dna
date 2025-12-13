@@ -19,7 +19,7 @@ import { useProfile } from '@/hooks/useProfile';
 // Profile v2 Components
 import ProfileV2Hero from '@/components/profile-v2/ProfileV2Hero';
 import ProfileV2About from '@/components/profile-v2/ProfileV2About';
-import ProfileV2Diaspora from '@/components/profile-v2/ProfileV2Diaspora';
+import ProfileV2Connection from '@/components/profile-v2/ProfileV2Connection';
 import ProfileV2Skills from '@/components/profile-v2/ProfileV2Skills';
 import ProfileV2Contributions from '@/components/profile-v2/ProfileV2Contributions';
 import ProfileV2Interests from '@/components/profile-v2/ProfileV2Interests';
@@ -166,7 +166,7 @@ const ProfileV2: React.FC = () => {
               onUpdate={handleUpdateAbout}
             />
 
-            <ProfileV2Diaspora
+            <ProfileV2Connection
               profile={profile}
               isOwner={permissions.is_owner}
             />
