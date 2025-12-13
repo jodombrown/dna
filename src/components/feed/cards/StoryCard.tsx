@@ -176,12 +176,12 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           )}
         </div>
 
-        {/* Read Full Story Button */}
+        {/* Read Full Story Button - expands in-place */}
         {needsExpansion && !isExpanded && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate(`/dna/story/${item.post_id}`)}
+            onClick={() => setIsExpanded(true)}
             className="text-primary"
           >
             Read Full Story
