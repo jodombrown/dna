@@ -1,10 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut } from 'lucide-react';
+import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
@@ -29,11 +35,52 @@ export const AccountDrawer: React.FC = () => {
     close();
   };
 
-  const handleShareProfile = () => {
+  const getPublicProfileUrl = () => {
     if (profile?.username) {
-      const profileUrl = `${window.location.origin}${profileRoute(profile)}`;
-      navigator.clipboard.writeText(profileUrl);
+      return `${window.location.origin}/u/${profile.username}`;
+    }
+    return '';
+  };
+
+  const handleCopyLink = () => {
+    const url = getPublicProfileUrl();
+    if (url) {
+      navigator.clipboard.writeText(url);
       toast.success('Profile link copied to clipboard');
+    }
+  };
+
+  const handleShareWhatsApp = () => {
+    const url = getPublicProfileUrl();
+    const text = `Check out ${profile?.display_name || profile?.username}'s profile on DNA - Diaspora Network of Africa`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, '_blank');
+  };
+
+  const handleShareLinkedIn = () => {
+    const url = getPublicProfileUrl();
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+  };
+
+  const handleShareTwitter = () => {
+    const url = getPublicProfileUrl();
+    const text = `Check out ${profile?.display_name || profile?.username}'s profile on DNA - Diaspora Network of Africa`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+  };
+
+  const handleNativeShare = async () => {
+    const url = getPublicProfileUrl();
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${profile?.display_name || profile?.username}'s Impact Profile`,
+          text: `Check out ${profile?.display_name || profile?.username}'s profile on DNA`,
+          url: url,
+        });
+      } catch (error) {
+        // User cancelled or error
+      }
+    } else {
+      handleCopyLink();
     }
   };
 
@@ -106,14 +153,41 @@ export const AccountDrawer: React.FC = () => {
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
-                <Button 
-                  onClick={handleShareProfile}
-                  variant="outline"
-                  className="justify-start"
-                >
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="outline"
+                      className="justify-start bg-dna-amber text-primary-foreground hover:bg-dna-amber/90"
+                    >
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Share
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 bg-background border border-border z-50">
+                    <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
+                      <Copy className="h-4 w-4 mr-3" />
+                      Copy link
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleShareWhatsApp} className="cursor-pointer">
+                      <MessageSquare className="h-4 w-4 mr-3" />
+                      Share via WhatsApp
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleShareLinkedIn} className="cursor-pointer">
+                      <Linkedin className="h-4 w-4 mr-3" />
+                      Share via LinkedIn
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleShareTwitter} className="cursor-pointer">
+                      <Twitter className="h-4 w-4 mr-3" />
+                      Share via X (Twitter)
+                    </DropdownMenuItem>
+                    {typeof navigator !== 'undefined' && navigator.share && (
+                      <DropdownMenuItem onClick={handleNativeShare} className="cursor-pointer">
+                        <Share2 className="h-4 w-4 mr-3" />
+                        Share via...
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </div>
