@@ -21,7 +21,7 @@ export const FeedStoryCard: React.FC<FeedStoryCardProps> = ({ activity }) => {
   };
 
   const handleViewStory = () => {
-    navigate(`/dna/convey/stories/${storyData.story_id}`);
+    navigate(`/dna/convey/stories/${storyData.slug || storyData.story_id}`);
   };
 
   const getStoryTypeLabel = (type: string) => {
