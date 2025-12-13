@@ -29,7 +29,13 @@ const ProfileV2Interests: React.FC<ProfileV2InterestsProps> = ({
     return null;
   }
 
-  const hasInterests = (tags.interests || []).length > 0;
+  const allInterests = [
+    ...(tags.interests || []),
+    ...(tags.focus_areas || []),
+    ...(tags.industries || []),
+    ...(tags.regional_expertise || []),
+  ];
+  const hasInterests = allInterests.length > 0;
 
   // Hide empty section for public viewers
   if (!hasInterests && !isOwner) {
@@ -137,7 +143,7 @@ const ProfileV2Interests: React.FC<ProfileV2InterestsProps> = ({
         ) : (
           <div className="flex flex-wrap gap-2">
             {hasInterests ? (
-              tags.interests?.map((interest, idx) => (
+              allInterests.map((interest, idx) => (
                 <Badge key={idx} variant="secondary" className="text-xs sm:text-sm">
                   {interest}
                 </Badge>
