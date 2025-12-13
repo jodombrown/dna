@@ -55,7 +55,11 @@ const ProfileV2Contributions: React.FC<ProfileV2ContributionsProps> = ({
     setIsEditing(false);
   };
 
-  const allContributions = [...(tags.contribution_tags || []), ...(tags.available_for || [])];
+  const allContributions = [
+    ...(tags.available_for || []),
+    ...(tags.mentorship_areas || []),
+    ...(tags.contribution_tags || []),
+  ];
   const hasContributions = allContributions.length > 0;
 
   // Hide empty section for public viewers

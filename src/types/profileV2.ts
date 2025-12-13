@@ -43,10 +43,19 @@ export interface ProfileV2Data {
 }
 
 export interface ProfileV2Tags {
+  // Primary array fields (used by profile view components)
   skills?: string[];
   interests?: string[];
   impact_areas?: string[];
   available_for?: string[];
+  // Additional discovery tags
+  focus_areas?: string[];
+  regional_expertise?: string[];
+  industries?: string[];
+  professional_sectors?: string[];
+  mentorship_areas?: string[];
+  diaspora_networks?: string[];
+  // Legacy tag fields for backward compatibility
   skill_tags?: any[];
   interest_tags?: any[];
   contribution_tags?: any[];
