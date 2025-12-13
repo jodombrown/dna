@@ -12,7 +12,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Play, X, ExternalLink, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { VideoEmbedLightbox, getYouTubeThumbnail } from './VideoEmbedLightbox';
+import { VideoEmbedLightbox, getYouTubeThumbnail, isSupportedVideoUrl } from './VideoEmbedLightbox';
 
 interface LinkPreviewData {
   url: string;
@@ -51,10 +51,10 @@ export const LinkPreviewCard: React.FC<LinkPreviewCardProps> = ({
   
   if (!data?.url) return null;
 
-  // Determine if this is a video - ONLY trust explicit type or is_video flag
-  // Do NOT use URL pattern matching as it can misclassify article pages
-  const isVideo = data.type === 'video' || data.is_video === true;
-
+  // Determine if this is a video - only when metadata says video AND URL is a supported platform
+  const isVideoMetadata = data.type === 'video' || data.is_video === true;
+  const isVideo = isVideoMetadata && isSupportedVideoUrl(data.url);
+  
   // Get the best available image
   const previewImage = data.thumbnail_url || data.image || 
     (isVideo ? getYouTubeThumbnail(data.url) : undefined);
