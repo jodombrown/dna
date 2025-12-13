@@ -256,7 +256,7 @@ const DnaFeed = () => {
           </div>
 
           {/* Add top padding to account for fixed header height */}
-          <main className="pb-16 px-3 pt-[8.5rem] space-y-3">
+          <main className="pb-16 px-3 pt-[11rem] space-y-3">
             {/* Tab Explainer - shows once per day/login per tab */}
             <FeedTabExplainer activeTab={activeTab} />
             
