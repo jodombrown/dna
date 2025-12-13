@@ -15,8 +15,9 @@ export const ProfileShareButtons: React.FC<ProfileShareButtonsProps> = ({
   className = ""
 }) => {
   const { toast } = useToast();
-  const profileUrl = `${window.location.origin}/impact-profile/${username}`;
-  const shareText = `Check out ${fullName}'s impact profile on DNA - Africa's digital diaspora network`;
+  // Use the public profile URL format /u/:username for sharing
+  const profileUrl = `${window.location.origin}/u/${username}`;
+  const shareText = `Check out ${fullName}'s profile on DNA - Diaspora Network of Africa`;
 
   const copyLink = async () => {
     try {
