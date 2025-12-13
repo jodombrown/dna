@@ -49,6 +49,7 @@ export function CommentItem({ comment, postId, currentUserId, onReply, isReplyin
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
   const [showReportDialog, setShowReportDialog] = useState(false);
+  const [isReactionPickerOpen, setIsReactionPickerOpen] = useState(false);
 
   const { isOwnComment, editComment, deleteComment, reportComment } = useCommentActions(
     comment.comment_id,
@@ -197,7 +198,7 @@ export function CommentItem({ comment, postId, currentUserId, onReply, isReplyin
         {/* Action buttons */}
         <div className="flex items-center gap-2 ml-1 mt-1">
           {/* Emoji reaction picker */}
-          <Popover>
+          <Popover open={isReactionPickerOpen} onOpenChange={setIsReactionPickerOpen}>
             <PopoverTrigger asChild>
               <Button 
                 variant="ghost" 
@@ -206,6 +207,11 @@ export function CommentItem({ comment, postId, currentUserId, onReply, isReplyin
                   "h-6 px-2 text-xs text-muted-foreground hover:text-foreground",
                   userReaction && "text-dna-forest"
                 )}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsReactionPickerOpen(true);
+                }}
               >
                 {userReaction || <Smile className="h-3 w-3" />}
                 <span className="ml-1">{userReaction ? getEmojiLabel(userReaction) : 'React'}</span>
@@ -216,7 +222,10 @@ export function CommentItem({ comment, postId, currentUserId, onReply, isReplyin
                 {QUICK_REACTIONS.map((emoji) => (
                   <button
                     key={emoji}
-                    onClick={() => toggleReaction(emoji)}
+                    onClick={() => {
+                      toggleReaction(emoji);
+                      setIsReactionPickerOpen(false);
+                    }}
                     className={cn(
                       "p-1.5 rounded hover:bg-muted transition-colors text-lg",
                       userReaction === emoji && "bg-muted ring-2 ring-dna-forest"
