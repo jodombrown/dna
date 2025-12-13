@@ -9,19 +9,20 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save, Loader2, LogOut } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
-import ProfileCompletionBar from '@/components/profile/ProfileCompletionBar';
+import ProfileCompletionBar, { calculateProfileCompletion } from '@/components/profile/ProfileCompletionBar';
 
 // Import modular profile edit components
 import {
   ProfileEditImages,
   ProfileEditBasicInfo,
+  ProfileEditContactPreferences,
+  ProfileEditOpenTo,
   ProfileEditProfessional,
   ProfileEditDiaspora,
   ProfileEditInterests,
   ProfileEditLanguages,
   ProfileEditSocialLinks,
   ProfileEditPrivacy,
-  ProfileEditContact,
 } from '@/components/profile-edit';
 
 const ProfileEdit = () => {
@@ -46,10 +47,15 @@ const ProfileEdit = () => {
   const [currentCountry, setCurrentCountry] = useState('');
   const [pronouns, setPronouns] = useState('');
 
-  // Contact preferences state
+  // Contact preferences state (unified)
+  const [preferredContactMethod, setPreferredContactMethod] = useState('platform_message');
+  const [contactNumberVisibility, setContactNumberVisibility] = useState('none');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [whatsappNumber, setWhatsappNumber] = useState('');
-  const [preferredContactMethod, setPreferredContactMethod] = useState('');
   const [timezone, setTimezone] = useState('');
+
+  // Open to / Collaboration state
+  const [availableFor, setAvailableFor] = useState<string[]>([]);
 
   // Professional state
   const [profession, setProfession] = useState('');
@@ -102,10 +108,15 @@ const ProfileEdit = () => {
       setCurrentCountry(profile.current_country || '');
       setPronouns((profile as any).pronouns || '');
 
-      // Contact preferences
+      // Contact preferences (unified)
+      setPreferredContactMethod((profile as any).preferred_contact_method || 'platform_message');
+      setContactNumberVisibility((profile as any).contact_number_visibility || 'none');
+      setPhoneNumber((profile as any).phone_number || '');
       setWhatsappNumber((profile as any).whatsapp_number || '');
-      setPreferredContactMethod((profile as any).preferred_contact_method || '');
       setTimezone((profile as any).timezone || '');
+
+      // Open to / Collaboration
+      setAvailableFor(Array.isArray(profile.available_for) ? profile.available_for : []);
 
       // Professional
       setProfession(profile.profession || '');
@@ -157,12 +168,11 @@ const ProfileEdit = () => {
       queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
       
       // Use client-side calculation for accurate completion percentage
-      const { calculateProfileCompletion } = require('@/components/profile/ProfileCompletionBar');
       const completionPercentage = calculateProfileCompletion(data);
       
       toast({
         title: 'Profile updated!',
-        description: `You're ${completionPercentage}% complete. ${completionPercentage >= 40 ? '✅ All features unlocked!' : `Complete ${40 - completionPercentage}% more to unlock all features.`}`,
+        description: `You're at ${completionPercentage} pts. ${completionPercentage >= 40 ? '✅ All features unlocked!' : `Complete ${40 - completionPercentage} more pts to unlock all features.`}`,
       });
       
       navigate('/dna/feed');
@@ -189,10 +199,15 @@ const ProfileEdit = () => {
       current_country: currentCountry,
       pronouns,
 
-      // Contact preferences
-      whatsapp_number: whatsappNumber,
+      // Contact preferences (unified)
       preferred_contact_method: preferredContactMethod,
+      contact_number_visibility: contactNumberVisibility,
+      phone_number: phoneNumber,
+      whatsapp_number: whatsappNumber,
       timezone,
+
+      // Open to / Collaboration
+      available_for: availableFor,
 
       // Professional
       profession,
@@ -318,14 +333,24 @@ const ProfileEdit = () => {
             onPronounsChange={setPronouns}
           />
 
-          {/* Contact Preferences */}
-          <ProfileEditContact
-            whatsappNumber={whatsappNumber}
+          {/* Contact Preferences (unified) */}
+          <ProfileEditContactPreferences
             preferredContactMethod={preferredContactMethod}
+            contactNumberVisibility={contactNumberVisibility}
+            phoneNumber={phoneNumber}
+            whatsappNumber={whatsappNumber}
             timezone={timezone}
-            onWhatsappChange={setWhatsappNumber}
             onPreferredContactChange={setPreferredContactMethod}
+            onContactNumberVisibilityChange={setContactNumberVisibility}
+            onPhoneNumberChange={setPhoneNumber}
+            onWhatsappNumberChange={setWhatsappNumber}
             onTimezoneChange={setTimezone}
+          />
+
+          {/* Open To / Collaboration */}
+          <ProfileEditOpenTo
+            availableFor={availableFor}
+            onAvailableForChange={setAvailableFor}
           />
 
           {/* Professional Background */}
