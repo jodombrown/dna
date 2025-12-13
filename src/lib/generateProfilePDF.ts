@@ -25,26 +25,34 @@ interface ProfileData {
   company?: string;
 }
 
+// DNA Brand Colors
 const DNA_COLORS = {
-  dark: '#1a1a2e',
-  accent: '#d4a574',
-  text: '#333333',
-  lightText: '#666666',
-  white: '#ffffff',
-  border: '#e5e5e5',
+  dark: '#1C3D3C',       // DNA forest/dark green
+  accent: '#D4A574',     // DNA copper/gold
+  emerald: '#10B981',    // DNA emerald
+  text: '#1F2937',       // Dark gray text
+  lightText: '#6B7280',  // Muted text
+  white: '#FFFFFF',
+  sidebarText: '#E5E7EB',
 };
 
 export async function generateProfilePDF(profile: ProfileData): Promise<void> {
-  const doc = new jsPDF('p', 'mm', 'a4');
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
+  // Create PDF in Letter size (8.5 x 11 inches = 215.9 x 279.4 mm)
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'letter',
+  });
   
-  const sidebarWidth = 70;
+  const pageWidth = doc.internal.pageSize.getWidth(); // 215.9mm
+  const pageHeight = doc.internal.pageSize.getHeight(); // 279.4mm
+  
+  const sidebarWidth = 72;
   const mainWidth = pageWidth - sidebarWidth;
-  const margin = 8;
+  const margin = 10;
   
   // Draw dark sidebar
-  doc.setFillColor(26, 26, 46); // DNA dark
+  doc.setFillColor(28, 61, 60); // DNA forest
   doc.rect(0, 0, sidebarWidth, pageHeight, 'F');
   
   // Draw main content area
@@ -52,24 +60,23 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   doc.rect(sidebarWidth, 0, mainWidth, pageHeight, 'F');
   
   // Avatar placeholder (circle)
-  const avatarSize = 45;
+  const avatarSize = 48;
   const avatarX = sidebarWidth / 2;
-  const avatarY = 35;
+  const avatarY = 40;
   
   // Draw avatar circle background
-  doc.setFillColor(212, 165, 116); // DNA accent
+  doc.setFillColor(212, 165, 116); // DNA copper
   doc.circle(avatarX, avatarY, avatarSize / 2, 'F');
   
   // If avatar URL exists, try to load it
   if (profile.avatar_url) {
     try {
       const img = await loadImage(profile.avatar_url);
-      // Create circular clip effect by drawing image
       doc.addImage(img, 'JPEG', avatarX - avatarSize/2, avatarY - avatarSize/2, avatarSize, avatarSize);
     } catch (e) {
       // Draw initials if image fails
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(20);
+      doc.setFontSize(22);
       doc.setFont('helvetica', 'bold');
       const initials = getInitials(profile.display_name || profile.full_name || profile.username || 'U');
       doc.text(initials, avatarX, avatarY + 3, { align: 'center' });
@@ -77,44 +84,43 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   } else {
     // Draw initials
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(20);
+    doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
     const initials = getInitials(profile.display_name || profile.full_name || profile.username || 'U');
     doc.text(initials, avatarX, avatarY + 3, { align: 'center' });
   }
   
-  let sidebarY = avatarY + avatarSize / 2 + 15;
+  let sidebarY = avatarY + avatarSize / 2 + 18;
   
   // Contact Section
   sidebarY = drawSidebarSection(doc, 'CONTACT', sidebarY, sidebarWidth, margin);
   
   if (profile.email) {
-    sidebarY = drawSidebarItem(doc, '✉', profile.email, sidebarY, sidebarWidth, margin);
-  }
-  if (profile.phone_number) {
-    sidebarY = drawSidebarItem(doc, '☎', profile.phone_number, sidebarY, sidebarWidth, margin);
+    sidebarY = drawSidebarItem(doc, 'Email:', profile.email, sidebarY, sidebarWidth, margin);
   }
   if (profile.linkedin_url) {
-    const linkedinHandle = profile.linkedin_url.split('/').pop() || 'LinkedIn';
-    sidebarY = drawSidebarItem(doc, 'in', linkedinHandle, sidebarY, sidebarWidth, margin);
+    const linkedinHandle = profile.linkedin_url.includes('linkedin.com') 
+      ? profile.linkedin_url.split('/').filter(Boolean).pop() || 'LinkedIn'
+      : profile.linkedin_url;
+    sidebarY = drawSidebarItem(doc, 'LinkedIn:', linkedinHandle, sidebarY, sidebarWidth, margin);
   }
   if (profile.location || profile.current_country) {
-    sidebarY = drawSidebarItem(doc, '◉', profile.location || profile.current_country || '', sidebarY, sidebarWidth, margin);
+    sidebarY = drawSidebarItem(doc, 'Location:', profile.location || profile.current_country || '', sidebarY, sidebarWidth, margin);
   }
   
-  sidebarY += 5;
+  sidebarY += 8;
   
   // Heritage Section
   if (profile.country_of_origin || (profile.languages && profile.languages.length > 0)) {
     sidebarY = drawSidebarSection(doc, 'HERITAGE', sidebarY, sidebarWidth, margin);
     
     if (profile.country_of_origin) {
-      sidebarY = drawSidebarItem(doc, '🌍', `Origin: ${profile.country_of_origin}`, sidebarY, sidebarWidth, margin);
+      sidebarY = drawSidebarItem(doc, 'Origin:', profile.country_of_origin, sidebarY, sidebarWidth, margin);
     }
     if (profile.languages && profile.languages.length > 0) {
-      sidebarY = drawSidebarItem(doc, '🗣', profile.languages.slice(0, 3).join(', '), sidebarY, sidebarWidth, margin);
+      sidebarY = drawSidebarItem(doc, 'Languages:', profile.languages.slice(0, 3).join(', '), sidebarY, sidebarWidth, margin);
     }
-    sidebarY += 5;
+    sidebarY += 8;
   }
   
   // Skills Section
@@ -124,7 +130,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     profile.skills.slice(0, 8).forEach((skill) => {
       sidebarY = drawSidebarBullet(doc, skill, sidebarY, sidebarWidth, margin);
     });
-    sidebarY += 5;
+    sidebarY += 8;
   }
   
   // Focus Areas Section
@@ -134,7 +140,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     profile.focus_areas.slice(0, 5).forEach((area) => {
       sidebarY = drawSidebarBullet(doc, area, sidebarY, sidebarWidth, margin);
     });
-    sidebarY += 5;
+    sidebarY += 8;
   }
   
   // Available For Section
@@ -147,17 +153,17 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   }
   
   // Main Content Area
-  let mainY = 25;
-  const mainX = sidebarWidth + 12;
-  const mainContentWidth = mainWidth - 24;
+  let mainY = 30;
+  const mainX = sidebarWidth + 15;
+  const mainContentWidth = mainWidth - 30;
   
-  // Name
-  doc.setTextColor(212, 165, 116); // DNA accent
+  // Name - using DNA copper color
+  doc.setTextColor(212, 165, 116); // DNA copper
   doc.setFontSize(28);
   doc.setFont('helvetica', 'bold');
   const displayName = profile.display_name || profile.full_name || profile.username || 'DNA Member';
   doc.text(displayName.toUpperCase(), mainX, mainY);
-  mainY += 10;
+  mainY += 12;
   
   // Professional Title
   if (profile.headline || profile.professional_role) {
@@ -179,10 +185,10 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
       companyLine += companyLine ? ` • ${profile.years_experience} years experience` : `${profile.years_experience} years experience`;
     }
     doc.text(companyLine, mainX, mainY);
-    mainY += 5;
+    mainY += 6;
   }
   
-  mainY += 10;
+  mainY += 12;
   
   // Professional Summary
   if (profile.bio) {
@@ -194,7 +200,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     
     const bioLines = doc.splitTextToSize(profile.bio, mainContentWidth);
     doc.text(bioLines, mainX, mainY);
-    mainY += bioLines.length * 5 + 10;
+    mainY += bioLines.length * 5 + 12;
   }
   
   // Interests Section
@@ -208,7 +214,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     const interestsText = profile.interests.join(' • ');
     const interestLines = doc.splitTextToSize(interestsText, mainContentWidth);
     doc.text(interestLines, mainX, mainY);
-    mainY += interestLines.length * 5 + 10;
+    mainY += interestLines.length * 5 + 12;
   }
   
   // Industry Section
@@ -222,18 +228,19 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     mainY += 15;
   }
   
-  // DNA Footer
-  doc.setFillColor(212, 165, 116);
-  doc.rect(sidebarWidth, pageHeight - 15, mainWidth, 15, 'F');
+  // DNA Footer Bar
+  const footerHeight = 18;
+  doc.setFillColor(212, 165, 116); // DNA copper
+  doc.rect(sidebarWidth, pageHeight - footerHeight, mainWidth, footerHeight, 'F');
   
-  doc.setTextColor(26, 26, 46);
-  doc.setFontSize(8);
+  doc.setTextColor(28, 61, 60); // DNA forest
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text('DIASPORA NETWORK OF AFRICA', sidebarWidth + mainWidth / 2, pageHeight - 8, { align: 'center' });
+  doc.text('DIASPORA NETWORK OF AFRICA', sidebarWidth + mainWidth / 2, pageHeight - 10, { align: 'center' });
   
-  doc.setFontSize(7);
+  doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
-  doc.text('diasporanetwork.africa', sidebarWidth + mainWidth / 2, pageHeight - 4, { align: 'center' });
+  doc.text('diasporanetwork.africa', sidebarWidth + mainWidth / 2, pageHeight - 5, { align: 'center' });
   
   // Save the PDF
   const fileName = `${(profile.username || profile.display_name || 'profile').replace(/\s+/g, '_')}_DNA_Profile.pdf`;
@@ -241,53 +248,53 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
 }
 
 function drawSidebarSection(doc: jsPDF, title: string, y: number, sidebarWidth: number, margin: number): number {
-  doc.setTextColor(212, 165, 116); // DNA accent
+  doc.setTextColor(212, 165, 116); // DNA copper
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.text(title, margin, y);
   
   // Underline
   doc.setDrawColor(212, 165, 116);
-  doc.setLineWidth(0.3);
+  doc.setLineWidth(0.4);
   doc.line(margin, y + 2, sidebarWidth - margin, y + 2);
   
-  return y + 10;
+  return y + 12;
 }
 
-function drawSidebarItem(doc: jsPDF, icon: string, text: string, y: number, sidebarWidth: number, margin: number): number {
-  doc.setTextColor(255, 255, 255);
+function drawSidebarItem(doc: jsPDF, label: string, text: string, y: number, sidebarWidth: number, margin: number): number {
+  // Label in accent color
+  doc.setTextColor(212, 165, 116);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.text(label, margin, y);
+  
+  // Value in light text
+  doc.setTextColor(229, 231, 235); // Light gray
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   
-  // Icon
-  doc.setTextColor(212, 165, 116);
-  doc.text(icon, margin, y);
+  const maxWidth = sidebarWidth - margin * 2;
+  const lines = doc.splitTextToSize(text, maxWidth);
+  doc.text(lines, margin, y + 4);
   
-  // Text - wrap if too long
-  doc.setTextColor(200, 200, 200);
-  const maxWidth = sidebarWidth - margin * 2 - 8;
+  return y + (lines.length * 4) + 8;
+}
+
+function drawSidebarBullet(doc: jsPDF, text: string, y: number, sidebarWidth: number, margin: number): number {
+  // Bullet in accent color
+  doc.setTextColor(212, 165, 116);
+  doc.setFontSize(8);
+  doc.text('•', margin + 2, y);
+  
+  // Text in light color
+  doc.setTextColor(229, 231, 235);
+  doc.setFont('helvetica', 'normal');
+  
+  const maxWidth = sidebarWidth - margin * 2 - 10;
   const lines = doc.splitTextToSize(text, maxWidth);
   doc.text(lines, margin + 8, y);
   
   return y + (lines.length * 4) + 3;
-}
-
-function drawSidebarBullet(doc: jsPDF, text: string, y: number, sidebarWidth: number, margin: number): number {
-  doc.setTextColor(200, 200, 200);
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'normal');
-  
-  // Bullet
-  doc.setTextColor(212, 165, 116);
-  doc.text('•', margin + 2, y);
-  
-  // Text
-  doc.setTextColor(200, 200, 200);
-  const maxWidth = sidebarWidth - margin * 2 - 8;
-  const lines = doc.splitTextToSize(text, maxWidth);
-  doc.text(lines, margin + 8, y);
-  
-  return y + (lines.length * 4) + 2;
 }
 
 function drawMainSection(doc: jsPDF, title: string, y: number, x: number, width: number): number {
@@ -296,12 +303,12 @@ function drawMainSection(doc: jsPDF, title: string, y: number, x: number, width:
   doc.setFont('helvetica', 'bold');
   doc.text(title, x, y);
   
-  // Underline
+  // Underline in DNA copper
   doc.setDrawColor(212, 165, 116);
-  doc.setLineWidth(0.5);
-  doc.line(x, y + 2, x + width * 0.4, y + 2);
+  doc.setLineWidth(0.6);
+  doc.line(x, y + 2, x + Math.min(width * 0.5, 80), y + 2);
   
-  return y + 10;
+  return y + 12;
 }
 
 function getInitials(name: string): string {

@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
-import { Loader2, Eye, EyeOff, Globe, Lock, Info } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Globe, Lock, Info, Share2 } from 'lucide-react';
 
 export default function PrivacySettings() {
   const { user } = useAuth();
@@ -18,11 +18,13 @@ export default function PrivacySettings() {
   const queryClient = useQueryClient();
 
   const [isPublic, setIsPublic] = useState(false);
+  const [allowProfileSharing, setAllowProfileSharing] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (profile) {
       setIsPublic(profile.is_public || false);
+      setAllowProfileSharing(profile.allow_profile_sharing !== false);
     }
   }, [profile]);
 
@@ -54,6 +56,42 @@ export default function PrivacySettings() {
       setIsPublic(!checked); // Revert on error
       toast({
         title: 'Error updating privacy',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSharingChange = async (checked: boolean) => {
+    setSaving(true);
+    setAllowProfileSharing(checked);
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          allow_profile_sharing: checked,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user?.id);
+
+      if (error) throw error;
+
+      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
+
+      toast({
+        title: checked ? 'Profile sharing enabled' : 'Profile sharing disabled',
+        description: checked
+          ? 'Other users can now share your profile with their network.'
+          : 'Other users can no longer share your profile.',
+      });
+    } catch (error: any) {
+      setAllowProfileSharing(!checked); // Revert on error
+      toast({
+        title: 'Error updating setting',
         description: error.message,
         variant: 'destructive',
       });
@@ -123,6 +161,58 @@ export default function PrivacySettings() {
                     {isPublic
                       ? 'Other DNA members can find you through search and discovery, and view your full profile.'
                       : 'Only you can see your profile. Others will see "This profile is private" when they visit.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Profile Sharing by Others */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Share2 className="h-5 w-5" />
+              Profile Sharing
+            </CardTitle>
+            <CardDescription>
+              Control whether other users can share your profile
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Label htmlFor="allow_sharing" className="text-base font-medium">
+                  Allow Others to Share My Profile
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  When enabled, other users can share your profile via social media, copy link, or download PDF
+                </p>
+              </div>
+              <Switch
+                id="allow_sharing"
+                checked={allowProfileSharing}
+                onCheckedChange={handleSharingChange}
+                disabled={saving}
+              />
+            </div>
+
+            {/* Status indicator */}
+            <div className={`p-4 rounded-lg ${allowProfileSharing ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900' : 'bg-muted border'}`}>
+              <div className="flex items-start gap-3">
+                {allowProfileSharing ? (
+                  <Share2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
+                ) : (
+                  <Lock className="h-5 w-5 text-muted-foreground mt-0.5" />
+                )}
+                <div>
+                  <p className={`font-medium ${allowProfileSharing ? 'text-green-800 dark:text-green-200' : 'text-foreground'}`}>
+                    {allowProfileSharing ? 'Profile sharing is enabled' : 'Profile sharing is disabled'}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {allowProfileSharing
+                      ? 'Other DNA members can share your profile with their connections via social media, WhatsApp, LinkedIn, or download your profile as a PDF.'
+                      : 'The share button is hidden when others view your profile. Only you can share your own profile.'}
                   </p>
                 </div>
               </div>

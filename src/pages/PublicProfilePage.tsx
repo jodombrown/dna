@@ -20,13 +20,10 @@ import {
   Globe2, 
   MessageCircle, 
   UserPlus, 
-  ArrowLeft,
   User,
-  Share2,
-  ExternalLink
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { ProfileShareButtons } from '@/components/profile/ProfileShareButtons';
+import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
 import { Helmet } from 'react-helmet-async';
 
 const PublicProfilePage = () => {
@@ -41,7 +38,7 @@ const PublicProfilePage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, username, full_name, avatar_url, profession, headline, bio, current_country, country_of_origin, skills, focus_areas, industries, is_public, diaspora_story, available_for, regional_expertise')
+        .select('id, username, full_name, avatar_url, profession, headline, bio, current_country, country_of_origin, skills, focus_areas, industries, is_public, diaspora_story, available_for, regional_expertise, allow_profile_sharing, email, linkedin_url, phone_number, whatsapp_number, languages, years_experience, company')
         .eq('username', username)
         .eq('is_public', true)
         .maybeSingle();
@@ -55,6 +52,8 @@ const PublicProfilePage = () => {
 
   const isLoggedIn = !!user;
   const isOwnProfile = user?.id === profile?.id;
+  // Check if profile allows sharing by others (default to true if not set)
+  const allowSharing = profile?.allow_profile_sharing !== false;
 
   // Handle connect click - redirect to auth if not logged in
   const handleConnect = () => {
@@ -76,31 +75,6 @@ const PublicProfilePage = () => {
       return;
     }
     navigate(`/dna/${username}`);
-  };
-
-  // Handle share
-  const handleShare = async () => {
-    const profileUrl = `${window.location.origin}/u/${username}`;
-    const shareText = `Check out ${profile?.full_name || username}'s profile on DNA - Diaspora Network of Africa`;
-    
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${profile?.full_name || username} on DNA`,
-          text: shareText,
-          url: profileUrl,
-        });
-      } catch (err) {
-        // User cancelled or error
-      }
-    } else {
-      // Fallback to clipboard
-      await navigator.clipboard.writeText(profileUrl);
-      toast({
-        title: 'Link copied!',
-        description: 'Profile link copied to clipboard',
-      });
-    }
   };
 
   if (isLoading) {
@@ -234,9 +208,21 @@ const PublicProfilePage = () => {
                   </Button>
                 )}
                 
-                <Button onClick={handleShare} variant="outline" size="icon">
-                  <Share2 className="w-4 h-4" />
-                </Button>
+                {/* Share dropdown - only show if profile owner allows sharing OR if viewer is the owner */}
+                {(allowSharing || isOwnProfile) && (
+                  <ProfileShareDropdown
+                    username={username || ''}
+                    fullName={profile.full_name}
+                    profile={{
+                      ...profile,
+                      display_name: profile.full_name,
+                      professional_role: profile.profession || profile.headline,
+                    }}
+                    showDownload={true}
+                    variant="outline"
+                    size="icon"
+                  />
+                )}
               </div>
 
               {/* Diaspora Story */}
