@@ -23,8 +23,11 @@ export default function CountryCombobox({
   const [search, setSearch] = useState('');
 
   // Find the currently selected country by name (case-insensitive)
+  // Also handle legacy values like "London, United Kingdom" by checking if value contains country name
   const selectedCountry = COUNTRIES.find((c) => 
     c.name.toLowerCase() === (value || '').toLowerCase()
+  ) || COUNTRIES.find((c) => 
+    (value || '').toLowerCase().includes(c.name.toLowerCase())
   );
 
   // CRITICAL FIX: Command component normalizes values to lowercase
