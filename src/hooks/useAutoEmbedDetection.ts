@@ -149,11 +149,10 @@ export const useAutoEmbedDetection = () => {
     console.log('[useAutoEmbedDetection] Detected URLs:', urls);
     
     if (urls.length > 0) {
-      // Use the first URL found, prioritize video URLs
-      const videoUrl = urls.find(isVideoUrl);
-      const urlToFetch = videoUrl || urls[0];
+      // Use the first URL found - no longer prioritize video URLs since we can't know type until API returns
+      const urlToFetch = urls[0];
       
-      console.log('[useAutoEmbedDetection] Will fetch:', urlToFetch, 'isVideo:', isVideoUrl(urlToFetch));
+      console.log('[useAutoEmbedDetection] Will fetch:', urlToFetch);
       
       // Debounce the fetch to avoid hammering the API while typing
       debounceTimer.current = setTimeout(() => {
