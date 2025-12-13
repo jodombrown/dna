@@ -249,7 +249,7 @@ export const ProfileMissingFields: React.FC<ProfileMissingFieldsProps> = ({
           </span>
           {!field.complete && !compact && (
             <span className="text-xs text-dna-copper font-medium ml-auto">
-              +{field.points}%
+              +{field.points} pts
             </span>
           )}
         </div>

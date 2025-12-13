@@ -5049,6 +5049,7 @@ export type Database = {
           consent_marketing_emails: boolean | null
           consent_partner_intros: boolean | null
           consent_public_search: boolean | null
+          contact_number_visibility: string
           contribution_style: string | null
           contribution_tags: Json | null
           contribution_types: string[] | null
@@ -5143,6 +5144,7 @@ export type Database = {
           origin_country_name: string | null
           past_contributions: string | null
           phone: string | null
+          phone_number: string | null
           pinned_activity_ids: Json | null
           preferred_contact: string | null
           preferred_contact_method: string | null
@@ -5244,6 +5246,7 @@ export type Database = {
           consent_marketing_emails?: boolean | null
           consent_partner_intros?: boolean | null
           consent_public_search?: boolean | null
+          contact_number_visibility?: string
           contribution_style?: string | null
           contribution_tags?: Json | null
           contribution_types?: string[] | null
@@ -5338,6 +5341,7 @@ export type Database = {
           origin_country_name?: string | null
           past_contributions?: string | null
           phone?: string | null
+          phone_number?: string | null
           pinned_activity_ids?: Json | null
           preferred_contact?: string | null
           preferred_contact_method?: string | null
@@ -5439,6 +5443,7 @@ export type Database = {
           consent_marketing_emails?: boolean | null
           consent_partner_intros?: boolean | null
           consent_public_search?: boolean | null
+          contact_number_visibility?: string
           contribution_style?: string | null
           contribution_tags?: Json | null
           contribution_types?: string[] | null
@@ -5533,6 +5538,7 @@ export type Database = {
           origin_country_name?: string | null
           past_contributions?: string | null
           phone?: string | null
+          phone_number?: string | null
           pinned_activity_ids?: Json | null
           preferred_contact?: string | null
           preferred_contact_method?: string | null
