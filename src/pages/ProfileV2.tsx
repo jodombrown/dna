@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
+import { useProfile } from '@/hooks/useProfile';
 
 // Profile v2 Components
 import ProfileV2Hero from '@/components/profile-v2/ProfileV2Hero';
@@ -35,6 +36,7 @@ const ProfileV2: React.FC = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { data: bundle, isLoading, error } = useProfileV2(username);
+  const { data: ownerProfile } = useProfile();
 
   // Update handlers
   const handleUpdateAbout = async (bio: string) => {
@@ -101,6 +103,7 @@ const ProfileV2: React.FC = () => {
   }
 
   const { profile, tags, activity, permissions, visibility, completion, verification_meta } = bundle;
+  const profileForCompletion = permissions.is_owner && ownerProfile ? ownerProfile : profile;
 
   // Check if this is a private profile (all main sections hidden for non-owner)
   const isPrivateProfile = !permissions.is_owner &&
@@ -194,8 +197,7 @@ const ProfileV2: React.FC = () => {
             {/* Profile Completion (Owner Only) */}
             {permissions.is_owner && (
               <ProfileV2Completion
-                profile={profile}
-                onActionClick={(action) => console.log('Action clicked:', action)}
+                profile={profileForCompletion}
               />
             )}
 
