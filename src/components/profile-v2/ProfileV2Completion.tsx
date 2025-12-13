@@ -2,20 +2,23 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp, ArrowRight, Sparkles, Target } from 'lucide-react';
-import { ProfileV2Completion as CompletionType } from '@/types/profileV2';
+import { ArrowRight, Sparkles, Target } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 
 interface ProfileV2CompletionProps {
-  completion: CompletionType;
+  profile: any;
   onActionClick?: (action: string) => void;
 }
 
 const ProfileV2Completion: React.FC<ProfileV2CompletionProps> = ({
-  completion,
+  profile,
   onActionClick,
 }) => {
   const navigate = useNavigate();
+  
+  // Use the canonical calculation - single source of truth
+  const score = calculateProfileCompletionPts(profile);
 
   const getProgressColor = (score: number) => {
     if (score >= 80) return 'text-green-600';
@@ -34,7 +37,6 @@ const ProfileV2Completion: React.FC<ProfileV2CompletionProps> = ({
     if (onActionClick) {
       onActionClick(action);
     } else {
-      // Default: navigate to profile edit
       navigate('/dna/profile/edit');
     }
   };
@@ -51,41 +53,27 @@ const ProfileV2Completion: React.FC<ProfileV2CompletionProps> = ({
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Progress</span>
-            <span className={`text-lg font-bold ${getProgressColor(completion.score)}`}>
-              {completion.score}%
+            <span className={`text-lg font-bold ${getProgressColor(score)}`}>
+              {score} pts
             </span>
           </div>
-          <Progress value={completion.score} className="h-2.5" />
+          <Progress value={score} className="h-2.5" />
           <p className="text-xs text-muted-foreground mt-2">
-            {getProgressMessage(completion.score)}
+            {getProgressMessage(score)}
           </p>
         </div>
 
-        {completion.suggested_actions && completion.suggested_actions.length > 0 && (
-          <div>
-            <p className="text-sm font-medium mb-2 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-primary" />
-              Quick wins
-            </p>
-            <div className="space-y-1.5">
-              {completion.suggested_actions
-                .filter(action => action && action.trim())
-                .slice(0, 3)
-                .map((action, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => handleActionClick(action)}
-                    className="w-full flex items-center justify-between p-2.5 text-left bg-background hover:bg-secondary/50 rounded-lg transition-colors group border border-transparent hover:border-primary/20"
-                  >
-                    <Badge variant="outline" className="text-xs capitalize font-normal">
-                      {action.replace(/_/g, ' ')}
-                    </Badge>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-                  </button>
-                ))}
-            </div>
-          </div>
-        )}
+        <div>
+          <button
+            onClick={() => handleActionClick('edit_profile')}
+            className="w-full flex items-center justify-between p-2.5 text-left bg-background hover:bg-secondary/50 rounded-lg transition-colors group border border-transparent hover:border-primary/20"
+          >
+            <Badge variant="outline" className="text-xs capitalize font-normal">
+              Complete your profile
+            </Badge>
+            <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+          </button>
+        </div>
       </CardContent>
     </Card>
   );

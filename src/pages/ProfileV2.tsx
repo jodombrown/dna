@@ -192,9 +192,9 @@ const ProfileV2: React.FC = () => {
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
             {/* Profile Completion (Owner Only) */}
-            {permissions.is_owner && completion.score < 100 && (
+            {permissions.is_owner && (
               <ProfileV2Completion
-                completion={completion}
+                profile={profile}
                 onActionClick={(action) => console.log('Action clicked:', action)}
               />
             )}
