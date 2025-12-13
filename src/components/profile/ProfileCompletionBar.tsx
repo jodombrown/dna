@@ -1,7 +1,11 @@
 import React from "react";
 import { Progress } from "@/components/ui/progress";
-import { ProfileMissingFields, getProfileFieldChecks } from "./ProfileMissingFields";
+import { ProfileMissingFields } from "./ProfileMissingFields";
 import { cn } from "@/lib/utils";
+import { calculateProfileCompletionPts } from "@/lib/profileCompletion";
+
+// Re-export from pure utility for backward compatibility
+export { calculateProfileCompletionPts, calculateProfileCompletionPts as calculateProfileCompletion } from "@/lib/profileCompletion";
 
 interface ProfileCompletionBarProps {
   profile: any;
@@ -10,26 +14,13 @@ interface ProfileCompletionBarProps {
   className?: string;
 }
 
-// Points-based calculation using 5-pillar system (total 100 pts)
-export function calculateProfileCompletionPts(profile: any): number {
-  if (!profile) return 0;
-  
-  const fields = getProfileFieldChecks(profile);
-  const completedPts = fields.filter(f => f.complete).reduce((sum, f) => sum + f.points, 0);
-  
-  return Math.min(100, completedPts);
-}
-
-// Legacy alias for backward compatibility
-export const calculateProfileCompletion = calculateProfileCompletionPts;
-
 const ProfileCompletionBar: React.FC<ProfileCompletionBarProps> = ({ 
   profile, 
   showMissingFields = false,
   compact = false,
   className 
 }) => {
-  const percent = calculateProfileCompletion(profile);
+  const completionPts = calculateProfileCompletionPts(profile);
 
   const getStrengthLabel = (score: number) => {
     if (score >= 80) return { label: 'Excellent', color: 'text-green-600' };
@@ -38,7 +29,7 @@ const ProfileCompletionBar: React.FC<ProfileCompletionBarProps> = ({
     return { label: 'Getting Started', color: 'text-dna-copper' };
   };
 
-  const strength = getStrengthLabel(percent);
+  const strength = getStrengthLabel(completionPts);
 
   return (
     <div className={cn("space-y-3", className)}>
@@ -48,12 +39,12 @@ const ProfileCompletionBar: React.FC<ProfileCompletionBarProps> = ({
           <span className={cn("text-xs font-semibold", strength.color)}>
             {strength.label}
           </span>
-          <span className="text-sm font-bold">{percent}%</span>
+          <span className="text-sm font-bold">{completionPts} pts</span>
         </div>
       </div>
-      <Progress value={percent} className={compact ? "h-1.5" : "h-2"} />
+      <Progress value={completionPts} className={compact ? "h-1.5" : "h-2"} />
       
-      {showMissingFields && percent < 100 && (
+      {showMissingFields && completionPts < 100 && (
         <div className="pt-2">
           <ProfileMissingFields profile={profile} compact maxItems={4} />
         </div>

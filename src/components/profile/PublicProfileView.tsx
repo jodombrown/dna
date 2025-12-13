@@ -10,7 +10,7 @@ interface ProfileData {
   id: string;
   full_name: string | null;
   avatar_url: string | null;
-  professional_role: string | null;
+  profession: string | null; // Changed from professional_role to match DB
   current_country: string | null;
   interests: string[] | null;
   bio: string | null;
@@ -23,13 +23,19 @@ interface ProfileData {
 
 interface PublicProfileViewProps {
   profile: ProfileData;
+  isOwner?: boolean; // Whether the viewer is the profile owner
   onMessage?: () => void;
   onConnect?: () => void;
 }
 
 // Helper to get the displayable contact number based on visibility setting
-const getDisplayContactNumber = (profile: ProfileData): { number: string | null; type: 'phone' | 'whatsapp' | null } => {
-  if (!profile.is_public) return { number: null, type: null };
+// Owners can always see their own info, others respect is_public and visibility
+const getDisplayContactNumber = (
+  profile: ProfileData, 
+  isOwner: boolean
+): { number: string | null; type: 'phone' | 'whatsapp' | null } => {
+  // Non-public profiles: only owner can see contact info
+  if (!profile.is_public && !isOwner) return { number: null, type: null };
   
   if (profile.contact_number_visibility === 'phone' && profile.phone_number) {
     return { number: profile.phone_number, type: 'phone' };
@@ -42,11 +48,12 @@ const getDisplayContactNumber = (profile: ProfileData): { number: string | null;
 
 const PublicProfileView: React.FC<PublicProfileViewProps> = ({ 
   profile, 
+  isOwner = false,
   onMessage, 
   onConnect 
 }) => {
-  // Don't show private profiles
-  if (!profile.is_public) {
+  // Don't show private profiles to non-owners
+  if (!profile.is_public && !isOwner) {
     return (
       <Card className="w-full">
         <CardContent className="p-8 text-center">
@@ -79,10 +86,10 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
               <h1 className="text-2xl font-bold text-gray-900">
                 {profile.full_name || 'DNA Member'}
               </h1>
-              {profile.professional_role && (
-                <div className="flex items-center text-gray-600 mt-1">
+              {profile.profession && (
+                <div className="flex items-center text-muted-foreground mt-1">
                   <Briefcase className="w-4 h-4 mr-2" />
-                  <span>{profile.professional_role}</span>
+                  <span>{profile.profession}</span>
                 </div>
               )}
               {profile.current_country && (
@@ -93,7 +100,7 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
               )}
               {/* Contact number visibility enforcement */}
               {(() => {
-                const contactInfo = getDisplayContactNumber(profile);
+                const contactInfo = getDisplayContactNumber(profile, isOwner);
                 if (!contactInfo.number) return null;
                 return (
                   <div className="flex items-center text-muted-foreground mt-1">
