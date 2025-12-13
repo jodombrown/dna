@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { RequireProfileScore } from '@/components/profile/RequireProfileScore';
-import { MapPin, Briefcase, Hash, MessageCircle, UserPlus } from 'lucide-react';
+import { MapPin, Briefcase, Hash, MessageCircle, UserPlus, Phone } from 'lucide-react';
 
 interface ProfileData {
   id: string;
@@ -16,6 +15,10 @@ interface ProfileData {
   interests: string[] | null;
   bio: string | null;
   is_public: boolean;
+  // Contact visibility fields
+  contact_number_visibility?: string | null;
+  phone_number?: string | null;
+  whatsapp_number?: string | null;
 }
 
 interface PublicProfileViewProps {
@@ -23,6 +26,19 @@ interface PublicProfileViewProps {
   onMessage?: () => void;
   onConnect?: () => void;
 }
+
+// Helper to get the displayable contact number based on visibility setting
+const getDisplayContactNumber = (profile: ProfileData): { number: string | null; type: 'phone' | 'whatsapp' | null } => {
+  if (!profile.is_public) return { number: null, type: null };
+  
+  if (profile.contact_number_visibility === 'phone' && profile.phone_number) {
+    return { number: profile.phone_number, type: 'phone' };
+  }
+  if (profile.contact_number_visibility === 'whatsapp' && profile.whatsapp_number) {
+    return { number: profile.whatsapp_number, type: 'whatsapp' };
+  }
+  return { number: null, type: null };
+};
 
 const PublicProfileView: React.FC<PublicProfileViewProps> = ({ 
   profile, 
@@ -70,11 +86,26 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
                 </div>
               )}
               {profile.current_country && (
-                <div className="flex items-center text-gray-600 mt-1">
+                <div className="flex items-center text-muted-foreground mt-1">
                   <MapPin className="w-4 h-4 mr-2" />
                   <span>{profile.current_country}</span>
                 </div>
               )}
+              {/* Contact number visibility enforcement */}
+              {(() => {
+                const contactInfo = getDisplayContactNumber(profile);
+                if (!contactInfo.number) return null;
+                return (
+                  <div className="flex items-center text-muted-foreground mt-1">
+                    {contactInfo.type === 'whatsapp' ? (
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                    ) : (
+                      <Phone className="w-4 h-4 mr-2" />
+                    )}
+                    <span>{contactInfo.number}</span>
+                  </div>
+                );
+              })()}
             </div>
           </div>
           <div className="flex space-x-3">
