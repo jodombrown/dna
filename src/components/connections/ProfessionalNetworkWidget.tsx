@@ -147,7 +147,7 @@ export const ProfessionalNetworkWidget: React.FC = () => {
             💡 Complete your profile to get better connection suggestions
           </div>
           <div className="text-xs text-dna-emerald">
-            Profile completion: {calculateProfileCompletion(profile)}%
+            Profile strength: {calculateProfileCompletion(profile)} pts
           </div>
         </div>
 
