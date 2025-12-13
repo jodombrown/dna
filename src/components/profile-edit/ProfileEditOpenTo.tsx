@@ -55,6 +55,7 @@ const ProfileEditOpenTo: React.FC<ProfileEditOpenToProps> = ({
                 id={`open-to-${type.value}`}
                 checked={availableFor.includes(type.value)}
                 onCheckedChange={(checked) => handleToggle(type.value, !!checked)}
+                onClick={(e) => e.stopPropagation()}
                 className="mt-0.5"
               />
               <div className="flex-1">
