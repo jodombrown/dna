@@ -153,7 +153,7 @@ export const AccountDrawer: React.FC = () => {
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
-                <DropdownMenu>
+                <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="outline"
@@ -163,7 +163,12 @@ export const AccountDrawer: React.FC = () => {
                       Share
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-background border border-border z-[100]" sideOffset={5}>
+                  <DropdownMenuContent 
+                    align="end" 
+                    className="w-56 bg-background border border-border" 
+                    sideOffset={5}
+                    style={{ zIndex: 9999 }}
+                  >
                     <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
                       <Copy className="h-4 w-4 mr-3" />
                       Copy link
