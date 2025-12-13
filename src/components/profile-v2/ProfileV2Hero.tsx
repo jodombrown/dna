@@ -1,9 +1,10 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Edit, Award, MapPin, Globe, Briefcase, MessageCircle, UserPlus, Share2 } from 'lucide-react';
+import { Edit, Award, MapPin, Globe, Briefcase, MessageCircle, UserPlus } from 'lucide-react';
 import { ProfileV2Data, ProfileV2Permissions, VerificationStatus } from '@/types/profileV2';
 import { useToast } from '@/hooks/use-toast';
+import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
 
 interface ProfileV2HeroProps {
   profile: ProfileV2Data;
@@ -94,10 +95,15 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                       Edit Profile
                     </Button>
                   )}
-                  <Button onClick={handleShare} variant="outline" size="sm">
-                    <Share2 className="w-4 h-4 mr-2" />
-                    Share
-                  </Button>
+                  <ProfileShareDropdown
+                    username={profile.username || ''}
+                    fullName={profile.full_name}
+                    profile={profile}
+                    showDownload={true}
+                    variant="ghost"
+                    size="icon"
+                    className="flex-shrink-0 h-10"
+                  />
                 </>
               ) : (
                 <>
@@ -178,9 +184,15 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                       Edit Profile
                     </Button>
                   )}
-                  <Button onClick={handleShare} variant="ghost" size="icon" className="flex-shrink-0 h-10">
-                    <Share2 className="w-4 h-4" />
-                  </Button>
+                  <ProfileShareDropdown
+                    username={profile.username || ''}
+                    fullName={profile.full_name}
+                    profile={profile}
+                    showDownload={true}
+                    variant="ghost"
+                    size="icon"
+                    className="flex-shrink-0 h-10"
+                  />
                 </>
               ) : (
                 <>
@@ -196,9 +208,15 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                       Message
                     </Button>
                   )}
-                  <Button onClick={handleShare} variant="ghost" size="icon" className="flex-shrink-0 h-9">
-                    <Share2 className="w-4 h-4" />
-                  </Button>
+                  <ProfileShareDropdown
+                    username={profile.username || ''}
+                    fullName={profile.full_name}
+                    profile={profile}
+                    showDownload={true}
+                    variant="ghost"
+                    size="icon"
+                    className="flex-shrink-0 h-9"
+                  />
                 </>
               )}
             </div>
