@@ -41,7 +41,7 @@ const Onboarding = () => {
     headline: profile?.headline || '',
     username: profile?.username || '',
     country_of_origin: profile?.country_of_origin || '',
-    diaspora_origin: profile?.diaspora_origin || '',
+    diaspora_status: profile?.diaspora_status || '',
     // Deferred fields - kept for profile completion later
     profession: profile?.profession || '',
     professional_role: profile?.professional_role || '',
@@ -137,7 +137,7 @@ const Onboarding = () => {
         skills: formData.skills || [],
         years_experience: formData.years_experience ? parseInt(formData.years_experience.split('-')[0]) : null,
         country_of_origin: formData.country_of_origin,
-        diaspora_origin: formData.diaspora_origin || null,
+        diaspora_status: formData.diaspora_status || null,
         interests: formData.interests || [],
         my_dna_statement: formData.my_dna_statement || null,
         focus_areas: formData.focus_areas || [],
@@ -258,7 +258,7 @@ const Onboarding = () => {
           <DiasporaOriginStep
             data={{
               country_of_origin: formData.country_of_origin,
-              diaspora_origin: formData.diaspora_origin,
+              diaspora_status: formData.diaspora_status,
             }}
             onUpdate={(field, value) => updateField(field as any, value)}
             errors={errors}

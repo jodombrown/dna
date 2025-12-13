@@ -14,9 +14,9 @@ export interface OnboardingFormData {
   // Step 2: Username
   username: string;
 
-  // Step 3: Diaspora & Impact
+  // Step 3: Connection to Africa
   country_of_origin: string;
-  diaspora_origin: string;
+  diaspora_status: string;
   interests: string[];
   my_dna_statement: string;
 
@@ -49,7 +49,7 @@ export const useOnboardingForm = (initialData?: Partial<OnboardingFormData>) => 
 
     // Step 3
     country_of_origin: initialData?.country_of_origin || '',
-    diaspora_origin: initialData?.diaspora_origin || '',
+    diaspora_status: initialData?.diaspora_status || '',
     interests: initialData?.interests || [],
     my_dna_statement: initialData?.my_dna_statement || '',
 

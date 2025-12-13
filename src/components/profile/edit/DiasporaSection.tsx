@@ -9,11 +9,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Check, ChevronsUpDown, X, Info, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import CountryCombobox from '@/components/ui/CountryCombobox';
 import { TagMultiSelect } from '@/components/ui/TagMultiSelect';
 import { ProfileEditSectionProps } from './types';
 import { LANGUAGES } from '@/data/languages';
-import { DIASPORA_STATUS_OPTIONS, DIASPORA_NETWORK_OPTIONS } from '@/data/profileOptions';
+import { CONNECTION_TYPE_OPTIONS, DIASPORA_NETWORK_OPTIONS } from '@/data/profileOptions';
 
 export function DiasporaSection({
   formData,
@@ -47,47 +46,31 @@ export function DiasporaSection({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Heart className="h-5 w-5 text-dna-copper fill-dna-copper/20" />
-          Your African Diaspora Identity
+          My Connection to Africa
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Help us understand your connection to the diaspora
+          Whether diaspora, continental African, or ally—tell us how you connect
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Country of Origin */}
+        {/* Connection Type */}
         <div>
-          <Label>Country of Origin *</Label>
-          <CountryCombobox
-            value={formData.country_of_origin || ''}
-            onChange={(code, name) => onUpdate('country_of_origin', name)}
-            africanOnly={true}
-            placeholder="Select your country of origin"
-            disabled={disabled}
-            error={!!errors.country_of_origin}
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            The African country you identify with or have roots in
-          </p>
-          {errors.country_of_origin && (
-            <p className="text-sm text-destructive mt-1">{errors.country_of_origin}</p>
-          )}
-        </div>
-
-        {/* Diaspora Status */}
-        <div>
-          <Label htmlFor="diaspora_status">Diaspora Status *</Label>
+          <Label htmlFor="diaspora_status">How do you connect to Africa? *</Label>
           <Select
             value={formData.diaspora_status || ''}
             onValueChange={(value) => onUpdate('diaspora_status', value)}
             disabled={disabled}
           >
             <SelectTrigger className={errors.diaspora_status ? 'border-destructive' : ''}>
-              <SelectValue placeholder="Select your diaspora status" />
+              <SelectValue placeholder="Select your connection type" />
             </SelectTrigger>
             <SelectContent>
-              {DIASPORA_STATUS_OPTIONS.map(option => (
+              {CONNECTION_TYPE_OPTIONS.map(option => (
                 <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+                  <div className="flex flex-col py-1">
+                    <span className="font-medium">{option.label}</span>
+                    <span className="text-xs text-muted-foreground">{option.description}</span>
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -106,7 +89,7 @@ export function DiasporaSection({
                 <Info className="h-4 w-4 text-muted-foreground cursor-help" />
               </TooltipTrigger>
               <TooltipContent>
-                <p>Add all languages you speak to help connect with the diaspora</p>
+                <p>Add all languages you speak to connect across cultures</p>
               </TooltipContent>
             </Tooltip>
           </Label>
@@ -180,14 +163,14 @@ export function DiasporaSection({
             </div>
           )}
           <p className="text-xs text-muted-foreground mt-2">
-            Type to search or scroll through the list. Select all languages you speak.
+            Type to search or scroll through the list.
           </p>
         </div>
 
-        {/* Diaspora Networks */}
+        {/* Networks */}
         <TagMultiSelect
-          label="Diaspora Networks"
-          options={DIASPORA_NETWORK_OPTIONS}
+          label="Networks & Communities"
+          options={Array.from(DIASPORA_NETWORK_OPTIONS)}
           selected={formData.diaspora_networks || []}
           onChange={(values) => onUpdate('diaspora_networks', values)}
           placeholder="Select networks you're part of"
