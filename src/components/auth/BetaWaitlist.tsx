@@ -68,7 +68,7 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
       } else {
         toast({
           title: "You're on the list! 🎉",
-          description: "We'll email you when DNA launches our free beta on December 15th, 2024.",
+          description: "We'll email you when DNA opens to more users after the beta period ends.",
         });
         
         // Clear form and close dialog
@@ -94,20 +94,20 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
           <LockKeyhole className="w-8 h-8 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-dna-forest">
-          Launching Free Beta
+          Beta Now Active
         </h2>
         <p className="text-base text-muted-foreground">
-          We're launching our free beta to a select group of users on{' '}
-          <span className="font-semibold text-dna-copper">December 15, 2024</span>.
+          Our beta is currently active for a select group of African Diaspora testers from{' '}
+          <span className="font-semibold text-dna-copper">December 15, 2025 – January 15, 2026</span>.
         </p>
       </div>
       <div className="mb-6 p-4 bg-dna-mint/10 border border-dna-mint/30 rounded-lg">
         <div className="flex items-start gap-3">
           <Calendar className="w-5 h-5 text-dna-copper mt-0.5 flex-shrink-0" />
           <div className="text-sm text-gray-700">
-            <p className="font-medium mb-1">Join our waitlist for early access</p>
+            <p className="font-medium mb-1">Join our waitlist for upcoming access</p>
             <p className="text-gray-600">
-              Be among the first to experience DNA when we launch in December.
+              Sign up to be notified when DNA opens to more users after the beta period.
             </p>
           </div>
         </div>
