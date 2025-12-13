@@ -18,7 +18,7 @@ import {
   Linkedin,
   Image
 } from 'lucide-react';
-import { calculateProfileCompletionPts, getMissingFields, type ProfileFieldCheck } from '@/lib/profileCompletion';
+import { calculateProfileCompletionPts, getMissingFields } from '@/lib/profileCompletion';
 
 interface ProfileCompletenessWidgetProps {
   className?: string;
@@ -57,7 +57,7 @@ export const ProfileCompletenessWidget: React.FC<ProfileCompletenessWidgetProps>
 
   // Get missing fields from canonical utility, take top 3
   const missingFields = getMissingFields(profile).slice(0, 3);
-  const incompleteItems = missingFields.map((field: ProfileFieldCheck) => ({
+  const incompleteItems = missingFields.map((field) => ({
     icon: getFieldIcon(field.field),
     label: field.label,
     points: field.points,
