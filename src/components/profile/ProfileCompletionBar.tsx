@@ -10,14 +10,18 @@ interface ProfileCompletionBarProps {
   className?: string;
 }
 
-export function calculateProfileCompletion(profile: any): number {
+// Points-based calculation using 5-pillar system (total 100 pts)
+export function calculateProfileCompletionPts(profile: any): number {
   if (!profile) return 0;
   
   const fields = getProfileFieldChecks(profile);
-  const completedPoints = fields.filter(f => f.complete).reduce((sum, f) => sum + f.points, 0);
+  const completedPts = fields.filter(f => f.complete).reduce((sum, f) => sum + f.points, 0);
   
-  return Math.min(100, completedPoints);
+  return Math.min(100, completedPts);
 }
+
+// Legacy alias for backward compatibility
+export const calculateProfileCompletion = calculateProfileCompletionPts;
 
 const ProfileCompletionBar: React.FC<ProfileCompletionBarProps> = ({ 
   profile, 

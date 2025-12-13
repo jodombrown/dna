@@ -67,11 +67,16 @@ const ProfileEditContactPreferences: React.FC<ProfileEditContactPreferencesProps
   onWhatsappNumberChange,
   onTimezoneChange,
 }) => {
-  const validatePhoneNumber = (value: string): boolean => {
+  // E.164-ish validation: must start with + and have at least 8 digits
+  const validateE164ish = (value: string): boolean => {
     if (!value) return true; // Empty is valid (optional)
-    const stripped = value.replace(/[\s\-\(\)]/g, '');
-    return stripped.startsWith('+') && stripped.length >= 9;
+    const digits = value.replace(/\D/g, ''); // Count only digits
+    return value.trim().startsWith('+') && digits.length >= 8;
   };
+
+  // Only validate the currently visible field
+  const shouldValidatePhone = contactNumberVisibility === 'phone';
+  const shouldValidateWhatsapp = contactNumberVisibility === 'whatsapp';
 
   return (
     <Card>
@@ -159,12 +164,12 @@ const ProfileEditContactPreferences: React.FC<ProfileEditContactPreferencesProps
               placeholder="+1 555 123 4567"
               value={phoneNumber}
               onChange={(e) => onPhoneNumberChange(e.target.value)}
-              className={!validatePhoneNumber(phoneNumber) && phoneNumber ? 'border-destructive' : ''}
+              className={shouldValidatePhone && !validateE164ish(phoneNumber) && phoneNumber ? 'border-destructive' : ''}
             />
             <p className="text-xs text-muted-foreground">
               Include country code (e.g., +1, +44, +234)
             </p>
-            {!validatePhoneNumber(phoneNumber) && phoneNumber && (
+            {shouldValidatePhone && !validateE164ish(phoneNumber) && phoneNumber && (
               <p className="text-xs text-destructive">
                 Please enter a valid phone number starting with + and at least 8 digits
               </p>
@@ -184,12 +189,12 @@ const ProfileEditContactPreferences: React.FC<ProfileEditContactPreferencesProps
               placeholder="+1 555 123 4567"
               value={whatsappNumber}
               onChange={(e) => onWhatsappNumberChange(e.target.value)}
-              className={!validatePhoneNumber(whatsappNumber) && whatsappNumber ? 'border-destructive' : ''}
+              className={shouldValidateWhatsapp && !validateE164ish(whatsappNumber) && whatsappNumber ? 'border-destructive' : ''}
             />
             <p className="text-xs text-muted-foreground">
               Include country code (e.g., +1, +44, +234)
             </p>
-            {!validatePhoneNumber(whatsappNumber) && whatsappNumber && (
+            {shouldValidateWhatsapp && !validateE164ish(whatsappNumber) && whatsappNumber && (
               <p className="text-xs text-destructive">
                 Please enter a valid WhatsApp number starting with + and at least 8 digits
               </p>

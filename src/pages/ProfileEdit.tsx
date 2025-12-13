@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save, Loader2, LogOut } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
-import ProfileCompletionBar, { calculateProfileCompletion } from '@/components/profile/ProfileCompletionBar';
+import ProfileCompletionBar, { calculateProfileCompletionPts } from '@/components/profile/ProfileCompletionBar';
 
 // Import modular profile edit components
 import {
@@ -167,12 +167,12 @@ const ProfileEdit = () => {
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['profile-v2'] });
       
-      // Use client-side calculation for accurate completion percentage
-      const completionPercentage = calculateProfileCompletion(data);
+      // Use points-based calculation (100 pts total)
+      const completionPts = calculateProfileCompletionPts(data);
       
       toast({
         title: 'Profile updated!',
-        description: `You're at ${completionPercentage} pts. ${completionPercentage >= 40 ? '✅ All features unlocked!' : `Complete ${40 - completionPercentage} more pts to unlock all features.`}`,
+        description: `You're at ${completionPts} pts. ${completionPts >= 40 ? '✅ All features unlocked!' : `Complete ${40 - completionPts} more pts to unlock all features.`}`,
       });
       
       navigate('/dna/feed');
