@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -14,6 +13,7 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ConveyItemType, ConveyItemVisibility, ConveyItemStatus } from '@/types/conveyTypes';
 import { Loader2 } from 'lucide-react';
+import { RichTextEditor } from './RichTextEditor';
 
 interface ConveyItemFormData {
   type: ConveyItemType;
@@ -147,21 +147,16 @@ export function ConveyItemForm({
         />
       </div>
 
-      {/* Body */}
+      {/* Body - Rich Text Editor */}
       <div className="space-y-2">
         <Label htmlFor="body">Story *</Label>
-        <Textarea
-          id="body"
-          {...register('body', { required: 'Story content is required' })}
-          placeholder="Share your story... (supports markdown formatting)"
-          className="min-h-[300px]"
+        <RichTextEditor
+          value={watch('body')}
+          onChange={(val) => setValue('body', val)}
+          placeholder="Share your story..."
+          minHeight="300px"
+          error={errors.body?.message}
         />
-        {errors.body && (
-          <p className="text-sm text-destructive">{errors.body.message}</p>
-        )}
-        <p className="text-sm text-muted-foreground">
-          Use markdown for formatting: **bold**, *italic*, links, etc.
-        </p>
       </div>
 
       {/* Visibility */}
