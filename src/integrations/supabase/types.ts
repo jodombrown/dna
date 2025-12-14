@@ -8176,6 +8176,17 @@ export type Database = {
           usage_count: number
         }[]
       }
+      get_trending_stories: {
+        Args: { p_limit?: number }
+        Returns: {
+          bookmark_count: number
+          comment_count: number
+          post_id: string
+          reaction_count: number
+          trending_score: number
+          view_count: number
+        }[]
+      }
       get_universal_feed: {
         Args: {
           p_author_id?: string

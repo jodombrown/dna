@@ -298,11 +298,9 @@ export default function ConveyStoryHub() {
         </div>
       </div>
 
-      {/* Trending Section - BuzzFeed Style */}
+      {/* Trending Section - BuzzFeed Style (self-contained with hook) */}
       {activeTab === 'all' && selectedCategory === 'all' && (
         <ConveyTrendingSection 
-          stories={trendingStories} 
-          isLoading={isLoading}
           onSeeAll={() => {/* TODO: Navigate to trending page */}}
         />
       )}
