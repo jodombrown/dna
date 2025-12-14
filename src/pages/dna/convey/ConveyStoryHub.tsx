@@ -5,8 +5,7 @@ import LayoutController from '@/components/LayoutController';
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, Heart, Lightbulb, TrendingUp, Users, PenSquare, Sparkles, Newspaper, Camera, Megaphone, Target } from 'lucide-react';
+import { BookOpen, Heart, Lightbulb, TrendingUp, Users, PenSquare, Sparkles, Newspaper, Camera, Megaphone, Target, ChevronDown } from 'lucide-react';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { Badge } from '@/components/ui/badge';
@@ -14,16 +13,29 @@ import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { useMobile } from '@/hooks/useMobile';
 import { STORY_TYPE_CONFIG, type StoryType } from '@/types/storyTypes';
 import { cn } from '@/lib/utils';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 type StoryTab = 'all' | 'my_stories' | 'saved';
 
-// Story type cards for Apple News-inspired filtering
-const storyTypeCards = [
-  { id: 'all' as const, label: 'All Stories', icon: Newspaper, color: 'text-foreground', bgColor: 'bg-muted/50' },
-  { id: 'impact' as StoryType, label: 'Impact', icon: Target, color: 'text-emerald-600', bgColor: 'bg-emerald-500/10' },
-  { id: 'update' as StoryType, label: 'Updates', icon: Megaphone, color: 'text-blue-600', bgColor: 'bg-blue-500/10' },
-  { id: 'spotlight' as StoryType, label: 'Spotlights', icon: Sparkles, color: 'text-amber-600', bgColor: 'bg-amber-500/10' },
-  { id: 'photo_essay' as StoryType, label: 'Photo Essays', icon: Camera, color: 'text-purple-600', bgColor: 'bg-purple-500/10' },
+// Story type filter options - compact for mobile horizontal scroll
+const storyTypeFilters = [
+  { id: 'all' as const, label: 'All', icon: Newspaper, color: 'text-foreground' },
+  { id: 'impact' as StoryType, label: 'Impact', icon: Target, color: 'text-emerald-600' },
+  { id: 'update' as StoryType, label: 'Updates', icon: Megaphone, color: 'text-blue-600' },
+  { id: 'spotlight' as StoryType, label: 'Spotlights', icon: Sparkles, color: 'text-amber-600' },
+  { id: 'photo_essay' as StoryType, label: 'Photos', icon: Camera, color: 'text-purple-600' },
+];
+
+// Tab options for dropdown
+const tabOptions = [
+  { id: 'all' as StoryTab, label: 'All Stories', icon: Sparkles },
+  { id: 'my_stories' as StoryTab, label: 'My Stories', icon: PenSquare },
+  { id: 'saved' as StoryTab, label: 'Saved', icon: BookOpen },
 ];
 
 export default function ConveyStoryHub() {
@@ -32,15 +44,15 @@ export default function ConveyStoryHub() {
   const [activeTab, setActiveTab] = useState<StoryTab>('all');
   const [selectedStoryType, setSelectedStoryType] = useState<StoryType | 'all'>('all');
   const composer = useUniversalComposer();
-  const { isMobile } = useMobile();
+  const { isMobile, isTablet } = useMobile();
 
   if (!user) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center">
-        <BookOpen className="h-16 w-16 text-dna-gold mb-4" />
-        <h1 className="text-3xl font-bold mb-2">Stories from the Diaspora</h1>
-        <p className="text-muted-foreground mb-6 max-w-md">
-          Sign in to share your story with the diaspora and discover longer narratives from our community.
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <BookOpen className="h-12 w-12 text-dna-gold mb-4" />
+        <h1 className="text-2xl font-bold mb-2">Stories from the Diaspora</h1>
+        <p className="text-muted-foreground mb-6 max-w-sm text-sm">
+          Sign in to share your story and discover narratives from our community.
         </p>
         <Button onClick={() => navigate('/auth')} size="lg">
           Sign In
@@ -51,10 +63,11 @@ export default function ConveyStoryHub() {
 
   // Map our story tabs to feed tabs
   const feedTab = activeTab === 'my_stories' ? 'my_posts' : activeTab === 'saved' ? 'bookmarks' : 'all';
+  const currentTabOption = tabOptions.find(t => t.id === activeTab) || tabOptions[0];
 
   const leftColumn = (
     <div className="space-y-6">
-      {/* Story Type Categories - Apple News Style */}
+      {/* Story Type Categories - Desktop sidebar */}
       <Card className="overflow-hidden">
         <CardHeader className="pb-3 bg-gradient-to-r from-dna-gold/10 to-transparent border-b border-border/50">
           <CardTitle className="text-base flex items-center gap-2">
@@ -64,7 +77,7 @@ export default function ConveyStoryHub() {
           <CardDescription className="text-xs">Filter by story type</CardDescription>
         </CardHeader>
         <CardContent className="p-3 space-y-2">
-          {storyTypeCards.map((type) => {
+          {storyTypeFilters.map((type) => {
             const Icon = type.icon;
             const isActive = selectedStoryType === type.id;
             return (
@@ -75,13 +88,13 @@ export default function ConveyStoryHub() {
                   "w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-200",
                   "hover:scale-[1.02] hover:shadow-sm",
                   isActive 
-                    ? `${type.bgColor} ring-2 ring-dna-gold/30 shadow-sm` 
+                    ? "bg-dna-gold/10 ring-2 ring-dna-gold/30 shadow-sm" 
                     : "hover:bg-muted/50"
                 )}
               >
                 <div className={cn(
                   "p-2 rounded-lg",
-                  isActive ? type.bgColor : "bg-muted"
+                  isActive ? "bg-dna-gold/20" : "bg-muted"
                 )}>
                   <Icon className={cn("h-4 w-4", isActive ? type.color : "text-muted-foreground")} />
                 </div>
@@ -100,7 +113,7 @@ export default function ConveyStoryHub() {
         </CardContent>
       </Card>
 
-      {/* Your Stories */}
+      {/* Your Stories - Desktop */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
@@ -109,33 +122,25 @@ export default function ConveyStoryHub() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-1">
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as StoryTab)} orientation="vertical" className="w-full">
-            <TabsList className="flex flex-col h-auto w-full bg-transparent space-y-1">
-              <TabsTrigger 
-                value="all" 
-                className="w-full justify-start data-[state=active]:bg-dna-gold/10 data-[state=active]:text-dna-gold"
+          {tabOptions.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "w-full flex items-center gap-2 p-2.5 rounded-lg text-sm transition-colors",
+                  isActive 
+                    ? "bg-dna-gold/10 text-dna-gold font-medium" 
+                    : "text-muted-foreground hover:bg-muted/50"
+                )}
               >
-                <Sparkles className="h-4 w-4 mr-2" />
-                All Stories
-              </TabsTrigger>
-              <TabsTrigger 
-                value="my_stories" 
-                className="w-full justify-start data-[state=active]:bg-dna-gold/10 data-[state=active]:text-dna-gold"
-              >
-                <PenSquare className="h-4 w-4 mr-2" />
-                My Stories
-              </TabsTrigger>
-              <TabsTrigger 
-                value="saved" 
-                className="w-full justify-start data-[state=active]:bg-dna-gold/10 data-[state=active]:text-dna-gold"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                </svg>
-                Saved
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            );
+          })}
         </CardContent>
       </Card>
 
@@ -159,34 +164,87 @@ export default function ConveyStoryHub() {
   );
 
   const centerColumn = (
-    <div className="space-y-6">
-      {/* Header - Apple News Style */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-dna-gold to-amber-600 shadow-lg shadow-dna-gold/20">
-              <BookOpen className="h-6 w-6 text-white" />
+    <div className="space-y-4">
+      {/* Sticky Mobile Header */}
+      <div className={cn(
+        "bg-background/95 backdrop-blur-sm z-10",
+        isMobile && "sticky top-0 -mx-4 px-4 py-3 border-b border-border/50"
+      )}>
+        {/* Header Row: Title + Dropdown + CTA */}
+        <div className="flex items-center justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className={cn(
+              "rounded-xl bg-gradient-to-br from-dna-gold to-amber-600 shadow-lg shadow-dna-gold/20 shrink-0",
+              isMobile ? "p-2" : "p-2.5"
+            )}>
+              <BookOpen className={cn("text-white", isMobile ? "h-5 w-5" : "h-6 w-6")} />
             </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Convey</h1>
-              <p className="text-muted-foreground text-sm">
-                Stories from the Diaspora
-              </p>
+            <div className="min-w-0">
+              <h1 className={cn("font-bold tracking-tight", isMobile ? "text-xl" : "text-2xl md:text-3xl")}>
+                Convey
+              </h1>
+              {!isMobile && (
+                <p className="text-muted-foreground text-sm truncate">
+                  Stories from the Diaspora
+                </p>
+              )}
             </div>
           </div>
+
+          {/* Mobile: Dropdown for tab selection */}
+          {(isMobile || isTablet) && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-1.5 text-sm h-9 px-3 bg-background border-border shrink-0"
+                >
+                  <currentTabOption.icon className="h-4 w-4" />
+                  <span className="hidden xs:inline">{currentTabOption.label}</span>
+                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                className="w-44 bg-background border border-border shadow-lg z-50"
+              >
+                {tabOptions.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <DropdownMenuItem
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={cn(
+                        "gap-2 cursor-pointer",
+                        activeTab === tab.id && "bg-dna-gold/10 text-dna-gold"
+                      )}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {tab.label}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
           <Button
             onClick={() => composer.open('story')}
-            className="bg-dna-gold hover:bg-dna-gold/90 text-white shadow-lg shadow-dna-gold/20"
+            size={isMobile ? "sm" : "default"}
+            className="bg-dna-gold hover:bg-dna-gold/90 text-white shadow-lg shadow-dna-gold/20 shrink-0"
           >
-            <PenSquare className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">Tell a Story</span>
-            <span className="sm:hidden">New</span>
+            <PenSquare className="h-4 w-4" />
+            <span className={cn("ml-1.5", isMobile ? "hidden" : "hidden sm:inline")}>Tell a Story</span>
           </Button>
         </div>
 
-        {/* Mobile Story Type Filters - Horizontal Scroll */}
-        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
-          {storyTypeCards.map((type) => {
+        {/* Story Type Filters - Horizontal Scroll Pills (Mobile-optimized) */}
+        <div className={cn(
+          "flex gap-2 pb-1 scrollbar-hide",
+          isMobile ? "overflow-x-auto -mx-4 px-4" : "overflow-x-auto"
+        )}>
+          {storyTypeFilters.map((type) => {
             const Icon = type.icon;
             const isActive = selectedStoryType === type.id;
             return (
@@ -194,15 +252,20 @@ export default function ConveyStoryHub() {
                 key={type.id}
                 onClick={() => setSelectedStoryType(type.id)}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all duration-200",
-                  "text-sm font-medium border",
+                  "flex items-center gap-1.5 rounded-full whitespace-nowrap transition-all duration-200",
+                  "text-sm font-medium border shrink-0",
+                  // Compact sizing for mobile
+                  isMobile ? "px-3 py-1.5" : "px-4 py-2",
                   isActive 
                     ? "bg-dna-gold text-white border-dna-gold shadow-md shadow-dna-gold/20" 
                     : "bg-background border-border hover:border-dna-gold/50 hover:bg-muted/50"
                 )}
               >
-                <Icon className={cn("h-4 w-4", isActive ? "text-white" : type.color)} />
-                {type.label}
+                <Icon className={cn(
+                  isMobile ? "h-3.5 w-3.5" : "h-4 w-4",
+                  isActive ? "text-white" : type.color
+                )} />
+                <span className={isMobile ? "text-xs" : "text-sm"}>{type.label}</span>
               </button>
             );
           })}
@@ -239,13 +302,13 @@ export default function ConveyStoryHub() {
   );
 
   const rightColumn = (
-    <div className="space-y-6 overflow-visible">
+    <div className="space-y-6">
       {/* Featured Story Type Card */}
       <Card className="overflow-hidden border-0 shadow-lg">
-        <div className="h-24 bg-gradient-to-br from-dna-gold via-amber-500 to-orange-500 relative">
+        <div className="h-20 bg-gradient-to-br from-dna-gold via-amber-500 to-orange-500 relative">
           <div className="absolute inset-0 bg-black/20" />
           <div className="absolute bottom-3 left-4 right-4">
-            <h3 className="text-white font-bold text-lg drop-shadow-md">Share Your Impact</h3>
+            <h3 className="text-white font-bold text-base drop-shadow-md">Share Your Impact</h3>
             <p className="text-white/80 text-xs">Tell stories that inspire change</p>
           </div>
         </div>
@@ -253,6 +316,7 @@ export default function ConveyStoryHub() {
           <Button
             onClick={() => composer.open('story')}
             variant="outline"
+            size="sm"
             className="w-full border-dna-gold text-dna-gold hover:bg-dna-gold hover:text-white"
           >
             <PenSquare className="h-4 w-4 mr-2" />
@@ -264,19 +328,18 @@ export default function ConveyStoryHub() {
       {/* Story Types Explained */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-sm flex items-center gap-2">
             <Lightbulb className="h-4 w-4 text-dna-gold" />
             Story Types
           </CardTitle>
-          <CardDescription className="text-xs">Choose your format</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-2">
           {Object.values(STORY_TYPE_CONFIG).map((config) => (
-            <div key={config.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
-              <span className="text-xl">{config.icon}</span>
+            <div key={config.id} className="flex items-start gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors">
+              <span className="text-lg">{config.icon}</span>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm">{config.label}</p>
-                <p className="text-xs text-muted-foreground line-clamp-2">{config.description}</p>
+                <p className="text-xs text-muted-foreground line-clamp-1">{config.description}</p>
               </div>
             </div>
           ))}
@@ -285,13 +348,13 @@ export default function ConveyStoryHub() {
 
       {/* Why Stories Matter */}
       <Card className="border-dna-gold/20 bg-gradient-to-br from-dna-gold/5 to-transparent">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2">
             <Heart className="h-4 w-4 text-dna-gold" />
             Why Stories Matter
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-muted-foreground">
+        <CardContent className="space-y-2 text-xs text-muted-foreground">
           <p className="flex items-start gap-2">
             <span className="text-dna-gold mt-0.5">•</span>
             <span>Help others learn from your journey</span>
@@ -302,27 +365,24 @@ export default function ConveyStoryHub() {
           </p>
           <p className="flex items-start gap-2">
             <span className="text-dna-gold mt-0.5">•</span>
-            <span>Turn activity into narrative that inspires</span>
+            <span>Turn activity into inspiring narrative</span>
           </p>
         </CardContent>
       </Card>
 
       {/* Related Activity (Future) */}
       <Card className="opacity-75">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
             Related Activity
           </CardTitle>
-          <CardDescription className="text-xs">
-            Turn recent activity into stories
-          </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground text-center py-4">
+          <p className="text-xs text-muted-foreground text-center py-3">
             Recent events, spaces, and projects will appear here.
           </p>
-          <Badge variant="secondary" className="w-full justify-center">Coming Soon</Badge>
+          <Badge variant="secondary" className="w-full justify-center text-xs">Coming Soon</Badge>
         </CardContent>
       </Card>
     </div>
