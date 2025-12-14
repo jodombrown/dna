@@ -69,6 +69,10 @@ const ProfileEdit = () => {
   const [diasporaNetworks, setDiasporaNetworks] = useState<string[]>([]);
   const [engagementIntentions, setEngagementIntentions] = useState<string[]>([]);
   const [mentorshipAreas, setMentorshipAreas] = useState<string[]>([]);
+  const [ethnicHeritage, setEthnicHeritage] = useState<string[]>([]);
+  const [returnIntentions, setReturnIntentions] = useState('');
+  const [africanCauses, setAfricanCauses] = useState<string[]>([]);
+  const [visitFrequency, setVisitFrequency] = useState('');
 
   // Interests & Discovery state
   const [interests, setInterests] = useState<string[]>([]);
@@ -130,6 +134,10 @@ const ProfileEdit = () => {
       setDiasporaNetworks(Array.isArray(profile.diaspora_networks) ? profile.diaspora_networks : []);
       setEngagementIntentions(Array.isArray(profile.engagement_intentions) ? profile.engagement_intentions : []);
       setMentorshipAreas(Array.isArray(profile.mentorship_areas) ? profile.mentorship_areas : []);
+      setEthnicHeritage(Array.isArray((profile as any).ethnic_heritage) ? (profile as any).ethnic_heritage : []);
+      setReturnIntentions((profile as any).return_intentions || '');
+      setAfricanCauses(Array.isArray((profile as any).african_causes) ? (profile as any).african_causes : []);
+      setVisitFrequency((profile as any).africa_visit_frequency || '');
 
       // Interests & Discovery
       setInterests(Array.isArray(profile.interests) ? profile.interests : []);
@@ -221,6 +229,10 @@ const ProfileEdit = () => {
       diaspora_networks: diasporaNetworks,
       engagement_intentions: engagementIntentions,
       mentorship_areas: mentorshipAreas,
+      ethnic_heritage: ethnicHeritage,
+      return_intentions: returnIntentions,
+      african_causes: africanCauses,
+      africa_visit_frequency: visitFrequency,
 
       // Interests & Discovery
       interests,
@@ -373,10 +385,18 @@ const ProfileEdit = () => {
             diasporaNetworks={diasporaNetworks}
             engagementIntentions={engagementIntentions}
             mentorshipAreas={mentorshipAreas}
+            ethnicHeritage={ethnicHeritage}
+            returnIntentions={returnIntentions}
+            africanCauses={africanCauses}
+            visitFrequency={visitFrequency}
             onDiasporaStatusChange={setDiasporaStatus}
             onNetworksChange={setDiasporaNetworks}
             onIntentionsChange={setEngagementIntentions}
             onMentorshipAreasChange={setMentorshipAreas}
+            onEthnicHeritageChange={setEthnicHeritage}
+            onReturnIntentionsChange={setReturnIntentions}
+            onAfricanCausesChange={setAfricanCauses}
+            onVisitFrequencyChange={setVisitFrequency}
           />
 
           {/* Interests & Focus Areas */}

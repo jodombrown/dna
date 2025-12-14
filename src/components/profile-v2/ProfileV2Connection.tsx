@@ -2,9 +2,15 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Heart, Languages, Users, Sparkles } from 'lucide-react';
+import { Edit, Heart, Languages, Users, Sparkles, Globe, Plane, Target, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { CONNECTION_TYPE_OPTIONS, isAfricanLanguage } from '@/data/profileOptions';
+import { 
+  CONNECTION_TYPE_OPTIONS, 
+  isAfricanLanguage,
+  RETURN_INTENTIONS_OPTIONS,
+  AFRICAN_CAUSES_OPTIONS,
+  VISIT_FREQUENCY_OPTIONS 
+} from '@/data/profileOptions';
 
 interface ProfileV2ConnectionProps {
   profile: {
@@ -12,6 +18,10 @@ interface ProfileV2ConnectionProps {
     languages?: string[] | null;
     diaspora_networks?: string[] | null;
     engagement_intentions?: string[] | null;
+    ethnic_heritage?: string[] | null;
+    return_intentions?: string | null;
+    african_causes?: string[] | null;
+    africa_visit_frequency?: string | null;
   };
   isOwner: boolean;
   onEdit?: () => void;
@@ -24,10 +34,27 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
 }) => {
   const navigate = useNavigate();
   
-  // Get connection type label from value
+  // Get label from value for select options
   const getConnectionLabel = (value: string | null | undefined) => {
     if (!value) return null;
     const option = CONNECTION_TYPE_OPTIONS.find(o => o.value === value);
+    return option ? option.label : value;
+  };
+
+  const getReturnIntentionsLabel = (value: string | null | undefined) => {
+    if (!value) return null;
+    const option = RETURN_INTENTIONS_OPTIONS.find(o => o.value === value);
+    return option ? option.label : value;
+  };
+
+  const getVisitFrequencyLabel = (value: string | null | undefined) => {
+    if (!value) return null;
+    const option = VISIT_FREQUENCY_OPTIONS.find(o => o.value === value);
+    return option ? option.label : value;
+  };
+
+  const getCauseLabel = (value: string) => {
+    const option = AFRICAN_CAUSES_OPTIONS.find(o => o.value === value);
     return option ? option.label : value;
   };
 
@@ -37,7 +64,11 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
   const hasContent = profile.diaspora_status || 
     africanLanguages.length > 0 ||
     (profile.diaspora_networks && profile.diaspora_networks.length > 0) ||
-    (profile.engagement_intentions && profile.engagement_intentions.length > 0);
+    (profile.engagement_intentions && profile.engagement_intentions.length > 0) ||
+    (profile.ethnic_heritage && profile.ethnic_heritage.length > 0) ||
+    profile.return_intentions ||
+    (profile.african_causes && profile.african_causes.length > 0) ||
+    profile.africa_visit_frequency;
 
   // Hide empty section for public viewers
   if (!hasContent && !isOwner) {
@@ -82,6 +113,30 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
               </div>
             )}
 
+            {/* Ethnic Heritage */}
+            {profile.ethnic_heritage && profile.ethnic_heritage.length > 0 && (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30">
+                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Globe className="w-4 h-4 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs text-muted-foreground mb-1.5">Heritage</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {profile.ethnic_heritage.slice(0, 4).map((heritage) => (
+                      <Badge key={heritage} variant="secondary" className="text-xs">
+                        {heritage}
+                      </Badge>
+                    ))}
+                    {profile.ethnic_heritage.length > 4 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{profile.ethnic_heritage.length - 4} more
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* African Languages */}
             {africanLanguages.length > 0 && (
               <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30">
@@ -103,6 +158,58 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
                     )}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* African Causes */}
+            {profile.african_causes && profile.african_causes.length > 0 && (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30">
+                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Target className="w-4 h-4 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs text-muted-foreground mb-1.5">Causes I Care About</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {profile.african_causes.slice(0, 4).map((cause) => (
+                      <Badge key={cause} variant="secondary" className="text-xs">
+                        {getCauseLabel(cause)}
+                      </Badge>
+                    ))}
+                    {profile.african_causes.length > 4 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{profile.african_causes.length - 4} more
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Return Intentions & Visit Frequency - Side by side on larger screens */}
+            {(profile.return_intentions || profile.africa_visit_frequency) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {profile.return_intentions && (
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30">
+                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs text-muted-foreground">Return Plans</div>
+                      <div className="font-medium text-sm">{getReturnIntentionsLabel(profile.return_intentions)}</div>
+                    </div>
+                  </div>
+                )}
+                {profile.africa_visit_frequency && (
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30">
+                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Plane className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs text-muted-foreground">Visit Frequency</div>
+                      <div className="font-medium text-sm">{getVisitFrequencyLabel(profile.africa_visit_frequency)}</div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
