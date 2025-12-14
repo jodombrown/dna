@@ -4,10 +4,10 @@
  * Shows above feed tabs with:
  * - Auto-fade out animation after 30 seconds
  * - Resets daily and on login
- * - Confetti celebration at 100% completion
+ * - Confetti celebration at 100% completion (one-time only)
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
@@ -68,9 +68,9 @@ const markConfettiShown = (userId: string): void => {
   } catch {}
 };
 
-// Standalone confetti function - no React dependencies
-const fireConfetti = () => {
-  const duration = 4000;
+// Standalone confetti function - completely outside React lifecycle
+const fireConfetti = (): void => {
+  const duration = 3000; // Reduced from 4000 to minimize DOM stress
   const animationEnd = Date.now() + duration;
   const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
 
@@ -80,10 +80,11 @@ const fireConfetti = () => {
     const timeLeft = animationEnd - Date.now();
 
     if (timeLeft <= 0) {
-      return clearInterval(interval);
+      clearInterval(interval);
+      return;
     }
 
-    const particleCount = 50 * (timeLeft / duration);
+    const particleCount = 40 * (timeLeft / duration); // Reduced particle count
 
     confetti({
       ...defaults,
@@ -97,7 +98,7 @@ const fireConfetti = () => {
       origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
       colors: ['#C49A6C', '#D4AF37', '#2E8B57', '#CD5C5C', '#DAA520'],
     });
-  }, 250);
+  }, 300); // Slower interval to reduce CPU load
 };
 
 export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBannerProps> = ({
@@ -106,14 +107,23 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
   const { user, session } = useAuth();
   const { completenessScore } = useProfileAccess();
   const navigate = useNavigate();
+  
+  // All state managed with refs to prevent re-render loops
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   
-  // Use refs to prevent re-render loops
+  // Refs to track initialization state - prevents multiple effect runs
   const confettiTriggeredRef = useRef(false);
   const bannerInitializedRef = useRef(false);
+  const mountedRef = useRef(true);
+  
+  // Capture score at mount to detect 100% transition
+  const initialScoreRef = useRef<number | null>(null);
+  if (initialScoreRef.current === null && completenessScore !== undefined) {
+    initialScoreRef.current = completenessScore;
+  }
 
-  // Stable session timestamp - only compute once
+  // Stable session timestamp - only compute once per mount
   const sessionTimestampRef = useRef<number | null>(null);
   if (sessionTimestampRef.current === null && session?.access_token) {
     sessionTimestampRef.current = session.expires_at 
@@ -121,32 +131,41 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
       : Date.now();
   }
 
-  // Handle confetti - completely separate from banner visibility
+  // Cleanup on unmount
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  // Handle confetti - runs exactly once when hitting 100%
   useEffect(() => {
     if (!user?.id) return;
     if (confettiTriggeredRef.current) return;
     if (completenessScore < 100) return;
     if (hasShownConfetti(user.id)) return;
     
-    // Mark as triggered immediately to prevent re-runs
+    // Immediately mark as triggered to prevent any re-runs
     confettiTriggeredRef.current = true;
     markConfettiShown(user.id);
     
-    // Fire confetti after a small delay to ensure DOM is stable
-    const timer = setTimeout(() => {
-      fireConfetti();
-    }, 300);
-    
-    return () => clearTimeout(timer);
+    // Use requestAnimationFrame for smoother scheduling
+    requestAnimationFrame(() => {
+      if (mountedRef.current) {
+        fireConfetti();
+      }
+    });
   }, [user?.id, completenessScore]);
 
-  // Handle banner visibility - separate from confetti
+  // Handle banner visibility - separate from confetti, runs once
   useEffect(() => {
     if (!user?.id) return;
     if (bannerInitializedRef.current) return;
     
-    // Profile complete - don't show banner
+    // Profile complete - hide banner permanently
     if (completenessScore >= 100) {
+      bannerInitializedRef.current = true;
       setIsVisible(false);
       return;
     }
@@ -155,8 +174,8 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
 
     // Check if already shown this session
     if (hasShownThisSession(user.id, sessionTs)) {
-      setIsVisible(false);
       bannerInitializedRef.current = true;
+      setIsVisible(false);
       return;
     }
 
@@ -167,11 +186,15 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
 
     // Auto-hide timers
     const exitTimer = setTimeout(() => {
-      setIsExiting(true);
+      if (mountedRef.current) {
+        setIsExiting(true);
+      }
     }, AUTO_HIDE_DELAY);
 
     const hideTimer = setTimeout(() => {
-      setIsVisible(false);
+      if (mountedRef.current) {
+        setIsVisible(false);
+      }
     }, AUTO_HIDE_DELAY + 500);
 
     return () => {
@@ -180,18 +203,29 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
     };
   }, [user?.id, completenessScore]);
 
-  const handleDismiss = () => {
+  // Memoized dismiss handler
+  const handleDismiss = useCallback(() => {
     setIsExiting(true);
-    setTimeout(() => setIsVisible(false), 500);
-  };
+    setTimeout(() => {
+      if (mountedRef.current) {
+        setIsVisible(false);
+      }
+    }, 500);
+  }, []);
+
+  // Memoized navigate handler
+  const handleNavigate = useCallback(() => {
+    navigate('/dna/profile/edit');
+  }, [navigate]);
 
   // Don't render if no user or profile is complete
   if (!user || completenessScore >= 100) return null;
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isVisible && (
         <motion.div
+          key="profile-banner"
           initial={{ opacity: 0, height: 0, marginBottom: 0 }}
           animate={isExiting 
             ? { opacity: 0, x: -100, height: 0, marginBottom: 0 }
@@ -199,8 +233,8 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
           }
           exit={{ opacity: 0, x: -100, height: 0, marginBottom: 0 }}
           transition={isExiting 
-            ? { duration: 0.4, ease: 'easeIn' }
-            : { duration: 0.4, ease: 'easeOut' }
+            ? { duration: 0.3, ease: 'easeIn' }
+            : { duration: 0.3, ease: 'easeOut' }
           }
           className="overflow-hidden"
         >
@@ -225,7 +259,7 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
                 size="sm"
                 variant="ghost"
                 className="h-6 px-2 text-xs text-dna-copper hover:text-dna-gold hover:bg-dna-copper/10 flex-shrink-0"
-                onClick={() => navigate('/dna/profile/edit')}
+                onClick={handleNavigate}
               >
                 Complete
                 <ArrowRight className="h-3 w-3 ml-1" />

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export interface ProfileAccessLevel {
@@ -76,30 +77,43 @@ const ACCESS_LEVELS: ProfileAccessLevel[] = [
   }
 ];
 
+const getAccessLevel = (score: number): ProfileAccessLevel => {
+  return ACCESS_LEVELS.find(level => 
+    score >= level.range[0] && score <= level.range[1]
+  ) || ACCESS_LEVELS[0];
+};
+
 export const useProfileAccess = () => {
   const { profile } = useAuth();
   
-  const completenessScore = profile?.profile_completion_percentage || 0;
+  // Memoize the score to prevent recalculation on every render
+  const completenessScore = useMemo(() => {
+    return profile?.profile_completion_percentage || 0;
+  }, [profile?.profile_completion_percentage]);
   
-  const getCurrentAccessLevel = (): ProfileAccessLevel => {
-    return ACCESS_LEVELS.find(level => 
-      completenessScore >= level.range[0] && completenessScore <= level.range[1]
-    ) || ACCESS_LEVELS[0];
-  };
+  // Memoize the access level to prevent object recreation
+  const currentAccessLevel = useMemo(() => {
+    return getAccessLevel(completenessScore);
+  }, [completenessScore]);
   
-  const hasAccess = (feature: keyof ProfileAccessLevel['features']): boolean => {
-    const currentLevel = getCurrentAccessLevel();
-    const featureAccess = currentLevel.features[feature];
-    return featureAccess === true || typeof featureAccess === 'string';
-  };
+  // Memoize hasAccess to maintain stable reference
+  const hasAccess = useMemo(() => {
+    return (feature: keyof ProfileAccessLevel['features']): boolean => {
+      const featureAccess = currentAccessLevel.features[feature];
+      return featureAccess === true || typeof featureAccess === 'string';
+    };
+  }, [currentAccessLevel]);
   
-  const meetsMinScore = (minScore: number): boolean => {
-    return completenessScore >= minScore;
-  };
+  // Memoize meetsMinScore to maintain stable reference
+  const meetsMinScore = useMemo(() => {
+    return (minScore: number): boolean => {
+      return completenessScore >= minScore;
+    };
+  }, [completenessScore]);
   
   return {
     completenessScore,
-    currentAccessLevel: getCurrentAccessLevel(),
+    currentAccessLevel,
     hasAccess,
     meetsMinScore,
   };
