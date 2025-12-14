@@ -5,6 +5,13 @@ import {
   AFRICAN_CAUSES_OPTIONS 
 } from '@/data/profileOptions';
 
+interface ProfileVisibility {
+  about?: 'public' | 'hidden';
+  skills?: 'public' | 'hidden';
+  interests?: 'public' | 'hidden';
+  activity?: 'public' | 'hidden';
+}
+
 interface ProfileData {
   display_name?: string;
   full_name?: string;
@@ -37,6 +44,12 @@ interface ProfileData {
   africa_visit_frequency?: string | null;
   diaspora_networks?: string[] | null;
   mentorship_areas?: string[] | null;
+  // Contact visibility
+  contact_number_visibility?: string;
+  // Visibility settings (for non-owner views) - any type for Json compatibility
+  visibility?: any;
+  // Is owner viewing (controls what's shown)
+  isOwnerView?: boolean;
 }
 
 // Helper functions to get labels from values
@@ -69,6 +82,23 @@ const DNA_COLORS = {
 };
 
 export async function generateProfilePDF(profile: ProfileData): Promise<void> {
+  // Determine visibility - if owner viewing, show everything; otherwise respect settings
+  const isOwner = profile.isOwnerView ?? true; // Default to owner view for backward compatibility
+  const visibility = profile.visibility as ProfileVisibility | undefined;
+  
+  // Helper to check if section should be shown
+  const shouldShowSection = (section: keyof ProfileVisibility): boolean => {
+    if (isOwner) return true; // Owner sees everything
+    if (!visibility) return true; // No settings = default public
+    return visibility[section] !== 'hidden';
+  };
+  
+  // Helper to check contact visibility
+  const shouldShowContact = (type: 'phone' | 'whatsapp'): boolean => {
+    if (isOwner) return true;
+    return profile.contact_number_visibility === type;
+  };
+  
   // Create PDF in Letter size (8.5 x 11 inches = 215.9 x 279.4 mm)
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -124,10 +154,11 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   
   let sidebarY = avatarY + avatarSize / 2 + 18;
   
-  // Contact Section
+  // Contact Section (respects visibility)
   sidebarY = drawSidebarSection(doc, 'CONTACT', sidebarY, sidebarWidth, margin);
   
-  if (profile.email) {
+  if (profile.email && isOwner) {
+    // Email only shown to owner in PDF for privacy
     sidebarY = drawSidebarItem(doc, 'Email:', profile.email, sidebarY, sidebarWidth, margin);
   }
   if (profile.linkedin_url) {
@@ -135,6 +166,12 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
       ? profile.linkedin_url.split('/').filter(Boolean).pop() || 'LinkedIn'
       : profile.linkedin_url;
     sidebarY = drawSidebarItem(doc, 'LinkedIn:', linkedinHandle, sidebarY, sidebarWidth, margin);
+  }
+  if (profile.phone_number && shouldShowContact('phone')) {
+    sidebarY = drawSidebarItem(doc, 'Phone:', profile.phone_number, sidebarY, sidebarWidth, margin);
+  }
+  if (profile.whatsapp_number && shouldShowContact('whatsapp')) {
+    sidebarY = drawSidebarItem(doc, 'WhatsApp:', profile.whatsapp_number, sidebarY, sidebarWidth, margin);
   }
   if (profile.location || profile.current_country) {
     sidebarY = drawSidebarItem(doc, 'Location:', profile.location || profile.current_country || '', sidebarY, sidebarWidth, margin);
@@ -170,8 +207,8 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     sidebarY += 8;
   }
   
-  // Skills Section
-  if (profile.skills && profile.skills.length > 0) {
+  // Skills Section (respects visibility)
+  if (profile.skills && profile.skills.length > 0 && shouldShowSection('skills')) {
     sidebarY = drawSidebarSection(doc, 'SKILLS', sidebarY, sidebarWidth, margin);
     
     profile.skills.slice(0, 6).forEach((skill) => {
@@ -237,8 +274,8 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   
   mainY += 12;
   
-  // Professional Summary
-  if (profile.bio) {
+  // Professional Summary (about section - respects visibility)
+  if (profile.bio && shouldShowSection('about')) {
     mainY = drawMainSection(doc, 'PROFESSIONAL SUMMARY', mainY, mainX, mainContentWidth);
     
     doc.setTextColor(80, 80, 80);
@@ -278,8 +315,8 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     mainY += intentionLines.length * 5 + 12;
   }
   
-  // Interests Section
-  if (profile.interests && profile.interests.length > 0) {
+  // Interests Section (respects visibility)
+  if (profile.interests && profile.interests.length > 0 && shouldShowSection('interests')) {
     mainY = drawMainSection(doc, 'INTERESTS & PASSIONS', mainY, mainX, mainContentWidth);
     
     doc.setTextColor(80, 80, 80);

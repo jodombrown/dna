@@ -49,6 +49,7 @@ const PublicProfilePage = () => {
         profile: any; 
         permissions?: { is_owner?: boolean };
         tags?: any;
+        visibility?: any;
       };
       
       if (!bundle.profile) throw new Error('Profile not found or private');
@@ -67,11 +68,19 @@ const PublicProfilePage = () => {
   // Extract profile from bundle for backward compatibility
   const profile = profileBundle?.profile;
   const tags = profileBundle?.tags;
+  const visibility = profileBundle?.visibility;
 
   const isLoggedIn = !!user;
   const isOwnProfile = user?.id === profile?.id;
   // Check if profile allows sharing by others (default to true if not set)
   const allowSharing = profile?.allow_profile_sharing !== false;
+  
+  // Helper to check visibility settings
+  const shouldShowSection = (section: 'about' | 'skills' | 'interests' | 'activity'): boolean => {
+    if (isOwnProfile) return true; // Owner sees everything
+    if (!visibility) return true; // No settings = default public
+    return visibility[section] !== 'hidden';
+  };
 
   // Handle connect click - redirect to auth if not logged in
   const handleConnect = () => {
@@ -240,6 +249,9 @@ const PublicProfilePage = () => {
                       industries: tags?.industries || profile.industries,
                       display_name: profile.full_name,
                       professional_role: profile.profession || profile.headline,
+                      // Pass visibility settings for PDF generation
+                      visibility: profileBundle?.visibility,
+                      isOwnerView: isOwnProfile,
                     }}
                     showDownload={true}
                     variant="outline"
@@ -291,7 +303,7 @@ const PublicProfilePage = () => {
               )}
 
               {/* Diaspora Story */}
-              {profile.diaspora_story && (
+              {profile.diaspora_story && shouldShowSection('about') && (
                 <div className="mb-6">
                   <h3 className="font-semibold mb-2">Diaspora Story</h3>
                   <p className="text-muted-foreground whitespace-pre-wrap">{profile.diaspora_story}</p>
@@ -299,7 +311,7 @@ const PublicProfilePage = () => {
               )}
 
               {/* Bio */}
-              {profile.bio && (
+              {profile.bio && shouldShowSection('about') && (
                 <div className="mb-6">
                   <h3 className="font-semibold mb-2">About</h3>
                   <p className="text-muted-foreground whitespace-pre-wrap">{profile.bio}</p>
@@ -308,7 +320,7 @@ const PublicProfilePage = () => {
 
               {/* Skills & Expertise */}
               <div className="grid md:grid-cols-2 gap-6 mt-6">
-                {profile.skills && profile.skills.length > 0 && (
+                {profile.skills && profile.skills.length > 0 && shouldShowSection('skills') && (
                   <div>
                     <h3 className="font-semibold mb-3">Skills</h3>
                     <div className="flex flex-wrap gap-2">
@@ -347,6 +359,17 @@ const PublicProfilePage = () => {
                     <div className="flex flex-wrap gap-2">
                       {profile.regional_expertise.map((region: string, i: number) => (
                         <Badge key={i} variant="outline">{region}</Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {profile.interests && profile.interests?.length > 0 && shouldShowSection('interests') && (
+                  <div>
+                    <h3 className="font-semibold mb-3">Interests</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {profile.interests.map((interest: string, i: number) => (
+                        <Badge key={i} variant="secondary">{interest}</Badge>
                       ))}
                     </div>
                   </div>
