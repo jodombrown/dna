@@ -45,7 +45,7 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
       return;
     }
 
-    const hasCompletedOnboarding = !!profile?.onboarding_completed_at;
+    const hasCompletedOnboarding = !!(profile?.onboarding_completed_at || profile?.username);
 
     // If onboarding not completed and not already on onboarding page, redirect
     if (!hasCompletedOnboarding && location.pathname !== '/onboarding') {
