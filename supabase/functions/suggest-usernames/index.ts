@@ -19,34 +19,27 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    // Create context-aware prompt for diaspora username suggestions
-    const prompt = `Generate 8 creative and professional username suggestions for an African diaspora professional with these details:
+    // Create focused, name-based prompt for username suggestions
+    const prompt = `Generate 8 short, clean username suggestions based ONLY on this person's name.
 
 Name: ${fullName}
-Industry: ${industry || 'Professional'}
-Country of Origin: ${countryOrigin || 'Africa'}
-Current Location: ${currentLocation || 'Global'}
+Industry (for context only, do not include in usernames): ${industry || 'Professional'}
+Country of Origin (for context only, do not include in usernames): ${countryOrigin || 'Africa'}
+Current Location (for context only, do not include in usernames): ${currentLocation || 'Global'}
 
-Guidelines:
-- Combine elements of name, industry, and diaspora identity
-- Use formats like: name_industry_location, name.profession, initials_field, etc.
-- Include African diaspora context (e.g., _africa, _diaspora, .connects, etc.)
-- Keep usernames 3-20 characters, use only letters, numbers, dots, underscores, hyphens
-- Make them memorable and professional
-- Avoid offensive or inappropriate content
-
-Examples for inspiration:
-- amina_bio_kenya
-- kofi.dev
-- nana_tech_ghana
-- diaspora_engineer
-- african_innovator
+Rules:
+- Usernames must be between 3 and 20 characters
+- Use only lowercase letters, numbers, dots (.), underscores (_) or hyphens (-)
+- Base every suggestion on variations of their first and/or last name (e.g. denacia, denacia_o, d_okoro, denaciaokoro, denacia01)
+- You may use initials and simple numbers, but DO NOT add extra words like "pro", "diaspora", "connects", job titles, industries, countries, or slogans
+- Do not include references to Africa, diaspora, locations, or professions in the username itself
+- All usernames should feel like natural, name-based handles that the person could realistically choose
 
 Return ONLY a JSON array of objects with this exact format:
 [
   {
     "username": "suggested_username",
-    "explanation": "Brief explanation of why this works for them"
+    "explanation": "Very short note about how this relates to their name"
   }
 ]`;
 
@@ -118,14 +111,28 @@ Return ONLY a JSON array of objects with this exact format:
     } catch (parseError) {
       console.error('Failed to parse AI response:', suggestions);
       // Fallback suggestions if AI response is malformed
+      const safeName = (fullName || 'member').toLowerCase().trim();
+      const parts = safeName.split(/\s+/);
+      const first = parts[0] || 'member';
+      const last = parts.length > 1 ? parts[parts.length - 1] : '';
+
+      const handle1 = (first + (last ? last[0] : '')).replace(/[^a-z0-9]/g, '').slice(0, 15);
+      const handle2 = (first + (last ? `_${last}` : '')).replace(/[^a-z0-9_]/g, '').slice(0, 18);
+      const handle3 = `${first.replace(/[^a-z0-9]/g, '').slice(0, 12)}${Math.floor(Math.random() * 90 + 10)}`;
+      const base = safeName.replace(/\s+/g, '').replace(/[^a-z0-9]/g, '').slice(0, 16) || 'member01';
+
       parsedSuggestions = [
         {
-          username: `${fullName?.toLowerCase().replace(/\s+/g, '_').slice(0, 10)}_pro`,
-          explanation: "Professional username based on your name"
+          username: handle1 || base,
+          explanation: "Based on your first and last name"
         },
         {
-          username: `${countryOrigin?.toLowerCase().slice(0, 4) || 'afro'}_innovator`,
-          explanation: "Reflects your innovative diaspora identity"
+          username: handle2 || base,
+          explanation: "Simple variation of your name"
+        },
+        {
+          username: handle3,
+          explanation: "Name-based handle with a short number"
         }
       ];
     }
