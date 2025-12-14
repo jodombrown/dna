@@ -203,6 +203,33 @@ export const DIASPORA_NETWORK_OPTIONS = [
 export type DiasporaNetwork = typeof DIASPORA_NETWORK_OPTIONS[number];
 
 // =============================================================================
+// AFRICAN LANGUAGES (For "My Connection to Africa" section)
+// =============================================================================
+
+export const AFRICAN_LANGUAGES = [
+  // Widely spoken
+  'Swahili', 'Arabic', 'Hausa', 'Yoruba', 'Igbo', 'Amharic', 'Oromo', 'Zulu',
+  'Shona', 'Xhosa', 'Afrikaans', 'Sotho', 'Tswana', 'Lingala', 'Wolof',
+  'Fulani', 'Akan', 'Twi', 'Tigrinya', 'Somali', 'Kinyarwanda', 'Kirundi',
+  'Luganda', 'Chichewa', 'Ndebele', 'Kikuyu', 'Luo', 'Malagasy', 'Berber',
+  'Tamazight', 'Fon', 'Ewe', 'Bambara', 'Mandinka', 'Serer', 'Tiv', 'Edo',
+  'Efik', 'Ibibio', 'Kanuri', 'Nupe', 'Tumbuka', 'Bemba', 'Nyanja', 'Lozi',
+  'Tsonga', 'Venda', 'Swazi', 'Setswana', 'Sesotho', 'Sepedi', 'isiZulu',
+  'isiXhosa', 'isiNdebele', 'Siswati', 'Tshivenda', 'Xitsonga', 'Krio',
+  'Pidgin English', 'Gikuyu', 'Dholuo', 'Kalenjin', 'Luhya', 'Meru', 'Maasai',
+] as const;
+
+export type AfricanLanguage = typeof AFRICAN_LANGUAGES[number];
+
+// Helper function to check if a language is African
+export const isAfricanLanguage = (language: string): boolean => {
+  const normalizedLang = language.toLowerCase().trim();
+  return AFRICAN_LANGUAGES.some(
+    africanLang => africanLang.toLowerCase() === normalizedLang
+  );
+};
+
+// =============================================================================
 // USER TYPES
 // =============================================================================
 

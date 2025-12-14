@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Heart, Languages, Users, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { CONNECTION_TYPE_OPTIONS } from '@/data/profileOptions';
+import { CONNECTION_TYPE_OPTIONS, isAfricanLanguage } from '@/data/profileOptions';
 
 interface ProfileV2ConnectionProps {
   profile: {
@@ -31,8 +31,11 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
     return option ? option.label : value;
   };
 
+  // Filter to only show African languages in this section
+  const africanLanguages = (profile.languages || []).filter(isAfricanLanguage);
+
   const hasContent = profile.diaspora_status || 
-    (profile.languages && profile.languages.length > 0) ||
+    africanLanguages.length > 0 ||
     (profile.diaspora_networks && profile.diaspora_networks.length > 0) ||
     (profile.engagement_intentions && profile.engagement_intentions.length > 0);
 
@@ -79,23 +82,23 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
               </div>
             )}
 
-            {/* Languages */}
-            {profile.languages && profile.languages.length > 0 && (
+            {/* African Languages */}
+            {africanLanguages.length > 0 && (
               <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30">
                 <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Languages className="w-4 h-4 text-primary" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-xs text-muted-foreground mb-1.5">Languages</div>
+                  <div className="text-xs text-muted-foreground mb-1.5">African Languages</div>
                   <div className="flex flex-wrap gap-1.5">
-                    {profile.languages.slice(0, 5).map((lang) => (
+                    {africanLanguages.slice(0, 5).map((lang) => (
                       <Badge key={lang} variant="secondary" className="text-xs">
                         {lang}
                       </Badge>
                     ))}
-                    {profile.languages.length > 5 && (
+                    {africanLanguages.length > 5 && (
                       <Badge variant="outline" className="text-xs">
-                        +{profile.languages.length - 5} more
+                        +{africanLanguages.length - 5} more
                       </Badge>
                     )}
                   </div>
