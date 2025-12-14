@@ -123,12 +123,28 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
     }, 250);
   }, [user]);
 
+  // Separate effect for confetti - only runs once when hitting 100%
+  const [confettiTriggered, setConfettiTriggered] = useState(false);
+  
+  useEffect(() => {
+    if (!user || confettiTriggered) return;
+    
+    if (completenessScore >= 100 && !hasShownConfetti(user.id)) {
+      setConfettiTriggered(true);
+      // Small delay to prevent flickering during state transitions
+      const timer = setTimeout(() => {
+        triggerConfetti();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [user, completenessScore, confettiTriggered, triggerConfetti]);
+
+  // Separate effect for banner visibility
   useEffect(() => {
     if (!user) return;
 
-    // Profile is 100% complete
+    // Profile is 100% complete - hide banner
     if (completenessScore >= 100) {
-      triggerConfetti();
       setIsVisible(false);
       return;
     }
@@ -143,20 +159,20 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
     setIsVisible(true);
     markAsShown(user.id, sessionTimestamp);
 
-    // Auto-hide after 1 minute with fade out animation
+    // Auto-hide after 30 seconds with fade out animation
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
     }, AUTO_HIDE_DELAY);
 
     const hideTimer = setTimeout(() => {
       setIsVisible(false);
-    }, AUTO_HIDE_DELAY + 500); // Extra 500ms for animation
+    }, AUTO_HIDE_DELAY + 500);
 
     return () => {
       clearTimeout(exitTimer);
       clearTimeout(hideTimer);
     };
-  }, [user, completenessScore, sessionTimestamp, triggerConfetti]);
+  }, [user, completenessScore, sessionTimestamp]);
 
   const handleDismiss = () => {
     setIsExiting(true);
