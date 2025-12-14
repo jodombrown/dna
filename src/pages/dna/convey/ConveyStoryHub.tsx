@@ -65,7 +65,8 @@ export default function ConveyStoryHub() {
   const feedTab = activeTab === 'my_stories' ? 'my_posts' : activeTab === 'saved' ? 'bookmarks' : 'all';
   const currentTabOption = tabOptions.find(t => t.id === activeTab) || tabOptions[0];
 
-  const leftColumn = (
+  // Left column - HIDDEN on mobile, shown on desktop only
+  const leftColumn = isMobile ? null : (
     <div className="space-y-6">
       {/* Story Type Categories - Desktop sidebar */}
       <Card className="overflow-hidden">
@@ -141,23 +142,6 @@ export default function ConveyStoryHub() {
               </button>
             );
           })}
-        </CardContent>
-      </Card>
-
-      {/* Story Themes (Future) */}
-      <Card className="opacity-75">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-muted-foreground" />
-            Story Themes
-          </CardTitle>
-          <CardDescription className="text-xs">Browse by topic</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <p className="text-xs text-muted-foreground text-center py-2">
-            Theme-based browsing coming soon
-          </p>
-          <Badge variant="secondary" className="w-full justify-center text-xs">Coming Soon</Badge>
         </CardContent>
       </Card>
     </div>
@@ -301,7 +285,8 @@ export default function ConveyStoryHub() {
     </div>
   );
 
-  const rightColumn = (
+  // Right column - HIDDEN on mobile, shown on desktop only
+  const rightColumn = isMobile ? null : (
     <div className="space-y-6">
       {/* Featured Story Type Card */}
       <Card className="overflow-hidden border-0 shadow-lg">
@@ -367,22 +352,6 @@ export default function ConveyStoryHub() {
             <span className="text-dna-gold mt-0.5">•</span>
             <span>Turn activity into inspiring narrative</span>
           </p>
-        </CardContent>
-      </Card>
-
-      {/* Related Activity (Future) */}
-      <Card className="opacity-75">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            Related Activity
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-xs text-muted-foreground text-center py-3">
-            Recent events, spaces, and projects will appear here.
-          </p>
-          <Badge variant="secondary" className="w-full justify-center text-xs">Coming Soon</Badge>
         </CardContent>
       </Card>
     </div>
