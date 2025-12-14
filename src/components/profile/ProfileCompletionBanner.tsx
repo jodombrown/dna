@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { Progress } from '@/components/ui/progress';
@@ -16,20 +16,30 @@ export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = (
   const { completenessScore } = useProfileAccess();
   const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(false);
+  
+  // Ref to track if we've already initialized
+  const initializedRef = useRef(false);
 
   const storageKey = user ? `dna_profile_banner_dismissed_${user.id}` : 'dna_profile_banner_dismissed';
 
   useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+    
     try {
       const val = localStorage.getItem(storageKey);
       setDismissed(val === '1');
     } catch {}
   }, [storageKey]);
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     try { localStorage.setItem(storageKey, '1'); } catch {}
     setDismissed(true);
-  };
+  }, [storageKey]);
+
+  const handleNavigate = useCallback(() => {
+    navigate('/dna/profile/edit');
+  }, [navigate]);
 
   if (!user) return null;
   if (dismissed) return null;
@@ -64,7 +74,7 @@ export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = (
               </div>
             )}
             <div className="mt-3 flex gap-2">
-              <Button size="sm" className="bg-dna-copper hover:bg-dna-gold" onClick={() => navigate('/dna/profile/edit')}>
+              <Button size="sm" className="bg-dna-copper hover:bg-dna-gold" onClick={handleNavigate}>
                 Complete profile
                 <ArrowRight className="h-3 w-3 ml-1" />
               </Button>
