@@ -2,12 +2,12 @@
  * Mobile Profile Completion Banner
  * 
  * Shows above feed tabs with:
- * - Auto-fade out animation after 1 minute
+ * - Auto-fade out animation after 30 seconds
  * - Resets daily and on login
  * - Confetti celebration at 100% completion
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
@@ -34,11 +34,7 @@ const hasShownThisSession = (userId: string, sessionTimestamp: number): boolean 
     const data = JSON.parse(stored);
     const today = new Date().toDateString();
     
-    // Check both daily reset AND session reset
-    // If stored date is not today, reset
     if (data.date !== today) return false;
-    
-    // If session timestamp is newer than stored session, reset (new login)
     if (sessionTimestamp > data.sessionTimestamp) return false;
     
     return true;
@@ -72,6 +68,38 @@ const markConfettiShown = (userId: string): void => {
   } catch {}
 };
 
+// Standalone confetti function - no React dependencies
+const fireConfetti = () => {
+  const duration = 4000;
+  const animationEnd = Date.now() + duration;
+  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+  const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+  const interval = setInterval(() => {
+    const timeLeft = animationEnd - Date.now();
+
+    if (timeLeft <= 0) {
+      return clearInterval(interval);
+    }
+
+    const particleCount = 50 * (timeLeft / duration);
+
+    confetti({
+      ...defaults,
+      particleCount,
+      origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      colors: ['#C49A6C', '#D4AF37', '#2E8B57', '#CD5C5C', '#DAA520'],
+    });
+    confetti({
+      ...defaults,
+      particleCount,
+      origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      colors: ['#C49A6C', '#D4AF37', '#2E8B57', '#CD5C5C', '#DAA520'],
+    });
+  }, 250);
+};
+
 export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBannerProps> = ({
   threshold = 100,
 }) => {
@@ -80,86 +108,64 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  
+  // Use refs to prevent re-render loops
+  const confettiTriggeredRef = useRef(false);
+  const bannerInitializedRef = useRef(false);
 
-  // Get session timestamp for login detection
-  const sessionTimestamp = session?.access_token 
-    ? new Date(session.expires_at ? (session.expires_at * 1000 - 3600000) : Date.now()).getTime()
-    : Date.now();
+  // Stable session timestamp - only compute once
+  const sessionTimestampRef = useRef<number | null>(null);
+  if (sessionTimestampRef.current === null && session?.access_token) {
+    sessionTimestampRef.current = session.expires_at 
+      ? (session.expires_at * 1000 - 3600000) 
+      : Date.now();
+  }
 
-  // Trigger confetti celebration
-  const triggerConfetti = useCallback(() => {
-    if (!user || hasShownConfetti(user.id)) return;
+  // Handle confetti - completely separate from banner visibility
+  useEffect(() => {
+    if (!user?.id) return;
+    if (confettiTriggeredRef.current) return;
+    if (completenessScore < 100) return;
+    if (hasShownConfetti(user.id)) return;
     
+    // Mark as triggered immediately to prevent re-runs
+    confettiTriggeredRef.current = true;
     markConfettiShown(user.id);
     
-    // Full-screen confetti celebration
-    const duration = 4000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
-
-    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
-
-    const interval = setInterval(() => {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-        colors: ['#C49A6C', '#D4AF37', '#2E8B57', '#CD5C5C', '#DAA520'],
-      });
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-        colors: ['#C49A6C', '#D4AF37', '#2E8B57', '#CD5C5C', '#DAA520'],
-      });
-    }, 250);
-  }, [user]);
-
-  // Separate effect for confetti - only runs once when hitting 100%
-  const [confettiTriggered, setConfettiTriggered] = useState(false);
-  
-  useEffect(() => {
-    if (!user || confettiTriggered) return;
+    // Fire confetti after a small delay to ensure DOM is stable
+    const timer = setTimeout(() => {
+      fireConfetti();
+    }, 300);
     
-    if (completenessScore >= 100 && !hasShownConfetti(user.id)) {
-      setConfettiTriggered(true);
-      // Small delay to prevent flickering during state transitions
-      const timer = setTimeout(() => {
-        triggerConfetti();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [user, completenessScore, confettiTriggered, triggerConfetti]);
+    return () => clearTimeout(timer);
+  }, [user?.id, completenessScore]);
 
-  // Separate effect for banner visibility
+  // Handle banner visibility - separate from confetti
   useEffect(() => {
-    if (!user) return;
-
-    // Profile is 100% complete - hide banner
+    if (!user?.id) return;
+    if (bannerInitializedRef.current) return;
+    
+    // Profile complete - don't show banner
     if (completenessScore >= 100) {
       setIsVisible(false);
       return;
     }
 
-    // Check if should show banner
-    if (hasShownThisSession(user.id, sessionTimestamp)) {
+    const sessionTs = sessionTimestampRef.current || Date.now();
+
+    // Check if already shown this session
+    if (hasShownThisSession(user.id, sessionTs)) {
       setIsVisible(false);
+      bannerInitializedRef.current = true;
       return;
     }
 
     // Show the banner
+    bannerInitializedRef.current = true;
     setIsVisible(true);
-    markAsShown(user.id, sessionTimestamp);
+    markAsShown(user.id, sessionTs);
 
-    // Auto-hide after 30 seconds with fade out animation
+    // Auto-hide timers
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
     }, AUTO_HIDE_DELAY);
@@ -172,13 +178,14 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
       clearTimeout(exitTimer);
       clearTimeout(hideTimer);
     };
-  }, [user, completenessScore, sessionTimestamp]);
+  }, [user?.id, completenessScore]);
 
   const handleDismiss = () => {
     setIsExiting(true);
     setTimeout(() => setIsVisible(false), 500);
   };
 
+  // Don't render if no user or profile is complete
   if (!user || completenessScore >= 100) return null;
 
   return (
