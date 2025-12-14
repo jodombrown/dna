@@ -148,86 +148,76 @@ export default function ConveyStoryHub() {
   );
 
   const centerColumn = (
-    <div className="space-y-4">
-      {/* Sticky Mobile Header */}
+    <div className={cn(isMobile ? "space-y-3" : "space-y-4")}>
+      {/* Sticky Mobile Header - Clean edge-to-edge like Feed */}
       <div className={cn(
         "bg-background/95 backdrop-blur-sm z-10",
-        isMobile && "sticky top-0 -mx-4 px-4 py-3 border-b border-border/50"
+        isMobile ? "sticky top-0 pt-2 pb-3 border-b border-border/50" : "pb-2"
       )}>
         {/* Header Row: Title + Dropdown + CTA */}
-        <div className="flex items-center justify-between gap-3 mb-3">
+        <div className="flex items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2 min-w-0">
             <div className={cn(
               "rounded-xl bg-gradient-to-br from-dna-gold to-amber-600 shadow-lg shadow-dna-gold/20 shrink-0",
-              isMobile ? "p-2" : "p-2.5"
+              isMobile ? "p-1.5" : "p-2.5"
             )}>
-              <BookOpen className={cn("text-white", isMobile ? "h-5 w-5" : "h-6 w-6")} />
+              <BookOpen className={cn("text-white", isMobile ? "h-4 w-4" : "h-6 w-6")} />
             </div>
-            <div className="min-w-0">
-              <h1 className={cn("font-bold tracking-tight", isMobile ? "text-xl" : "text-2xl md:text-3xl")}>
-                Convey
-              </h1>
-              {!isMobile && (
-                <p className="text-muted-foreground text-sm truncate">
-                  Stories from the Diaspora
-                </p>
-              )}
-            </div>
+            <h1 className={cn("font-bold tracking-tight", isMobile ? "text-lg" : "text-2xl md:text-3xl")}>
+              Convey
+            </h1>
           </div>
 
-          {/* Mobile: Dropdown for tab selection */}
-          {(isMobile || isTablet) && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="gap-1.5 text-sm h-9 px-3 bg-background border-border shrink-0"
+          <div className="flex items-center gap-2">
+            {/* Mobile: Dropdown for tab selection */}
+            {(isMobile || isTablet) && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="gap-1 text-xs h-8 px-2 bg-background border-border shrink-0"
+                  >
+                    <currentTabOption.icon className="h-3.5 w-3.5" />
+                    <ChevronDown className="h-3 w-3 opacity-60" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-40 bg-background border border-border shadow-lg z-50"
                 >
-                  <currentTabOption.icon className="h-4 w-4" />
-                  <span className="hidden xs:inline">{currentTabOption.label}</span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent 
-                align="end" 
-                className="w-44 bg-background border border-border shadow-lg z-50"
-              >
-                {tabOptions.map((tab) => {
-                  const Icon = tab.icon;
-                  return (
-                    <DropdownMenuItem
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={cn(
-                        "gap-2 cursor-pointer",
-                        activeTab === tab.id && "bg-dna-gold/10 text-dna-gold"
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {tab.label}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                  {tabOptions.map((tab) => {
+                    const Icon = tab.icon;
+                    return (
+                      <DropdownMenuItem
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={cn(
+                          "gap-2 cursor-pointer text-sm",
+                          activeTab === tab.id && "bg-dna-gold/10 text-dna-gold"
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {tab.label}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
-          <Button
-            onClick={() => composer.open('story')}
-            size={isMobile ? "sm" : "default"}
-            className="bg-dna-gold hover:bg-dna-gold/90 text-white shadow-lg shadow-dna-gold/20 shrink-0"
-          >
-            <PenSquare className="h-4 w-4" />
-            <span className={cn("ml-1.5", isMobile ? "hidden" : "hidden sm:inline")}>Tell a Story</span>
-          </Button>
+            <Button
+              onClick={() => composer.open('story')}
+              size="sm"
+              className="bg-dna-gold hover:bg-dna-gold/90 text-white shadow-md shadow-dna-gold/20 shrink-0 h-8 px-3"
+            >
+              <PenSquare className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        {/* Story Type Filters - Horizontal Scroll Pills (Mobile-optimized) */}
-        <div className={cn(
-          "flex gap-2 pb-1 scrollbar-hide",
-          isMobile ? "overflow-x-auto -mx-4 px-4" : "overflow-x-auto"
-        )}>
+        {/* Story Type Filters - Horizontal Scroll Pills */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
           {storyTypeFilters.map((type) => {
             const Icon = type.icon;
             const isActive = selectedStoryType === type.id;
@@ -237,19 +227,14 @@ export default function ConveyStoryHub() {
                 onClick={() => setSelectedStoryType(type.id)}
                 className={cn(
                   "flex items-center gap-1.5 rounded-full whitespace-nowrap transition-all duration-200",
-                  "text-sm font-medium border shrink-0",
-                  // Compact sizing for mobile
-                  isMobile ? "px-3 py-1.5" : "px-4 py-2",
+                  "text-xs font-medium border shrink-0 px-3 py-1.5",
                   isActive 
-                    ? "bg-dna-gold text-white border-dna-gold shadow-md shadow-dna-gold/20" 
-                    : "bg-background border-border hover:border-dna-gold/50 hover:bg-muted/50"
+                    ? "bg-dna-gold text-white border-dna-gold shadow-sm" 
+                    : "bg-background border-border hover:border-dna-gold/50"
                 )}
               >
-                <Icon className={cn(
-                  isMobile ? "h-3.5 w-3.5" : "h-4 w-4",
-                  isActive ? "text-white" : type.color
-                )} />
-                <span className={isMobile ? "text-xs" : "text-sm"}>{type.label}</span>
+                <Icon className={cn("h-3.5 w-3.5", isActive ? "text-white" : type.color)} />
+                <span>{type.label}</span>
               </button>
             );
           })}
