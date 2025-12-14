@@ -86,31 +86,32 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
 
   const generateFallbackSuggestions = () => {
     if (!data.full_name) return;
-
-    const name = data.full_name.toLowerCase().replace(/\s+/g, '_');
-    const firstName = data.full_name.split(' ')[0]?.toLowerCase();
-    const country = data.country_of_origin?.toLowerCase().slice(0, 4) || 'afr';
-    
-    const fallbacks: AISuggestion[] = [
+ 
+    const safeName = data.full_name.toLowerCase().trim();
+    const parts = safeName.split(/\s+/);
+    const first = parts[0] || 'member';
+    const last = parts.length > 1 ? parts[parts.length - 1] : '';
+ 
+    const suggestions: AISuggestion[] = [
       {
-        username: `${firstName}_${country}`,
-        explanation: `Combines your first name with your origin country`
+        username: `${first}${last ? last[0] : ''}`.replace(/[^a-z0-9]/g, '').slice(0, 20),
+        explanation: 'Based on your first and last name',
       },
       {
-        username: `${name.slice(0, 12)}_pro`,
-        explanation: "Professional username based on your name"
+        username: `${first}_${last}`.replace(/[^a-z0-9_]/g, '').slice(0, 20),
+        explanation: 'Simple variation of your name',
       },
       {
-        username: `${firstName}.connects`,
-        explanation: "Perfect for building diaspora connections"
+        username: `${first}${last}`.replace(/[^a-z0-9]/g, '').slice(0, 20),
+        explanation: 'Combined first and last name',
       },
       {
-        username: `diaspora_${firstName}`,
-        explanation: "Celebrates your diaspora identity"
-      }
-    ];
-
-    setAiSuggestions(fallbacks);
+        username: `${first}${Math.floor(Math.random() * 90 + 10)}`.replace(/[^a-z0-9]/g, '').slice(0, 20),
+        explanation: 'Name with short number',
+      },
+    ].filter((s) => s.username.length >= 3);
+ 
+    setAiSuggestions(suggestions);
   };
 
   const checkUsernameAvailability = async (name: string) => {
@@ -122,10 +123,10 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
         .select('id')
         .eq('username', name)
         .single();
-
+ 
       const taken = !!existingUser && !error;
       setIsAvailable(!taken);
-
+ 
       if (taken) {
         generateManualSuggestions(name);
       } else {
@@ -133,22 +134,26 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
       }
     } catch (error) {
       console.error('Error checking username:', error);
-      setIsAvailable(false);
+      setIsAvailable(null);
+      toast({
+        title: 'Unable to verify username',
+        description: 'Please check your connection and try again.',
+        variant: 'destructive',
+      });
     }
-
+ 
     setChecking(false);
   };
 
   const generateManualSuggestions = (base: string): void => {
-    const suffix = Math.floor(Math.random() * 1000);
+    const cleanBase = base.toLowerCase().replace(/[^a-z0-9_.-]/g, '').slice(0, 16);
     const suggestions = [
-      `${base}_${suffix}`,
-      `${base}.${Math.floor(Math.random() * 100)}`,
-      `${base}_${new Date().getFullYear()}`,
-      `${base}_dna`,
-      `${base}_connects`,
+      `${cleanBase}${Math.floor(Math.random() * 90 + 10)}`,
+      `${cleanBase}_${Math.floor(Math.random() * 90 + 10)}`,
+      `${cleanBase}${new Date().getFullYear().toString().slice(-2)}`,
+      `${cleanBase}_${Math.floor(Math.random() * 900 + 100)}`,
     ];
-    setManualSuggestions(suggestions);
+    setManualSuggestions(Array.from(new Set(suggestions)));
   };
 
   const selectUsername = (selectedUsername: string) => {
@@ -271,34 +276,26 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
                 <span className="ml-2 text-sm text-muted-foreground">Generating suggestions...</span>
               </div>
             ) : aiSuggestions.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {aiSuggestions.map((suggestion, index) => (
-                  <div
-                    key={index}
-                    className={`p-3 rounded-lg border cursor-pointer transition-all hover:border-dna-emerald/50 ${
-                      username === suggestion.username 
-                        ? 'border-dna-emerald bg-dna-emerald/5' 
-                        : 'border-border hover:bg-accent/50'
-                    }`}
-                    onClick={() => selectUsername(suggestion.username)}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <Badge variant="outline" className="mb-2 text-xs">
-                          @{suggestion.username}
-                        </Badge>
-                        <p className="text-xs text-muted-foreground">{suggestion.explanation}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground text-center py-4">
-                AI suggestions will appear here based on your profile
-              </p>
-            )}
-          </div>
+               <div className="flex flex-wrap gap-2">
+                 {aiSuggestions.map((suggestion, index) => (
+                   <Button
+                     key={index}
+                     type="button"
+                     variant={username === suggestion.username ? 'default' : 'outline'}
+                     size="sm"
+                     onClick={() => selectUsername(suggestion.username)}
+                     className="h-8 text-xs rounded-full"
+                   >
+                     @{suggestion.username}
+                   </Button>
+                 ))}
+               </div>
+             ) : (
+               <p className="text-sm text-muted-foreground text-center py-4">
+                 AI suggestions will appear here based on your profile
+               </p>
+             )}
+           </div>
 
           {/* Changes Progress */}
           <div className="space-y-2">
