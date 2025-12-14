@@ -54,8 +54,6 @@ export interface ComposerFormData {
   // Story specific
   subtitle?: string;
   heroImage?: string;
-  storyType?: 'impact' | 'update' | 'spotlight' | 'photo_essay';
-  galleryUrls?: string[];
 }
 
 export const useUniversalComposer = (initialContext?: ComposerContext) => {
@@ -123,9 +121,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
             storyTitle: formData.title,
             storyBody: formData.content,
             storySubtitle: formData.subtitle,
-            storyType: formData.storyType || 'update',
             imageUrl: formData.heroImage || formData.mediaUrl,
-            galleryUrls: formData.galleryUrls,
             spaceId: context.spaceId,
             eventId: context.eventId,
           });

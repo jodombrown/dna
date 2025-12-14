@@ -130,26 +130,22 @@ export async function createStoryPost(params: {
   storyTitle: string;
   storyBody: string;
   storySubtitle?: string;
-  storyType?: 'impact' | 'update' | 'spotlight' | 'photo_essay';
   authorId: string;
   spaceId?: string;
   eventId?: string;
   imageUrl?: string;
-  galleryUrls?: string[];
 }): Promise<any> {
-  const { authorId, storyTitle, storyBody, storySubtitle, storyType, spaceId, eventId, imageUrl, galleryUrls } = params;
+  const { authorId, storyTitle, storyBody, storySubtitle, spaceId, eventId, imageUrl } = params;
 
   try {
-    // Insert story post with title and story_type
+    // Insert story post with title
     const insertPayload = {
       author_id: authorId,
       title: storyTitle,
       subtitle: storySubtitle || null,
       content: storyBody,
       post_type: 'story',
-      story_type: storyType || 'update',
       image_url: imageUrl || null,
-      gallery_urls: galleryUrls || null,
       space_id: spaceId || null,
       event_id: eventId || null,
       privacy_level: 'public' as const,
@@ -162,7 +158,7 @@ export async function createStoryPost(params: {
     const { data: postData, error: postError } = await supabase
       .from('posts')
       .insert(insertPayload)
-      .select('id, author_id, title, subtitle, content, post_type, story_type, image_url, gallery_urls, created_at')
+      .select('id, author_id, title, subtitle, content, post_type, image_url, created_at')
       .single();
 
     if (postError) {
