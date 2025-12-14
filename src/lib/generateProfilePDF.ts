@@ -1,4 +1,9 @@
 import jsPDF from 'jspdf';
+import { 
+  CONNECTION_TYPE_OPTIONS, 
+  RETURN_INTENTIONS_OPTIONS,
+  AFRICAN_CAUSES_OPTIONS 
+} from '@/data/profileOptions';
 
 interface ProfileData {
   display_name?: string;
@@ -23,7 +28,34 @@ interface ProfileData {
   industry?: string;
   years_experience?: number;
   company?: string;
+  // Diaspora connection fields
+  diaspora_status?: string | null;
+  ethnic_heritage?: string[] | null;
+  african_causes?: string[] | null;
+  engagement_intentions?: string[] | null;
+  return_intentions?: string | null;
+  africa_visit_frequency?: string | null;
+  diaspora_networks?: string[] | null;
+  mentorship_areas?: string[] | null;
 }
+
+// Helper functions to get labels from values
+const getConnectionLabel = (value: string | null | undefined): string => {
+  if (!value) return '';
+  const option = CONNECTION_TYPE_OPTIONS.find(o => o.value === value);
+  return option ? option.label : value;
+};
+
+const getReturnIntentionsLabel = (value: string | null | undefined): string => {
+  if (!value) return '';
+  const option = RETURN_INTENTIONS_OPTIONS.find(o => o.value === value);
+  return option ? option.label : value;
+};
+
+const getCauseLabel = (value: string): string => {
+  const option = AFRICAN_CAUSES_OPTIONS.find(o => o.value === value);
+  return option ? option.label : value;
+};
 
 // DNA Brand Colors
 const DNA_COLORS = {
@@ -110,15 +142,30 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   
   sidebarY += 8;
   
-  // Heritage Section
-  if (profile.country_of_origin || (profile.languages && profile.languages.length > 0)) {
-    sidebarY = drawSidebarSection(doc, 'HERITAGE', sidebarY, sidebarWidth, margin);
+  // My Connection to Africa Section (Enhanced Heritage Section)
+  const hasConnectionData = profile.diaspora_status || 
+    profile.country_of_origin || 
+    (profile.languages && profile.languages.length > 0) ||
+    (profile.ethnic_heritage && profile.ethnic_heritage.length > 0) ||
+    (profile.diaspora_networks && profile.diaspora_networks.length > 0);
     
+  if (hasConnectionData) {
+    sidebarY = drawSidebarSection(doc, 'AFRICA CONNECTION', sidebarY, sidebarWidth, margin);
+    
+    if (profile.diaspora_status) {
+      sidebarY = drawSidebarItem(doc, 'Type:', getConnectionLabel(profile.diaspora_status), sidebarY, sidebarWidth, margin);
+    }
     if (profile.country_of_origin) {
       sidebarY = drawSidebarItem(doc, 'Origin:', profile.country_of_origin, sidebarY, sidebarWidth, margin);
     }
+    if (profile.ethnic_heritage && profile.ethnic_heritage.length > 0) {
+      sidebarY = drawSidebarItem(doc, 'Heritage:', profile.ethnic_heritage.slice(0, 3).join(', '), sidebarY, sidebarWidth, margin);
+    }
     if (profile.languages && profile.languages.length > 0) {
-      sidebarY = drawSidebarItem(doc, 'Languages:', profile.languages.slice(0, 3).join(', '), sidebarY, sidebarWidth, margin);
+      sidebarY = drawSidebarItem(doc, 'Languages:', profile.languages.slice(0, 4).join(', '), sidebarY, sidebarWidth, margin);
+    }
+    if (profile.diaspora_networks && profile.diaspora_networks.length > 0) {
+      sidebarY = drawSidebarItem(doc, 'Networks:', profile.diaspora_networks.slice(0, 2).join(', '), sidebarY, sidebarWidth, margin);
     }
     sidebarY += 8;
   }
@@ -127,7 +174,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   if (profile.skills && profile.skills.length > 0) {
     sidebarY = drawSidebarSection(doc, 'SKILLS', sidebarY, sidebarWidth, margin);
     
-    profile.skills.slice(0, 8).forEach((skill) => {
+    profile.skills.slice(0, 6).forEach((skill) => {
       sidebarY = drawSidebarBullet(doc, skill, sidebarY, sidebarWidth, margin);
     });
     sidebarY += 8;
@@ -137,7 +184,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   if (profile.focus_areas && profile.focus_areas.length > 0) {
     sidebarY = drawSidebarSection(doc, 'FOCUS AREAS', sidebarY, sidebarWidth, margin);
     
-    profile.focus_areas.slice(0, 5).forEach((area) => {
+    profile.focus_areas.slice(0, 4).forEach((area) => {
       sidebarY = drawSidebarBullet(doc, area, sidebarY, sidebarWidth, margin);
     });
     sidebarY += 8;
@@ -147,7 +194,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   if (profile.available_for && profile.available_for.length > 0) {
     sidebarY = drawSidebarSection(doc, 'OPEN TO', sidebarY, sidebarWidth, margin);
     
-    profile.available_for.slice(0, 5).forEach((item) => {
+    profile.available_for.slice(0, 4).forEach((item) => {
       sidebarY = drawSidebarBullet(doc, item, sidebarY, sidebarWidth, margin);
     });
   }
@@ -201,6 +248,34 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     const bioLines = doc.splitTextToSize(profile.bio, mainContentWidth);
     doc.text(bioLines, mainX, mainY);
     mainY += bioLines.length * 5 + 12;
+  }
+  
+  // African Causes Section
+  if (profile.african_causes && profile.african_causes.length > 0) {
+    mainY = drawMainSection(doc, 'CAUSES I CARE ABOUT', mainY, mainX, mainContentWidth);
+    
+    doc.setTextColor(80, 80, 80);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    
+    const causesText = profile.african_causes.map(c => getCauseLabel(c)).join(' • ');
+    const causeLines = doc.splitTextToSize(causesText, mainContentWidth);
+    doc.text(causeLines, mainX, mainY);
+    mainY += causeLines.length * 5 + 12;
+  }
+  
+  // Engagement Intentions Section
+  if (profile.engagement_intentions && profile.engagement_intentions.length > 0) {
+    mainY = drawMainSection(doc, 'HERE TO', mainY, mainX, mainContentWidth);
+    
+    doc.setTextColor(80, 80, 80);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    
+    const intentionsText = profile.engagement_intentions.join(' • ');
+    const intentionLines = doc.splitTextToSize(intentionsText, mainContentWidth);
+    doc.text(intentionLines, mainX, mainY);
+    mainY += intentionLines.length * 5 + 12;
   }
   
   // Interests Section
