@@ -40,12 +40,6 @@ const DnaFeed = () => {
   const composer = useUniversalComposer();
   const { isMobile } = useMobile();
 
-  // Redirect to welcome wizard if no role set - MUST be before any returns
-  useEffect(() => {
-    if (!profileLoading && profile && !profile.user_role) {
-      navigate('/dna/welcome', { replace: true });
-    }
-  }, [profileLoading, profile, navigate]);
 
   if (profileLoading) {
     return (
