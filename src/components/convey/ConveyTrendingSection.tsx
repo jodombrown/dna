@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { UniversalFeedItem } from '@/types/feed';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ConveyTrendingSectionProps {
   stories: UniversalFeedItem[];
@@ -11,17 +13,79 @@ interface ConveyTrendingSectionProps {
   onSeeAll?: () => void;
 }
 
+// Hook to fetch engagement data for multiple stories
+function useStoriesEngagement(storyIds: string[]) {
+  return useQuery({
+    queryKey: ['stories-engagement', storyIds],
+    queryFn: async () => {
+      if (storyIds.length === 0) return {};
+
+      // Fetch reactions grouped by post
+      const { data: reactions } = await supabase
+        .from('post_reactions')
+        .select('post_id, emoji')
+        .in('post_id', storyIds);
+
+      // Fetch comment counts
+      const { data: comments } = await supabase
+        .from('post_comments')
+        .select('post_id')
+        .in('post_id', storyIds)
+        .eq('is_deleted', false);
+
+      // Fetch view counts
+      const { data: views } = await supabase
+        .from('post_views')
+        .select('post_id')
+        .in('post_id', storyIds);
+
+      // Aggregate by post_id
+      const engagement: Record<string, { 
+        reactions: Record<string, number>; 
+        commentCount: number; 
+        viewCount: number 
+      }> = {};
+
+      storyIds.forEach(id => {
+        engagement[id] = { reactions: {}, commentCount: 0, viewCount: 0 };
+      });
+
+      // Count reactions by emoji per post
+      reactions?.forEach(r => {
+        if (!engagement[r.post_id].reactions[r.emoji]) {
+          engagement[r.post_id].reactions[r.emoji] = 0;
+        }
+        engagement[r.post_id].reactions[r.emoji]++;
+      });
+
+      // Count comments per post
+      comments?.forEach(c => {
+        engagement[c.post_id].commentCount++;
+      });
+
+      // Count views per post
+      views?.forEach(v => {
+        engagement[v.post_id].viewCount++;
+      });
+
+      return engagement;
+    },
+    enabled: storyIds.length > 0,
+    staleTime: 30000, // 30 seconds
+  });
+}
+
 // Emoji reaction display with counts
 const ReactionBar = ({ reactions }: { reactions: Record<string, number> }) => {
-  const emojis = ['👍', '❤️', '😂', '🤯', '🙌'];
-  const total = Object.values(reactions || {}).reduce((a, b) => a + b, 0);
+  const entries = Object.entries(reactions || {}).sort((a, b) => b[1] - a[1]);
+  const total = entries.reduce((a, [, count]) => a + count, 0);
   
   if (total === 0) return null;
   
   return (
     <div className="flex items-center gap-1">
       <div className="flex -space-x-1">
-        {emojis.slice(0, 3).map((emoji) => (
+        {entries.slice(0, 3).map(([emoji]) => (
           <span key={emoji} className="text-sm">{emoji}</span>
         ))}
       </div>
@@ -34,23 +98,23 @@ const ReactionBar = ({ reactions }: { reactions: Record<string, number> }) => {
 const TrendingCard = ({ 
   story, 
   rank, 
-  isHero = false 
+  isHero = false,
+  engagement,
 }: { 
   story: UniversalFeedItem; 
   rank: number;
   isHero?: boolean;
+  engagement?: { reactions: Record<string, number>; commentCount: number; viewCount: number };
 }) => {
   const navigate = useNavigate();
   
   const handleClick = () => {
-    // Navigate to story detail using post_id
     navigate(`/dna/convey/stories/${story.post_id}`);
   };
   
-  // Mock reactions/engagement - in real app, pull from story data
-  const mockReactions = { '👍': 12, '❤️': 8, '😂': 3 };
-  const commentCount = story.comment_count || 0;
-  const viewCount = story.view_count || Math.floor(Math.random() * 500) + 100;
+  const reactions = engagement?.reactions || {};
+  const commentCount = engagement?.commentCount || story.comment_count || 0;
+  const viewCount = engagement?.viewCount || story.view_count || 0;
   
   const getAuthorInitials = (name: string) => {
     return name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'DN';
@@ -66,7 +130,7 @@ const TrendingCard = ({
       )}
     >
       {/* Background Image */}
-      <div className="absolute inset-0 bg-gradient-to-br from-dna-gold/20 via-amber-600/30 to-orange-700/40">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/30 to-secondary/40">
         {story.media_url && (
           <img 
             src={story.media_url} 
@@ -91,14 +155,14 @@ const TrendingCard = ({
         {/* Story Type Badge */}
         <Badge 
           variant="secondary" 
-          className="w-fit mb-2 bg-dna-gold/90 text-white border-0 text-xs"
+          className="w-fit mb-2 bg-primary/90 text-primary-foreground border-0 text-xs"
         >
           {story.linked_entity_type === 'story' ? 'Story' : story.post_type || 'Story'}
         </Badge>
         
         {/* Title */}
         <h3 className={cn(
-          "font-bold text-white leading-tight mb-2 group-hover:text-dna-gold transition-colors",
+          "font-bold text-white leading-tight mb-2 group-hover:text-primary transition-colors",
           isHero ? "text-xl md:text-2xl" : "text-sm md:text-base"
         )}>
           {story.title || story.content?.substring(0, isHero ? 150 : 80)}
@@ -110,7 +174,7 @@ const TrendingCard = ({
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6 border border-white/20">
               <AvatarImage src={story.author_avatar_url || undefined} />
-              <AvatarFallback className="bg-dna-gold/20 text-white text-xs">
+              <AvatarFallback className="bg-primary/20 text-white text-xs">
                 {getAuthorInitials(story.author_display_name)}
               </AvatarFallback>
             </Avatar>
@@ -120,7 +184,7 @@ const TrendingCard = ({
           </div>
           
           <div className="flex items-center gap-3 text-white/70">
-            <ReactionBar reactions={mockReactions} />
+            <ReactionBar reactions={reactions} />
             <div className="flex items-center gap-1">
               <MessageCircle className="h-3.5 w-3.5" />
               <span className="text-xs">{commentCount}</span>
@@ -148,14 +212,17 @@ const TrendingSkeleton = ({ isHero = false }: { isHero?: boolean }) => (
 
 export function ConveyTrendingSection({ stories, isLoading, onSeeAll }: ConveyTrendingSectionProps) {
   const trendingStories = stories.slice(0, 4);
+  const storyIds = trendingStories.map(s => s.post_id);
+  
+  const { data: engagementData } = useStoriesEngagement(storyIds);
   
   if (isLoading) {
     return (
       <section className="mb-8">
         <div className="flex items-center gap-2 mb-4">
           <div className="relative">
-            <TrendingUp className="h-5 w-5 text-dna-gold animate-pulse" />
-            <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping" />
+            <TrendingUp className="h-5 w-5 text-primary animate-pulse" />
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full animate-ping" />
           </div>
           <h2 className="text-lg font-bold">Trending</h2>
         </div>
@@ -176,18 +243,18 @@ export function ConveyTrendingSection({ stories, isLoading, onSeeAll }: ConveyTr
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="relative">
-            <TrendingUp className="h-5 w-5 text-dna-gold" />
-            <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            <TrendingUp className="h-5 w-5 text-primary" />
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-destructive rounded-full animate-pulse" />
           </div>
           <h2 className="text-lg font-bold">Trending</h2>
-          <Badge variant="outline" className="text-xs border-dna-gold/30 text-dna-gold">
+          <Badge variant="outline" className="text-xs border-primary/30 text-primary">
             LIVE
           </Badge>
         </div>
         {onSeeAll && (
           <button 
             onClick={onSeeAll}
-            className="flex items-center gap-1 text-sm text-dna-gold hover:underline font-medium"
+            className="flex items-center gap-1 text-sm text-primary hover:underline font-medium"
           >
             See All Trending
             <ChevronRight className="h-4 w-4" />
@@ -198,10 +265,20 @@ export function ConveyTrendingSection({ stories, isLoading, onSeeAll }: ConveyTr
       {/* BuzzFeed-style Grid: Hero + 3 smaller cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {trendingStories[0] && (
-          <TrendingCard story={trendingStories[0]} rank={1} isHero />
+          <TrendingCard 
+            story={trendingStories[0]} 
+            rank={1} 
+            isHero 
+            engagement={engagementData?.[trendingStories[0].post_id]}
+          />
         )}
         {trendingStories.slice(1, 4).map((story, i) => (
-          <TrendingCard key={story.post_id} story={story} rank={i + 2} />
+          <TrendingCard 
+            key={story.post_id} 
+            story={story} 
+            rank={i + 2} 
+            engagement={engagementData?.[story.post_id]}
+          />
         ))}
       </div>
     </section>

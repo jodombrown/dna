@@ -1,10 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Eye, Bookmark, Share2, Clock } from 'lucide-react';
+import { MessageCircle, Eye, Bookmark, BookmarkCheck, Share2, Clock, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDistanceToNow } from 'date-fns';
 import type { UniversalFeedItem } from '@/types/feed';
+import { useStoryEngagement, useStoryViewTracker } from '@/hooks/useStoryEngagement';
+import { useAuth } from '@/contexts/AuthContext';
+import { ReactionEmoji } from '@/types/reactions';
 
 interface ConveyStoryCardProps {
   story: UniversalFeedItem;
@@ -13,29 +16,42 @@ interface ConveyStoryCardProps {
   showEngagement?: boolean;
 }
 
-// Emoji reactions with picker
-const EmojiReactions = ({ reactions, onReact }: { 
-  reactions?: Record<string, number>;
-  onReact?: (emoji: string) => void;
+// Quick reaction emojis for stories
+const STORY_REACTIONS: ReactionEmoji[] = ['👏', '❤️', '🔥', '💡', '🙌'];
+
+// Emoji reactions component with real engagement
+const EmojiReactions = ({ 
+  reactions, 
+  currentReaction,
+  onReact,
+  isLoading 
+}: { 
+  reactions: { emoji: ReactionEmoji; count: number }[];
+  currentReaction?: ReactionEmoji;
+  onReact: (emoji: ReactionEmoji) => void;
+  isLoading?: boolean;
 }) => {
-  const activeReactions = reactions || {};
-  const totalReactions = Object.values(activeReactions).reduce((a, b) => a + b, 0);
+  const totalReactions = reactions.reduce((a, b) => a + b.count, 0);
   
-  // Show top 3 reactions with counts
-  const topReactions = Object.entries(activeReactions)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 3);
+  // Show top 3 reactions
+  const topReactions = reactions.slice(0, 3);
   
   return (
     <div className="flex items-center gap-2">
       {/* Show existing reactions */}
       {topReactions.length > 0 && (
         <div className="flex items-center gap-1 bg-muted/50 rounded-full px-2 py-1">
-          {topReactions.map(([emoji, count]) => (
+          {topReactions.map(({ emoji, count }) => (
             <button
               key={emoji}
-              onClick={() => onReact?.(emoji)}
-              className="flex items-center gap-0.5 hover:scale-110 transition-transform"
+              onClick={(e) => {
+                e.stopPropagation();
+                onReact(emoji);
+              }}
+              className={cn(
+                "flex items-center gap-0.5 hover:scale-110 transition-transform",
+                currentReaction === emoji && "ring-2 ring-primary ring-offset-1 rounded-full"
+              )}
             >
               <span className="text-sm">{emoji}</span>
               {count > 1 && (
@@ -45,20 +61,31 @@ const EmojiReactions = ({ reactions, onReact }: {
           ))}
           {totalReactions > 3 && (
             <span className="text-xs text-muted-foreground ml-1">
-              +{totalReactions - 3}
+              +{totalReactions - reactions.slice(0, 3).reduce((a, b) => a + b.count, 0)}
             </span>
           )}
         </div>
       )}
       
-      {/* Add reaction button */}
-      <button 
-        className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
-        onClick={() => onReact?.('👍')}
-      >
-        <span className="text-lg opacity-60 hover:opacity-100">😊</span>
-        <span className="text-xs">React</span>
-      </button>
+      {/* Add reaction button with quick reactions */}
+      <div className="flex items-center gap-0.5">
+        {STORY_REACTIONS.slice(0, 3).map((emoji) => (
+          <button
+            key={emoji}
+            onClick={(e) => {
+              e.stopPropagation();
+              onReact(emoji);
+            }}
+            className={cn(
+              "text-lg opacity-50 hover:opacity-100 hover:scale-125 transition-all",
+              currentReaction === emoji && "opacity-100 scale-110"
+            )}
+            disabled={isLoading}
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
@@ -82,6 +109,20 @@ export function ConveyStoryCard({
   showEngagement = true,
 }: ConveyStoryCardProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const viewRef = useStoryViewTracker(story.post_id);
+  
+  const {
+    reactions,
+    currentReaction,
+    commentCount,
+    viewCount,
+    isBookmarked,
+    toggleReaction,
+    toggleBookmark,
+    isTogglingBookmark,
+    isLoading,
+  } = useStoryEngagement(story.post_id, user?.id);
   
   const handleClick = () => {
     navigate(`/dna/convey/stories/${story.post_id}`);
@@ -95,20 +136,35 @@ export function ConveyStoryCard({
     ? formatDistanceToNow(new Date(story.created_at), { addSuffix: true })
     : '';
   
-  // Engagement data from story
-  const commentCount = story.comment_count || 0;
-  const viewCount = story.view_count || 0;
-  const mockReactions = { '👍': story.like_count || 0, '❤️': 3, '😂': 1 };
-  
   const storyType = getStoryTypeBadge(story.post_type || 'story');
   
+  const handleBookmark = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await toggleBookmark();
+  };
+  
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (navigator.share) {
+      await navigator.share({
+        title: story.title || 'DNA Story',
+        url: `${window.location.origin}/dna/convey/stories/${story.post_id}`,
+      });
+    } else {
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/dna/convey/stories/${story.post_id}`
+      );
+    }
+  };
+
   if (variant === 'compact') {
     return (
       <div 
+        ref={viewRef}
         onClick={handleClick}
         className={cn(
           "flex gap-3 p-3 rounded-xl cursor-pointer",
-          "bg-card border border-border/50 hover:border-dna-gold/30",
+          "bg-card border border-border/50 hover:border-primary/30",
           "transition-all duration-200 hover:shadow-md"
         )}
       >
@@ -143,6 +199,7 @@ export function ConveyStoryCard({
   if (variant === 'featured') {
     return (
       <div 
+        ref={viewRef}
         onClick={handleClick}
         className={cn(
           "relative rounded-2xl overflow-hidden cursor-pointer group",
@@ -151,7 +208,7 @@ export function ConveyStoryCard({
         )}
       >
         {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-dna-gold/30 to-orange-600/40">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/40">
           {story.media_url && (
             <img 
               src={story.media_url} 
@@ -168,7 +225,7 @@ export function ConveyStoryCard({
             {storyType.label}
           </Badge>
           
-          <h2 className="text-xl md:text-2xl font-bold text-white mb-3 line-clamp-3 group-hover:text-dna-gold transition-colors">
+          <h2 className="text-xl md:text-2xl font-bold text-white mb-3 line-clamp-3 group-hover:text-primary transition-colors">
             {story.title || story.content?.substring(0, 150)}...
           </h2>
           
@@ -176,7 +233,7 @@ export function ConveyStoryCard({
             <div className="flex items-center gap-3 mb-3">
               <Avatar className="h-8 w-8 border-2 border-white/20">
                 <AvatarImage src={story.author_avatar_url || undefined} />
-                <AvatarFallback className="bg-dna-gold text-white text-xs">
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                   {getAuthorInitials(story.author_display_name)}
                 </AvatarFallback>
               </Avatar>
@@ -189,7 +246,12 @@ export function ConveyStoryCard({
           
           {showEngagement && (
             <div className="flex items-center justify-between">
-              <EmojiReactions reactions={mockReactions} />
+              <EmojiReactions 
+                reactions={reactions} 
+                currentReaction={currentReaction}
+                onReact={toggleReaction}
+                isLoading={isLoading}
+              />
               <div className="flex items-center gap-3 text-white/70">
                 <div className="flex items-center gap-1">
                   <MessageCircle className="h-4 w-4" />
@@ -210,9 +272,10 @@ export function ConveyStoryCard({
   // Default variant - BuzzFeed-style card
   return (
     <div 
+      ref={viewRef}
       className={cn(
         "bg-card rounded-2xl overflow-hidden border border-border/50",
-        "hover:border-dna-gold/30 hover:shadow-lg",
+        "hover:border-primary/30 hover:shadow-lg",
         "transition-all duration-300 group"
       )}
     >
@@ -238,7 +301,7 @@ export function ConveyStoryCard({
         {/* Title */}
         <h3 
           onClick={handleClick}
-          className="font-bold text-lg mb-2 line-clamp-2 cursor-pointer hover:text-dna-gold transition-colors"
+          className="font-bold text-lg mb-2 line-clamp-2 cursor-pointer hover:text-primary transition-colors"
         >
           {story.title || story.content?.substring(0, 100)}...
         </h3>
@@ -248,7 +311,7 @@ export function ConveyStoryCard({
           <div className="flex items-center gap-2 mb-3">
             <Avatar className="h-7 w-7">
               <AvatarImage src={story.author_avatar_url || undefined} />
-              <AvatarFallback className="bg-dna-gold/10 text-dna-gold text-xs">
+              <AvatarFallback className="bg-primary/10 text-primary text-xs">
                 {getAuthorInitials(story.author_display_name)}
               </AvatarFallback>
             </Avatar>
@@ -265,18 +328,50 @@ export function ConveyStoryCard({
         {/* Engagement Row */}
         {showEngagement && (
           <div className="flex items-center justify-between pt-3 border-t border-border/50">
-            <EmojiReactions reactions={mockReactions} />
+            <EmojiReactions 
+              reactions={reactions}
+              currentReaction={currentReaction}
+              onReact={toggleReaction}
+              isLoading={isLoading}
+            />
             
-            <div className="flex items-center gap-2">
-              <button className="p-1.5 rounded-full hover:bg-muted transition-colors">
+            <div className="flex items-center gap-1">
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClick();
+                }}
+                className="p-1.5 rounded-full hover:bg-muted transition-colors flex items-center gap-1"
+              >
                 <MessageCircle className="h-4 w-4 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">{commentCount}</span>
               </button>
-              <button className="p-1.5 rounded-full hover:bg-muted transition-colors">
-                <Bookmark className="h-4 w-4 text-muted-foreground" />
+              <button 
+                onClick={handleBookmark}
+                disabled={isTogglingBookmark}
+                className={cn(
+                  "p-1.5 rounded-full hover:bg-muted transition-colors",
+                  isBookmarked && "text-primary"
+                )}
+              >
+                {isTogglingBookmark ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : isBookmarked ? (
+                  <BookmarkCheck className="h-4 w-4" />
+                ) : (
+                  <Bookmark className="h-4 w-4 text-muted-foreground" />
+                )}
               </button>
-              <button className="p-1.5 rounded-full hover:bg-muted transition-colors">
+              <button 
+                onClick={handleShare}
+                className="p-1.5 rounded-full hover:bg-muted transition-colors"
+              >
                 <Share2 className="h-4 w-4 text-muted-foreground" />
               </button>
+              <div className="flex items-center gap-1 ml-1 text-muted-foreground">
+                <Eye className="h-3.5 w-3.5" />
+                <span className="text-xs">{viewCount}</span>
+              </div>
             </div>
           </div>
         )}
