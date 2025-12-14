@@ -83,6 +83,7 @@ const FeatureDetail = lazy(() => import("./pages/documentation/FeatureDetail"));
 
 // Convene M1-M3 pages
 const ConveneHub = lazy(() => import("./pages/dna/convene/ConveneHub"));
+const ComingSoonConvene = lazy(() => import("./pages/dna/convene/ComingSoonConvene"));
 const EventsIndex = lazy(() => import("./pages/dna/convene/EventsIndex"));
 const EventDetail = lazy(() => import("./pages/dna/convene/EventDetail"));
 const Welcome = lazy(() => import("./pages/dna/Welcome"));
@@ -96,6 +97,7 @@ const GroupEventsPage = lazy(() => import("./pages/dna/convene/GroupEventsPage")
 
 // Collaborate M1-M5 pages
 const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub"));
+const ComingSoonCollaborate = lazy(() => import("./pages/dna/collaborate/ComingSoonCollaborate"));
 const SpacesIndex = lazy(() => import("./pages/dna/collaborate/SpacesIndex"));
 const CollaborateSpaceDetail = lazy(() => import("./pages/dna/collaborate/SpaceDetail"));
 const SpaceBoard = lazy(() => import("./pages/dna/collaborate/SpaceBoard"));
@@ -105,6 +107,7 @@ const MySpaces = lazy(() => import("./pages/dna/collaborate/MySpaces"));
 
 // Contribute M1-M2 pages
 const ContributeHub = lazy(() => import("./pages/dna/contribute/ContributeHub"));
+const ComingSoonContribute = lazy(() => import("./pages/dna/contribute/ComingSoonContribute"));
 const NeedsIndex = lazy(() => import("./pages/dna/contribute/NeedsIndex"));
 const NeedDetail = lazy(() => import("./pages/dna/contribute/NeedDetail"));
 const OpportunityDetail = lazy(() => import("./pages/dna/contribute/OpportunityDetail"));
@@ -337,7 +340,7 @@ function App() {
               {/* ========== CONVENE PILLAR M1 ========== */}
               <Route path="/dna/convene" element={
                 <OnboardingGuard>
-                  <ConveneHub />
+                  <ComingSoonConvene />
                 </OnboardingGuard>
               } />
               <Route path="/dna/convene/events" element={
@@ -383,7 +386,7 @@ function App() {
               {/* ========== COLLABORATE PILLAR M1-M5 ========== */}
               <Route path="/dna/collaborate" element={
                 <OnboardingGuard>
-                  <CollaborateHub />
+                  <ComingSoonCollaborate />
                 </OnboardingGuard>
               } />
               <Route path="/dna/collaborate/spaces" element={
@@ -420,7 +423,7 @@ function App() {
               {/* ========== CONTRIBUTE PILLAR M1 ========== */}
               <Route path="/dna/contribute" element={
                 <OnboardingGuard>
-                  <ContributeHub />
+                  <ComingSoonContribute />
                 </OnboardingGuard>
               } />
               <Route path="/dna/contribute/needs" element={

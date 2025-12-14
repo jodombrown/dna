@@ -18,6 +18,7 @@ import { SearchDialog } from '@/components/feed/SearchDialog';
 import { MobileFeedTabs } from '@/components/feed/MobileFeedTabs';
 import { FeedTabExplainer } from '@/components/feed/FeedTabExplainer';
 import { MobileProfileCompletionBanner } from '@/components/feed/MobileProfileCompletionBanner';
+import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrough';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileViewContainer } from '@/components/mobile/MobileViewContainer';
@@ -229,6 +230,9 @@ const DnaFeed = () => {
   if (isMobile) {
     return (
       <>
+        {/* First-time user walkthrough */}
+        <FirstTimeWalkthrough />
+        
         {/* Hide BaseLayout's UnifiedHeader for mobile feed */}
         <style>{`
           body:has([data-mobile-feed="true"]) header[data-unified-header] {
@@ -308,6 +312,9 @@ const DnaFeed = () => {
   // Desktop layout
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      {/* First-time user walkthrough */}
+      <FirstTimeWalkthrough />
+      
       <LayoutController
         leftColumn={leftColumn}
         centerColumn={centerColumn}
