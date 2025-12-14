@@ -4769,9 +4769,11 @@ export type Database = {
           flag_reason: string | null
           flagged_at: string | null
           flagged_by: string | null
+          gallery_urls: string[] | null
           id: string
           image_url: string | null
           is_deleted: boolean
+          is_featured: boolean | null
           link_description: string | null
           link_metadata: Json | null
           link_title: string | null
@@ -4790,6 +4792,7 @@ export type Database = {
           share_commentary: string | null
           shared_by: string | null
           space_id: string | null
+          story_type: string | null
           subtitle: string | null
           title: string | null
           updated_at: string
@@ -4804,9 +4807,11 @@ export type Database = {
           flag_reason?: string | null
           flagged_at?: string | null
           flagged_by?: string | null
+          gallery_urls?: string[] | null
           id?: string
           image_url?: string | null
           is_deleted?: boolean
+          is_featured?: boolean | null
           link_description?: string | null
           link_metadata?: Json | null
           link_title?: string | null
@@ -4825,6 +4830,7 @@ export type Database = {
           share_commentary?: string | null
           shared_by?: string | null
           space_id?: string | null
+          story_type?: string | null
           subtitle?: string | null
           title?: string | null
           updated_at?: string
@@ -4839,9 +4845,11 @@ export type Database = {
           flag_reason?: string | null
           flagged_at?: string | null
           flagged_by?: string | null
+          gallery_urls?: string[] | null
           id?: string
           image_url?: string | null
           is_deleted?: boolean
+          is_featured?: boolean | null
           link_description?: string | null
           link_metadata?: Json | null
           link_title?: string | null
@@ -4860,6 +4868,7 @@ export type Database = {
           share_commentary?: string | null
           shared_by?: string | null
           space_id?: string | null
+          story_type?: string | null
           subtitle?: string | null
           title?: string | null
           updated_at?: string
