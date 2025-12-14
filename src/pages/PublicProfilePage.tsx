@@ -32,23 +32,41 @@ const PublicProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Fetch profile data - no auth required
-  const { data: profile, isLoading, error } = useQuery({
-    queryKey: ['public-profile-view', username],
+  // Fetch profile data using unified RPC - same source as owner profile and PDF
+  const { data: profileBundle, isLoading, error } = useQuery({
+    queryKey: ['public-profile-view', username, user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, username, full_name, avatar_url, profession, headline, bio, current_country, country_of_origin, skills, focus_areas, industries, is_public, diaspora_story, available_for, regional_expertise, allow_profile_sharing, email, linkedin_url, phone_number, whatsapp_number, languages, years_experience, company')
-        .eq('username', username)
-        .eq('is_public', true)
-        .maybeSingle();
+      const { data, error } = await supabase.rpc('rpc_get_profile_bundle', {
+        p_username: username,
+        p_viewer_id: user?.id || null,
+      });
 
       if (error) throw error;
       if (!data) throw new Error('Profile not found or private');
-      return data;
+      
+      // Cast to expected structure
+      const bundle = data as unknown as { 
+        profile: any; 
+        permissions?: { is_owner?: boolean };
+        tags?: any;
+      };
+      
+      if (!bundle.profile) throw new Error('Profile not found or private');
+      
+      // Check if profile is public (non-owners can only see public profiles)
+      const profileData = bundle.profile;
+      if (!profileData.is_public && bundle.permissions?.is_owner !== true) {
+        throw new Error('Profile not found or private');
+      }
+      
+      return bundle;
     },
     enabled: !!username,
   });
+
+  // Extract profile from bundle for backward compatibility
+  const profile = profileBundle?.profile;
+  const tags = profileBundle?.tags;
 
   const isLoggedIn = !!user;
   const isOwnProfile = user?.id === profile?.id;
@@ -215,6 +233,11 @@ const PublicProfilePage = () => {
                     fullName={profile.full_name}
                     profile={{
                       ...profile,
+                      // Include tags from bundle for PDF
+                      skills: tags?.skills || profile.skills,
+                      focus_areas: tags?.focus_areas || profile.focus_areas,
+                      interests: tags?.interests,
+                      industries: tags?.industries || profile.industries,
                       display_name: profile.full_name,
                       professional_role: profile.profession || profile.headline,
                     }}
@@ -224,6 +247,48 @@ const PublicProfilePage = () => {
                   />
                 )}
               </div>
+
+              {/* My Connection to Africa */}
+              {(profile.diaspora_status || profile.ethnic_heritage?.length > 0 || profile.african_causes?.length > 0 || profile.engagement_intentions?.length > 0) && (
+                <div className="mb-6 p-4 rounded-lg bg-dna-forest/5 border border-dna-forest/10">
+                  <h3 className="font-semibold mb-3 text-dna-forest">My Connection to Africa</h3>
+                  {profile.diaspora_status && (
+                    <p className="text-sm text-muted-foreground mb-2">
+                      <span className="font-medium">Connection Type:</span> {profile.diaspora_status}
+                    </p>
+                  )}
+                  {profile.ethnic_heritage && profile.ethnic_heritage.length > 0 && (
+                    <div className="mb-2">
+                      <span className="text-sm font-medium">Heritage:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {profile.ethnic_heritage.map((h: string, i: number) => (
+                          <Badge key={i} variant="outline" className="text-xs">{h}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {profile.african_causes && profile.african_causes.length > 0 && (
+                    <div className="mb-2">
+                      <span className="text-sm font-medium">Causes I Care About:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {profile.african_causes.map((c: string, i: number) => (
+                          <Badge key={i} variant="secondary" className="text-xs">{c}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {profile.engagement_intentions && profile.engagement_intentions.length > 0 && (
+                    <div>
+                      <span className="text-sm font-medium">Here To:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {profile.engagement_intentions.map((e: string, i: number) => (
+                          <Badge key={i} className="text-xs bg-dna-copper/10 text-dna-copper border-dna-copper/20">{e}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Diaspora Story */}
               {profile.diaspora_story && (
