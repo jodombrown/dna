@@ -4,6 +4,7 @@ import ThreeColumnLayout from '@/layouts/ThreeColumnLayout';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import FullCanvasLayout from '@/layouts/FullCanvasLayout';
 import DetailViewLayout from '@/layouts/DetailViewLayout';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 interface LayoutControllerProps {
   // Column content for ThreeColumnLayout
@@ -60,10 +61,18 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
 }) => {
   const { viewState, layoutConfig } = useViewState();
 
+  // Helper to wrap layout with MobileBottomNav
+  const withMobileNav = (layout: React.ReactNode) => (
+    <>
+      {layout}
+      <MobileBottomNav />
+    </>
+  );
+
   // Render appropriate layout based on view state
   switch (viewState) {
     case 'DASHBOARD_HOME':
-      return (
+      return withMobileNav(
         <ThreeColumnLayout
           leftWidth={layoutConfig.leftWidth}
           centerWidth={layoutConfig.centerWidth}
@@ -75,19 +84,19 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
       );
 
     case 'CONNECT_MODE':
-      return (
+      return withMobileNav(
         <ThreeColumnLayout
           leftWidth={layoutConfig.leftWidth}
           centerWidth={layoutConfig.centerWidth}
           rightWidth={layoutConfig.rightWidth}
           left={leftColumn}
           center={centerColumn || children}
-          right={rightColumn} // Adapted with network stats
+          right={rightColumn}
         />
       );
 
     case 'CONVENE_MODE':
-      return (
+      return withMobileNav(
         <TwoColumnLayout
           leftWidth={layoutConfig.leftWidth}
           rightWidth={layoutConfig.rightWidth}
@@ -97,7 +106,7 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
       );
 
     case 'MESSAGES_MODE':
-      return (
+      return withMobileNav(
         <TwoColumnLayout
           leftWidth={layoutConfig.leftWidth}
           rightWidth={layoutConfig.rightWidth}
@@ -107,7 +116,7 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
       );
 
     case 'COLLABORATE_MODE':
-      return (
+      return withMobileNav(
         <FullCanvasLayout
           sidebar={canvasSidebar || leftColumn}
           sidebarWidth={layoutConfig.leftWidth}
@@ -117,7 +126,7 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
       );
 
     case 'CONTRIBUTE_MODE':
-      return (
+      return withMobileNav(
         <TwoColumnLayout
           leftWidth={layoutConfig.leftWidth}
           rightWidth={layoutConfig.rightWidth}
@@ -127,7 +136,7 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
       );
 
     case 'CONVEY_MODE':
-      return (
+      return withMobileNav(
         <ThreeColumnLayout
           leftWidth={layoutConfig.leftWidth}
           centerWidth={layoutConfig.centerWidth}
@@ -141,7 +150,7 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
     case 'FOCUS_DETAIL_MODE':
       // DetailViewLayout for focused entity views (profiles, events, spaces, stories, needs)
       // Provides consistent breadcrumbs, back navigation, and optional context rail
-      return (
+      return withMobileNav(
         <DetailViewLayout>
           {children || centerColumn}
         </DetailViewLayout>
@@ -149,7 +158,7 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
 
     default:
       // Fallback to three-column layout
-      return (
+      return withMobileNav(
         <ThreeColumnLayout
           left={leftColumn}
           center={centerColumn || children}
