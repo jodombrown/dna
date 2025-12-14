@@ -78,7 +78,7 @@ const TrendingCard = ({
       )}
       
       {/* Content */}
-      <div className="absolute inset-0 flex flex-col justify-end p-4">
+      <div className="absolute inset-0 flex flex-col justify-end p-3 md:p-4">
         {/* Story Type Badge */}
         <Badge 
           variant="secondary" 
@@ -87,43 +87,43 @@ const TrendingCard = ({
           {getStoryTypeLabel(story.story_type)}
         </Badge>
         
-        {/* Title */}
+        {/* Title - improved readability */}
         <h3 className={cn(
-          "font-bold text-white leading-tight mb-2 group-hover:text-primary transition-colors",
-          isHero ? "text-xl md:text-2xl" : "text-sm md:text-base"
+          "font-bold text-white leading-snug mb-2 group-hover:text-primary transition-colors",
+          isHero ? "text-lg md:text-xl lg:text-2xl line-clamp-3" : "text-sm md:text-base line-clamp-2"
         )}>
-          {story.title || story.content?.substring(0, isHero ? 150 : 80)}
-          {!story.title && (story.content?.length || 0) > (isHero ? 150 : 80) && '...'}
+          {story.title || story.content?.substring(0, isHero ? 120 : 60)}
+          {!story.title && (story.content?.length || 0) > (isHero ? 120 : 60) && '...'}
         </h3>
         
         {/* Author + Engagement Row */}
         <div className="flex items-center justify-between gap-2 mt-auto">
           <div className="flex items-center gap-2">
-            <Avatar className="h-6 w-6 border border-white/20">
+            <Avatar className="h-6 w-6 md:h-7 md:w-7 border border-white/20">
               <AvatarImage src={story.author_avatar || undefined} />
               <AvatarFallback className="bg-primary/20 text-white text-xs">
                 {getAuthorInitials(story.author_name)}
               </AvatarFallback>
             </Avatar>
-            <span className="text-xs text-white/80 font-medium truncate max-w-[100px]">
+            <span className="text-xs md:text-sm text-white/80 font-medium truncate max-w-[80px] md:max-w-[120px]">
               {story.author_name}
             </span>
           </div>
           
-          <div className="flex items-center gap-3 text-white/70">
+          <div className="flex items-center gap-2 md:gap-3 text-white/70">
             {story.reaction_count > 0 && (
               <div className="flex items-center gap-1">
-                <span className="text-sm">❤️</span>
+                <span className="text-xs md:text-sm">❤️</span>
                 <span className="text-xs">{story.reaction_count}</span>
               </div>
             )}
             <div className="flex items-center gap-1">
-              <MessageCircle className="h-3.5 w-3.5" />
+              <MessageCircle className="h-3.5 w-3.5 md:h-4 md:w-4" />
               <span className="text-xs">{story.comment_count}</span>
             </div>
             {isHero && (
               <div className="flex items-center gap-1">
-                <Eye className="h-3.5 w-3.5" />
+                <Eye className="h-3.5 w-3.5 md:h-4 md:w-4" />
                 <span className="text-xs">{story.view_count}</span>
               </div>
             )}

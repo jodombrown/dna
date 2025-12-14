@@ -192,10 +192,10 @@ export default function ConveyStoryHub() {
         <CardContent className="space-y-2">
           {Object.values(STORY_TYPE_CONFIG).slice(0, 4).map((config) => (
             <div key={config.id} className="flex items-start gap-2 p-2 rounded-lg hover:bg-muted/30 transition-colors">
-              <span className="text-lg">{config.icon}</span>
+              <span className="text-base">{config.icon}</span>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-xs">{config.label}</p>
-                <p className="text-[10px] text-muted-foreground line-clamp-1">{config.description}</p>
+                <p className="font-medium text-sm">{config.label}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2">{config.description}</p>
               </div>
             </div>
           ))}
