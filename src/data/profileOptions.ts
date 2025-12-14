@@ -230,6 +230,87 @@ export const isAfricanLanguage = (language: string): boolean => {
 };
 
 // =============================================================================
+// ETHNIC/TRIBAL HERITAGE
+// =============================================================================
+
+export const ETHNIC_HERITAGE_OPTIONS = [
+  // West Africa
+  'Yoruba', 'Igbo', 'Hausa', 'Fulani', 'Akan', 'Ashanti', 'Ewe', 'Fon', 'Wolof',
+  'Mandinka', 'Serer', 'Bambara', 'Soninke', 'Mossi', 'Tuareg', 'Kanuri',
+  // East Africa
+  'Amhara', 'Oromo', 'Tigray', 'Somali', 'Kikuyu', 'Luo', 'Maasai', 'Kalenjin',
+  'Luhya', 'Kamba', 'Baganda', 'Tutsi', 'Hutu', 'Swahili',
+  // Southern Africa
+  'Zulu', 'Xhosa', 'Sotho', 'Tswana', 'Ndebele', 'Shona', 'Venda', 'Tsonga',
+  'Swazi', 'Pedi', 'Herero', 'Himba', 'San', 'Khoikhoi',
+  // North Africa
+  'Berber', 'Amazigh', 'Tuareg', 'Nubian', 'Coptic', 'Arab',
+  // Central Africa
+  'Kongo', 'Luba', 'Mongo', 'Fang', 'Beti', 'Bamileke', 'Pygmy',
+  // Other
+  'Mixed Heritage', 'Unknown/Researching',
+] as const;
+
+export type EthnicHeritage = typeof ETHNIC_HERITAGE_OPTIONS[number];
+
+// =============================================================================
+// RETURN INTENTIONS
+// =============================================================================
+
+export const RETURN_INTENTIONS_OPTIONS = [
+  { value: 'planning_return', label: 'Planning to Return', description: 'Actively planning to relocate to Africa' },
+  { value: 'exploring', label: 'Exploring Options', description: 'Considering it, researching possibilities' },
+  { value: 'regular_visits', label: 'Regular Visits', description: 'Prefer to visit regularly but live abroad' },
+  { value: 'no_plans', label: 'No Current Plans', description: 'Content living abroad for now' },
+  { value: 'already_returned', label: 'Already Returned', description: 'Have relocated back to Africa' },
+  { value: 'never_left', label: 'Never Left', description: 'Continental African, never left' },
+] as const;
+
+export const RETURN_INTENTIONS_VALUES = RETURN_INTENTIONS_OPTIONS.map(o => o.value);
+export type ReturnIntentionsValue = typeof RETURN_INTENTIONS_OPTIONS[number]['value'];
+
+// =============================================================================
+// AFRICAN CAUSES
+// =============================================================================
+
+export const AFRICAN_CAUSES_OPTIONS = [
+  { value: 'education', label: 'Education & Literacy' },
+  { value: 'healthcare', label: 'Healthcare & Public Health' },
+  { value: 'tech_ecosystem', label: 'Tech Ecosystem & Innovation' },
+  { value: 'climate', label: 'Climate & Environment' },
+  { value: 'youth_empowerment', label: 'Youth Empowerment' },
+  { value: 'womens_rights', label: "Women's Rights & Gender Equality" },
+  { value: 'economic_development', label: 'Economic Development' },
+  { value: 'agriculture', label: 'Agriculture & Food Security' },
+  { value: 'infrastructure', label: 'Infrastructure & Housing' },
+  { value: 'governance', label: 'Governance & Democracy' },
+  { value: 'arts_culture', label: 'Arts, Culture & Heritage' },
+  { value: 'diaspora_engagement', label: 'Diaspora Engagement' },
+  { value: 'entrepreneurship', label: 'Entrepreneurship & SMEs' },
+  { value: 'financial_inclusion', label: 'Financial Inclusion' },
+] as const;
+
+export const AFRICAN_CAUSES_VALUES = AFRICAN_CAUSES_OPTIONS.map(o => o.value);
+export type AfricanCausesValue = typeof AFRICAN_CAUSES_OPTIONS[number]['value'];
+
+// =============================================================================
+// AFRICA VISIT FREQUENCY
+// =============================================================================
+
+export const VISIT_FREQUENCY_OPTIONS = [
+  { value: 'live_there', label: 'I Live in Africa', description: 'Currently residing in Africa' },
+  { value: 'multiple_yearly', label: 'Multiple Times a Year', description: 'Frequent traveler' },
+  { value: 'yearly', label: 'About Once a Year', description: 'Annual visits' },
+  { value: 'every_few_years', label: 'Every Few Years', description: 'Occasional visits' },
+  { value: 'rarely', label: 'Rarely', description: 'Infrequent visits' },
+  { value: 'never_visited', label: 'Not Yet', description: "Haven't visited yet but want to" },
+  { value: 'planning_first', label: 'Planning First Trip', description: 'First visit coming up' },
+] as const;
+
+export const VISIT_FREQUENCY_VALUES = VISIT_FREQUENCY_OPTIONS.map(o => o.value);
+export type VisitFrequencyValue = typeof VISIT_FREQUENCY_OPTIONS[number]['value'];
+
+// =============================================================================
 // USER TYPES
 // =============================================================================
 

@@ -5018,6 +5018,8 @@ export type Database = {
           adin_prompt_status: string | null
           advocacy_interests: string[] | null
           africa_focus_areas: string[] | null
+          africa_visit_frequency: string | null
+          african_causes: string[] | null
           agrees_to_values: boolean | null
           allow_profile_sharing: boolean | null
           availability_for_mentoring: boolean | null
@@ -5078,6 +5080,7 @@ export type Database = {
           email_notifications: boolean | null
           email_visible: boolean | null
           engagement_intentions: string[] | null
+          ethnic_heritage: string[] | null
           event_interest_tags: Json | null
           facebook_url: string | null
           first_action_completed: boolean | null
@@ -5165,6 +5168,7 @@ export type Database = {
           referrer_id: string | null
           region_tags: Json | null
           regional_expertise: string[] | null
+          return_intentions: string | null
           roles: string[] | null
           sdg_focus: string[] | null
           sector_tags: Json | null
@@ -5216,6 +5220,8 @@ export type Database = {
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           africa_focus_areas?: string[] | null
+          africa_visit_frequency?: string | null
+          african_causes?: string[] | null
           agrees_to_values?: boolean | null
           allow_profile_sharing?: boolean | null
           availability_for_mentoring?: boolean | null
@@ -5276,6 +5282,7 @@ export type Database = {
           email_notifications?: boolean | null
           email_visible?: boolean | null
           engagement_intentions?: string[] | null
+          ethnic_heritage?: string[] | null
           event_interest_tags?: Json | null
           facebook_url?: string | null
           first_action_completed?: boolean | null
@@ -5363,6 +5370,7 @@ export type Database = {
           referrer_id?: string | null
           region_tags?: Json | null
           regional_expertise?: string[] | null
+          return_intentions?: string | null
           roles?: string[] | null
           sdg_focus?: string[] | null
           sector_tags?: Json | null
@@ -5414,6 +5422,8 @@ export type Database = {
           adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           africa_focus_areas?: string[] | null
+          africa_visit_frequency?: string | null
+          african_causes?: string[] | null
           agrees_to_values?: boolean | null
           allow_profile_sharing?: boolean | null
           availability_for_mentoring?: boolean | null
@@ -5474,6 +5484,7 @@ export type Database = {
           email_notifications?: boolean | null
           email_visible?: boolean | null
           engagement_intentions?: string[] | null
+          ethnic_heritage?: string[] | null
           event_interest_tags?: Json | null
           facebook_url?: string | null
           first_action_completed?: boolean | null
@@ -5561,6 +5572,7 @@ export type Database = {
           referrer_id?: string | null
           region_tags?: Json | null
           regional_expertise?: string[] | null
+          return_intentions?: string | null
           roles?: string[] | null
           sdg_focus?: string[] | null
           sector_tags?: Json | null
