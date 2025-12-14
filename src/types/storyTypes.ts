@@ -84,10 +84,15 @@ export function getStoryTypeConfig(type: StoryType): StoryTypeConfig {
 }
 
 export function getStoryTypeOptions(): Array<{ value: StoryType; label: string; description: string; icon: string }> {
-  return Object.values(STORY_TYPE_CONFIG).map((config) => ({
-    value: config.id,
-    label: config.label,
-    description: config.description,
-    icon: config.icon,
-  }));
+  // Explicitly return all story types in order
+  const types: StoryType[] = ['impact', 'update', 'spotlight', 'photo_essay'];
+  return types.map((type) => {
+    const config = STORY_TYPE_CONFIG[type];
+    return {
+      value: config.id,
+      label: config.label,
+      description: config.description,
+      icon: config.icon,
+    };
+  });
 }
