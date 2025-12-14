@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAutoEmbedDetection } from '@/hooks/useAutoEmbedDetection';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { getStoryTypeOptions, getStoryTypeConfig, type StoryType } from '@/types/storyTypes';
+import { RichTextEditor } from '@/components/convey/RichTextEditor';
 
 interface ComposerBodyProps {
   mode: ComposerMode;
@@ -225,19 +226,18 @@ function StoryModeFields({
         />
       </div>
 
-      {/* Content */}
+      {/* Content - Rich Text Editor */}
       <div>
         <Label>Story *</Label>
-        <Textarea
-          placeholder={config.placeholders.content}
+        <RichTextEditor
           value={formData.content}
-          onChange={(e) => {
-            const value = e.target.value;
+          onChange={(value) => {
             if (value.length <= 4000) {
               onChange({ content: value });
             }
           }}
-          className="min-h-[200px] resize-none"
+          placeholder={config.placeholders.content}
+          minHeight="200px"
         />
         <p className="text-xs text-muted-foreground mt-1">
           {formData.content.length < config.suggestedLength.min 
