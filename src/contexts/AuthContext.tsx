@@ -30,6 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Fetch user profile
   const fetchProfile = async (userId: string) => {
@@ -108,7 +109,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setProfile(null);
         }
         
-        setLoading(false);
+        // Only set loading to false after initial session check is complete
+        if (isInitialized) {
+          setLoading(false);
+        }
       }
     );
 
@@ -119,6 +123,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (error) {
           console.error('Error getting session:', error);
+          setIsInitialized(true);
           setLoading(false);
           return;
         }
@@ -130,9 +135,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           await fetchProfile(session.user.id);
         }
         
+        setIsInitialized(true);
         setLoading(false);
       } catch (error) {
         console.error('Network error getting session:', error);
+        setIsInitialized(true);
         setLoading(false);
       }
     };
