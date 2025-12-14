@@ -106,21 +106,29 @@ export function FirstTimeWalkthrough() {
   useEffect(() => {
     if (!user) return;
     
-    // Check if user has seen the walkthrough
-    const walkthroughKey = `dna_walkthrough_completed_${user.id}`;
-    const hasCompleted = localStorage.getItem(walkthroughKey);
-    
-    if (!hasCompleted) {
-      // Small delay to let the page render first
-      const timer = setTimeout(() => setIsVisible(true), 500);
-      return () => clearTimeout(timer);
+    // Check if user has seen the walkthrough (guarded for environments where localStorage may fail)
+    try {
+      const walkthroughKey = `dna_walkthrough_completed_${user.id}`;
+      const hasCompleted = localStorage.getItem(walkthroughKey);
+
+      if (!hasCompleted) {
+        // Small delay to let the page render first
+        const timer = setTimeout(() => setIsVisible(true), 500);
+        return () => clearTimeout(timer);
+      }
+    } catch (error) {
+      console.warn('FirstTimeWalkthrough: localStorage unavailable, skipping persistence', error);
     }
   }, [user]);
-
+ 
   const handleComplete = () => {
     if (!user) return;
     const walkthroughKey = `dna_walkthrough_completed_${user.id}`;
-    localStorage.setItem(walkthroughKey, 'true');
+    try {
+      localStorage.setItem(walkthroughKey, 'true');
+    } catch (error) {
+      console.warn('FirstTimeWalkthrough: failed to persist walkthrough completion', error);
+    }
     setIsVisible(false);
   };
 
