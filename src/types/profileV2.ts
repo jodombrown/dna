@@ -40,6 +40,15 @@ export interface ProfileV2Data {
   verification_status: VerificationStatus;
   verification_updated_at?: string | null;
   created_at?: string;
+  // Diaspora connection fields
+  diaspora_status?: string | null;
+  ethnic_heritage?: string[] | null;
+  african_causes?: string[] | null;
+  engagement_intentions?: string[] | null;
+  return_intentions?: string | null;
+  africa_visit_frequency?: string | null;
+  diaspora_networks?: string[] | null;
+  mentorship_areas?: string[] | null;
 }
 
 export interface ProfileV2Tags {
