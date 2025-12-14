@@ -298,12 +298,13 @@ export function ConveyStoryCard({
       
       {/* Content */}
       <div className="p-4">
-        {/* Title */}
+        {/* Title - improved readability */}
         <h3 
           onClick={handleClick}
-          className="font-bold text-lg mb-2 line-clamp-2 cursor-pointer hover:text-primary transition-colors"
+          className="font-bold text-base md:text-lg mb-2 line-clamp-2 cursor-pointer hover:text-primary transition-colors leading-snug"
         >
-          {story.title || story.content?.substring(0, 100)}...
+          {story.title || story.content?.substring(0, 100)}
+          {!story.title && (story.content?.length || 0) > 100 && '...'}
         </h3>
         
         {/* Author Row */}
@@ -341,16 +342,16 @@ export function ConveyStoryCard({
                   e.stopPropagation();
                   handleClick();
                 }}
-                className="p-1.5 rounded-full hover:bg-muted transition-colors flex items-center gap-1"
+                className="p-2 rounded-full hover:bg-muted transition-colors flex items-center gap-1"
               >
                 <MessageCircle className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">{commentCount}</span>
+                <span className="text-sm text-muted-foreground">{commentCount}</span>
               </button>
               <button 
                 onClick={handleBookmark}
                 disabled={isTogglingBookmark}
                 className={cn(
-                  "p-1.5 rounded-full hover:bg-muted transition-colors",
+                  "p-2 rounded-full hover:bg-muted transition-colors",
                   isBookmarked && "text-primary"
                 )}
               >
@@ -364,13 +365,13 @@ export function ConveyStoryCard({
               </button>
               <button 
                 onClick={handleShare}
-                className="p-1.5 rounded-full hover:bg-muted transition-colors"
+                className="p-2 rounded-full hover:bg-muted transition-colors"
               >
                 <Share2 className="h-4 w-4 text-muted-foreground" />
               </button>
               <div className="flex items-center gap-1 ml-1 text-muted-foreground">
-                <Eye className="h-3.5 w-3.5" />
-                <span className="text-xs">{viewCount}</span>
+                <Eye className="h-4 w-4" />
+                <span className="text-sm">{viewCount}</span>
               </div>
             </div>
           </div>

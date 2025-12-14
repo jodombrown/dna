@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ConveyStoryCard } from './ConveyStoryCard';
@@ -100,17 +101,17 @@ export function ConveyDiscussionPrompt({
   onAnswer?: () => void;
 }) {
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-amber-100 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/10 p-5 border border-amber-200/50 dark:border-amber-800/30">
+    <div className="rounded-xl md:rounded-2xl bg-gradient-to-br from-amber-100 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/10 p-4 md:p-5 border border-amber-200/50 dark:border-amber-800/30">
       <p className="text-xs font-semibold text-dna-gold uppercase tracking-wide mb-2">
         Join the Discussion
       </p>
-      <h3 className="text-lg font-bold text-foreground mb-4">
+      <h3 className="text-base md:text-lg font-bold text-foreground mb-3 md:mb-4 leading-snug">
         {question}
       </h3>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <button 
           onClick={onAnswer}
-          className="px-4 py-2 bg-dna-gold text-white rounded-full text-sm font-medium hover:bg-dna-gold/90 transition-colors"
+          className="px-4 py-2.5 bg-dna-gold text-white rounded-full text-sm font-medium hover:bg-dna-gold/90 transition-colors active:scale-95"
         >
           Add Your Answer
         </button>
@@ -122,12 +123,22 @@ export function ConveyDiscussionPrompt({
   );
 }
 
-// Mini card for sidebar
+// Mini card for sidebar - with proper navigation
 export function ConveyMiniCard({ story }: { story: UniversalFeedItem }) {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    // Use post_id for posts table-based stories
+    navigate(`/dna/convey/stories/${story.post_id}`);
+  };
+  
   return (
-    <div className="flex gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+    <div 
+      onClick={handleClick}
+      className="flex gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer active:bg-muted"
+    >
       {story.media_url && (
-        <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-muted">
+        <div className="w-14 h-14 md:w-16 md:h-16 rounded-lg overflow-hidden shrink-0 bg-muted">
           <img 
             src={story.media_url} 
             alt="" 
@@ -136,8 +147,12 @@ export function ConveyMiniCard({ story }: { story: UniversalFeedItem }) {
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium line-clamp-2">{story.title || story.content?.substring(0, 60)}...</p>
-        <p className="text-xs text-muted-foreground mt-1">{story.author_display_name}</p>
+        <p className="text-sm font-medium line-clamp-2 leading-snug">
+          {story.title || story.content?.substring(0, 60)}...
+        </p>
+        <p className="text-xs text-muted-foreground mt-1 truncate">
+          {story.author_display_name}
+        </p>
       </div>
     </div>
   );
