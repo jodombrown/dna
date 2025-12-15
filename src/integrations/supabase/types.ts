@@ -8266,37 +8266,24 @@ export type Database = {
           is_active: boolean
         }[]
       }
-      get_user_connections:
-        | {
-            Args: { p_limit?: number; p_offset?: number; p_user_id: string }
-            Returns: {
-              avatar_url: string
-              connected_at: string
-              full_name: string
-              headline: string
-              id: string
-              location: string
-              username: string
-            }[]
-          }
-        | {
-            Args: {
-              limit_count?: number
-              offset_count?: number
-              search_query?: string
-              user_id: string
-            }
-            Returns: {
-              avatar_url: string
-              connected_at: string
-              full_name: string
-              headline: string
-              id: string
-              location: string
-              professional_role: string
-              username: string
-            }[]
-          }
+      get_user_connections: {
+        Args: {
+          limit_count?: number
+          offset_count?: number
+          search_query?: string
+          user_id: string
+        }
+        Returns: {
+          avatar_url: string
+          connected_at: string
+          full_name: string
+          headline: string
+          id: string
+          location: string
+          professional_role: string
+          username: string
+        }[]
+      }
       get_user_conversations: {
         Args: { p_limit?: number; p_offset?: number; p_user_id: string }
         Returns: {

@@ -94,7 +94,13 @@ export default function Network() {
     if (!user) return;
     try {
       setLoading(prev => ({ ...prev, connections: true }));
-      const { data, error } = await supabase.rpc('get_user_connections', { p_user_id: user.id, p_limit: 50, p_offset: 0 });
+      // Use correct RPC signature with requester_id/recipient_id columns
+      const { data, error } = await supabase.rpc('get_user_connections', { 
+        user_id: user.id, 
+        search_query: null,
+        limit_count: 50, 
+        offset_count: 0 
+      });
       if (error) throw error;
       setConnections(data || []);
     } finally {

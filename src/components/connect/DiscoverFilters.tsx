@@ -1,12 +1,11 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { X, Filter } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-
+import CountryCombobox from '@/components/ui/country-combobox';
 interface DiscoverFiltersProps {
   filters: {
     country_of_origin?: string;
@@ -116,50 +115,48 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Country Filters */}
+        {/* Country Filters - Now with searchable dropdowns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="country_of_origin">Country of Origin</Label>
-            <Select
-              value={filters.country_of_origin ?? 'all'}
+            <Label>Country of Origin</Label>
+            <CountryCombobox
+              value={filters.country_of_origin ?? ''}
               onValueChange={(value) => 
-                onFilterChange({ ...filters, country_of_origin: value === 'all' ? undefined : value })
+                onFilterChange({ ...filters, country_of_origin: value || undefined })
               }
-            >
-              <SelectTrigger id="country_of_origin">
-                <SelectValue placeholder="Any country" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Any country</SelectItem>
-                <SelectItem value="Nigeria">Nigeria</SelectItem>
-                <SelectItem value="Kenya">Kenya</SelectItem>
-                <SelectItem value="Ghana">Ghana</SelectItem>
-                <SelectItem value="South Africa">South Africa</SelectItem>
-                <SelectItem value="Ethiopia">Ethiopia</SelectItem>
-              </SelectContent>
-            </Select>
+              placeholder="Any country"
+            />
+            {filters.country_of_origin && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onFilterChange({ ...filters, country_of_origin: undefined })}
+                className="h-6 text-xs px-2"
+              >
+                <X className="h-3 w-3 mr-1" /> Clear
+              </Button>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="current_country">Current Country</Label>
-            <Select
-              value={filters.current_country ?? 'all'}
+            <Label>Current Country</Label>
+            <CountryCombobox
+              value={filters.current_country ?? ''}
               onValueChange={(value) => 
-                onFilterChange({ ...filters, current_country: value === 'all' ? undefined : value })
+                onFilterChange({ ...filters, current_country: value || undefined })
               }
-            >
-              <SelectTrigger id="current_country">
-                <SelectValue placeholder="Any country" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Any country</SelectItem>
-                <SelectItem value="United States">United States</SelectItem>
-                <SelectItem value="United Kingdom">United Kingdom</SelectItem>
-                <SelectItem value="Canada">Canada</SelectItem>
-                <SelectItem value="Nigeria">Nigeria</SelectItem>
-                <SelectItem value="Kenya">Kenya</SelectItem>
-              </SelectContent>
-            </Select>
+              placeholder="Any country"
+            />
+            {filters.current_country && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onFilterChange({ ...filters, current_country: undefined })}
+                className="h-6 text-xs px-2"
+              >
+                <X className="h-3 w-3 mr-1" /> Clear
+              </Button>
+            )}
           </div>
         </div>
 
