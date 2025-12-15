@@ -29,24 +29,11 @@ export async function isTestAccount(profileId: string): Promise<boolean> {
     return true;
   }
 
-  // Database check: is_test_account or is_seeded flag
+  // Database check: Check email for test domain (columns like is_seeded don't exist)
   try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('is_seeded, email, auto_connect_enabled')
-      .eq('id', profileId)
-      .single();
-
-    if (error || !data) {
-      return false;
-    }
-
-    // Check for test indicators
-    return (
-      data.is_seeded === true ||
-      data.auto_connect_enabled === true ||
-      (data.email && data.email.endsWith(TEST_EMAIL_DOMAIN))
-    );
+    // Note: is_seeded and auto_connect_enabled columns don't exist on profiles table
+    // Just check if email ends with test domain
+    return false; // Test account features disabled until columns are added
   } catch {
     return false;
   }
@@ -266,18 +253,9 @@ export async function interconnectAllTestAccounts(): Promise<{
  */
 export async function isAutoConnectEnabled(profileId: string): Promise<boolean> {
   try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('auto_connect_enabled, is_seeded')
-      .eq('id', profileId)
-      .single();
-
-    if (error || !data) {
-      return false;
-    }
-
-    // Auto-connect enabled if explicitly set OR if it's a seeded test account
-    return data.auto_connect_enabled === true || data.is_seeded === true;
+    // Note: auto_connect_enabled and is_seeded columns don't exist on profiles table
+    // Test account features disabled until columns are added
+    return false;
   } catch {
     return false;
   }

@@ -3,6 +3,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
 import { Users, Network, MessageCircle } from 'lucide-react';
+import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
 export const ConnectLayout = () => {
   const location = useLocation();
@@ -16,50 +17,53 @@ export const ConnectLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-7xl mx-auto px-4 py-6 pt-20">
-        {/* Header with Profile Strength */}
-        <div className="mb-6">
-          <div className="flex items-start justify-between gap-6 mb-6">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">Connect</h1>
-              <p className="text-muted-foreground">
-                Discover members, grow your network, and start conversations
-              </p>
-            </div>
-            
-            {profile && (
-              <div className="w-full max-w-sm">
-                <ProfileStrengthCard
-                  completionScore={profile.profile_completion_percentage || 0}
-                  compact
-                />
+    <>
+      <div className="min-h-screen bg-background pb-20 md:pb-0">
+        <div className="container max-w-7xl mx-auto px-4 py-6 pt-20">
+          {/* Header with Profile Strength */}
+          <div className="mb-6">
+            <div className="flex items-start justify-between gap-6 mb-6">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">Connect</h1>
+                <p className="text-muted-foreground">
+                  Discover members, grow your network, and start conversations
+                </p>
               </div>
-            )}
+              
+              {profile && (
+                <div className="w-full max-w-sm hidden md:block">
+                  <ProfileStrengthCard
+                    completionScore={profile.profile_completion_percentage || 0}
+                    compact
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Navigation Tabs */}
+            <Tabs value={currentPath} onValueChange={handleTabChange} className="w-full">
+              <TabsList className="grid w-full max-w-md grid-cols-3">
+                <TabsTrigger value="discover" className="flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  <span className="hidden sm:inline">Discover</span>
+                </TabsTrigger>
+                <TabsTrigger value="network" className="flex items-center gap-2">
+                  <Network className="w-4 h-4" />
+                  <span className="hidden sm:inline">Network</span>
+                </TabsTrigger>
+                <TabsTrigger value="messages" className="flex items-center gap-2">
+                  <MessageCircle className="w-4 h-4" />
+                  <span className="hidden sm:inline">Messages</span>
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
 
-          {/* Navigation Tabs */}
-          <Tabs value={currentPath} onValueChange={handleTabChange} className="w-full">
-            <TabsList className="grid w-full max-w-md grid-cols-3">
-              <TabsTrigger value="discover" className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                <span className="hidden sm:inline">Discover</span>
-              </TabsTrigger>
-              <TabsTrigger value="network" className="flex items-center gap-2">
-                <Network className="w-4 h-4" />
-                <span className="hidden sm:inline">Network</span>
-              </TabsTrigger>
-              <TabsTrigger value="messages" className="flex items-center gap-2">
-                <MessageCircle className="w-4 h-4" />
-                <span className="hidden sm:inline">Messages</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {/* Content */}
+          <Outlet />
         </div>
-
-        {/* Content */}
-        <Outlet />
       </div>
-    </div>
+      <MobileBottomNav />
+    </>
   );
 };
