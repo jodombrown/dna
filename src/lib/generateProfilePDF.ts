@@ -112,6 +112,11 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   const sidebarWidth = 72;
   const mainWidth = pageWidth - sidebarWidth;
   const margin = 10;
+  const footerHeight = 18;
+  
+  // Maximum Y positions to prevent overflow (leave room for footer)
+  const sidebarMaxY = pageHeight - footerHeight - 10;
+  const mainMaxY = pageHeight - footerHeight - 10;
   
   // Draw dark sidebar
   doc.setFillColor(28, 61, 60); // DNA forest
@@ -154,30 +159,37 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   
   let sidebarY = avatarY + avatarSize / 2 + 18;
   
+  // Helper to check if sidebar has space for a section
+  const hasSidebarSpace = (neededHeight: number): boolean => {
+    return sidebarY + neededHeight < sidebarMaxY;
+  };
+  
   // Contact Section (respects visibility)
-  sidebarY = drawSidebarSection(doc, 'CONTACT', sidebarY, sidebarWidth, margin);
-  
-  if (profile.email && isOwner) {
-    // Email only shown to owner in PDF for privacy
-    sidebarY = drawSidebarItem(doc, 'Email:', profile.email, sidebarY, sidebarWidth, margin);
+  if (hasSidebarSpace(30)) {
+    sidebarY = drawSidebarSection(doc, 'CONTACT', sidebarY, sidebarWidth, margin);
+    
+    if (profile.email && isOwner && hasSidebarSpace(12)) {
+      // Email only shown to owner in PDF for privacy
+      sidebarY = drawSidebarItem(doc, 'Email:', profile.email, sidebarY, sidebarWidth, margin);
+    }
+    if (profile.linkedin_url && hasSidebarSpace(12)) {
+      const linkedinHandle = profile.linkedin_url.includes('linkedin.com') 
+        ? profile.linkedin_url.split('/').filter(Boolean).pop() || 'LinkedIn'
+        : profile.linkedin_url;
+      sidebarY = drawSidebarItem(doc, 'LinkedIn:', linkedinHandle, sidebarY, sidebarWidth, margin);
+    }
+    if (profile.phone_number && shouldShowContact('phone') && hasSidebarSpace(12)) {
+      sidebarY = drawSidebarItem(doc, 'Phone:', profile.phone_number, sidebarY, sidebarWidth, margin);
+    }
+    if (profile.whatsapp_number && shouldShowContact('whatsapp') && hasSidebarSpace(12)) {
+      sidebarY = drawSidebarItem(doc, 'WhatsApp:', profile.whatsapp_number, sidebarY, sidebarWidth, margin);
+    }
+    if ((profile.location || profile.current_country) && hasSidebarSpace(12)) {
+      sidebarY = drawSidebarItem(doc, 'Location:', profile.location || profile.current_country || '', sidebarY, sidebarWidth, margin);
+    }
+    
+    sidebarY += 6;
   }
-  if (profile.linkedin_url) {
-    const linkedinHandle = profile.linkedin_url.includes('linkedin.com') 
-      ? profile.linkedin_url.split('/').filter(Boolean).pop() || 'LinkedIn'
-      : profile.linkedin_url;
-    sidebarY = drawSidebarItem(doc, 'LinkedIn:', linkedinHandle, sidebarY, sidebarWidth, margin);
-  }
-  if (profile.phone_number && shouldShowContact('phone')) {
-    sidebarY = drawSidebarItem(doc, 'Phone:', profile.phone_number, sidebarY, sidebarWidth, margin);
-  }
-  if (profile.whatsapp_number && shouldShowContact('whatsapp')) {
-    sidebarY = drawSidebarItem(doc, 'WhatsApp:', profile.whatsapp_number, sidebarY, sidebarWidth, margin);
-  }
-  if (profile.location || profile.current_country) {
-    sidebarY = drawSidebarItem(doc, 'Location:', profile.location || profile.current_country || '', sidebarY, sidebarWidth, margin);
-  }
-  
-  sidebarY += 8;
   
   // My Connection to Africa Section (Enhanced Heritage Section)
   const hasConnectionData = profile.diaspora_status || 
@@ -186,54 +198,60 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     (profile.ethnic_heritage && profile.ethnic_heritage.length > 0) ||
     (profile.diaspora_networks && profile.diaspora_networks.length > 0);
     
-  if (hasConnectionData) {
+  if (hasConnectionData && hasSidebarSpace(30)) {
     sidebarY = drawSidebarSection(doc, 'AFRICA CONNECTION', sidebarY, sidebarWidth, margin);
     
-    if (profile.diaspora_status) {
+    if (profile.diaspora_status && hasSidebarSpace(12)) {
       sidebarY = drawSidebarItem(doc, 'Type:', getConnectionLabel(profile.diaspora_status), sidebarY, sidebarWidth, margin);
     }
-    if (profile.country_of_origin) {
+    if (profile.country_of_origin && hasSidebarSpace(12)) {
       sidebarY = drawSidebarItem(doc, 'Origin:', profile.country_of_origin, sidebarY, sidebarWidth, margin);
     }
-    if (profile.ethnic_heritage && profile.ethnic_heritage.length > 0) {
-      sidebarY = drawSidebarItem(doc, 'Heritage:', profile.ethnic_heritage.slice(0, 3).join(', '), sidebarY, sidebarWidth, margin);
+    if (profile.ethnic_heritage && profile.ethnic_heritage.length > 0 && hasSidebarSpace(12)) {
+      sidebarY = drawSidebarItem(doc, 'Heritage:', profile.ethnic_heritage.slice(0, 2).join(', '), sidebarY, sidebarWidth, margin);
     }
-    if (profile.languages && profile.languages.length > 0) {
-      sidebarY = drawSidebarItem(doc, 'Languages:', profile.languages.slice(0, 4).join(', '), sidebarY, sidebarWidth, margin);
+    if (profile.languages && profile.languages.length > 0 && hasSidebarSpace(12)) {
+      sidebarY = drawSidebarItem(doc, 'Languages:', profile.languages.slice(0, 3).join(', '), sidebarY, sidebarWidth, margin);
     }
-    if (profile.diaspora_networks && profile.diaspora_networks.length > 0) {
+    if (profile.diaspora_networks && profile.diaspora_networks.length > 0 && hasSidebarSpace(12)) {
       sidebarY = drawSidebarItem(doc, 'Networks:', profile.diaspora_networks.slice(0, 2).join(', '), sidebarY, sidebarWidth, margin);
     }
-    sidebarY += 8;
+    sidebarY += 6;
   }
   
-  // Skills Section (respects visibility)
-  if (profile.skills && profile.skills.length > 0 && shouldShowSection('skills')) {
+  // Skills Section (respects visibility) - limit items based on space
+  if (profile.skills && profile.skills.length > 0 && shouldShowSection('skills') && hasSidebarSpace(25)) {
     sidebarY = drawSidebarSection(doc, 'SKILLS', sidebarY, sidebarWidth, margin);
     
-    profile.skills.slice(0, 6).forEach((skill) => {
-      sidebarY = drawSidebarBullet(doc, skill, sidebarY, sidebarWidth, margin);
-    });
-    sidebarY += 8;
+    const maxSkills = Math.min(5, profile.skills.length);
+    for (let i = 0; i < maxSkills; i++) {
+      if (!hasSidebarSpace(8)) break;
+      sidebarY = drawSidebarBullet(doc, profile.skills[i], sidebarY, sidebarWidth, margin);
+    }
+    sidebarY += 6;
   }
   
-  // Focus Areas Section
-  if (profile.focus_areas && profile.focus_areas.length > 0) {
+  // Focus Areas Section - limit items based on space
+  if (profile.focus_areas && profile.focus_areas.length > 0 && hasSidebarSpace(25)) {
     sidebarY = drawSidebarSection(doc, 'FOCUS AREAS', sidebarY, sidebarWidth, margin);
     
-    profile.focus_areas.slice(0, 4).forEach((area) => {
-      sidebarY = drawSidebarBullet(doc, area, sidebarY, sidebarWidth, margin);
-    });
-    sidebarY += 8;
+    const maxAreas = Math.min(3, profile.focus_areas.length);
+    for (let i = 0; i < maxAreas; i++) {
+      if (!hasSidebarSpace(8)) break;
+      sidebarY = drawSidebarBullet(doc, profile.focus_areas[i], sidebarY, sidebarWidth, margin);
+    }
+    sidebarY += 6;
   }
   
-  // Available For Section
-  if (profile.available_for && profile.available_for.length > 0) {
+  // Available For Section - only if space allows
+  if (profile.available_for && profile.available_for.length > 0 && hasSidebarSpace(25)) {
     sidebarY = drawSidebarSection(doc, 'OPEN TO', sidebarY, sidebarWidth, margin);
     
-    profile.available_for.slice(0, 4).forEach((item) => {
-      sidebarY = drawSidebarBullet(doc, item, sidebarY, sidebarWidth, margin);
-    });
+    const maxItems = Math.min(3, profile.available_for.length);
+    for (let i = 0; i < maxItems; i++) {
+      if (!hasSidebarSpace(8)) break;
+      sidebarY = drawSidebarBullet(doc, profile.available_for[i], sidebarY, sidebarWidth, margin);
+    }
   }
   
   // Main Content Area
@@ -341,7 +359,6 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   }
   
   // DNA Footer Bar
-  const footerHeight = 18;
   doc.setFillColor(212, 165, 116); // DNA copper
   doc.rect(sidebarWidth, pageHeight - footerHeight, mainWidth, footerHeight, 'F');
   
