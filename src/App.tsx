@@ -13,11 +13,12 @@ import BaseLayout from "@/layouts/BaseLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import React, { Suspense, lazy } from "react";
+import AfricaSpinner from "@/components/ui/AfricaSpinner";
 
 // Loading fallback for lazy-loaded routes
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    <AfricaSpinner size="lg" showText text="Loading..." />
   </div>
 );
 
