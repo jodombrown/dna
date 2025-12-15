@@ -71,6 +71,17 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Client-side validation
+    if (signUpPassword.length < 6) {
+      toast({
+        title: 'Password too short',
+        description: 'Password must be at least 6 characters long.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     setIsSignUpLoading(true);
 
     try {
@@ -252,12 +263,12 @@ const Auth = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signup-password">Password</Label>
+                <Label htmlFor="signup-password">Password (min 6 characters)</Label>
                 <div className="relative">
                   <Input
                     id="signup-password"
                     type={showSignUpPassword ? "text" : "password"}
-                    placeholder="••••••••"
+                    placeholder="Enter 6+ characters"
                     value={signUpPassword}
                     onChange={(e) => setSignUpPassword(e.target.value)}
                     required

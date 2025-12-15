@@ -167,15 +167,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         console.error('Sign up error:', error);
         // Provide more specific error messages
-        if (error.message.includes('already registered')) {
+        if (error.message.includes('already registered') || error.message.includes('User already registered')) {
           return { error: { ...error, message: 'This email is already registered. Please sign in instead.' } };
         }
-        if (error.message.includes('Password')) {
+        if (error.message.toLowerCase().includes('password') || error.message.includes('should be at least')) {
           return { error: { ...error, message: 'Password must be at least 6 characters long.' } };
+        }
+        if (error.message.includes('Invalid email') || error.message.includes('invalid email')) {
+          return { error: { ...error, message: 'Please enter a valid email address.' } };
         }
         if (error.message.includes('network') || error.message.includes('fetch')) {
           return { error: { ...error, message: 'Connection error. Please check your internet connection and try again.' } };
         }
+        // Return the original error message if no specific match
+        return { error };
       }
       
       return { error };
