@@ -238,11 +238,11 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all shadow-md border-border/50 overflow-hidden mx-1">
-      <CardContent className="p-4 sm:p-5">
-        <div className="flex items-start gap-3 sm:gap-4">
+    <Card className="hover:shadow-lg transition-all shadow-md border-border/50 overflow-hidden">
+      <CardContent className="p-3 sm:p-5">
+        <div className="flex items-start gap-3">
           {/* Avatar */}
-          <Avatar className="h-14 w-14 sm:h-16 sm:w-16 cursor-pointer shrink-0" onClick={handleViewProfile}>
+          <Avatar className="h-12 w-12 sm:h-16 sm:w-16 cursor-pointer shrink-0" onClick={handleViewProfile}>
             <AvatarImage src={member.avatar_url} alt={member.full_name} />
             <AvatarFallback className="text-sm bg-primary/10 text-primary">
               {member.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
@@ -250,38 +250,39 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
           </Avatar>
 
           {/* Content */}
-          <div className="flex-1 min-w-0 overflow-hidden">
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <div className="flex-1 min-w-0 overflow-hidden">
-                <h3 
-                  className="font-semibold text-base hover:text-dna-copper cursor-pointer truncate"
-                  onClick={handleViewProfile}
-                >
-                  {member.full_name}
-                </h3>
-                <p className="text-sm text-muted-foreground truncate max-w-[200px] sm:max-w-none">
-                  {member.headline || member.profession || 'DNA Member'}
-                </p>
-                {/* Why this match - enhanced match reasons */}
-                {matchReasons.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-1.5">
-                    {matchReasons.map((reason, idx) => (
-                      <Badge key={idx} variant="secondary" className="text-xs bg-dna-copper/10 text-dna-copper border-none whitespace-nowrap">
-                        {reason}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Match Score */}
-              <div className="flex flex-col items-end shrink-0">
-                <span className={`text-sm font-semibold whitespace-nowrap ${getMatchColor(member.match_score)}`}>
-                  {member.match_score}% match
+          <div className="flex-1 min-w-0">
+            {/* Header row with name and match score */}
+            <div className="flex items-start justify-between gap-1 mb-1">
+              <h3 
+                className="font-semibold text-sm sm:text-base hover:text-dna-copper cursor-pointer truncate flex-1 min-w-0"
+                onClick={handleViewProfile}
+              >
+                {member.full_name}
+              </h3>
+              {/* Match Score - compact on mobile */}
+              <div className="flex items-center gap-1 shrink-0">
+                <span className={`text-xs sm:text-sm font-semibold ${getMatchColor(member.match_score)}`}>
+                  {member.match_score}%
                 </span>
-                <Progress value={member.match_score} className="w-14 sm:w-16 h-1.5 mt-1" />
+                <Progress value={member.match_score} className="w-10 sm:w-16 h-1.5" />
               </div>
             </div>
+
+            {/* Headline */}
+            <p className="text-xs sm:text-sm text-muted-foreground truncate mb-1.5">
+              {member.headline || member.profession || 'DNA Member'}
+            </p>
+
+            {/* Why this match - enhanced match reasons */}
+            {matchReasons.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-2">
+                {matchReasons.slice(0, 2).map((reason, idx) => (
+                  <Badge key={idx} variant="secondary" className="text-[10px] sm:text-xs px-1.5 py-0 bg-dna-copper/10 text-dna-copper border-none">
+                    {reason}
+                  </Badge>
+                ))}
+              </div>
+            )}
 
             {/* Location */}
             {member.location && (
@@ -301,67 +302,71 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
               </div>
             )}
 
-            {/* Tags */}
-            <div className="flex flex-wrap gap-1.5 mb-3 overflow-hidden">
+            {/* Tags - limited on mobile */}
+            <div className="flex flex-wrap gap-1 mb-2 sm:mb-3">
               {/* Mentor/Investor badges - high visibility */}
               {member.is_mentor && (
-                <Badge variant="outline" className="text-xs border-green-300 bg-green-50 text-green-700 whitespace-nowrap">
+                <Badge variant="outline" className="text-[10px] sm:text-xs px-1.5 py-0 border-green-300 bg-green-50 text-green-700">
                   Mentor
                 </Badge>
               )}
               {member.is_investor && (
-                <Badge variant="outline" className="text-xs border-blue-300 bg-blue-50 text-blue-700 whitespace-nowrap">
+                <Badge variant="outline" className="text-[10px] sm:text-xs px-1.5 py-0 border-blue-300 bg-blue-50 text-blue-700">
                   Investor
                 </Badge>
               )}
-              {member.focus_areas?.slice(0, 2).map((area) => (
-                <Badge key={area} variant="secondary" className="text-xs whitespace-nowrap">
+              {member.focus_areas?.slice(0, 1).map((area) => (
+                <Badge key={area} variant="secondary" className="text-[10px] sm:text-xs px-1.5 py-0 max-w-[100px] truncate">
                   {area}
                 </Badge>
               ))}
-              {member.industries?.slice(0, 1).map((industry) => (
-                <Badge key={industry} variant="outline" className="text-xs whitespace-nowrap">
-                  <Briefcase className="h-3 w-3 mr-1 shrink-0" />
-                  <span className="truncate max-w-[100px]">{industry}</span>
-                </Badge>
-              ))}
+              <span className="hidden sm:inline-flex">
+                {member.industries?.slice(0, 1).map((industry) => (
+                  <Badge key={industry} variant="outline" className="text-xs">
+                    <Briefcase className="h-3 w-3 mr-1 shrink-0" />
+                    <span className="truncate max-w-[80px]">{industry}</span>
+                  </Badge>
+                ))}
+              </span>
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-2">
+            {/* Actions - compact on mobile */}
+            <div className="flex gap-1.5 sm:gap-2">
               {connectionStatus === 'accepted' ? (
                 <>
                   <Button
                     variant="default"
                     size="sm"
                     onClick={handleMessage}
-                    className="flex-1"
+                    className="flex-1 h-8 text-xs sm:text-sm"
                   >
-                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <MessageSquare className="mr-1.5 h-3.5 w-3.5" />
                     Message
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleViewProfile}
+                    className="h-8 text-xs sm:text-sm px-2 sm:px-3"
                   >
-                    <Eye className="mr-2 h-4 w-4" />
-                    Profile
+                    <Eye className="h-3.5 w-3.5 sm:mr-1.5" />
+                    <span className="hidden sm:inline">Profile</span>
                   </Button>
                 </>
               ) : connectionStatus === 'pending_sent' ? (
                 <>
-                  <Button variant="outline" size="sm" disabled className="flex-1">
-                    <Check className="mr-2 h-4 w-4" />
-                    Request Sent
+                  <Button variant="outline" size="sm" disabled className="flex-1 h-8 text-xs sm:text-sm">
+                    <Check className="mr-1.5 h-3.5 w-3.5" />
+                    Sent
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleViewProfile}
+                    className="h-8 text-xs sm:text-sm px-2 sm:px-3"
                   >
-                    <Eye className="mr-2 h-4 w-4" />
-                    Profile
+                    <Eye className="h-3.5 w-3.5 sm:mr-1.5" />
+                    <span className="hidden sm:inline">Profile</span>
                   </Button>
                 </>
               ) : connectionStatus === 'pending_received' ? (
@@ -370,17 +375,18 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                     variant="outline"
                     size="sm"
                     onClick={() => navigate('/dna/connect/network?tab=requests')}
-                    className="flex-1"
+                    className="flex-1 h-8 text-xs sm:text-sm"
                   >
-                    Request Received
+                    Respond
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleViewProfile}
+                    className="h-8 text-xs sm:text-sm px-2 sm:px-3"
                   >
-                    <Eye className="mr-2 h-4 w-4" />
-                    Profile
+                    <Eye className="h-3.5 w-3.5 sm:mr-1.5" />
+                    <span className="hidden sm:inline">Profile</span>
                   </Button>
                 </>
               ) : (
@@ -390,18 +396,19 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                     size="sm"
                     onClick={handleConnect}
                     disabled={isSending}
-                    className="flex-1"
+                    className="flex-1 h-8 text-xs sm:text-sm"
                   >
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    {isSending ? 'Sending...' : 'Connect'}
+                    <UserPlus className="mr-1.5 h-3.5 w-3.5" />
+                    {isSending ? '...' : 'Connect'}
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleViewProfile}
+                    className="h-8 text-xs sm:text-sm px-2 sm:px-3"
                   >
-                    <Eye className="mr-2 h-4 w-4" />
-                    Profile
+                    <Eye className="h-3.5 w-3.5 sm:mr-1.5" />
+                    <span className="hidden sm:inline">Profile</span>
                   </Button>
                 </>
               )}
