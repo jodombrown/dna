@@ -422,12 +422,16 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-2 right-2 h-8 w-8 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent 
+                      align="end" 
+                      className="z-[9999] bg-popover border border-border shadow-lg"
+                    >
                       {isArchived ? (
                         // Archived conversation menu
                         <DropdownMenuItem
