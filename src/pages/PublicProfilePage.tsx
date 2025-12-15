@@ -25,6 +25,33 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
 import { Helmet } from 'react-helmet-async';
+import { useState } from 'react';
+
+// About section component with read more functionality
+const AboutSection = ({ bio }: { bio: string }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const charLimit = 200;
+  const needsTruncation = bio.length > charLimit;
+  
+  const displayText = isExpanded || !needsTruncation 
+    ? bio 
+    : bio.slice(0, charLimit).trim() + '...';
+  
+  return (
+    <div className="mb-6">
+      <h3 className="font-semibold mb-2">About</h3>
+      <p className="text-muted-foreground whitespace-pre-wrap">{displayText}</p>
+      {needsTruncation && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-primary text-sm font-medium mt-2 hover:underline"
+        >
+          {isExpanded ? 'Show less' : 'Read more'}
+        </button>
+      )}
+    </div>
+  );
+};
 
 const PublicProfilePage = () => {
   const { username } = useParams<{ username: string }>();
@@ -149,31 +176,6 @@ const PublicProfilePage = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-          <div className="container max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2">
-              <span className="font-bold text-lg text-dna-copper">DNA</span>
-            </Link>
-            <div className="flex items-center gap-2">
-              {!isLoggedIn ? (
-                <>
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link to="/auth">Log In</Link>
-                  </Button>
-                  <Button size="sm" className="bg-dna-copper hover:bg-dna-gold" asChild>
-                    <Link to="/auth?mode=signup">Sign Up</Link>
-                  </Button>
-                </>
-              ) : (
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/dna/feed">Go to Dashboard</Link>
-                </Button>
-              )}
-            </div>
-          </div>
-        </header>
-
         <div className="container max-w-4xl mx-auto px-4 py-8">
           {/* Profile Card */}
           <Card>
@@ -305,12 +307,9 @@ const PublicProfilePage = () => {
                 </div>
               )}
 
-              {/* Bio */}
+              {/* Bio with read more */}
               {profile.bio && shouldShowSection('about') && (
-                <div className="mb-6">
-                  <h3 className="font-semibold mb-2">About</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap">{profile.bio}</p>
-                </div>
+                <AboutSection bio={profile.bio} />
               )}
 
               {/* Skills & Expertise */}
@@ -408,11 +407,11 @@ const PublicProfilePage = () => {
                   </Button>
                   <Button 
                     size="lg" 
-                    variant="outline" 
-                    className="border-white text-white hover:bg-white/10"
+                    variant="secondary"
+                    className="bg-white text-dna-forest hover:bg-white/90"
                     asChild
                   >
-                    <Link to="/">
+                    <Link to="/about">
                       Learn More About DNA
                     </Link>
                   </Button>
