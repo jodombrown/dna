@@ -104,25 +104,31 @@ export function FirstTimeWalkthrough() {
   const [currentStep, setCurrentStep] = useState(0);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
     
     // Check if user has seen the walkthrough (guarded for environments where localStorage may fail)
     try {
       const walkthroughKey = `dna_walkthrough_completed_${user.id}`;
       const hasCompleted = localStorage.getItem(walkthroughKey);
 
-      if (!hasCompleted) {
-        // Small delay to let the page render first
-        const timer = setTimeout(() => setIsVisible(true), 500);
-        return () => clearTimeout(timer);
+      // Only show if user has NOT completed the walkthrough
+      if (hasCompleted === 'true') {
+        setIsVisible(false);
+        return;
       }
+
+      // First time user - show walkthrough after a short delay
+      const timer = setTimeout(() => setIsVisible(true), 500);
+      return () => clearTimeout(timer);
     } catch (error) {
       console.warn('FirstTimeWalkthrough: localStorage unavailable, skipping persistence', error);
+      // Don't show walkthrough if localStorage fails
+      setIsVisible(false);
     }
-  }, [user]);
+  }, [user?.id]);
  
   const handleComplete = () => {
-    if (!user) return;
+    if (!user?.id) return;
     const walkthroughKey = `dna_walkthrough_completed_${user.id}`;
     try {
       localStorage.setItem(walkthroughKey, 'true');
