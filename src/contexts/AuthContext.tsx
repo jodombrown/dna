@@ -170,8 +170,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (error.message.includes('already registered') || error.message.includes('User already registered')) {
           return { error: { ...error, message: 'This email is already registered. Please sign in instead.' } };
         }
-        if (error.message.toLowerCase().includes('password') || error.message.includes('should be at least')) {
+        const lowerMsg = error.message.toLowerCase();
+        // Map only explicit minimum-length messages to our 8-character requirement
+        if (
+          lowerMsg.includes('should be at least') ||
+          lowerMsg.includes('at least 6 characters') ||
+          lowerMsg.includes('at least 8 characters')
+        ) {
           return { error: { ...error, message: 'Password must be at least 8 characters long.' } };
+        }
+        // For other password-related errors (strength, leaks, etc.), surface Supabase's message directly
+        if (lowerMsg.includes('password')) {
+          return { error };
         }
         if (error.message.includes('Invalid email') || error.message.includes('invalid email')) {
           return { error: { ...error, message: 'Please enter a valid email address.' } };
