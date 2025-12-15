@@ -32,7 +32,7 @@ const ProfileEdit = () => {
   const queryClient = useQueryClient();
   
   // Fetch current profile using unified hook
-  const { data: profile, isLoading } = useProfile();
+  const { data: profile, isLoading, isError, error } = useProfile();
 
   // Image state
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -196,9 +196,59 @@ const ProfileEdit = () => {
     },
   });
 
+  // URL validation helper
+  const isValidUrl = (url: string): boolean => {
+    if (!url) return true; // Empty is valid (optional field)
+    try {
+      const parsed = new URL(url);
+      return ['http:', 'https:'].includes(parsed.protocol);
+    } catch {
+      return false;
+    }
+  };
+
+  // Form validation
+  const validateForm = (): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+
+    // Required field validation
+    if (!fullName.trim()) {
+      errors.push('Full name is required');
+    }
+
+    // URL validation
+    if (linkedinUrl && !isValidUrl(linkedinUrl)) {
+      errors.push('LinkedIn URL is invalid');
+    }
+    if (twitterUrl && !isValidUrl(twitterUrl)) {
+      errors.push('Twitter/X URL is invalid');
+    }
+    if (websiteUrl && !isValidUrl(websiteUrl)) {
+      errors.push('Website URL is invalid');
+    }
+
+    // Bio length suggestion (not blocking)
+    if (bio && bio.length < 50) {
+      // Just a soft warning, not an error
+    }
+
+    return { isValid: errors.length === 0, errors };
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Validate form before submission
+    const { isValid, errors } = validateForm();
+    if (!isValid) {
+      toast({
+        title: 'Please fix the following errors',
+        description: errors.join(', '),
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const updates = {
       // Basic info
       full_name: fullName,
@@ -268,8 +318,41 @@ const ProfileEdit = () => {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-destructive">Failed to load profile</h2>
+          <p className="text-muted-foreground mt-2">
+            {error?.message || 'An unexpected error occurred. Please try again.'}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => navigate('/dna/feed')}>
+            Back to Feed
+          </Button>
+          <Button onClick={() => window.location.reload()}>
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (!user || !profile) {
-    return null;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold">Profile not found</h2>
+          <p className="text-muted-foreground mt-2">
+            Please sign in to edit your profile.
+          </p>
+        </div>
+        <Button onClick={() => navigate('/auth')}>
+          Sign In
+        </Button>
+      </div>
+    );
   }
 
   return (
