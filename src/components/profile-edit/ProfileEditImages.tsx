@@ -57,7 +57,17 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
         toast({ title: 'Avatar updated!' });
       }
     } catch (error) {
-      toast({ title: 'Upload failed', description: 'Please try again', variant: 'destructive' });
+      console.error('Avatar upload error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast({
+        title: 'Upload failed',
+        description: errorMessage.includes('network')
+          ? 'Network error. Please check your connection and try again.'
+          : errorMessage.includes('storage') || errorMessage.includes('bucket')
+          ? 'Storage error. Please try again later.'
+          : 'Please try again. If the issue persists, try a different image format.',
+        variant: 'destructive'
+      });
     }
     setUploadingAvatar(false);
   };
@@ -65,7 +75,7 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
   const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       toast({ title: 'Invalid file type', description: 'Please upload JPG, PNG, or WebP', variant: 'destructive' });
       return;
@@ -74,7 +84,7 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
       toast({ title: 'File too large', description: 'Max size is 10MB for banners', variant: 'destructive' });
       return;
     }
-    
+
     setUploadingBanner(true);
     try {
       const url = await uploadImage(file, userId, 'banner');
@@ -86,7 +96,17 @@ const ProfileEditImages: React.FC<ProfileEditImagesProps> = ({
         toast({ title: 'Banner updated!' });
       }
     } catch (error) {
-      toast({ title: 'Upload failed', description: 'Please try again', variant: 'destructive' });
+      console.error('Banner upload error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast({
+        title: 'Upload failed',
+        description: errorMessage.includes('network')
+          ? 'Network error. Please check your connection and try again.'
+          : errorMessage.includes('storage') || errorMessage.includes('bucket')
+          ? 'Storage error. Please try again later.'
+          : 'Please try again. If the issue persists, try a different image format.',
+        variant: 'destructive'
+      });
     }
     setUploadingBanner(false);
   };

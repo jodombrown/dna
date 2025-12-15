@@ -5,17 +5,47 @@ import { Label } from '@/components/ui/label';
 import { TagMultiSelect } from '@/components/profile/TagMultiSelect';
 
 const SECTOR_OPTIONS = [
-  'Fintech', 'Agtech', 'Healthcare', 'Education', 'Infrastructure', 
-  'Energy', 'Climate', 'Manufacturing', 'Retail', 'Tech/Software',
-  'Real Estate', 'Transportation', 'Media & Entertainment', 'Tourism', 'Mining',
-  'Legal', 'Consulting', 'Non-Profit', 'Government', 'Arts & Culture'
+  'Agtech',
+  'Arts & Culture',
+  'Climate',
+  'Consulting',
+  'Education',
+  'Energy',
+  'Fintech',
+  'Government',
+  'Healthcare',
+  'Infrastructure',
+  'Legal',
+  'Manufacturing',
+  'Media & Entertainment',
+  'Mining',
+  'Non-Profit',
+  'Real Estate',
+  'Retail',
+  'Tech/Software',
+  'Tourism',
+  'Transportation',
 ] as const;
 
 const SKILL_SUGGESTIONS = [
-  'Leadership', 'Strategy', 'Product Management', 'Software Development',
-  'Data Analysis', 'Marketing', 'Finance', 'Operations', 'Sales',
-  'Project Management', 'Business Development', 'Research', 'Design',
-  'Consulting', 'Public Speaking', 'Writing', 'Fundraising', 'Networking'
+  'Business Development',
+  'Consulting',
+  'Data Analysis',
+  'Design',
+  'Finance',
+  'Fundraising',
+  'Leadership',
+  'Marketing',
+  'Networking',
+  'Operations',
+  'Product Management',
+  'Project Management',
+  'Public Speaking',
+  'Research',
+  'Sales',
+  'Software Development',
+  'Strategy',
+  'Writing',
 ] as const;
 
 interface ProfileEditProfessionalProps {
@@ -78,8 +108,19 @@ const ProfileEditProfessional: React.FC<ProfileEditProfessionalProps> = ({
             type="number"
             min="0"
             max="50"
-            value={yearsExperience}
-            onChange={(e) => onYearsExperienceChange(parseInt(e.target.value) || 0)}
+            value={yearsExperience === 0 ? '' : yearsExperience}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '') {
+                onYearsExperienceChange(0);
+              } else {
+                const parsed = parseInt(value, 10);
+                if (!isNaN(parsed) && parsed >= 0 && parsed <= 50) {
+                  onYearsExperienceChange(parsed);
+                }
+              }
+            }}
+            placeholder="0"
           />
         </div>
 

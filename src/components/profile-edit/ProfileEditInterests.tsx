@@ -3,30 +3,72 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { TagMultiSelect } from '@/components/profile/TagMultiSelect';
 
 const INTEREST_OPTIONS = [
-  'Technology', 'Entrepreneurship', 'Investment', 'Healthcare', 'Education',
-  'Agriculture', 'Energy', 'Climate', 'Arts & Culture', 'Media',
-  'Finance', 'Real Estate', 'Infrastructure', 'Sports', 'Fashion',
-  'Music', 'Film', 'Literature', 'Politics', 'Social Impact'
+  'Agriculture',
+  'Arts & Culture',
+  'Climate',
+  'Education',
+  'Energy',
+  'Entrepreneurship',
+  'Fashion',
+  'Film',
+  'Finance',
+  'Healthcare',
+  'Infrastructure',
+  'Investment',
+  'Literature',
+  'Media',
+  'Music',
+  'Politics',
+  'Real Estate',
+  'Social Impact',
+  'Sports',
+  'Technology',
 ] as const;
 
 const FOCUS_AREA_OPTIONS = [
-  'Economic Development', 'Youth Empowerment', 'Women in Leadership',
-  'Tech Innovation', 'Climate Action', 'Healthcare Access', 'Education Reform',
-  'Financial Inclusion', 'Agriculture Modernization', 'Infrastructure Development',
-  'Cultural Preservation', 'Diaspora Engagement', 'Trade & Commerce',
-  'Governance & Policy', 'Social Enterprise', 'Sustainable Development'
+  'Agriculture Modernization',
+  'Climate Action',
+  'Cultural Preservation',
+  'Diaspora Engagement',
+  'Economic Development',
+  'Education Reform',
+  'Financial Inclusion',
+  'Governance & Policy',
+  'Healthcare Access',
+  'Infrastructure Development',
+  'Social Enterprise',
+  'Sustainable Development',
+  'Tech Innovation',
+  'Trade & Commerce',
+  'Women in Leadership',
+  'Youth Empowerment',
 ] as const;
 
 const REGIONAL_EXPERTISE_OPTIONS = [
-  'West Africa', 'East Africa', 'Southern Africa', 'North Africa', 'Central Africa',
-  'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Ethiopia', 'Egypt',
-  'Morocco', 'Tanzania', 'Uganda', 'Rwanda', 'Senegal', 'Côte d\'Ivoire'
+  'Central Africa',
+  'East Africa',
+  'North Africa',
+  'Southern Africa',
+  'West Africa',
+  'African Diaspora',
 ] as const;
 
 const INDUSTRY_OPTIONS = [
-  'Technology', 'Finance', 'Healthcare', 'Education', 'Agriculture',
-  'Energy', 'Manufacturing', 'Retail', 'Real Estate', 'Transportation',
-  'Media', 'Consulting', 'Legal', 'Non-Profit', 'Government'
+  'Agriculture',
+  'Consulting',
+  'Education',
+  'Energy',
+  'Finance',
+  'Government',
+  'Healthcare',
+  'Legal',
+  'Manufacturing',
+  'Media',
+  'Non-Profit',
+  'Real Estate',
+  'Retail',
+  'Technology',
+  'Transportation',
 ] as const;
 
 interface ProfileEditInterestsProps {

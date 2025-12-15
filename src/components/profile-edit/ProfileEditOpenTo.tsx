@@ -9,11 +9,13 @@ interface ProfileEditOpenToProps {
 }
 
 const COLLABORATION_TYPES = [
-  { value: 'mentoring', label: 'Mentoring', icon: Users, description: 'Guide and support others in their journey' },
-  { value: 'hiring', label: 'Hiring', icon: Briefcase, description: 'Looking to hire or be hired' },
   { value: 'advisory', label: 'Advisory', icon: Lightbulb, description: 'Provide strategic advice and guidance' },
+  { value: 'hiring', label: 'Hiring', icon: Briefcase, description: 'Looking to hire talent for your team' },
+  { value: 'investing', label: 'Investing', icon: TrendingUp, description: 'Looking to invest in ventures' },
+  { value: 'job_seeking', label: 'Job Seeking', icon: Briefcase, description: 'Open to new job opportunities' },
+  { value: 'mentoring', label: 'Mentoring', icon: Users, description: 'Guide and support others in their journey' },
   { value: 'partnerships', label: 'Partnerships', icon: Handshake, description: 'Explore business or project partnerships' },
-  { value: 'investing', label: 'Investing', icon: TrendingUp, description: 'Investment opportunities or seeking investment' },
+  { value: 'seeking_investment', label: 'Seeking Investment', icon: TrendingUp, description: 'Looking for investment for your venture' },
   { value: 'volunteering', label: 'Volunteering / Pro bono', icon: Heart, description: 'Contribute time and skills for impact' },
 ];
 

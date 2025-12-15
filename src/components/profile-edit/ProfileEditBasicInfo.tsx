@@ -63,7 +63,11 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
               onChange={(e) => onFullNameChange(e.target.value)}
               placeholder="Your full name"
               required
+              maxLength={100}
             />
+            {!fullName.trim() && (
+              <p className="text-xs text-destructive mt-1">Full name is required</p>
+            )}
           </div>
           <div>
             <Label>Pronouns</Label>
@@ -89,10 +93,16 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
             placeholder="e.g., Software Engineer at Tech Company"
             value={headline}
             onChange={(e) => onHeadlineChange(e.target.value)}
+            maxLength={150}
           />
-          <p className="text-xs text-muted-foreground mt-1">
-            A short description of what you do
-          </p>
+          <div className="flex justify-between mt-1">
+            <p className="text-xs text-muted-foreground">
+              A short description of what you do
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {headline.length}/150
+            </p>
+          </div>
         </div>
 
         <div>
@@ -103,10 +113,19 @@ const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
             value={bio}
             onChange={(e) => onBioChange(e.target.value)}
             rows={4}
+            maxLength={2000}
           />
-          <p className="text-xs text-muted-foreground mt-1">
-            A good bio helps others understand your story and connect with you. Aim for 50+ characters.
-          </p>
+          <div className="flex justify-between mt-1">
+            <p className={`text-xs ${bio.length > 0 && bio.length < 50 ? 'text-amber-500' : 'text-muted-foreground'}`}>
+              {bio.length > 0 && bio.length < 50
+                ? `Add ${50 - bio.length} more characters for a complete bio`
+                : 'A good bio helps others understand your story and connect with you'
+              }
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {bio.length}/2000
+            </p>
+          </div>
         </div>
 
         <div>

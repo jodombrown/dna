@@ -24,9 +24,16 @@ interface MemberCardProps {
     profession?: string;
     location?: string;
     country_of_origin?: string;
+    current_country?: string;
     focus_areas?: string[];
     industries?: string[];
     skills?: string[];
+    languages?: string[];
+    available_for?: string[];
+    diaspora_status?: string;
+    regional_expertise?: string[];
+    is_mentor?: boolean;
+    is_investor?: boolean;
     match_score: number;
   };
   onConnectionSent?: () => void;
@@ -42,40 +49,92 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
   const { data: connectionStatus, refetch: refetchStatus } = useConnectionStatus(member.id);
   const { data: mutualConnections } = useMutualConnections(user?.id, member.id);
 
-  // Compute shared attributes for "why this match"
-  const getSharedAttributes = () => {
+  // Compute match reasons for "why this match" - now with enhanced criteria
+  const getMatchReasons = (): string[] => {
     if (!currentUserProfile) return [];
-    const shared: string[] = [];
-    
+    const reasons: string[] = [];
+
+    // Complementary collaboration opportunities (highest priority)
+    const userAvailableFor = (currentUserProfile as any).available_for || [];
+    const memberAvailableFor = member.available_for || [];
+
+    if ((userAvailableFor.includes('hiring') && memberAvailableFor.includes('job_seeking')) ||
+        (userAvailableFor.includes('job_seeking') && memberAvailableFor.includes('hiring'))) {
+      reasons.push('Career match');
+    }
+    if ((userAvailableFor.includes('investing') && memberAvailableFor.includes('seeking_investment')) ||
+        (userAvailableFor.includes('seeking_investment') && memberAvailableFor.includes('investing'))) {
+      reasons.push('Investment fit');
+    }
+    if ((userAvailableFor.includes('mentoring') && memberAvailableFor.includes('being_mentored')) ||
+        (userAvailableFor.includes('being_mentored') && memberAvailableFor.includes('mentoring'))) {
+      reasons.push('Mentorship match');
+    }
+
+    // Mentor/Investor badges
+    if (member.is_mentor && (currentUserProfile as any).seeking_mentorship) {
+      reasons.push('Mentor available');
+    }
+    if (member.is_investor && userAvailableFor.includes('seeking_investment')) {
+      reasons.push('Investor');
+    }
+
+    // Same heritage country
+    if (currentUserProfile.country_of_origin && member.country_of_origin &&
+        currentUserProfile.country_of_origin.toLowerCase() === member.country_of_origin.toLowerCase()) {
+      reasons.push('Same heritage');
+    }
+
+    // Same current location
+    if ((currentUserProfile as any).current_country && member.current_country &&
+        (currentUserProfile as any).current_country.toLowerCase() === member.current_country.toLowerCase()) {
+      reasons.push('Same location');
+    }
+
+    // Shared languages
+    if ((currentUserProfile as any).languages && member.languages) {
+      const sharedLangs = (currentUserProfile as any).languages.filter((l: string) =>
+        member.languages?.map(ml => ml.toLowerCase()).includes(l.toLowerCase())
+      );
+      if (sharedLangs.length > 0 && reasons.length < 4) {
+        reasons.push(`Speaks ${sharedLangs[0]}`);
+      }
+    }
+
     // Check focus areas
-    if (currentUserProfile.focus_areas && member.focus_areas) {
-      const sharedFocus = currentUserProfile.focus_areas.filter(f => 
+    if (currentUserProfile.focus_areas && member.focus_areas && reasons.length < 4) {
+      const sharedFocus = currentUserProfile.focus_areas.filter(f =>
         member.focus_areas?.includes(f)
       );
-      shared.push(...sharedFocus.slice(0, 2));
+      if (sharedFocus.length > 0) {
+        reasons.push(sharedFocus[0]);
+      }
     }
-    
+
     // Check industries
-    if (currentUserProfile.industries && member.industries) {
-      const sharedIndustries = currentUserProfile.industries.filter(i => 
+    if (currentUserProfile.industries && member.industries && reasons.length < 4) {
+      const sharedIndustries = currentUserProfile.industries.filter(i =>
         member.industries?.includes(i)
       );
-      if (sharedIndustries.length > 0 && shared.length < 3) {
-        shared.push(...sharedIndustries.slice(0, 3 - shared.length));
+      if (sharedIndustries.length > 0) {
+        reasons.push(sharedIndustries[0]);
       }
     }
-    
+
     // Check regional expertise
-    if (currentUserProfile.regional_expertise && member.country_of_origin) {
-      if (currentUserProfile.regional_expertise.includes(member.country_of_origin) && shared.length < 3) {
-        shared.push(member.country_of_origin);
+    if ((currentUserProfile as any).regional_expertise && member.regional_expertise && reasons.length < 4) {
+      const sharedRegions = (currentUserProfile as any).regional_expertise.filter((r: string) =>
+        member.regional_expertise?.includes(r)
+      );
+      if (sharedRegions.length > 0) {
+        reasons.push(sharedRegions[0]);
       }
     }
-    
-    return shared.slice(0, 3);
+
+    return reasons.slice(0, 3);
   };
 
-  const sharedAttributes = getSharedAttributes();
+  const matchReasons = getMatchReasons();
 
   const handleConnect = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -203,11 +262,15 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
                 <p className="text-sm text-muted-foreground truncate">
                   {member.headline || member.profession || 'DNA Member'}
                 </p>
-                {/* Why this match */}
-                {sharedAttributes.length > 0 && (
-                  <p className="text-xs text-dna-copper font-medium mt-0.5">
-                    Shared: {sharedAttributes.join(' · ')}
-                  </p>
+                {/* Why this match - enhanced match reasons */}
+                {matchReasons.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {matchReasons.map((reason, idx) => (
+                      <Badge key={idx} variant="secondary" className="text-xs bg-dna-copper/10 text-dna-copper border-none">
+                        {reason}
+                      </Badge>
+                    ))}
+                  </div>
                 )}
               </div>
 
@@ -240,12 +303,23 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
 
             {/* Tags */}
             <div className="flex flex-wrap gap-1.5 mb-3">
+              {/* Mentor/Investor badges - high visibility */}
+              {member.is_mentor && (
+                <Badge variant="outline" className="text-xs border-green-300 bg-green-50 text-green-700">
+                  Mentor
+                </Badge>
+              )}
+              {member.is_investor && (
+                <Badge variant="outline" className="text-xs border-blue-300 bg-blue-50 text-blue-700">
+                  Investor
+                </Badge>
+              )}
               {member.focus_areas?.slice(0, 2).map((area) => (
                 <Badge key={area} variant="secondary" className="text-xs">
                   {area}
                 </Badge>
               ))}
-              {member.industries?.slice(0, 2).map((industry) => (
+              {member.industries?.slice(0, 1).map((industry) => (
                 <Badge key={industry} variant="outline" className="text-xs">
                   <Briefcase className="h-3 w-3 mr-1" />
                   {industry}
