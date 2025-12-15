@@ -3,7 +3,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { TagMultiSelect } from '@/components/profile/TagMultiSelect';
 import { InfoIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ENGAGEMENT_INTENTION_OPTIONS } from '@/data/profileOptions';
 
+// Use same options across onboarding and profile edit
 const FOCUS_AREAS = [
   'Agricultural Innovation',
   'Clean Energy & Climate',
@@ -40,16 +42,8 @@ const INDUSTRIES = [
   'Professional Services'
 ];
 
-const ENGAGEMENT_OPTIONS = [
-  'Find Collaborators',
-  'Seek Investment',
-  'Offer Mentorship',
-  'Find a Mentor',
-  'Explore Partnerships',
-  'Join Projects',
-  'Share Knowledge',
-  'Build Network'
-];
+// Use canonical engagement options from profileOptions.ts
+const ENGAGEMENT_OPTIONS = ENGAGEMENT_INTENTION_OPTIONS.map(o => o.label);
 
 interface DiscoveryStepProps {
   data: {
@@ -62,6 +56,27 @@ interface DiscoveryStepProps {
 }
 
 const DiscoveryStep: React.FC<DiscoveryStepProps> = ({ data, onUpdate }) => {
+  // Map stored values to labels for display, handle both old and new formats
+  const getDisplayValues = (values: string[]) => {
+    return values.map(val => {
+      // If it's already a label (old format), keep it
+      const optionByLabel = ENGAGEMENT_INTENTION_OPTIONS.find(o => o.label === val);
+      if (optionByLabel) return val;
+      // If it's a value, convert to label
+      const optionByValue = ENGAGEMENT_INTENTION_OPTIONS.find(o => o.value === val);
+      return optionByValue ? optionByValue.label : val;
+    });
+  };
+
+  // Convert labels back to values for storage
+  const handleIntentionsChange = (labels: string[]) => {
+    const values = labels.map(label => {
+      const option = ENGAGEMENT_INTENTION_OPTIONS.find(o => o.label === label);
+      return option ? option.value : label;
+    });
+    onUpdate('engagement_intentions', values);
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
@@ -110,13 +125,13 @@ const DiscoveryStep: React.FC<DiscoveryStepProps> = ({ data, onUpdate }) => {
             colorClass="bg-dna-copper/10 text-dna-copper border-dna-copper/20"
           />
 
-          {/* Engagement Intentions */}
+          {/* Engagement Intentions - now uses same options as profile edit */}
           <TagMultiSelect
-            label="What Brings You Here?"
+            label="What Brings You to DNA?"
             options={ENGAGEMENT_OPTIONS}
-            selected={data.engagement_intentions}
-            onChange={(value) => onUpdate('engagement_intentions', value)}
-            placeholder="Select how you want to engage with the community"
+            selected={getDisplayValues(data.engagement_intentions)}
+            onChange={handleIntentionsChange}
+            placeholder="Select how you want to engage"
             colorClass="bg-dna-gold/10 text-dna-gold border-dna-gold/20"
           />
         </CardContent>

@@ -9,17 +9,19 @@ import { OnboardingProgressBar } from '@/components/onboarding/OnboardingProgres
 import UserTypeStep from '@/components/onboarding/steps/UserTypeStep';
 import IdentityStep from '@/components/onboarding/steps/IdentityStep';
 import DiasporaOriginStep from '@/components/onboarding/steps/DiasporaOriginStep';
+import DiscoveryStep from '@/components/onboarding/steps/DiscoveryStep';
 import UsernameStep from '@/components/onboarding/steps/UsernameStep';
 import { validateStep } from '@/components/onboarding/validation/onboardingStepValidation';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 
 const STEP_TITLES = [
   'How are you joining?',
   'Basic Identity',
-  'Diaspora Origin',
+  'Connection to Africa',
+  'Your Interests & Goals',
   'Claim Your Username'
 ];
 
@@ -265,6 +267,18 @@ const Onboarding = () => {
           />
         );
       case 3:
+        return (
+          <DiscoveryStep
+            data={{
+              focus_areas: formData.focus_areas,
+              regional_expertise: formData.regional_expertise,
+              industries: formData.industries,
+              engagement_intentions: formData.engagement_intentions,
+            }}
+            onUpdate={(field, value) => updateField(field as any, value)}
+          />
+        );
+      case 4:
         return (
           <UsernameStep
             data={{
