@@ -92,6 +92,8 @@ export const validateStep = (step: number, data: any): ValidationError[] => {
     case 2:
       return validateDiasporaImpactStep(data);
     case 3:
+      return validateDiscoveryStep(data); // Optional step
+    case 4:
       return validateUsernameStep(data);
     default:
       return [];

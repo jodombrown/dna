@@ -179,8 +179,21 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
         <TagMultiSelect
           label="What Brings You to DNA?"
           options={Array.from(ENGAGEMENT_INTENTION_OPTIONS.map(o => o.label))}
-          selected={engagementIntentions}
-          onChange={onIntentionsChange}
+          selected={engagementIntentions.map(val => {
+            // Handle both value and label formats for backward compatibility
+            const optionByValue = ENGAGEMENT_INTENTION_OPTIONS.find(o => o.value === val);
+            if (optionByValue) return optionByValue.label;
+            const optionByLabel = ENGAGEMENT_INTENTION_OPTIONS.find(o => o.label === val);
+            return optionByLabel ? optionByLabel.label : val;
+          })}
+          onChange={(labels) => {
+            // Store as values for consistency
+            const values = labels.map(label => {
+              const option = ENGAGEMENT_INTENTION_OPTIONS.find(o => o.label === label);
+              return option ? option.value : label;
+            });
+            onIntentionsChange(values);
+          }}
           placeholder="Select your intentions..."
           colorClass="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700"
           allowCustom={true}
