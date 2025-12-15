@@ -55,7 +55,7 @@ export default function Discover() {
         // Hotfix fallback: simple profiles query so the page still works
         let q = supabase
           .from('profiles')
-          .select('id, full_name, username, avatar_url, headline, profession, location, country_of_origin, focus_areas, industries, skills, updated_at')
+          .select('id, full_name, username, avatar_url, headline, profession, location, country_of_origin, current_country, focus_areas, industries, skills, languages, available_for, diaspora_status, regional_expertise, is_mentor, is_investor, updated_at')
           .neq('id', user.id)
           .eq('is_public', true)
           .gte('profile_completion_percentage', 40);

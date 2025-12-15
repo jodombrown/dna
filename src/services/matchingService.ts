@@ -14,6 +14,10 @@ export interface MatchingCriteria {
   availableFor?: string[];
   industries?: string[];
   interests?: string[];
+  languages?: string[];
+  regionalExpertise?: string[];
+  focusAreas?: string[];
+  diasporaStatus?: string;
 }
 
 export interface MatchScore {
@@ -29,14 +33,41 @@ export interface MatchScore {
     culturalMatch: number;
     interestsMatch: number;
     collaborationMatch: number;
+    languageMatch: number;
+    diasporaMatch: number;
+    regionalMatch: number;
+    causesMatch: number;
+    mentorshipMatch: number;
+    industryMatch: number;
   };
 }
 
+// African regions for grouping
+const AFRICAN_REGIONS: Record<string, string[]> = {
+  'West Africa': ['nigeria', 'ghana', 'senegal', 'ivory coast', 'cote d\'ivoire', 'mali', 'burkina faso', 'niger', 'guinea', 'benin', 'togo', 'sierra leone', 'liberia', 'gambia', 'guinea-bissau', 'cape verde', 'mauritania'],
+  'East Africa': ['kenya', 'ethiopia', 'tanzania', 'uganda', 'rwanda', 'burundi', 'south sudan', 'somalia', 'eritrea', 'djibouti'],
+  'Southern Africa': ['south africa', 'zimbabwe', 'zambia', 'botswana', 'namibia', 'mozambique', 'malawi', 'lesotho', 'eswatini', 'swaziland', 'angola'],
+  'North Africa': ['egypt', 'morocco', 'algeria', 'tunisia', 'libya', 'sudan'],
+  'Central Africa': ['cameroon', 'democratic republic of congo', 'drc', 'congo', 'gabon', 'equatorial guinea', 'central african republic', 'chad']
+};
+
+// Complementary diaspora status pairs for meaningful connections
+const DIASPORA_COMPLEMENTARY_PAIRS: [string, string, string][] = [
+  ['returnee', 'continental_african', 'Returnee connecting with local'],
+  ['1st_gen_diaspora', '2nd_gen_diaspora', 'Cross-generational diaspora'],
+  ['1st_gen_diaspora', 'continental_african', 'Diaspora-continental bridge'],
+  ['ally', 'continental_african', 'Ally supporting Africa'],
+  ['returnee', '1st_gen_diaspora', 'Return journey connection'],
+];
+
 class MatchingService {
-  // Advanced AI-powered matching algorithm
+  /**
+   * Advanced AI-powered matching algorithm
+   * Uses 14+ different matching criteria for comprehensive compatibility
+   */
   async findMatches(currentUserId: string, criteria: MatchingCriteria): Promise<MatchScore[]> {
     try {
-      // Get current user's profile for comparison
+      // Get current user's full profile for comparison
       const { data: currentUser } = await supabase
         .from('profiles')
         .select('*')
@@ -45,23 +76,22 @@ class MatchingService {
 
       if (!currentUser) return [];
 
-      // Get all potential matches
+      // Get all potential matches with extended fields
       const { data: professionals } = await supabase
-        .rpc('rpc_public_profiles', {
-          p_location: criteria.location || null,
-          p_profession: criteria.profession || null,
-          p_skills: criteria.skills || null,
-          p_limit: 100
-        });
+        .from('profiles')
+        .select('*')
+        .neq('id', currentUserId)
+        .eq('is_public', true)
+        .limit(200);
 
       if (!professionals) return [];
 
       // Calculate match scores for each professional
       const matches = professionals
-        .filter((prof: any) => prof.id !== currentUserId)
         .map((prof: any) => this.calculateMatchScore(currentUser, prof, criteria))
+        .filter(match => match.score > 20) // Filter out very low matches
         .sort((a, b) => b.score - a.score)
-        .slice(0, 20); // Return top 20 matches
+        .slice(0, 50); // Return top 50 matches
 
       return matches;
     } catch (error) {
@@ -70,9 +100,11 @@ class MatchingService {
     }
   }
 
+  /**
+   * Calculate comprehensive match score using 14+ criteria
+   */
   private calculateMatchScore(currentUser: any, professional: any, criteria: MatchingCriteria): MatchScore {
     let totalScore = 0;
-    let maxScore = 0;
     const reasons: string[] = [];
     const details = {
       skillsMatch: 0,
@@ -82,282 +114,598 @@ class MatchingService {
       experienceMatch: 0,
       culturalMatch: 0,
       interestsMatch: 0,
-      collaborationMatch: 0
+      collaborationMatch: 0,
+      languageMatch: 0,
+      diasporaMatch: 0,
+      regionalMatch: 0,
+      causesMatch: 0,
+      mentorshipMatch: 0,
+      industryMatch: 0
     };
 
-    // Skills matching (20% weight)
-    const skillsWeight = 20;
-    maxScore += skillsWeight;
-    const skillsScore = this.calculateSkillsMatch(currentUser.skills || [], professional.skills || []);
+    // =========================================================================
+    // CORE MATCHING CRITERIA (60% of base score)
+    // =========================================================================
+
+    // 1. Skills matching (12%)
+    const skillsScore = this.calculateArrayMatch(
+      currentUser.skills || [],
+      professional.skills || []
+    );
     details.skillsMatch = skillsScore;
-    totalScore += (skillsScore / 100) * skillsWeight;
-    if (skillsScore > 40) {
-      reasons.push(`${Math.round(skillsScore)}% skills compatibility`);
+    totalScore += skillsScore * 0.12;
+    if (skillsScore > 50) {
+      const commonCount = this.countCommonItems(currentUser.skills || [], professional.skills || []);
+      reasons.push(`${commonCount} shared skills`);
     }
 
-    // Location proximity (10% weight) - use current_country or current_location field
-    const locationWeight = 10;
-    maxScore += locationWeight;
-    const userLocation = currentUser.current_country || currentUser.current_location || currentUser.location || '';
-    const profLocation = professional.current_country || professional.current_location || professional.location || '';
-    const locationScore = this.calculateLocationMatch(userLocation, profLocation);
+    // 2. Location/Region proximity (8%)
+    const locationScore = this.calculateLocationMatch(
+      currentUser.current_country || currentUser.location,
+      professional.current_country || professional.location
+    );
     details.locationMatch = locationScore;
-    totalScore += (locationScore / 100) * locationWeight;
-    if (locationScore > 50) {
-      reasons.push('Same location/region');
+    totalScore += locationScore * 0.08;
+    if (locationScore >= 100) {
+      reasons.push('Same location');
+    } else if (locationScore >= 70) {
+      reasons.push('Same region');
     }
 
-    // Profession relevance (15% weight)
-    const professionWeight = 15;
-    maxScore += professionWeight;
-    const professionScore = this.calculateProfessionMatch(currentUser.profession, professional.profession);
+    // 3. Professional relevance (10%)
+    const professionScore = this.calculateProfessionMatch(
+      currentUser.profession,
+      professional.profession
+    );
     details.professionMatch = professionScore;
-    totalScore += (professionScore / 100) * professionWeight;
-    if (professionScore > 60) {
+    totalScore += professionScore * 0.10;
+    if (professionScore > 70) {
       reasons.push('Related profession');
     }
 
-    // Impact areas alignment (10% weight)
-    const impactWeight = 10;
-    maxScore += impactWeight;
-    const impactScore = this.calculateImpactMatch(currentUser.impact_areas || [], professional.impact_areas || []);
-    details.impactMatch = impactScore;
-    totalScore += (impactScore / 100) * impactWeight;
-    if (impactScore > 30) {
-      reasons.push('Shared impact focus');
-    }
-
-    // Experience level compatibility (5% weight)
-    const experienceWeight = 5;
-    maxScore += experienceWeight;
-    const experienceScore = this.calculateExperienceMatch(currentUser.years_experience, professional.years_experience);
-    details.experienceMatch = experienceScore;
-    totalScore += (experienceScore / 100) * experienceWeight;
-
-    // Cultural background (15% weight)
-    const culturalWeight = 15;
-    maxScore += culturalWeight;
-    const culturalScore = this.calculateCulturalMatch(currentUser.country_of_origin, professional.country_of_origin);
+    // 4. Cultural/Heritage background (10%)
+    const culturalScore = this.calculateCulturalMatch(
+      currentUser.country_of_origin,
+      professional.country_of_origin
+    );
     details.culturalMatch = culturalScore;
-    totalScore += (culturalScore / 100) * culturalWeight;
-    if (culturalScore > 70) {
-      reasons.push('Shared cultural background');
+    totalScore += culturalScore * 0.10;
+    if (culturalScore >= 100) {
+      reasons.push('Same heritage country');
+    } else if (culturalScore >= 80) {
+      reasons.push('Same African region');
     }
 
-    // Interests matching (10% weight)
-    const interestsWeight = 10;
-    maxScore += interestsWeight;
-    const interestsScore = this.calculateInterestsMatch(
+    // 5. Interests alignment (10%)
+    const interestsScore = this.calculateArrayMatch(
       currentUser.interests || currentUser.interest_tags || [],
       professional.interests || professional.interest_tags || []
     );
     details.interestsMatch = interestsScore;
-    totalScore += (interestsScore / 100) * interestsWeight;
+    totalScore += interestsScore * 0.10;
     if (interestsScore > 40) {
       reasons.push('Shared interests');
     }
 
-    // Collaboration compatibility (15% weight) - matches complementary needs
-    const collaborationWeight = 15;
-    maxScore += collaborationWeight;
-    const collaborationScore = this.calculateCollaborationMatch(
+    // 6. Collaboration compatibility (10%)
+    const { score: collabScore, reason: collabReason } = this.calculateCollaborationMatchWithReason(
       currentUser.available_for || [],
       professional.available_for || []
     );
-    details.collaborationMatch = collaborationScore;
-    totalScore += (collaborationScore / 100) * collaborationWeight;
-    if (collaborationScore > 60) {
-      reasons.push('Complementary collaboration goals');
+    details.collaborationMatch = collabScore;
+    totalScore += collabScore * 0.10;
+    if (collabReason) {
+      reasons.push(collabReason);
     }
 
-    // Mentor/Investor matching bonus
+    // =========================================================================
+    // DIASPORA-SPECIFIC MATCHING (25% of base score)
+    // =========================================================================
+
+    // 7. Language compatibility (8%) - especially African languages
+    const languageScore = this.calculateLanguageMatch(
+      currentUser.languages || [],
+      professional.languages || []
+    );
+    details.languageMatch = languageScore;
+    totalScore += languageScore * 0.08;
+    if (languageScore > 60) {
+      const commonLangs = this.getCommonItems(currentUser.languages || [], professional.languages || []);
+      if (commonLangs.length > 0) {
+        reasons.push(`Speaks ${commonLangs[0]}`);
+      }
+    }
+
+    // 8. Diaspora status complementary matching (7%)
+    const { score: diasporaScore, reason: diasporaReason } = this.calculateDiasporaMatch(
+      currentUser.diaspora_status,
+      professional.diaspora_status
+    );
+    details.diasporaMatch = diasporaScore;
+    totalScore += diasporaScore * 0.07;
+    if (diasporaReason) {
+      reasons.push(diasporaReason);
+    }
+
+    // 9. Regional expertise overlap (5%)
+    const regionalScore = this.calculateArrayMatch(
+      currentUser.regional_expertise || [],
+      professional.regional_expertise || []
+    );
+    details.regionalMatch = regionalScore;
+    totalScore += regionalScore * 0.05;
+    if (regionalScore > 50) {
+      reasons.push('Regional expertise overlap');
+    }
+
+    // 10. African causes alignment (5%)
+    const causesScore = this.calculateArrayMatch(
+      currentUser.african_causes || [],
+      professional.african_causes || []
+    );
+    details.causesMatch = causesScore;
+    totalScore += causesScore * 0.05;
+    if (causesScore > 40) {
+      reasons.push('Shared African causes');
+    }
+
+    // =========================================================================
+    // PROFESSIONAL DEPTH MATCHING (15% of base score)
+    // =========================================================================
+
+    // 11. Mentorship areas compatibility (5%)
+    const mentorshipScore = this.calculateMentorshipMatch(
+      currentUser,
+      professional
+    );
+    details.mentorshipMatch = mentorshipScore;
+    totalScore += mentorshipScore * 0.05;
+    if (mentorshipScore > 70) {
+      reasons.push('Mentorship match');
+    }
+
+    // 12. Industry/Sector alignment (5%)
+    const industryScore = this.calculateArrayMatch(
+      currentUser.industries || currentUser.professional_sectors || [],
+      professional.industries || professional.professional_sectors || []
+    );
+    details.industryMatch = industryScore;
+    totalScore += industryScore * 0.05;
+    if (industryScore > 50) {
+      reasons.push('Same industry');
+    }
+
+    // 13. Impact areas alignment (3%)
+    const impactScore = this.calculateArrayMatch(
+      currentUser.impact_areas || currentUser.focus_areas || [],
+      professional.impact_areas || professional.focus_areas || []
+    );
+    details.impactMatch = impactScore;
+    totalScore += impactScore * 0.03;
+    if (impactScore > 40) {
+      reasons.push('Shared impact focus');
+    }
+
+    // 14. Experience level compatibility (2%)
+    const experienceScore = this.calculateExperienceMatch(
+      currentUser.years_experience,
+      professional.years_experience
+    );
+    details.experienceMatch = experienceScore;
+    totalScore += experienceScore * 0.02;
+
+    // =========================================================================
+    // BONUS POINTS (Can exceed 100% base, capped at final score)
+    // =========================================================================
+
+    // Mentor/Investor seeking bonus (+15 each)
     if (criteria.isLookingForMentor && professional.is_mentor) {
-      totalScore += 10;
-      reasons.push('Available for mentoring');
+      totalScore += 15;
+      reasons.push('Available mentor');
     }
     if (criteria.isLookingForInvestor && professional.is_investor) {
-      totalScore += 10;
+      totalScore += 15;
       reasons.push('Active investor');
     }
 
-    // Complementary "Open To" matching bonus (hiring <-> job_seeking, investing <-> seeking_investment)
+    // High-value complementary matching bonuses
     const userAvailableFor = currentUser.available_for || [];
     const profAvailableFor = professional.available_for || [];
 
+    // Career opportunity match (+12)
     if ((userAvailableFor.includes('hiring') && profAvailableFor.includes('job_seeking')) ||
         (userAvailableFor.includes('job_seeking') && profAvailableFor.includes('hiring'))) {
-      totalScore += 15;
-      reasons.push('Career opportunity match');
+      totalScore += 12;
+      if (!reasons.includes('Career opportunity match')) {
+        reasons.push('Career opportunity match');
+      }
     }
 
+    // Investment opportunity match (+12)
     if ((userAvailableFor.includes('investing') && profAvailableFor.includes('seeking_investment')) ||
         (userAvailableFor.includes('seeking_investment') && profAvailableFor.includes('investing'))) {
-      totalScore += 15;
-      reasons.push('Investment opportunity match');
+      totalScore += 12;
+      if (!reasons.includes('Investment opportunity match')) {
+        reasons.push('Investment opportunity match');
+      }
     }
+
+    // Mentorship pairing bonus (+10)
+    if ((userAvailableFor.includes('mentoring') && profAvailableFor.includes('being_mentored')) ||
+        (userAvailableFor.includes('being_mentored') && profAvailableFor.includes('mentoring'))) {
+      totalScore += 10;
+      if (!reasons.includes('Mentorship pairing')) {
+        reasons.push('Mentorship pairing');
+      }
+    }
+
+    // Ethnic heritage connection bonus (+8)
+    const heritageScore = this.calculateArrayMatch(
+      currentUser.ethnic_heritage || [],
+      professional.ethnic_heritage || []
+    );
+    if (heritageScore > 50) {
+      totalScore += 8;
+      reasons.push('Shared ethnic heritage');
+    }
+
+    // Diaspora networks connection bonus (+5)
+    const networkScore = this.calculateArrayMatch(
+      currentUser.diaspora_networks || [],
+      professional.diaspora_networks || []
+    );
+    if (networkScore > 50) {
+      totalScore += 5;
+      reasons.push('Same diaspora network');
+    }
+
+    // Engagement intentions alignment bonus (+5)
+    const intentScore = this.calculateArrayMatch(
+      currentUser.engagement_intentions || [],
+      professional.engagement_intentions || []
+    );
+    if (intentScore > 40) {
+      totalScore += 5;
+    }
+
+    // Prioritize and deduplicate reasons
+    const prioritizedReasons = this.prioritizeReasons(reasons);
 
     return {
       professionalId: professional.id,
-      score: Math.min(100, (totalScore / maxScore) * 100),
-      reasons: reasons.slice(0, 4), // Top 4 reasons
+      score: Math.min(100, Math.round(totalScore)),
+      reasons: prioritizedReasons.slice(0, 4),
       details
     };
   }
 
-  private calculateSkillsMatch(userSkills: string[], profSkills: string[]): number {
-    if (!userSkills.length || !profSkills.length) return 0;
-    
-    const userSkillsLower = userSkills.map(s => s.toLowerCase());
-    const profSkillsLower = profSkills.map(s => s.toLowerCase());
-    
-    const commonSkills = userSkillsLower.filter(skill => 
-      profSkillsLower.some(pSkill => 
-        pSkill.includes(skill) || skill.includes(pSkill)
-      )
-    );
-    
-    return (commonSkills.length / Math.max(userSkillsLower.length, profSkillsLower.length)) * 100;
+  // =========================================================================
+  // HELPER METHODS
+  // =========================================================================
+
+  /**
+   * Generic array matching with fuzzy string comparison
+   */
+  private calculateArrayMatch(arr1: string[], arr2: string[]): number {
+    if (!arr1?.length || !arr2?.length) return 0;
+
+    const set1 = new Set(arr1.map(s => s.toLowerCase().trim()));
+    const set2 = new Set(arr2.map(s => s.toLowerCase().trim()));
+
+    let matches = 0;
+    for (const item of set1) {
+      for (const item2 of set2) {
+        if (item === item2 || item.includes(item2) || item2.includes(item)) {
+          matches++;
+          break;
+        }
+      }
+    }
+
+    return (matches / Math.max(set1.size, set2.size)) * 100;
   }
 
+  /**
+   * Count common items between two arrays
+   */
+  private countCommonItems(arr1: string[], arr2: string[]): number {
+    if (!arr1?.length || !arr2?.length) return 0;
+    const set1 = new Set(arr1.map(s => s.toLowerCase().trim()));
+    const set2 = new Set(arr2.map(s => s.toLowerCase().trim()));
+    let count = 0;
+    for (const item of set1) {
+      if (set2.has(item)) count++;
+    }
+    return count;
+  }
+
+  /**
+   * Get common items between two arrays
+   */
+  private getCommonItems(arr1: string[], arr2: string[]): string[] {
+    if (!arr1?.length || !arr2?.length) return [];
+    const set2 = new Set(arr2.map(s => s.toLowerCase().trim()));
+    return arr1.filter(item => set2.has(item.toLowerCase().trim()));
+  }
+
+  /**
+   * Location matching with region awareness
+   */
   private calculateLocationMatch(userLocation: string, profLocation: string): number {
     if (!userLocation || !profLocation) return 20;
-    
-    const userLoc = userLocation.toLowerCase();
-    const profLoc = profLocation.toLowerCase();
-    
+
+    const userLoc = userLocation.toLowerCase().trim();
+    const profLoc = profLocation.toLowerCase().trim();
+
+    // Exact match
     if (userLoc === profLoc) return 100;
-    
-    // Check for same country/region
+
+    // Same country parts
     const userParts = userLoc.split(',').map(p => p.trim());
     const profParts = profLoc.split(',').map(p => p.trim());
-    
-    if (userParts.some(part => profParts.includes(part))) return 70;
-    
+    if (userParts.some(part => profParts.includes(part))) return 80;
+
+    // Same African region
+    const userRegion = this.getAfricanRegion(userLoc);
+    const profRegion = this.getAfricanRegion(profLoc);
+    if (userRegion && profRegion && userRegion === profRegion) return 70;
+
+    // Both in Africa
+    if (userRegion && profRegion) return 50;
+
     return 30;
   }
 
+  /**
+   * Get African region from country name
+   */
+  private getAfricanRegion(location: string): string | null {
+    const loc = location.toLowerCase();
+    for (const [region, countries] of Object.entries(AFRICAN_REGIONS)) {
+      if (countries.some(c => loc.includes(c))) {
+        return region;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Profession matching with field groupings
+   */
   private calculateProfessionMatch(userProf: string, profProf: string): number {
     if (!userProf || !profProf) return 30;
-    
-    const userProfLower = userProf.toLowerCase();
-    const profProfLower = profProf.toLowerCase();
-    
-    if (userProfLower === profProfLower) return 100;
-    
-    // Check for related professions
-    const techFields = ['engineer', 'developer', 'programmer', 'software', 'tech', 'data', 'ai', 'ml'];
-    const businessFields = ['manager', 'consultant', 'analyst', 'business', 'marketing', 'sales'];
-    const financeFields = ['finance', 'investment', 'banking', 'financial', 'accounting'];
-    
-    const isUserTech = techFields.some(field => userProfLower.includes(field));
-    const isProfTech = techFields.some(field => profProfLower.includes(field));
-    
-    const isUserBusiness = businessFields.some(field => userProfLower.includes(field));
-    const isProfBusiness = businessFields.some(field => profProfLower.includes(field));
-    
-    const isUserFinance = financeFields.some(field => userProfLower.includes(field));
-    const isProfFinance = financeFields.some(field => profProfLower.includes(field));
-    
-    if ((isUserTech && isProfTech) || (isUserBusiness && isProfBusiness) || (isUserFinance && isProfFinance)) {
-      return 70;
+
+    const u = userProf.toLowerCase();
+    const p = profProf.toLowerCase();
+
+    if (u === p) return 100;
+
+    const fieldGroups = [
+      ['engineer', 'developer', 'programmer', 'software', 'tech', 'data', 'ai', 'ml', 'devops', 'architect'],
+      ['manager', 'director', 'lead', 'head', 'vp', 'chief', 'ceo', 'cto', 'cfo'],
+      ['consultant', 'advisor', 'analyst', 'strategist'],
+      ['marketing', 'growth', 'brand', 'communications', 'pr'],
+      ['sales', 'business development', 'partnerships', 'account'],
+      ['finance', 'investment', 'banking', 'financial', 'accounting', 'investor'],
+      ['design', 'ux', 'ui', 'product design', 'creative'],
+      ['founder', 'entrepreneur', 'co-founder', 'startup'],
+      ['research', 'scientist', 'academic', 'professor'],
+      ['lawyer', 'legal', 'attorney', 'counsel'],
+      ['doctor', 'medical', 'healthcare', 'physician', 'nurse']
+    ];
+
+    for (const group of fieldGroups) {
+      const userInGroup = group.some(f => u.includes(f));
+      const profInGroup = group.some(f => p.includes(f));
+      if (userInGroup && profInGroup) return 75;
     }
-    
+
     return 40;
   }
 
-  private calculateImpactMatch(userImpact: string[], profImpact: string[]): number {
-    if (!userImpact.length || !profImpact.length) return 20;
-    
-    const userImpactLower = userImpact.map(i => i.toLowerCase());
-    const profImpactLower = profImpact.map(i => i.toLowerCase());
-    
-    const commonImpact = userImpactLower.filter(impact => 
-      profImpactLower.some(pImpact => 
-        pImpact.includes(impact) || impact.includes(pImpact)
-      )
-    );
-    
-    return (commonImpact.length / Math.max(userImpactLower.length, profImpactLower.length)) * 100;
-  }
-
-  private calculateExperienceMatch(userExp: number, profExp: number): number {
-    if (!userExp || !profExp) return 50;
-    
-    const diff = Math.abs(userExp - profExp);
-    
-    if (diff <= 2) return 100;
-    if (diff <= 5) return 80;
-    if (diff <= 10) return 60;
-    
-    return 40;
-  }
-
+  /**
+   * Cultural match based on country of origin with region awareness
+   */
   private calculateCulturalMatch(userCountry: string, profCountry: string): number {
     if (!userCountry || !profCountry) return 30;
 
-    if (userCountry.toLowerCase() === profCountry.toLowerCase()) return 100;
+    const u = userCountry.toLowerCase();
+    const p = profCountry.toLowerCase();
 
-    // African countries get higher match scores
-    const africanCountries = [
-      'nigeria', 'kenya', 'south africa', 'ghana', 'ethiopia', 'uganda', 'tanzania',
-      'morocco', 'algeria', 'egypt', 'cameroon', 'ivory coast', 'senegal', 'zambia',
-      'zimbabwe', 'botswana', 'namibia', 'rwanda', 'mali', 'burkina faso'
-    ];
+    if (u === p) return 100;
 
-    const userIsAfrican = africanCountries.some(country =>
-      userCountry.toLowerCase().includes(country)
-    );
-    const profIsAfrican = africanCountries.some(country =>
-      profCountry.toLowerCase().includes(country)
-    );
+    // Same African region bonus
+    const userRegion = this.getAfricanRegion(u);
+    const profRegion = this.getAfricanRegion(p);
 
-    if (userIsAfrican && profIsAfrican) return 80;
+    if (userRegion && profRegion) {
+      if (userRegion === profRegion) return 85;
+      return 70; // Both African, different regions
+    }
 
-    return 50;
+    return 40;
   }
 
-  private calculateInterestsMatch(userInterests: string[], profInterests: string[]): number {
-    if (!userInterests.length || !profInterests.length) return 20;
+  /**
+   * Language matching with African language priority
+   */
+  private calculateLanguageMatch(userLangs: string[], profLangs: string[]): number {
+    if (!userLangs?.length || !profLangs?.length) return 20;
 
-    const userInterestsLower = userInterests.map(i => i.toLowerCase());
-    const profInterestsLower = profInterests.map(i => i.toLowerCase());
+    const africanLanguages = new Set([
+      'swahili', 'arabic', 'hausa', 'yoruba', 'igbo', 'amharic', 'oromo', 'zulu',
+      'xhosa', 'afrikaans', 'somali', 'twi', 'wolof', 'fulani', 'shona', 'lingala',
+      'kikuyu', 'luo', 'tigrinya', 'berber', 'pidgin', 'krio'
+    ]);
 
-    const commonInterests = userInterestsLower.filter(interest =>
-      profInterestsLower.some(pInterest =>
-        pInterest.includes(interest) || interest.includes(pInterest)
-      )
-    );
-
-    return (commonInterests.length / Math.max(userInterestsLower.length, profInterestsLower.length)) * 100;
-  }
-
-  private calculateCollaborationMatch(userAvailableFor: string[], profAvailableFor: string[]): number {
-    if (!userAvailableFor.length || !profAvailableFor.length) return 30;
+    const userSet = new Set(userLangs.map(l => l.toLowerCase().trim()));
+    const profSet = new Set(profLangs.map(l => l.toLowerCase().trim()));
 
     let score = 0;
+    let africanMatch = false;
 
-    // Check for direct matches (both want the same collaboration type)
-    const directMatches = userAvailableFor.filter(item => profAvailableFor.includes(item));
-    score += (directMatches.length / Math.max(userAvailableFor.length, profAvailableFor.length)) * 50;
-
-    // Check for complementary matches
-    const complementaryPairs: [string, string][] = [
-      ['hiring', 'job_seeking'],
-      ['investing', 'seeking_investment'],
-      ['mentoring', 'being_mentored'],
-    ];
-
-    for (const [need1, need2] of complementaryPairs) {
-      if ((userAvailableFor.includes(need1) && profAvailableFor.includes(need2)) ||
-          (userAvailableFor.includes(need2) && profAvailableFor.includes(need1))) {
+    for (const lang of userSet) {
+      if (profSet.has(lang)) {
         score += 25;
+        if (africanLanguages.has(lang)) {
+          africanMatch = true;
+          score += 15; // Bonus for African language match
+        }
       }
     }
 
     return Math.min(100, score);
   }
 
-  // Get recommended connections based on user activity
+  /**
+   * Diaspora status complementary matching
+   */
+  private calculateDiasporaMatch(userStatus: string, profStatus: string): { score: number; reason: string | null } {
+    if (!userStatus || !profStatus) return { score: 30, reason: null };
+
+    const u = userStatus.toLowerCase();
+    const p = profStatus.toLowerCase();
+
+    // Same status - moderate match
+    if (u === p) {
+      return { score: 60, reason: null };
+    }
+
+    // Check for complementary pairs
+    for (const [status1, status2, reason] of DIASPORA_COMPLEMENTARY_PAIRS) {
+      if ((u.includes(status1) && p.includes(status2)) ||
+          (u.includes(status2) && p.includes(status1))) {
+        return { score: 90, reason };
+      }
+    }
+
+    return { score: 40, reason: null };
+  }
+
+  /**
+   * Mentorship match - considers both offering and seeking
+   */
+  private calculateMentorshipMatch(user: any, prof: any): number {
+    let score = 0;
+
+    // Direct mentor/mentee pairing
+    if ((user.is_mentor && prof.seeking_mentorship) ||
+        (user.seeking_mentorship && prof.is_mentor)) {
+      score += 50;
+    }
+
+    // Mentorship areas overlap
+    const areasScore = this.calculateArrayMatch(
+      user.mentorship_areas || [],
+      prof.mentorship_areas || []
+    );
+    score += areasScore * 0.5;
+
+    return Math.min(100, score);
+  }
+
+  /**
+   * Collaboration match with reason
+   */
+  private calculateCollaborationMatchWithReason(
+    userAvailableFor: string[],
+    profAvailableFor: string[]
+  ): { score: number; reason: string | null } {
+    if (!userAvailableFor?.length || !profAvailableFor?.length) {
+      return { score: 30, reason: null };
+    }
+
+    let score = 0;
+    let reason: string | null = null;
+
+    // Direct matches
+    const directMatches = userAvailableFor.filter(item =>
+      profAvailableFor.includes(item)
+    );
+    score += (directMatches.length / Math.max(userAvailableFor.length, profAvailableFor.length)) * 40;
+
+    // Complementary pairs with reasons
+    const pairs: [string, string, string][] = [
+      ['hiring', 'job_seeking', 'Career opportunity match'],
+      ['investing', 'seeking_investment', 'Investment opportunity match'],
+      ['mentoring', 'being_mentored', 'Mentorship pairing'],
+    ];
+
+    for (const [need1, need2, pairReason] of pairs) {
+      if ((userAvailableFor.includes(need1) && profAvailableFor.includes(need2)) ||
+          (userAvailableFor.includes(need2) && profAvailableFor.includes(need1))) {
+        score += 30;
+        reason = pairReason;
+        break;
+      }
+    }
+
+    return { score: Math.min(100, score), reason };
+  }
+
+  /**
+   * Experience level compatibility
+   */
+  private calculateExperienceMatch(userExp: number, profExp: number): number {
+    if (!userExp || !profExp) return 50;
+
+    const diff = Math.abs(userExp - profExp);
+
+    if (diff <= 2) return 100;
+    if (diff <= 5) return 80;
+    if (diff <= 10) return 60;
+    return 40;
+  }
+
+  /**
+   * Prioritize and deduplicate match reasons
+   */
+  private prioritizeReasons(reasons: string[]): string[] {
+    // Priority order for reasons
+    const priority = [
+      'Career opportunity match',
+      'Investment opportunity match',
+      'Mentorship pairing',
+      'Available mentor',
+      'Active investor',
+      'Same heritage country',
+      'Same location',
+      'Shared ethnic heritage',
+      'Same diaspora network',
+      'Diaspora-continental bridge',
+      'Returnee connecting with local',
+      'Cross-generational diaspora',
+    ];
+
+    const seen = new Set<string>();
+    const sorted: string[] = [];
+
+    // Add priority items first
+    for (const p of priority) {
+      if (reasons.includes(p) && !seen.has(p)) {
+        sorted.push(p);
+        seen.add(p);
+      }
+    }
+
+    // Add remaining items
+    for (const r of reasons) {
+      if (!seen.has(r)) {
+        sorted.push(r);
+        seen.add(r);
+      }
+    }
+
+    return sorted;
+  }
+
+  // =========================================================================
+  // PUBLIC API METHODS
+  // =========================================================================
+
+  /**
+   * Get smart recommendations based on user profile
+   */
   async getSmartRecommendations(userId: string): Promise<Professional[]> {
     try {
       const criteria: MatchingCriteria = {
@@ -366,48 +714,98 @@ class MatchingService {
       };
 
       const matches = await this.findMatches(userId, criteria);
-      
+
       // Get full profile data for top matches
-      const topMatchIds = matches.slice(0, 10).map(m => m.professionalId);
-      
+      const topMatchIds = matches.slice(0, 15).map(m => m.professionalId);
+
       const { data: profiles } = await supabase
-        .rpc('rpc_public_profiles', { p_limit: 50 });
+        .from('profiles')
+        .select('*')
+        .in('id', topMatchIds);
 
       if (!profiles) return [];
 
       // Map to Professional type with required fields
-      return profiles
-        .filter((p: any) => topMatchIds.includes(p.id))
-        .map((p: any): Professional => ({
-          id: p.id,
-          username: p.username,
-          full_name: p.full_name,
-          headline: p.headline,
-          profession: p.profession,
-          company: p.company,
-          location: p.location,
-          country_of_origin: p.country_of_origin,
-          expertise: p.skills,
-          bio: p.bio,
-          years_experience: p.years_experience,
-          education: p.education,
-          languages: p.languages,
-          availability_for: p.available_for,
-          linkedin_url: p.linkedin_url,
-          website_url: p.website_url,
-          avatar_url: p.avatar_url,
-          skills: p.skills,
-          impact_areas: p.impact_areas,
-          is_mentor: p.is_mentor || false,
-          is_investor: p.is_investor || false,
-          looking_for_opportunities: p.looking_for_opportunities || false,
-          created_at: p.created_at,
-          updated_at: p.updated_at || p.created_at
-        }));
+      return profiles.map((p: any): Professional => ({
+        id: p.id,
+        username: p.username,
+        full_name: p.full_name,
+        headline: p.headline,
+        profession: p.profession,
+        company: p.company,
+        location: p.current_country || p.location,
+        country_of_origin: p.country_of_origin,
+        expertise: p.skills,
+        bio: p.bio,
+        years_experience: p.years_experience,
+        education: p.education,
+        languages: p.languages,
+        availability_for: p.available_for,
+        linkedin_url: p.linkedin_url,
+        website_url: p.website_url,
+        avatar_url: p.avatar_url,
+        skills: p.skills,
+        impact_areas: p.impact_areas,
+        is_mentor: p.is_mentor || false,
+        is_investor: p.is_investor || false,
+        looking_for_opportunities: p.looking_for_opportunities || false,
+        created_at: p.created_at,
+        updated_at: p.updated_at || p.created_at
+      }));
     } catch (error) {
       console.error('Error getting smart recommendations:', error);
       return [];
     }
+  }
+
+  /**
+   * Find complementary matches - people who have what you need
+   */
+  async findComplementaryMatches(userId: string): Promise<MatchScore[]> {
+    try {
+      const { data: user } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (!user) return [];
+
+      // Build criteria based on what user is looking for
+      const criteria: MatchingCriteria = {
+        isLookingForMentor: user.seeking_mentorship || false,
+        isLookingForInvestor: (user.available_for || []).includes('seeking_investment'),
+      };
+
+      return this.findMatches(userId, criteria);
+    } catch (error) {
+      console.error('Error finding complementary matches:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Find matches by specific criteria (for discover filters)
+   */
+  async findMatchesByCriteria(
+    userId: string,
+    filters: {
+      focusAreas?: string[];
+      regionalExpertise?: string[];
+      industries?: string[];
+      countryOfOrigin?: string;
+      location?: string;
+    }
+  ): Promise<MatchScore[]> {
+    const criteria: MatchingCriteria = {
+      focusAreas: filters.focusAreas,
+      regionalExpertise: filters.regionalExpertise,
+      industries: filters.industries,
+      countryOfOrigin: filters.countryOfOrigin,
+      location: filters.location,
+    };
+
+    return this.findMatches(userId, criteria);
   }
 }
 
