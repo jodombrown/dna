@@ -1,6 +1,6 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { AdminGuard } from '@/components/admin/AdminGuard';
-import { BarChart, Users, Settings, Shield, ArrowLeft, Activity } from 'lucide-react';
+import { BarChart, Users, Settings, Shield, ArrowLeft, Activity, MessageCircle } from 'lucide-react';
 
 export default function AdminLayout() {
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -59,6 +59,10 @@ export default function AdminLayout() {
               <NavLink to="/app/admin/signals" className={navLinkClass}>
                 <Settings className="h-4 w-4" />
                 Signals
+              </NavLink>
+              <NavLink to="/app/admin/feedback" className={navLinkClass}>
+                <MessageCircle className="h-4 w-4" />
+                Feedback
               </NavLink>
             </nav>
           </div>
