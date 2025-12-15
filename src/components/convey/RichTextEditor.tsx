@@ -62,16 +62,18 @@ export function RichTextEditor({
       setHasTextSelection(hasSelection);
     };
 
+    const handleBlur = () => setHasTextSelection(false);
+
     textarea.addEventListener('select', checkSelection);
     textarea.addEventListener('mouseup', checkSelection);
     textarea.addEventListener('keyup', checkSelection);
-    textarea.addEventListener('blur', () => setHasTextSelection(false));
+    textarea.addEventListener('blur', handleBlur);
 
     return () => {
       textarea.removeEventListener('select', checkSelection);
       textarea.removeEventListener('mouseup', checkSelection);
       textarea.removeEventListener('keyup', checkSelection);
-      textarea.removeEventListener('blur', () => setHasTextSelection(false));
+      textarea.removeEventListener('blur', handleBlur);
     };
   }, []);
 

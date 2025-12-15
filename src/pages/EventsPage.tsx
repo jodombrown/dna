@@ -76,8 +76,8 @@ export default function EventsPage() {
   }, [user, refetch]);
 
   const filteredEvents = events?.filter((event) =>
-    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.description.toLowerCase().includes(searchQuery.toLowerCase())
+    event.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
