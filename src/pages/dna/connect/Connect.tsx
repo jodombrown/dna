@@ -4,11 +4,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, Network, MessageSquare } from 'lucide-react';
 import { ProfileStrengthCard } from '@/components/profile/ProfileStrengthCard';
 import { calculateProfileCompletion } from '@/components/profile/ProfileCompletionBar';
 import { TYPOGRAPHY } from '@/lib/typography.config';
+import { ConnectTabExplainer, ConnectTab } from '@/components/connect/ConnectTabExplainer';
+import { cn } from '@/lib/utils';
+
+const TAB_CONFIG: { value: ConnectTab; icon: React.ElementType; label: string; route: string }[] = [
+  { value: 'discover', icon: Users, label: 'Discover', route: '/dna/connect/discover' },
+  { value: 'network', icon: Network, label: 'Network', route: '/dna/connect/network' },
+  { value: 'messages', icon: MessageSquare, label: 'Messages', route: '/dna/messages' },
+];
 
 const Connect = () => {
   const navigate = useNavigate();
@@ -17,7 +24,7 @@ const Connect = () => {
   const { data: profile, isLoading } = useProfile();
 
   // Determine active tab from current path
-  const getActiveTab = () => {
+  const getActiveTab = (): ConnectTab => {
     if (location.pathname.includes('/discover')) return 'discover';
     if (location.pathname.includes('/network')) return 'network';
     if (location.pathname.includes('/messages')) return 'messages';
@@ -50,7 +57,7 @@ const Connect = () => {
               Connect
             </h1>
             <p className={TYPOGRAPHY.body}>
-              Discover, connect, and engage with your network
+              Discover members, grow your network, and start conversations
             </p>
           </div>
 
@@ -59,35 +66,36 @@ const Connect = () => {
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <Tabs value={activeTab} className="mb-6">
-          <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-3 gap-2">
-            <TabsTrigger 
-              value="discover"
-              onClick={() => navigate('/dna/connect/discover')}
-              className="flex items-center gap-2"
-            >
-              <Users className="h-4 w-4" />
-              <span>Discover</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="network"
-              onClick={() => navigate('/dna/connect/network')}
-              className="flex items-center gap-2"
-            >
-              <Network className="h-4 w-4" />
-              <span>Network</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="messages"
-              onClick={() => navigate('/dna/messages')}
-              className="flex items-center gap-2"
-            >
-              <MessageSquare className="h-4 w-4" />
-              <span>Messages</span>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        {/* Navigation Tabs - Feed-like layout with icon + text */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg">
+            {TAB_CONFIG.map(({ value, icon: Icon, label, route }) => {
+              const isActive = activeTab === value;
+              
+              return (
+                <button
+                  key={value}
+                  onClick={() => navigate(route)}
+                  className={cn(
+                    "flex items-center justify-center gap-1.5 py-2 rounded-md transition-all duration-200",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    isActive 
+                      ? "bg-background shadow-sm flex-1 px-3" 
+                      : "px-3 text-muted-foreground hover:text-foreground hover:bg-background/50"
+                  )}
+                >
+                  <Icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} />
+                  {isActive && (
+                    <span className="text-xs font-medium truncate">{label}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Tab Explainer */}
+        <ConnectTabExplainer activeTab={activeTab} />
 
         {/* Tab Content */}
         <div>
