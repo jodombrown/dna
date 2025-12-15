@@ -114,79 +114,71 @@ export const ConnectionCard: React.FC<ConnectionCardProps> = ({
 
   return (
     <>
-      <Card className="hover:shadow-md transition-shadow">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-4">
+      <Card className="hover:shadow-sm transition-all border-border/50">
+        <CardContent className="p-3">
+          <div className="flex items-center gap-3">
             {/* Avatar */}
             <Avatar 
-              className="h-14 w-14 cursor-pointer" 
+              className="h-10 w-10 cursor-pointer shrink-0" 
               onClick={() => navigate(`/dna/${connection.username}`)}
             >
               <AvatarImage src={connection.avatar_url} alt={connection.full_name} />
-              <AvatarFallback>
+              <AvatarFallback className="text-xs bg-primary/10 text-primary">
                 {connection.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
               </AvatarFallback>
             </Avatar>
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex-1 min-w-0">
-                  <h3 
-                    className="font-semibold text-base hover:text-dna-copper cursor-pointer truncate"
-                    onClick={() => navigate(`/dna/${connection.username}`)}
-                  >
-                    {connection.full_name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {connection.headline || 'DNA Member'}
-                  </p>
-                </div>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setShowRemoveDialog(true)}>
-                      <UserMinus className="mr-2 h-4 w-4" />
-                      Remove Connection
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
+              <h3 
+                className="font-medium text-sm hover:text-primary cursor-pointer truncate"
+                onClick={() => navigate(`/dna/${connection.username}`)}
+              >
+                {connection.full_name}
+              </h3>
+              <p className="text-xs text-muted-foreground truncate">
+                {connection.headline || 'DNA Member'}
+              </p>
               {connection.location && (
-                <p className="text-xs text-muted-foreground mb-3">{connection.location}</p>
+                <p className="text-xs text-muted-foreground/70 truncate">{connection.location}</p>
               )}
+            </div>
 
-              {/* Actions */}
-              <div className="flex gap-2">
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={handleMessage}
-                  className="flex-1"
-                >
-                  <MessageCircle className="mr-2 h-4 w-4" />
-                  Message
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate(`/dna/${connection.username}`)}
-                >
-                  <Eye className="mr-2 h-4 w-4" />
-                  View Profile
-                </Button>
-              </div>
+            {/* Actions - Compact inline */}
+            <div className="flex items-center gap-1 shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleMessage}
+                className="h-8 w-8"
+                title="Message"
+              >
+                <MessageCircle className="h-4 w-4" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(`/dna/${connection.username}`)}
+                className="h-8 w-8"
+                title="View Profile"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
 
-              <div className="text-xs text-muted-foreground mt-2">
-                Connected {new Date(connection.connected_at).toLocaleDateString()}
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-background border shadow-lg z-50">
+                  <DropdownMenuItem onClick={() => setShowRemoveDialog(true)}>
+                    <UserMinus className="mr-2 h-4 w-4" />
+                    Remove Connection
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </CardContent>
