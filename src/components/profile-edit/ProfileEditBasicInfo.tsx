@@ -30,7 +30,6 @@ const PRONOUN_OPTIONS = [
   { value: 'he/they', label: 'He/They' },
   { value: 'she/they', label: 'She/They' },
   { value: 'prefer_not_to_say', label: 'Prefer not to say' },
-  { value: 'custom', label: 'Custom' },
 ];
 
 const ProfileEditBasicInfo: React.FC<ProfileEditBasicInfoProps> = ({
