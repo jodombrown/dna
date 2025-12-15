@@ -1,19 +1,16 @@
-
 import React from 'react';
+import AfricaSpinner from '@/components/ui/AfricaSpinner';
 
 interface ConnectLoadingStateProps {
   message?: string;
 }
 
 const ConnectLoadingState: React.FC<ConnectLoadingStateProps> = ({ 
-  message = "Loading Professional Network..." 
+  message = "Connecting you with the diaspora community" 
 }) => {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <div className="text-xl font-semibold mb-2">{message}</div>
-        <div className="text-gray-600">Connecting you with the diaspora community</div>
-      </div>
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <AfricaSpinner size="lg" showText text={message} />
     </div>
   );
 };
