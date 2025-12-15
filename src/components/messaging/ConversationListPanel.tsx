@@ -115,23 +115,56 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   }, [conversations]);
 
 
+  const handleMarkAllRead = () => {
+    toast({ title: 'Marked all as read', description: 'All conversations marked as read' });
+  };
+
+  const handleArchiveAll = () => {
+    toast({ title: 'Archive', description: 'Archive feature coming soon' });
+  };
+
   return (
     <Card className="flex flex-col h-full">
       {/* Search Header */}
       <div className="p-4 border-b space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Messages</h2>
-          {onNewConversation && (
-            <Button variant="ghost" size="sm" onClick={onNewConversation}>
-              <Plus className="w-4 h-4" />
-            </Button>
-          )}
+          <h2 className="font-semibold text-lg">Messages</h2>
+          <div className="flex items-center gap-1">
+            {onNewConversation && (
+              <Button variant="ghost" size="icon" onClick={onNewConversation} className="h-8 w-8">
+                <Plus className="w-4 h-4" />
+              </Button>
+            )}
+            {/* Header Actions Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="default" size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90">
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={handleMarkAllRead}>
+                  <span className="mr-2">✓</span>
+                  Mark all as read
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleArchiveAll}>
+                  <span className="mr-2">📁</span>
+                  Archive all read
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => toast({ title: 'Settings', description: 'Message settings coming soon' })}>
+                  <span className="mr-2">⚙️</span>
+                  Message settings
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
-            placeholder="Search conversations..."
+            placeholder="Search messages"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9"
