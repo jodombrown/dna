@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
 import { Users, Briefcase, Lightbulb, Handshake, TrendingUp, Heart } from 'lucide-react';
 
 interface ProfileEditOpenToProps {
@@ -43,30 +42,34 @@ const ProfileEditOpenTo: React.FC<ProfileEditOpenToProps> = ({
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {COLLABORATION_TYPES.map((type) => (
-            <div
-              key={type.value}
-              className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all hover:bg-muted/50 ${
-                availableFor.includes(type.value) ? 'border-primary bg-primary/5' : ''
-              }`}
-              onClick={() => handleToggle(type.value, !availableFor.includes(type.value))}
-            >
-              <Checkbox
-                id={`open-to-${type.value}`}
-                checked={availableFor.includes(type.value)}
-                className="mt-0.5"
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <type.icon className="h-4 w-4 text-muted-foreground" />
-                  <Label htmlFor={`open-to-${type.value}`} className="font-medium text-sm cursor-pointer">
-                    {type.label}
-                  </Label>
+          {COLLABORATION_TYPES.map((type) => {
+            const isChecked = availableFor.includes(type.value);
+            return (
+              <label
+                key={type.value}
+                htmlFor={`open-to-${type.value}`}
+                className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all hover:bg-muted/50 ${
+                  isChecked ? 'border-primary bg-primary/5' : ''
+                }`}
+              >
+                <Checkbox
+                  id={`open-to-${type.value}`}
+                  checked={isChecked}
+                  onCheckedChange={(checked) => handleToggle(type.value, !!checked)}
+                  className="mt-0.5"
+                />
+                <div className="flex-1 pointer-events-none">
+                  <div className="flex items-center gap-2">
+                    <type.icon className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium text-sm">
+                      {type.label}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{type.description}</p>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">{type.description}</p>
-              </div>
-            </div>
-          ))}
+              </label>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
