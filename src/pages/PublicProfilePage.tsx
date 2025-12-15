@@ -33,6 +33,7 @@ const PublicProfilePage = () => {
   const { toast } = useToast();
 
   // Fetch profile data using unified RPC - same source as owner profile and PDF
+  // The RPC handles privacy checks server-side (returns NULL for non-public profiles when not owner)
   const { data: profileBundle, isLoading, error } = useQuery({
     queryKey: ['public-profile-view', username, user?.id],
     queryFn: async () => {
@@ -53,12 +54,6 @@ const PublicProfilePage = () => {
       };
       
       if (!bundle.profile) throw new Error('Profile not found or private');
-      
-      // Check if profile is public (non-owners can only see public profiles)
-      const profileData = bundle.profile;
-      if (!profileData.is_public && bundle.permissions?.is_owner !== true) {
-        throw new Error('Profile not found or private');
-      }
       
       return bundle;
     },

@@ -5031,6 +5031,7 @@ export type Database = {
           african_causes: string[] | null
           agrees_to_values: boolean | null
           allow_profile_sharing: boolean | null
+          auto_connect_enabled: boolean | null
           availability_for_mentoring: boolean | null
           availability_hours_per_month: number | null
           availability_tags: Json | null
@@ -5123,6 +5124,7 @@ export type Database = {
           is_admin: boolean | null
           is_beta_tester: boolean | null
           is_public: boolean | null
+          is_test_account: boolean | null
           language_tags: Json | null
           languages: string[] | null
           last_active: string | null
@@ -5233,6 +5235,7 @@ export type Database = {
           african_causes?: string[] | null
           agrees_to_values?: boolean | null
           allow_profile_sharing?: boolean | null
+          auto_connect_enabled?: boolean | null
           availability_for_mentoring?: boolean | null
           availability_hours_per_month?: number | null
           availability_tags?: Json | null
@@ -5325,6 +5328,7 @@ export type Database = {
           is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          is_test_account?: boolean | null
           language_tags?: Json | null
           languages?: string[] | null
           last_active?: string | null
@@ -5435,6 +5439,7 @@ export type Database = {
           african_causes?: string[] | null
           agrees_to_values?: boolean | null
           allow_profile_sharing?: boolean | null
+          auto_connect_enabled?: boolean | null
           availability_for_mentoring?: boolean | null
           availability_hours_per_month?: number | null
           availability_tags?: Json | null
@@ -5527,6 +5532,7 @@ export type Database = {
           is_admin?: boolean | null
           is_beta_tester?: boolean | null
           is_public?: boolean | null
+          is_test_account?: boolean | null
           language_tags?: Json | null
           languages?: string[] | null
           last_active?: string | null
