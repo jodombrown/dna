@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter, Download, Loader2 } from 'lucide-react';
+import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter, Download, Loader2, Sparkles } from 'lucide-react';
+import { useTourProgress } from '@/hooks/useTourProgress';
+import OnboardingTour from '@/components/onboarding/OnboardingTour';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -25,6 +27,16 @@ export const AccountDrawer: React.FC = () => {
   const { data: profile } = useProfile();
   const navigate = useNavigate();
   const [isDownloading, setIsDownloading] = useState(false);
+  const [showTour, setShowTour] = useState(false);
+  const { isCompleted: tourCompleted, resetTour } = useTourProgress();
+
+  const handleTakeTour = () => {
+    if (tourCompleted) {
+      resetTour();
+    }
+    setShowTour(true);
+    close();
+  };
 
   const handleViewProfile = () => {
     if (profile?.username) {
@@ -116,6 +128,7 @@ export const AccountDrawer: React.FC = () => {
   if (!user || !profile) return null;
 
   return (
+    <>
     <Sheet open={isOpen} onOpenChange={(open) => !open && close()}>
       <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col">
         {/* Header */}
@@ -307,6 +320,15 @@ export const AccountDrawer: React.FC = () => {
             <Button
               variant="ghost"
               className="w-full justify-start"
+              onClick={handleTakeTour}
+            >
+              <Sparkles className="h-4 w-4 mr-3" />
+              Take Platform Tour
+            </Button>
+
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
               onClick={() => window.open('mailto:aweh@diasporanetwork.africa', '_blank')}
             >
               <HelpCircle className="h-4 w-4 mr-3" />
@@ -325,5 +347,9 @@ export const AccountDrawer: React.FC = () => {
         </div>
       </SheetContent>
     </Sheet>
+
+    {/* Platform Tour Dialog */}
+    <OnboardingTour open={showTour} onClose={() => setShowTour(false)} />
+  </>
   );
 };

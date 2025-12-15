@@ -10,6 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save, Loader2, LogOut } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import ProfileCompletionBar, { calculateProfileCompletionPts } from '@/components/profile/ProfileCompletionBar';
+import TourResumeBanner from '@/components/onboarding/TourResumeBanner';
+import OnboardingTour from '@/components/onboarding/OnboardingTour';
 
 // Import modular profile edit components
 import {
@@ -30,6 +32,7 @@ const ProfileEdit = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [showTour, setShowTour] = useState(false);
   
   // Fetch current profile using unified hook
   const { data: profile, isLoading, isError, error } = useProfile();
@@ -402,6 +405,9 @@ const ProfileEdit = () => {
         {/* Profile Completion Progress */}
         <ProfileCompletionBar profile={{ ...profile, avatar_url: avatarUrl, banner_url: bannerUrl }} />
 
+        {/* Tour Resume Banner - shows if user skipped tour */}
+        <TourResumeBanner onStartTour={() => setShowTour(true)} />
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Profile Images */}
           <ProfileEditImages
@@ -556,6 +562,9 @@ const ProfileEdit = () => {
           </div>
         </form>
       </div>
+
+      {/* Platform Tour Dialog */}
+      <OnboardingTour open={showTour} onClose={() => setShowTour(false)} />
     </div>
   );
 };
