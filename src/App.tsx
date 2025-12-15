@@ -171,7 +171,6 @@ const MvpPhase = lazy(() => import("./pages/MvpPhase"));
 const BetaValidationPhase = lazy(() => import("./pages/BetaValidationPhase"));
 const GoToMarketPhase = lazy(() => import("./pages/GoToMarketPhase"));
 const Moderation = lazy(() => import("./pages/admin/Moderation"));
-const FeedbackInbox = lazy(() => import("./pages/admin/FeedbackInbox"));
 
 // Partner With DNA pages
 const PartnerWithDna = lazy(() => import("./pages/PartnerWithDna"));
@@ -543,7 +542,6 @@ function App() {
                 <Route path="signals" element={<AdminSignals />} />
                 <Route path="moderation" element={<ContentModeration />} />
                 <Route path="convey" element={<ConveyAnalytics />} />
-                <Route path="feedback" element={<FeedbackInbox />} />
               </Route>
               <Route path="/app/admin/moderation" element={<Moderation />} />
 

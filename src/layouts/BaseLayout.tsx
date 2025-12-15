@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { AccountDrawer } from '@/components/navigation/AccountDrawer';
-import { FeedbackChatWidget } from '@/components/feedback-chat';
 
 interface BaseLayoutProps {
   children: React.ReactNode;
@@ -72,7 +71,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
     <>
       <UnifiedHeader />
       <AccountDrawer />
-      <FeedbackChatWidget />
       <div
         className={cn(
           "min-h-screen w-full max-w-full",
