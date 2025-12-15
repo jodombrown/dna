@@ -238,35 +238,35 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
-        <div className="flex items-start gap-4">
+    <Card className="hover:shadow-lg transition-all shadow-md border-border/50 overflow-hidden mx-1">
+      <CardContent className="p-4 sm:p-5">
+        <div className="flex items-start gap-3 sm:gap-4">
           {/* Avatar */}
-          <Avatar className="h-16 w-16 cursor-pointer" onClick={handleViewProfile}>
+          <Avatar className="h-14 w-14 sm:h-16 sm:w-16 cursor-pointer shrink-0" onClick={handleViewProfile}>
             <AvatarImage src={member.avatar_url} alt={member.full_name} />
-            <AvatarFallback>
+            <AvatarFallback className="text-sm bg-primary/10 text-primary">
               {member.full_name.split(' ').map(n => n[0]).join('').slice(0, 2)}
             </AvatarFallback>
           </Avatar>
 
           {/* Content */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 overflow-hidden">
             <div className="flex items-start justify-between gap-2 mb-2">
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 overflow-hidden">
                 <h3 
                   className="font-semibold text-base hover:text-dna-copper cursor-pointer truncate"
                   onClick={handleViewProfile}
                 >
                   {member.full_name}
                 </h3>
-                <p className="text-sm text-muted-foreground truncate">
+                <p className="text-sm text-muted-foreground truncate max-w-[200px] sm:max-w-none">
                   {member.headline || member.profession || 'DNA Member'}
                 </p>
                 {/* Why this match - enhanced match reasons */}
                 {matchReasons.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-1">
+                  <div className="flex flex-wrap gap-1 mt-1.5">
                     {matchReasons.map((reason, idx) => (
-                      <Badge key={idx} variant="secondary" className="text-xs bg-dna-copper/10 text-dna-copper border-none">
+                      <Badge key={idx} variant="secondary" className="text-xs bg-dna-copper/10 text-dna-copper border-none whitespace-nowrap">
                         {reason}
                       </Badge>
                     ))}
@@ -275,11 +275,11 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
               </div>
 
               {/* Match Score */}
-              <div className="flex flex-col items-end">
-                <span className={`text-sm font-semibold ${getMatchColor(member.match_score)}`}>
+              <div className="flex flex-col items-end shrink-0">
+                <span className={`text-sm font-semibold whitespace-nowrap ${getMatchColor(member.match_score)}`}>
                   {member.match_score}% match
                 </span>
-                <Progress value={member.match_score} className="w-16 h-1.5 mt-1" />
+                <Progress value={member.match_score} className="w-14 sm:w-16 h-1.5 mt-1" />
               </div>
             </div>
 
@@ -302,27 +302,27 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
             )}
 
             {/* Tags */}
-            <div className="flex flex-wrap gap-1.5 mb-3">
+            <div className="flex flex-wrap gap-1.5 mb-3 overflow-hidden">
               {/* Mentor/Investor badges - high visibility */}
               {member.is_mentor && (
-                <Badge variant="outline" className="text-xs border-green-300 bg-green-50 text-green-700">
+                <Badge variant="outline" className="text-xs border-green-300 bg-green-50 text-green-700 whitespace-nowrap">
                   Mentor
                 </Badge>
               )}
               {member.is_investor && (
-                <Badge variant="outline" className="text-xs border-blue-300 bg-blue-50 text-blue-700">
+                <Badge variant="outline" className="text-xs border-blue-300 bg-blue-50 text-blue-700 whitespace-nowrap">
                   Investor
                 </Badge>
               )}
               {member.focus_areas?.slice(0, 2).map((area) => (
-                <Badge key={area} variant="secondary" className="text-xs">
+                <Badge key={area} variant="secondary" className="text-xs whitespace-nowrap">
                   {area}
                 </Badge>
               ))}
               {member.industries?.slice(0, 1).map((industry) => (
-                <Badge key={industry} variant="outline" className="text-xs">
-                  <Briefcase className="h-3 w-3 mr-1" />
-                  {industry}
+                <Badge key={industry} variant="outline" className="text-xs whitespace-nowrap">
+                  <Briefcase className="h-3 w-3 mr-1 shrink-0" />
+                  <span className="truncate max-w-[100px]">{industry}</span>
                 </Badge>
               ))}
             </div>
