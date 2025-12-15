@@ -7400,13 +7400,13 @@ export type Database = {
             Returns: {
               avatar_url: string
               country_of_origin: string
+              current_country: string
               focus_areas: string[]
               full_name: string
               headline: string
               id: string
               industries: string[]
               is_connected: boolean
-              location_country: string
               match_score: number
               regional_expertise: string[]
               skills: string[]
