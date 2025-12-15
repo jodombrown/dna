@@ -5192,6 +5192,10 @@ export type Database = {
           skills_offered: string[] | null
           support_areas: string[] | null
           timezone: string | null
+          tour_completed_at: string | null
+          tour_current_step: number | null
+          tour_last_shown_at: string | null
+          tour_skipped_at: string | null
           twitter_handle: string | null
           twitter_url: string | null
           updated_at: string
@@ -5396,6 +5400,10 @@ export type Database = {
           skills_offered?: string[] | null
           support_areas?: string[] | null
           timezone?: string | null
+          tour_completed_at?: string | null
+          tour_current_step?: number | null
+          tour_last_shown_at?: string | null
+          tour_skipped_at?: string | null
           twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
@@ -5600,6 +5608,10 @@ export type Database = {
           skills_offered?: string[] | null
           support_areas?: string[] | null
           timezone?: string | null
+          tour_completed_at?: string | null
+          tour_current_step?: number | null
+          tour_last_shown_at?: string | null
+          tour_skipped_at?: string | null
           twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
