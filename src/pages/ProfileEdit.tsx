@@ -165,11 +165,13 @@ const ProfileEdit = () => {
         .from('profiles')
         .update(updates)
         .eq('id', user!.id)
-        .select()
-        .single();
+        .select();
       
       if (error) throw error;
-      return data;
+      if (!data || data.length === 0) {
+        throw new Error('Profile not found');
+      }
+      return data[0];
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
