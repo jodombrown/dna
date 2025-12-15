@@ -8,21 +8,21 @@
 // =============================================================================
 
 export const SECTOR_OPTIONS = [
-  'Fintech',
   'Agtech',
-  'Healthcare',
-  'Education',
-  'Infrastructure',
-  'Energy',
   'Climate',
+  'Education',
+  'Energy',
+  'Fintech',
+  'Healthcare',
+  'Infrastructure',
   'Manufacturing',
+  'Media & Entertainment',
+  'Mining',
+  'Real Estate',
   'Retail',
   'Tech/Software',
-  'Real Estate',
-  'Transportation',
-  'Media & Entertainment',
   'Tourism',
-  'Mining',
+  'Transportation',
 ] as const;
 
 export type Sector = typeof SECTOR_OPTIONS[number];
@@ -70,18 +70,18 @@ export type DiasporaStatusValue = ConnectionTypeValue;
 // =============================================================================
 
 export const ENGAGEMENT_INTENTION_OPTIONS = [
-  { value: 'mentoring', label: 'Mentoring Others' },
+  { value: 'advising', label: 'Advising/Consulting' },
   { value: 'being_mentored', label: 'Being Mentored' },
   { value: 'collaborating', label: 'Collaborating on Projects' },
-  { value: 'investing', label: 'Investing' },
   { value: 'fundraising', label: 'Fundraising' },
   { value: 'hiring', label: 'Hiring' },
+  { value: 'investing', label: 'Investing' },
   { value: 'job_seeking', label: 'Seeking Opportunities' },
-  { value: 'networking', label: 'Networking' },
-  { value: 'volunteering', label: 'Volunteering' },
-  { value: 'advising', label: 'Advising/Consulting' },
-  { value: 'speaking', label: 'Speaking at Events' },
   { value: 'learning', label: 'Learning & Development' },
+  { value: 'mentoring', label: 'Mentoring Others' },
+  { value: 'networking', label: 'Networking' },
+  { value: 'speaking', label: 'Speaking at Events' },
+  { value: 'volunteering', label: 'Volunteering' },
 ] as const;
 
 export const ENGAGEMENT_INTENTION_VALUES = ENGAGEMENT_INTENTION_OPTIONS.map(o => o.value);
@@ -92,16 +92,18 @@ export type EngagementIntentionValue = typeof ENGAGEMENT_INTENTION_OPTIONS[numbe
 // =============================================================================
 
 export const AVAILABLE_FOR_OPTIONS = [
-  { value: 'mentorship', label: 'Mentorship' },
-  { value: 'collaborations', label: 'Collaborations' },
-  { value: 'volunteering', label: 'Volunteering' },
   { value: 'advising', label: 'Advisory Roles' },
   { value: 'board_positions', label: 'Board Positions' },
-  { value: 'speaking', label: 'Speaking Engagements' },
+  { value: 'collaborations', label: 'Collaborations' },
   { value: 'consulting', label: 'Consulting' },
-  { value: 'investments', label: 'Investment Opportunities' },
-  { value: 'job_opportunities', label: 'Job Opportunities' },
+  { value: 'hiring', label: 'Hiring' },
+  { value: 'investing', label: 'Investing' },
+  { value: 'job_seeking', label: 'Job Seeking' },
+  { value: 'mentorship', label: 'Mentorship' },
   { value: 'partnerships', label: 'Business Partnerships' },
+  { value: 'seeking_investment', label: 'Seeking Investment' },
+  { value: 'speaking', label: 'Speaking Engagements' },
+  { value: 'volunteering', label: 'Volunteering' },
 ] as const;
 
 export const AVAILABLE_FOR_VALUES = AVAILABLE_FOR_OPTIONS.map(o => o.value);
@@ -112,20 +114,20 @@ export type AvailableForValue = typeof AVAILABLE_FOR_OPTIONS[number]['value'];
 // =============================================================================
 
 export const MENTORSHIP_AREA_OPTIONS = [
-  'Career Development',
-  'Leadership & Management',
-  'Entrepreneurship',
-  'Fundraising & Investment',
-  'Product Development',
-  'Marketing & Growth',
-  'Technical Skills',
-  'Business Strategy',
-  'Financial Planning',
-  'Work-Life Balance',
-  'Navigating Corporate Culture',
   'Building Networks',
-  'Personal Branding',
+  'Business Strategy',
+  'Career Development',
+  'Entrepreneurship',
+  'Financial Planning',
+  'Fundraising & Investment',
   'Industry Expertise',
+  'Leadership & Management',
+  'Marketing & Growth',
+  'Navigating Corporate Culture',
+  'Personal Branding',
+  'Product Development',
+  'Technical Skills',
+  'Work-Life Balance',
 ] as const;
 
 export type MentorshipArea = typeof MENTORSHIP_AREA_OPTIONS[number];
@@ -135,26 +137,26 @@ export type MentorshipArea = typeof MENTORSHIP_AREA_OPTIONS[number];
 // =============================================================================
 
 export const COMMON_SKILLS = [
-  'Product Management',
-  'Software Engineering',
-  'Data Science',
-  'Machine Learning',
-  'UX/UI Design',
-  'Marketing',
-  'Sales',
   'Business Development',
+  'Community Building',
+  'Data Science',
   'Finance & Accounting',
-  'Operations',
+  'Fundraising',
   'Human Resources',
   'Legal',
-  'Strategy & Consulting',
-  'Project Management',
-  'Research',
-  'Writing & Content',
-  'Public Speaking',
-  'Fundraising',
-  'Community Building',
+  'Machine Learning',
+  'Marketing',
+  'Operations',
   'Policy & Government Relations',
+  'Product Management',
+  'Project Management',
+  'Public Speaking',
+  'Research',
+  'Sales',
+  'Software Engineering',
+  'Strategy & Consulting',
+  'UX/UI Design',
+  'Writing & Content',
 ] as const;
 
 export type CommonSkill = typeof COMMON_SKILLS[number];
@@ -165,20 +167,20 @@ export type CommonSkill = typeof COMMON_SKILLS[number];
 
 export const COMMON_INTERESTS = [
   'African Tech Ecosystem',
-  'Impact Investing',
-  'Sustainable Development',
+  'Agritech',
   'Climate & Environment',
+  'Creative Industries',
+  'Cultural Preservation',
+  'Diaspora Engagement',
+  'EdTech',
   'Fintech & Digital Finance',
   'Healthcare Innovation',
-  'EdTech',
-  'Agritech',
-  'Creative Industries',
-  'Diaspora Engagement',
+  'Impact Investing',
+  'Infrastructure Development',
   'Policy & Governance',
+  'Sustainable Development',
   'Women in Business',
   'Youth Empowerment',
-  'Infrastructure Development',
-  'Cultural Preservation',
 ] as const;
 
 export type CommonInterest = typeof COMMON_INTERESTS[number];
@@ -188,16 +190,16 @@ export type CommonInterest = typeof COMMON_INTERESTS[number];
 // =============================================================================
 
 export const DIASPORA_NETWORK_OPTIONS = [
-  'Tech Community',
+  'Academic/Research Networks',
+  'Alumni Networks',
+  'Cultural Organizations',
+  'Entrepreneurship Hubs',
+  'Faith-Based Communities',
   'Investment Networks',
   'Professional Associations',
-  'Cultural Organizations',
-  'Alumni Networks',
-  'Faith-Based Communities',
+  'Tech Community',
   'Women\'s Networks',
   'Youth Networks',
-  'Entrepreneurship Hubs',
-  'Academic/Research Networks',
 ] as const;
 
 export type DiasporaNetwork = typeof DIASPORA_NETWORK_OPTIONS[number];

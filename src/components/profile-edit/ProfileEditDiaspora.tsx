@@ -14,9 +14,18 @@ import {
 } from '@/data/profileOptions';
 
 const MENTORSHIP_AREA_OPTIONS = [
-  'Career guidance', 'Entrepreneurship', 'Technical skills', 'Leadership',
-  'Fundraising', 'Business strategy', 'Marketing', 'Product development',
-  'Investment', 'Legal/Compliance', 'Operations', 'Personal development'
+  'Business strategy',
+  'Career guidance',
+  'Entrepreneurship',
+  'Fundraising',
+  'Investment',
+  'Leadership',
+  'Legal/Compliance',
+  'Marketing',
+  'Operations',
+  'Personal development',
+  'Product development',
+  'Technical skills',
 ] as const;
 
 interface ProfileEditDiasporaProps {
