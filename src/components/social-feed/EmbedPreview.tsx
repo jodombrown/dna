@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { X, ExternalLink, Globe } from 'lucide-react';
+import DOMPurify from 'dompurify';
 
 interface EmbedMetadata {
   url: string;
@@ -42,10 +43,20 @@ export const EmbedPreview: React.FC<EmbedPreviewProps> = ({
 
   // Determine the best image to show
   const previewImage = embedData.thumbnail_url || embedData.image;
-  const embedHtml = embedData.embed_html || embedData.html;
+  const rawEmbedHtml = embedData.embed_html || embedData.html;
   const isVideo = embedData.type === 'video' || embedData.is_video;
   const authorName = embedData.author_name || embedData.author;
   const providerName = embedData.provider_name || embedData.site_name;
+
+  // Sanitize embed HTML to prevent XSS - only allow iframe tags with safe attributes
+  const sanitizedEmbedHtml = useMemo(() => {
+    if (!rawEmbedHtml) return null;
+    return DOMPurify.sanitize(rawEmbedHtml, {
+      ALLOWED_TAGS: ['iframe'],
+      ALLOWED_ATTR: ['src', 'width', 'height', 'frameborder', 'allow', 'allowfullscreen', 'title', 'loading'],
+      ALLOWED_URI_REGEXP: /^https:\/\/(www\.)?(youtube\.com|youtube-nocookie\.com|player\.vimeo\.com|platform\.twitter\.com|www\.tiktok\.com)/i,
+    });
+  }, [rawEmbedHtml]);
 
   // Get domain for display
   const getDomain = (url: string) => {
@@ -73,11 +84,11 @@ export const EmbedPreview: React.FC<EmbedPreviewProps> = ({
           </div>
         )}
         
-        {/* Rich embed with HTML (for videos) */}
-        {embedHtml && isVideo ? (
+        {/* Rich embed with HTML (for videos) - sanitized to prevent XSS */}
+        {sanitizedEmbedHtml && isVideo ? (
           <div className="aspect-video w-full">
-            <div 
-              dangerouslySetInnerHTML={{ __html: embedHtml }}
+            <div
+              dangerouslySetInnerHTML={{ __html: sanitizedEmbedHtml }}
               className="w-full h-full [&_iframe]:w-full [&_iframe]:h-full [&_iframe]:border-0"
             />
           </div>

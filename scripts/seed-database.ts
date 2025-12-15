@@ -100,7 +100,7 @@ async function seed() {
     const posts = [
       {
         author_id: 'user-1',
-        content: 'How can we drive fintech adoption in rural Africa? I've been working on mobile payment solutions and would love to hear from others in this space. What challenges are you seeing?',
+        content: "How can we drive fintech adoption in rural Africa? I've been working on mobile payment solutions and would love to hear from others in this space. What challenges are you seeing?",
         pillar: 'collaborate',
         post_type: 'text',
         tags: ['fintech', 'rural', 'mobile-payments'],
@@ -109,7 +109,7 @@ async function seed() {
       },
       {
         author_id: 'user-2',
-        content: 'Here's a visual recap of our Lagos tech summit! Amazing to see so many African tech leaders in one room. The energy was incredible! 🚀',
+        content: "Here's a visual recap of our Lagos tech summit! Amazing to see so many African tech leaders in one room. The energy was incredible! 🚀",
         pillar: 'connect',
         post_type: 'media',
         media_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
@@ -119,7 +119,7 @@ async function seed() {
       },
       {
         author_id: 'user-3',
-        content: 'Solar for Schools project update: We've successfully installed panels in 12 schools in Northern Ghana! The impact on learning hours has been remarkable. Next phase: 13 more schools. #SolarEnergy #Education',
+        content: "Solar for Schools project update: We've successfully installed panels in 12 schools in Northern Ghana! The impact on learning hours has been remarkable. Next phase: 13 more schools. #SolarEnergy #Education",
         pillar: 'contribute',
         post_type: 'text',
         tags: ['solar', 'education', 'ghana', 'impact'],
@@ -308,7 +308,7 @@ async function seed() {
         sender_id: 'user-4',
         receiver_id: 'user-5',
         purpose: 'collaboration',
-        message: 'Your EdTech work aligns perfectly with our talent bridge initiative. Let's connect!',
+        message: "Your EdTech work aligns perfectly with our talent bridge initiative. Let's connect!",
         status: 'accepted',
         is_seeded: true
       },
@@ -338,7 +338,7 @@ async function seed() {
       {
         post_id: posts[0].author_id, // This would need to be the actual post ID
         author_id: 'user-2',
-        content: 'Great question! In Ghana, we've seen success with USSD-based solutions that work on basic feature phones.',
+        content: "Great question! In Ghana, we've seen success with USSD-based solutions that work on basic feature phones.",
         is_seeded: true
       },
       {
