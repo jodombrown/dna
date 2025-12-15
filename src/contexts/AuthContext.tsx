@@ -171,7 +171,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return { error: { ...error, message: 'This email is already registered. Please sign in instead.' } };
         }
         if (error.message.toLowerCase().includes('password') || error.message.includes('should be at least')) {
-          return { error: { ...error, message: 'Password must be at least 6 characters long.' } };
+          return { error: { ...error, message: 'Password must be at least 8 characters long.' } };
         }
         if (error.message.includes('Invalid email') || error.message.includes('invalid email')) {
           return { error: { ...error, message: 'Please enter a valid email address.' } };

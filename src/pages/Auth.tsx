@@ -73,10 +73,10 @@ const Auth = () => {
     e.preventDefault();
     
     // Client-side validation
-    if (signUpPassword.length < 6) {
+    if (signUpPassword.length < 8) {
       toast({
         title: 'Password too short',
-        description: 'Password must be at least 6 characters long.',
+        description: 'Password must be at least 8 characters long.',
         variant: 'destructive',
       });
       return;
@@ -263,17 +263,17 @@ const Auth = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signup-password">Password (min 6 characters)</Label>
+                <Label htmlFor="signup-password">Password (min 8 characters)</Label>
                 <div className="relative">
                   <Input
                     id="signup-password"
                     type={showSignUpPassword ? "text" : "password"}
-                    placeholder="Enter 6+ characters"
+                    placeholder="Enter 8+ characters"
                     value={signUpPassword}
                     onChange={(e) => setSignUpPassword(e.target.value)}
                     required
                     disabled={isSignUpLoading}
-                    minLength={6}
+                    minLength={8}
                     className="pr-10"
                   />
                   <button
