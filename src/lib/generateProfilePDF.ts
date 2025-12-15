@@ -157,7 +157,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     doc.text(initials, avatarX, avatarY + 3, { align: 'center' });
   }
   
-  let sidebarY = avatarY + avatarSize / 2 + 18;
+  let sidebarY = avatarY + avatarSize / 2 + 12;
   
   // Helper to check if sidebar has space for a section
   const hasSidebarSpace = (neededHeight: number): boolean => {
@@ -165,30 +165,29 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   };
   
   // Contact Section (respects visibility)
-  if (hasSidebarSpace(30)) {
+  if (hasSidebarSpace(20)) {
     sidebarY = drawSidebarSection(doc, 'CONTACT', sidebarY, sidebarWidth, margin);
     
-    if (profile.email && isOwner && hasSidebarSpace(12)) {
-      // Email only shown to owner in PDF for privacy
+    if (profile.email && isOwner && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'Email:', profile.email, sidebarY, sidebarWidth, margin);
     }
-    if (profile.linkedin_url && hasSidebarSpace(12)) {
+    if (profile.linkedin_url && hasSidebarSpace(10)) {
       const linkedinHandle = profile.linkedin_url.includes('linkedin.com') 
         ? profile.linkedin_url.split('/').filter(Boolean).pop() || 'LinkedIn'
         : profile.linkedin_url;
       sidebarY = drawSidebarItem(doc, 'LinkedIn:', linkedinHandle, sidebarY, sidebarWidth, margin);
     }
-    if (profile.phone_number && shouldShowContact('phone') && hasSidebarSpace(12)) {
+    if (profile.phone_number && shouldShowContact('phone') && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'Phone:', profile.phone_number, sidebarY, sidebarWidth, margin);
     }
-    if (profile.whatsapp_number && shouldShowContact('whatsapp') && hasSidebarSpace(12)) {
+    if (profile.whatsapp_number && shouldShowContact('whatsapp') && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'WhatsApp:', profile.whatsapp_number, sidebarY, sidebarWidth, margin);
     }
-    if ((profile.location || profile.current_country) && hasSidebarSpace(12)) {
+    if ((profile.location || profile.current_country) && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'Location:', profile.location || profile.current_country || '', sidebarY, sidebarWidth, margin);
     }
     
-    sidebarY += 6;
+    sidebarY += 4;
   }
   
   // My Connection to Africa Section (Enhanced Heritage Section)
@@ -198,59 +197,71 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     (profile.ethnic_heritage && profile.ethnic_heritage.length > 0) ||
     (profile.diaspora_networks && profile.diaspora_networks.length > 0);
     
-  if (hasConnectionData && hasSidebarSpace(30)) {
+  if (hasConnectionData && hasSidebarSpace(20)) {
     sidebarY = drawSidebarSection(doc, 'AFRICA CONNECTION', sidebarY, sidebarWidth, margin);
     
-    if (profile.diaspora_status && hasSidebarSpace(12)) {
+    if (profile.diaspora_status && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'Type:', getConnectionLabel(profile.diaspora_status), sidebarY, sidebarWidth, margin);
     }
-    if (profile.country_of_origin && hasSidebarSpace(12)) {
+    if (profile.country_of_origin && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'Origin:', profile.country_of_origin, sidebarY, sidebarWidth, margin);
     }
-    if (profile.ethnic_heritage && profile.ethnic_heritage.length > 0 && hasSidebarSpace(12)) {
+    if (profile.ethnic_heritage && profile.ethnic_heritage.length > 0 && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'Heritage:', profile.ethnic_heritage.slice(0, 2).join(', '), sidebarY, sidebarWidth, margin);
     }
-    if (profile.languages && profile.languages.length > 0 && hasSidebarSpace(12)) {
+    if (profile.languages && profile.languages.length > 0 && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'Languages:', profile.languages.slice(0, 3).join(', '), sidebarY, sidebarWidth, margin);
     }
-    if (profile.diaspora_networks && profile.diaspora_networks.length > 0 && hasSidebarSpace(12)) {
+    if (profile.diaspora_networks && profile.diaspora_networks.length > 0 && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'Networks:', profile.diaspora_networks.slice(0, 2).join(', '), sidebarY, sidebarWidth, margin);
     }
-    sidebarY += 6;
+    sidebarY += 4;
   }
   
   // Skills Section (respects visibility) - limit items based on space
-  if (profile.skills && profile.skills.length > 0 && shouldShowSection('skills') && hasSidebarSpace(25)) {
+  if (profile.skills && profile.skills.length > 0 && shouldShowSection('skills') && hasSidebarSpace(18)) {
     sidebarY = drawSidebarSection(doc, 'SKILLS', sidebarY, sidebarWidth, margin);
     
-    const maxSkills = Math.min(5, profile.skills.length);
+    const maxSkills = Math.min(6, profile.skills.length);
     for (let i = 0; i < maxSkills; i++) {
-      if (!hasSidebarSpace(8)) break;
+      if (!hasSidebarSpace(6)) break;
       sidebarY = drawSidebarBullet(doc, profile.skills[i], sidebarY, sidebarWidth, margin);
     }
-    sidebarY += 6;
+    sidebarY += 4;
   }
   
   // Focus Areas Section - limit items based on space
-  if (profile.focus_areas && profile.focus_areas.length > 0 && hasSidebarSpace(25)) {
+  if (profile.focus_areas && profile.focus_areas.length > 0 && hasSidebarSpace(18)) {
     sidebarY = drawSidebarSection(doc, 'FOCUS AREAS', sidebarY, sidebarWidth, margin);
     
-    const maxAreas = Math.min(3, profile.focus_areas.length);
+    const maxAreas = Math.min(4, profile.focus_areas.length);
     for (let i = 0; i < maxAreas; i++) {
-      if (!hasSidebarSpace(8)) break;
+      if (!hasSidebarSpace(6)) break;
       sidebarY = drawSidebarBullet(doc, profile.focus_areas[i], sidebarY, sidebarWidth, margin);
     }
-    sidebarY += 6;
+    sidebarY += 4;
   }
   
   // Available For Section - only if space allows
-  if (profile.available_for && profile.available_for.length > 0 && hasSidebarSpace(25)) {
+  if (profile.available_for && profile.available_for.length > 0 && hasSidebarSpace(18)) {
     sidebarY = drawSidebarSection(doc, 'OPEN TO', sidebarY, sidebarWidth, margin);
     
-    const maxItems = Math.min(3, profile.available_for.length);
+    const maxItems = Math.min(4, profile.available_for.length);
     for (let i = 0; i < maxItems; i++) {
-      if (!hasSidebarSpace(8)) break;
+      if (!hasSidebarSpace(6)) break;
       sidebarY = drawSidebarBullet(doc, profile.available_for[i], sidebarY, sidebarWidth, margin);
+    }
+    sidebarY += 4;
+  }
+  
+  // Mentorship Areas - use remaining sidebar space
+  if (profile.mentorship_areas && profile.mentorship_areas.length > 0 && hasSidebarSpace(18)) {
+    sidebarY = drawSidebarSection(doc, 'MENTORSHIP', sidebarY, sidebarWidth, margin);
+    
+    const maxItems = Math.min(3, profile.mentorship_areas.length);
+    for (let i = 0; i < maxItems; i++) {
+      if (!hasSidebarSpace(6)) break;
+      sidebarY = drawSidebarBullet(doc, profile.mentorship_areas[i], sidebarY, sidebarWidth, margin);
     }
   }
   
@@ -287,10 +298,10 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
       companyLine += companyLine ? ` • ${profile.years_experience} years experience` : `${profile.years_experience} years experience`;
     }
     doc.text(companyLine, mainX, mainY);
-    mainY += 6;
+    mainY += 5;
   }
   
-  mainY += 12;
+  mainY += 8;
   
   // Professional Summary (about section - respects visibility)
   if (profile.bio && shouldShowSection('about')) {
@@ -302,7 +313,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     
     const bioLines = doc.splitTextToSize(profile.bio, mainContentWidth);
     doc.text(bioLines, mainX, mainY);
-    mainY += bioLines.length * 5 + 12;
+    mainY += bioLines.length * 5 + 8;
   }
   
   // African Causes Section
@@ -316,7 +327,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     const causesText = profile.african_causes.map(c => getCauseLabel(c)).join(' • ');
     const causeLines = doc.splitTextToSize(causesText, mainContentWidth);
     doc.text(causeLines, mainX, mainY);
-    mainY += causeLines.length * 5 + 12;
+    mainY += causeLines.length * 5 + 8;
   }
   
   // Engagement Intentions Section
@@ -330,7 +341,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     const intentionsText = profile.engagement_intentions.join(' • ');
     const intentionLines = doc.splitTextToSize(intentionsText, mainContentWidth);
     doc.text(intentionLines, mainX, mainY);
-    mainY += intentionLines.length * 5 + 12;
+    mainY += intentionLines.length * 5 + 8;
   }
   
   // Interests Section (respects visibility)
@@ -344,7 +355,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     const interestsText = profile.interests.join(' • ');
     const interestLines = doc.splitTextToSize(interestsText, mainContentWidth);
     doc.text(interestLines, mainX, mainY);
-    mainY += interestLines.length * 5 + 12;
+    mainY += interestLines.length * 5 + 8;
   }
   
   // Industry Section
@@ -355,7 +366,29 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.text(profile.industry, mainX, mainY);
-    mainY += 15;
+    mainY += 10;
+  }
+  
+  // Return Intentions - if available and space permits
+  if (profile.return_intentions && mainY < mainMaxY - 20) {
+    mainY = drawMainSection(doc, 'RETURN INTENTIONS', mainY, mainX, mainContentWidth);
+    
+    doc.setTextColor(80, 80, 80);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(getReturnIntentionsLabel(profile.return_intentions), mainX, mainY);
+    mainY += 10;
+  }
+  
+  // Visit Frequency - if available and space permits
+  if (profile.africa_visit_frequency && mainY < mainMaxY - 20) {
+    mainY = drawMainSection(doc, 'AFRICA VISITS', mainY, mainX, mainContentWidth);
+    
+    doc.setTextColor(80, 80, 80);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(profile.africa_visit_frequency, mainX, mainY);
+    mainY += 10;
   }
   
   // DNA Footer Bar
@@ -378,66 +411,66 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
 
 function drawSidebarSection(doc: jsPDF, title: string, y: number, sidebarWidth: number, margin: number): number {
   doc.setTextColor(212, 165, 116); // DNA copper
-  doc.setFontSize(10);
+  doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
   doc.text(title, margin, y);
   
   // Underline
   doc.setDrawColor(212, 165, 116);
-  doc.setLineWidth(0.4);
-  doc.line(margin, y + 2, sidebarWidth - margin, y + 2);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y + 1.5, sidebarWidth - margin, y + 1.5);
   
-  return y + 12;
+  return y + 8;
 }
 
 function drawSidebarItem(doc: jsPDF, label: string, text: string, y: number, sidebarWidth: number, margin: number): number {
   // Label in accent color
   doc.setTextColor(212, 165, 116);
-  doc.setFontSize(8);
+  doc.setFontSize(7);
   doc.setFont('helvetica', 'bold');
   doc.text(label, margin, y);
   
   // Value in light text
   doc.setTextColor(229, 231, 235); // Light gray
-  doc.setFontSize(8);
+  doc.setFontSize(7);
   doc.setFont('helvetica', 'normal');
   
   const maxWidth = sidebarWidth - margin * 2;
   const lines = doc.splitTextToSize(text, maxWidth);
-  doc.text(lines, margin, y + 4);
+  doc.text(lines, margin, y + 3);
   
-  return y + (lines.length * 4) + 8;
+  return y + (lines.length * 3.5) + 5;
 }
 
 function drawSidebarBullet(doc: jsPDF, text: string, y: number, sidebarWidth: number, margin: number): number {
   // Bullet in accent color
   doc.setTextColor(212, 165, 116);
-  doc.setFontSize(8);
+  doc.setFontSize(7);
   doc.text('•', margin + 2, y);
   
   // Text in light color
   doc.setTextColor(229, 231, 235);
   doc.setFont('helvetica', 'normal');
   
-  const maxWidth = sidebarWidth - margin * 2 - 10;
+  const maxWidth = sidebarWidth - margin * 2 - 8;
   const lines = doc.splitTextToSize(text, maxWidth);
-  doc.text(lines, margin + 8, y);
+  doc.text(lines, margin + 6, y);
   
-  return y + (lines.length * 4) + 3;
+  return y + (lines.length * 3.5) + 2;
 }
 
 function drawMainSection(doc: jsPDF, title: string, y: number, x: number, width: number): number {
   doc.setTextColor(51, 51, 51);
-  doc.setFontSize(12);
+  doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
   doc.text(title, x, y);
   
   // Underline in DNA copper
   doc.setDrawColor(212, 165, 116);
-  doc.setLineWidth(0.6);
-  doc.line(x, y + 2, x + Math.min(width * 0.5, 80), y + 2);
+  doc.setLineWidth(0.5);
+  doc.line(x, y + 1.5, x + Math.min(width * 0.5, 70), y + 1.5);
   
-  return y + 12;
+  return y + 9;
 }
 
 function getInitials(name: string): string {
