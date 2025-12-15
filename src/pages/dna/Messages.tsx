@@ -26,9 +26,16 @@ const DnaMessages = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch conversations
-  const { data: conversations, isLoading } = useQuery({
+  const { data: conversations, isLoading, refetch } = useQuery({
     queryKey: ['conversations'],
     queryFn: () => messageService.getConversations(),
+  });
+
+  // Fetch archived conversations
+  const { data: archivedConversations } = useQuery({
+    queryKey: ['conversations-archived'],
+    queryFn: () => messageService.getConversations(50, 0, true),
+    select: (data) => data.filter(c => c.is_archived),
   });
 
   if (isLoading) {
@@ -69,11 +76,13 @@ const DnaMessages = () => {
         <div className="container mx-auto px-4 py-6">
           <ConversationListPanel
             conversations={conversations || []}
+            archivedConversations={archivedConversations || []}
             isLoading={isLoading}
             selectedConversationId={selectedConversationId}
             onSelectConversation={setSelectedConversationId}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
+            onRefresh={() => { refetch(); }}
           />
         </div>
         <MobileBottomNav />
@@ -91,11 +100,13 @@ const DnaMessages = () => {
         left={
           <ConversationListPanel
             conversations={conversations || []}
+            archivedConversations={archivedConversations || []}
             isLoading={isLoading}
             selectedConversationId={selectedConversationId}
             onSelectConversation={setSelectedConversationId}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
+            onRefresh={() => { refetch(); }}
           />
         }
         right={

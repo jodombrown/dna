@@ -97,6 +97,7 @@ export interface ConversationListItem {
   participant_status?: ParticipantStatus;
   is_muted?: boolean;
   is_pinned?: boolean;
+  is_archived?: boolean;
 }
 
 // =====================================================
@@ -258,7 +259,7 @@ export interface CanMessageResult {
 /**
  * Inbox tab filter type following LinkedIn pattern
  */
-export type InboxTab = 'focused' | 'other' | 'requests';
+export type InboxTab = 'focused' | 'other' | 'requests' | 'archived';
 
 /**
  * Inbox filter configuration

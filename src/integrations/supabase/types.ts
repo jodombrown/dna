@@ -8288,6 +8288,7 @@ export type Database = {
         Args: { p_limit?: number; p_offset?: number; p_user_id: string }
         Returns: {
           conversation_id: string
+          is_archived: boolean
           is_muted: boolean
           is_pinned: boolean
           last_message_at: string

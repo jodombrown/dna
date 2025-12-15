@@ -9,6 +9,7 @@ interface InboxTabsProps {
   focusedCount?: number;
   otherCount?: number;
   requestsCount?: number;
+  archivedCount?: number;
 }
 
 /**
@@ -25,11 +26,13 @@ const InboxTabs: React.FC<InboxTabsProps> = ({
   focusedCount,
   otherCount,
   requestsCount,
+  archivedCount,
 }) => {
   const tabs: { id: InboxTab; label: string; count?: number }[] = [
     { id: 'focused', label: 'Focused', count: focusedCount },
     { id: 'other', label: 'Other', count: otherCount },
     { id: 'requests', label: 'Requests', count: requestsCount },
+    { id: 'archived', label: 'Archived', count: archivedCount },
   ];
 
   return (

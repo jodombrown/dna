@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { Loader2, Search, Plus, MoreVertical, Pin, BellOff, Trash2 } from 'lucide-react';
+import { Loader2, Search, Plus, MoreVertical, Pin, BellOff, Trash2, Archive, ArchiveRestore } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ConversationListItem, InboxTab } from '@/types/messaging';
 import InboxTabs from './InboxTabs';
@@ -22,6 +22,7 @@ import { MessageRequestCard } from './MessageRequestBanner';
 import { useMessageRequests } from '@/hooks/useMessageRequests';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { messageService } from '@/services/messageService';
 
 interface ConversationListPanelProps {
   conversations?: ConversationListItem[];
@@ -32,13 +33,15 @@ interface ConversationListPanelProps {
   onSelectConversation: (id: string) => void;
   onNewConversation?: () => void;
   onlineUsers?: string[];
+  onRefresh?: () => void;
+  archivedConversations?: ConversationListItem[];
 }
 
 /**
  * ConversationListPanel - Left panel (35%) for MESSAGES_MODE
  *
  * Implements PRD requirements:
- * - Inbox Tabs: Focused | Other | Requests (LinkedIn-style)
+ * - Inbox Tabs: Focused | Other | Requests | Archived (LinkedIn-style)
  * - Presence: Green dot for online users
  * - Context Badge: Icon showing origin (event, project)
  * - Actions: Pin, mute, archive, delete
@@ -54,14 +57,65 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   onSelectConversation,
   onNewConversation,
   onlineUsers = [],
+  onRefresh,
+  archivedConversations = [],
 }) => {
   const [activeTab, setActiveTab] = useState<InboxTab>('focused');
   const { toast } = useToast();
   const { requests, requestCount, isLoading: requestsLoading } = useMessageRequests();
 
-  // Mute/unmute - simplified (just toast for now, needs RPC)
-  const handleToggleMute = (conversationId: string, currentlyMuted: boolean) => {
-    toast({ title: currentlyMuted ? 'Unmuted' : 'Muted', description: 'Feature coming soon' });
+  // Archive a conversation
+  const handleArchive = async (conversationId: string) => {
+    try {
+      await messageService.archiveConversation(conversationId);
+      toast({ 
+        title: 'Conversation archived', 
+        description: 'You can find it in the Archived tab',
+        action: (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={async () => {
+              await messageService.unarchiveConversation(conversationId);
+              onRefresh?.();
+              toast({ title: 'Conversation restored' });
+            }}
+          >
+            Undo
+          </Button>
+        ),
+      });
+      onRefresh?.();
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to archive conversation', variant: 'destructive' });
+    }
+  };
+
+  // Unarchive a conversation
+  const handleUnarchive = async (conversationId: string) => {
+    try {
+      await messageService.unarchiveConversation(conversationId);
+      toast({ title: 'Conversation restored', description: 'Moved back to Focused' });
+      onRefresh?.();
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to restore conversation', variant: 'destructive' });
+    }
+  };
+
+  // Mute/unmute
+  const handleToggleMute = async (conversationId: string, currentlyMuted: boolean) => {
+    try {
+      if (currentlyMuted) {
+        await messageService.unmuteConversation(conversationId);
+        toast({ title: 'Conversation unmuted' });
+      } else {
+        await messageService.muteConversation(conversationId);
+        toast({ title: 'Conversation muted', description: 'Moved to Other tab' });
+      }
+      onRefresh?.();
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to update mute status', variant: 'destructive' });
+    }
   };
 
   // Pin/unpin - simplified (just toast for now, needs RPC)
@@ -75,10 +129,18 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
 
   // Filter conversations based on search term and tab
   const filteredConversations = useMemo(() => {
+    // For archived tab, use archivedConversations prop
+    if (activeTab === 'archived') {
+      return archivedConversations.filter((conv) =>
+        conv.other_user_full_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
     if (!conversations) return [];
 
     let filtered = conversations.filter((conv) =>
-      conv.other_user_full_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      conv.other_user_full_name?.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !conv.is_archived // Exclude archived from other tabs
     );
 
     // Filter by tab
@@ -86,13 +148,13 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
       case 'focused':
         // Active conversations that are not muted
         filtered = filtered.filter(
-          (conv) => conv.participant_status === 'active' && !conv.is_muted
+          (conv) => !conv.is_muted
         );
         break;
       case 'other':
-        // Muted or low-priority conversations
+        // Muted conversations
         filtered = filtered.filter(
-          (conv) => conv.participant_status === 'active' && conv.is_muted
+          (conv) => conv.is_muted
         );
         break;
       case 'requests':
@@ -104,23 +166,44 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
     }
 
     return filtered;
-  }, [conversations, searchTerm, activeTab]);
+  }, [conversations, archivedConversations, searchTerm, activeTab]);
 
   // Count unread for focused tab
   const focusedUnreadCount = useMemo(() => {
     if (!conversations) return 0;
     return conversations
-      .filter((c) => c.participant_status === 'active' && !c.is_muted)
+      .filter((c) => !c.is_muted && !c.is_archived)
       .reduce((sum, c) => sum + (c.unread_count || 0), 0);
   }, [conversations]);
 
+  // Count archived conversations
+  const archivedCount = archivedConversations.length;
 
   const handleMarkAllRead = () => {
     toast({ title: 'Marked all as read', description: 'All conversations marked as read' });
   };
 
-  const handleArchiveAll = () => {
-    toast({ title: 'Archive', description: 'Archive feature coming soon' });
+  const handleArchiveAllRead = async () => {
+    // Archive all conversations with no unread messages
+    const conversationsToArchive = conversations?.filter(c => c.unread_count === 0 && !c.is_archived) || [];
+    
+    if (conversationsToArchive.length === 0) {
+      toast({ title: 'Nothing to archive', description: 'No read conversations found' });
+      return;
+    }
+
+    try {
+      for (const conv of conversationsToArchive) {
+        await messageService.archiveConversation(conv.conversation_id);
+      }
+      toast({ 
+        title: `Archived ${conversationsToArchive.length} conversation${conversationsToArchive.length > 1 ? 's' : ''}`,
+        description: 'Find them in the Archived tab'
+      });
+      onRefresh?.();
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to archive conversations', variant: 'destructive' });
+    }
   };
 
   return (
@@ -147,8 +230,8 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                   <span className="mr-2">✓</span>
                   Mark all as read
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleArchiveAll}>
-                  <span className="mr-2">📁</span>
+                <DropdownMenuItem onClick={handleArchiveAllRead}>
+                  <Archive className="h-4 w-4 mr-2" />
                   Archive all read
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -178,6 +261,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
         onTabChange={setActiveTab}
         focusedCount={focusedUnreadCount}
         requestsCount={requestCount}
+        archivedCount={archivedCount}
       />
 
       {/* Conversation List */}
@@ -199,7 +283,15 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
           </div>
         ) : filteredConversations.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground">
-            {activeTab === 'requests' ? (
+            {activeTab === 'archived' ? (
+              <>
+                <Archive className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p className="font-medium">No archived conversations</p>
+                <p className="text-sm mt-2">
+                  Archived conversations will appear here
+                </p>
+              </>
+            ) : activeTab === 'requests' ? (
               <>
                 <p>No message requests</p>
                 <p className="text-sm mt-2">
@@ -223,6 +315,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
             {filteredConversations.map((conversation) => {
               const hasUnread = conversation.unread_count > 0;
               const isOnline = onlineUsers.includes(conversation.other_user_id || '');
+              const isArchived = activeTab === 'archived';
 
               return (
                 <div
@@ -335,30 +428,55 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleTogglePin(
-                            conversation.conversation_id,
-                            conversation.is_pinned
-                          );
-                        }}
-                      >
-                        <Pin className="h-4 w-4 mr-2" />
-                        {conversation.is_pinned ? 'Unpin' : 'Pin'}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleMute(
-                            conversation.conversation_id,
-                            conversation.is_muted
-                          );
-                        }}
-                      >
-                        <BellOff className="h-4 w-4 mr-2" />
-                        {conversation.is_muted ? 'Unmute' : 'Mute'}
-                      </DropdownMenuItem>
+                      {isArchived ? (
+                        // Archived conversation menu
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUnarchive(conversation.conversation_id);
+                          }}
+                        >
+                          <ArchiveRestore className="h-4 w-4 mr-2" />
+                          Unarchive
+                        </DropdownMenuItem>
+                      ) : (
+                        // Regular conversation menu
+                        <>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleTogglePin(
+                                conversation.conversation_id,
+                                conversation.is_pinned
+                              );
+                            }}
+                          >
+                            <Pin className="h-4 w-4 mr-2" />
+                            {conversation.is_pinned ? 'Unpin' : 'Pin'}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleMute(
+                                conversation.conversation_id,
+                                conversation.is_muted
+                              );
+                            }}
+                          >
+                            <BellOff className="h-4 w-4 mr-2" />
+                            {conversation.is_muted ? 'Unmute' : 'Mute'}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleArchive(conversation.conversation_id);
+                            }}
+                          >
+                            <Archive className="h-4 w-4 mr-2" />
+                            Archive
+                          </DropdownMenuItem>
+                        </>
+                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem className="text-destructive">
                         <Trash2 className="h-4 w-4 mr-2" />
