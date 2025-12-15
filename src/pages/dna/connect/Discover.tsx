@@ -138,7 +138,7 @@ export default function Discover() {
         </Alert>
       ) : (
         <>
-          <div className="grid gap-4">
+          <div className="grid gap-4 px-1">
             {members.map(m => (
               <MemberCard 
                 key={m.id} 
