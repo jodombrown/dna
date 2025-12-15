@@ -41,9 +41,10 @@ export const NewMessageDialog: React.FC<NewMessageDialogProps> = ({ isOpen, onCl
     setLoading(true);
     try {
       const { data, error } = await supabase.rpc('get_user_connections', {
-        p_user_id: user.id,
-        p_limit: 50,
-        p_offset: 0,
+        user_id: user.id,
+        search_query: null,
+        limit_count: 50,
+        offset_count: 0,
       });
 
       if (error) throw error;
