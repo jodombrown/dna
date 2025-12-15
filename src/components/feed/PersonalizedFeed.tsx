@@ -61,18 +61,18 @@ export const PersonalizedFeed = () => {
   return (
     <div className="space-y-4">
       {/* Personalized Posts */}
-      {posts.map((post) => (
+      {posts.map((post: any) => (
         <PostCard
-          key={post.id}
+          key={post.post_id || post.id}
           post={{
-            id: post.id,
+            id: post.post_id || post.id,
             author_id: post.author_id,
             content: post.content,
             created_at: post.created_at,
             updated_at: post.updated_at,
             post_type: post.post_type,
             visibility: post.privacy_level,
-            media_urls: post.image_url ? [post.image_url] : null,
+            media_urls: post.media_url ? [post.media_url] : (post.image_url ? [post.image_url] : null),
             title: post.title,
             subtitle: post.subtitle,
           }}
