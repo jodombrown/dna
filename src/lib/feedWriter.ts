@@ -236,22 +236,26 @@ export async function createCommunityFeedPost(params: {
 }
 
 /**
- * Create a reshare post
+ * Create a reshare post with proper original_post_id reference
  */
 export async function createResharePost(params: {
   originalPostId: string;
   authorId: string;
   commentary?: string;
 }) {
-  const content = params.commentary || '';
-  
-  await createFeedPost({
-    authorId: params.authorId,
-    postType: 'reshare',
-    content,
-    linkedEntityType: null, // Reshares reference posts, not external entities
-    linkedEntityId: params.originalPostId,
+  const { error } = await supabase.from('posts').insert({
+    author_id: params.authorId,
+    content: params.commentary || '',
+    post_type: 'reshare',
+    privacy_level: 'public',
+    original_post_id: params.originalPostId,
+    share_commentary: params.commentary || null,
   });
+
+  if (error) {
+    console.error('Error creating reshare post:', error);
+    throw error;
+  }
 }
 
 /**
