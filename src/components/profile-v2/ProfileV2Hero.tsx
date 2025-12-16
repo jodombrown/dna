@@ -19,7 +19,7 @@ const isVerified = (status: VerificationStatus): boolean => {
   return status === 'fully_verified' || status === 'soft_verified';
 };
 
-// Gradient ring wrapper for verified users - uses DNA cultural colors
+// Gradient ring wrapper for verified users - uses DNA cultural colors with 3D shadow
 const VerificationRing: React.FC<{ status: VerificationStatus; children: React.ReactNode }> = ({ status, children }) => {
   if (!isVerified(status)) {
     return <>{children}</>;
@@ -32,11 +32,11 @@ const VerificationRing: React.FC<{ status: VerificationStatus; children: React.R
       className="relative p-1 rounded-full"
       style={{
         background: isFullyVerified 
-          ? 'linear-gradient(135deg, hsl(var(--dna-ochre)), hsl(var(--dna-terra)), hsl(var(--dna-sunset)))'
-          : 'linear-gradient(135deg, hsl(var(--dna-forest)), hsl(var(--dna-emerald)))',
+          ? 'linear-gradient(135deg, hsl(38 70% 50%), hsl(18 60% 55%), hsl(25 85% 55%))'
+          : 'linear-gradient(135deg, hsl(183 28% 28%), hsl(160 35% 45%))',
         boxShadow: isFullyVerified
-          ? '0 4px 20px hsla(var(--dna-ochre), 0.4), 0 2px 8px hsla(var(--dna-terra), 0.3)'
-          : '0 4px 16px hsla(var(--dna-forest), 0.35), 0 2px 6px hsla(var(--dna-emerald), 0.25)'
+          ? '0 4px 20px hsla(38, 70%, 50%, 0.4), 0 2px 8px hsla(18, 60%, 55%, 0.3), 0 6px 24px hsla(25, 85%, 55%, 0.25)'
+          : '0 4px 16px hsla(183, 28%, 28%, 0.35), 0 2px 6px hsla(160, 35%, 45%, 0.25)'
       }}
     >
       {children}
