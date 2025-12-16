@@ -209,26 +209,26 @@ const PublicPostPage = () => {
         {/* Use the standard unified header */}
         <UnifiedHeader />
 
-        {/* Animated CTA Banner for non-logged-in users */}
+        {/* Animated CTA Banner for non-logged-in users - flush under header */}
         <AnimatePresence>
           {!isLoggedIn && showBanner && (
             <motion.div
-              initial={{ y: -100, opacity: 0 }}
+              initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -100, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest sticky top-[60px] z-40 shadow-lg"
+              exit={{ y: -50, opacity: 0 }}
+              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+              className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest mt-2 mx-4 sm:mx-auto sm:max-w-2xl rounded-lg shadow-md"
             >
-              <div className="container max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+              <div className="px-4 py-2.5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 text-white min-w-0">
                   <Sparkles className="w-4 h-4 shrink-0" />
                   <span className="text-sm font-medium truncate">
-                    Shared from DNA — Connect with the global African diaspora
+                    Shared from DNA — Connect with the diaspora
                   </span>
                 </div>
                 <Button
                   size="sm"
-                  className="bg-white text-dna-forest hover:bg-white/90 shrink-0"
+                  className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
                   asChild
                 >
                   <Link to="/auth?mode=signup">
@@ -387,36 +387,40 @@ const PublicPostPage = () => {
             </Card>
           )}
 
-          {/* CTA Card for non-logged-in users */}
+          {/* Compact CTA Card for non-logged-in users */}
           {!isLoggedIn && (
             <Card className="mt-4 bg-gradient-to-r from-dna-forest to-dna-emerald text-white overflow-hidden">
-              <CardContent className="py-6 text-center">
-                <h2 className="text-lg sm:text-xl font-bold mb-2">
-                  Join the Conversation on DNA
-                </h2>
-                <p className="text-white/90 mb-4 text-sm max-w-md mx-auto">
-                  Connect with the global African diaspora. Like, comment, and share your own stories.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                  <Button 
-                    size="sm" 
-                    className="bg-dna-copper hover:bg-dna-gold text-white"
-                    asChild
-                  >
-                    <Link to="/auth?mode=signup">
-                      Create Your Free Account
-                    </Link>
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="secondary"
-                    className="bg-white text-dna-forest hover:bg-white/90"
-                    asChild
-                  >
-                    <Link to="/about">
-                      Learn About DNA
-                    </Link>
-                  </Button>
+              <CardContent className="py-4 px-4">
+                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+                  <div className="text-center sm:text-left flex-1">
+                    <h2 className="text-base font-bold">
+                      Join the Conversation on DNA
+                    </h2>
+                    <p className="text-white/80 text-xs mt-0.5">
+                      Connect with the global African diaspora. Like, comment, and share your own stories.
+                    </p>
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <Button 
+                      size="sm" 
+                      className="bg-dna-copper hover:bg-dna-gold text-white h-8 text-xs"
+                      asChild
+                    >
+                      <Link to="/auth?mode=signup">
+                        Create Your Free Account
+                      </Link>
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="secondary"
+                      className="bg-white text-dna-forest hover:bg-white/90 h-8 text-xs"
+                      asChild
+                    >
+                      <Link to="/about">
+                        Learn About DNA
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
