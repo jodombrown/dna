@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+// Admin RPC/table functions use 'as any' to bypass TypeScript since they're not in auto-generated types
 
 interface SystemSetting {
   id: string;

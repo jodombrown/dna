@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Loader2, Shield, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+// Admin RPC functions use 'as any' to bypass TypeScript since they're not in auto-generated types
 
 type AdminRoleLevel =
   | 'super_admin'
