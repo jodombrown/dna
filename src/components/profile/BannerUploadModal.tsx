@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { BANNER_GRADIENTS, BannerGradientKey } from "@/lib/constants/bannerGradients";
-import { Loader2, Upload, Check } from "lucide-react";
+import { Loader2, Upload, Check, Move, ZoomIn, ZoomOut } from "lucide-react";
+import Cropper from "react-easy-crop";
+import { getCroppedImg } from "@/lib/utils/cropImage";
 
 interface BannerUploadModalProps {
   open: boolean;
@@ -35,18 +38,65 @@ export function BannerUploadModal({
     currentBanner.type === 'gradient' ? (currentBanner.value as BannerGradientKey) : 'dna'
   );
   const [overlay, setOverlay] = useState(currentBanner.overlay);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+  // Image cropping state
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+
+  // Banner aspect ratio (3:1 for wide banners)
+  const BANNER_ASPECT_RATIO = 3 / 1;
+  const MIN_IMAGE_WIDTH = 1200;
+  const MIN_IMAGE_HEIGHT = 400;
+
+  const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // Validate file type
+    if (!['image/jpeg', 'image/png', 'image/webp', 'image/heic'].includes(file.type)) {
+      toast({ title: "Error", description: "Please upload JPG, PNG, WebP, or HEIC", variant: "destructive" });
+      return;
+    }
 
     if (file.size > 10 * 1024 * 1024) {
       toast({ title: "Error", description: "Max 10MB", variant: "destructive" });
       return;
     }
 
-    setUploadedFile(file);
+    // Load image for cropping
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        // Check minimum dimensions
+        if (img.width < MIN_IMAGE_WIDTH || img.height < MIN_IMAGE_HEIGHT) {
+          toast({
+            title: "Image too small",
+            description: `Minimum ${MIN_IMAGE_WIDTH}×${MIN_IMAGE_HEIGHT}px required. Your image is ${img.width}×${img.height}px.`,
+            variant: "destructive"
+          });
+          return;
+        }
+        setImageSrc(reader.result as string);
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleClearImage = () => {
+    setImageSrc(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setCroppedAreaPixels(null);
   };
 
   const handleSave = async () => {
@@ -58,12 +108,17 @@ export function BannerUploadModal({
         overlay
       };
 
-      if (selectedTab === 'upload' && uploadedFile) {
-        const fileName = `${userId}/banner-${Date.now()}.${uploadedFile.name.split('.').pop()}`;
+      if (selectedTab === 'upload' && imageSrc && croppedAreaPixels) {
+        // Generate cropped image
+        const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
+        const fileName = `${userId}/banner-${Date.now()}.png`;
 
         const { error: uploadError } = await supabase.storage
           .from('banners')
-          .upload(fileName, uploadedFile, { upsert: true });
+          .upload(fileName, croppedBlob, {
+            upsert: true,
+            contentType: 'image/png'
+          });
 
         if (uploadError) throw uploadError;
 
@@ -88,6 +143,7 @@ export function BannerUploadModal({
 
       onUploadComplete();
       toast({ title: "Success", description: "Banner updated!" });
+      handleClearImage();
       onOpenChange(false);
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -136,29 +192,77 @@ export function BannerUploadModal({
           </TabsContent>
 
           <TabsContent value="upload" className="space-y-4">
-            <div className="flex flex-col items-center py-12">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-                id="banner-upload"
-              />
-              <label 
-                htmlFor="banner-upload"
-                className="cursor-pointer flex flex-col items-center gap-4 p-8 border-2 border-dashed border-warm-gray-300 rounded-lg hover:border-dna-emerald transition-colors w-full"
-              >
-                <Upload className="h-12 w-12 text-warm-gray-400" />
-                <div className="text-center">
-                  <p className="font-medium">
-                    {uploadedFile ? uploadedFile.name : 'Click to upload'}
-                  </p>
-                  <p className="text-sm text-warm-gray-600 mt-1">
-                    Recommended: 1500x500px • Max 10MB
-                  </p>
+            {!imageSrc ? (
+              <div className="flex flex-col items-center py-12">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/heic"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="banner-upload"
+                />
+                <label
+                  htmlFor="banner-upload"
+                  className="cursor-pointer flex flex-col items-center gap-4 p-8 border-2 border-dashed border-warm-gray-300 rounded-lg hover:border-dna-emerald transition-colors w-full"
+                >
+                  <Upload className="h-12 w-12 text-warm-gray-400" />
+                  <div className="text-center">
+                    <p className="font-medium">Click to upload</p>
+                    <p className="text-sm text-warm-gray-600 mt-1">
+                      Min 1200×400px • Max 10MB • JPG, PNG, WebP
+                    </p>
+                  </div>
+                </label>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Cropper */}
+                <div className="relative h-64 sm:h-80 bg-warm-gray-100 rounded-lg overflow-hidden">
+                  <Cropper
+                    image={imageSrc}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={BANNER_ASPECT_RATIO}
+                    onCropChange={setCrop}
+                    onZoomChange={setZoom}
+                    onCropComplete={onCropComplete}
+                    objectFit="horizontal-cover"
+                  />
                 </div>
-              </label>
-            </div>
+
+                {/* Instructions */}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
+                  <Move className="h-4 w-4 flex-shrink-0" />
+                  <span>Drag to reposition • Pinch or use slider to zoom</span>
+                </div>
+
+                {/* Zoom Controls */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-4">
+                    <ZoomOut className="h-4 w-4 text-muted-foreground" />
+                    <Slider
+                      value={[zoom]}
+                      onValueChange={([v]) => setZoom(v)}
+                      min={1}
+                      max={3}
+                      step={0.1}
+                      className="flex-1"
+                    />
+                    <ZoomIn className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </div>
+
+                {/* Change Image Button */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleClearImage}
+                  className="w-full"
+                >
+                  Choose Different Image
+                </Button>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
 
@@ -172,9 +276,9 @@ export function BannerUploadModal({
 
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button 
-            onClick={handleSave} 
-            disabled={uploading || (selectedTab === 'upload' && !uploadedFile)}
+          <Button
+            onClick={handleSave}
+            disabled={uploading || (selectedTab === 'upload' && !imageSrc)}
             className="bg-dna-emerald hover:bg-dna-forest"
           >
             {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save Banner'}
